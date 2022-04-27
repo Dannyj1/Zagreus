@@ -15,7 +15,8 @@ namespace Chess {
 
     enum PieceColor {
         WHITE,
-        BLACK
+        BLACK,
+        NONE
     };
 
     enum PieceType {
@@ -27,7 +28,7 @@ namespace Chess {
         KING
     };
 
-    PieceColor getOppositeColor(PieceColor color) {
+    inline PieceColor getOppositeColor(PieceColor color) {
         if (color == PieceColor::WHITE) {
             return PieceColor::BLACK;
         } else {
@@ -45,11 +46,13 @@ namespace Chess {
 
     public:
         explicit Piece(PieceColor color, int initialX, int initialY, int id) {
+            this->id = id;
             this->color = color;
             this->initialX = initialX;
             this->initialY = initialY;
-            this->id = id;
         }
+
+        [[nodiscard]] int getId() const;
 
         PieceColor getColor();
 
@@ -57,17 +60,15 @@ namespace Chess {
 
         [[nodiscard]] int getInitialY() const;
 
-        [[nodiscard]] int getId() const;
-
         [[nodiscard]] bool getHasMoved() const;
 
         void setHasMoved(bool hasMoved);
 
         virtual PieceType getPieceType() = 0;
 
-        virtual std::vector<Tile*> getLegalMoves(Board* board) = 0;
+        virtual void getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) = 0;
 
-        virtual std::vector<Tile*> getAttackedTiles(Board* board) = 0;
+        virtual void getAttackedTiles(std::vector<Tile*>* result, Board* board) = 0;
 
         virtual int getBaseWeight() = 0;
 
@@ -84,9 +85,9 @@ namespace Chess {
 
         PieceType getPieceType() override;
 
-        std::vector<Tile*> getLegalMoves(Board* board) override;
+        void getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) override;
 
-        std::vector<Tile*> getAttackedTiles(Board* board) override;
+        void getAttackedTiles(std::vector<Tile*>* result, Board* board) override;
 
         int getBaseWeight() override;
 
@@ -103,9 +104,9 @@ namespace Chess {
 
         PieceType getPieceType() override;
 
-        std::vector<Tile*> getLegalMoves(Board* board) override;
+        void getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) override;
 
-        std::vector<Tile*> getAttackedTiles(Board* board) override;
+        void getAttackedTiles(std::vector<Tile*>* result, Board* board) override;
 
         int getBaseWeight() override;
 
@@ -113,7 +114,7 @@ namespace Chess {
 
         std::string getSymbol() override;
 
-        bool isInCheck(Board* board);
+        bool isChecked(Board* board);
 
         bool isCheckMate(Board* board);
     };
@@ -126,9 +127,9 @@ namespace Chess {
 
         PieceType getPieceType() override;
 
-        std::vector<Tile*> getLegalMoves(Board* board) override;
+        void getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) override;
 
-        std::vector<Tile*> getAttackedTiles(Board* board) override;
+        void getAttackedTiles(std::vector<Tile*>* result, Board* board) override;
 
         int getBaseWeight() override;
 
@@ -145,9 +146,9 @@ namespace Chess {
 
         PieceType getPieceType() override;
 
-        std::vector<Tile*> getLegalMoves(Board* board) override;
+        void getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) override;
 
-        std::vector<Tile*> getAttackedTiles(Board* board) override;
+        void getAttackedTiles(std::vector<Tile*>* result, Board* board) override;
 
         int getBaseWeight() override;
 
@@ -164,9 +165,9 @@ namespace Chess {
 
         PieceType getPieceType() override;
 
-        std::vector<Tile*> getLegalMoves(Board* board) override;
+        void getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) override;
 
-        std::vector<Tile*> getAttackedTiles(Board* board) override;
+        void getAttackedTiles(std::vector<Tile*>* result, Board* board) override;
 
         int getBaseWeight() override;
 
@@ -183,9 +184,9 @@ namespace Chess {
 
         PieceType getPieceType() override;
 
-        std::vector<Tile*> getLegalMoves(Board* board) override;
+        void getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) override;
 
-        std::vector<Tile*> getAttackedTiles(Board* board) override;
+        void getAttackedTiles(std::vector<Tile*>* result, Board* board) override;
 
         int getBaseWeight() override;
 

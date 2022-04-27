@@ -6,15 +6,6 @@
 #include "board.h"
 
 namespace Chess {
-    std::vector<std::tuple<int, int>> knightDirections{{-1, 2},
-                                                       {1,  2},
-                                                       {-1, -2},
-                                                       {1,  -2},
-                                                       {2,  1},
-                                                       {2,  -1},
-                                                       {-2, 1},
-                                                       {-2, -1}};
-
     PieceColor Piece::getColor() {
         return this->color;
     }
@@ -27,10 +18,6 @@ namespace Chess {
         return this->initialY;
     }
 
-    int Piece::getId() const {
-        return this->id;
-    }
-
     bool Piece::getHasMoved() const {
         return this->hasMoved;
     }
@@ -39,41 +26,24 @@ namespace Chess {
         this->hasMoved = moved;
     }
 
-    // TODO: remove moves that cause a check
-    std::vector<Tile*> Bishop::getLegalMoves(Board* board) {
-        std::vector<Tile*> legalMoves{};
-        std::vector<Direction> directions{Direction::UP_LEFT, Direction::UP_RIGHT, Direction::DOWN_LEFT,
-                                          Direction::DOWN_RIGHT};
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
-
-        for (Direction direction: directions) {
-            std::vector<Tile*> tiles = board->getTilesInDirection(x, y, direction, getColor(), false);
-
-            for (Tile* tile: tiles) {
-                legalMoves.push_back(tile);
-            }
-        }
-
-        return legalMoves;
+    int Piece::getId() const {
+        return id;
     }
 
-    std::vector<Tile*> Bishop::getAttackedTiles(Board* board) {
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
-        std::vector<Tile*> attackedTiles{};
-        std::vector<Direction> directions{Direction::UP_LEFT, Direction::UP_RIGHT, Direction::DOWN_LEFT,
-                                          Direction::DOWN_RIGHT};
+    void Bishop::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (Direction direction: directions) {
-            std::vector<Tile*> tiles = board->getTilesInDirection(x, y, direction, getColor(), true);
-
-            for (Tile* tile: tiles) {
-                attackedTiles.push_back(tile);
-            }
+        for (Direction direction : BISHOP_DIRECTIONS) {
+            board->getTilesInDirection(result, loc.x, loc.y, direction, getColor(), false);
         }
+    }
 
-        return attackedTiles;
+    void Bishop::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        for (Direction direction : BISHOP_DIRECTIONS) {
+            board->getTilesInDirection(result, loc.x, loc.y, direction, getColor(), true);
+        }
     }
 
     int Bishop::getBaseWeight() {
@@ -96,49 +66,95 @@ namespace Chess {
         return PieceType::BISHOP;
     }
 
-    std::vector<Tile*> King::getLegalMoves(Board* board) {
-        std::vector<Tile*> legalMoves{};
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
+    void King::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (int i = 0; i < 8; i++) {
-            auto direction = static_cast<Direction>(i);
-            Tile* tile = board->getTileInDirection(x, y, direction);
-            PieceColor oppositeColor = getOppositeColor(this->getColor());
+        for (Direction direction : ALL_DIRECTIONS) {
+            Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
 
             if (tile != nullptr) {
                 std::shared_ptr<Piece> piece = tile->getPiece();
 
-                if ((tile->getPiece() == nullptr || tile->getPiece()->getColor() != this->getColor()) &&
-                    tile->getAttackersByColor(oppositeColor).empty()) {
-                    legalMoves.push_back(tile);
+                if ((tile->getPiece() == nullptr || (tile->getPiece()->getPieceType() != PieceType::KING && tile->getPiece()->getColor() != this->getColor()))) {
+                    result->push_back(tile);
                 }
             }
         }
 
-        return legalMoves;
+        TileLocation aRookLoc;
+        TileLocation hRookLoc;
+
+        if (getColor() == PieceColor::BLACK) {
+            aRookLoc = board->getPiecePosition(BLACK_A_ROOK_ID);
+            hRookLoc = board->getPiecePosition(BLACK_H_ROOK_ID);
+        } else {
+            aRookLoc = board->getPiecePosition(WHITE_A_ROOK_ID);
+            hRookLoc = board->getPiecePosition(WHITE_H_ROOK_ID);
+        }
+
+
+        if (!getHasMoved() && !isChecked(board)) {
+            Tile* aRookTile = board->getTile(aRookLoc.x, aRookLoc.y);
+            Tile* hRookTile = board->getTile(hRookLoc.x, hRookLoc.y);
+
+            if (aRookTile != nullptr) {
+                std::shared_ptr<Piece> aRook = aRookTile->getPiece();
+
+                if (aRook != nullptr && !aRook->getHasMoved()) {
+                    bool canCastle = true;
+
+                    for (int i = 1; i < 3; i++) {
+                        Tile* tile = board->getTile(aRookLoc.x + i, aRookLoc.y);
+
+                        if (tile->getPiece() != nullptr ||
+                            !tile->getAttackersByColor(getOppositeColor(getColor())).empty()) {
+                            canCastle = false;
+                            break;
+                        }
+                    }
+
+                    if (canCastle) {
+                        result->push_back(board->getTile(aRookLoc.x, aRookLoc.y));
+                    }
+                }
+            }
+
+            if (hRookTile != nullptr) {
+                std::shared_ptr<Piece> hRook = board->getTile(hRookLoc.x, hRookLoc.y)->getPiece();
+
+                if (hRook != nullptr && !hRook->getHasMoved()) {
+                    bool canCastle = true;
+
+                    for (int i = 1; i < 4; i++) {
+                        Tile* tile = board->getTile(hRookLoc.x - i, hRookLoc.y);
+
+                        if (tile->getPiece() != nullptr ||
+                            !tile->getAttackersByColor(getOppositeColor(getColor())).empty()) {
+                            canCastle = false;
+                            break;
+                        }
+                    }
+
+                    if (canCastle) {
+                        result->push_back(board->getTile(hRookLoc.x, hRookLoc.y));
+                    }
+                }
+            }
+        }
     }
 
-    std::vector<Tile*> King::getAttackedTiles(Board* board) {
-        std::vector<Tile*> attackedTiles{};
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
+    void King::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (int i = 0; i < 8; i++) {
-            auto direction = static_cast<Direction>(i);
-            Tile* tile = board->getTileInDirection(x, y, direction);
-            PieceColor oppositeColor = getOppositeColor(this->getColor());
+        for (Direction direction : ALL_DIRECTIONS) {
+            Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
 
             if (tile != nullptr) {
                 std::shared_ptr<Piece> piece = tile->getPiece();
 
-                if (tile->getAttackersByColor(oppositeColor).empty()) {
-                    attackedTiles.push_back(tile);
-                }
+                result->push_back(tile);
             }
         }
-
-        return attackedTiles;
     }
 
     int King::getBaseWeight() {
@@ -157,73 +173,57 @@ namespace Chess {
         }
     }
 
-    bool King::isInCheck(Board* board) {
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
-        Tile* tile = board->getTile(x, y);
+    bool King::isChecked(Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+        Tile* tile = board->getTile(loc.x, loc.y);
         PieceColor oppositeColor = getOppositeColor(this->getColor());
 
-        if (tile->getAttackersByColor(oppositeColor).empty()) {
+        return !tile->getAttackersByColor(oppositeColor).empty();
+    }
+
+    bool King::isCheckMate(Board* board) {
+        if (!isChecked(board)) {
+            return false;
+        }
+
+        std::vector<Move> legalMoves = board->getLegalMoves(this->getColor(), false);
+        if (!legalMoves.empty()) {
             return false;
         }
 
         return true;
     }
 
-    bool King::isCheckMate(Board* board) {
-        if (!isInCheck(board)) {
-            return false;
-        }
-
-        bool isMate = true;
-        std::vector<std::shared_ptr<Piece>> pieces = board->getPieces(this->getColor());
-
-        for (const std::shared_ptr<Piece> &piece: pieces) {
-            std::vector<Tile*> legalMoves = piece->getLegalMoves(board);
-
-            if (!piece->getLegalMoves(board).empty()) {
-                isMate = false;
-                break;
-            }
-        }
-
-        return isMate;
-    }
-
     PieceType King::getPieceType() {
         return PieceType::KING;
     }
 
-    std::vector<Tile*> Knight::getLegalMoves(Board* board) {
-        std::vector<Tile*> legalMoves{};
+    void Knight::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (std::tuple<int, int> direction: knightDirections) {
-            Tile* tile = board->getTile(std::get<0>(direction), std::get<1>(direction));
+        for (const DirectionValue &direction : knightDirections) {
+            Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
 
             if (tile != nullptr) {
                 std::shared_ptr<Piece> piece = tile->getPiece();
 
-                if (piece == nullptr || piece->getColor() != this->getColor()) {
-                    legalMoves.push_back(tile);
+                if ((piece == nullptr || (tile->getPiece()->getPieceType() != PieceType::KING && piece->getColor() != this->getColor()))) {
+                    result->push_back(tile);
                 }
             }
         }
-
-        return legalMoves;
     }
 
-    std::vector<Tile*> Knight::getAttackedTiles(Board* board) {
-        std::vector<Tile*> attackedTiles{};
+    void Knight::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (std::tuple<int, int> direction: knightDirections) {
-            Tile* tile = board->getTile(std::get<0>(direction), std::get<1>(direction));
+        for (const DirectionValue &direction : knightDirections) {
+            Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
 
             if (tile != nullptr) {
-                attackedTiles.push_back(tile);
+                result->push_back(tile);
             }
         }
-
-        return attackedTiles;
     }
 
     int Knight::getBaseWeight() {
@@ -246,58 +246,45 @@ namespace Chess {
         return PieceType::KNIGHT;
     }
 
-    std::vector<Tile*> Pawn::getLegalMoves(Board* board) {
-        std::vector<Tile*> legalMoves{};
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
-        Tile* frontTile = board->getTile(x, y + (this->getColor() == PieceColor::BLACK ? 1 : -1));
+    void Pawn::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+        int direction = this->getColor() == PieceColor::BLACK ? 1 : -1;
+        Tile* frontTile = board->getTile(loc.x, loc.y + direction);
 
         if (frontTile != nullptr && frontTile->getPiece() == nullptr) {
-            legalMoves.push_back(frontTile);
+            result->push_back(frontTile);
 
             if (!this->getHasMoved()) {
-                Tile* secondFrontTile = board->getTile(x, y + (this->getColor() == PieceColor::BLACK ? 2 : -2));
+                Tile* secondFrontTile = board->getTile(loc.x, loc.y + direction * 2);
 
-                if (secondFrontTile != nullptr && frontTile->getPiece() == nullptr) {
-                    legalMoves.push_back(secondFrontTile);
+                if (secondFrontTile != nullptr && secondFrontTile->getPiece() == nullptr) {
+                    result->push_back(secondFrontTile);
                 }
             }
         }
 
-        for (Tile* attackedTile: this->getAttackedTiles(board)) {
-            if (attackedTile->getEnPassantTarget() != nullptr
-            || (attackedTile->getPiece() != nullptr && attackedTile->getPiece()->getColor() != this->getColor())) {
-                legalMoves.push_back(attackedTile);
+        std::vector<Tile*> attackedTiles;
+        this->getAttackedTiles(&attackedTiles, board);
+
+        for (Tile* attackedTile : attackedTiles) {
+            if ((attackedTile->getEnPassantTarget() != nullptr && attackedTile->getEnPassantTarget()->getColor() != this->getColor())
+                || (attackedTile->getPiece() != nullptr && attackedTile->getPiece()->getColor() != this->getColor() && attackedTile->getPiece()->getPieceType() != PieceType::KING)) {
+                result->push_back(attackedTile);
             }
         }
-
-        return legalMoves;
     }
 
-    std::vector<Tile*> Pawn::getAttackedTiles(Board* board) {
-        std::vector<Tile*> attackedTiles{};
-        std::vector<Direction> directions;
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
+    void Pawn::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        if (this->getColor() == PieceColor::WHITE) {
-            directions = {Direction::UP_LEFT, Direction::UP_RIGHT};
-        } else {
-            directions = {Direction::DOWN_LEFT, Direction::DOWN_RIGHT};
-        }
-
-
-        for (Direction direction: directions) {
-            int dx, dy;
-            std::tie(dx, dy) = Board::getDirectionValues(direction);
-            Tile* tile = board->getTile(x + dx, y + dy);
+        for (Direction direction : this->getColor() == PieceColor::WHITE ? WHITE_PAWN_ATTACK_DIRECTIONS : BLACK_PAWN_ATTACK_DIRECTIONS) {
+            DirectionValue value = Board::getDirectionValues(direction);
+            Tile* tile = board->getTile(loc.x + value.dx, loc.y + value.dy);
 
             if (tile != nullptr) {
-                attackedTiles.push_back(tile);
+                result->push_back(tile);
             }
         }
-
-        return attackedTiles;
     }
 
     int Pawn::getBaseWeight() {
@@ -320,42 +307,20 @@ namespace Chess {
         return PieceType::PAWN;
     }
 
-    std::vector<Tile*> Queen::getLegalMoves(Board* board) {
-        std::vector<Tile*> legalMoves{};
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
+    void Queen::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (int i = 0; i < 8; i++) {
-            auto direction = static_cast<Direction>(i);
-            int dx, dy;
-            std::tie(dx, dy) = Board::getDirectionValues(direction);
-            std::vector<Tile*> tiles = board->getTilesInDirection(x, y, direction, this->getColor(), false);
-
-            for (Tile* tile: tiles) {
-                legalMoves.push_back(tile);
-            }
+        for (Direction direction : ALL_DIRECTIONS) {
+            board->getTilesInDirection(result, loc.x, loc.y, direction, this->getColor(), false);
         }
-
-        return legalMoves;
     }
 
-    std::vector<Tile*> Queen::getAttackedTiles(Board* board) {
-        std::vector<Tile*> attackedTiles{};
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
+    void Queen::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (int i = 0; i < 8; i++) {
-            auto direction = static_cast<Direction>(i);
-            int dx, dy;
-            std::tie(dx, dy) = Board::getDirectionValues(direction);
-            std::vector<Tile*> tiles = board->getTilesInDirection(x, y, direction, this->getColor(), true);
-
-            for (Tile* tile: tiles) {
-                attackedTiles.push_back(tile);
-            }
+        for (Direction direction : ALL_DIRECTIONS) {
+            board->getTilesInDirection(result, loc.x, loc.y, direction, this->getColor(), true);
         }
-
-        return attackedTiles;
     }
 
     int Queen::getBaseWeight() {
@@ -378,38 +343,20 @@ namespace Chess {
         return PieceType::QUEEN;
     }
 
-    std::vector<Tile*> Rook::getLegalMoves(Board* board) {
-        std::vector<Tile*> legalMoves{};
-        std::vector<Direction> directions{Direction::UP, Direction::DOWN, Direction::LEFT, Direction::RIGHT};
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
+    void Rook::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (Direction direction: directions) {
-            std::vector<Tile*> tiles = board->getTilesInDirection(x, y, direction, getColor(), false);
-
-            for (Tile* tile: tiles) {
-                legalMoves.push_back(tile);
-            }
+        for (Direction direction : ROOK_DIRECTIONS) {
+            board->getTilesInDirection(result, loc.x, loc.y, direction, getColor(), false);
         }
-
-        return legalMoves;
     }
 
-    std::vector<Tile*> Rook::getAttackedTiles(Board* board) {
-        int x, y;
-        std::tie(x, y) = board->getPiecePosition(this->getId());
-        std::vector<Tile*> attackedTiles{};
-        std::vector<Direction> directions{Direction::UP, Direction::DOWN, Direction::LEFT, Direction::RIGHT};
+    void Rook::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
 
-        for (Direction direction: directions) {
-            std::vector<Tile*> tiles = board->getTilesInDirection(x, y, direction, getColor(), true);
-
-            for (Tile* tile: tiles) {
-                attackedTiles.push_back(tile);
-            }
+        for (Direction direction : ROOK_DIRECTIONS) {
+            board->getTilesInDirection(result, loc.x, loc.y, direction, getColor(), true);
         }
-
-        return attackedTiles;
     }
 
     int Rook::getBaseWeight() {
