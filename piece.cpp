@@ -46,6 +46,14 @@ namespace Chess {
         }
     }
 
+    void Bishop::setAttackedTiles(Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        for (Direction direction : BISHOP_DIRECTIONS) {
+            board->setAttackedTilesInDirection(loc.x, loc.y, this, direction, getColor(), true);
+        }
+    }
+
     int Bishop::getBaseWeight() {
         return 350;
     }
@@ -73,7 +81,7 @@ namespace Chess {
             Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
 
             if (tile != nullptr) {
-                std::shared_ptr<Piece> piece = tile->getPiece();
+                Piece* piece = tile->getPiece();
 
                 if ((tile->getPiece() == nullptr || (tile->getPiece()->getPieceType() != PieceType::KING && tile->getPiece()->getColor() != this->getColor()))) {
                     result->push_back(tile);
@@ -98,7 +106,7 @@ namespace Chess {
             Tile* hRookTile = board->getTile(hRookLoc.x, hRookLoc.y);
 
             if (aRookTile != nullptr) {
-                std::shared_ptr<Piece> aRook = aRookTile->getPiece();
+                Piece* aRook = aRookTile->getPiece();
 
                 if (aRook != nullptr && !aRook->getHasMoved()) {
                     bool canCastle = true;
@@ -120,7 +128,7 @@ namespace Chess {
             }
 
             if (hRookTile != nullptr) {
-                std::shared_ptr<Piece> hRook = board->getTile(hRookLoc.x, hRookLoc.y)->getPiece();
+                Piece* hRook = board->getTile(hRookLoc.x, hRookLoc.y)->getPiece();
 
                 if (hRook != nullptr && !hRook->getHasMoved()) {
                     bool canCastle = true;
@@ -150,9 +158,19 @@ namespace Chess {
             Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
 
             if (tile != nullptr) {
-                std::shared_ptr<Piece> piece = tile->getPiece();
-
                 result->push_back(tile);
+            }
+        }
+    }
+
+    void King::setAttackedTiles(Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        for (const DirectionValue &direction : knightDirections) {
+            Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
+
+            if (tile != nullptr) {
+                tile->addAttacker(this);
             }
         }
     }
@@ -205,7 +223,7 @@ namespace Chess {
             Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
 
             if (tile != nullptr) {
-                std::shared_ptr<Piece> piece = tile->getPiece();
+                Piece* piece = tile->getPiece();
 
                 if ((piece == nullptr || (tile->getPiece()->getPieceType() != PieceType::KING && piece->getColor() != this->getColor()))) {
                     result->push_back(tile);
@@ -222,6 +240,18 @@ namespace Chess {
 
             if (tile != nullptr) {
                 result->push_back(tile);
+            }
+        }
+    }
+
+    void Knight::setAttackedTiles(Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        for (const DirectionValue &direction : knightDirections) {
+            Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
+
+            if (tile != nullptr) {
+                tile->addAttacker(this);
             }
         }
     }
@@ -278,11 +308,22 @@ namespace Chess {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : this->getColor() == PieceColor::WHITE ? WHITE_PAWN_ATTACK_DIRECTIONS : BLACK_PAWN_ATTACK_DIRECTIONS) {
-            DirectionValue value = Board::getDirectionValues(direction);
-            Tile* tile = board->getTile(loc.x + value.dx, loc.y + value.dy);
+            Tile* tile = board->getTile(loc.x + DIRECTION_VALUES[direction].dx, loc.y + DIRECTION_VALUES[direction].dy);
 
             if (tile != nullptr) {
                 result->push_back(tile);
+            }
+        }
+    }
+
+    void Pawn::setAttackedTiles(Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        for (Direction direction : this->getColor() == PieceColor::WHITE ? WHITE_PAWN_ATTACK_DIRECTIONS : BLACK_PAWN_ATTACK_DIRECTIONS) {
+            Tile* tile = board->getTile(loc.x + DIRECTION_VALUES[direction].dx, loc.y + DIRECTION_VALUES[direction].dy);
+
+            if (tile != nullptr) {
+                tile->addAttacker(this);
             }
         }
     }
@@ -323,6 +364,14 @@ namespace Chess {
         }
     }
 
+    void Queen::setAttackedTiles(Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        for (Direction direction : ALL_DIRECTIONS) {
+            board->setAttackedTilesInDirection(loc.x, loc.y, this, direction, this->getColor(), true);
+        }
+    }
+
     int Queen::getBaseWeight() {
         return 1000;
     }
@@ -356,6 +405,14 @@ namespace Chess {
 
         for (Direction direction : ROOK_DIRECTIONS) {
             board->getTilesInDirection(result, loc.x, loc.y, direction, getColor(), true);
+        }
+    }
+
+    void Rook::setAttackedTiles(Board* board) {
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        for (Direction direction : ROOK_DIRECTIONS) {
+            board->setAttackedTilesInDirection(loc.x, loc.y, this, direction, getColor(), true);
         }
     }
 

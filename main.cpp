@@ -27,7 +27,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
 }
 
 int main() {
-    for (int i = 7; i < 16; i++) {
+    for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
         auto start = std::chrono::system_clock::now();

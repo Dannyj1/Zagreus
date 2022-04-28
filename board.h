@@ -12,15 +12,22 @@
 
 namespace Chess {
     enum Direction {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
-        UP_LEFT,
-        UP_RIGHT,
-        DOWN_LEFT,
-        DOWN_RIGHT
+        UP = 0,
+        DOWN = 1,
+        LEFT = 2,
+        RIGHT = 3,
+        UP_LEFT = 4,
+        UP_RIGHT = 5,
+        DOWN_LEFT = 6,
+        DOWN_RIGHT = 7
     };
+
+    struct DirectionValue {
+        int dx;
+        int dy;
+    };
+
+    static const DirectionValue DIRECTION_VALUES[] = { {0, -1}, {0, 1}, {-1, 0}, {1, 0}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1} };
 
     struct TileLocation {
         int x, y;
@@ -28,12 +35,7 @@ namespace Chess {
 
     struct Move {
         Tile* tile;
-        std::shared_ptr<Piece> piece;
-    };
-
-    struct DirectionValue {
-        int dx;
-        int dy;
+        Piece* piece;
     };
 
     static const std::vector<Direction> ALL_DIRECTIONS = {UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT};
@@ -72,10 +74,10 @@ namespace Chess {
 
     class UndoData {
     public:
-        std::map<std::shared_ptr<Piece>, TileLocation> originalPositions;
+        std::map<Piece*, TileLocation> originalPositions;
         std::map<int, bool> hasMoved;
-        std::map<std::shared_ptr<Piece>, TileLocation> captures;
-        std::map<std::pair<int, int>, std::shared_ptr<Piece>> enPassantTargets;
+        std::map<Piece*, TileLocation> captures;
+        std::map<std::pair<int, int>, Piece*> enPassantTargets;
     };
 
     class Board {
@@ -86,9 +88,11 @@ namespace Chess {
         std::vector<TileLocation> enPassantTargets;
         std::stack<UndoData> undoData;
 
-        void setPieceAtPosition(int x, int y, std::shared_ptr<Piece> piece);
+        void setPieceAtPosition(int x, int y, Piece* piece);
 
     public:
+        ~Board();
+
         Board();
 
         Tile* getTile(int x, int y);
@@ -98,9 +102,11 @@ namespace Chess {
         void getTilesInDirection(std::vector<Tile*>* result, int x, int y, Direction direction, PieceColor movingColor,
                                  bool ignoreColor);
 
+        void setAttackedTilesInDirection(int x, int y, Piece* attackingPiece, Direction direction, PieceColor movingColor, bool ignoreColor);
+
         TileLocation getPiecePosition(int id);
 
-        void makeMove(int toX, int toY, std::shared_ptr<Piece> movingPiece);
+        void makeMove(int toX, int toY, Piece* movingPiece);
 
         void unmakeMove();
 
@@ -112,21 +118,19 @@ namespace Chess {
 
         void setState(GameState state);
 
-        static DirectionValue getDirectionValues(Direction direction);
-
-        std::vector<std::shared_ptr<Piece>> getPieces(PieceColor color);
+        std::vector<Piece*> getPieces(PieceColor color);
 
         bool isDraw();
 
-        void handleKingCastle(int y, std::shared_ptr<Piece> &movingPiece, Tile* fromTile, Tile* toTile,
-                              std::shared_ptr<Piece> &toPiece);
+        void handleKingCastle(int y, Piece* &movingPiece, Tile* fromTile, Tile* toTile,
+                              Piece* &toPiece);
 
-        void handleEnPassant(const std::shared_ptr<Piece> &movingPiece, Tile* toTile);
+        void handleEnPassant(Piece*movingPiece, Tile* toTile);
 
         std::vector<Move> getLegalMoves(PieceColor color, bool pseudoLegal);
 
         std::vector<Tile*>
-        removeMovesCausingCheck(const std::vector<Tile*> &moves, const std::shared_ptr<Piece> &movingPiece);
+        removeMovesCausingCheck(const std::vector<Tile*> &moves, Piece*movingPiece);
 
         [[nodiscard]] GameState getGameState() const;
 
