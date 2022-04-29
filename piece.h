@@ -36,7 +36,7 @@ namespace Chess {
         }
     }
 
-    class Piece {
+    class Piece : public std::enable_shared_from_this<Piece> {
     private:
         PieceColor color;
         int initialX;
@@ -79,6 +79,8 @@ namespace Chess {
         virtual int getWeight(Board* board) = 0;
 
         virtual std::string getSymbol() = 0;
+
+        virtual std::string getFEN() = 0;
     };
 
     class Bishop : public Piece {
@@ -100,6 +102,8 @@ namespace Chess {
         int getWeight(Board* board) override;
 
         std::string getSymbol() override;
+
+        std::string getFEN() override;
     };
 
     class King : public Piece {
@@ -125,6 +129,8 @@ namespace Chess {
         bool isChecked(Board* board);
 
         bool isCheckMate(Board* board);
+
+        std::string getFEN() override;
     };
 
     class Knight : public Piece {
@@ -146,6 +152,8 @@ namespace Chess {
         int getWeight(Board* board) override;
 
         std::string getSymbol() override;
+
+        std::string getFEN() override;
     };
 
     class Pawn : public Piece {
@@ -167,6 +175,8 @@ namespace Chess {
         int getWeight(Board* board) override;
 
         std::string getSymbol() override;
+
+        std::string getFEN() override;
     };
 
     class Queen : public Piece {
@@ -188,6 +198,8 @@ namespace Chess {
         int getWeight(Board* board) override;
 
         std::string getSymbol() override;
+
+        std::string getFEN() override;
     };
 
     class Rook : public Piece {
@@ -209,5 +221,7 @@ namespace Chess {
         int getWeight(Board* board) override;
 
         std::string getSymbol() override;
+
+        std::string getFEN() override;
     };
 }

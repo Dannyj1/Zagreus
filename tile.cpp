@@ -7,12 +7,12 @@
 #include <utility>
 
 namespace Chess {
-    Piece* Tile::getPiece() {
+    std::shared_ptr<Piece> Tile::getPiece() {
         return this->piece;
     }
 
-    void Tile::setPiece(Piece* newPiece) {
-        this->piece = std::move(newPiece);
+    void Tile::setPiece(std::shared_ptr<Piece> newPiece) {
+        this->piece = newPiece;
     }
 
     int Tile::getX() const {
@@ -27,16 +27,16 @@ namespace Chess {
         this->attackers.clear();
     }
 
-    void Tile::addAttacker(Piece* attacker) {
+    void Tile::addAttacker(std::shared_ptr<Piece> attacker) {
         this->attackers.push_back(attacker);
     }
 
-    std::vector<Piece*> Tile::getAttackers() {
+    std::vector<std::shared_ptr<Piece>> Tile::getAttackers() {
         return this->attackers;
     }
 
-    std::vector<Piece*> Tile::getAttackersByColor(PieceColor color) {
-        std::vector<Piece*> attackersByColor;
+    std::vector<std::shared_ptr<Piece>> Tile::getAttackersByColor(PieceColor color) {
+        std::vector<std::shared_ptr<Piece>> attackersByColor;
         attackersByColor.reserve(16);
 
         for (const auto &attacker : this->attackers) {
@@ -48,20 +48,43 @@ namespace Chess {
         return attackersByColor;
     }
 
-    Piece* Tile::getEnPassantTarget() {
+    std::shared_ptr<Piece> Tile::getEnPassantTarget() {
         return this->enPassantTarget;
     }
 
-    void Tile::setEnPassantTarget(Piece* targetPiece) {
+    void Tile::setEnPassantTarget(std::shared_ptr<Piece> targetPiece) {
         this->enPassantTarget = std::move(targetPiece);
     }
 
-    void Tile::removeAttacker(Piece*sharedPtr) {
+    void Tile::removeAttacker(std::shared_ptr<Piece>sharedPtr) {
         for (auto it = this->attackers.begin(); it != this->attackers.end(); ++it) {
             if (*it == sharedPtr) {
                 this->attackers.erase(it);
                 break;
             }
         }
+    }
+
+    std::string Tile::getNotation() {
+        switch (getX()) {
+            case 0:
+                return "a" + std::to_string(8 - getY());
+            case 1:
+                return "b" + std::to_string(8 - getY());
+            case 2:
+                return "c" + std::to_string(8 - getY());
+            case 3:
+                return "d" + std::to_string(8 - getY());
+            case 4:
+                return "e" + std::to_string(8 - getY());
+            case 5:
+                return "f" + std::to_string(8 - getY());
+            case 6:
+                return "g" + std::to_string(8 - getY());
+            case 7:
+                return "h" + std::to_string(8 - getY());
+        }
+
+        return "error";
     }
 }

@@ -77,7 +77,7 @@ namespace senjo {
         std::string command = params.popString();
         if (iEqual(token::Go, command)) {
             doStopCommand();
-            execute(std::unique_ptr<BackgroundCommand>(new GoCommandHandle(engine)), params);
+            execute(std::shared_ptr<BackgroundCommand>(new GoCommandHandle(engine)), params);
         } else if (iEqual(token::Position, command)) {
             doStopCommand();
             doPositionCommand(line, params);
@@ -99,7 +99,7 @@ namespace senjo {
             doDebugCommand(params);
         } else if (iEqual(token::Register, command)) {
             doStopCommand(params);
-            execute(std::unique_ptr<BackgroundCommand>(new RegisterCommandHandle(engine)), params);
+            execute(std::shared_ptr<BackgroundCommand>(new RegisterCommandHandle(engine)), params);
         } else if (iEqual(token::PonderHit, command)) {
             doPonderHitCommand(params);
         } else if (iEqual(token::Fen, command)) {
@@ -108,10 +108,10 @@ namespace senjo {
             doPrintCommand(params);
         } else if (iEqual(token::Perft, command)) {
             doStopCommand();
-            execute(std::unique_ptr<BackgroundCommand>(new PerftCommandHandle(engine)), params);
+            execute(std::shared_ptr<BackgroundCommand>(new PerftCommandHandle(engine)), params);
         } else if (iEqual(token::Test, command)) {
             doStopCommand();
-            execute(std::unique_ptr<BackgroundCommand>(new TestCommandHandle(engine)), params);
+            execute(std::shared_ptr<BackgroundCommand>(new TestCommandHandle(engine)), params);
         } else if (iEqual(token::Opts, command)) {
             doOptsCommand(params);
         } else if (iEqual(token::Help, command)) {
@@ -163,7 +163,7 @@ namespace senjo {
 //-----------------------------------------------------------------------------
 //! \brief Execute the given background command thread
 //-----------------------------------------------------------------------------
-    void UCIAdapter::execute(std::unique_ptr<BackgroundCommand> command,
+    void UCIAdapter::execute(std::shared_ptr<BackgroundCommand> command,
                              Parameters &params) {
         if (!command) {
             return;

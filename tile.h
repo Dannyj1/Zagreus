@@ -16,9 +16,9 @@ namespace Chess {
     private:
         int x = 0;
         int y = 0;
-        Piece* piece = nullptr;
-        std::vector<Piece*> attackers;
-        Piece* enPassantTarget = nullptr;
+        std::shared_ptr<Piece> piece = nullptr;
+        std::vector<std::shared_ptr<Piece>> attackers;
+        std::shared_ptr<Piece> enPassantTarget = nullptr;
 
     public:
         Tile() {
@@ -33,16 +33,16 @@ namespace Chess {
             attackers.reserve(32);
         }
 
-        Tile(Piece* piece, int x, int y) {
+        Tile(std::shared_ptr<Piece> piece, int x, int y) {
             this->piece = std::move(piece);
             this->x = x;
             this->y = y;
             attackers.reserve(32);
         }
 
-        [[nodiscard]] Piece* getPiece();
+        [[nodiscard]] std::shared_ptr<Piece> getPiece();
 
-        void setPiece(Piece* piece);
+        void setPiece(std::shared_ptr<Piece> piece);
 
         [[nodiscard]] int getX() const;
 
@@ -50,16 +50,18 @@ namespace Chess {
 
         void clearAttackers();
 
-        void addAttacker(Piece* attacker);
+        void addAttacker(std::shared_ptr<Piece> attacker);
 
-        [[nodiscard]] std::vector<Piece*> getAttackers();
+        [[nodiscard]] std::vector<std::shared_ptr<Piece>> getAttackers();
 
-        [[nodiscard]] Piece* getEnPassantTarget();
+        [[nodiscard]] std::shared_ptr<Piece> getEnPassantTarget();
 
-        void setEnPassantTarget(Piece* targetPiece);
+        void setEnPassantTarget(std::shared_ptr<Piece> targetPiece);
 
-        [[nodiscard]] std::vector<Piece*> getAttackersByColor(PieceColor color);
+        [[nodiscard]] std::vector<std::shared_ptr<Piece>> getAttackersByColor(PieceColor color);
 
-        void removeAttacker(Piece* sharedPtr);
+        void removeAttacker(std::shared_ptr<Piece> sharedPtr);
+
+        std::string getNotation();
     };
 }

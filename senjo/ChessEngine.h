@@ -48,39 +48,39 @@ namespace senjo {
         //! \brief Get the engine name
         //! \return The engine name
         //---------------------------------------------------------------------------
-        virtual std::string getEngineName() const = 0;
+        virtual std::string getEngineName() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Get the engine version (e.g. "major.minor.build" e.g. "1.0.0")
         //! \return The engine version
         //---------------------------------------------------------------------------
-        virtual std::string getEngineVersion() const = 0;
+        virtual std::string getEngineVersion() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Get the engine author name(s)
         //! \return The engine author name(s)
         //---------------------------------------------------------------------------
-        virtual std::string getAuthorName() const = 0;
+        virtual std::string getAuthorName() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Get email address(es) for use with this engine
         //! Return an empty string if you don't wish to report an email address.
         //! \return An email address(es) for use with this engine
         //---------------------------------------------------------------------------
-        virtual std::string getEmailAddress() const;
+        virtual std::string getEmailAddress() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Get the name of the country this engine originates from
         //! Return an empty string if you don't wish to report a country
         //! \return The name of the country this engine originates from
         //---------------------------------------------------------------------------
-        virtual std::string getCountryName() const;
+        virtual std::string getCountryName() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Get options supported by the engine, and their current values
         //! \return A list of the engine's options and their current values
         //---------------------------------------------------------------------------
-        virtual std::list<EngineOption> getOptions() const = 0;
+        virtual std::list<EngineOption> getOptions() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Set a particular option to a given value
@@ -101,7 +101,7 @@ namespace senjo {
         //! \brief Is the engine initialized?
         //! \return true if the engine is initialized
         //---------------------------------------------------------------------------
-        virtual bool isInitialized() const = 0;
+        virtual bool isInitialized() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Set the board position according to a given FEN string
@@ -130,18 +130,18 @@ namespace senjo {
         //! \brief Get a FEN string representation of the current board position
         //! \return A FEN string representation of the current board postiion
         //---------------------------------------------------------------------------
-        virtual std::string getFEN() const = 0;
+        virtual std::string getFEN() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Output a text representation of the current board position
         //---------------------------------------------------------------------------
-        virtual void printBoard() const = 0;
+        virtual void printBoard() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Is it white to move in the current position?
         //! \return true if it is white to move in the current position
         //---------------------------------------------------------------------------
-        virtual bool whiteToMove() const = 0;
+        virtual bool whiteToMove() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Clear any engine data that can persist between searches
@@ -165,13 +165,13 @@ namespace senjo {
         //! \brief Is the engine registered?
         //! \return true if the engine is registered
         //---------------------------------------------------------------------------
-        virtual bool isRegistered() const;
+        virtual bool isRegistered() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Register the engine later
         //! The engine should still function, but may cripple itself in some fashion.
         //---------------------------------------------------------------------------
-        virtual void registerLater();
+        virtual void registerLater() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Register the engine now
@@ -182,13 +182,13 @@ namespace senjo {
         //! \return true if successful
         //---------------------------------------------------------------------------
         virtual bool doRegistration(const std::string &name,
-                                    const std::string &code);
+                                    const std::string &code) = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Does this engine use copy protection?
         //! \return true if the engine uses copy protection
         //---------------------------------------------------------------------------
-        virtual bool isCopyProtected() const;
+        virtual bool isCopyProtected() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Determine whether this is a legitimate copy of the engine
@@ -197,7 +197,7 @@ namespace senjo {
         //! copy or not.
         //! \return true if the engine is a legitimate copy
         //---------------------------------------------------------------------------
-        virtual bool copyIsOK();
+        virtual bool copyIsOK() = 0;
 
         //--------------------------------------------------------------------------
         //! \brief Set the engine's debug mode on or off
@@ -209,7 +209,7 @@ namespace senjo {
         //! \brief Is debug mode enabled?
         //! \return true if debug mode is enabled
         //---------------------------------------------------------------------------
-        virtual bool isDebugOn() const = 0;
+        virtual bool isDebugOn() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Is the engine currently executing the Go() method?
@@ -228,7 +228,7 @@ namespace senjo {
         //! \brief Was stopSearching() called after the last go() or perft() call?
         //! \return true if stopSearching() called after the last go() or perft() call
         //--------------------------------------------------------------------------
-        virtual bool stopRequested() const = 0;
+        virtual bool stopRequested() = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Block execution on the calling thread until the engine is
@@ -257,21 +257,21 @@ namespace senjo {
         //! \param[in] count The maximum number of lines to get stats for
         //! \return a SearchStats struct updated with the latest search stats
         //--------------------------------------------------------------------------
-        virtual SearchStats getSearchStats() const = 0;
+        virtual SearchStats getSearchStats() = 0;
 
         //--------------------------------------------------------------------------
         //! \brief Reset custom engine statistical counter totals
         //! \remark Override if you desire custom engine stats to be output when
         //!         the "test" command is run.
         //--------------------------------------------------------------------------
-        virtual void resetEngineStats();
+        virtual void resetEngineStats() = 0;
 
         //--------------------------------------------------------------------------
         //! \brief Output engine stats collected since last resetEngineStats call
         //! \remark Override if you desire custom engine stats to be output when
         //!         the "test" command is run.
         //--------------------------------------------------------------------------
-        virtual void showEngineStats() const;
+        virtual void showEngineStats() = 0;
     };
 
 } // namespace senjo

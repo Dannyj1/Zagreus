@@ -1,142 +1,155 @@
 #include "senjo/ChessEngine.h"
 #include "senjo/Output.h"
 #include "engine.h"
+#include "board.h"
+#include "search_mgr.h"
 
-bool isEngineRegistered = false;
+namespace Chess {
+    std::string Engine::getEngineName() {
+        return "Chess";
+    }
 
-std::string Engine::getEngineName() const {
-    return "Engine";
-}
+    std::string Engine::getEngineVersion() {
+        return "0.1";
+    }
 
-std::string Engine::getEngineVersion() const {
-    return "0.1-SNAPSHOT";
-}
+    std::string Engine::getAuthorName() {
+        return "Dannyj1";
+    }
 
-std::string Engine::getAuthorName() const {
-    return "Dannyj1";
-}
+    std::string Engine::getEmailAddress() {
+        return "";
+    }
 
-std::string Engine::getEmailAddress() const {
-    return "";
-}
+    std::string Engine::getCountryName() {
+        return "The Netherlands";
+    }
 
-std::string Engine::getCountryName() const {
-    return "The Netherlands";
-}
+    std::list<senjo::EngineOption> Engine::getOptions() {
+        return {};
+    }
 
-std::list<senjo::EngineOption> Engine::getOptions() const {
-    return {};
-}
+    bool Engine::setEngineOption(const std::string &optionName, const std::string &optionValue) {
+        return false;
+    }
 
-bool Engine::setEngineOption(const std::string &optionName, const std::string &optionValue) {
-    return false;
-}
+    void Engine::initialize() {
+        board = Board{};
+        isEngineInitialized = true;
+    }
 
-void Engine::initialize() {
-    // TODO: create new board
-}
+    bool Engine::isInitialized() {
+        return isEngineInitialized;
+    }
 
-bool Engine::isInitialized() const {
-    // TODO: implement
-    return true;
-}
+    bool Engine::setPosition(const std::string &fen, std::string* remain) {
+        return board.setFromFEN(fen);
+    }
 
-bool Engine::setPosition(const std::string &fen, std::string* remain) {
-    // TODO: implement
-    return false;
-}
+    bool Engine::makeMove(const std::string &move) {
+        if (move.size() < 4 || move.size() > 5) {
+            return false;
+        }
 
-bool Engine::makeMove(const std::string &move) {
-    // TODO: implement
-    return false;
-}
+        return board.makeStrMove(move);
+    }
 
-std::string Engine::getFEN() const {
-    // TODO: implement
-    return "";
-}
+    std::string Engine::getFEN() {
+        return board.getFEN();
+    }
 
-void Engine::printBoard() const {
-    // TODO: implement
-}
+    void Engine::printBoard() {
+        board.print();
+    }
 
-bool Engine::whiteToMove() const {
-    // TODO: implement
-    return true;
-}
+    bool Engine::whiteToMove() {
+        return board.getMovingColor() == PieceColor::WHITE;
+    }
 
-void Engine::clearSearchData() {
-    // TODO: implement
-}
+    void Engine::clearSearchData() {
+        // TODO: implement
+    }
 
-void Engine::ponderHit() {
-}
+    void Engine::ponderHit() {
+    }
 
-bool Engine::isRegistered() const {
-    return isEngineRegistered;
-}
+    bool Engine::isRegistered() {
+        return true;
+    }
 
-void Engine::registerLater() {
+    void Engine::registerLater() {
 
-}
+    }
 
-bool Engine::doRegistration(const std::string &name, const std::string &code) {
-    return false;
-}
+    bool Engine::doRegistration(const std::string &name, const std::string &code) {
+        return true;
+    }
 
-bool Engine::isCopyProtected() const {
-    return false;
-}
+    bool Engine::isCopyProtected() {
+        return false;
+    }
 
-bool Engine::copyIsOK() {
-    return true;
-}
+    bool Engine::copyIsOK() {
+        return true;
+    }
 
-void Engine::setDebug(const bool flag) {
+    void Engine::setDebug(const bool flag) {
 
-}
+    }
 
-bool Engine::isDebugOn() const {
-    return false;
-}
+    bool Engine::isDebugOn() {
+        return false;
+    }
 
-bool Engine::isSearching() {
-    // TODO: implement
-    return false;
-}
+    bool Engine::isSearching() {
+        return searchManager.isCurrentlySearching();
+    }
 
-void Engine::stopSearching() {
-    // TODO: implement
-}
+    void Engine::stopSearching() {
+        // TODO: implement
+    }
 
-bool Engine::stopRequested() const {
-    // TODO: implement
-    return false;
-}
+    bool Engine::stopRequested() {
+        // TODO: implement
+        return false;
+    }
 
-void Engine::waitForSearchFinish() {
-    // TODO: implement
-}
+    void Engine::waitForSearchFinish() {
+        while (searchManager.isCurrentlySearching()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }
 
-uint64_t Engine::perft(const int depth) {
-    // TODO: implement
-    return 0;
-}
+    uint64_t Engine::perft(const int depth) {
+        // TODO: implement
+        return 0;
+    }
 
-std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
-    // TODO: implement
-    return "";
-}
+    std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
+        board.setWhiteTimeMsec(params.wtime);
+        board.setBlackTimeMsec(params.btime);
 
-senjo::SearchStats Engine::getSearchStats() const {
-    // TODO: implement
-    return {};
-}
+        SearchResult bestResult = searchManager.getBestMove(&board);
+        TileLocation fromLoc = board.getPiecePosition(bestResult.move.piece->getId());
+        Tile* fromTile = board.getTile(fromLoc.x, fromLoc.y);
 
-void Engine::resetEngineStats() {
-    // TODO: implement
-}
+        return fromTile->getNotation() + bestResult.move.tile->getNotation();
+    }
 
-void Engine::showEngineStats() const {
-    // TODO: implement
+    senjo::SearchStats Engine::getSearchStats() {
+        // TODO: implement
+        return {};
+    }
+
+    void Engine::resetEngineStats() {
+        // TODO: implement
+    }
+
+    void Engine::showEngineStats() {
+        // TODO: implement
+    }
+
+    Engine::Engine() {
+        isEngineInitialized = false;
+    }
 }

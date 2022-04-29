@@ -1,5 +1,8 @@
 #include <iostream>
+#include <random>
+
 #include "board.h"
+#include "search_mgr.h"
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
 #include "senjo/Output.h"
@@ -27,7 +30,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
 }
 
 int main() {
-    for (int i = 1; i < 16; i++) {
+/*    for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
         auto start = std::chrono::system_clock::now();
@@ -39,10 +42,10 @@ int main() {
                   << std::endl;
     }
 
-    std::cout << "Perft done!" << std::endl;
+    std::cout << "Perft done!" << std::endl;*/
 
     try {
-        Engine engine;
+        Chess::Engine engine;
         senjo::UCIAdapter adapter(engine);
 
         std::string line;
@@ -57,7 +60,8 @@ int main() {
 
         return 0;
     } catch (const std::exception &e) {
-        senjo::Output() << "ERROR: " << e.what();
+        std::cout << "ERROR: " << e.what();
+        MessageBox(nullptr, std::string(e.what()).c_str(), "Error", MB_OK | MB_ICONERROR);
         return 1;
     }
 }

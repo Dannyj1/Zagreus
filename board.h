@@ -35,7 +35,7 @@ namespace Chess {
 
     struct Move {
         Tile* tile;
-        Piece* piece;
+        std::shared_ptr<Piece> piece;
     };
 
     static const std::vector<Direction> ALL_DIRECTIONS = {UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT};
@@ -74,10 +74,11 @@ namespace Chess {
 
     class UndoData {
     public:
-        std::map<Piece*, TileLocation> originalPositions;
+        std::map<std::shared_ptr<Piece>, TileLocation> originalPositions;
         std::map<int, bool> hasMoved;
-        std::map<Piece*, TileLocation> captures;
-        std::map<std::pair<int, int>, Piece*> enPassantTargets;
+        std::map<std::shared_ptr<Piece>, TileLocation> captures;
+        std::map<std::pair<int, int>, std::shared_ptr<Piece>> enPassantTargets;
+        GameState gameState;
     };
 
     class Board {
@@ -87,12 +88,12 @@ namespace Chess {
         std::map<int, TileLocation> piecePositions;
         std::vector<TileLocation> enPassantTargets;
         std::stack<UndoData> undoData;
+        uint64_t whiteTimeMsec;
+        uint64_t blackTimeMsec;
 
-        void setPieceAtPosition(int x, int y, Piece* piece);
+        void setPieceAtPosition(int x, int y, std::shared_ptr<Piece> piece);
 
     public:
-        ~Board();
-
         Board();
 
         Tile* getTile(int x, int y);
@@ -102,11 +103,11 @@ namespace Chess {
         void getTilesInDirection(std::vector<Tile*>* result, int x, int y, Direction direction, PieceColor movingColor,
                                  bool ignoreColor);
 
-        void setAttackedTilesInDirection(int x, int y, Piece* attackingPiece, Direction direction, PieceColor movingColor, bool ignoreColor);
+        void setAttackedTilesInDirection(int x, int y, std::shared_ptr<Piece> attackingPiece, Direction direction, PieceColor movingColor, bool ignoreColor);
 
         TileLocation getPiecePosition(int id);
 
-        void makeMove(int toX, int toY, Piece* movingPiece);
+        void makeMove(int toX, int toY, std::shared_ptr<Piece> movingPiece);
 
         void unmakeMove();
 
@@ -118,19 +119,22 @@ namespace Chess {
 
         void setState(GameState state);
 
-        std::vector<Piece*> getPieces(PieceColor color);
+        std::vector<std::shared_ptr<Piece>> getPieces();
+
+        std::vector<std::shared_ptr<Piece>> getPieces(PieceColor color);
 
         bool isDraw();
 
-        void handleKingCastle(int y, Piece* &movingPiece, Tile* fromTile, Tile* toTile,
-                              Piece* &toPiece);
+        void handleKingCastle(int y, std::shared_ptr<Piece> king, Tile* fromTile, Tile* toTile, std::shared_ptr<Piece> rook);
 
-        void handleEnPassant(Piece*movingPiece, Tile* toTile);
+        void handleEnPassant(std::shared_ptr<Piece>movingPiece, Tile* toTile);
 
         std::vector<Move> getLegalMoves(PieceColor color, bool pseudoLegal);
 
+        PieceColor getMovingColor() const;
+
         std::vector<Tile*>
-        removeMovesCausingCheck(const std::vector<Tile*> &moves, Piece*movingPiece);
+        removeMovesCausingCheck(std::vector<Tile*>* moves, std::shared_ptr<Piece>movingPiece);
 
         [[nodiscard]] GameState getGameState() const;
 
@@ -139,5 +143,29 @@ namespace Chess {
         bool isKingChecked(PieceColor color);
 
         PieceColor getWinner();
+
+        bool isStalemate(PieceColor color);
+
+        bool makeStrMove(const std::string &move);
+
+        Tile* getTileFromString(const std::string &tile);
+
+        std::string getFEN();
+
+        bool setFromFEN(std::string fen);
+
+        std::string getCastlingFEN();
+
+        std::string getEnPassantFEN();
+
+        uint64_t getWhiteTimeMsec() const;
+
+        void setWhiteTimeMsec(uint64_t whiteTimeMsec);
+
+        uint64_t getBlackTimeMsec() const;
+
+        void setBlackTimeMsec(uint64_t blackTimeMsec);
+
+        void setPieceFromFENChar(char character, int x, int y);
     };
 }

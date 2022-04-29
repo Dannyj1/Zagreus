@@ -33,7 +33,7 @@ namespace senjo {
 //-----------------------------------------------------------------------------
     class Thread {
     protected:
-        std::unique_ptr<std::thread> thread;
+        std::shared_ptr<std::thread> thread;
         std::mutex mutex;
 
         //---------------------------------------------------------------------------

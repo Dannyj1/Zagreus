@@ -29,17 +29,17 @@ namespace senjo {
             "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 //-----------------------------------------------------------------------------
-    std::string ChessEngine::getEmailAddress() const {
+    std::string ChessEngine::getEmailAddress() {
         return "";
     }
 
 //-----------------------------------------------------------------------------
-    std::string ChessEngine::getCountryName() const {
+    std::string ChessEngine::getCountryName() {
         return "";
     }
 
 //-----------------------------------------------------------------------------
-    bool ChessEngine::isRegistered() const {
+    bool ChessEngine::isRegistered() {
         return true;
     }
 
@@ -54,7 +54,7 @@ namespace senjo {
     }
 
 //-----------------------------------------------------------------------------
-    bool ChessEngine::isCopyProtected() const {
+    bool ChessEngine::isCopyProtected() {
         return false;
     }
 
@@ -68,7 +68,7 @@ namespace senjo {
     }
 
 //-----------------------------------------------------------------------------
-    void ChessEngine::showEngineStats() const {
+    void ChessEngine::showEngineStats() {
     }
 
 } // namespace senjo

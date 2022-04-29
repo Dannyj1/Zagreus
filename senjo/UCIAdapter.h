@@ -76,11 +76,11 @@ namespace senjo {
 
         void doPositionCommand(const std::string &line, Parameters &params);
 
-        void execute(std::unique_ptr<BackgroundCommand> command, Parameters &params);
+        void execute(std::shared_ptr<BackgroundCommand> command, Parameters &params);
 
         ChessEngine &engine;
         std::string lastPosition;
-        std::unique_ptr<BackgroundCommand> lastCommand;
+        std::shared_ptr<BackgroundCommand> lastCommand;
     };
 
 } // namespace senjo
