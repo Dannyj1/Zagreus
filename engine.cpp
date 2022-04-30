@@ -10,7 +10,7 @@ namespace Chess {
     }
 
     std::string Engine::getEngineVersion() {
-        return "0.1";
+        return "v0.2";
     }
 
     std::string Engine::getAuthorName() {
@@ -49,6 +49,35 @@ namespace Chess {
     bool Engine::makeMove(const std::string &move) {
         if (move.size() < 4 || move.size() > 5) {
             return false;
+        }
+
+        TileLocation whiteKingLoc = board.getPiecePosition(WHITE_KING_ID);
+        TileLocation blackKingLoc = board.getPiecePosition(BLACK_KING_ID);
+        TileLocation whiteARookLoc = board.getPiecePosition(WHITE_A_ROOK_ID);
+        TileLocation whiteHRookLoc = board.getPiecePosition(WHITE_H_ROOK_ID);
+        TileLocation blackARookLoc = board.getPiecePosition(BLACK_A_ROOK_ID);
+        TileLocation blackHRookLoc = board.getPiecePosition(BLACK_H_ROOK_ID);
+        std::shared_ptr<Piece> whiteKing = board.getTile(whiteKingLoc.x, whiteKingLoc.y)->getPiece();
+        std::shared_ptr<Piece> blackKing = board.getTile(blackKingLoc.x, blackKingLoc.y)->getPiece();
+        Tile* whiteARookTile = board.getTile(whiteARookLoc.x, whiteARookLoc.y);
+        Tile* whiteHRookTile = board.getTile(whiteHRookLoc.x, whiteHRookLoc.y);
+        Tile* blackARookTile = board.getTile(blackARookLoc.x, blackARookLoc.y);
+        Tile* blackHRookTile = board.getTile(blackHRookLoc.x, blackHRookLoc.y);
+
+        if (move == "e1g1" && !whiteKing->getHasMoved() && whiteHRookTile && !whiteHRookTile->getPiece()->getHasMoved()) {
+            return board.makeStrMove("e1h1");
+        }
+
+        if (move == "e1c1" && !whiteKing->getHasMoved() && whiteARookTile && !whiteARookTile->getPiece()->getHasMoved()) {
+            return board.makeStrMove("e1a1");
+        }
+
+        if (move == "e8g8" && !blackKing->getHasMoved() && blackHRookTile && !blackHRookTile->getPiece()->getHasMoved()) {
+            return board.makeStrMove("e8h8");
+        }
+
+        if (move == "e8c8" && !blackKing->getHasMoved() && blackARookTile && !blackARookTile->getPiece()->getHasMoved()) {
+            return board.makeStrMove("e8a8");
         }
 
         return board.makeStrMove(move);
@@ -132,6 +161,11 @@ namespace Chess {
         SearchResult bestResult = searchManager.getBestMove(&board);
         TileLocation fromLoc = board.getPiecePosition(bestResult.move.piece->getId());
         Tile* fromTile = board.getTile(fromLoc.x, fromLoc.y);
+
+        if (bestResult.move.piece->getPieceType() == PieceType::PAWN
+        && (bestResult.move.tile->getY() == 0 || bestResult.move.tile->getY() == 7)) {
+            return fromTile->getNotation() + bestResult.move.tile->getNotation() + "q";
+        }
 
         return fromTile->getNotation() + bestResult.move.tile->getNotation();
     }

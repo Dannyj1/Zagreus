@@ -9,7 +9,7 @@
 namespace Chess {
     class TimeManager {
     public:
-        std::chrono::time_point<std::chrono::system_clock> getEndTime(Board* board);
+        std::chrono::time_point<std::chrono::system_clock> getEndTime(Board* board, PieceColor movingColor);
     };
 
     static TimeManager timeManager{};

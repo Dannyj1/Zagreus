@@ -78,6 +78,8 @@ namespace Chess {
 
         virtual int getWeight(Board* board) = 0;
 
+        virtual int getMobilityScore(Board* board) = 0;
+
         virtual std::string getSymbol() = 0;
 
         virtual std::string getFEN() = 0;
@@ -100,6 +102,8 @@ namespace Chess {
         int getBaseWeight() override;
 
         int getWeight(Board* board) override;
+
+        int getMobilityScore(Board* board) override;
 
         std::string getSymbol() override;
 
@@ -131,6 +135,8 @@ namespace Chess {
         bool isCheckMate(Board* board);
 
         std::string getFEN() override;
+
+        int getMobilityScore(Board* board) override;
     };
 
     class Knight : public Piece {
@@ -150,6 +156,8 @@ namespace Chess {
         int getBaseWeight() override;
 
         int getWeight(Board* board) override;
+
+        int getMobilityScore(Board* board) override;
 
         std::string getSymbol() override;
 
@@ -174,6 +182,8 @@ namespace Chess {
 
         int getWeight(Board* board) override;
 
+        int getMobilityScore(Board* board) override;
+
         std::string getSymbol() override;
 
         std::string getFEN() override;
@@ -197,6 +207,8 @@ namespace Chess {
 
         int getWeight(Board* board) override;
 
+        int getMobilityScore(Board* board) override;
+
         std::string getSymbol() override;
 
         std::string getFEN() override;
@@ -219,6 +231,8 @@ namespace Chess {
         int getBaseWeight() override;
 
         int getWeight(Board* board) override;
+
+        int getMobilityScore(Board* board) override;
 
         std::string getSymbol() override;
 

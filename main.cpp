@@ -2,10 +2,8 @@
 #include <random>
 
 #include "board.h"
-#include "search_mgr.h"
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
-#include "senjo/Output.h"
 
 uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
     uint64_t nodes = 0;
@@ -52,16 +50,19 @@ int main() {
         line.reserve(16384);
 
         while (std::getline(std::cin, line)) {
-            senjo::Output() << "INFO: " << line;
-            if (!adapter.doCommand(line)) {
-                break;
-            }
+            //try {
+                if (!adapter.doCommand(line)) {
+                    break;
+                }
+/*            } catch (const std::exception &e) {
+                senjo::Output() << "ERROR: " << e.what();
+                return -1;
+            }*/
         }
 
         return 0;
     } catch (const std::exception &e) {
         std::cout << "ERROR: " << e.what();
-        MessageBox(nullptr, std::string(e.what()).c_str(), "Error", MB_OK | MB_ICONERROR);
         return 1;
     }
 }
