@@ -6,23 +6,25 @@
 
 #include <iostream>
 #include <chrono>
+
 #include "search_mgr.h"
 #include "time_mgr.h"
+#include "tt.h"
 
 namespace Chess {
-    SearchResult SearchManager::getBestMove(Board* board) {
+    SearchResult SearchManager::getBestMove(Board* board, PieceColor color) {
         isSearching = true;
         SearchResult bestResult;
         SearchResult iterationResult;
         std::chrono::time_point<std::chrono::system_clock> startTime = std::chrono::system_clock::now();
-        std::chrono::time_point<std::chrono::system_clock> endTime = timeManager.getEndTime(board, board->getMovingColor());
-        std::vector<Move> legalMoves = board->getLegalMoves(board->getMovingColor(), true);
+        std::chrono::time_point<std::chrono::system_clock> endTime = timeManager.getEndTime(board, color);
+        std::vector<Move> legalMoves = board->getLegalMoves(color, true);
         int depth = 0;
 
         while (std::chrono::system_clock::now() < endTime) {
             depth += 1;
 
-            if (std::chrono::system_clock::now() - startTime > (endTime - startTime) * 0.5) {
+            if (std::chrono::system_clock::now() - startTime > (endTime - startTime) * 0.7) {
                 break;
             }
 
@@ -33,8 +35,13 @@ namespace Chess {
             }
 
             for (const Move &move : legalMoves) {
+                if (std::chrono::system_clock::now() > endTime) {
+                    break;
+                }
+
                 Tile* toTile = move.tile;
-                board->makeMove(toTile->getX(), toTile->getY(), move.piece);
+                std::shared_ptr<Piece> piece = move.piece;
+                board->makeMove(toTile->getX(), toTile->getY(), piece);
 
                 if (board->isKingChecked(move.piece->getColor())) {
                     board->unmakeMove();
@@ -48,10 +55,6 @@ namespace Chess {
                 if (result.score > iterationResult.score) {
                     iterationResult = result;
                 }
-
-                if (std::chrono::system_clock::now() > endTime) {
-                    break;
-                }
             }
 
             if (std::chrono::system_clock::now() < endTime) {
@@ -61,6 +64,8 @@ namespace Chess {
             iterationResult = {};
         }
 
+        tt.clearKillerMoves();
+        tt.clearPVMoves();
         isSearching = false;
         return bestResult;
     }
@@ -80,33 +85,46 @@ namespace Chess {
 
             SearchResult result;
             Tile* toTile = move.tile;
-            board->makeMove(toTile->getX(), toTile->getY(), move.piece);
+            std::shared_ptr<Piece> piece = move.piece;
+
+            board->makeMove(toTile->getX(), toTile->getY(), piece);
 
             if (board->isKingChecked(move.piece->getColor())) {
                 board->unmakeMove();
                 continue;
             }
 
-            if (searchPv) {
-                result = search(board, depth - 1, -beta, -alpha, rootMove, endTime);
-                result.score *= -1;
+            if (tt.isPositionInTable(board->getZobristHash(), depth)) {
+                result = {rootMove, tt.getPositionScore(board->getZobristHash())};
             } else {
-                result = zwSearch(board, depth - 1, -alpha, rootMove, endTime);
-                result.score *= -1;
-
-                if (result.score > alpha) {
+                if (searchPv) {
                     result = search(board, depth - 1, -beta, -alpha, rootMove, endTime);
                     result.score *= -1;
+                    tt.addPosition(board->getZobristHash(), depth, result.score);
+                } else {
+                    result = zwSearch(board, depth - 1, -alpha, rootMove, endTime);
+                    result.score *= -1;
+
+                    if (result.score > alpha) {
+                        result = search(board, depth - 1, -beta, -alpha, rootMove, endTime);
+                        result.score *= -1;
+                        tt.addPosition(board->getZobristHash(), depth, result.score);
+                    }
                 }
             }
 
             board->unmakeMove();
 
             if (result.score >= beta) {
+                tt.addKillerMove(move);
                 return {rootMove, beta};
             }
 
             if (result.score > alpha) {
+                if (searchPv) {
+                    tt.addPVMove(move);
+                }
+
                 alpha = result.score;
                 searchPv = false;
             }
@@ -128,7 +146,8 @@ namespace Chess {
             }
 
             Tile* toTile = move.tile;
-            board->makeMove(toTile->getX(), toTile->getY(), move.piece);
+            std::shared_ptr<Piece> piece = move.piece;
+            board->makeMove(toTile->getX(), toTile->getY(), piece);
 
             if (board->isKingChecked(move.piece->getColor())) {
                 board->unmakeMove();
@@ -148,10 +167,8 @@ namespace Chess {
     }
 
     int SearchManager::evaluate(Board* board) {
-        int whiteMaterialScore = 0;
-        int blackMaterialScore = 0;
-        int whiteMobilityScore = 0;
-        int blackMobilityScore = 0;
+        int whiteScore = 0;
+        int blackScore = 0;
         int modifier = board->getMovingColor() == PieceColor::WHITE ? 1 : -1;
 
         if (board->isDraw()) {
@@ -161,24 +178,26 @@ namespace Chess {
         PieceColor winner = board->getWinner();
         if (winner != PieceColor::NONE) {
             if (winner == board->getMovingColor()) {
-                return 10000;
+                return 100000;
             } else {
-                return -10000;
+                return -100000;
             }
         }
 
         for (const std::shared_ptr<Piece> &piece : board->getPieces()) {
             if (piece->getColor() == PieceColor::WHITE) {
-                whiteMaterialScore += piece->getWeight(board);
-                whiteMobilityScore += piece->getMobilityScore(board);
+                whiteScore += piece->getWeight(board);
+                whiteScore += piece->getMobilityScore(board);
+                whiteScore += piece->getTempo(board);
+                whiteScore += piece->getEvaluationScore(board);
             } else {
-                blackMaterialScore += piece->getWeight(board);
-                blackMobilityScore += piece->getMobilityScore(board);
+                blackScore += piece->getWeight(board);
+                blackScore += piece->getMobilityScore(board);
+                blackScore += piece->getTempo(board);
+                blackScore += piece->getEvaluationScore(board);
             }
         }
 
-        int whiteScore = whiteMaterialScore + whiteMobilityScore;
-        int blackScore = blackMaterialScore + blackMobilityScore;
         return (whiteScore - blackScore) * modifier;
     }
 

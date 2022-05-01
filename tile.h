@@ -50,7 +50,7 @@ namespace Chess {
 
         void clearAttackers();
 
-        void addAttacker(std::shared_ptr<Piece> attacker);
+        void addAttacker(const std::shared_ptr<Piece>& attacker);
 
         [[nodiscard]] std::vector<std::shared_ptr<Piece>> getAttackers();
 
@@ -60,7 +60,7 @@ namespace Chess {
 
         [[nodiscard]] std::vector<std::shared_ptr<Piece>> getAttackersByColor(PieceColor color);
 
-        void removeAttacker(std::shared_ptr<Piece> sharedPtr);
+        void removeAttacker(const std::shared_ptr<Piece>& sharedPtr);
 
         std::string getNotation();
     };

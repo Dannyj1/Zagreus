@@ -10,7 +10,7 @@ namespace Chess {
     }
 
     std::string Engine::getEngineVersion() {
-        return "v0.2";
+        return "v0.3";
     }
 
     std::string Engine::getAuthorName() {
@@ -155,10 +155,14 @@ namespace Chess {
     }
 
     std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
+        if (engineColor == PieceColor::NONE) {
+            engineColor = board.getMovingColor();
+        }
+
         board.setWhiteTimeMsec(params.wtime);
         board.setBlackTimeMsec(params.btime);
 
-        SearchResult bestResult = searchManager.getBestMove(&board);
+        SearchResult bestResult = searchManager.getBestMove(&board, engineColor);
         TileLocation fromLoc = board.getPiecePosition(bestResult.move.piece->getId());
         Tile* fromTile = board.getTile(fromLoc.x, fromLoc.y);
 
@@ -181,9 +185,5 @@ namespace Chess {
 
     void Engine::showEngineStats() {
         // TODO: implement
-    }
-
-    Engine::Engine() {
-        isEngineInitialized = false;
     }
 }

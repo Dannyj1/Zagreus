@@ -30,7 +30,7 @@ namespace Chess {
         return id;
     }
 
-    void Bishop::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+    void Bishop::getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : BISHOP_DIRECTIONS) {
@@ -38,7 +38,7 @@ namespace Chess {
         }
     }
 
-    void Bishop::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+    void Bishop::getAttackedTiles(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : BISHOP_DIRECTIONS) {
@@ -52,10 +52,6 @@ namespace Chess {
         for (Direction direction : BISHOP_DIRECTIONS) {
             board->setAttackedTilesInDirection(loc.x, loc.y, this->shared_from_this(), direction, getColor(), true);
         }
-    }
-
-    int Bishop::getBaseWeight() {
-        return 350;
     }
 
     int Bishop::getWeight(Board* board) {
@@ -85,7 +81,7 @@ namespace Chess {
     int Bishop::getMobilityScore(Board* board) {
         int badMoves = 0;
         std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(&pseudoLegalMoves, board);
+        this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
         for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
@@ -93,10 +89,76 @@ namespace Chess {
             }
         }
 
-        return pseudoLegalMoves.size() - badMoves;
+        return (pseudoLegalMoves.size() - badMoves) * 2;
     }
 
-    void King::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+    int Bishop::getEvaluationScore(Board* board) {
+        int score = 0;
+        TileLocation loc = board->getPiecePosition(this->getId());
+        std::vector<Tile*> attackedTiles;
+        this->getAttackedTiles(attackedTiles, board);
+
+        for (Tile* tile : attackedTiles) {
+            if (board->isInCenter(tile->getX(), tile->getY())) {
+                score += 2;
+            } else if (board->isInExtendedCenter(tile->getX(), tile->getY())) {
+                score += 1;
+            }
+        }
+
+        int bishopsCaptured = 2;
+        for (const std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+            if (piece->getPieceType() == PieceType::BISHOP) {
+                bishopsCaptured -= 1;
+                break;
+            }
+        }
+
+        if (bishopsCaptured >= 1) {
+            score -= 100;
+        }
+
+        bool isFianchetto = false;
+        if (getColor() == PieceColor::WHITE) {
+            if ((loc.x == 1 && loc.y == 6) || (loc.x == 6 && loc.y == 6)) {
+                isFianchetto = true;
+            }
+        } else {
+            if ((loc.x == 1 && loc.y == 1) || (loc.x == 6 && loc.y == 1)) {
+                isFianchetto = true;
+            }
+        }
+
+        if (isFianchetto) {
+            for (Direction direction : getColor() == PieceColor::WHITE ? WHITE_FIANCHETTO_DIRECTIONS
+                                                                       : BLACK_FIANCHETTO_DIRECTIONS) {
+                Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
+
+                if (tile->getPiece() && tile->getPiece()->getPieceType() == PieceType::PAWN && tile->getPiece()->getColor() == getColor()) {
+                    continue;
+                }
+
+                isFianchetto = false;
+                break;
+            }
+        }
+
+        if (isFianchetto) {
+            score += 25;
+        }
+
+        return score;
+    }
+
+    int Bishop::getTempo(Board* board) {
+        if (getHasMoved()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    void King::getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : ALL_DIRECTIONS) {
@@ -104,7 +166,7 @@ namespace Chess {
 
             if (tile != nullptr) {
                 if ((tile->getPiece() == nullptr || (tile->getPiece()->getPieceType() != PieceType::KING && tile->getPiece()->getColor() != this->getColor()))) {
-                    result->push_back(tile);
+                    result.push_back(tile);
                 }
             }
         }
@@ -142,7 +204,7 @@ namespace Chess {
                     }
 
                     if (canCastle) {
-                        result->push_back(board->getTile(aRookLoc.x, aRookLoc.y));
+                        result.push_back(board->getTile(aRookLoc.x, aRookLoc.y));
                     }
                 }
             }
@@ -164,21 +226,21 @@ namespace Chess {
                     }
 
                     if (canCastle) {
-                        result->push_back(board->getTile(hRookLoc.x, hRookLoc.y));
+                        result.push_back(board->getTile(hRookLoc.x, hRookLoc.y));
                     }
                 }
             }
         }
     }
 
-    void King::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+    void King::getAttackedTiles(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : ALL_DIRECTIONS) {
             Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
 
             if (tile != nullptr) {
-                result->push_back(tile);
+                result.push_back(tile);
             }
         }
     }
@@ -193,10 +255,6 @@ namespace Chess {
                 tile->addAttacker(this->shared_from_this());
             }
         }
-    }
-
-    int King::getBaseWeight() {
-        return 10000;
     }
 
     int King::getWeight(Board* board) {
@@ -227,11 +285,11 @@ namespace Chess {
         std::vector<Tile*> legalMoves;
         legalMoves.reserve(10);
 
-        for (std::shared_ptr<Piece> piece : board->getPieces(getColor())) {
-            piece->getPseudoLegalMoves(&legalMoves, board);
+        for (std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+            piece->getPseudoLegalMoves(legalMoves, board);
 
             if (!legalMoves.empty()) {
-                legalMoves = board->removeMovesCausingCheck(&legalMoves, piece);
+                legalMoves = board->removeMovesCausingCheck(legalMoves, piece);
 
                 if (!legalMoves.empty()) {
                     return false;
@@ -257,7 +315,7 @@ namespace Chess {
     int King::getMobilityScore(Board* board) {
         int badMoves = 0;
         std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(&pseudoLegalMoves, board);
+        this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
         for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty()) {
@@ -265,10 +323,57 @@ namespace Chess {
             }
         }
 
-        return pseudoLegalMoves.size() - badMoves;
+        return (pseudoLegalMoves.size() - badMoves) * 6;
     }
 
-    void Knight::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+    int King::getTempo(Board* board) {
+        // TODO: handle castling tempo
+        return 0;
+    }
+
+    int King::getEvaluationScore(Board* board) {
+        int score = 0;
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        if (getColor() == PieceColor::WHITE) {
+            if (board->getHasWhiteCastled()) {
+                score += 25;
+            }
+        } else {
+            if (board->getHasBlackCastled()) {
+                score += 25;
+            }
+        }
+
+        if (getHasMoved()) {
+            for (Direction direction : getColor() == PieceColor::WHITE ? WHITE_PAWN_SHIELD_DIRECTIONS
+                                                                       : BLACK_PAWN_SHIELD_DIRECTIONS) {
+                Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
+
+                if (tile != nullptr && tile->getPiece() != nullptr &&
+                    tile->getPiece()->getPieceType() == PieceType::PAWN
+                    && tile->getPiece()->getColor() == getColor()) {
+                    score += 5;
+                }
+            }
+        }
+
+        for (Direction direction : ALL_DIRECTIONS) {
+            Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
+
+            if (tile != nullptr) {
+                std::vector<std::shared_ptr<Piece>> attackers = tile->getAttackersByColor(getOppositeColor(getColor()));
+
+                for (const std::shared_ptr<Piece> &attacker : attackers) {
+                    score -= 5 * (attacker->getWeight(board) / 100);
+                }
+            }
+        }
+
+        return score;
+    }
+
+    void Knight::getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (const DirectionValue &direction : knightDirections) {
@@ -278,20 +383,20 @@ namespace Chess {
                 std::shared_ptr<Piece> piece = tile->getPiece();
 
                 if ((piece == nullptr || (tile->getPiece()->getPieceType() != PieceType::KING && piece->getColor() != this->getColor()))) {
-                    result->push_back(tile);
+                    result.push_back(tile);
                 }
             }
         }
     }
 
-    void Knight::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+    void Knight::getAttackedTiles(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (const DirectionValue &direction : knightDirections) {
             Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
 
             if (tile != nullptr) {
-                result->push_back(tile);
+                result.push_back(tile);
             }
         }
     }
@@ -308,12 +413,16 @@ namespace Chess {
         }
     }
 
-    int Knight::getBaseWeight() {
-        return 350;
-    }
-
     int Knight::getWeight(Board* board) {
-        return 350;
+        int pawnsCaptured = 8;
+
+        for (const std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+            if (piece->getPieceType() == PieceType::PAWN) {
+                pawnsCaptured -= 1;
+            }
+        }
+
+        return 350 - (pawnsCaptured * 10);
     }
 
     std::string Knight::getSymbol() {
@@ -339,7 +448,7 @@ namespace Chess {
     int Knight::getMobilityScore(Board* board) {
         int badMoves = 0;
         std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(&pseudoLegalMoves, board);
+        this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
         for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
@@ -347,45 +456,77 @@ namespace Chess {
             }
         }
 
-        return pseudoLegalMoves.size() - badMoves;
+        return (pseudoLegalMoves.size() - badMoves) * 2;
     }
 
-    void Pawn::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+    int Knight::getEvaluationScore(Board* board) {
+        int score = 0;
+        std::vector<Tile*> attackedTiles;
+        TileLocation loc = board->getPiecePosition(this->getId());
+        Tile* ownTile = board->getTile(loc.x, loc.y);
+        this->getAttackedTiles(attackedTiles, board);
+
+        for (Tile* tile : attackedTiles) {
+            if (board->isInCenter(tile->getX(), tile->getY())) {
+                score += 2;
+            } else if (board->isInExtendedCenter(tile->getX(), tile->getY())) {
+                score += 1;
+            }
+        }
+
+        for (const std::shared_ptr<Piece> &defender : ownTile->getAttackersByColor(getColor())) {
+            if (defender->getPieceType() == PieceType::PAWN) {
+                score += 2;
+            }
+        }
+
+        return score;
+    }
+
+    int Knight::getTempo(Board* board) {
+        if (getHasMoved()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    void Pawn::getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
         int direction = this->getColor() == PieceColor::BLACK ? 1 : -1;
         Tile* frontTile = board->getTile(loc.x, loc.y + direction);
 
         if (frontTile != nullptr && frontTile->getPiece() == nullptr) {
-            result->push_back(frontTile);
+            result.push_back(frontTile);
 
             if (!this->getHasMoved()) {
                 Tile* secondFrontTile = board->getTile(loc.x, loc.y + direction * 2);
 
                 if (secondFrontTile != nullptr && secondFrontTile->getPiece() == nullptr) {
-                    result->push_back(secondFrontTile);
+                    result.push_back(secondFrontTile);
                 }
             }
         }
 
         std::vector<Tile*> attackedTiles;
-        this->getAttackedTiles(&attackedTiles, board);
+        this->getAttackedTiles(attackedTiles, board);
 
         for (Tile* attackedTile : attackedTiles) {
             if ((attackedTile->getEnPassantTarget() != nullptr && attackedTile->getEnPassantTarget()->getColor() != this->getColor())
                 || (attackedTile->getPiece() != nullptr && attackedTile->getPiece()->getColor() != this->getColor() && attackedTile->getPiece()->getPieceType() != PieceType::KING)) {
-                result->push_back(attackedTile);
+                result.push_back(attackedTile);
             }
         }
     }
 
-    void Pawn::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+    void Pawn::getAttackedTiles(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : this->getColor() == PieceColor::WHITE ? WHITE_PAWN_ATTACK_DIRECTIONS : BLACK_PAWN_ATTACK_DIRECTIONS) {
             Tile* tile = board->getTile(loc.x + DIRECTION_VALUES[direction].dx, loc.y + DIRECTION_VALUES[direction].dy);
 
             if (tile != nullptr) {
-                result->push_back(tile);
+                result.push_back(tile);
             }
         }
     }
@@ -402,12 +543,10 @@ namespace Chess {
         }
     }
 
-    int Pawn::getBaseWeight() {
-        return 100;
-    }
-
     int Pawn::getWeight(Board* board) {
-        return 100;
+        TileLocation loc = board->getPiecePosition(this->getId());
+
+        return PAWN_WEIGHTS[loc.x];
     }
 
     std::string Pawn::getSymbol() {
@@ -434,7 +573,36 @@ namespace Chess {
         return 0;
     }
 
-    void Queen::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+    int Pawn::getTempo(Board* board) {
+        return 0;
+    }
+
+    int Pawn::getEvaluationScore(Board* board) {
+        int score = 0;
+        TileLocation loc = board->getPiecePosition(this->getId());
+        std::vector<Tile*> attackedTiles;
+        this->getAttackedTiles(attackedTiles, board);
+
+        for (Tile* tile : attackedTiles) {
+            if (board->isInCenter(tile->getX(), tile->getY())) {
+                score += 2;
+            } else if (board->isInExtendedCenter(tile->getX(), tile->getY())) {
+                score += 1;
+            }
+        }
+
+        if (board->getMovesMade() <= 20) {
+            if (board->isInCenter(loc.x, loc.y)) {
+                score += 6;
+            } else if (board->isInExtendedCenter(loc.x, loc.y)) {
+                score += 3;
+            }
+        }
+
+        return score;
+    }
+
+    void Queen::getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : ALL_DIRECTIONS) {
@@ -442,7 +610,7 @@ namespace Chess {
         }
     }
 
-    void Queen::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+    void Queen::getAttackedTiles(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : ALL_DIRECTIONS) {
@@ -456,10 +624,6 @@ namespace Chess {
         for (Direction direction : ALL_DIRECTIONS) {
             board->setAttackedTilesInDirection(loc.x, loc.y, this->shared_from_this(), direction, this->getColor(), true);
         }
-    }
-
-    int Queen::getBaseWeight() {
-        return 1000;
     }
 
     int Queen::getWeight(Board* board) {
@@ -489,7 +653,7 @@ namespace Chess {
     int Queen::getMobilityScore(Board* board) {
         int badMoves = 0;
         std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(&pseudoLegalMoves, board);
+        this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
         for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
@@ -497,10 +661,34 @@ namespace Chess {
             }
         }
 
-        return pseudoLegalMoves.size() - badMoves;
+        return (pseudoLegalMoves.size() - badMoves) * 5;
     }
 
-    void Rook::getPseudoLegalMoves(std::vector<Tile*>* result, Board* board) {
+    int Queen::getTempo(Board* board) {
+        if (getHasMoved()) {
+            return board->getMovesMade() <= 25 ? -1 : 1;
+        } else {
+            return 0;
+        }
+    }
+
+    int Queen::getEvaluationScore(Board* board) {
+        int score = 0;
+        std::vector<Tile*> attackedTiles;
+        this->getAttackedTiles(attackedTiles, board);
+
+        for (Tile* tile : attackedTiles) {
+            if (board->isInCenter(tile->getX(), tile->getY())) {
+                score += 2;
+            } else if (board->isInExtendedCenter(tile->getX(), tile->getY())) {
+                score += 1;
+            }
+        }
+
+        return score;
+    }
+
+    void Rook::getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : ROOK_DIRECTIONS) {
@@ -508,7 +696,7 @@ namespace Chess {
         }
     }
 
-    void Rook::getAttackedTiles(std::vector<Tile*>* result, Board* board) {
+    void Rook::getAttackedTiles(std::vector<Tile*> &result, Board* board) {
         TileLocation loc = board->getPiecePosition(this->getId());
 
         for (Direction direction : ROOK_DIRECTIONS) {
@@ -524,12 +712,16 @@ namespace Chess {
         }
     }
 
-    int Rook::getBaseWeight() {
-        return 525;
-    }
-
     int Rook::getWeight(Board* board) {
-        return 525;
+        int pawnsCaptured = 8;
+
+        for (const std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+            if (piece->getPieceType() == PieceType::PAWN) {
+                pawnsCaptured -= 1;
+            }
+        }
+
+        return 525 + (pawnsCaptured * 10);
     }
 
     std::string Rook::getSymbol() {
@@ -555,7 +747,7 @@ namespace Chess {
     int Rook::getMobilityScore(Board* board) {
         int badMoves = 0;
         std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(&pseudoLegalMoves, board);
+        this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
         for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
@@ -563,6 +755,34 @@ namespace Chess {
             }
         }
 
-        return pseudoLegalMoves.size() - badMoves;
+        return (pseudoLegalMoves.size() - badMoves) * 4;
+    }
+
+    int Rook::getTempo(Board* board) {
+        if (getHasMoved()) {
+            if (board->hasCastled(getColor())) {
+                return 1;
+            } else {
+                return -1;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    int Rook::getEvaluationScore(Board* board) {
+        int score = 0;
+        std::vector<Tile*> attackedTiles;
+        this->getAttackedTiles(attackedTiles, board);
+
+        for (Tile* tile : attackedTiles) {
+            if (board->isInCenter(tile->getX(), tile->getY())) {
+                score += 2;
+            } else if (board->isInExtendedCenter(tile->getX(), tile->getY())) {
+                score += 1;
+            }
+        }
+
+        return score;
     }
 }

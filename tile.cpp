@@ -12,7 +12,7 @@ namespace Chess {
     }
 
     void Tile::setPiece(std::shared_ptr<Piece> newPiece) {
-        this->piece = newPiece;
+        this->piece = std::move(newPiece);
     }
 
     int Tile::getX() const {
@@ -27,7 +27,7 @@ namespace Chess {
         this->attackers.clear();
     }
 
-    void Tile::addAttacker(std::shared_ptr<Piece> attacker) {
+    void Tile::addAttacker(const std::shared_ptr<Piece> &attacker) {
         this->attackers.push_back(attacker);
     }
 
@@ -56,7 +56,7 @@ namespace Chess {
         this->enPassantTarget = std::move(targetPiece);
     }
 
-    void Tile::removeAttacker(std::shared_ptr<Piece>sharedPtr) {
+    void Tile::removeAttacker(const std::shared_ptr<Piece> &sharedPtr) {
         for (auto it = this->attackers.begin(); it != this->attackers.end(); ++it) {
             if (*it == sharedPtr) {
                 this->attackers.erase(it);

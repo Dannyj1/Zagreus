@@ -9,10 +9,11 @@
 #include "board.h"
 
 namespace Chess {
-    static Board board;
-    static bool isEngineInitialized;
-
     class Engine : public senjo::ChessEngine {
+    private:
+        Board board;
+        bool isEngineInitialized;
+        PieceColor engineColor = PieceColor::NONE;
     public:
         std::string getEngineName() override;
 
@@ -77,7 +78,5 @@ namespace Chess {
         void resetEngineStats() override;
 
         void showEngineStats() override;
-
-        Engine();
     };
 }
