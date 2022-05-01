@@ -192,7 +192,6 @@ namespace Chess {
         && fromLoc.y == (movingPiece->getColor() == PieceColor::WHITE ? 3 : 4)) {
             handleEnPassant(movingPiece, toTile);
             // TODO: don't make from scratch
-            updateGameState(movingPiece->getColor());
             createInitialZobristHash();
         } else if (toPiece && movingPiece->getPieceType() == PieceType::KING && toPiece->getPieceType() == PieceType::ROOK) {
             handleKingCastle(toY, movingPiece, fromTile, toTile, toPiece);
@@ -204,7 +203,6 @@ namespace Chess {
             }
 
             // TODO: don't make from scratch
-            updateGameState(movingPiece->getColor());
             createInitialZobristHash();
         } else {
             std::vector<std::shared_ptr<Piece>> attackers { movingPiece };
@@ -326,6 +324,7 @@ namespace Chess {
         }
 
         movesMade += 1;
+        updateGameState(movingPiece->getColor());
 
         if (moveHistory.contains(getZobristHash())) {
             int amount = moveHistory.at(getZobristHash());
