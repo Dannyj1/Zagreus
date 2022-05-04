@@ -46,14 +46,6 @@ namespace Chess {
         }
     }
 
-    void Bishop::setAttackedTiles(Board* board) {
-        TileLocation loc = board->getPiecePosition(this->getId());
-
-        for (Direction direction : BISHOP_DIRECTIONS) {
-            board->setAttackedTilesInDirection(loc.x, loc.y, this->shared_from_this(), direction, getColor(), true);
-        }
-    }
-
     int Bishop::getWeight(Board* board) {
         return 350;
     }
@@ -83,13 +75,7 @@ namespace Chess {
         std::vector<Tile*> pseudoLegalMoves;
         this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
-        for (Tile* tile : pseudoLegalMoves) {
-            if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
-                badMoves += 1;
-            }
-        }
-
-        return (pseudoLegalMoves.size() - badMoves) * 2;
+        return pseudoLegalMoves.size() * 2;
     }
 
     int Bishop::getEvaluationScore(Board* board) {
@@ -107,7 +93,7 @@ namespace Chess {
         }
 
         int bishopsCaptured = 2;
-        for (const std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+        for (Piece* piece : board->getPieces(getColor())) {
             if (piece->getPieceType() == PieceType::BISHOP) {
                 bishopsCaptured -= 1;
                 break;
@@ -188,16 +174,16 @@ namespace Chess {
             Tile* hRookTile = board->getTile(hRookLoc.x, hRookLoc.y);
 
             if (aRookTile != nullptr) {
-                std::shared_ptr<Piece> aRook = aRookTile->getPiece();
+                Piece* aRook = aRookTile->getPiece();
 
                 if (aRook != nullptr && !aRook->getHasMoved()) {
                     bool canCastle = true;
 
                     for (int i = 1; i < 3; i++) {
-                        Tile* tile = board->getTile(aRookLoc.x + i, aRookLoc.y);
+                        Tile* square = board->getTile(aRookLoc.x + i, aRookLoc.y);
 
-                        if (tile->getPiece() != nullptr ||
-                            !tile->getAttackersByColor(getOppositeColor(getColor())).empty()) {
+                        if (square->getPiece() != nullptr ||
+                                board->isTileAttackedByColor(square, getOppositeColor(aRook->getColor()))) {
                             canCastle = false;
                             break;
                         }
@@ -210,16 +196,16 @@ namespace Chess {
             }
 
             if (hRookTile != nullptr) {
-                std::shared_ptr<Piece> hRook = board->getTile(hRookLoc.x, hRookLoc.y)->getPiece();
+                Piece* hRook = board->getTile(hRookLoc.x, hRookLoc.y)->getPiece();
 
                 if (hRook != nullptr && !hRook->getHasMoved()) {
                     bool canCastle = true;
 
                     for (int i = 1; i < 4; i++) {
-                        Tile* tile = board->getTile(hRookLoc.x - i, hRookLoc.y);
+                        Tile* square = board->getTile(hRookLoc.x - i, hRookLoc.y);
 
-                        if (tile->getPiece() != nullptr ||
-                            !tile->getAttackersByColor(getOppositeColor(getColor())).empty()) {
+                        if (square->getPiece() != nullptr ||
+                                board->isTileAttackedByColor(square, getOppositeColor(hRook->getColor()))) {
                             canCastle = false;
                             break;
                         }
@@ -245,18 +231,6 @@ namespace Chess {
         }
     }
 
-    void King::setAttackedTiles(Board* board) {
-        TileLocation loc = board->getPiecePosition(this->getId());
-
-        for (const DirectionValue &direction : knightDirections) {
-            Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
-
-            if (tile != nullptr) {
-                tile->addAttacker(this->shared_from_this());
-            }
-        }
-    }
-
     int King::getWeight(Board* board) {
         return 10000;
     }
@@ -274,7 +248,7 @@ namespace Chess {
         Tile* tile = board->getTile(loc.x, loc.y);
         PieceColor oppositeColor = getOppositeColor(this->getColor());
 
-        return !tile->getAttackersByColor(oppositeColor).empty();
+        return board->isTileAttackedByColor(tile, oppositeColor);
     }
 
     bool King::isCheckMate(Board* board) {
@@ -285,7 +259,7 @@ namespace Chess {
         std::vector<Tile*> legalMoves;
         legalMoves.reserve(10);
 
-        for (std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+        for (Piece* &piece : board->getPieces(getColor())) {
             piece->getPseudoLegalMoves(legalMoves, board);
 
             if (!legalMoves.empty()) {
@@ -317,13 +291,15 @@ namespace Chess {
         std::vector<Tile*> pseudoLegalMoves;
         this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
+/*
         for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty()) {
                 badMoves += 1;
             }
         }
+*/
 
-        return (pseudoLegalMoves.size() - badMoves) * 6;
+        return pseudoLegalMoves.size() * 6;
     }
 
     int King::getTempo(Board* board) {
@@ -358,17 +334,17 @@ namespace Chess {
             }
         }
 
-        for (Direction direction : ALL_DIRECTIONS) {
+        /*for (Direction direction : ALL_DIRECTIONS) {
             Tile* tile = board->getTileInDirection(loc.x, loc.y, direction);
 
             if (tile != nullptr) {
-                std::vector<std::shared_ptr<Piece>> attackers = tile->getAttackersByColor(getOppositeColor(getColor()));
+                std::vector<Piece*> attackers = tile->getAttackersByColor(getOppositeColor(getColor()));
 
-                for (const std::shared_ptr<Piece> &attacker : attackers) {
+                for (Piece* attacker : attackers) {
                     score -= 5 * (attacker->getWeight(board) / 100);
                 }
             }
-        }
+        }*/
 
         return score;
     }
@@ -380,7 +356,7 @@ namespace Chess {
             Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
 
             if (tile != nullptr) {
-                std::shared_ptr<Piece> piece = tile->getPiece();
+                Piece* piece = tile->getPiece();
 
                 if ((piece == nullptr || (tile->getPiece()->getPieceType() != PieceType::KING && piece->getColor() != this->getColor()))) {
                     result.push_back(tile);
@@ -401,22 +377,10 @@ namespace Chess {
         }
     }
 
-    void Knight::setAttackedTiles(Board* board) {
-        TileLocation loc = board->getPiecePosition(this->getId());
-
-        for (const DirectionValue &direction : knightDirections) {
-            Tile* tile = board->getTile(loc.x + direction.dx, loc.y + direction.dy);
-
-            if (tile != nullptr) {
-                tile->addAttacker(this->shared_from_this());
-            }
-        }
-    }
-
     int Knight::getWeight(Board* board) {
         int pawnsCaptured = 8;
 
-        for (const std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+        for (Piece* piece : board->getPieces(getColor())) {
             if (piece->getPieceType() == PieceType::PAWN) {
                 pawnsCaptured -= 1;
             }
@@ -450,13 +414,7 @@ namespace Chess {
         std::vector<Tile*> pseudoLegalMoves;
         this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
-        for (Tile* tile : pseudoLegalMoves) {
-            if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
-                badMoves += 1;
-            }
-        }
-
-        return (pseudoLegalMoves.size() - badMoves) * 2;
+        return pseudoLegalMoves.size() * 2;
     }
 
     int Knight::getEvaluationScore(Board* board) {
@@ -474,11 +432,12 @@ namespace Chess {
             }
         }
 
-        for (const std::shared_ptr<Piece> &defender : ownTile->getAttackersByColor(getColor())) {
+        // TODO: add check to see if controlled by pawn
+/*        for (Piece* defender : ownTile->getAttackersByColor(getColor())) {
             if (defender->getPieceType() == PieceType::PAWN) {
                 score += 2;
             }
-        }
+        }*/
 
         return score;
     }
@@ -527,18 +486,6 @@ namespace Chess {
 
             if (tile != nullptr) {
                 result.push_back(tile);
-            }
-        }
-    }
-
-    void Pawn::setAttackedTiles(Board* board) {
-        TileLocation loc = board->getPiecePosition(this->getId());
-
-        for (Direction direction : this->getColor() == PieceColor::WHITE ? WHITE_PAWN_ATTACK_DIRECTIONS : BLACK_PAWN_ATTACK_DIRECTIONS) {
-            Tile* tile = board->getTile(loc.x + DIRECTION_VALUES[direction].dx, loc.y + DIRECTION_VALUES[direction].dy);
-
-            if (tile != nullptr) {
-                tile->addAttacker(this->shared_from_this());
             }
         }
     }
@@ -618,14 +565,6 @@ namespace Chess {
         }
     }
 
-    void Queen::setAttackedTiles(Board* board) {
-        TileLocation loc = board->getPiecePosition(this->getId());
-
-        for (Direction direction : ALL_DIRECTIONS) {
-            board->setAttackedTilesInDirection(loc.x, loc.y, this->shared_from_this(), direction, this->getColor(), true);
-        }
-    }
-
     int Queen::getWeight(Board* board) {
         return 1000;
     }
@@ -655,13 +594,13 @@ namespace Chess {
         std::vector<Tile*> pseudoLegalMoves;
         this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
-        for (Tile* tile : pseudoLegalMoves) {
+/*        for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
                 badMoves += 1;
             }
-        }
+        }*/
 
-        return (pseudoLegalMoves.size() - badMoves) * 5;
+        return pseudoLegalMoves.size() * 5;
     }
 
     int Queen::getTempo(Board* board) {
@@ -704,18 +643,10 @@ namespace Chess {
         }
     }
 
-    void Rook::setAttackedTiles(Board* board) {
-        TileLocation loc = board->getPiecePosition(this->getId());
-
-        for (Direction direction : ROOK_DIRECTIONS) {
-            board->setAttackedTilesInDirection(loc.x, loc.y, this->shared_from_this(), direction, getColor(), true);
-        }
-    }
-
     int Rook::getWeight(Board* board) {
         int pawnsCaptured = 8;
 
-        for (const std::shared_ptr<Piece> &piece : board->getPieces(getColor())) {
+        for (Piece* piece : board->getPieces(getColor())) {
             if (piece->getPieceType() == PieceType::PAWN) {
                 pawnsCaptured -= 1;
             }
@@ -749,13 +680,13 @@ namespace Chess {
         std::vector<Tile*> pseudoLegalMoves;
         this->getPseudoLegalMoves(pseudoLegalMoves, board);
 
-        for (Tile* tile : pseudoLegalMoves) {
+/*        for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
                 badMoves += 1;
             }
-        }
+        }*/
 
-        return (pseudoLegalMoves.size() - badMoves) * 4;
+        return pseudoLegalMoves.size() * 4;
     }
 
     int Rook::getTempo(Board* board) {

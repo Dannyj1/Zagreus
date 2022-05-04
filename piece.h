@@ -38,7 +38,7 @@ namespace Chess {
         }
     }
 
-    class Piece : public std::enable_shared_from_this<Piece> {
+    class Piece {
     private:
         PieceColor color;
         int initialX;
@@ -55,6 +55,8 @@ namespace Chess {
         }
 
         virtual ~Piece() = default;
+
+        Piece(const Piece&) = delete;
 
         [[nodiscard]] int getId() const;
 
@@ -73,8 +75,6 @@ namespace Chess {
         virtual void getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) = 0;
 
         virtual void getAttackedTiles(std::vector<Tile*> &result, Board* board) = 0;
-
-        virtual void setAttackedTiles(Board* board) = 0;
 
         virtual int getWeight(Board* board) = 0;
 
@@ -95,13 +95,13 @@ namespace Chess {
 
         }
 
+        Bishop(const Bishop&) = delete;
+
         PieceType getPieceType() override;
 
         void getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) override;
 
         void getAttackedTiles(std::vector<Tile*> &result, Board* board) override;
-
-        void setAttackedTiles(Board* board) override;
 
         int getEvaluationScore(Board* board) override;
 
@@ -122,13 +122,13 @@ namespace Chess {
 
         }
 
+        King(const King&) = delete;
+
         PieceType getPieceType() override;
 
         void getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) override;
 
         void getAttackedTiles(std::vector<Tile*> &result, Board* board) override;
-
-        void setAttackedTiles(Board* board) override;
 
         int getWeight(Board* board) override;
 
@@ -153,13 +153,13 @@ namespace Chess {
 
         }
 
+        Knight(const Knight&) = delete;
+
         PieceType getPieceType() override;
 
         void getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) override;
 
         void getAttackedTiles(std::vector<Tile*> &result, Board* board) override;
-
-        void setAttackedTiles(Board* board) override;
 
         int getWeight(Board* board) override;
 
@@ -180,13 +180,13 @@ namespace Chess {
 
         }
 
+        Pawn(const Pawn&) = delete;
+
         PieceType getPieceType() override;
 
         void getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) override;
 
         void getAttackedTiles(std::vector<Tile*> &result, Board* board) override;
-
-        void setAttackedTiles(Board* board) override;
 
         int getWeight(Board* board) override;
 
@@ -207,13 +207,13 @@ namespace Chess {
 
         }
 
+        Queen(const Queen&) = delete;
+
         PieceType getPieceType() override;
 
         void getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) override;
 
         void getAttackedTiles(std::vector<Tile*> &result, Board* board) override;
-
-        void setAttackedTiles(Board* board) override;
 
         int getWeight(Board* board) override;
 
@@ -234,13 +234,13 @@ namespace Chess {
 
         }
 
+        Rook(const Rook&) = delete;
+
         PieceType getPieceType() override;
 
         void getPseudoLegalMoves(std::vector<Tile*> &result, Board* board) override;
 
         void getAttackedTiles(std::vector<Tile*> &result, Board* board) override;
-
-        void setAttackedTiles(Board* board) override;
 
         int getWeight(Board* board) override;
 

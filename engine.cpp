@@ -57,8 +57,8 @@ namespace Chess {
         TileLocation whiteHRookLoc = board.getPiecePosition(WHITE_H_ROOK_ID);
         TileLocation blackARookLoc = board.getPiecePosition(BLACK_A_ROOK_ID);
         TileLocation blackHRookLoc = board.getPiecePosition(BLACK_H_ROOK_ID);
-        std::shared_ptr<Piece> whiteKing = board.getTile(whiteKingLoc.x, whiteKingLoc.y)->getPiece();
-        std::shared_ptr<Piece> blackKing = board.getTile(blackKingLoc.x, blackKingLoc.y)->getPiece();
+        Piece* whiteKing = board.getTile(whiteKingLoc.x, whiteKingLoc.y)->getPiece();
+        Piece* blackKing = board.getTile(blackKingLoc.x, blackKingLoc.y)->getPiece();
         Tile* whiteARookTile = board.getTile(whiteARookLoc.x, whiteARookLoc.y);
         Tile* whiteHRookTile = board.getTile(whiteHRookLoc.x, whiteHRookLoc.y);
         Tile* blackARookTile = board.getTile(blackARookLoc.x, blackARookLoc.y);

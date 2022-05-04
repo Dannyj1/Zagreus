@@ -15,7 +15,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
     std::vector<Chess::Move> moves = board->getLegalMoves(color, true);
 
     for (const Chess::Move &move : moves) {
-        std::shared_ptr<Chess::Piece> piece = move.piece;
+        Chess::Piece* piece = move.piece;
         board->makeMove(move.tile->getX(), move.tile->getY(), piece);
 
         if (!board->isKingChecked(move.piece->getColor())) {
