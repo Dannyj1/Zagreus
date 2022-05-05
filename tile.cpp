@@ -7,12 +7,12 @@
 #include <utility>
 
 namespace Chess {
-    Piece* Tile::getPiece() {
+    std::shared_ptr<Piece> Tile::getPiece() {
         return this->piece;
     }
 
-    void Tile::setPiece(Piece* newPiece) {
-        this->piece = newPiece;
+    void Tile::setPiece(std::shared_ptr<Piece> newPiece) {
+        this->piece = std::move(newPiece);
     }
 
     int Tile::getX() const {
@@ -23,11 +23,11 @@ namespace Chess {
         return this->y;
     }
 
-    Piece* Tile::getEnPassantTarget() {
+    std::shared_ptr<Piece> Tile::getEnPassantTarget() {
         return this->enPassantTarget;
     }
 
-    void Tile::setEnPassantTarget(Piece* targetPiece) {
+    void Tile::setEnPassantTarget(std::shared_ptr<Piece> targetPiece) {
         this->enPassantTarget = std::move(targetPiece);
     }
 
