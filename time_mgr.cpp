@@ -14,6 +14,11 @@ namespace Chess {
         }
 
         uint64_t timeLeft = movingColor == PieceColor::WHITE ? board->getWhiteTimeMsec() : board->getBlackTimeMsec();
+
+        if (timeLeft == 0) {
+            timeLeft = 300000;
+        }
+
         uint64_t timePerMove = timeLeft / movesLeft;
 
         if (board->getMovesMade() <= 30) {

@@ -12,7 +12,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
         return 1ULL;
     }
 
-    std::vector<Chess::Move> moves = board->getLegalMoves(color, true);
+    std::vector<Chess::Move> moves = board->getPseudoLegalMoves(color);
 
     for (const Chess::Move &move : moves) {
         Chess::Piece* piece = move.piece;
@@ -29,7 +29,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
 }
 
 int main() {
-    for (int i = 1; i < 16; i++) {
+    /*for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
         auto start = std::chrono::system_clock::now();
@@ -41,7 +41,7 @@ int main() {
                   << std::endl;
     }
 
-    std::cout << "Perft done!" << std::endl;
+    std::cout << "Perft done!" << std::endl;*/
 
     try {
         Chess::Engine engine;

@@ -197,10 +197,11 @@ namespace Chess {
 
         if (toTile->getEnPassantTarget()) {
             if (toTile->getEnPassantTarget()->getColor() == PieceColor::WHITE) {
-                data.originalPositions.push_back({toTile->getEnPassantTarget(), {toTile->getX(), 5}});
-            } else {
                 data.originalPositions.push_back({toTile->getEnPassantTarget(), {toTile->getX(), 4}});
+            } else {
+                data.originalPositions.push_back({toTile->getEnPassantTarget(), {toTile->getX(), 3}});
             }
+
             data.hasMoved.emplace_back(toTile->getEnPassantTarget(), toTile->getEnPassantTarget()->getHasMoved());
         }
 
@@ -214,7 +215,6 @@ namespace Chess {
 
         if (movingPiece->getPieceType() == PieceType::PAWN && fromLoc.x != toX && toTile->getEnPassantTarget() != nullptr && toTile->getPiece() == nullptr
         && fromLoc.y == (movingPiece->getColor() == PieceColor::WHITE ? 3 : 4)) {
-            // TODO: fix, prob broken
             handleEnPassant(movingPiece, toTile);
             // TODO: don't make from scratch
             createInitialZobristHash();
@@ -320,13 +320,10 @@ namespace Chess {
     void Board::handleEnPassant(Piece* movingPiece, Tile* toTile) {
         Piece* enPassantTarget = toTile->getEnPassantTarget();
         TileLocation fromLoc = getPiecePosition(movingPiece->getId());
-        Tile* fromTile = getTile(fromLoc.x, fromLoc.y);
         TileLocation enPassantTargetLoc = getPiecePosition(enPassantTarget->getId());
-        Tile* enPassantTargetTile = getTile(enPassantTargetLoc.x, enPassantTargetLoc.y);
 
-        removePieceFromPosition(fromTile->getX(), fromTile->getY());
-        removePieceFromPosition(enPassantTargetTile->getX(), enPassantTargetTile->getY());
-        removePieceFromPosition(toTile->getX(), toTile->getY());
+        removePieceFromPosition(fromLoc.x, fromLoc.y);
+        removePieceFromPosition(enPassantTargetLoc.x, enPassantTargetLoc.y);
         setPieceAtPosition(toTile->getX(), toTile->getY(), movingPiece);
     }
 
@@ -376,10 +373,13 @@ namespace Chess {
         for (auto &piecePosition : piecePositions) {
             TileLocation position = piecePosition.second;
             Tile* tile = getTile(position.x, position.y);
-            Piece* piece = tile->getPiece();
 
-            if (piece->getColor() == color) {
-                pieces.push_back(piece);
+            if (tile) {
+                Piece *piece = tile->getPiece();
+
+                if (piece && piece->getColor() == color) {
+                    pieces.push_back(piece);
+                }
             }
         }
 
@@ -394,7 +394,9 @@ namespace Chess {
             TileLocation position = piecePosition.second;
             Tile* tile = getTile(position.x, position.y);
 
-            pieces.push_back(tile->getPiece());
+            if (tile && tile->getPiece()) {
+                pieces.push_back(tile->getPiece());
+            }
         }
 
         return pieces;
@@ -412,16 +414,16 @@ namespace Chess {
     }
 
     bool Board::isStalemate(PieceColor color) {
-        std::vector<Tile*> legalMoves;
-        legalMoves.reserve(10);
+        std::vector<Piece*> pieces = getPieces(color);
 
-        for (Piece* &piece : getPieces(color)) {
-            piece->getPseudoLegalMoves(legalMoves, this);
+        for (Piece* piece : pieces) {
+            legalTiles.clear();
+            piece->getPseudoLegalMoves(legalTiles, this);
 
-            if (!legalMoves.empty()) {
-                legalMoves = removeMovesCausingCheck(legalMoves, piece);
+            if (!legalTiles.empty()) {
+                legalTiles = removeMovesCausingCheck(legalTiles, piece);
 
-                if (!legalMoves.empty()) {
+                if (!legalTiles.empty()) {
                     return false;
                 }
             }
@@ -529,30 +531,27 @@ namespace Chess {
         return scoreA > scoreB;
     }
 
-    std::vector<Move> Board::getLegalMoves(PieceColor color, bool pseudoLegal) {
-        std::vector<Move> legalMoves;
-        legalMoves.reserve(64);
+    std::vector<Move> Board::getPseudoLegalMoves(PieceColor color) {
+        std::vector<Move> movesResult;
+        movesResult.reserve(100);
 
-        for (Piece* &piece : this->getPieces(color)) {
-            std::vector<Tile*> moves;
-            moves.reserve(15);
+        for (Piece* piece : this->getPieces(color)) {
+            legalTiles.clear();
 
-            piece->getPseudoLegalMoves(moves, this);
+            if (piece) {
+                piece->getPseudoLegalMoves(legalTiles, this);
 
-            if (!pseudoLegal) {
-                moves = removeMovesCausingCheck(moves, piece);
-            }
-
-            for (Tile* move : moves) {
-                legalMoves.push_back({move, piece});
+                for (Tile *move: legalTiles) {
+                    movesResult.push_back({move, piece});
+                }
             }
         }
 
-        std::sort(legalMoves.begin(), legalMoves.end(), [this](const Move &a, const Move &b){
+        std::sort(movesResult.begin(), movesResult.end(), [this](const Move &a, const Move &b){
             return orderMoves(a, b);
         });
 
-        return legalMoves;
+        return movesResult;
     }
 
     PieceColor Board::getWinner() {
@@ -1111,27 +1110,33 @@ namespace Chess {
 
     bool Board::isTileAttackedByColor(Tile* targetSquare, PieceColor attackingColor) {
         for (Direction direction : ALL_DIRECTIONS) {
-            std::vector<Tile*> attackedSquares{8};
-            getTilesInDirection(attackedSquares, targetSquare->getX(), targetSquare->getY(), direction,
+            attackedTiles.clear();
+            getTilesInDirection(attackedTiles, targetSquare->getX(), targetSquare->getY(), direction,
                                 getOppositeColor(attackingColor), false);
 
-            for (Tile* square : attackedSquares) {
-                if (square != nullptr) {
-                    Piece* piece = square->getPiece();
+            for (Tile* tile: attackedTiles) {
+                if (tile != nullptr) {
+                    Piece* piece = tile->getPiece();
 
-                    if (piece != nullptr) {
-                        if (piece->getPieceType() == PieceType::PAWN || piece->getPieceType() == PieceType::KING) {
-                            if (!(std::abs(targetSquare->getX() - square->getX()) <= 1 &&
-                                  std::abs(targetSquare->getY() - square->getY()) <= 1)) {
-                                continue;
-                            }
-                        }
+                    if (!piece || piece->getColor() != attackingColor) {
+                        continue;
+                    }
 
-                        if (piece->getColor() == attackingColor) {
-                            if (canPieceAttackDirection(piece, direction)) {
-                                return true;
-                            }
+                    if (piece->getPieceType() == PieceType::KING) {
+                        if (!(std::abs(targetSquare->getX() - tile->getX()) <= 1 &&
+                              std::abs(targetSquare->getY() - tile->getY()) <= 1)) {
+                            continue;
                         }
+                    }
+
+                    if (piece->getPieceType() == PieceType::PAWN) {
+                        if (std::abs(targetSquare->getY() - tile->getY()) > 1) {
+                            continue;
+                        }
+                    }
+
+                    if (canPieceAttackDirection(piece, direction)) {
+                        return true;
                     }
                 }
             }
@@ -1143,8 +1148,7 @@ namespace Chess {
             if (square != nullptr) {
                 Piece *piece = square->getPiece();
 
-                if (piece != nullptr && piece->getColor() == attackingColor &&
-                    piece->getPieceType() == PieceType::KNIGHT) {
+                if (piece != nullptr && piece->getPieceType() == PieceType::KNIGHT && piece->getColor() == attackingColor) {
                     return true;
                 }
             }
@@ -1156,7 +1160,8 @@ namespace Chess {
     bool Board::canPieceAttackDirection(Piece* piece, Direction direction) {
         switch(piece->getPieceType()) {
             case PAWN:
-                if (piece->getColor() == PieceColor::BLACK) {
+                // Color arrays have to be inverted
+                if (piece->getColor() == PieceColor::WHITE) {
                     return std::find(BLACK_PAWN_ATTACK_DIRECTIONS.begin(), BLACK_PAWN_ATTACK_DIRECTIONS.end(), direction) != BLACK_PAWN_ATTACK_DIRECTIONS.end();
                 } else {
                     return std::find(WHITE_PAWN_ATTACK_DIRECTIONS.begin(), WHITE_PAWN_ATTACK_DIRECTIONS.end(), direction) != WHITE_PAWN_ATTACK_DIRECTIONS.end();

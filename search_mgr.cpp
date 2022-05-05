@@ -18,13 +18,13 @@ namespace Chess {
         SearchResult iterationResult;
         std::chrono::time_point<std::chrono::system_clock> startTime = std::chrono::system_clock::now();
         std::chrono::time_point<std::chrono::system_clock> endTime = timeManager.getEndTime(board, color);
-        std::vector<Move> legalMoves = board->getLegalMoves(color, true);
+        std::vector<Move> legalMoves = board->getPseudoLegalMoves(color);
         int depth = 0;
 
         while (std::chrono::system_clock::now() < endTime) {
             depth += 1;
 
-            if (std::chrono::system_clock::now() - startTime > (endTime - startTime) * 0.7) {
+            if (std::chrono::system_clock::now() - startTime > (endTime - startTime) * 0.75) {
                 break;
             }
 
@@ -52,12 +52,12 @@ namespace Chess {
                 result.score *= -1;
                 board->unmakeMove();
 
-                if (result.score > iterationResult.score) {
+                if (result.score > iterationResult.score || iterationResult.move.piece == nullptr) {
                     iterationResult = result;
                 }
             }
 
-            if (std::chrono::system_clock::now() < endTime) {
+            if (std::chrono::system_clock::now() < endTime || bestResult.move.piece == nullptr) {
                 bestResult = iterationResult;
             }
 
@@ -76,7 +76,7 @@ namespace Chess {
         }
 
         bool searchPv = true;
-        std::vector<Move> legalMoves = board->getLegalMoves(board->getMovingColor(), true);
+        std::vector<Move> legalMoves = board->getPseudoLegalMoves(board->getMovingColor());
 
         for (const Move &move : legalMoves) {
             if (std::chrono::system_clock::now() > endTime){
@@ -139,7 +139,7 @@ namespace Chess {
             return {rootMove, evaluate(board)};
         }
 
-        std::vector<Move> legalMoves = board->getLegalMoves(board->getMovingColor(), true);
+        std::vector<Move> legalMoves = board->getPseudoLegalMoves(board->getMovingColor());
         for (const Move &move : legalMoves) {
             if (std::chrono::system_clock::now() > endTime){
                 break;

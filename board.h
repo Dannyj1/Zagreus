@@ -100,14 +100,18 @@ namespace Chess {
         }
     };
 
+    // Pre-allocated vectors for improved performance
+    static std::vector<Tile*> attackedTiles{8};
+    static std::vector<Tile*> legalTiles{25};
+
     class Board {
     private:
         Tile board[8][8];
         GameState gameState = WHITE_TURN;
         std::unordered_map<int, TileLocation> piecePositions;
         std::stack<UndoData> undoData;
-        uint64_t whiteTimeMsec = 0;
-        uint64_t blackTimeMsec = 0;
+        uint64_t whiteTimeMsec = 300000;
+        uint64_t blackTimeMsec = 300000;
         uint64_t zobristHash = 0;
         uint64_t zobristConstants[781]{};
         int movesMade = 0;
@@ -119,7 +123,7 @@ namespace Chess {
     public:
         Board();
 
-        int getMovesMade() const;
+        [[nodiscard]] int getMovesMade() const;
 
         void setPieceAtPosition(int x, int y, Piece* piece);
 
@@ -131,8 +135,6 @@ namespace Chess {
 
         void getTilesInDirection(std::vector<Tile*> &result, int x, int y, Direction direction, PieceColor movingColor,
                                  bool ignoreColor);
-
-        void setAttackedTilesInDirection(int x, int y, Piece* attackingPiece, Direction direction, PieceColor movingColor, bool ignoreColor);
 
         TileLocation getPiecePosition(int id);
 
@@ -158,9 +160,9 @@ namespace Chess {
 
         void handleEnPassant(Piece* movingPiece, Tile* toTile);
 
-        std::vector<Move> getLegalMoves(PieceColor color, bool pseudoLegal);
+        std::vector<Move> getPseudoLegalMoves(PieceColor color);
 
-        PieceColor getMovingColor() const;
+        [[nodiscard]] PieceColor getMovingColor() const;
 
         std::vector<Tile*>
         removeMovesCausingCheck(std::vector<Tile*> &moves, Piece* &movingPiece);
@@ -187,11 +189,11 @@ namespace Chess {
 
         std::string getEnPassantFEN();
 
-        uint64_t getWhiteTimeMsec() const;
+        [[nodiscard]] uint64_t getWhiteTimeMsec() const;
 
         void setWhiteTimeMsec(uint64_t whiteTimeMsec);
 
-        uint64_t getBlackTimeMsec() const;
+        [[nodiscard]] uint64_t getBlackTimeMsec() const;
 
         void setBlackTimeMsec(uint64_t blackTimeMsec);
 
@@ -213,14 +215,14 @@ namespace Chess {
 
         bool isInExtendedCenter(int x, int y);
 
-        bool getHasBlackCastled() const;
+        [[nodiscard]] bool getHasBlackCastled() const;
 
-        bool getHasWhiteCastled() const;
+        [[nodiscard]] bool getHasWhiteCastled() const;
 
         bool hasCastled(PieceColor color);
 
         bool isTileAttackedByColor(Tile* targetSquare, PieceColor attackingColor);
 
-        bool canPieceAttackDirection(Piece* piece, Direction direction);
+        static bool canPieceAttackDirection(Piece* piece, Direction direction);
     };
 }

@@ -71,17 +71,16 @@ namespace Chess {
     }
 
     int Bishop::getMobilityScore(Board* board) {
-        int badMoves = 0;
-        std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(pseudoLegalMoves, board);
+        legalTiles.clear();
+        this->getPseudoLegalMoves(legalTiles, board);
 
-        return pseudoLegalMoves.size() * 2;
+        return legalTiles.size() * 2;
     }
 
     int Bishop::getEvaluationScore(Board* board) {
         int score = 0;
         TileLocation loc = board->getPiecePosition(this->getId());
-        std::vector<Tile*> attackedTiles;
+        attackedTiles.clear();
         this->getAttackedTiles(attackedTiles, board);
 
         for (Tile* tile : attackedTiles) {
@@ -167,7 +166,6 @@ namespace Chess {
             aRookLoc = board->getPiecePosition(WHITE_A_ROOK_ID);
             hRookLoc = board->getPiecePosition(WHITE_H_ROOK_ID);
         }
-
 
         if (!getHasMoved() && !isChecked(board)) {
             Tile* aRookTile = board->getTile(aRookLoc.x, aRookLoc.y);
@@ -256,16 +254,14 @@ namespace Chess {
             return false;
         }
 
-        std::vector<Tile*> legalMoves;
-        legalMoves.reserve(10);
+        for (Piece* piece : board->getPieces(getColor())) {
+            legalTiles.clear();
+            piece->getPseudoLegalMoves(legalTiles, board);
 
-        for (Piece* &piece : board->getPieces(getColor())) {
-            piece->getPseudoLegalMoves(legalMoves, board);
+            if (!legalTiles.empty()) {
+                legalTiles = board->removeMovesCausingCheck(legalTiles, piece);
 
-            if (!legalMoves.empty()) {
-                legalMoves = board->removeMovesCausingCheck(legalMoves, piece);
-
-                if (!legalMoves.empty()) {
+                if (!legalTiles.empty()) {
                     return false;
                 }
             }
@@ -287,9 +283,8 @@ namespace Chess {
     }
 
     int King::getMobilityScore(Board* board) {
-        int badMoves = 0;
-        std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(pseudoLegalMoves, board);
+        legalTiles.clear();
+        this->getPseudoLegalMoves(legalTiles, board);
 
 /*
         for (Tile* tile : pseudoLegalMoves) {
@@ -299,7 +294,7 @@ namespace Chess {
         }
 */
 
-        return pseudoLegalMoves.size() * 6;
+        return legalTiles.size() * 6;
     }
 
     int King::getTempo(Board* board) {
@@ -410,18 +405,16 @@ namespace Chess {
     }
 
     int Knight::getMobilityScore(Board* board) {
-        int badMoves = 0;
-        std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(pseudoLegalMoves, board);
+        legalTiles.clear();
+        this->getPseudoLegalMoves(legalTiles, board);
 
-        return pseudoLegalMoves.size() * 2;
+        return legalTiles.size() * 2;
     }
 
     int Knight::getEvaluationScore(Board* board) {
         int score = 0;
-        std::vector<Tile*> attackedTiles;
+        attackedTiles.clear();
         TileLocation loc = board->getPiecePosition(this->getId());
-        Tile* ownTile = board->getTile(loc.x, loc.y);
         this->getAttackedTiles(attackedTiles, board);
 
         for (Tile* tile : attackedTiles) {
@@ -467,7 +460,7 @@ namespace Chess {
             }
         }
 
-        std::vector<Tile*> attackedTiles;
+        attackedTiles.clear();
         this->getAttackedTiles(attackedTiles, board);
 
         for (Tile* attackedTile : attackedTiles) {
@@ -527,7 +520,7 @@ namespace Chess {
     int Pawn::getEvaluationScore(Board* board) {
         int score = 0;
         TileLocation loc = board->getPiecePosition(this->getId());
-        std::vector<Tile*> attackedTiles;
+        attackedTiles.clear();
         this->getAttackedTiles(attackedTiles, board);
 
         for (Tile* tile : attackedTiles) {
@@ -590,9 +583,8 @@ namespace Chess {
     }
 
     int Queen::getMobilityScore(Board* board) {
-        int badMoves = 0;
-        std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(pseudoLegalMoves, board);
+        legalTiles.clear();
+        this->getPseudoLegalMoves(legalTiles, board);
 
 /*        for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
@@ -600,7 +592,7 @@ namespace Chess {
             }
         }*/
 
-        return pseudoLegalMoves.size() * 5;
+        return legalTiles.size() * 5;
     }
 
     int Queen::getTempo(Board* board) {
@@ -613,7 +605,7 @@ namespace Chess {
 
     int Queen::getEvaluationScore(Board* board) {
         int score = 0;
-        std::vector<Tile*> attackedTiles;
+        attackedTiles.clear();
         this->getAttackedTiles(attackedTiles, board);
 
         for (Tile* tile : attackedTiles) {
@@ -676,9 +668,8 @@ namespace Chess {
     }
 
     int Rook::getMobilityScore(Board* board) {
-        int badMoves = 0;
-        std::vector<Tile*> pseudoLegalMoves;
-        this->getPseudoLegalMoves(pseudoLegalMoves, board);
+        legalTiles.clear();
+        this->getPseudoLegalMoves(legalTiles, board);
 
 /*        for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
@@ -686,7 +677,7 @@ namespace Chess {
             }
         }*/
 
-        return pseudoLegalMoves.size() * 4;
+        return legalTiles.size() * 4;
     }
 
     int Rook::getTempo(Board* board) {
@@ -703,7 +694,7 @@ namespace Chess {
 
     int Rook::getEvaluationScore(Board* board) {
         int score = 0;
-        std::vector<Tile*> attackedTiles;
+        attackedTiles.clear();
         this->getAttackedTiles(attackedTiles, board);
 
         for (Tile* tile : attackedTiles) {
