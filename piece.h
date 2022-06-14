@@ -56,7 +56,7 @@ namespace Chess {
 
         virtual ~Piece() = default;
 
-        Piece(const Piece&) = delete;
+        Piece(const Piece &) = delete;
 
         [[nodiscard]] int getId() const;
 
@@ -95,7 +95,7 @@ namespace Chess {
 
         }
 
-        Bishop(const Bishop&) = delete;
+        Bishop(const Bishop &) = delete;
 
         PieceType getPieceType() override;
 
@@ -122,7 +122,7 @@ namespace Chess {
 
         }
 
-        King(const King&) = delete;
+        King(const King &) = delete;
 
         PieceType getPieceType() override;
 
@@ -153,7 +153,7 @@ namespace Chess {
 
         }
 
-        Knight(const Knight&) = delete;
+        Knight(const Knight &) = delete;
 
         PieceType getPieceType() override;
 
@@ -180,7 +180,7 @@ namespace Chess {
 
         }
 
-        Pawn(const Pawn&) = delete;
+        Pawn(const Pawn &) = delete;
 
         PieceType getPieceType() override;
 
@@ -207,7 +207,7 @@ namespace Chess {
 
         }
 
-        Queen(const Queen&) = delete;
+        Queen(const Queen &) = delete;
 
         PieceType getPieceType() override;
 
@@ -234,7 +234,7 @@ namespace Chess {
 
         }
 
-        Rook(const Rook&) = delete;
+        Rook(const Rook &) = delete;
 
         PieceType getPieceType() override;
 

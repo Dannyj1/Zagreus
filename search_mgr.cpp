@@ -70,7 +70,8 @@ namespace Chess {
         return bestResult;
     }
 
-    SearchResult SearchManager::search(Board* board, int depth, int alpha, int beta, const Move &rootMove, std::chrono::time_point<std::chrono::system_clock> endTime) {
+    SearchResult SearchManager::search(Board* board, int depth, int alpha, int beta, const Move &rootMove,
+                                       std::chrono::time_point<std::chrono::system_clock> endTime) {
         if (depth == 0 || std::chrono::system_clock::now() > endTime) {
             return {rootMove, evaluate(board)};
         }
@@ -79,7 +80,7 @@ namespace Chess {
         std::vector<Move> legalMoves = board->getPseudoLegalMoves(board->getMovingColor());
 
         for (const Move &move : legalMoves) {
-            if (std::chrono::system_clock::now() > endTime){
+            if (std::chrono::system_clock::now() > endTime) {
                 break;
             }
 
@@ -134,14 +135,15 @@ namespace Chess {
     }
 
     SearchResult
-    SearchManager::zwSearch(Board* board, int depth, int beta, const Move &rootMove, std::chrono::time_point<std::chrono::system_clock> endTime) {
+    SearchManager::zwSearch(Board* board, int depth, int beta, const Move &rootMove,
+                            std::chrono::time_point<std::chrono::system_clock> endTime) {
         if (depth == 0) {
             return {rootMove, evaluate(board)};
         }
 
         std::vector<Move> legalMoves = board->getPseudoLegalMoves(board->getMovingColor());
         for (const Move &move : legalMoves) {
-            if (std::chrono::system_clock::now() > endTime){
+            if (std::chrono::system_clock::now() > endTime) {
                 break;
             }
 

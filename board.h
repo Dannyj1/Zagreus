@@ -103,6 +103,7 @@ namespace Chess {
     // Pre-allocated vectors for improved performance
     static std::vector<Tile*> attackedTiles{8};
     static std::vector<Tile*> legalTiles{25};
+    static std::vector<std::shared_ptr<Piece>> piecesList{32};
 
     class Board {
     private:

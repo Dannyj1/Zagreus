@@ -31,15 +31,15 @@ namespace Chess {
 
         void clearKillerMoves();
 
-        void addKillerMove(const Move& move);
+        void addKillerMove(const Move &move);
 
-        bool isKillerMove(const Move& move);
+        bool isKillerMove(const Move &move);
 
         void clearPVMoves();
 
-        void addPVMove(const Move& move);
+        void addPVMove(const Move &move);
 
-        bool isPVMove(const Move& move);
+        bool isPVMove(const Move &move);
     };
 
     static TranspositionTable tt{};

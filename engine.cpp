@@ -64,19 +64,23 @@ namespace Chess {
         Tile* blackARookTile = board.getTile(blackARookLoc.x, blackARookLoc.y);
         Tile* blackHRookTile = board.getTile(blackHRookLoc.x, blackHRookLoc.y);
 
-        if (move == "e1g1" && !whiteKing->getHasMoved() && whiteHRookTile && !whiteHRookTile->getPiece()->getHasMoved()) {
+        if (move == "e1g1" && !whiteKing->getHasMoved() && whiteHRookTile &&
+            !whiteHRookTile->getPiece()->getHasMoved()) {
             return board.makeStrMove("e1h1");
         }
 
-        if (move == "e1c1" && !whiteKing->getHasMoved() && whiteARookTile && !whiteARookTile->getPiece()->getHasMoved()) {
+        if (move == "e1c1" && !whiteKing->getHasMoved() && whiteARookTile &&
+            !whiteARookTile->getPiece()->getHasMoved()) {
             return board.makeStrMove("e1a1");
         }
 
-        if (move == "e8g8" && !blackKing->getHasMoved() && blackHRookTile && !blackHRookTile->getPiece()->getHasMoved()) {
+        if (move == "e8g8" && !blackKing->getHasMoved() && blackHRookTile &&
+            !blackHRookTile->getPiece()->getHasMoved()) {
             return board.makeStrMove("e8h8");
         }
 
-        if (move == "e8c8" && !blackKing->getHasMoved() && blackARookTile && !blackARookTile->getPiece()->getHasMoved()) {
+        if (move == "e8c8" && !blackKing->getHasMoved() && blackARookTile &&
+            !blackARookTile->getPiece()->getHasMoved()) {
             return board.makeStrMove("e8a8");
         }
 
@@ -167,7 +171,7 @@ namespace Chess {
         Tile* fromTile = board.getTile(fromLoc.x, fromLoc.y);
 
         if (bestResult.move.piece->getPieceType() == PieceType::PAWN
-        && (bestResult.move.tile->getY() == 0 || bestResult.move.tile->getY() == 7)) {
+            && (bestResult.move.tile->getY() == 0 || bestResult.move.tile->getY() == 7)) {
             return fromTile->getNotation() + bestResult.move.tile->getNotation() + "q";
         }
 
