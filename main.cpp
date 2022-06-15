@@ -11,9 +11,9 @@ uint64_t checks = 0;
 uint64_t checkMates = 0;
 uint64_t ep = 0;
 uint64_t castles = 0;
-std::unordered_map<std::string, uint64_t> moveCounts{};
+uint64_t promotions = 0;
 
-uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
+uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0;
 
     if (depth == 0) {
@@ -46,16 +46,28 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
             }
         }
 
-        board->makeMove(move.tile->getX(), move.tile->getY(), piece);
+/*        if (isEp && depth == 1) {
+            board->print();
+        }*/
+
+        board->makeMove(move.tile->getX(), move.tile->getY(), piece, move.promotionPiece);
+
+/*        if (isEp && depth == 1) {
+            board->print();
+        }*/
 
         if (!board->isKingChecked(move.piece->getColor())) {
-            if (moveCounts.contains(board->getTile(fromLoc.x, fromLoc.y)->getNotation())) {
-                moveCounts[board->getTile(fromLoc.x, fromLoc.y)->getNotation()]++;
-            } else {
-                moveCounts[board->getTile(fromLoc.x, fromLoc.y)->getNotation()] = 1;
+            if (move.promotionPiece) {
+                promotions++;
             }
 
-            nodes += perft(board, Chess::getOppositeColor(color), depth - 1);
+            uint64_t nodeAmount = perft(board, Chess::getOppositeColor(color), depth - 1, startingDepth);
+            nodes += nodeAmount;
+
+            if (depth == startingDepth) {
+                std::string notation = board->getTile(fromLoc.x, fromLoc.y)->getNotation() + board->getTile(move.tile->getX(), move.tile->getY())->getNotation();
+                std::cout << notation << ": " << nodeAmount << std::endl;
+            }
 
             if (depth == 1) {
                 if (board->isKingChecked(getOppositeColor(move.piece->getColor()))) {
@@ -82,32 +94,35 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth) {
         }
 
         board->unmakeMove();
+/*        if (isEp && depth == 1) {
+            board->print();
+            std::cout << "==============================" << std::endl;
+        }*/
     }
 
     return nodes;
 }
 
 int main() {
-    for (int i = 6; i < 16; i++) {
+    for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
-        // Position 1
-        board.setFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        // Position 3
+        board.setFromFEN("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
         checks = 0;
         ep = 0;
         captures = 0;
         checkMates = 0;
         castles = 0;
-        moveCounts.clear();
 
         auto start = std::chrono::system_clock::now();
-        uint64_t nodes = perft(&board, Chess::PieceColor::WHITE, i);
+        uint64_t nodes = perft(&board, Chess::PieceColor::WHITE, i, i);
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         std::cout << "Depth " << i << " Nodes: " << nodes << ", Captures: " << captures << ", Checks: " << checks
-                  << ", Checkmates: " << checkMates << ", E.p: " << ep << ", Castles: " << castles << ", Took: "
-                  << elapsed_seconds.count() << "s" << std::endl;
+                  << ", Checkmates: " << checkMates << ", E.p: " << ep << ", Castles: " << castles
+                  << ", Promotions: " << promotions << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
 
         std::cout << std::endl;
     }

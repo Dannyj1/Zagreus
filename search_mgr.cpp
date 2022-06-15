@@ -41,7 +41,7 @@ namespace Chess {
 
                 Tile* toTile = move.tile;
                 std::shared_ptr<Piece> piece = move.piece;
-                board->makeMove(toTile->getX(), toTile->getY(), piece);
+                board->makeMove(toTile->getX(), toTile->getY(), piece, move.promotionPiece);
 
                 if (board->isKingChecked(move.piece->getColor())) {
                     board->unmakeMove();
@@ -88,7 +88,7 @@ namespace Chess {
             Tile* toTile = move.tile;
             std::shared_ptr<Piece> piece = move.piece;
 
-            board->makeMove(toTile->getX(), toTile->getY(), piece);
+            board->makeMove(toTile->getX(), toTile->getY(), piece, move.promotionPiece);
 
             if (board->isKingChecked(move.piece->getColor())) {
                 board->unmakeMove();
@@ -149,7 +149,7 @@ namespace Chess {
 
             Tile* toTile = move.tile;
             std::shared_ptr<Piece> piece = move.piece;
-            board->makeMove(toTile->getX(), toTile->getY(), piece);
+            board->makeMove(toTile->getX(), toTile->getY(), piece, move.promotionPiece);
 
             if (board->isKingChecked(move.piece->getColor())) {
                 board->unmakeMove();

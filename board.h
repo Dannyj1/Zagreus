@@ -37,6 +37,7 @@ namespace Chess {
     struct Move {
         Tile* tile;
         std::shared_ptr<Piece> piece;
+        std::shared_ptr<Piece> promotionPiece = nullptr;
 
         bool operator==(const Move &a) const {
             return tile->getX() == a.tile->getX() && tile->getY() == a.tile->getY() && piece->getPieceType() == a.piece->getPieceType();
@@ -104,6 +105,7 @@ namespace Chess {
     static std::vector<Tile*> attackedTiles{8};
     static std::vector<Tile*> legalTiles{25};
     static std::vector<std::shared_ptr<Piece>> piecesList{32};
+    static std::vector<Move> movesResult{100};
 
     class Board {
     private:
@@ -139,11 +141,11 @@ namespace Chess {
 
         TileLocation getPiecePosition(int id);
 
-        void makeMove(int toX, int toY, std::shared_ptr<Piece> movingPiece);
+        void makeMove(int toX, int toY, std::shared_ptr<Piece> movingPiece, const std::shared_ptr<Piece>& promotionPiece);
 
         void unmakeMove();
 
-        void updateGameState(PieceColor movingColor);
+        void updateGameState(PieceColor movedColor);
 
         void print();
 
