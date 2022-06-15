@@ -104,11 +104,11 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
 }
 
 int main() {
-    for (int i = 1; i < 16; i++) {
+    for (int i = 2; i < 3; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
-        // Position 3
-        board.setFromFEN("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
+        // Position 2
+        board.setFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
         checks = 0;
         ep = 0;
         captures = 0;

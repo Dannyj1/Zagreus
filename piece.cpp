@@ -179,7 +179,7 @@ namespace Chess {
                 if (aRook != nullptr && !aRook->getHasMoved()) {
                     bool canCastle = true;
 
-                    for (int i = 1; i < 4; i++) {
+                    for (int i = 1; i < 3; i++) {
                         Tile* tile = board->getTile(aRookLoc.x + i, aRookLoc.y);
 
                         if (tile->getPiece() != nullptr ||
