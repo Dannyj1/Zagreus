@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <map>
 #include "board.h"
+#include "include/tsl/hopscotch_map.h"
 
 namespace Chess {
     struct TTEntry {
@@ -17,7 +18,7 @@ namespace Chess {
 
     class TranspositionTable {
     private:
-        std::map<uint64_t, TTEntry> table;
+        tsl::hopscotch_map<uint64_t, TTEntry> table;
         std::vector<Move> killerMoves;
         std::vector<Move> pvMoves;
     public:

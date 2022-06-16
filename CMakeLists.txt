@@ -7,5 +7,6 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O0")
 
 file(GLOB inc_senjo "senjo/*.h" "senjo/*.cpp")
+file(GLOB inc_hopscotch "tsl/*.h" "tsl/*.cpp")
 find_package(Boost REQUIRED)
-add_executable(Chess main.cpp board.cpp board.h piece.cpp piece.h tile.cpp tile.h engine.cpp engine.h ${inc_senjo} search_mgr.cpp search_mgr.h time_mgr.cpp time_mgr.h tt.cpp tt.h)
+add_executable(Chess main.cpp ${inc_senjo} ${inc_hopscotch} board.cpp board.h piece.cpp piece.h tile.cpp tile.h engine.cpp engine.h search_mgr.cpp search_mgr.h time_mgr.cpp time_mgr.h tt.cpp tt.h)

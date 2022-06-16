@@ -10,7 +10,7 @@ namespace Chess {
     }
 
     std::string Engine::getEngineVersion() {
-        return "v0.3";
+        return "v0.4";
     }
 
     std::string Engine::getAuthorName() {
@@ -57,8 +57,8 @@ namespace Chess {
         TileLocation whiteHRookLoc = board.getPiecePosition(WHITE_H_ROOK_ID);
         TileLocation blackARookLoc = board.getPiecePosition(BLACK_A_ROOK_ID);
         TileLocation blackHRookLoc = board.getPiecePosition(BLACK_H_ROOK_ID);
-        std::shared_ptr<Piece> whiteKing = board.getTile(whiteKingLoc.x, whiteKingLoc.y)->getPiece();
-        std::shared_ptr<Piece> blackKing = board.getTile(blackKingLoc.x, blackKingLoc.y)->getPiece();
+        Piece* whiteKing = board.getTileUnsafe(whiteKingLoc.x, whiteKingLoc.y)->getPiece();
+        Piece* blackKing = board.getTileUnsafe(blackKingLoc.x, blackKingLoc.y)->getPiece();
         Tile* whiteARookTile = board.getTile(whiteARookLoc.x, whiteARookLoc.y);
         Tile* whiteHRookTile = board.getTile(whiteHRookLoc.x, whiteHRookLoc.y);
         Tile* blackARookTile = board.getTile(blackARookLoc.x, blackARookLoc.y);
@@ -166,15 +166,29 @@ namespace Chess {
         board.setWhiteTimeMsec(params.wtime);
         board.setBlackTimeMsec(params.btime);
 
+        board.print();
         SearchResult bestResult = searchManager.getBestMove(&board, engineColor);
         TileLocation fromLoc = board.getPiecePosition(bestResult.move.piece->getId());
-        Tile* fromTile = board.getTile(fromLoc.x, fromLoc.y);
+        Tile* fromTile = board.getTileUnsafe(fromLoc.x, fromLoc.y);
 
-        if (bestResult.move.piece->getPieceType() == PieceType::PAWN
-            && (bestResult.move.tile->getY() == 0 || bestResult.move.tile->getY() == 7)) {
-            return fromTile->getNotation() + bestResult.move.tile->getNotation() + "q";
+        if (bestResult.move.promotionPiece) {
+            switch (bestResult.move.promotionPiece->getPieceType()) {
+                case PieceType::QUEEN:
+                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "q";
+                case PAWN:
+                    break;
+                case KNIGHT:
+                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "n";
+                case BISHOP:
+                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "b";
+                case ROOK:
+                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "r";
+                case KING:
+                    break;
+            }
         }
 
+        std::cout << "Score: " << bestResult.score << std::endl;
         return fromTile->getNotation() + bestResult.move.tile->getNotation();
     }
 

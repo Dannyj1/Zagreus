@@ -10,6 +10,7 @@
 #include <stack>
 #include "tile.h"
 #include "piece.h"
+#include "include/tsl/hopscotch_map.h"
 
 namespace Chess {
     enum Direction {
@@ -36,8 +37,8 @@ namespace Chess {
 
     struct Move {
         Tile* tile;
-        std::shared_ptr<Piece> piece;
-        std::shared_ptr<Piece> promotionPiece = nullptr;
+        Piece* piece;
+        Piece* promotionPiece = nullptr;
 
         bool operator==(const Move &a) const {
             return tile->getX() == a.tile->getX() && tile->getY() == a.tile->getY() && piece->getPieceType() == a.piece->getPieceType();
@@ -84,9 +85,9 @@ namespace Chess {
 
     class UndoData {
     public:
-        std::vector<std::pair<std::shared_ptr<Piece>, TileLocation>> originalPositions;
-        std::vector<std::pair<std::shared_ptr<Piece>, bool>> hasMoved;
-        std::vector<std::tuple<int, int, std::shared_ptr<Piece>>> enPassantTargets;
+        std::vector<std::pair<Piece*, TileLocation>> originalPositions;
+        std::vector<std::pair<Piece*, bool>> hasMoved;
+        std::vector<std::tuple<int, int, Piece*>> enPassantTargets;
         GameState gameState;
         uint64_t zobristHash;
         int halfMoveClock;
@@ -104,21 +105,22 @@ namespace Chess {
     // Pre-allocated vectors for improved performance
     static std::vector<Tile*> attackedTiles{8};
     static std::vector<Tile*> legalTiles{25};
-    static std::vector<std::shared_ptr<Piece>> piecesList{32};
+    static std::vector<Tile*> removeResult{25};
+    static std::vector<Piece*> piecesList{32};
     static std::vector<Move> movesResult{100};
 
     class Board {
     private:
         Tile board[8][8];
         GameState gameState = WHITE_TURN;
-        std::unordered_map<int, TileLocation> piecePositions;
+        tsl::hopscotch_map<int, TileLocation> piecePositions;
         std::stack<UndoData> undoData;
         uint64_t whiteTimeMsec = 300000;
         uint64_t blackTimeMsec = 300000;
         uint64_t zobristHash = 0;
         uint64_t zobristConstants[781]{};
         int movesMade = 0;
-        std::unordered_map<uint64_t, int> moveHistory;
+        tsl::hopscotch_map<uint64_t, int> moveHistory;
         int halfMoveClock = 0;
         bool hasBlackCastled = false;
         bool hasWhiteCastled = false;
@@ -128,11 +130,13 @@ namespace Chess {
 
         [[nodiscard]] int getMovesMade() const;
 
-        void setPieceAtPosition(int x, int y, const std::shared_ptr<Piece>& piece);
+        void setPieceAtPosition(int x, int y, Piece* piece);
 
         void removePieceFromPosition(int x, int y);
 
         Tile* getTile(int x, int y);
+
+        Tile* getTileUnsafe(int x, int y);
 
         Tile* getTileInDirection(int x, int y, Direction direction);
 
@@ -141,7 +145,7 @@ namespace Chess {
 
         TileLocation getPiecePosition(int id);
 
-        void makeMove(int toX, int toY, std::shared_ptr<Piece> movingPiece, const std::shared_ptr<Piece>& promotionPiece);
+        void makeMove(int toX, int toY, Piece* movingPiece, Piece* promotionPiece);
 
         void unmakeMove();
 
@@ -153,22 +157,22 @@ namespace Chess {
 
         void setState(GameState state);
 
-        std::vector<std::shared_ptr<Piece>> getPieces();
+        std::vector<Piece*> getPieces();
 
-        std::vector<std::shared_ptr<Piece>> getPieces(PieceColor color);
+        std::vector<Piece*> getPieces(PieceColor color);
 
         bool isDraw();
 
-        void handleKingCastle(int y, const std::shared_ptr<Piece>& king, Tile* fromTile, Tile* toTile, const std::shared_ptr<Piece>& rook);
+        void handleKingCastle(int y, Piece* king, Tile* fromTile, Tile* toTile, Piece* rook);
 
-        void handleEnPassant(const std::shared_ptr<Piece>& movingPiece, Tile* toTile);
+        void handleEnPassant(Piece* movingPiece, Tile* toTile);
 
         std::vector<Move> getPseudoLegalMoves(PieceColor color);
 
         [[nodiscard]] PieceColor getMovingColor() const;
 
         std::vector<Tile*>
-        removeMovesCausingCheck(std::vector<Tile*> &moves, const std::shared_ptr<Piece>&movingPiece);
+        removeMovesCausingCheck(std::vector<Tile*> &moves, Piece*movingPiece);
 
         [[nodiscard]] GameState getGameState() const;
 
@@ -208,7 +212,7 @@ namespace Chess {
 
         uint64_t getZobristHash() const;
 
-        uint64_t getZobristHashForMove(int toX, int toY, const std::shared_ptr<Piece>& movingPiece);
+        uint64_t getZobristHashForMove(int toX, int toY, Piece* movingPiece);
 
         void createInitialZobristHash();
 
@@ -226,6 +230,6 @@ namespace Chess {
 
         bool isTileAttackedByColor(Tile* targetSquare, PieceColor attackingColor);
 
-        static bool canPieceAttackDirection(const std::shared_ptr<Piece>& piece, Direction direction);
+        static bool canPieceAttackDirection(Piece* piece, Direction direction);
     };
 }

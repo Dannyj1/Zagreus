@@ -16,8 +16,8 @@ namespace Chess {
     private:
         int x = 0;
         int y = 0;
-        std::shared_ptr<Piece> piece = nullptr;
-        std::shared_ptr<Piece> enPassantTarget = nullptr;
+        Piece* piece = nullptr;
+        Piece* enPassantTarget = nullptr;
 
     public:
         Tile() {
@@ -30,23 +30,23 @@ namespace Chess {
             this->y = y;
         }
 
-        Tile(std::shared_ptr<Piece> piece, int x, int y) {
+        Tile(Piece* piece, int x, int y) {
             this->piece = piece;
             this->x = x;
             this->y = y;
         }
 
-        [[nodiscard]] std::shared_ptr<Piece> getPiece();
+        [[nodiscard]] Piece* getPiece();
 
-        void setPiece(std::shared_ptr<Piece> piece);
+        void setPiece(Piece* piece);
 
         [[nodiscard]] int getX() const;
 
         [[nodiscard]] int getY() const;
 
-        [[nodiscard]] std::shared_ptr<Piece> getEnPassantTarget();
+        [[nodiscard]] Piece* getEnPassantTarget();
 
-        void setEnPassantTarget(std::shared_ptr<Piece> targetPiece);
+        void setEnPassantTarget(Piece* targetPiece);
 
         std::string getNotation();
     };

@@ -34,7 +34,7 @@ namespace Chess {
         if (!table.contains(zobristHash)) {
             return 0;
         }
-
+        
         return table.at(zobristHash).score;
     }
 

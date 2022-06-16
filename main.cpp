@@ -1,5 +1,4 @@
 #include <iostream>
-#include <random>
 #include <unordered_map>
 
 #include "board.h"
@@ -13,6 +12,7 @@ uint64_t ep = 0;
 uint64_t castles = 0;
 uint64_t promotions = 0;
 
+// TODO: consider taking care of things like dangling pointer and freeing memory
 uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0;
 
@@ -23,7 +23,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
     std::vector<Chess::Move> moves = board->getPseudoLegalMoves(color);
 
     for (const Chess::Move &move : moves) {
-        std::shared_ptr<Chess::Piece> piece = move.piece;
+        Chess::Piece* piece = move.piece;
         Chess::TileLocation fromLoc = board->getPiecePosition(piece->getId());
         bool isCapture = false;
         bool isEp = false;
@@ -70,7 +70,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
             nodes += nodeAmount;
 
             if (depth == startingDepth) {
-                std::string notation = board->getTile(fromLoc.x, fromLoc.y)->getNotation() + board->getTile(move.tile->getX(), move.tile->getY())->getNotation();
+                std::string notation = board->getTileUnsafe(fromLoc.x, fromLoc.y)->getNotation() + board->getTileUnsafe(move.tile->getX(), move.tile->getY())->getNotation();
                 std::cout << notation << ": " << nodeAmount << std::endl;
             }
 
@@ -109,11 +109,10 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
 }
 
 int main() {
-    for (int i = 1; i < 16; i++) {
+    /*for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
-        // Position 2
-        board.setFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+        // board.setFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
         checks = 0;
         ep = 0;
         captures = 0;
@@ -130,9 +129,7 @@ int main() {
                   << ", Promotions: " << promotions << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
 
         std::cout << std::endl;
-    }
-
-    std::cout << "Perft done!" << std::endl;
+    }*/
 
     try {
         Chess::Engine engine;
