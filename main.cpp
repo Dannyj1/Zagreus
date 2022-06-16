@@ -29,6 +29,11 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
         bool isEp = false;
         bool isCastle = false;
 
+        if (fromLoc.x < 0) {
+            board->print();
+            std::cout << "Error: piece not found. Type: " << piece->getPieceType() << ", Color: " << piece->getColor() << std::endl;
+        }
+
         if (depth == 1) {
             if (move.tile->getPiece() && move.tile->getPiece()->getColor() != piece->getColor()) {
                 isCapture = true;
@@ -104,7 +109,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
 }
 
 int main() {
-    for (int i = 2; i < 3; i++) {
+    for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
         // Position 2

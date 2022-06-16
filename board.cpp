@@ -194,7 +194,7 @@ namespace Chess {
             data.hasMoved.emplace_back(toTile->getEnPassantTarget(), toTile->getEnPassantTarget()->getHasMoved());
         }
 
-        if (movingPiece->getPieceType() == PieceType::PAWN && (toY == 0 || toY == 7)) {
+        if (promotionPiece) {
             data.promotionTile = toTile;
         }
 
@@ -211,9 +211,7 @@ namespace Chess {
             handleEnPassant(movingPiece, toTile);
             // TODO: don't make from scratch
             createInitialZobristHash();
-        }
-
-        if (toPiece && movingPiece->getPieceType() == PieceType::KING &&
+        } else if (toPiece && movingPiece->getPieceType() == PieceType::KING &&
                    toPiece->getPieceType() == PieceType::ROOK && toPiece->getColor() == movingPiece->getColor()) {
             handleKingCastle(toY, movingPiece, fromTile, toTile, toPiece);
 
@@ -227,11 +225,11 @@ namespace Chess {
             createInitialZobristHash();
         } else {
             if (promotionPiece) {
-                movingPiece = promotionPiece;
-
-                removePieceFromPosition(toTile->getX(), toTile->getY());
+                removePieceFromPosition(fromTile->getX(), fromTile->getY());
                 movingPiece->setHasMoved(true);
                 setPieceAtPosition(toTile->getX(), toTile->getY(), movingPiece);
+
+                setPieceAtPosition(toTile->getX(), toTile->getY(), promotionPiece);
                 createInitialZobristHash();
                 return;
             }

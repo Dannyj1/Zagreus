@@ -179,11 +179,11 @@ namespace Chess {
                 if (aRook != nullptr && !aRook->getHasMoved()) {
                     bool canCastle = true;
 
-                    for (int i = 1; i < 3; i++) {
-                        Tile* tile = board->getTile(aRookLoc.x + i, aRookLoc.y);
+                    for (int i = 1; i < 4; i++) {
+                        Tile* tile = board->getTile(loc.x - i, loc.y);
 
                         if (tile->getPiece() != nullptr ||
-                            board->isTileAttackedByColor(tile, getOppositeColor(aRook->getColor()))) {
+                                (board->isTileAttackedByColor(tile, getOppositeColor(aRook->getColor())) && i != 3)) {
                             canCastle = false;
                             break;
                         }
@@ -202,7 +202,7 @@ namespace Chess {
                     bool canCastle = true;
 
                     for (int i = 1; i < 3; i++) {
-                        Tile* tile = board->getTile(hRookLoc.x - i, hRookLoc.y);
+                        Tile* tile = board->getTile(loc.x + i, loc.y);
 
                         if (tile->getPiece() != nullptr ||
                             board->isTileAttackedByColor(tile, getOppositeColor(hRook->getColor()))) {
