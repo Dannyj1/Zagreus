@@ -116,7 +116,7 @@ namespace Chess {
         Tile* tile = getTileUnsafe(x, y);
 
         if (tile->getPiece()) {
-            piecePositions.erase(tile->getPiece()->getId());
+            removePieceFromPosition(tile->getX(), tile->getY());
         }
 
         piecePositions.erase(piece->getId());
@@ -500,6 +500,13 @@ namespace Chess {
         return king->isChecked(this);
     }
 
+    bool Board::orderQuiscenceMoves(const Move &a, const Move &b) {
+        int scoreA = mvvlva(a.tile, a.piece->getColor());
+        int scoreB = mvvlva(b.tile, b.piece->getColor());
+
+        return scoreA > scoreB;
+    }
+
     bool Board::orderMoves(const Move &a, const Move &b) {
         int scoreA = mvvlva(a.tile, a.piece->getColor());
         int scoreB = mvvlva(b.tile, b.piece->getColor());
@@ -535,21 +542,63 @@ namespace Chess {
         movesResult.clear();
 
         for (Piece* piece : this->getPieces(color)) {
-            if (piece) {
-                legalTiles.clear();
-                piece->getPseudoLegalMoves(legalTiles, this);
+            legalTiles.clear();
+            piece->getPseudoLegalMoves(legalTiles, this);
 
-                for (Tile* move : legalTiles) {
+            for (Tile* move : legalTiles) {
+                if (piece->getPieceType() == PieceType::PAWN) {
+                    if (move->getY() == 0 || move->getY() == 7) {
+                        Queen* queen = new Queen(piece->getColor(), move->getX(), move->getY(),
+                                                 piece->getId());
+                        Knight* knight = new Knight(piece->getColor(), move->getX(), move->getY(),
+                                                    piece->getId());
+                        Rook* rook = new Rook(piece->getColor(), move->getX(), move->getY(),
+                                              piece->getId());
+                        Bishop* bishop = new Bishop(piece->getColor(), move->getX(), move->getY(),
+                                                    piece->getId());
+
+                        movesResult.push_back({move, piece, queen});
+                        movesResult.push_back({move, piece, knight});
+                        movesResult.push_back({move, piece, rook});
+                        movesResult.push_back({move, piece, bishop});
+                        continue;
+                    }
+                }
+
+                movesResult.push_back({move, piece, nullptr});
+            }
+        }
+
+        std::sort(movesResult.begin(), movesResult.end(), [this](const Move &a, const Move &b) {
+            return orderMoves(a, b);
+        });
+
+        return movesResult;
+    }
+
+    std::vector<Move> Board::getQuiescenceMoves(PieceColor color) {
+        movesResult.clear();
+
+        for (Piece* piece : this->getPieces(color)) {
+            legalTiles.clear();
+            piece->getPseudoLegalMoves(legalTiles, this);
+
+            for (Tile* move : legalTiles) {
+                if (move->getPiece() && move->getPiece()->getColor() != color) {
+                    if (mvvlva(move, piece->getColor()) < 0) {
+                        continue;
+                    }
+
                     if (piece->getPieceType() == PieceType::PAWN) {
                         if (move->getY() == 0 || move->getY() == 7) {
                             Queen* queen = new Queen(piece->getColor(), move->getX(), move->getY(),
-                                                                                   piece->getId());
+                                                     piece->getId());
                             Knight* knight = new Knight(piece->getColor(), move->getX(), move->getY(),
-                                                                                    piece->getId());
+                                                        piece->getId());
                             Rook* rook = new Rook(piece->getColor(), move->getX(), move->getY(),
-                                                                                  piece->getId());
+                                                  piece->getId());
                             Bishop* bishop = new Bishop(piece->getColor(), move->getX(), move->getY(),
-                                                                                    piece->getId());
+                                                        piece->getId());
 
                             movesResult.push_back({move, piece, queen});
                             movesResult.push_back({move, piece, knight});
@@ -565,7 +614,7 @@ namespace Chess {
         }
 
         std::sort(movesResult.begin(), movesResult.end(), [this](const Move &a, const Move &b) {
-            return orderMoves(a, b);
+            return orderQuiscenceMoves(a, b);
         });
 
         return movesResult;
@@ -899,13 +948,13 @@ namespace Chess {
                 setPieceAtPosition(x, y, new Bishop(PieceColor::BLACK, x, y, id));
                 break;
             case 'R':
-                if (x <= 4) {
-                    Rook* rook = new Rook(PieceColor::WHITE, x, y, WHITE_A_ROOK_ID);
+                if (x < 4) {
+                    Rook* rook = new Rook(PieceColor::WHITE, x, y, piecePositions.contains(WHITE_A_ROOK_ID) ? WHITE_H_ROOK_ID : WHITE_A_ROOK_ID);
 
                     rook->setHasMoved(true);
                     setPieceAtPosition(x, y, rook);
                 } else {
-                    Rook* rook = new Rook(PieceColor::WHITE, x, y, WHITE_H_ROOK_ID);
+                    Rook* rook = new Rook(PieceColor::WHITE, x, y, piecePositions.contains(WHITE_H_ROOK_ID) ? WHITE_A_ROOK_ID : WHITE_H_ROOK_ID);
 
                     rook->setHasMoved(true);
                     setPieceAtPosition(x, y, rook);
@@ -913,12 +962,12 @@ namespace Chess {
                 break;
             case 'r':
                 if (x <= 4) {
-                    Rook* rook = new Rook(PieceColor::BLACK, x, y, BLACK_A_ROOK_ID);
+                    Rook* rook = new Rook(PieceColor::BLACK, x, y, piecePositions.contains(BLACK_A_ROOK_ID) ? BLACK_H_ROOK_ID : BLACK_A_ROOK_ID);
 
                     rook->setHasMoved(true);
                     setPieceAtPosition(x, y, rook);
                 } else {
-                    Rook* rook = new Rook(PieceColor::BLACK, x, y, BLACK_H_ROOK_ID);
+                    Rook* rook = new Rook(PieceColor::BLACK, x, y, piecePositions.contains(BLACK_H_ROOK_ID) ? BLACK_A_ROOK_ID : BLACK_H_ROOK_ID);
 
                     rook->setHasMoved(true);
                     setPieceAtPosition(x, y, rook);
@@ -947,13 +996,15 @@ namespace Chess {
 
     int Board::mvvlva(Tile* tile, PieceColor attackingColor) {
         int score = 0;
-/*        int aggressorWeight = 99999999;
+        /*int aggressorWeight = 99999999;
         Piece* piece = tile->getPiece();
 
         if (piece != nullptr) {
-            for (Piece* attacker : tile->getAttackersByColor(attackingColor)) {
-                if (attacker->getPieceType() != PieceType::KING && attacker->getWeight(this) < aggressorWeight) {
-                    aggressorWeight = attacker->getWeight(this);
+            std::vector<Piece*> attackers = getAttackersByColor(tile, attackingColor);
+
+            for (Piece* attacker : attackers) {
+                if (attacker->getWeight(this) < aggressorWeight) {
+                    aggressorWeight = attacker->getPieceType() == PieceType::KING ? 0 : attacker->getWeight(this);
                 }
             }
 
@@ -1149,7 +1200,7 @@ namespace Chess {
         for (Direction direction : ALL_DIRECTIONS) {
             attackedTiles.clear();
             getTilesInDirection(attackedTiles, targetSquare->getX(), targetSquare->getY(), direction,
-                                getOppositeColor(attackingColor), false);
+                                getOppositeColor(attackingColor), true);
 
             for (Tile* tile : attackedTiles) {
                 Piece* piece = tile->getPiece();
@@ -1191,6 +1242,56 @@ namespace Chess {
         }
 
         return false;
+    }
+
+    std::vector<Piece*> Board::getAttackersByColor(Tile* targetSquare, PieceColor attackingColor) {
+        piecesList.clear();
+
+        for (Direction direction : ALL_DIRECTIONS) {
+            attackedTiles.clear();
+            getTilesInDirection(attackedTiles, targetSquare->getX(), targetSquare->getY(), direction,
+                                getOppositeColor(attackingColor), true);
+
+            for (Tile* tile : attackedTiles) {
+                Piece* piece = tile->getPiece();
+
+                if (!piece || piece->getColor() != attackingColor) {
+                    continue;
+                }
+
+                if (piece->getPieceType() == PieceType::PAWN) {
+                    if (std::abs(targetSquare->getY() - tile->getY()) >= 2) {
+                        continue;
+                    }
+                }
+
+                if (piece->getPieceType() == PieceType::KING) {
+                    if (!(std::abs(targetSquare->getX() - tile->getX()) <= 1 &&
+                          std::abs(targetSquare->getY() - tile->getY()) <= 1)) {
+                        continue;
+                    }
+                }
+
+                if (canPieceAttackDirection(piece, direction)) {
+                    piecesList.push_back(piece);
+                }
+            }
+        }
+
+        for (DirectionValue directionValue : knightDirections) {
+            Tile* tile = getTile(targetSquare->getX() + directionValue.dx, targetSquare->getY() + directionValue.dy);
+
+            if (tile != nullptr) {
+                Piece* piece = tile->getPiece();
+
+                if (piece != nullptr && piece->getPieceType() == PieceType::KNIGHT &&
+                    piece->getColor() == attackingColor) {
+                    piecesList.push_back(piece);
+                }
+            }
+        }
+
+        return piecesList;
     }
 
     bool Board::canPieceAttackDirection(Piece* piece, Direction direction) {

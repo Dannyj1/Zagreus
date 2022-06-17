@@ -18,15 +18,16 @@ namespace Chess {
     public:
         SearchResult getBestMove(Board* board, PieceColor color);
 
-        SearchResult search(Board* board, int depth, int alpha, int beta, const Move &rootMove,
+        SearchResult search(Board* board, int depth, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
                             std::chrono::time_point<std::chrono::system_clock> endTime);
 
-        SearchResult zwSearch(Board* board, int depth, int beta, const Move &rootMove,
+        SearchResult zwSearch(Board* board, int depth, int ply, int beta, const Move &rootMove, const Move &previousMove,
                               std::chrono::time_point<std::chrono::system_clock> endTime);
 
-        int quiesce(Board* board, int alpha, int beta);
+        SearchResult quiesce(Board* board, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
+                             std::chrono::time_point<std::chrono::system_clock> endTime);
 
-        int evaluate(Board* board);
+        int evaluate(Board* board, int ply, std::chrono::time_point<std::chrono::system_clock> endTime);
 
         bool isCurrentlySearching();
     };

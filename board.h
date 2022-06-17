@@ -169,6 +169,8 @@ namespace Chess {
 
         std::vector<Move> getPseudoLegalMoves(PieceColor color);
 
+        std::vector<Move> getQuiescenceMoves(PieceColor color);
+
         [[nodiscard]] PieceColor getMovingColor() const;
 
         std::vector<Tile*>
@@ -216,6 +218,8 @@ namespace Chess {
 
         void createInitialZobristHash();
 
+        bool orderQuiscenceMoves(const Move &a, const Move &b);
+
         bool orderMoves(const Move &a, const Move &b);
 
         static bool isInCenter(int x, int y);
@@ -229,6 +233,8 @@ namespace Chess {
         bool hasCastled(PieceColor color);
 
         bool isTileAttackedByColor(Tile* targetSquare, PieceColor attackingColor);
+
+        std::vector<Piece*> getAttackersByColor(Tile* targetSquare, PieceColor attackingColor);
 
         static bool canPieceAttackDirection(Piece* piece, Direction direction);
     };

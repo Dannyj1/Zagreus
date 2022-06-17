@@ -10,7 +10,7 @@ namespace Chess {
     }
 
     std::string Engine::getEngineVersion() {
-        return "v0.4";
+        return "v0.6";
     }
 
     std::string Engine::getAuthorName() {

@@ -530,7 +530,7 @@ namespace Chess {
 
         for (Tile* tile : attackedTiles) {
             if (board->isInCenter(tile->getX(), tile->getY())) {
-                score += 2;
+                score += 3;
             } else if (board->isInExtendedCenter(tile->getX(), tile->getY())) {
                 score += 1;
             }
@@ -538,9 +538,9 @@ namespace Chess {
 
         if (board->getMovesMade() <= 20) {
             if (board->isInCenter(loc.x, loc.y)) {
-                score += 6;
+                score += 5;
             } else if (board->isInExtendedCenter(loc.x, loc.y)) {
-                score += 3;
+                score += 1;
             }
         }
 
@@ -588,8 +588,9 @@ namespace Chess {
     }
 
     int Queen::getMobilityScore(Board* board) {
-        legalTiles.clear();
-        this->getPseudoLegalMoves(legalTiles, board);
+        if (board->getMovesMade() <= 25) {
+            legalTiles.clear();
+            this->getPseudoLegalMoves(legalTiles, board);
 
 /*        for (Tile* tile : pseudoLegalMoves) {
             if (!tile->getAttackersByColor(getOppositeColor(getColor())).empty() && board->mvvlva(tile, getColor()) < 0) {
@@ -597,12 +598,15 @@ namespace Chess {
             }
         }*/
 
-        return legalTiles.size() * 5;
+            return legalTiles.size() * 5;
+        } else {
+            return 0;
+        }
     }
 
     int Queen::getTempo(Board* board) {
         if (getHasMoved()) {
-            return board->getMovesMade() <= 25 ? -1 : 1;
+            return board->getMovesMade() <= 25 ? -3 : 3;
         } else {
             return 0;
         }

@@ -162,7 +162,6 @@ namespace senjo {
 
         static const std::string _TEST_FILE;
 
-        bool unsorted;
         int count;
         int skip;
         int maxDepth;

@@ -4,6 +4,7 @@
 #include "board.h"
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
+#include "search_mgr.h"
 
 uint64_t captures = 0;
 uint64_t checks = 0;
@@ -31,7 +32,7 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
 
         if (fromLoc.x < 0) {
             board->print();
-            std::cout << "Error: piece not found. Type: " << piece->getPieceType() << ", Color: " << piece->getColor() << std::endl;
+            std::cout << "Error: piece not found. Type: " << piece->getPieceType() << ", Color: " << piece->getColor() << ", To: " << move.tile->getNotation() << std::endl;
         }
 
         if (depth == 1) {
@@ -109,10 +110,15 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
 }
 
 int main() {
-    /*for (int i = 1; i < 16; i++) {
+    // Custom test pos 1: r3kb1r/pppbqppp/4pn2/n2p4/3P1B2/2PBPN2/PP1N1PPP/R2QK2R w KQkq - 5 8
+    // Custom test pos 2: r2qr1k1/1p1bbppp/2pp1n2/2n5/p2NPB2/P1N2Q1P/BPP2PP1/R3R1K1 b - - 2 14
+    // Custom test pos 3: nk5b/2rBppP1/pPpp1R2/1NP1Qpr1/3PPPp1/3RKPN1/1Pq1np1b/3B4 w - - 0 1
+    // eval test: 8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33
+
+/*    for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
-        // board.setFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+        board.setFromFEN("nk5b/2rBppP1/pPpp1R2/1NP1Qpr1/3PPPp1/3RKPN1/1Pq1np1b/3B4 w - - 0 1");
         checks = 0;
         ep = 0;
         captures = 0;
@@ -120,7 +126,7 @@ int main() {
         castles = 0;
 
         auto start = std::chrono::system_clock::now();
-        uint64_t nodes = perft(&board, Chess::PieceColor::WHITE, i, i);
+        uint64_t nodes = perft(&board, board.getMovingColor(), i, i);
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
@@ -130,6 +136,17 @@ int main() {
 
         std::cout << std::endl;
     }*/
+
+
+/*    Chess::Board board;
+    Chess::SearchManager searchManager{};
+
+    board.setFromFEN("8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33");
+    Chess::Move bestMove = searchManager.getBestMove(&board, Chess::PieceColor::WHITE).move;
+    Chess::TileLocation pieceLoc = board.getPiecePosition(bestMove.piece->getId());
+    Chess::Tile* tile = board.getTileUnsafe(pieceLoc.x, pieceLoc.y);
+
+    std::cout << "Move: " << tile->getNotation() << bestMove.tile->getNotation() << std::endl;*/
 
     try {
         Chess::Engine engine;

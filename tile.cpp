@@ -4,15 +4,13 @@
 
 #include "tile.h"
 
-#include <utility>
-
 namespace Chess {
     Piece* Tile::getPiece() {
         return this->piece;
     }
 
     void Tile::setPiece(Piece* newPiece) {
-        this->piece = std::move(newPiece);
+        this->piece = newPiece;
     }
 
     int Tile::getX() const {
@@ -28,7 +26,7 @@ namespace Chess {
     }
 
     void Tile::setEnPassantTarget(Piece* targetPiece) {
-        this->enPassantTarget = std::move(targetPiece);
+        this->enPassantTarget = targetPiece;
     }
 
     std::string Tile::getNotation() {

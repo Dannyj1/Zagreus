@@ -2,6 +2,7 @@
 // Created by Danny on 30-4-2022.
 //
 
+#include <iostream>
 #include "tt.h"
 
 namespace Chess {
@@ -34,7 +35,7 @@ namespace Chess {
         if (!table.contains(zobristHash)) {
             return 0;
         }
-        
+
         return table.at(zobristHash).score;
     }
 

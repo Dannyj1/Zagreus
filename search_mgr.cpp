@@ -28,7 +28,7 @@ namespace Chess {
                 break;
             }
 
-            if (std::chrono::system_clock::now() - startTime > (endTime - startTime) * 0.65) {
+            if (std::chrono::system_clock::now() - startTime > (endTime - startTime) * std::min(0.2, 0.9 - (depth * 0.1))) {
                 break;
             }
 
@@ -52,7 +52,7 @@ namespace Chess {
                     continue;
                 }
 
-                SearchResult result = search(board, depth, -99999999, 99999999, move, endTime);
+                SearchResult result = search(board, depth, 0, -99999999, 99999999, move, move, endTime);
                 result.score *= -1;
                 board->unmakeMove();
 
@@ -74,10 +74,10 @@ namespace Chess {
         return bestResult;
     }
 
-    SearchResult SearchManager::search(Board* board, int depth, int alpha, int beta, const Move &rootMove,
-                                       std::chrono::time_point<std::chrono::system_clock> endTime) {
+    SearchResult SearchManager::search(Board* board, int depth, int ply, int alpha, int beta, const Move &rootMove,
+                                       const Move &previousMove, std::chrono::time_point<std::chrono::system_clock> endTime) {
         if (depth == 0 || std::chrono::system_clock::now() > endTime || board->getWinner() != PieceColor::NONE || board->isDraw()) {
-            return {rootMove, evaluate(board)};
+            return quiesce(board, ply, alpha, beta, rootMove, previousMove, endTime);
         }
 
         bool searchPv = true;
@@ -103,15 +103,15 @@ namespace Chess {
                 result = {rootMove, tt.getPositionScore(board->getZobristHash())};
             } else {
                 if (searchPv) {
-                    result = search(board, depth - 1, -beta, -alpha, rootMove, endTime);
+                    result = search(board, depth - 1, ply + 1, -beta, -alpha, rootMove, move, endTime);
                     result.score *= -1;
                     tt.addPosition(board->getZobristHash(), depth, result.score);
                 } else {
-                    result = zwSearch(board, depth - 1, -alpha, rootMove, endTime);
+                    result = zwSearch(board, depth - 1, ply + 1, -alpha, rootMove, move, endTime);
                     result.score *= -1;
 
                     if (result.score > alpha) {
-                        result = search(board, depth - 1, -beta, -alpha, rootMove, endTime);
+                        result = search(board, depth - 1, ply + 1, -beta, -alpha, rootMove, move, endTime);
                         result.score *= -1;
                         tt.addPosition(board->getZobristHash(), depth, result.score);
                     }
@@ -139,10 +139,10 @@ namespace Chess {
     }
 
     SearchResult
-    SearchManager::zwSearch(Board* board, int depth, int beta, const Move &rootMove,
+    SearchManager::zwSearch(Board* board, int depth, int ply, int beta, const Move &rootMove, const Move &previousMove,
                             std::chrono::time_point<std::chrono::system_clock> endTime) {
         if (depth == 0 || std::chrono::system_clock::now() > endTime || board->getWinner() != PieceColor::NONE || board->isDraw()) {
-            return {rootMove, evaluate(board)};
+            return quiesce(board, ply, beta - 1, beta, rootMove, previousMove, endTime);
         }
 
         std::vector<Move> legalMoves = board->getPseudoLegalMoves(board->getMovingColor());
@@ -160,7 +160,7 @@ namespace Chess {
                 continue;
             }
 
-            SearchResult result = zwSearch(board, depth - 1, 1 - beta, rootMove, endTime);
+            SearchResult result = zwSearch(board, depth - 1, ply + 1, 1 - beta, rootMove, move, endTime);
             result.score *= -1;
             board->unmakeMove();
 
@@ -172,14 +172,22 @@ namespace Chess {
         return {rootMove, beta - 1};
     }
 
-    int SearchManager::evaluate(Board* board) {
+    int SearchManager::evaluate(Board* board, int ply, std::chrono::time_point<std::chrono::system_clock> endTime) {
+        if (std::chrono::system_clock::now() > endTime) {
+            return 0;
+        }
+
         int whiteScore = 0;
         int blackScore = 0;
         int modifier = board->getMovingColor() == PieceColor::WHITE ? 1 : -1;
 
         PieceColor winner = board->getWinner();
         if (winner != PieceColor::NONE) {
-            return 999999 * -modifier;
+            if (winner == board->getMovingColor()) {
+                return 100000 - ply;
+            } else {
+                return -100000 + ply;
+            }
         }
 
         if (board->isDraw()) {
@@ -187,6 +195,10 @@ namespace Chess {
         }
 
         for (Piece* piece : board->getPieces()) {
+            if (std::chrono::system_clock::now() > endTime) {
+                return 0;
+            }
+
             if (piece->getColor() == PieceColor::WHITE) {
                 whiteScore += piece->getWeight(board);
                 whiteScore += piece->getMobilityScore(board);
@@ -203,8 +215,61 @@ namespace Chess {
         return (whiteScore - blackScore) * modifier;
     }
 
-    int SearchManager::quiesce(Board* board, int alpha, int beta) {
-        return 0;
+    SearchResult SearchManager::quiesce(Board* board, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
+                                        std::chrono::time_point<std::chrono::system_clock> endTime) {
+        if (std::chrono::system_clock::now() > endTime) {
+            return {rootMove, beta};
+        }
+
+        int standPat = evaluate(board, ply, endTime);
+
+        if (standPat >= beta) {
+            return {rootMove, beta};
+        }
+
+        int delta = 1000;
+
+        if (previousMove.promotionPiece) {
+            delta += 900;
+        }
+
+        if (standPat < alpha - delta) {
+            return {rootMove, alpha};
+        }
+
+        if (alpha < standPat) {
+            alpha = standPat;
+        }
+
+        for (Move move : board->getQuiescenceMoves(board->getMovingColor())) {
+            if (std::chrono::system_clock::now() > endTime) {
+                break;
+            }
+
+            Tile* toTile = move.tile;
+            Piece* piece = move.piece;
+
+            board->makeMove(toTile->getX(), toTile->getY(), piece, move.promotionPiece);
+
+            if (board->isKingChecked(move.piece->getColor())) {
+                board->unmakeMove();
+                continue;
+            }
+
+            SearchResult result = quiesce(board, ply + 1, -beta, -alpha, rootMove, move, endTime);
+            result.score *= -1;
+            board->unmakeMove();
+
+            if (result.score >= beta) {
+                return {rootMove, beta};
+            }
+
+            if (result.score > alpha) {
+                alpha = result.score;
+            }
+        }
+
+        return {rootMove, alpha};
     }
 
     bool SearchManager::isCurrentlySearching() {
