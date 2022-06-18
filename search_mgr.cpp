@@ -275,6 +275,10 @@ namespace Chess {
     bool SearchManager::isCurrentlySearching() {
         return isSearching;
     }
+
+    senjo::SearchStats SearchManager::getSearchStats() {
+        return senjo::SearchStats();
+    }
 }
 
 #pragma clang diagnostic pop

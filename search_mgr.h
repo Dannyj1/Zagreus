@@ -5,6 +5,7 @@
 #pragma once
 
 #include "board.h"
+#include "senjo/SearchStats.h"
 
 namespace Chess {
     struct SearchResult {
@@ -15,6 +16,7 @@ namespace Chess {
     class SearchManager {
     private:
         bool isSearching;
+        senjo::SearchStats searchStats;
     public:
         SearchResult getBestMove(Board* board, PieceColor color);
 
@@ -30,6 +32,8 @@ namespace Chess {
         int evaluate(Board* board, int ply, std::chrono::time_point<std::chrono::system_clock> endTime);
 
         bool isCurrentlySearching();
+
+        senjo::SearchStats getSearchStats();
     };
 
     static SearchManager searchManager{};

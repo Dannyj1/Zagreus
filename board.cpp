@@ -996,6 +996,7 @@ namespace Chess {
 
     int Board::mvvlva(Tile* tile, PieceColor attackingColor) {
         int score = 0;
+        // TODO: Wrong! Most Valuable Victim isn't calculated!
         /*int aggressorWeight = 99999999;
         Piece* piece = tile->getPiece();
 
