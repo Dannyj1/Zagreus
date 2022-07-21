@@ -6,14 +6,13 @@
 
 #include <string>
 #include "senjo/ChessEngine.h"
-#include "board.h"
 
 namespace Chess {
     class Engine : public senjo::ChessEngine {
     private:
-        Board board;
+        //Board board;
         bool isEngineInitialized;
-        PieceColor engineColor = PieceColor::NONE;
+        //PieceColor engineColor = PieceColor::NONE;
     public:
         std::string getEngineName() override;
 

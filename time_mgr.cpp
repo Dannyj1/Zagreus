@@ -1,3 +1,4 @@
+/*
 //
 // Created by Danny on 28-4-2022.
 //
@@ -34,3 +35,4 @@ namespace Chess {
         return now;
     }
 }
+*/

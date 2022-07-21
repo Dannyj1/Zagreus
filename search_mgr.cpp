@@ -1,3 +1,4 @@
+/*
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "misc-no-recursion"
 //
@@ -281,4 +282,4 @@ namespace Chess {
     }
 }
 
-#pragma clang diagnostic pop
+#pragma clang diagnostic pop*/

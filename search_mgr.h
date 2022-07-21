@@ -1,3 +1,4 @@
+/*
 //
 // Created by Danny on 26-4-2022.
 //
@@ -38,3 +39,4 @@ namespace Chess {
 
     static SearchManager searchManager{};
 }
+*/

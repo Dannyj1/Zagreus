@@ -1,3 +1,4 @@
+/*
 //
 // Created by Danny on 30-4-2022.
 //
@@ -45,3 +46,4 @@ namespace Chess {
 
     static TranspositionTable tt{};
 }
+*/

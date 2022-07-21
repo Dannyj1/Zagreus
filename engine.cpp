@@ -1,7 +1,6 @@
 #include "senjo/ChessEngine.h"
 #include "senjo/Output.h"
 #include "engine.h"
-#include "board.h"
 #include "search_mgr.h"
 
 namespace Chess {
@@ -34,7 +33,7 @@ namespace Chess {
     }
 
     void Engine::initialize() {
-        board = Board{};
+/*        board = Board{};*/
         isEngineInitialized = true;
     }
 
@@ -43,11 +42,12 @@ namespace Chess {
     }
 
     bool Engine::setPosition(const std::string &fen, std::string* remain) {
-        return board.setFromFEN(fen);
+        //return board.setFromFEN(fen);
+        return true;
     }
 
     bool Engine::makeMove(const std::string &move) {
-        if (move.size() < 4 || move.size() > 5) {
+        /*if (move.size() < 4 || move.size() > 5) {
             return false;
         }
 
@@ -84,19 +84,22 @@ namespace Chess {
             return board.makeStrMove("e8a8");
         }
 
-        return board.makeStrMove(move);
+        return board.makeStrMove(move);*/
+        return true;
     }
 
     std::string Engine::getFEN() {
-        return board.getFEN();
+        //return board.getFEN();
+        return "";
     }
 
     void Engine::printBoard() {
-        board.print();
+        //board.print();
     }
 
     bool Engine::whiteToMove() {
-        return board.getMovingColor() == PieceColor::WHITE;
+/*        return board.getMovingColor() == PieceColor::WHITE;*/
+        return true;
     }
 
     void Engine::clearSearchData() {
@@ -135,7 +138,8 @@ namespace Chess {
     }
 
     bool Engine::isSearching() {
-        return searchManager.isCurrentlySearching();
+        //return searchManager.isCurrentlySearching();
+        return false;
     }
 
     void Engine::stopSearching() {
@@ -148,9 +152,9 @@ namespace Chess {
     }
 
     void Engine::waitForSearchFinish() {
-        while (searchManager.isCurrentlySearching()) {
+/*        while (searchManager.isCurrentlySearching()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
+        }*/
     }
 
     uint64_t Engine::perft(const int depth) {
@@ -159,7 +163,7 @@ namespace Chess {
     }
 
     std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
-        if (engineColor == PieceColor::NONE) {
+        /*if (engineColor == PieceColor::NONE) {
             engineColor = board.getMovingColor();
         }
 
@@ -189,7 +193,8 @@ namespace Chess {
         }
 
         std::cout << "Score: " << bestResult.score << std::endl;
-        return fromTile->getNotation() + bestResult.move.tile->getNotation();
+        return fromTile->getNotation() + bestResult.move.tile->getNotation();*/
+        return "a1a2";
     }
 
     senjo::SearchStats Engine::getSearchStats() {

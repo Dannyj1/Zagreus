@@ -1,10 +1,11 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "board.h"
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
 #include "search_mgr.h"
+#include "bitboard.h"
+#include "senjo/Output.h"
 
 uint64_t captures = 0;
 uint64_t checks = 0;
@@ -13,8 +14,7 @@ uint64_t ep = 0;
 uint64_t castles = 0;
 uint64_t promotions = 0;
 
-// TODO: consider taking care of things like dangling pointer and freeing memory
-uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int startingDepth) {
+/*uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0;
 
     if (depth == 0) {
@@ -52,15 +52,19 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
             }
         }
 
-/*        if (isEp && depth == 1) {
+
+        if (isEp && depth == 1) {
             board->print();
-        }*/
+        }
+
 
         board->makeMove(move.tile->getX(), move.tile->getY(), piece, move.promotionPiece);
 
-/*        if (isEp && depth == 1) {
+
+        if (isEp && depth == 1) {
             board->print();
-        }*/
+        }
+
 
         if (!board->isKingChecked(move.piece->getColor())) {
             if (move.promotionPiece) {
@@ -100,14 +104,16 @@ uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int star
         }
 
         board->unmakeMove();
-/*        if (isEp && depth == 1) {
+
+        if (isEp && depth == 1) {
             board->print();
             std::cout << "==============================" << std::endl;
-        }*/
+        }
+
     }
 
     return nodes;
-}
+}*/
 
 int main() {
     // Custom test pos 1: r3kb1r/pppbqppp/4pn2/n2p4/3P1B2/2PBPN2/PP1N1PPP/R2QK2R w KQkq - 5 8
@@ -115,7 +121,7 @@ int main() {
     // Custom test pos 3: nk5b/2rBppP1/pPpp1R2/1NP1Qpr1/3PPPp1/3RKPN1/1Pq1np1b/3B4 w - - 0 1
     // eval test: 8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33
 
-/*    for (int i = 1; i < 16; i++) {
+    /*for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Board board;
         board.setFromFEN("nk5b/2rBppP1/pPpp1R2/1NP1Qpr1/3PPPp1/3RKPN1/1Pq1np1b/3B4 w - - 0 1");
@@ -156,14 +162,14 @@ int main() {
         line.reserve(16384);
 
         while (std::getline(std::cin, line)) {
-            //try {
-            if (!adapter.doCommand(line)) {
-                break;
-            }
-/*            } catch (const std::exception &e) {
+            try {
+                if (!adapter.doCommand(line)) {
+                    break;
+                }
+            } catch (const std::exception &e) {
                 senjo::Output() << "ERROR: " << e.what();
                 return -1;
-            }*/
+            }
         }
 
         return 0;
