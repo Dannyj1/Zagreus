@@ -3,9 +3,10 @@
 //
 
 #include <cstdint>
-#include <popcntintrin.h>
-#include <psdk_inc/intrin-impl.h>
 #include <string>
+#include <iostream>
+#include <bitset>
+#include <popcntintrin.h>
 
 #include "bitboard.h"
 
@@ -118,11 +119,11 @@ namespace Chess {
         return soutOne(singlePushs) & getEmptyBoard() & RANK_5;
     }
 
-    void Bitboard::setPiece(int index, PieceType pieceType, PieceColor color) {
+    void Bitboard::setPiece(int index, PieceType pieceType) {
         pieceBB[pieceType] |= 1ULL << index;
         occupiedBB |= 1ULL << index;
 
-        if (color == PieceColor::White) {
+        if (pieceType % 2 == 0) {
             whiteBB |= 1ULL << index;
         } else {
             blackBB |= 1ULL << index;
@@ -138,7 +139,7 @@ namespace Chess {
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType) {
         removePiece(fromSquare, pieceType);
-        setPiece(toSquare, pieceType, getPieceColor(pieceType));
+        setPiece(toSquare, pieceType);
     }
 
     bool Bitboard::setFromFEN(const std::string &fen) {
@@ -162,8 +163,8 @@ namespace Chess {
                 }
 
                 if (character >= 'A' && character <= 'z') {
-                    setPieceFromFENChar(character, x, y);
-                    x++;
+                    setPieceFromFENChar(character, index);
+                    index++;
                     continue;
                 } else {
                     std::cout << "Invalid character!" << std::endl;
@@ -171,7 +172,7 @@ namespace Chess {
                 }
             }
 
-            if (spaces == 1) {
+            /*if (spaces == 1) {
                 gameState = character == 'w' ? GameState::WHITE_TURN : GameState::BLACK_TURN;
                 continue;
             }
@@ -210,14 +211,123 @@ namespace Chess {
                 }
 
                 continue;
-            }
+            }*/
         }
 
         return true;
     }
 
     PieceColor Bitboard::getPieceColor(PieceType type) {
-        return White;
+        if (type % 2 == 0) {
+            return PieceColor::White;
+        } else {
+            return PieceColor::Black;
+        }
+    }
+
+    void Bitboard::setPieceFromFENChar(const char character, int index) {
+        // Uppercase = White, lowercase = black
+        switch (character) {
+            case 'P':
+                setPiece(index, PieceType::WhitePawn);
+                break;
+            case 'p':
+                setPiece(index, PieceType::BlackPawn);
+                break;
+            case 'N':
+                setPiece(index, PieceType::WhiteKnight);
+                break;
+            case 'n':
+                setPiece(index, PieceType::BlackKnight);
+                break;
+            case 'B':
+                setPiece(index, PieceType::WhiteBishop);
+                break;
+            case 'b':
+                setPiece(index, PieceType::BlackBishop);
+                break;
+            case 'R':
+                setPiece(index, PieceType::WhiteRook);
+                break;
+            case 'r':
+                setPiece(index, PieceType::BlackRook);
+                break;
+            case 'Q':
+                setPiece(index, PieceType::WhiteQueen);
+                break;
+            case 'q':
+                setPiece(index, PieceType::BlackQueen);
+                break;
+            case 'K':
+                setPiece(index, PieceType::WhiteKing);
+                break;
+            case 'k':
+                setPiece(index, PieceType::BlackKing);
+                break;
+        }
+    }
+
+    void Bitboard::print() {
+        int bbAmount = sizeof(pieceBB) / sizeof(uint64_t);
+        char boardChars[64];
+
+        std::fill_n(boardChars, 64, ' ');
+
+        for (int i = 0; i < bbAmount; i++) {
+            uint64_t bb = pieceBB[i];
+            char pieceChar = getCharacterForPieceType(static_cast<PieceType>(i));
+
+            while (bb) {
+                uint64_t index = bitscanForward(bb);
+                bb &= ~(1ULL << index);
+
+                boardChars[index] = pieceChar;
+            }
+        }
+
+        std::cout << "---------------------------------" << std::endl;
+        std::cout << "| ";
+
+        for (int i = 0; i < 64; i++) {
+            char boardChar = boardChars[i];
+
+            std::cout << boardChar << " | ";
+
+            if ((i + 1) % 8 == 0 && i != 63) {
+                std::cout << std::endl << "| ";
+            }
+        }
+
+        std::cout << std::endl << "---------------------------------" << std::endl;
+    }
+
+    char Bitboard::getCharacterForPieceType(PieceType pieceType) {
+        switch (pieceType) {
+            case WhitePawn:
+                return 'P';
+            case BlackPawn:
+                return 'p';
+            case WhiteKnight:
+                return 'N';
+            case BlackKnight:
+                return 'n';
+            case WhiteBishop:
+                return 'B';
+            case BlackBishop:
+                return 'b';
+            case WhiteRook:
+                return 'R';
+            case BlackRook:
+                return 'r';
+            case WhiteQueen:
+                return 'Q';
+            case BlackQueen:
+                return 'q';
+            case WhiteKing:
+                return 'K';
+            case BlackKing:
+                return 'k';
+        }
     }
 
     uint64_t soutOne(uint64_t b) {
@@ -285,7 +395,7 @@ namespace Chess {
     }
 
     uint64_t popcnt(uint64_t b) {
-        return _mm_popcnt_u64(b);
+        return __builtin_popcountll(b);
     }
 
     unsigned long bitscanForward(uint64_t b) {

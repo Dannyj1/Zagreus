@@ -8,18 +8,18 @@
 
 namespace Chess {
     enum PieceType {
-        WhitePawn,
-        BlackPawn,
-        WhiteKnight,
-        BlackKnight,
-        WhiteBishop,
-        BlackBishop,
-        WhiteRook,
-        BlackRook,
-        WhiteQueen,
-        BlackQueen,
-        WhiteKing,
-        BlackKing,
+        WhitePawn = 0,
+        BlackPawn = 1,
+        WhiteKnight = 2,
+        BlackKnight = 3,
+        WhiteBishop = 4,
+        BlackBishop = 5,
+        WhiteRook = 6,
+        BlackRook = 7,
+        WhiteQueen = 8,
+        BlackQueen = 9,
+        WhiteKing = 10,
+        BlackKing = 11,
     };
 
     enum PieceColor {
@@ -110,13 +110,13 @@ namespace Chess {
 
     class Bitboard {
     private:
-        uint64_t pieceBB[12];
-        uint64_t whiteBB;
-        uint64_t blackBB;
-        uint64_t occupiedBB;
+        uint64_t pieceBB[12]{};
+        uint64_t whiteBB{};
+        uint64_t blackBB{};
+        uint64_t occupiedBB{};
 
-        uint64_t kingAttacks[64];
-        uint64_t knightAttacks[64];
+        uint64_t kingAttacks[64]{};
+        uint64_t knightAttacks[64]{};
     public:
         Bitboard();
 
@@ -150,7 +150,7 @@ namespace Chess {
 
         uint64_t getBlackPawnDoublePush(uint64_t bPawns);
 
-        void setPiece(int index, PieceType pieceType, PieceColor color);
+        void setPiece(int index, PieceType pieceType);
 
         void removePiece(int index, PieceType pieceType);
 
@@ -161,5 +161,11 @@ namespace Chess {
         uint64_t getEmptyBoard();
 
         bool setFromFEN(const std::string &fen);
+
+        void setPieceFromFENChar(const char character, int index);
+
+        void print();
+
+        char getCharacterForPieceType(PieceType pieceType);
     };
 }

@@ -1,6 +1,7 @@
 //
 // Created by Danny on 14-6-2022.
 //
+#include <string>
 
 #include "bitboard.h"
 #include "move_gen.h"
