@@ -2,6 +2,7 @@
 // Created by Danny on 14-6-2022.
 //
 #include <string>
+#include <iostream>
 
 #include "bitboard.h"
 #include "move_gen.h"
@@ -9,7 +10,7 @@
 namespace Chess {
     std::vector<Move> generateMoves(Bitboard bitboard, PieceColor color) {
         std::vector<Move> moves;
-        moves.reserve(50);
+        moves.reserve(100);
 
         generatePawnMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhitePawn : PieceType::BlackPawn);
         generateKnightMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhiteKnight : PieceType::BlackKnight);
@@ -54,11 +55,11 @@ namespace Chess {
 
             genBB = bitboard.getKnightAttacks(index);
 
-            while (genBB > 0) {
+            while (genBB) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
                 result.push_back({index, genIndex, pieceType});
-                genBB &= ~(1ULL << index);
+                genBB &= ~(1ULL << genIndex);
             }
 
             knightBB &= ~(1ULL << index);
@@ -78,7 +79,7 @@ namespace Chess {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
                 result.push_back({index, genIndex, pieceType});
-                genBB &= ~(1ULL << index);
+                genBB &= ~(1ULL << genIndex);
             }
 
             bishopBB &= ~(1ULL << index);
@@ -98,7 +99,7 @@ namespace Chess {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
                 result.push_back({index, genIndex, pieceType});
-                genBB &= ~(1ULL << index);
+                genBB &= ~(1ULL << genIndex);
             }
 
             rookBB &= ~(1ULL << index);
@@ -118,7 +119,7 @@ namespace Chess {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
                 result.push_back({index, genIndex, pieceType});
-                genBB &= ~(1ULL << index);
+                genBB &= ~(1ULL << genIndex);
             }
 
             queenBB &= ~(1ULL << index);
@@ -136,7 +137,7 @@ namespace Chess {
             uint64_t genIndex = Chess::bitscanForward(genBB);
 
             result.push_back({index, genIndex, pieceType});
-            genBB &= ~(1ULL << index);
+            genBB &= ~(1ULL << genIndex);
         }
     }
 }

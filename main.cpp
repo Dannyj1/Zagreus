@@ -7,6 +7,7 @@
 #include "bitboard.h"
 #include "senjo/Output.h"
 #include "bitboard.h"
+#include "move_gen.h"
 
 uint64_t captures = 0;
 uint64_t checks = 0;
@@ -127,6 +128,9 @@ int main() {
 
     bb.setFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     bb.print();
+
+    std::vector<Chess::Move> moves = Chess::generateMoves(bb, Chess::PieceColor::White);
+    std::cout << moves.size() << std::endl;
 
     /*for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
