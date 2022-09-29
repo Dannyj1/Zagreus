@@ -106,7 +106,7 @@ namespace Chess {
     uint64_t Bitboard::getWhitePawnDoublePush(uint64_t wPawns) {
         uint64_t singlePushs = getWhitePawnSinglePush(wPawns);
 
-        return nortOne(singlePushs) & getEmptyBoard() & RANK_4;
+        return singlePushs | (nortOne(singlePushs) & getEmptyBoard() & RANK_4);
     }
 
     uint64_t Bitboard::getBlackPawnSinglePush(uint64_t bPawns) {
@@ -116,7 +116,7 @@ namespace Chess {
     uint64_t Bitboard::getBlackPawnDoublePush(uint64_t bPawns) {
         uint64_t singlePushs = getBlackPawnSinglePush(bPawns);
 
-        return soutOne(singlePushs) & getEmptyBoard() & RANK_5;
+        return singlePushs | (soutOne(singlePushs) & getEmptyBoard() & RANK_5);
     }
 
     void Bitboard::setPiece(int index, PieceType pieceType) {
@@ -143,7 +143,7 @@ namespace Chess {
     }
 
     bool Bitboard::setFromFEN(const std::string &fen) {
-        int index = 0;
+        int index = 63;
         int spaces = 0;
 
         for (const char character : fen) {
@@ -164,7 +164,7 @@ namespace Chess {
 
                 if (character >= 'A' && character <= 'z') {
                     setPieceFromFENChar(character, index);
-                    index++;
+                    index--;
                     continue;
                 } else {
                     std::cout << "Invalid character!" << std::endl;
@@ -289,7 +289,7 @@ namespace Chess {
         std::cout << "| ";
 
         for (int i = 0; i < 64; i++) {
-            char boardChar = boardChars[i];
+            char boardChar = boardChars[63 - i];
 
             std::cout << boardChar << " | ";
 
