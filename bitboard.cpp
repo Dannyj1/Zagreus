@@ -91,11 +91,11 @@ namespace Chess {
     }
 
     uint64_t Bitboard::getWhitePawnAttacks(uint64_t wPawns) {
-        return getWhitePawnEastAttacks(wPawns) & getWhitePawnWestAttacks(wPawns);
+        return getWhitePawnEastAttacks(wPawns) | getWhitePawnWestAttacks(wPawns);
     }
 
     uint64_t Bitboard::getBlackPawnAttacks(uint64_t bPawns) {
-        return getBlackPawnEastAttacks(bPawns) & getBlackPawnWestAttacks(bPawns);
+        return getBlackPawnEastAttacks(bPawns) | getBlackPawnWestAttacks(bPawns);
     }
 
     uint64_t Bitboard::getWhitePawnSinglePush(uint64_t wPawns) {

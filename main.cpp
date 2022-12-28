@@ -49,10 +49,16 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
         }
 */
 
+        if (board.getPieceOnSquare(move.toSquare) != Chess::PieceType::Empty) {
+            isCapture = true;
+        }
 
         board.makeMove(move.fromSquare, move.toSquare, move.pieceType);
 
         if (!board.isKingInCheck(color)) {
+            if (depth == 1) {
+            }
+
 /*            if (move.promotionPiece) {
                 promotions++;
             }*/
@@ -65,12 +71,12 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
                     checks++;
                 }
 
-               /* if (board->getWinner() != Chess::PieceColor::NONE) {
-                    checkMates++;
-                }
-
                 if (isCapture) {
                     captures++;
+                }
+
+               /* if (board->getWinner() != Chess::PieceColor::NONE) {
+                    checkMates++;
                 }
 
                 if (isEp) {

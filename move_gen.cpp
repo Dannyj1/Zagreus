@@ -13,7 +13,7 @@ namespace Chess {
         moves.reserve(100);
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
-        generatePawnMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhitePawn : PieceType::BlackPawn);
+        generatePawnMoves(moves, bitboard, ownPiecesBB, color, color == PieceColor::White ? PieceType::WhitePawn : PieceType::BlackPawn);
         generateKnightMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteKnight : PieceType::BlackKnight);
         generateBishopMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteBishop : PieceType::BlackBishop);
         generateRookMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteRook : PieceType::BlackRook);
@@ -24,8 +24,9 @@ namespace Chess {
     }
 
     // TODO: generate attacks and en passant
-    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType) {
+    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType) {
         uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
+        uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));
 
         while (pawnBB) {
             uint64_t index = Chess::bitscanForward(pawnBB);
@@ -44,6 +45,23 @@ namespace Chess {
 
                 result.push_back({index, genIndex, pieceType});
                 genBB &= ~(1ULL << genIndex);
+            }
+
+            uint64_t attackBB;
+            if (pieceType == PieceType::WhitePawn) {
+                attackBB = bitboard.getWhitePawnAttacks(1ULL << index);
+            } else {
+                attackBB = bitboard.getBlackPawnAttacks(1ULL << index);
+            }
+
+            attackBB &= ~ownPiecesBB;
+            attackBB &= opponentPiecesBB;
+
+            while (attackBB > 0) {
+                uint64_t attackIndex = Chess::bitscanForward(attackBB);
+
+                result.push_back({index, attackIndex, pieceType});
+                attackBB &= ~(1ULL << attackIndex);
             }
 
             pawnBB &= ~(1ULL << index);

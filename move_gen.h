@@ -11,7 +11,7 @@
 namespace Chess {
     std::vector<Move> generateMoves(Bitboard bitboard, PieceColor color);
 
-    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType);
+    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType);
 
     void generateKnightMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType);
 
