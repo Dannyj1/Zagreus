@@ -16,27 +16,21 @@ uint64_t ep = 0;
 uint64_t castles = 0;
 uint64_t promotions = 0;
 
-/*uint64_t perft(Chess::Board* board, Chess::PieceColor color, int depth, int startingDepth) {
+uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0;
 
     if (depth == 0) {
         return 1ULL;
     }
 
-    std::vector<Chess::Move> moves = board->getPseudoLegalMoves(color);
+    std::vector<Chess::Move> moves = Chess::generateMoves(board, color);
 
     for (const Chess::Move &move : moves) {
-        Chess::Piece* piece = move.piece;
-        Chess::TileLocation fromLoc = board->getPiecePosition(piece->getId());
         bool isCapture = false;
         bool isEp = false;
         bool isCastle = false;
 
-        if (fromLoc.x < 0) {
-            board->print();
-            std::cout << "Error: piece not found. Type: " << piece->getPieceType() << ", Color: " << piece->getColor() << ", To: " << move.tile->getNotation() << std::endl;
-        }
-
+/*
         if (depth == 1) {
             if (move.tile->getPiece() && move.tile->getPiece()->getColor() != piece->getColor()) {
                 isCapture = true;
@@ -53,40 +47,25 @@ uint64_t promotions = 0;
                 isCastle = true;
             }
         }
+*/
 
 
-        if (isEp && depth == 1) {
-            board->print();
-        }
+        board.makeMove(move.fromSquare, move.toSquare, move.pieceType);
 
-
-        board->makeMove(move.tile->getX(), move.tile->getY(), piece, move.promotionPiece);
-
-
-        if (isEp && depth == 1) {
-            board->print();
-        }
-
-
-        if (!board->isKingChecked(move.piece->getColor())) {
-            if (move.promotionPiece) {
+        if (!board.isKingInCheck(color)) {
+/*            if (move.promotionPiece) {
                 promotions++;
-            }
+            }*/
 
-            uint64_t nodeAmount = perft(board, Chess::getOppositeColor(color), depth - 1, startingDepth);
+            uint64_t nodeAmount = perft(board, Chess::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
             nodes += nodeAmount;
 
-            if (depth == startingDepth) {
-                std::string notation = board->getTileUnsafe(fromLoc.x, fromLoc.y)->getNotation() + board->getTileUnsafe(move.tile->getX(), move.tile->getY())->getNotation();
-                std::cout << notation << ": " << nodeAmount << std::endl;
-            }
-
             if (depth == 1) {
-                if (board->isKingChecked(getOppositeColor(move.piece->getColor()))) {
+                if (board.isKingInCheck(Chess::Bitboard::getOppositeColor(color))) {
                     checks++;
                 }
 
-                if (board->getWinner() != Chess::PieceColor::NONE) {
+               /* if (board->getWinner() != Chess::PieceColor::NONE) {
                     checkMates++;
                 }
 
@@ -101,21 +80,16 @@ uint64_t promotions = 0;
 
                 if (isCastle) {
                     castles++;
-                }
+                }*/
             }
         }
 
-        board->unmakeMove();
-
-        if (isEp && depth == 1) {
-            board->print();
-            std::cout << "==============================" << std::endl;
-        }
+        board.unmakeMove();
 
     }
 
     return nodes;
-}*/
+}
 
 int main() {
     // Custom test pos 1: r3kb1r/pppbqppp/4pn2/n2p4/3P1B2/2PBPN2/PP1N1PPP/R2QK2R w KQkq - 5 8
@@ -124,18 +98,10 @@ int main() {
     // eval test: 8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
-    Chess::Bitboard bb;
-
-    bb.setFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    bb.print();
-
-    std::vector<Chess::Move> moves = Chess::generateMoves(bb, Chess::PieceColor::White);
-    std::cout << moves.size() << std::endl;
-
-    /*for (int i = 1; i < 16; i++) {
+    for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
-        Chess::Board board;
-        board.setFromFEN("nk5b/2rBppP1/pPpp1R2/1NP1Qpr1/3PPPp1/3RKPN1/1Pq1np1b/3B4 w - - 0 1");
+        Chess::Bitboard board;
+        board.setFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         checks = 0;
         ep = 0;
         captures = 0;
@@ -143,7 +109,7 @@ int main() {
         castles = 0;
 
         auto start = std::chrono::system_clock::now();
-        uint64_t nodes = perft(&board, board.getMovingColor(), i, i);
+        uint64_t nodes = perft(board, Chess::PieceColor::White, i, i);
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
@@ -152,7 +118,7 @@ int main() {
                   << ", Promotions: " << promotions << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
 
         std::cout << std::endl;
-    }*/
+    }
 
 
 /*    Chess::Board board;

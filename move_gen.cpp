@@ -1,9 +1,8 @@
 //
 // Created by Danny on 14-6-2022.
 //
-#include <string>
+
 #include <iostream>
-#include <bitset>
 
 #include "bitboard.h"
 #include "move_gen.h"
@@ -12,18 +11,20 @@ namespace Chess {
     std::vector<Move> generateMoves(Bitboard bitboard, PieceColor color) {
         std::vector<Move> moves;
         moves.reserve(100);
+        uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
-        generatePawnMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhitePawn : PieceType::BlackPawn);
-        generateKnightMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhiteKnight : PieceType::BlackKnight);
-        generateBishopMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhiteBishop : PieceType::BlackBishop);
-        generateRookMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhiteRook : PieceType::BlackRook);
-        generateQueenMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhiteQueen : PieceType::BlackQueen);
-        generateKingMoves(moves, bitboard, color == PieceColor::White ? PieceType::WhiteKing : PieceType::BlackKing);
+        generatePawnMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhitePawn : PieceType::BlackPawn);
+        generateKnightMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteKnight : PieceType::BlackKnight);
+        generateBishopMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteBishop : PieceType::BlackBishop);
+        generateRookMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteRook : PieceType::BlackRook);
+        generateQueenMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteQueen : PieceType::BlackQueen);
+        generateKingMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteKing : PieceType::BlackKing);
 
         return moves;
     }
 
-    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, PieceType pieceType) {
+    // TODO: generate attacks and en passant
+    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType) {
         uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
 
         while (pawnBB) {
@@ -31,10 +32,12 @@ namespace Chess {
             uint64_t genBB;
 
             if (pieceType == PieceType::WhitePawn) {
-                genBB = bitboard.getWhitePawnDoublePush(1 << index);
+                genBB = bitboard.getWhitePawnDoublePush(1ULL << index);
             } else {
-                genBB = bitboard.getBlackPawnDoublePush(1 << index);
+                genBB = bitboard.getBlackPawnDoublePush(1ULL << index);
             }
+
+            genBB &= ~ownPiecesBB;
 
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
@@ -45,16 +48,16 @@ namespace Chess {
 
             pawnBB &= ~(1ULL << index);
         }
-
-        std::cout << result.size() << std::endl;
     }
 
-    void generateKnightMoves(std::vector<Move> &result, Bitboard bitboard, PieceType pieceType) {
+    void generateKnightMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType) {
         uint64_t knightBB = bitboard.getPieceBoard(pieceType);
 
         while (knightBB) {
             uint64_t index = Chess::bitscanForward(knightBB);
             uint64_t genBB = bitboard.getKnightAttacks(index);
+
+            genBB &= ~ownPiecesBB;
 
             while (genBB) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
@@ -65,18 +68,16 @@ namespace Chess {
 
             knightBB &= ~(1ULL << index);
         }
-
-        std::cout << result.size() << std::endl;
     }
 
-    void generateBishopMoves(std::vector<Move> &result, Bitboard bitboard, PieceType pieceType) {
+    void generateBishopMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType) {
         uint64_t bishopBB = bitboard.getPieceBoard(pieceType);
 
         while (bishopBB) {
             uint64_t index = Chess::bitscanForward(bishopBB);
-            uint64_t genBB;
+            uint64_t genBB = bitboard.getBishopAttacks(1ULL << index);
 
-            genBB = bitboard.getBishopAttacks(1 << index);
+            genBB &= ~ownPiecesBB;
 
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
@@ -87,16 +88,16 @@ namespace Chess {
 
             bishopBB &= ~(1ULL << index);
         }
-
-        std::cout << result.size() << std::endl;
     }
 
-    void generateRookMoves(std::vector<Move> &result, Bitboard bitboard, PieceType pieceType) {
+    void generateRookMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType) {
         uint64_t rookBB = bitboard.getPieceBoard(pieceType);
 
         while (rookBB) {
             uint64_t index = Chess::bitscanForward(rookBB);
-            uint64_t genBB = bitboard.getRookAttacks(1 << index);
+            uint64_t genBB = bitboard.getRookAttacks(1ULL << index);
+
+            genBB &= ~ownPiecesBB;
 
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
@@ -107,16 +108,16 @@ namespace Chess {
 
             rookBB &= ~(1ULL << index);
         }
-
-        std::cout << result.size() << std::endl;
     }
 
-    void generateQueenMoves(std::vector<Move> &result, Bitboard bitboard, PieceType pieceType) {
+    void generateQueenMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType) {
         uint64_t queenBB = bitboard.getPieceBoard(pieceType);
 
         while (queenBB) {
             uint64_t index = Chess::bitscanForward(queenBB);
-            uint64_t genBB = bitboard.getQueenAttacks(1 << index);
+            uint64_t genBB = bitboard.getQueenAttacks(1ULL << index);
+
+            genBB &= ~ownPiecesBB;
 
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
@@ -127,14 +128,14 @@ namespace Chess {
 
             queenBB &= ~(1ULL << index);
         }
-
-        std::cout << result.size() << std::endl;
     }
 
-    void generateKingMoves(std::vector<Move> &result, Bitboard bitboard, PieceType pieceType) {
+    void generateKingMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType) {
         uint64_t kingBB = bitboard.getPieceBoard(pieceType);
         uint64_t index = Chess::bitscanForward(kingBB);
         uint64_t genBB = bitboard.getKingAttacks(index);
+
+        genBB &= ~ownPiecesBB;
 
         while (genBB > 0) {
             uint64_t genIndex = Chess::bitscanForward(genBB);
@@ -142,7 +143,5 @@ namespace Chess {
             result.push_back({index, genIndex, pieceType});
             genBB &= ~(1ULL << genIndex);
         }
-
-        std::cout << result.size() << std::endl;
     }
 }

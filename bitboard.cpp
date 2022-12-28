@@ -3,14 +3,13 @@
 //
 
 #include <cstdint>
-#include <string>
 #include <iostream>
-#include <bitset>
-#include <popcntintrin.h>
+#include <psdk_inc/intrin-impl.h>
 
 #include "bitboard.h"
 
 namespace Chess {
+
     Bitboard::Bitboard() {
         uint64_t sqBB = 1;
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1) {
@@ -82,7 +81,7 @@ namespace Chess {
     uint64_t Bitboard::getRookAttacks(uint64_t bb) {
         uint64_t rookAttacks = 0;
         uint64_t emptyBB = getEmptyBoard();
-        
+
         rookAttacks |= nortOccl(bb, emptyBB);
         rookAttacks |= westOccl(bb, emptyBB);
         rookAttacks |= soutOccl(bb, emptyBB);
@@ -95,8 +94,8 @@ namespace Chess {
         return getWhitePawnEastAttacks(wPawns) & getWhitePawnWestAttacks(wPawns);
     }
 
-    uint64_t Bitboard::getBlackPawnAttacks(uint64_t wPawns) {
-        return getBlackPawnEastAttacks(wPawns) & getBlackPawnWestAttacks(wPawns);
+    uint64_t Bitboard::getBlackPawnAttacks(uint64_t bPawns) {
+        return getBlackPawnEastAttacks(bPawns) & getBlackPawnWestAttacks(bPawns);
     }
 
     uint64_t Bitboard::getWhitePawnSinglePush(uint64_t wPawns) {
@@ -138,8 +137,22 @@ namespace Chess {
     }
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType) {
+        undoStack.push({fromSquare, toSquare, pieceType, getPieceOnSquare(toSquare)});
+
         removePiece(fromSquare, pieceType);
         setPiece(toSquare, pieceType);
+    }
+
+    void Bitboard::unmakeMove() {
+        UndoData undoData = undoStack.top();
+        undoStack.pop();
+
+        removePiece(undoData.toSquare, undoData.pieceType);
+        setPiece(undoData.fromSquare, undoData.pieceType);
+
+        if (undoData.capturedPieceType != PieceType::Empty) {
+            setPiece(undoData.toSquare, undoData.capturedPieceType);
+        }
     }
 
     bool Bitboard::setFromFEN(const std::string &fen) {
@@ -301,6 +314,102 @@ namespace Chess {
         std::cout << std::endl << "---------------------------------" << std::endl;
     }
 
+    void Bitboard::printAvailableMoves(const std::vector<Move> &availableMoves) {
+        int bbAmount = sizeof(pieceBB) / sizeof(uint64_t);
+        char boardChars[64];
+
+        std::fill_n(boardChars, 64, ' ');
+
+        for (int i = 0; i < bbAmount; i++) {
+            uint64_t bb = pieceBB[i];
+            char pieceChar = getCharacterForPieceType(static_cast<PieceType>(i));
+
+            while (bb) {
+                uint64_t index = bitscanForward(bb);
+                bb &= ~(1ULL << index);
+
+                boardChars[index] = pieceChar;
+            }
+        }
+
+        for (Move move : availableMoves) {
+            boardChars[move.toSquare] = 'X';
+        }
+
+        std::cout << "---------------------------------" << std::endl;
+        std::cout << "| ";
+
+        for (int i = 0; i < 64; i++) {
+            char boardChar = boardChars[63 - i];
+
+            std::cout << boardChar << " | ";
+
+            if ((i + 1) % 8 == 0 && i != 63) {
+                std::cout << std::endl << "| ";
+            }
+        }
+
+        std::cout << std::endl << "---------------------------------" << std::endl;
+    }
+
+    uint64_t Bitboard::getAttackedTilesForColor(PieceColor color) {
+        uint64_t attacks = 0;
+
+        if (color == PieceColor::White) {
+            attacks |= getWhitePawnAttacks(getPieceBoard(PieceType::WhitePawn));
+            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::WhiteKnight));
+            attacks |= getBishopAttacks(getPieceBoard(PieceType::WhiteBishop));
+            attacks |= getRookAttacks(getPieceBoard(PieceType::WhiteRook));
+            attacks |= getQueenAttacks(getPieceBoard(PieceType::WhiteQueen));
+            attacks |= calculateKingAttacks(getPieceBoard(PieceType::WhiteKing));
+        } else {
+            attacks |= getBlackPawnAttacks(getPieceBoard(PieceType::BlackPawn));
+            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::BlackKnight));
+            attacks |= getBishopAttacks(getPieceBoard(PieceType::BlackBishop));
+            attacks |= getRookAttacks(getPieceBoard(PieceType::BlackRook));
+            attacks |= getQueenAttacks(getPieceBoard(PieceType::BlackQueen));
+            attacks |= calculateKingAttacks(getPieceBoard(PieceType::BlackKing));
+        }
+
+        return attacks;
+    }
+
+    bool Bitboard::isKingInCheck(PieceColor color) {
+        uint64_t kingBB = getPieceBoard(color == PieceColor::White ? PieceType::WhiteKing : PieceType::BlackKing);
+        uint64_t kingLocation = bitscanForward(kingBB);
+        uint64_t attacks = getAttackedTilesForColor(getOppositeColor(color));
+
+        return attacks & (1ULL << kingLocation);
+    }
+
+    void Bitboard::printAvailableMoves(uint64_t availableMoves) {
+        char boardChars[64];
+
+        std::fill_n(boardChars, 64, ' ');
+
+        while (availableMoves) {
+            uint64_t index = bitscanForward(availableMoves);
+            availableMoves &= ~(1ULL << index);
+
+            boardChars[index] = 'X';
+        }
+
+        std::cout << "---------------------------------" << std::endl;
+        std::cout << "| ";
+
+        for (int i = 0; i < 64; i++) {
+            char boardChar = boardChars[63 - i];
+
+            std::cout << boardChar << " | ";
+
+            if ((i + 1) % 8 == 0 && i != 63) {
+                std::cout << std::endl << "| ";
+            }
+        }
+
+        std::cout << std::endl << "---------------------------------" << std::endl;
+    }
+
     char Bitboard::getCharacterForPieceType(PieceType pieceType) {
         switch (pieceType) {
             case WhitePawn:
@@ -327,7 +436,39 @@ namespace Chess {
                 return 'K';
             case BlackKing:
                 return 'k';
+            case Empty:
+                return ' ';
         }
+    }
+
+    uint64_t Bitboard::getBoardByColor(PieceColor color) {
+        if (color == PieceColor::White) {
+            return getWhiteBoard();
+        } else {
+            return getBlackBoard();
+        }
+    }
+
+    Chess::PieceColor Bitboard::getOppositeColor(PieceColor color) {
+        if (color == PieceColor::White) {
+            return PieceColor::Black;
+        } else {
+            return PieceColor::White;
+        }
+    }
+
+    PieceType Bitboard::getPieceOnSquare(int square) {
+        int bbAmount = sizeof(pieceBB) / sizeof(uint64_t);
+
+        for (int i = 0; i < bbAmount; i++) {
+            uint64_t bb = pieceBB[i];
+
+            if (bb & (1ULL << square)) {
+                return static_cast<PieceType>(i);
+            }
+        }
+
+        return PieceType::Empty;
     }
 
     uint64_t soutOne(uint64_t b) {

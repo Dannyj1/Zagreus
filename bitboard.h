@@ -5,9 +5,11 @@
 #pragma once
 
 #include <cstdint>
+#include <stack>
 
 namespace Chess {
     enum PieceType {
+        Empty = -1,
         WhitePawn = 0,
         BlackPawn = 1,
         WhiteKnight = 2,
@@ -20,6 +22,19 @@ namespace Chess {
         BlackQueen = 9,
         WhiteKing = 10,
         BlackKing = 11,
+    };
+
+    struct Move {
+        uint64_t fromSquare;
+        uint64_t toSquare;
+        PieceType pieceType;
+    };
+
+    struct UndoData {
+        int fromSquare;
+        int toSquare;
+        PieceType pieceType;
+        PieceType capturedPieceType;
     };
 
     enum PieceColor {
@@ -117,6 +132,7 @@ namespace Chess {
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
+        std::stack<UndoData> undoStack{};
     public:
         Bitboard();
 
@@ -166,6 +182,22 @@ namespace Chess {
 
         void print();
 
-        char getCharacterForPieceType(PieceType pieceType);
+        static char getCharacterForPieceType(PieceType pieceType);
+
+        void printAvailableMoves(uint64_t availableMoves);
+
+        void printAvailableMoves(const std::vector<Move>& availableMoves);
+
+        uint64_t getBoardByColor(PieceColor color);
+
+        void unmakeMove();
+
+        static Chess::PieceColor getOppositeColor(PieceColor color);
+
+        PieceType getPieceOnSquare(int square);
+
+        uint64_t getAttackedTilesForColor(PieceColor color);
+
+        bool isKingInCheck(PieceColor color);
     };
 }
