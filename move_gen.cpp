@@ -13,12 +13,12 @@ namespace Chess {
         moves.reserve(100);
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
-        generatePawnMoves(moves, bitboard, ownPiecesBB, color, color == PieceColor::White ? PieceType::WhitePawn : PieceType::BlackPawn);
-        generateKnightMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteKnight : PieceType::BlackKnight);
-        generateBishopMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteBishop : PieceType::BlackBishop);
-        generateRookMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteRook : PieceType::BlackRook);
-        generateQueenMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteQueen : PieceType::BlackQueen);
-        generateKingMoves(moves, bitboard, ownPiecesBB, color == PieceColor::White ? PieceType::WhiteKing : PieceType::BlackKing);
+        generatePawnMoves(moves, bitboard, ownPiecesBB, color, color == PieceColor::WHITE ? PieceType::WHITE_PAWN : PieceType::BLACK_PAWN);
+        generateKnightMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT);
+        generateBishopMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP);
+        generateRookMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK);
+        generateQueenMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN);
+        generateKingMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
 
         return moves;
     }
@@ -32,7 +32,7 @@ namespace Chess {
             uint64_t index = Chess::bitscanForward(pawnBB);
             uint64_t genBB;
 
-            if (pieceType == PieceType::WhitePawn) {
+            if (pieceType == PieceType::WHITE_PAWN) {
                 genBB = bitboard.getWhitePawnDoublePush(1ULL << index);
             } else {
                 genBB = bitboard.getBlackPawnDoublePush(1ULL << index);
@@ -48,7 +48,7 @@ namespace Chess {
             }
 
             uint64_t attackBB;
-            if (pieceType == PieceType::WhitePawn) {
+            if (pieceType == PieceType::WHITE_PAWN) {
                 attackBB = bitboard.getWhitePawnAttacks(1ULL << index);
             } else {
                 attackBB = bitboard.getBlackPawnAttacks(1ULL << index);

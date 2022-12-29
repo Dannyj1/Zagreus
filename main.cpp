@@ -9,15 +9,14 @@
 #include "bitboard.h"
 #include "move_gen.h"
 
-uint64_t captures = 0;
-uint64_t checks = 0;
-uint64_t checkMates = 0;
-uint64_t ep = 0;
-uint64_t castles = 0;
-uint64_t promotions = 0;
+uint64_t captures = 0ULL;
+uint64_t checks = 0ULL;
+uint64_t ep = 0ULL;
+uint64_t castles = 0ULL;
+uint64_t promotions = 0ULL;
 
 uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int startingDepth) {
-    uint64_t nodes = 0;
+    uint64_t nodes = 0ULL;
 
     if (depth == 0) {
         return 1ULL;
@@ -49,7 +48,7 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
         }
 */
 
-        if (board.getPieceOnSquare(move.toSquare) != Chess::PieceType::Empty) {
+        if (board.getPieceOnSquare(move.toSquare) != Chess::PieceType::EMPTY) {
             isCapture = true;
         }
 
@@ -63,10 +62,6 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
             if (depth == 1) {
                 if (board.isKingInCheck(Chess::Bitboard::getOppositeColor(color))) {
                     checks++;
-                }
-
-                if (board.isWinner(color)) {
-                    checkMates++;
                 }
 
                 if (isCapture) {
@@ -87,14 +82,14 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
             uint64_t nodeAmount = perft(board, Chess::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
             nodes += nodeAmount;
 
-            if (depth == startingDepth) {
-                std::string notation = Chess::Bitboard::getNotation(move.fromSquare) + Chess::Bitboard::getNotation(move.toSquare);
+            if (depth == startingDepth && nodeAmount > 0LL) {
+                std::string notation =
+                        Chess::Bitboard::getNotation(move.fromSquare) + Chess::Bitboard::getNotation(move.toSquare);
                 std::cout << notation << ": " << nodeAmount << std::endl;
             }
         }
 
         board.unmakeMove();
-
     }
 
     return nodes;
@@ -111,19 +106,18 @@ int main() {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Bitboard board;
         board.setFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        checks = 0;
-        ep = 0;
-        captures = 0;
-        checkMates = 0;
-        castles = 0;
+        checks = 0LL;
+        ep = 0LL;
+        captures = 0LL;
+        castles = 0LL;
 
         auto start = std::chrono::system_clock::now();
-        uint64_t nodes = perft(board, Chess::PieceColor::White, i, i);
+        uint64_t nodes = perft(board, Chess::PieceColor::WHITE, i, i);
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         std::cout << "Depth " << i << " Nodes: " << nodes << ", Captures: " << captures << ", Checks: " << checks
-                  << ", Checkmates: " << checkMates << ", E.p: " << ep << ", Castles: " << castles
+                  << ", E.p: " << ep << ", Castles: " << castles
                   << ", Promotions: " << promotions << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
 
         std::cout << std::endl;

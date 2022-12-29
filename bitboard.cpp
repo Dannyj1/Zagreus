@@ -12,34 +12,15 @@
 namespace Chess {
 
     Bitboard::Bitboard() {
-        uint64_t sqBB = 1;
-        for (int sq = 0; sq < 64; sq++, sqBB <<= 1) {
+        uint64_t sqBB = 1ULL;
+        for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             kingAttacks[sq] = calculateKingAttacks(sqBB);
         }
 
-        sqBB = 1;
-        for (int sq = 0; sq < 64; sq++, sqBB <<= 1) {
+        sqBB = 1ULL;
+        for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             knightAttacks[sq] = calculateKnightAttacks(sqBB);
         }
-
-        whiteAttacksBB = getAttackedTilesForColor(PieceColor::White);
-        blackAttacksBB = getAttackedTilesForColor(PieceColor::Black);
-    }
-
-    uint64_t Bitboard::getAttackBBForColor(PieceColor color) {
-        if (color == PieceColor::White) {
-            return getWhiteAttacksBB();
-        } else {
-            return getBlackAttacksBB();
-        }
-    }
-
-    uint64_t Bitboard::getWhiteAttacksBB() {
-        return whiteAttacksBB;
-    }
-
-    uint64_t Bitboard::getBlackAttacksBB() {
-        return blackAttacksBB;
     }
 
     uint64_t Bitboard::getPieceBoard(int pieceType) {
@@ -71,7 +52,7 @@ namespace Chess {
     }
 
     uint64_t Bitboard::getQueenAttacks(uint64_t bb) {
-        uint64_t queenAttacks = 0;
+        uint64_t queenAttacks = 0ULL;
         uint64_t emptyBB = getEmptyBoard();
 
         queenAttacks |= nortOccl(bb, emptyBB);
@@ -87,7 +68,7 @@ namespace Chess {
     }
 
     uint64_t Bitboard::getBishopAttacks(uint64_t bb) {
-        uint64_t bishopAttacks = 0;
+        uint64_t bishopAttacks = 0ULL;
         uint64_t emptyBB = getEmptyBoard();
 
         bishopAttacks |= noEaOccl(bb, emptyBB);
@@ -99,7 +80,7 @@ namespace Chess {
     }
 
     uint64_t Bitboard::getRookAttacks(uint64_t bb) {
-        uint64_t rookAttacks = 0;
+        uint64_t rookAttacks = 0ULL;
         uint64_t emptyBB = getEmptyBoard();
 
         rookAttacks |= nortOccl(bb, emptyBB);
@@ -157,15 +138,16 @@ namespace Chess {
     }
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType) {
+        PieceType pieceOnSquare = getPieceOnSquare(toSquare);
+
         undoStack.push({fromSquare,
                         toSquare,
-                        whiteAttacksBB,
-                        blackAttacksBB,
                         pieceType,
-                        getPieceOnSquare(toSquare)});
+                        pieceOnSquare});
 
-        whiteAttacksBB = getAttackedTilesForColor(PieceColor::White);
-        blackAttacksBB = getAttackedTilesForColor(PieceColor::Black);
+        if (pieceOnSquare != PieceType::EMPTY) {
+            removePiece(toSquare, pieceOnSquare);
+        }
 
         removePiece(fromSquare, pieceType);
         setPiece(toSquare, pieceType);
@@ -178,12 +160,9 @@ namespace Chess {
         removePiece(undoData.toSquare, undoData.pieceType);
         setPiece(undoData.fromSquare, undoData.pieceType);
 
-        if (undoData.capturedPieceType != PieceType::Empty) {
+        if (undoData.capturedPieceType != PieceType::EMPTY) {
             setPiece(undoData.toSquare, undoData.capturedPieceType);
         }
-
-        whiteAttacksBB = undoData.oldWhiteAttacksBB;
-        blackAttacksBB = undoData.oldBlackAttacksBB;
     }
 
     bool Bitboard::setFromFEN(const std::string &fen) {
@@ -202,7 +181,7 @@ namespace Chess {
                 }
 
                 if (character >= '1' && character <= '8') {
-                    index += character - '0';
+                    index -= character - '0';
                     continue;
                 }
 
@@ -263,50 +242,50 @@ namespace Chess {
 
     PieceColor Bitboard::getPieceColor(PieceType type) {
         if (type % 2 == 0) {
-            return PieceColor::White;
+            return PieceColor::WHITE;
         } else {
-            return PieceColor::Black;
+            return PieceColor::BLACK;
         }
     }
 
     void Bitboard::setPieceFromFENChar(const char character, int index) {
-        // Uppercase = White, lowercase = black
+        // Uppercase = WHITE, lowercase = black
         switch (character) {
             case 'P':
-                setPiece(index, PieceType::WhitePawn);
+                setPiece(index, PieceType::WHITE_PAWN);
                 break;
             case 'p':
-                setPiece(index, PieceType::BlackPawn);
+                setPiece(index, PieceType::BLACK_PAWN);
                 break;
             case 'N':
-                setPiece(index, PieceType::WhiteKnight);
+                setPiece(index, PieceType::WHITE_KNIGHT);
                 break;
             case 'n':
-                setPiece(index, PieceType::BlackKnight);
+                setPiece(index, PieceType::BLACK_KNIGHT);
                 break;
             case 'B':
-                setPiece(index, PieceType::WhiteBishop);
+                setPiece(index, PieceType::WHITE_BISHOP);
                 break;
             case 'b':
-                setPiece(index, PieceType::BlackBishop);
+                setPiece(index, PieceType::BLACK_BISHOP);
                 break;
             case 'R':
-                setPiece(index, PieceType::WhiteRook);
+                setPiece(index, PieceType::WHITE_ROOK);
                 break;
             case 'r':
-                setPiece(index, PieceType::BlackRook);
+                setPiece(index, PieceType::BLACK_ROOK);
                 break;
             case 'Q':
-                setPiece(index, PieceType::WhiteQueen);
+                setPiece(index, PieceType::WHITE_QUEEN);
                 break;
             case 'q':
-                setPiece(index, PieceType::BlackQueen);
+                setPiece(index, PieceType::BLACK_QUEEN);
                 break;
             case 'K':
-                setPiece(index, PieceType::WhiteKing);
+                setPiece(index, PieceType::WHITE_KING);
                 break;
             case 'k':
-                setPiece(index, PieceType::BlackKing);
+                setPiece(index, PieceType::BLACK_KING);
                 break;
         }
     }
@@ -386,29 +365,29 @@ namespace Chess {
     uint64_t Bitboard::getAttackedTilesForColor(PieceColor color) {
         uint64_t attacks = 0;
 
-        if (color == PieceColor::White) {
-            attacks |= getWhitePawnAttacks(getPieceBoard(PieceType::WhitePawn));
-            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::WhiteKnight));
-            attacks |= getBishopAttacks(getPieceBoard(PieceType::WhiteBishop));
-            attacks |= getRookAttacks(getPieceBoard(PieceType::WhiteRook));
-            attacks |= getQueenAttacks(getPieceBoard(PieceType::WhiteQueen));
-            attacks |= calculateKingAttacks(getPieceBoard(PieceType::WhiteKing));
+        if (color == PieceColor::WHITE) {
+            attacks |= getWhitePawnAttacks(getPieceBoard(PieceType::WHITE_PAWN));
+            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::WHITE_KNIGHT));
+            attacks |= getBishopAttacks(getPieceBoard(PieceType::WHITE_BISHOP));
+            attacks |= getRookAttacks(getPieceBoard(PieceType::WHITE_ROOK));
+            attacks |= getQueenAttacks(getPieceBoard(PieceType::WHITE_QUEEN));
+            attacks |= calculateKingAttacks(getPieceBoard(PieceType::WHITE_KING));
         } else {
-            attacks |= getBlackPawnAttacks(getPieceBoard(PieceType::BlackPawn));
-            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::BlackKnight));
-            attacks |= getBishopAttacks(getPieceBoard(PieceType::BlackBishop));
-            attacks |= getRookAttacks(getPieceBoard(PieceType::BlackRook));
-            attacks |= getQueenAttacks(getPieceBoard(PieceType::BlackQueen));
-            attacks |= calculateKingAttacks(getPieceBoard(PieceType::BlackKing));
+            attacks |= getBlackPawnAttacks(getPieceBoard(PieceType::BLACK_PAWN));
+            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::BLACK_KNIGHT));
+            attacks |= getBishopAttacks(getPieceBoard(PieceType::BLACK_BISHOP));
+            attacks |= getRookAttacks(getPieceBoard(PieceType::BLACK_ROOK));
+            attacks |= getQueenAttacks(getPieceBoard(PieceType::BLACK_QUEEN));
+            attacks |= calculateKingAttacks(getPieceBoard(PieceType::BLACK_KING));
         }
 
         return attacks;
     }
 
     bool Bitboard::isKingInCheck(PieceColor color) {
-        uint64_t kingBB = getPieceBoard(color == PieceColor::White ? PieceType::WhiteKing : PieceType::BlackKing);
+        uint64_t kingBB = getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
         uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t attacks = getAttackBBForColor(getOppositeColor(color));
+        uint64_t attacks = getAttackedTilesForColor(getOppositeColor(color));
 
         return attacks & (1ULL << kingLocation);
     }
@@ -419,7 +398,7 @@ namespace Chess {
         int file = index % 8;
         int rank = index / 8;
 
-        notation += "abcdefgh"[file];
+        notation += "hgfedcba"[file];
         notation += "12345678"[rank];
 
         return notation;
@@ -455,37 +434,37 @@ namespace Chess {
 
     char Bitboard::getCharacterForPieceType(PieceType pieceType) {
         switch (pieceType) {
-            case WhitePawn:
+            case WHITE_PAWN:
                 return 'P';
-            case BlackPawn:
+            case BLACK_PAWN:
                 return 'p';
-            case WhiteKnight:
+            case WHITE_KNIGHT:
                 return 'N';
-            case BlackKnight:
+            case BLACK_KNIGHT:
                 return 'n';
-            case WhiteBishop:
+            case WHITE_BISHOP:
                 return 'B';
-            case BlackBishop:
+            case BLACK_BISHOP:
                 return 'b';
-            case WhiteRook:
+            case WHITE_ROOK:
                 return 'R';
-            case BlackRook:
+            case BLACK_ROOK:
                 return 'r';
-            case WhiteQueen:
+            case WHITE_QUEEN:
                 return 'Q';
-            case BlackQueen:
+            case BLACK_QUEEN:
                 return 'q';
-            case WhiteKing:
+            case WHITE_KING:
                 return 'K';
-            case BlackKing:
+            case BLACK_KING:
                 return 'k';
-            case Empty:
+            case EMPTY:
                 return ' ';
         }
     }
 
     uint64_t Bitboard::getBoardByColor(PieceColor color) {
-        if (color == PieceColor::White) {
+        if (color == PieceColor::WHITE) {
             return getWhiteBoard();
         } else {
             return getBlackBoard();
@@ -493,10 +472,10 @@ namespace Chess {
     }
 
     Chess::PieceColor Bitboard::getOppositeColor(PieceColor color) {
-        if (color == PieceColor::White) {
-            return PieceColor::Black;
+        if (color == PieceColor::WHITE) {
+            return PieceColor::BLACK;
         } else {
-            return PieceColor::White;
+            return PieceColor::WHITE;
         }
     }
 
@@ -511,7 +490,7 @@ namespace Chess {
             }
         }
 
-        return PieceType::Empty;
+        return PieceType::EMPTY;
     }
 
     bool Bitboard::isWinner(PieceColor color) {
@@ -535,67 +514,67 @@ namespace Chess {
     }
 
     uint64_t soutOne(uint64_t b) {
-        return b >> 8;
+        return b >> 8ULL;
     }
 
     uint64_t nortOne(uint64_t b) {
-        return b << 8;
+        return b << 8ULL;
     }
 
     uint64_t eastOne(uint64_t b) {
-        return (b << 1) & NOT_A_FILE;
+        return (b << 1ULL) & NOT_A_FILE;
     }
 
     uint64_t noEaOne(uint64_t b) {
-        return (b << 9) & NOT_A_FILE;
+        return (b << 9ULL) & NOT_A_FILE;
     }
 
     uint64_t soEaOne(uint64_t b) {
-        return (b >> 7) & NOT_A_FILE;
+        return (b >> 7ULL) & NOT_A_FILE;
     }
 
     uint64_t westOne(uint64_t b) {
-        return (b >> 1) & NOT_H_FILE;
+        return (b >> 1ULL) & NOT_H_FILE;
     }
 
     uint64_t soWeOne(uint64_t b) {
-        return (b >> 9) & NOT_H_FILE;
+        return (b >> 9ULL) & NOT_H_FILE;
     }
 
     uint64_t noWeOne(uint64_t b) {
-        return (b << 7) & NOT_H_FILE;
+        return (b << 7ULL) & NOT_H_FILE;
     }
 
     uint64_t noNoEa(uint64_t b) {
-        return (b << 17) & NOT_A_FILE;
+        return (b << 17ULL) & NOT_A_FILE;
     }
 
     uint64_t noEaEa(uint64_t b) {
-        return (b << 10) & NOT_AB_FILE;
+        return (b << 10ULL) & NOT_AB_FILE;
     }
 
     uint64_t soEaEa(uint64_t b) {
-        return (b >>  6) & NOT_AB_FILE;
+        return (b >>  6ULL) & NOT_AB_FILE;
     }
 
     uint64_t soSoEa(uint64_t b) {
-        return (b >> 15) & NOT_A_FILE;
+        return (b >> 15ULL) & NOT_A_FILE;
     }
 
     uint64_t noNoWe(uint64_t b) {
-        return (b << 15) & NOT_H_FILE;
+        return (b << 15ULL) & NOT_H_FILE;
     }
 
     uint64_t noWeWe(uint64_t b) {
-        return (b <<  6) & NOT_GH_FILE;
+        return (b << 6ULL) & NOT_GH_FILE;
 
     }
     uint64_t soWeWe(uint64_t b) {
-        return (b >> 10) & NOT_GH_FILE;
+        return (b >> 10ULL) & NOT_GH_FILE;
     }
 
     uint64_t soSoWe(uint64_t b) {
-        return (b >> 17) & NOT_H_FILE;
+        return (b >> 17ULL) & NOT_H_FILE;
     }
 
     uint64_t popcnt(uint64_t b) {
@@ -617,96 +596,96 @@ namespace Chess {
 
     uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {
         uint64_t flood = pieceBB;
-        flood |= pieceBB = (pieceBB >> 8) & empty;
-        flood |= pieceBB = (pieceBB >> 8) & empty;
-        flood |= pieceBB = (pieceBB >> 8) & empty;
-        flood |= pieceBB = (pieceBB >> 8) & empty;
-        flood |= pieceBB = (pieceBB >> 8) & empty;
-        flood |= (pieceBB >> 8) & empty;
-        return flood >> 8;
+        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
+        flood |= (pieceBB >> 8ULL) & empty;
+        return flood >> 8ULL;
     }
 
     uint64_t nortOccl(uint64_t pieceBB, uint64_t empty) {
         uint64_t flood = pieceBB;
-        flood |= pieceBB = (pieceBB << 8) & empty;
-        flood |= pieceBB = (pieceBB << 8) & empty;
-        flood |= pieceBB = (pieceBB << 8) & empty;
-        flood |= pieceBB = (pieceBB << 8) & empty;
-        flood |= pieceBB = (pieceBB << 8) & empty;
-        flood |= (pieceBB << 8) & empty;
-        return flood << 8;
+        flood |= pieceBB = (pieceBB << 8ULL) & empty;
+        flood |= pieceBB = (pieceBB << 8ULL) & empty;
+        flood |= pieceBB = (pieceBB << 8ULL) & empty;
+        flood |= pieceBB = (pieceBB << 8ULL) & empty;
+        flood |= pieceBB = (pieceBB << 8ULL) & empty;
+        flood |= (pieceBB << 8ULL) & empty;
+        return flood << 8ULL;
     }
 
     uint64_t eastOccl(uint64_t pieceBB, uint64_t empty) {
         uint64_t flood = pieceBB;
         empty &= NOT_A_FILE;
-        flood |= pieceBB = (pieceBB << 1) & empty;
-        flood |= pieceBB = (pieceBB << 1) & empty;
-        flood |= pieceBB = (pieceBB << 1) & empty;
-        flood |= pieceBB = (pieceBB << 1) & empty;
-        flood |= pieceBB = (pieceBB << 1) & empty;
-        flood |= (pieceBB << 1) & empty;
-        return (flood << 1) & NOT_A_FILE;
+        flood |= pieceBB = (pieceBB << 1ULL) & empty;
+        flood |= pieceBB = (pieceBB << 1ULL) & empty;
+        flood |= pieceBB = (pieceBB << 1ULL) & empty;
+        flood |= pieceBB = (pieceBB << 1ULL) & empty;
+        flood |= pieceBB = (pieceBB << 1ULL) & empty;
+        flood |= (pieceBB << 1ULL) & empty;
+        return (flood << 1ULL) & NOT_A_FILE;
     }
 
     uint64_t noEaOccl(uint64_t pieceBB, uint64_t empty) {
         uint64_t flood = pieceBB;
         empty &= NOT_A_FILE;
-        flood |= pieceBB = (pieceBB << 9) & empty;
-        flood |= pieceBB = (pieceBB << 9) & empty;
-        flood |= pieceBB = (pieceBB << 9) & empty;
-        flood |= pieceBB = (pieceBB << 9) & empty;
-        flood |= pieceBB = (pieceBB << 9) & empty;
-        flood |= (pieceBB << 9) & empty;
-        return (flood << 9) & NOT_A_FILE;
+        flood |= pieceBB = (pieceBB << 9ULL) & empty;
+        flood |= pieceBB = (pieceBB << 9ULL) & empty;
+        flood |= pieceBB = (pieceBB << 9ULL) & empty;
+        flood |= pieceBB = (pieceBB << 9ULL) & empty;
+        flood |= pieceBB = (pieceBB << 9ULL) & empty;
+        flood |= (pieceBB << 9ULL) & empty;
+        return (flood << 9ULL) & NOT_A_FILE;
     }
 
     uint64_t soEaOccl(uint64_t pieceBB, uint64_t empty) {
         uint64_t flood = pieceBB;
         empty &= NOT_A_FILE;
-        flood |= pieceBB = (pieceBB >> 7) & empty;
-        flood |= pieceBB = (pieceBB >> 7) & empty;
-        flood |= pieceBB = (pieceBB >> 7) & empty;
-        flood |= pieceBB = (pieceBB >> 7) & empty;
-        flood |= pieceBB = (pieceBB >> 7) & empty;
-        flood |= (pieceBB >> 7) & empty;
-        return (flood >> 7) & NOT_A_FILE;
+        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
+        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
+        flood |= (pieceBB >> 7ULL) & empty;
+        return (flood >> 7ULL) & NOT_A_FILE;
     }
 
     uint64_t westOccl(uint64_t rooks, uint64_t empty) {
         uint64_t flood = rooks;
         empty &= NOT_H_FILE;
-        flood |= rooks = (rooks >> 1) & empty;
-        flood |= rooks = (rooks >> 1) & empty;
-        flood |= rooks = (rooks >> 1) & empty;
-        flood |= rooks = (rooks >> 1) & empty;
-        flood |= rooks = (rooks >> 1) & empty;
-        flood |= (rooks >> 1) & empty;
-        return (flood >> 1) & NOT_H_FILE;
+        flood |= rooks = (rooks >> 1ULL) & empty;
+        flood |= rooks = (rooks >> 1ULL) & empty;
+        flood |= rooks = (rooks >> 1ULL) & empty;
+        flood |= rooks = (rooks >> 1ULL) & empty;
+        flood |= rooks = (rooks >> 1ULL) & empty;
+        flood |= (rooks >> 1ULL) & empty;
+        return (flood >> 1ULL) & NOT_H_FILE;
     }
 
     uint64_t soWeOccl(uint64_t bishops, uint64_t empty) {
         uint64_t flood = bishops;
         empty &= NOT_H_FILE;
-        flood |= bishops = (bishops >> 9) & empty;
-        flood |= bishops = (bishops >> 9) & empty;
-        flood |= bishops = (bishops >> 9) & empty;
-        flood |= bishops = (bishops >> 9) & empty;
-        flood |= bishops = (bishops >> 9) & empty;
-        flood |= (bishops >> 9) & empty;
-        return (flood >> 9) & NOT_H_FILE;
+        flood |= bishops = (bishops >> 9ULL) & empty;
+        flood |= bishops = (bishops >> 9ULL) & empty;
+        flood |= bishops = (bishops >> 9ULL) & empty;
+        flood |= bishops = (bishops >> 9ULL) & empty;
+        flood |= bishops = (bishops >> 9ULL) & empty;
+        flood |= (bishops >> 9ULL) & empty;
+        return (flood >> 9ULL) & NOT_H_FILE;
     }
 
     uint64_t noWeOccl(uint64_t bishops, uint64_t empty) {
         uint64_t flood = bishops;
         empty &= NOT_H_FILE;
-        flood |= bishops = (bishops << 7) & empty;
-        flood |= bishops = (bishops << 7) & empty;
-        flood |= bishops = (bishops << 7) & empty;
-        flood |= bishops = (bishops << 7) & empty;
-        flood |= bishops = (bishops << 7) & empty;
-        flood |= (bishops << 7) & empty;
-        return (flood << 7) & NOT_H_FILE;
+        flood |= bishops = (bishops << 7ULL) & empty;
+        flood |= bishops = (bishops << 7ULL) & empty;
+        flood |= bishops = (bishops << 7ULL) & empty;
+        flood |= bishops = (bishops << 7ULL) & empty;
+        flood |= bishops = (bishops << 7ULL) & empty;
+        flood |= (bishops << 7ULL) & empty;
+        return (flood << 7ULL) & NOT_H_FILE;
     }
 
     uint64_t getWhitePawnEastAttacks(uint64_t wPawns) {
@@ -718,13 +697,13 @@ namespace Chess {
     }
 
     uint64_t calculateKnightAttacks(uint64_t knights) {
-        uint64_t l1 = (knights >> 1) & NOT_H_FILE;
-        uint64_t l2 = (knights >> 2) & NOT_GH_FILE;
-        uint64_t r1 = (knights << 1) & NOT_A_FILE;
-        uint64_t r2 = (knights << 2) & NOT_AB_FILE;
+        uint64_t l1 = (knights >> 1ULL) & NOT_H_FILE;
+        uint64_t l2 = (knights >> 2ULL) & NOT_GH_FILE;
+        uint64_t r1 = (knights << 1ULL) & NOT_A_FILE;
+        uint64_t r2 = (knights << 2ULL) & NOT_AB_FILE;
         uint64_t h1 = l1 | r1;
         uint64_t h2 = l2 | r2;
-        return (h1 << 16) | (h1 >> 16) | (h2 << 8) | (h2 >> 8);
+        return (h1 << 16ULL) | (h1 >> 16ULL) | (h2 << 8ULL) | (h2 >> 8ULL);
     }
 
     uint64_t calculateKingAttacks(uint64_t kingSet) {

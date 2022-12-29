@@ -32,11 +32,11 @@ namespace senjo {
         bool ponder = false; // Start searching in pondering mode
         int depth = 0; // Maximum number of half-moves (plies) to search
         int movestogo = 0; // Number of moves remaining until next time control
-        uint64_t binc = 0; // Black increment per move in milliseconds
+        uint64_t binc = 0; // BLACK increment per move in milliseconds
         uint64_t btime = 0; // Milliseconds remaining on black's clock
         uint64_t movetime = 0; // Maximum milliseconds to spend on this move
         uint64_t nodes = 0; // Maximum number of nodes to search
-        uint64_t winc = 0; // White increment per move in milliseconds
+        uint64_t winc = 0; // WHITE increment per move in milliseconds
         uint64_t wtime = 0; // Milliseconds remaining on white's clock
     };
 

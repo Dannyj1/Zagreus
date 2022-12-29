@@ -9,19 +9,19 @@
 
 namespace Chess {
     enum PieceType {
-        Empty = -1,
-        WhitePawn = 0,
-        BlackPawn = 1,
-        WhiteKnight = 2,
-        BlackKnight = 3,
-        WhiteBishop = 4,
-        BlackBishop = 5,
-        WhiteRook = 6,
-        BlackRook = 7,
-        WhiteQueen = 8,
-        BlackQueen = 9,
-        WhiteKing = 10,
-        BlackKing = 11,
+        EMPTY = -1,
+        WHITE_PAWN = 0,
+        BLACK_PAWN = 1,
+        WHITE_KNIGHT = 2,
+        BLACK_KNIGHT = 3,
+        WHITE_BISHOP = 4,
+        BLACK_BISHOP = 5,
+        WHITE_ROOK = 6,
+        BLACK_ROOK = 7,
+        WHITE_QUEEN = 8,
+        BLACK_QUEEN = 9,
+        WHITE_KING = 10,
+        BLACK_KING = 11,
     };
 
     struct Move {
@@ -33,16 +33,14 @@ namespace Chess {
     struct UndoData {
         int fromSquare;
         int toSquare;
-        uint64_t oldWhiteAttacksBB;
-        uint64_t oldBlackAttacksBB;
         PieceType pieceType;
         PieceType capturedPieceType;
     };
 
     enum PieceColor {
-        None = -1,
-        White,
-        Black
+        NONE = -1,
+        WHITE = 0,
+        BLACK = 1
     };
 
     constexpr uint64_t A_FILE = 0x0101010101010101;
@@ -132,8 +130,6 @@ namespace Chess {
         uint64_t whiteBB{};
         uint64_t blackBB{};
         uint64_t occupiedBB{};
-        uint64_t whiteAttacksBB{};
-        uint64_t blackAttacksBB{};
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
