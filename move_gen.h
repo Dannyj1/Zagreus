@@ -9,7 +9,7 @@
 #include "bitboard.h"
 
 namespace Chess {
-    std::vector<Move> generateMoves(Bitboard bitboard, PieceColor color);
+    std::vector<Move> generatePseudoLegalMoves(Bitboard bitboard, PieceColor color);
 
     void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType);
 

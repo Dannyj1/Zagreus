@@ -8,7 +8,7 @@
 #include "move_gen.h"
 
 namespace Chess {
-    std::vector<Move> generateMoves(Bitboard bitboard, PieceColor color) {
+    std::vector<Move> generatePseudoLegalMoves(Bitboard bitboard, PieceColor color) {
         std::vector<Move> moves;
         moves.reserve(100);
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
@@ -23,7 +23,7 @@ namespace Chess {
         return moves;
     }
 
-    // TODO: generate attacks and en passant
+    // TODO: generate en passant
     void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType) {
         uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
         uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));

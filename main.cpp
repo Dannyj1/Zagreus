@@ -23,7 +23,7 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
         return 1ULL;
     }
 
-    std::vector<Chess::Move> moves = Chess::generateMoves(board, color);
+    std::vector<Chess::Move> moves = Chess::generatePseudoLegalMoves(board, color);
 
     for (const Chess::Move &move : moves) {
         bool isCapture = false;
@@ -56,37 +56,40 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
         board.makeMove(move.fromSquare, move.toSquare, move.pieceType);
 
         if (!board.isKingInCheck(color)) {
-            if (depth == 1) {
-            }
-
 /*            if (move.promotionPiece) {
                 promotions++;
             }*/
-
-            uint64_t nodeAmount = perft(board, Chess::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
-            nodes += nodeAmount;
 
             if (depth == 1) {
                 if (board.isKingInCheck(Chess::Bitboard::getOppositeColor(color))) {
                     checks++;
                 }
 
+                if (board.isWinner(color)) {
+                    checkMates++;
+                }
+
                 if (isCapture) {
                     captures++;
                 }
 
-               /* if (board->getWinner() != Chess::PieceColor::NONE) {
-                    checkMates++;
-                }
+                /*
+                 if (isEp) {
+                     ep++;
+                     captures++;
+                 }
 
-                if (isEp) {
-                    ep++;
-                    captures++;
-                }
+                 if (isCastle) {
+                     castles++;
+                 }*/
+            }
 
-                if (isCastle) {
-                    castles++;
-                }*/
+            uint64_t nodeAmount = perft(board, Chess::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
+            nodes += nodeAmount;
+
+            if (depth == startingDepth) {
+                std::string notation = Chess::Bitboard::getNotation(move.fromSquare) + Chess::Bitboard::getNotation(move.toSquare);
+                std::cout << notation << ": " << nodeAmount << std::endl;
             }
         }
 

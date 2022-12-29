@@ -33,11 +33,14 @@ namespace Chess {
     struct UndoData {
         int fromSquare;
         int toSquare;
+        uint64_t oldWhiteAttacksBB;
+        uint64_t oldBlackAttacksBB;
         PieceType pieceType;
         PieceType capturedPieceType;
     };
 
     enum PieceColor {
+        None = -1,
         White,
         Black
     };
@@ -129,9 +132,12 @@ namespace Chess {
         uint64_t whiteBB{};
         uint64_t blackBB{};
         uint64_t occupiedBB{};
+        uint64_t whiteAttacksBB{};
+        uint64_t blackAttacksBB{};
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
+
         std::stack<UndoData> undoStack{};
     public:
         Bitboard();
@@ -199,5 +205,15 @@ namespace Chess {
         uint64_t getAttackedTilesForColor(PieceColor color);
 
         bool isKingInCheck(PieceColor color);
+
+        uint64_t getAttackBBForColor(PieceColor color);
+
+        uint64_t getWhiteAttacksBB();
+
+        uint64_t getBlackAttacksBB();
+
+        bool isWinner(PieceColor color);
+
+        static std::string getNotation(int index);
     };
 }

@@ -7,6 +7,7 @@
 #include <psdk_inc/intrin-impl.h>
 
 #include "bitboard.h"
+#include "move_gen.h"
 
 namespace Chess {
 
@@ -20,6 +21,25 @@ namespace Chess {
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1) {
             knightAttacks[sq] = calculateKnightAttacks(sqBB);
         }
+
+        whiteAttacksBB = getAttackedTilesForColor(PieceColor::White);
+        blackAttacksBB = getAttackedTilesForColor(PieceColor::Black);
+    }
+
+    uint64_t Bitboard::getAttackBBForColor(PieceColor color) {
+        if (color == PieceColor::White) {
+            return getWhiteAttacksBB();
+        } else {
+            return getBlackAttacksBB();
+        }
+    }
+
+    uint64_t Bitboard::getWhiteAttacksBB() {
+        return whiteAttacksBB;
+    }
+
+    uint64_t Bitboard::getBlackAttacksBB() {
+        return blackAttacksBB;
     }
 
     uint64_t Bitboard::getPieceBoard(int pieceType) {
@@ -137,7 +157,15 @@ namespace Chess {
     }
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType) {
-        undoStack.push({fromSquare, toSquare, pieceType, getPieceOnSquare(toSquare)});
+        undoStack.push({fromSquare,
+                        toSquare,
+                        whiteAttacksBB,
+                        blackAttacksBB,
+                        pieceType,
+                        getPieceOnSquare(toSquare)});
+
+        whiteAttacksBB = getAttackedTilesForColor(PieceColor::White);
+        blackAttacksBB = getAttackedTilesForColor(PieceColor::Black);
 
         removePiece(fromSquare, pieceType);
         setPiece(toSquare, pieceType);
@@ -153,6 +181,9 @@ namespace Chess {
         if (undoData.capturedPieceType != PieceType::Empty) {
             setPiece(undoData.toSquare, undoData.capturedPieceType);
         }
+
+        whiteAttacksBB = undoData.oldWhiteAttacksBB;
+        blackAttacksBB = undoData.oldBlackAttacksBB;
     }
 
     bool Bitboard::setFromFEN(const std::string &fen) {
@@ -377,9 +408,21 @@ namespace Chess {
     bool Bitboard::isKingInCheck(PieceColor color) {
         uint64_t kingBB = getPieceBoard(color == PieceColor::White ? PieceType::WhiteKing : PieceType::BlackKing);
         uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t attacks = getAttackedTilesForColor(getOppositeColor(color));
+        uint64_t attacks = getAttackBBForColor(getOppositeColor(color));
 
         return attacks & (1ULL << kingLocation);
+    }
+
+    std::string Bitboard::getNotation(int index) {
+        std::string notation;
+
+        int file = index % 8;
+        int rank = index / 8;
+
+        notation += "abcdefgh"[file];
+        notation += "12345678"[rank];
+
+        return notation;
     }
 
     void Bitboard::printAvailableMoves(uint64_t availableMoves) {
@@ -469,6 +512,26 @@ namespace Chess {
         }
 
         return PieceType::Empty;
+    }
+
+    bool Bitboard::isWinner(PieceColor color) {
+        if (!isKingInCheck(getOppositeColor(color))) {
+            return false;
+        }
+
+        std::vector<Move> moves = Chess::generatePseudoLegalMoves(*this, color);
+
+        for (Move move : moves) {
+            makeMove(move.fromSquare, move.toSquare, move.pieceType);
+            bool isKingInCheck = this->isKingInCheck(getOppositeColor(color));
+            unmakeMove();
+
+            if (!isKingInCheck) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     uint64_t soutOne(uint64_t b) {
