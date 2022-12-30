@@ -102,6 +102,16 @@ int main() {
     // eval test: 8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
+/*    Chess::Bitboard bb;
+    bb.setFromFEN("rnbqkbnr/pppppp1p/8/6p1/7P/4P3/PPPP1PP1/RNBQKBNR b KQkq - 0 2");
+    bb.print();
+    bb.makeMove(Chess::Square::G5, Chess::Square::G4, Chess::PieceType::BLACK_PAWN);
+    bb.print();
+    std::vector<Chess::Move> availableMoves = Chess::generatePseudoLegalMoves(bb, Chess::PieceColor::WHITE);
+    bb.printAvailableMoves(availableMoves);
+    bb.unmakeMove();
+    bb.print();*/
+
     for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Bitboard board;
@@ -122,17 +132,6 @@ int main() {
 
         std::cout << std::endl;
     }
-
-
-/*    Chess::Board board;
-    Chess::SearchManager searchManager{};
-
-    board.setFromFEN("8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33");
-    Chess::Move bestMove = searchManager.getBestMove(&board, Chess::PieceColor::WHITE).move;
-    Chess::TileLocation pieceLoc = board.getPiecePosition(bestMove.piece->getId());
-    Chess::Tile* tile = board.getTileUnsafe(pieceLoc.x, pieceLoc.y);
-
-    std::cout << "Move: " << tile->getNotation() << bestMove.tile->getNotation() << std::endl;*/
 
     try {
         Chess::Engine engine;

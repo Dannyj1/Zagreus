@@ -50,12 +50,23 @@ namespace Chess {
             uint64_t attackBB;
             if (pieceType == PieceType::WHITE_PAWN) {
                 attackBB = bitboard.getWhitePawnAttacks(1ULL << index);
+
+                if (bitboard.getBlackEnPassantSquare() >= 0) {
+                    attackBB &= opponentPiecesBB | (1ULL << bitboard.getBlackEnPassantSquare());
+                } else {
+                    attackBB &= opponentPiecesBB;
+                }
             } else {
                 attackBB = bitboard.getBlackPawnAttacks(1ULL << index);
+
+                if (bitboard.getWhiteEnPassantSquare() >= 0) {
+                    attackBB &= opponentPiecesBB | (1ULL << bitboard.getWhiteEnPassantSquare());
+                } else {
+                    attackBB &= opponentPiecesBB;
+                }
             }
 
             attackBB &= ~ownPiecesBB;
-            attackBB &= opponentPiecesBB;
 
             while (attackBB > 0) {
                 uint64_t attackIndex = Chess::bitscanForward(attackBB);

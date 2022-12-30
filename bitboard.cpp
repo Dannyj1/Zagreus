@@ -138,22 +138,59 @@ namespace Chess {
     }
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType) {
-        PieceType pieceOnSquare = getPieceOnSquare(toSquare);
+        PieceType capturedPiece = getPieceOnSquare(toSquare);
+        PieceType enPassantCapture = PieceType::EMPTY;
+        int oldWhiteEnPassantSquare = whiteEnPassantSquare;
+        int oldBlackEnPassantSquare = blackEnPassantSquare;
 
-        undoStack.push({fromSquare,
-                        toSquare,
-                        pieceType,
-                        pieceOnSquare});
+        if (pieceType == PieceType::WHITE_PAWN || pieceType == PieceType::BLACK_PAWN) {
+            if (fromSquare - toSquare == 16) {
+                whiteEnPassantSquare = -1;
+                blackEnPassantSquare = toSquare + 8;
+            } else if (fromSquare - toSquare == -16) {
+                whiteEnPassantSquare = toSquare - 8;
+                blackEnPassantSquare = -1;
+            } else {
+                if (std::abs(fromSquare - toSquare) == 7 || std::abs(fromSquare - toSquare) == 9) {
+                    if (whiteEnPassantSquare == toSquare) {
+                        enPassantCapture = PieceType::WHITE_PAWN;
+                        removePiece(toSquare + 8, PieceType::WHITE_PAWN);
+                    } else if (blackEnPassantSquare == toSquare) {
+                        enPassantCapture = PieceType::BLACK_PAWN;
+                        removePiece(toSquare - 8, PieceType::BLACK_PAWN);
+                    }
+                }
 
-        if (pieceOnSquare != PieceType::EMPTY) {
-            removePiece(toSquare, pieceOnSquare);
+                whiteEnPassantSquare = -1;
+                blackEnPassantSquare = -1;
+            }
+        } else {
+            whiteEnPassantSquare = -1;
+            blackEnPassantSquare = -1;
+        }
+
+        if (capturedPiece != PieceType::EMPTY) {
+            removePiece(toSquare, capturedPiece);
         }
 
         removePiece(fromSquare, pieceType);
         setPiece(toSquare, pieceType);
+
+        undoStack.push({fromSquare,
+                        toSquare,
+                        pieceType,
+                        capturedPiece,
+                        enPassantCapture,
+                        oldWhiteEnPassantSquare,
+                        oldBlackEnPassantSquare});
     }
 
     void Bitboard::unmakeMove() {
+        if (undoStack.empty()) {
+            std::cout << "Unmake move: Undo stack is empty!" << std::endl;
+            return;
+        }
+
         UndoData undoData = undoStack.top();
         undoStack.pop();
 
@@ -163,6 +200,25 @@ namespace Chess {
         if (undoData.capturedPieceType != PieceType::EMPTY) {
             setPiece(undoData.toSquare, undoData.capturedPieceType);
         }
+
+        if (undoData.enPassantCapture != PieceType::EMPTY) {
+            if (undoData.enPassantCapture == PieceType::WHITE_PAWN) {
+                setPiece(undoData.toSquare + 8, undoData.enPassantCapture);
+            } else {
+                setPiece(undoData.toSquare - 8, undoData.enPassantCapture);
+            }
+        }
+
+        whiteEnPassantSquare = undoData.whiteEnPassantSquare;
+        blackEnPassantSquare = undoData.blackEnPassantSquare;
+    }
+
+    int Bitboard::getBlackEnPassantSquare() const {
+        return blackEnPassantSquare;
+    }
+
+    int Bitboard::getWhiteEnPassantSquare() const {
+        return whiteEnPassantSquare;
     }
 
     bool Bitboard::setFromFEN(const std::string &fen) {
