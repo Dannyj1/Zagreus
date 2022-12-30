@@ -42,19 +42,28 @@ namespace Chess {
     };
 
     struct UndoData {
-        int fromSquare;
-        int toSquare;
-        PieceType pieceType;
-        PieceType capturedPieceType;
-        PieceType enPassantCapture;
+        uint64_t pieceBB[12];
+        uint64_t whiteBB;
+        uint64_t blackBB;
+        uint64_t occupiedBB;
         int whiteEnPassantSquare;
         int blackEnPassantSquare;
+        uint8_t castlingRights;
+        uint64_t whiteAttackMap;
+        uint64_t blackAttackMap;
     };
 
     enum PieceColor {
         NONE = -1,
         WHITE = 0,
         BLACK = 1
+    };
+
+    enum CastlingRights {
+        WHITE_KINGSIDE = 1 << 0,
+        WHITE_QUEENSIDE = 1 << 1,
+        BLACK_KINGSIDE = 1 << 2,
+        BLACK_QUEENSIDE = 1 << 3
     };
 
     constexpr uint64_t A_FILE = 0x0101010101010101;
@@ -146,6 +155,9 @@ namespace Chess {
         uint64_t occupiedBB{};
         int blackEnPassantSquare = -1;
         int whiteEnPassantSquare = -1;
+        uint8_t castlingRights = 0b00001111;
+        uint64_t whiteAttackMap = 0;
+        uint64_t blackAttackMap = 0;
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
@@ -218,7 +230,7 @@ namespace Chess {
 
         bool isKingInCheck(PieceColor color);
 
-        uint64_t getAttackBBForColor(PieceColor color);
+        uint64_t calculateAttackedTilesForColor(PieceColor color);
 
         uint64_t getWhiteAttacksBB();
 
@@ -228,10 +240,12 @@ namespace Chess {
 
         static std::string getNotation(int index);
 
-        uint64_t getEnPassantBB(PieceColor color);
-
         int getBlackEnPassantSquare() const;
 
         int getWhiteEnPassantSquare() const;
+
+        void handleCastling(Square rookSquare, Square kingSquare, PieceType rookType, PieceType kingType);
+
+        uint8_t getCastlingRights() const;
     };
 }

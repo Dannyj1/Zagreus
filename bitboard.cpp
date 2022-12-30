@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <psdk_inc/intrin-impl.h>
+#include <map>
 
 #include "bitboard.h"
 #include "move_gen.h"
@@ -139,9 +140,12 @@ namespace Chess {
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType) {
         PieceType capturedPiece = getPieceOnSquare(toSquare);
-        PieceType enPassantCapture = PieceType::EMPTY;
-        int oldWhiteEnPassantSquare = whiteEnPassantSquare;
-        int oldBlackEnPassantSquare = blackEnPassantSquare;
+
+        undoStack.push({{}, whiteBB, blackBB, occupiedBB, whiteEnPassantSquare, blackEnPassantSquare, castlingRights, whiteAttackMap, blackAttackMap});
+
+        for (int i = 0; i < 12; i++) {
+            undoStack.top().pieceBB[i] = pieceBB[i];
+        }
 
         if (pieceType == PieceType::WHITE_PAWN || pieceType == PieceType::BLACK_PAWN) {
             if (fromSquare - toSquare == 16) {
@@ -153,10 +157,8 @@ namespace Chess {
             } else {
                 if (std::abs(fromSquare - toSquare) == 7 || std::abs(fromSquare - toSquare) == 9) {
                     if (whiteEnPassantSquare == toSquare) {
-                        enPassantCapture = PieceType::WHITE_PAWN;
                         removePiece(toSquare + 8, PieceType::WHITE_PAWN);
                     } else if (blackEnPassantSquare == toSquare) {
-                        enPassantCapture = PieceType::BLACK_PAWN;
                         removePiece(toSquare - 8, PieceType::BLACK_PAWN);
                     }
                 }
@@ -169,6 +171,49 @@ namespace Chess {
             blackEnPassantSquare = -1;
         }
 
+        // TODO: refactor. Really ugly
+        if (pieceType == PieceType::WHITE_ROOK && toSquare == Square::E1) {
+            if (fromSquare == Square::A1 && (castlingRights & CastlingRights::WHITE_QUEENSIDE)) {
+                handleCastling(Square::A1, Square::E1, PieceType::WHITE_ROOK, PieceType::WHITE_KING);
+                return;
+            } else if (fromSquare == Square::H1 && (castlingRights & CastlingRights::WHITE_KINGSIDE)) {
+                handleCastling(Square::H1, Square::E1, PieceType::WHITE_ROOK, PieceType::WHITE_KING);
+                return;
+            }
+        }
+
+        if (pieceType == PieceType::BLACK_ROOK && toSquare == Square::E8) {
+            if (fromSquare == Square::A8 && (castlingRights & CastlingRights::BLACK_QUEENSIDE)) {
+                handleCastling(Square::A8, Square::E8, PieceType::BLACK_ROOK, PieceType::BLACK_KING);
+                return;
+            } else if (fromSquare == Square::H8 && (castlingRights & CastlingRights::BLACK_KINGSIDE)) {
+                handleCastling(Square::H8, Square::E8, PieceType::BLACK_ROOK, PieceType::BLACK_KING);
+                return;
+            }
+        }
+
+        if (pieceType == PieceType::WHITE_KING) {
+            castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
+        } else if (pieceType == PieceType::BLACK_KING) {
+            castlingRights &= ~(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
+        }
+
+        if (pieceType == PieceType::WHITE_ROOK) {
+            if (fromSquare == Square::A1) {
+                castlingRights &= ~CastlingRights::WHITE_QUEENSIDE;
+            } else if (fromSquare == Square::H1) {
+                castlingRights &= ~CastlingRights::WHITE_KINGSIDE;
+            }
+        }
+
+        if (pieceType == PieceType::BLACK_ROOK) {
+            if (fromSquare == Square::A8) {
+                castlingRights &= ~CastlingRights::BLACK_QUEENSIDE;
+            } else if (fromSquare == Square::H8) {
+                castlingRights &= ~CastlingRights::BLACK_KINGSIDE;
+            }
+        }
+
         if (capturedPiece != PieceType::EMPTY) {
             removePiece(toSquare, capturedPiece);
         }
@@ -176,13 +221,8 @@ namespace Chess {
         removePiece(fromSquare, pieceType);
         setPiece(toSquare, pieceType);
 
-        undoStack.push({fromSquare,
-                        toSquare,
-                        pieceType,
-                        capturedPiece,
-                        enPassantCapture,
-                        oldWhiteEnPassantSquare,
-                        oldBlackEnPassantSquare});
+        whiteAttackMap = calculateAttackedTilesForColor(PieceColor::WHITE);
+        blackAttackMap = calculateAttackedTilesForColor(PieceColor::BLACK);
     }
 
     void Bitboard::unmakeMove() {
@@ -194,23 +234,18 @@ namespace Chess {
         UndoData undoData = undoStack.top();
         undoStack.pop();
 
-        removePiece(undoData.toSquare, undoData.pieceType);
-        setPiece(undoData.fromSquare, undoData.pieceType);
-
-        if (undoData.capturedPieceType != PieceType::EMPTY) {
-            setPiece(undoData.toSquare, undoData.capturedPieceType);
+        for (int i = 0; i < 12; i++) {
+            pieceBB[i] = undoData.pieceBB[i];
         }
 
-        if (undoData.enPassantCapture != PieceType::EMPTY) {
-            if (undoData.enPassantCapture == PieceType::WHITE_PAWN) {
-                setPiece(undoData.toSquare + 8, undoData.enPassantCapture);
-            } else {
-                setPiece(undoData.toSquare - 8, undoData.enPassantCapture);
-            }
-        }
-
+        whiteBB = undoData.whiteBB;
+        blackBB = undoData.blackBB;
+        occupiedBB = undoData.occupiedBB;
         whiteEnPassantSquare = undoData.whiteEnPassantSquare;
         blackEnPassantSquare = undoData.blackEnPassantSquare;
+        castlingRights = undoData.castlingRights;
+        whiteAttackMap = undoData.whiteAttackMap;
+        blackAttackMap = undoData.blackAttackMap;
     }
 
     int Bitboard::getBlackEnPassantSquare() const {
@@ -418,7 +453,7 @@ namespace Chess {
         std::cout << std::endl << "---------------------------------" << std::endl;
     }
 
-    uint64_t Bitboard::getAttackedTilesForColor(PieceColor color) {
+    uint64_t Bitboard::calculateAttackedTilesForColor(PieceColor color) {
         uint64_t attacks = 0;
 
         if (color == PieceColor::WHITE) {
@@ -486,6 +521,10 @@ namespace Chess {
         }
 
         std::cout << std::endl << "---------------------------------" << std::endl;
+    }
+
+    uint8_t Bitboard::getCastlingRights() const {
+        return castlingRights;
     }
 
     char Bitboard::getCharacterForPieceType(PieceType pieceType) {
@@ -567,6 +606,48 @@ namespace Chess {
         }
 
         return true;
+    }
+
+    void Bitboard::handleCastling(Square rookSquare, Square kingSquare, PieceType rookType, PieceType kingType) {
+        static const std::map<Square, std::pair<Square, Square>> destinations = {
+                { Square::A1, { Square::C1, Square::D1 } },
+                { Square::H1, { Square::G1, Square::F1 } },
+                { Square::A8, { Square::C8, Square::D8 } },
+                { Square::H8, { Square::G8, Square::F8 } }
+        };
+
+        auto it = destinations.find(rookSquare);
+
+        if (it == destinations.end()) {
+            return;
+        }
+
+        removePiece(rookSquare, rookType);
+        removePiece(kingSquare, kingType);
+        setPiece(it->second.first, kingType);
+        setPiece(it->second.second, rookType);
+
+        if (kingType == PieceType::WHITE_KING) {
+            castlingRights &= ~(CastlingRights::WHITE_QUEENSIDE | CastlingRights::WHITE_KINGSIDE);
+        } else {
+            castlingRights &= ~(CastlingRights::BLACK_QUEENSIDE | CastlingRights::BLACK_KINGSIDE);
+        }
+    }
+
+    uint64_t Bitboard::getAttackedTilesForColor(PieceColor color) {
+        if (color == PieceColor::WHITE) {
+            return getWhiteAttacksBB();
+        } else {
+            return getBlackAttacksBB();
+        }
+    }
+
+    uint64_t Bitboard::getWhiteAttacksBB() {
+        return whiteAttackMap;
+    }
+
+    uint64_t Bitboard::getBlackAttacksBB() {
+        return blackAttackMap;
     }
 
     uint64_t soutOne(uint64_t b) {
