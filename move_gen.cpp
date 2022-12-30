@@ -13,18 +13,25 @@ namespace Chess {
         moves.reserve(100);
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
-        generatePawnMoves(moves, bitboard, ownPiecesBB, color, color == PieceColor::WHITE ? PieceType::WHITE_PAWN : PieceType::BLACK_PAWN);
-        generateKnightMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT);
-        generateBishopMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP);
-        generateRookMoves(moves, bitboard, ownPiecesBB, color, color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK);
-        generateQueenMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN);
-        generateKingMoves(moves, bitboard, ownPiecesBB, color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
+        generatePawnMoves(moves, bitboard, ownPiecesBB, color,
+                          color == PieceColor::WHITE ? PieceType::WHITE_PAWN : PieceType::BLACK_PAWN);
+        generateKnightMoves(moves, bitboard, ownPiecesBB,
+                            color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT);
+        generateBishopMoves(moves, bitboard, ownPiecesBB,
+                            color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP);
+        generateRookMoves(moves, bitboard, ownPiecesBB, color,
+                          color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK);
+        generateQueenMoves(moves, bitboard, ownPiecesBB,
+                           color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN);
+        generateKingMoves(moves, bitboard, ownPiecesBB,
+                          color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
 
         return moves;
     }
 
     // TODO: generate en passant
-    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType) {
+    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color,
+                           PieceType pieceType) {
         uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
         uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));
 
@@ -43,7 +50,20 @@ namespace Chess {
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
-                result.push_back({index, genIndex, pieceType});
+                if (pieceType == PieceType::WHITE_PAWN && genIndex >= Square::H8) {
+                    result.push_back({index, genIndex, pieceType, PieceType::WHITE_QUEEN});
+                    result.push_back({index, genIndex, pieceType, PieceType::WHITE_ROOK});
+                    result.push_back({index, genIndex, pieceType, PieceType::WHITE_BISHOP});
+                    result.push_back({index, genIndex, pieceType, PieceType::WHITE_KNIGHT});
+                } else if (pieceType == PieceType::BLACK_PAWN && genIndex <= Square::A1) {
+                    result.push_back({index, genIndex, pieceType, PieceType::BLACK_QUEEN});
+                    result.push_back({index, genIndex, pieceType, PieceType::BLACK_ROOK});
+                    result.push_back({index, genIndex, pieceType, PieceType::BLACK_BISHOP});
+                    result.push_back({index, genIndex, pieceType, PieceType::BLACK_KNIGHT});
+                } else {
+                    result.push_back({index, genIndex, pieceType});
+                }
+
                 genBB &= ~(1ULL << genIndex);
             }
 
@@ -71,7 +91,20 @@ namespace Chess {
             while (attackBB > 0) {
                 uint64_t attackIndex = Chess::bitscanForward(attackBB);
 
-                result.push_back({index, attackIndex, pieceType});
+                if (pieceType == PieceType::WHITE_PAWN && attackIndex >= Square::H8) {
+                    result.push_back({index, attackIndex, pieceType, PieceType::WHITE_QUEEN});
+                    result.push_back({index, attackIndex, pieceType, PieceType::WHITE_ROOK});
+                    result.push_back({index, attackIndex, pieceType, PieceType::WHITE_BISHOP});
+                    result.push_back({index, attackIndex, pieceType, PieceType::WHITE_KNIGHT});
+                } else if (pieceType == PieceType::BLACK_PAWN && attackIndex <= Square::A1) {
+                    result.push_back({index, attackIndex, pieceType, PieceType::BLACK_QUEEN});
+                    result.push_back({index, attackIndex, pieceType, PieceType::BLACK_ROOK});
+                    result.push_back({index, attackIndex, pieceType, PieceType::BLACK_BISHOP});
+                    result.push_back({index, attackIndex, pieceType, PieceType::BLACK_KNIGHT});
+                } else {
+                    result.push_back({index, attackIndex, pieceType});
+                }
+
                 attackBB &= ~(1ULL << attackIndex);
             }
 
@@ -119,7 +152,8 @@ namespace Chess {
         }
     }
 
-    void generateRookMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType) {
+    void generateRookMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color,
+                           PieceType pieceType) {
         uint64_t rookBB = bitboard.getPieceBoard(pieceType);
         uint8_t castlingRights = bitboard.getCastlingRights();
         uint64_t occupiedBB = bitboard.getOccupiedBoard();
@@ -142,12 +176,12 @@ namespace Chess {
                 }
 
                 if (castlingRights & CastlingRights::WHITE_QUEENSIDE && index == Square::A1) {
-                    uint64_t tilesBetween = (1ULL << Square::B1) | (1ULL << Square::C1) | (1ULL << Square::D1);
+                    uint64_t tilesBetween = (1ULL << Square::C1) | (1ULL << Square::D1);
 
                     if (!(occupiedBB & tilesBetween)) {
                         uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & tilesBetween)  && !(opponentAttacks & (1ULL << Square::E1))) {
+                        if (!(opponentAttacks & tilesBetween) && !(opponentAttacks & (1ULL << Square::E1))) {
                             result.push_back({Square::A1, Square::E1, PieceType::WHITE_ROOK});
                         }
                     }
@@ -166,7 +200,7 @@ namespace Chess {
                 }
 
                 if (castlingRights & CastlingRights::BLACK_QUEENSIDE && index == Square::A8) {
-                    uint64_t tilesBetween = (1ULL << Square::B8) | (1ULL << Square::C8) | (1ULL << Square::D8);
+                    uint64_t tilesBetween = (1ULL << Square::C8) | (1ULL << Square::D8);
 
 
                     if (!(occupiedBB & tilesBetween)) {

@@ -39,10 +39,12 @@ namespace Chess {
         uint64_t fromSquare;
         uint64_t toSquare;
         PieceType pieceType;
+        PieceType promotionPiece = PieceType::EMPTY;
     };
 
     struct UndoData {
         uint64_t pieceBB[12];
+        PieceType pieceSquareMapping[64]{PieceType::EMPTY};
         uint64_t whiteBB;
         uint64_t blackBB;
         uint64_t occupiedBB;
@@ -81,6 +83,8 @@ namespace Chess {
     constexpr uint64_t LIGHT_SQUARES = 0x55AA55AA55AA55AA;
     constexpr uint64_t DARK_SQUARES = 0xAA55AA55AA55AA55;
 
+    constexpr PieceColor oppositeColors[2]{PieceColor::BLACK, PieceColor::WHITE};
+
     uint64_t soutOne(uint64_t b);
 
     uint64_t nortOne(uint64_t b);
@@ -108,7 +112,7 @@ namespace Chess {
     uint64_t noNoWe(uint64_t b);
 
     uint64_t noWeWe(uint64_t b);
-    
+
     uint64_t soWeWe(uint64_t b);
 
     uint64_t soSoWe(uint64_t b);
@@ -162,7 +166,11 @@ namespace Chess {
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
 
-        std::stack<UndoData> undoStack{};
+        PieceType pieceSquareMapping[64]{};
+
+        PieceColor movingColor;
+
+        std::vector<UndoData> undoStack{};
     public:
         Bitboard();
 
@@ -200,7 +208,7 @@ namespace Chess {
 
         void removePiece(int index, PieceType pieceType);
 
-        void makeMove(int fromSquare, int toSquare, PieceType pieceType);
+        void makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece = PieceType::EMPTY);
 
         PieceColor getPieceColor(PieceType type);
 
@@ -208,21 +216,21 @@ namespace Chess {
 
         bool setFromFEN(const std::string &fen);
 
-        void setPieceFromFENChar(const char character, int index);
+        void setPieceFromFENChar(char character, int index);
 
         void print();
+
+        static PieceColor getOppositeColor(PieceColor color);
 
         static char getCharacterForPieceType(PieceType pieceType);
 
         void printAvailableMoves(uint64_t availableMoves);
 
-        void printAvailableMoves(const std::vector<Move>& availableMoves);
+        void printAvailableMoves(const std::vector<Move> &availableMoves);
 
         uint64_t getBoardByColor(PieceColor color);
 
         void unmakeMove();
-
-        static Chess::PieceColor getOppositeColor(PieceColor color);
 
         PieceType getPieceOnSquare(int square);
 
@@ -247,5 +255,7 @@ namespace Chess {
         void handleCastling(Square rookSquare, Square kingSquare, PieceType rookType, PieceType kingType);
 
         uint8_t getCastlingRights() const;
+
+        PieceColor getMovingColor() const;
     };
 }

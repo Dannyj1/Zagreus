@@ -31,7 +31,7 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
         Chess::PieceType fromPiece = board.getPieceOnSquare(move.fromSquare);
         Chess::PieceType toPiece = board.getPieceOnSquare(move.toSquare);
 
-        if (board.getPieceOnSquare(move.toSquare) != Chess::PieceType::EMPTY) {
+        if (toPiece != Chess::PieceType::EMPTY) {
             isCapture = true;
         }
 
@@ -46,14 +46,14 @@ uint64_t perft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int s
             isCastle = true;
         }
 
-        board.makeMove(move.fromSquare, move.toSquare, move.pieceType);
+        board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
         if (!board.isKingInCheck(color)) {
-/*            if (move.promotionPiece) {
-                promotions++;
-            }*/
-
             if (depth == 1) {
+                if (move.promotionPiece != Chess::PieceType::EMPTY) {
+                    promotions++;
+                }
+
                 if (board.isKingInCheck(Chess::Bitboard::getOppositeColor(color))) {
                     checks++;
                 }
@@ -97,15 +97,15 @@ int main() {
     for (int i = 1; i < 16; i++) {
         std::cout << "Running perft for depth " << i << "..." << std::endl;
         Chess::Bitboard board;
-        board.setFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        board.setFromFEN("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
         checks = 0LL;
         ep = 0LL;
         captures = 0LL;
         castles = 0LL;
 
-        auto start = std::chrono::system_clock::now();
-        uint64_t nodes = perft(board, Chess::PieceColor::BLACK, i, i);
-        auto end = std::chrono::system_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
+        uint64_t nodes = perft(board, board.getMovingColor(), i, i);
+        auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         std::cout << "Depth " << i << " Nodes: " << nodes << ", Captures: " << captures << ", Checks: " << checks
