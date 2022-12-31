@@ -78,7 +78,7 @@ namespace Chess {
     SearchResult SearchManager::search(Bitboard board, int depth, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove, std::chrono::time_point<std::chrono::high_resolution_clock> endTime) {
         if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
         || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) || board.isDraw()) {
-            return quiesce(board, ply, alpha, beta, rootMove, previousMove, endTime);
+            return quiesce(board, ply, 10, alpha, beta, rootMove, previousMove, endTime);
         }
 
         bool searchPv = true;
@@ -141,7 +141,7 @@ namespace Chess {
                             std::chrono::time_point<std::chrono::high_resolution_clock> endTime) {
         if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
         || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) || board.isDraw()) {
-            return quiesce(board, ply, beta - 1, beta, rootMove, previousMove, endTime);
+            return quiesce(board, ply, 10, beta - 1, beta, rootMove, previousMove, endTime);
         }
 
         std::vector<Move> legalMoves = generatePseudoLegalMoves(board, board.getMovingColor());
@@ -218,9 +218,9 @@ namespace Chess {
         return (whiteScore - blackScore) * modifier;
     }
 
-    SearchResult SearchManager::quiesce(Bitboard board, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
+    SearchResult SearchManager::quiesce(Bitboard board, int ply, int depth, int alpha, int beta, const Move &rootMove, const Move &previousMove,
                                         std::chrono::time_point<std::chrono::high_resolution_clock> endTime) {
-        if (std::chrono::high_resolution_clock::now() > endTime) {
+        if (std::chrono::high_resolution_clock::now() > endTime || depth == 0) {
             return {rootMove, beta};
         }
 
@@ -232,7 +232,7 @@ namespace Chess {
 
         int delta = 1000;
 
-        if (previousMove.promotionPiece) {
+        if (previousMove.promotionPiece != PieceType::EMPTY) {
             delta += 900;
         }
 
@@ -256,7 +256,7 @@ namespace Chess {
                 continue;
             }
 
-            SearchResult result = quiesce(board, ply + 1, -beta, -alpha, rootMove, move, endTime);
+            SearchResult result = quiesce(board, ply + 1, depth - 1, -beta, -alpha, rootMove, move, endTime);
             result.score *= -1;
             board.unmakeMove();
 

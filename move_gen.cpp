@@ -88,6 +88,10 @@ namespace Chess {
 
             genBB &= ~ownPiecesBB;
 
+            if (quiesce) {
+                genBB &= opponentPiecesBB;
+            }
+
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
@@ -217,53 +221,59 @@ namespace Chess {
         while (rookBB) {
             uint64_t index = Chess::bitscanForward(rookBB);
 
-            // TODO: refactor, is very ugly
-            if (color == PieceColor::WHITE) {
-                if (castlingRights & CastlingRights::WHITE_KINGSIDE && index == Square::H1) {
-                    uint64_t tilesBetween = (1ULL << Square::F1) | (1ULL << Square::G1);
+            if (!quiesce) {
+                // TODO: refactor, is very ugly
+                if (color == PieceColor::WHITE) {
+                    if (castlingRights & CastlingRights::WHITE_KINGSIDE && index == Square::H1) {
+                        uint64_t tilesBetween = (1ULL << Square::F1) | (1ULL << Square::G1);
 
-                    if (!(occupiedBB & tilesBetween)) {
-                        uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
+                        if (!(occupiedBB & tilesBetween)) {
+                            uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(
+                                    Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E1)))) {
-                            result.push_back({Square::H1, Square::E1, PieceType::WHITE_ROOK});
+                            if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E1)))) {
+                                result.push_back({Square::H1, Square::E1, PieceType::WHITE_ROOK});
+                            }
                         }
                     }
-                }
 
-                if (castlingRights & CastlingRights::WHITE_QUEENSIDE && index == Square::A1) {
-                    uint64_t tilesBetween = (1ULL << Square::C1) | (1ULL << Square::D1);
+                    if (castlingRights & CastlingRights::WHITE_QUEENSIDE && index == Square::A1) {
+                        uint64_t tilesBetween = (1ULL << Square::C1) | (1ULL << Square::D1);
 
-                    if (!(occupiedBB & (tilesBetween | (1ULL << Square::B1)))) {
-                        uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
+                        if (!(occupiedBB & (tilesBetween | (1ULL << Square::B1)))) {
+                            uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(
+                                    Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E1)))) {
-                            result.push_back({Square::A1, Square::E1, PieceType::WHITE_ROOK});
+                            if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E1)))) {
+                                result.push_back({Square::A1, Square::E1, PieceType::WHITE_ROOK});
+                            }
                         }
                     }
-                }
-            } else {
-                if (castlingRights & CastlingRights::BLACK_KINGSIDE && index == Square::H8) {
-                    uint64_t tilesBetween = (1ULL << Square::F8) | (1ULL << Square::G8);
+                } else {
+                    if (castlingRights & CastlingRights::BLACK_KINGSIDE && index == Square::H8) {
+                        uint64_t tilesBetween = (1ULL << Square::F8) | (1ULL << Square::G8);
 
-                    if (!(occupiedBB & tilesBetween)) {
-                        uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
+                        if (!(occupiedBB & tilesBetween)) {
+                            uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(
+                                    Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E8)))) {
-                            result.push_back({Square::H8, Square::E8, PieceType::BLACK_ROOK});
+                            if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E8)))) {
+                                result.push_back({Square::H8, Square::E8, PieceType::BLACK_ROOK});
+                            }
                         }
                     }
-                }
 
-                if (castlingRights & CastlingRights::BLACK_QUEENSIDE && index == Square::A8) {
-                    uint64_t tilesBetween = (1ULL << Square::C8) | (1ULL << Square::D8);
+                    if (castlingRights & CastlingRights::BLACK_QUEENSIDE && index == Square::A8) {
+                        uint64_t tilesBetween = (1ULL << Square::C8) | (1ULL << Square::D8);
 
 
-                    if (!(occupiedBB & (tilesBetween | (1ULL << Square::B8)))) {
-                        uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
+                        if (!(occupiedBB & (tilesBetween | (1ULL << Square::B8)))) {
+                            uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(
+                                    Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E8)))) {
-                            result.push_back({Square::A8, Square::E8, PieceType::BLACK_ROOK});
+                            if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E8)))) {
+                                result.push_back({Square::A8, Square::E8, PieceType::BLACK_ROOK});
+                            }
                         }
                     }
                 }
