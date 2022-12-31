@@ -53,6 +53,7 @@ namespace Chess {
         uint8_t castlingRights;
         uint64_t whiteAttackMap;
         uint64_t blackAttackMap;
+        uint64_t zobristHash;
     };
 
     enum PieceColor {
@@ -154,6 +155,7 @@ namespace Chess {
     class Bitboard {
     private:
         uint64_t pieceBB[12]{};
+        PieceType pieceSquareMapping[64]{};
         uint64_t whiteBB{};
         uint64_t blackBB{};
         uint64_t occupiedBB{};
@@ -166,9 +168,12 @@ namespace Chess {
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
 
-        PieceType pieceSquareMapping[64]{};
-
         PieceColor movingColor;
+        int movesMade = 0;
+        int halfmoveClock = 0;
+        int fullmoveClock = 1;
+        uint64_t zobristHash = 0;
+        uint64_t zobristConstants[789]{};
 
         std::vector<UndoData> undoStack{};
     public:
@@ -208,7 +213,7 @@ namespace Chess {
 
         void removePiece(int index, PieceType pieceType);
 
-        void makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece = PieceType::EMPTY);
+        void makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece);
 
         PieceColor getPieceColor(PieceType type);
 
@@ -257,5 +262,11 @@ namespace Chess {
         uint8_t getCastlingRights() const;
 
         PieceColor getMovingColor() const;
+
+        bool isDraw();
+
+        bool isInsufficientMaterial();
+
+        uint64_t getZobristHash() const;
     };
 }

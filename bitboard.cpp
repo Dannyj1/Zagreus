@@ -6,6 +6,7 @@
 #include <iostream>
 #include <psdk_inc/intrin-impl.h>
 #include <map>
+#include <random>
 
 #include "bitboard.h"
 #include "move_gen.h"
@@ -13,6 +14,15 @@
 namespace Chess {
 
     Bitboard::Bitboard() {
+        std::random_device rd;
+        std::mt19937_64 gen(rd());
+        gen.seed(1);
+        std::uniform_int_distribution<uint64_t> dis;
+
+        for (uint64_t &zobristConstant : zobristConstants) {
+            zobristConstant = dis(gen);
+        }
+
         undoStack.reserve(200);
 
         uint64_t sqBB = 1ULL;
@@ -134,6 +144,7 @@ namespace Chess {
         }
 
         pieceSquareMapping[index] = pieceType;
+        zobristHash ^= zobristConstants[index * 12 + pieceType];
     }
 
     void Bitboard::removePiece(int index, PieceType pieceType) {
@@ -143,25 +154,44 @@ namespace Chess {
         blackBB &= ~(1ULL << index);
 
         pieceSquareMapping[index] = PieceType::EMPTY;
+        zobristHash ^= zobristConstants[index * 12 + pieceType];
     }
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
         PieceType capturedPiece = getPieceOnSquare(toSquare);
 
-        undoStack.push_back(
-                {{}, {}, whiteBB, blackBB, occupiedBB, whiteEnPassantSquare, blackEnPassantSquare, castlingRights,
-                 whiteAttackMap, blackAttackMap});
+        undoStack.push_back({{}, {}, whiteBB, blackBB, occupiedBB, whiteEnPassantSquare, blackEnPassantSquare, castlingRights,
+                 whiteAttackMap, blackAttackMap, zobristHash});
 
         std::copy(pieceBB, pieceBB + 12, undoStack.back().pieceBB);
         std::copy(pieceSquareMapping, pieceSquareMapping + 64, undoStack.back().pieceSquareMapping);
 
+        movesMade += 1;
+        halfmoveClock += 1;
+
+        if (whiteEnPassantSquare != -1) {
+            zobristHash ^= zobristConstants[(whiteEnPassantSquare % 8) + 768 + 5];
+        }
+
+        if (blackEnPassantSquare != -1) {
+            zobristHash ^= zobristConstants[(blackEnPassantSquare % 8) + 768 + 13];
+        }
+
+        if (getMovingColor() == PieceColor::BLACK) {
+            fullmoveClock += 1;
+        }
+
         if (pieceType == PieceType::WHITE_PAWN || pieceType == PieceType::BLACK_PAWN) {
+            halfmoveClock = 0;
+
             if (fromSquare - toSquare == 16) {
                 whiteEnPassantSquare = -1;
                 blackEnPassantSquare = toSquare + 8;
+                zobristHash ^= zobristConstants[(blackEnPassantSquare % 8) + 768 + 5];
             } else if (fromSquare - toSquare == -16) {
                 whiteEnPassantSquare = toSquare - 8;
                 blackEnPassantSquare = -1;
+                zobristHash ^= zobristConstants[(whiteEnPassantSquare % 8) + 768 + 5];
             } else {
                 if (std::abs(fromSquare - toSquare) == 7 || std::abs(fromSquare - toSquare) == 9) {
                     if (whiteEnPassantSquare == toSquare) {
@@ -202,15 +232,21 @@ namespace Chess {
 
         if (pieceType == PieceType::WHITE_KING) {
             castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
+            zobristHash ^= zobristConstants[768 + 1];
+            zobristHash ^= zobristConstants[768 + 2];
         } else if (pieceType == PieceType::BLACK_KING) {
             castlingRights &= ~(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
+            zobristHash ^= zobristConstants[768 + 3];
+            zobristHash ^= zobristConstants[768 + 4];
         }
 
         if (pieceType == PieceType::WHITE_ROOK) {
             if (fromSquare == Square::A1) {
                 castlingRights &= ~CastlingRights::WHITE_QUEENSIDE;
+                zobristHash ^= zobristConstants[768 + 2];
             } else if (fromSquare == Square::H1) {
                 castlingRights &= ~CastlingRights::WHITE_KINGSIDE;
+                zobristHash ^= zobristConstants[768 + 1];
             }
         }
 
@@ -224,6 +260,7 @@ namespace Chess {
 
         if (capturedPiece != PieceType::EMPTY) {
             removePiece(toSquare, capturedPiece);
+            halfmoveClock = 0;
         }
 
         removePiece(fromSquare, pieceType);
@@ -236,12 +273,21 @@ namespace Chess {
 
         whiteAttackMap = 0;
         blackAttackMap = 0;
+        movingColor = getOppositeColor(movingColor);
+        zobristHash ^= zobristConstants[768];
     }
 
     void Bitboard::unmakeMove() {
         if (undoStack.empty()) {
             std::cout << "Unmake move: Undo stack is empty!" << std::endl;
             return;
+        }
+
+        movesMade -= 1;
+        halfmoveClock -= 1;
+
+        if (getMovingColor() == PieceColor::BLACK) {
+            fullmoveClock -= 1;
         }
 
         UndoData undoData = undoStack.back();
@@ -257,6 +303,8 @@ namespace Chess {
         castlingRights = undoData.castlingRights;
         whiteAttackMap = undoData.whiteAttackMap;
         blackAttackMap = undoData.blackAttackMap;
+        movingColor = getOppositeColor(movingColor);
+        zobristHash = undoData.zobristHash;
     }
 
     int Bitboard::getBlackEnPassantSquare() const {
@@ -272,6 +320,15 @@ namespace Chess {
         int spaces = 0;
 
         castlingRights = 0;
+        zobristHash = 0;
+        movesMade = 0;
+        halfmoveClock = 0;
+        fullmoveClock = 1;
+        blackEnPassantSquare = -1;
+        whiteEnPassantSquare = -1;
+        castlingRights = 0b00001111;
+        whiteAttackMap = 0;
+        blackAttackMap = 0;
 
         for (const char character : fen) {
             if (character == ' ') {
@@ -301,6 +358,7 @@ namespace Chess {
 
             if (spaces == 1) {
                 movingColor = character == 'w' ? PieceColor::WHITE : PieceColor::BLACK;
+                zobristHash ^= zobristConstants[768];
                 continue;
             }
 
@@ -311,21 +369,25 @@ namespace Chess {
 
                 if (character == 'K') {
                     castlingRights |= CastlingRights::WHITE_KINGSIDE;
+                    zobristHash ^= zobristConstants[768 + 1];
                     continue;
                 }
 
                 if (character == 'Q') {
                     castlingRights |= CastlingRights::WHITE_QUEENSIDE;
+                    zobristHash ^= zobristConstants[768 + 2];
                     continue;
                 }
 
                 if (character == 'k') {
                     castlingRights |= CastlingRights::BLACK_KINGSIDE;
+                    zobristHash ^= zobristConstants[768 + 3];
                     continue;
                 }
 
                 if (character == 'q') {
                     castlingRights |= CastlingRights::BLACK_QUEENSIDE;
+                    zobristHash ^= zobristConstants[768 + 4];
                     continue;
                 }
 
@@ -494,6 +556,61 @@ namespace Chess {
         return attacks & (1ULL << kingLocation);
     }
 
+    bool Bitboard::isDraw() {
+        std::vector<Move> availableMoves = generatePseudoLegalMoves(*this, movingColor);
+
+        if (availableMoves.size() == 0 && !isKingInCheck(movingColor)) {
+            return true;
+        }
+
+        if (halfmoveClock >= 100) {
+            return true;
+        }
+
+        return isInsufficientMaterial();
+    }
+
+    bool Bitboard::isInsufficientMaterial() {
+        int pieceCount = popcnt(getOccupiedBoard());
+
+        if (pieceCount > 4) {
+            return false;
+        }
+
+        if (pieceCount == 2) {
+            return true;
+        }
+
+        if (pieceCount == 3) {
+            uint64_t bishopBB = getPieceBoard(WHITE_BISHOP) | getPieceBoard(BLACK_BISHOP);
+            uint64_t knightBB = getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT);
+
+            if (bishopBB || knightBB) {
+                return true;
+            }
+        }
+
+        if (pieceCount == 4) {
+            if (popcnt(getWhiteBoard()) != 2) {
+                return false;
+            }
+
+            uint64_t whiteDrawPieces = getPieceBoard(WHITE_BISHOP) | getPieceBoard(WHITE_KNIGHT);
+            uint64_t blackDrawPieces = getPieceBoard(BLACK_BISHOP) | getPieceBoard(BLACK_KNIGHT);
+
+            // King not included in the above boards, so if there is only one piece left, it's a draw
+            if (popcnt(whiteDrawPieces) == 1 && popcnt(blackDrawPieces) == 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    uint64_t Bitboard::getZobristHash() const {
+        return zobristHash;
+    }
+
     std::string Bitboard::getNotation(int index) {
         std::string notation;
 
@@ -589,7 +706,7 @@ namespace Chess {
         std::vector<Move> moves = Chess::generatePseudoLegalMoves(*this, color);
 
         for (Move move : moves) {
-            makeMove(move.fromSquare, move.toSquare, move.pieceType);
+            makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
             bool isKingInCheck = this->isKingInCheck(getOppositeColor(color));
             unmakeMove();
 
@@ -622,8 +739,12 @@ namespace Chess {
 
         if (kingType == PieceType::WHITE_KING) {
             castlingRights &= ~(CastlingRights::WHITE_QUEENSIDE | CastlingRights::WHITE_KINGSIDE);
+            zobristHash ^= zobristConstants[768 + 1];
+            zobristHash ^= zobristConstants[768 + 2];
         } else {
             castlingRights &= ~(CastlingRights::BLACK_QUEENSIDE | CastlingRights::BLACK_KINGSIDE);
+            zobristHash ^= zobristConstants[768 + 3];
+            zobristHash ^= zobristConstants[768 + 4];
         }
     }
 
@@ -738,97 +859,81 @@ namespace Chess {
     }
 
     uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {
-        uint64_t flood = pieceBB;
-        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 8ULL) & empty;
-        flood |= (pieceBB >> 8ULL) & empty;
-        return flood >> 8ULL;
+        pieceBB |= empty & (pieceBB >> 8ULL);
+        empty &= (empty >> 8ULL);
+        pieceBB |= empty & (pieceBB >> 16ULL);
+        empty &= (empty >> 16ULL);
+        pieceBB |= empty & (pieceBB >> 32ULL);
+        return soutOne(pieceBB);
     }
 
     uint64_t nortOccl(uint64_t pieceBB, uint64_t empty) {
-        uint64_t flood = pieceBB;
-        flood |= pieceBB = (pieceBB << 8ULL) & empty;
-        flood |= pieceBB = (pieceBB << 8ULL) & empty;
-        flood |= pieceBB = (pieceBB << 8ULL) & empty;
-        flood |= pieceBB = (pieceBB << 8ULL) & empty;
-        flood |= pieceBB = (pieceBB << 8ULL) & empty;
-        flood |= (pieceBB << 8ULL) & empty;
-        return flood << 8ULL;
+        pieceBB |= empty & (pieceBB << 8ULL);
+        empty &= (empty << 8ULL);
+        pieceBB |= empty & (pieceBB << 16ULL);
+        empty &= (empty << 16ULL);
+        pieceBB |= empty & (pieceBB << 32ULL);
+        return nortOne(pieceBB);
     }
 
     uint64_t eastOccl(uint64_t pieceBB, uint64_t empty) {
-        uint64_t flood = pieceBB;
         empty &= NOT_A_FILE;
-        flood |= pieceBB = (pieceBB << 1ULL) & empty;
-        flood |= pieceBB = (pieceBB << 1ULL) & empty;
-        flood |= pieceBB = (pieceBB << 1ULL) & empty;
-        flood |= pieceBB = (pieceBB << 1ULL) & empty;
-        flood |= pieceBB = (pieceBB << 1ULL) & empty;
-        flood |= (pieceBB << 1ULL) & empty;
-        return (flood << 1ULL) & NOT_A_FILE;
+        pieceBB |= empty & (pieceBB << 1ULL);
+        empty &= (empty << 1ULL);
+        pieceBB |= empty & (pieceBB << 2ULL);
+        empty &= (empty << 2ULL);
+        pieceBB |= empty & (pieceBB << 4ULL);
+        return eastOne(pieceBB);
     }
 
     uint64_t noEaOccl(uint64_t pieceBB, uint64_t empty) {
-        uint64_t flood = pieceBB;
         empty &= NOT_A_FILE;
-        flood |= pieceBB = (pieceBB << 9ULL) & empty;
-        flood |= pieceBB = (pieceBB << 9ULL) & empty;
-        flood |= pieceBB = (pieceBB << 9ULL) & empty;
-        flood |= pieceBB = (pieceBB << 9ULL) & empty;
-        flood |= pieceBB = (pieceBB << 9ULL) & empty;
-        flood |= (pieceBB << 9ULL) & empty;
-        return (flood << 9ULL) & NOT_A_FILE;
+        pieceBB |= empty & (pieceBB << 9ULL);
+        empty &= (empty << 9ULL);
+        pieceBB |= empty & (pieceBB << 18ULL);
+        empty &= (empty << 18ULL);
+        pieceBB |= empty & (pieceBB << 36ULL);
+        return noEaOne(pieceBB);
     }
 
     uint64_t soEaOccl(uint64_t pieceBB, uint64_t empty) {
-        uint64_t flood = pieceBB;
         empty &= NOT_A_FILE;
-        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
-        flood |= pieceBB = (pieceBB >> 7ULL) & empty;
-        flood |= (pieceBB >> 7ULL) & empty;
-        return (flood >> 7ULL) & NOT_A_FILE;
+        pieceBB |= empty & (pieceBB >> 7ULL);
+        empty &= (empty >> 7ULL);
+        pieceBB |= empty & (pieceBB >> 14ULL);
+        empty &= (empty >> 14ULL);
+        pieceBB |= empty & (pieceBB >> 28ULL);
+        return soEaOne(pieceBB);
     }
 
-    uint64_t westOccl(uint64_t rooks, uint64_t empty) {
-        uint64_t flood = rooks;
+    uint64_t westOccl(uint64_t pieceBB, uint64_t empty) {
         empty &= NOT_H_FILE;
-        flood |= rooks = (rooks >> 1ULL) & empty;
-        flood |= rooks = (rooks >> 1ULL) & empty;
-        flood |= rooks = (rooks >> 1ULL) & empty;
-        flood |= rooks = (rooks >> 1ULL) & empty;
-        flood |= rooks = (rooks >> 1ULL) & empty;
-        flood |= (rooks >> 1ULL) & empty;
-        return (flood >> 1ULL) & NOT_H_FILE;
+        pieceBB |= empty & (pieceBB >> 1ULL);
+        empty &= (empty >> 1ULL);
+        pieceBB |= empty & (pieceBB >> 2ULL);
+        empty &= (empty >> 2ULL);
+        pieceBB |= empty & (pieceBB >> 4ULL);
+        return westOne(pieceBB);
     }
 
-    uint64_t soWeOccl(uint64_t bishops, uint64_t empty) {
-        uint64_t flood = bishops;
+    uint64_t soWeOccl(uint64_t pieceBB, uint64_t empty) {
         empty &= NOT_H_FILE;
-        flood |= bishops = (bishops >> 9ULL) & empty;
-        flood |= bishops = (bishops >> 9ULL) & empty;
-        flood |= bishops = (bishops >> 9ULL) & empty;
-        flood |= bishops = (bishops >> 9ULL) & empty;
-        flood |= bishops = (bishops >> 9ULL) & empty;
-        flood |= (bishops >> 9ULL) & empty;
-        return (flood >> 9ULL) & NOT_H_FILE;
+        pieceBB |= empty & (pieceBB >> 9ULL);
+        empty &= (empty >> 9ULL);
+        pieceBB |= empty & (pieceBB >> 18ULL);
+        empty &= (empty >> 18ULL);
+        pieceBB |= empty & (pieceBB >> 36ULL);
+        return soWeOne(pieceBB);
     }
 
-    uint64_t noWeOccl(uint64_t bishops, uint64_t empty) {
-        uint64_t flood = bishops;
+    uint64_t noWeOccl(uint64_t pieceBB, uint64_t empty) {
         empty &= NOT_H_FILE;
-        flood |= bishops = (bishops << 7ULL) & empty;
-        flood |= bishops = (bishops << 7ULL) & empty;
-        flood |= bishops = (bishops << 7ULL) & empty;
-        flood |= bishops = (bishops << 7ULL) & empty;
-        flood |= bishops = (bishops << 7ULL) & empty;
-        flood |= (bishops << 7ULL) & empty;
-        return (flood << 7ULL) & NOT_H_FILE;
+        pieceBB |= empty & (pieceBB << 7ULL);
+        empty &= (empty << 7ULL);
+        pieceBB |= empty & (pieceBB << 14ULL);
+        empty &= (empty << 14ULL);
+        pieceBB |= empty & (pieceBB << 28ULL);
+        return noWeOne(pieceBB);
     }
 
     uint64_t getWhitePawnEastAttacks(uint64_t wPawns) {

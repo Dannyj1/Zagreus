@@ -5,9 +5,10 @@
 
 #include <chrono>
 #include "time_mgr.h"
+#include "bitboard.h"
 
 namespace Chess {
-    std::chrono::time_point<std::chrono::system_clock> TimeManager::getEndTime(Board* board, PieceColor movingColor) {
+    std::chrono::time_point<std::chrono::system_clock> TimeManager::getEndTime(Bitboard bitboard, PieceColor movingColor) {
         int movesLeft = 80 - board->getMovesMade();
 
         if (movesLeft < 6) {

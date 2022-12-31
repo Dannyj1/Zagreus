@@ -10,7 +10,8 @@
 namespace Chess {
     std::vector<Move> generatePseudoLegalMoves(Bitboard bitboard, PieceColor color) {
         std::vector<Move> moves;
-        moves.reserve(100);
+        moves.reserve(1000);
+
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
         generatePawnMoves(moves, bitboard, ownPiecesBB, color,
@@ -50,12 +51,12 @@ namespace Chess {
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
-                if (pieceType == PieceType::WHITE_PAWN && genIndex >= Square::H8) {
+                if (pieceType == PieceType::WHITE_PAWN && genIndex >= 56) {
                     result.push_back({index, genIndex, pieceType, PieceType::WHITE_QUEEN});
                     result.push_back({index, genIndex, pieceType, PieceType::WHITE_ROOK});
                     result.push_back({index, genIndex, pieceType, PieceType::WHITE_BISHOP});
                     result.push_back({index, genIndex, pieceType, PieceType::WHITE_KNIGHT});
-                } else if (pieceType == PieceType::BLACK_PAWN && genIndex <= Square::A1) {
+                } else if (pieceType == PieceType::BLACK_PAWN && genIndex <= 7) {
                     result.push_back({index, genIndex, pieceType, PieceType::BLACK_QUEEN});
                     result.push_back({index, genIndex, pieceType, PieceType::BLACK_ROOK});
                     result.push_back({index, genIndex, pieceType, PieceType::BLACK_BISHOP});
@@ -91,12 +92,12 @@ namespace Chess {
             while (attackBB > 0) {
                 uint64_t attackIndex = Chess::bitscanForward(attackBB);
 
-                if (pieceType == PieceType::WHITE_PAWN && attackIndex >= Square::H8) {
+                if (pieceType == PieceType::WHITE_PAWN && attackIndex >= 56) {
                     result.push_back({index, attackIndex, pieceType, PieceType::WHITE_QUEEN});
                     result.push_back({index, attackIndex, pieceType, PieceType::WHITE_ROOK});
                     result.push_back({index, attackIndex, pieceType, PieceType::WHITE_BISHOP});
                     result.push_back({index, attackIndex, pieceType, PieceType::WHITE_KNIGHT});
-                } else if (pieceType == PieceType::BLACK_PAWN && attackIndex <= Square::A1) {
+                } else if (pieceType == PieceType::BLACK_PAWN && attackIndex <= 7) {
                     result.push_back({index, attackIndex, pieceType, PieceType::BLACK_QUEEN});
                     result.push_back({index, attackIndex, pieceType, PieceType::BLACK_ROOK});
                     result.push_back({index, attackIndex, pieceType, PieceType::BLACK_BISHOP});
@@ -169,7 +170,7 @@ namespace Chess {
                     if (!(occupiedBB & tilesBetween)) {
                         uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & tilesBetween) && !(opponentAttacks & (1ULL << Square::E1))) {
+                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E1)))) {
                             result.push_back({Square::H1, Square::E1, PieceType::WHITE_ROOK});
                         }
                     }
@@ -178,10 +179,10 @@ namespace Chess {
                 if (castlingRights & CastlingRights::WHITE_QUEENSIDE && index == Square::A1) {
                     uint64_t tilesBetween = (1ULL << Square::C1) | (1ULL << Square::D1);
 
-                    if (!(occupiedBB & tilesBetween)) {
+                    if (!(occupiedBB & (tilesBetween | (1ULL << Square::B1)))) {
                         uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & tilesBetween) && !(opponentAttacks & (1ULL << Square::E1))) {
+                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E1)))) {
                             result.push_back({Square::A1, Square::E1, PieceType::WHITE_ROOK});
                         }
                     }
@@ -193,7 +194,7 @@ namespace Chess {
                     if (!(occupiedBB & tilesBetween)) {
                         uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & tilesBetween) && !(opponentAttacks & (1ULL << Square::E8))) {
+                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E8)))) {
                             result.push_back({Square::H8, Square::E8, PieceType::BLACK_ROOK});
                         }
                     }
@@ -203,10 +204,10 @@ namespace Chess {
                     uint64_t tilesBetween = (1ULL << Square::C8) | (1ULL << Square::D8);
 
 
-                    if (!(occupiedBB & tilesBetween)) {
+                    if (!(occupiedBB & (tilesBetween | (1ULL << Square::B8)))) {
                         uint64_t opponentAttacks = bitboard.getAttackedTilesForColor(Bitboard::getOppositeColor(color));
 
-                        if (!(opponentAttacks & tilesBetween) && !(opponentAttacks & (1ULL << Square::E8))) {
+                        if (!(opponentAttacks & (tilesBetween | (1ULL << Square::E8)))) {
                             result.push_back({Square::A8, Square::E8, PieceType::BLACK_ROOK});
                         }
                     }
