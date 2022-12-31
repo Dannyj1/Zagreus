@@ -54,6 +54,9 @@ namespace Chess {
         uint64_t whiteAttackMap;
         uint64_t blackAttackMap;
         uint64_t zobristHash;
+        int movesMade;
+        int halfMoveClock;
+        int fullMoveClock;
     };
 
     enum PieceColor {
@@ -172,6 +175,7 @@ namespace Chess {
         int movesMade = 0;
         int halfmoveClock = 0;
         int fullmoveClock = 1;
+        std::vector<uint64_t> moveHistory;
         uint64_t zobristHash = 0;
         uint64_t zobristConstants[789]{};
 

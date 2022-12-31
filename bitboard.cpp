@@ -24,6 +24,7 @@ namespace Chess {
         }
 
         undoStack.reserve(200);
+        moveHistory.reserve(200);
 
         uint64_t sqBB = 1ULL;
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
@@ -160,8 +161,9 @@ namespace Chess {
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
         PieceType capturedPiece = getPieceOnSquare(toSquare);
 
+        moveHistory.push_back(zobristHash);
         undoStack.push_back({{}, {}, whiteBB, blackBB, occupiedBB, whiteEnPassantSquare, blackEnPassantSquare, castlingRights,
-                 whiteAttackMap, blackAttackMap, zobristHash});
+                 whiteAttackMap, blackAttackMap, zobristHash, movesMade, halfmoveClock, fullmoveClock});
 
         std::copy(pieceBB, pieceBB + 12, undoStack.back().pieceBB);
         std::copy(pieceSquareMapping, pieceSquareMapping + 64, undoStack.back().pieceSquareMapping);
@@ -283,12 +285,7 @@ namespace Chess {
             return;
         }
 
-        movesMade -= 1;
-        halfmoveClock -= 1;
-
-        if (getMovingColor() == PieceColor::BLACK) {
-            fullmoveClock -= 1;
-        }
+        moveHistory.pop_back();
 
         UndoData undoData = undoStack.back();
         undoStack.pop_back();
@@ -305,6 +302,9 @@ namespace Chess {
         blackAttackMap = undoData.blackAttackMap;
         movingColor = getOppositeColor(movingColor);
         zobristHash = undoData.zobristHash;
+        movesMade = undoData.movesMade;
+        halfmoveClock = undoData.halfMoveClock;
+        fullmoveClock = undoData.fullMoveClock;
     }
 
     int Bitboard::getBlackEnPassantSquare() const {
@@ -564,6 +564,10 @@ namespace Chess {
         }
 
         if (halfmoveClock >= 100) {
+            return true;
+        }
+
+        if (std::count(std::begin(moveHistory), std::end(moveHistory), zobristHash) >= 3) {
             return true;
         }
 
