@@ -1,4 +1,3 @@
-/*
 //
 // Created by Danny on 30-4-2022.
 //
@@ -8,8 +7,7 @@
 
 #include <cstdint>
 #include <map>
-#include "board.h"
-#include "include/tsl/hopscotch_map.h"
+#include "bitboard.h"
 
 namespace Chess {
     struct TTEntry {
@@ -19,7 +17,7 @@ namespace Chess {
 
     class TranspositionTable {
     private:
-        tsl::hopscotch_map<uint64_t, TTEntry> table;
+        std::map<uint64_t, TTEntry> table;
         std::vector<Move> killerMoves;
         std::vector<Move> pvMoves;
     public:
@@ -33,17 +31,16 @@ namespace Chess {
 
         void clearKillerMoves();
 
-        void addKillerMove(const Move &move);
+        void addKillerMove(Move move);
 
-        bool isKillerMove(const Move &move);
+        bool isKillerMove(Move move);
 
         void clearPVMoves();
 
-        void addPVMove(const Move &move);
+        void addPVMove(Move move);
 
-        bool isPVMove(const Move &move);
+        bool isPVMove(Move move);
     };
 
     static TranspositionTable tt{};
 }
-*/

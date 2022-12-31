@@ -285,5 +285,9 @@ namespace Chess {
         void setWhiteTimeMsec(unsigned int whiteTimeMsec);
 
         void setBlackTimeMsec(unsigned int blackTimeMsec);
+
+        void makeStrMove(const std::string &move);
+
+        int getSquareFromString(std::string notation);
     };
 }

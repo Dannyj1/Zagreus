@@ -65,8 +65,8 @@ namespace Chess {
             iterationResult = {};
         }
 
-/*        tt.clearKillerMoves();
-        tt.clearPVMoves();*/
+        tt.clearKillerMoves();
+        tt.clearPVMoves();
         isSearching = false;
         return bestResult;
     }
@@ -94,36 +94,36 @@ namespace Chess {
                 continue;
             }
 
-/*            if (tt.isPositionInTable(board->getZobristHash(), depth)) {
-                result = {rootMove, tt.getPositionScore(board->getZobristHash())};
-            } else {*/
-            if (searchPv) {
-                result = search(board, depth - 1, ply + 1, -beta, -alpha, rootMove, move, endTime);
-                result.score *= -1;
-//                tt.addPosition(board->getZobristHash(), depth, result.score);
+            if (tt.isPositionInTable(board.getZobristHash(), depth)) {
+                result = {rootMove, tt.getPositionScore(board.getZobristHash())};
             } else {
-                result = zwSearch(board, depth - 1, ply + 1, -alpha, rootMove, move, endTime);
-                result.score *= -1;
-
-                if (result.score > alpha) {
+                if (searchPv) {
                     result = search(board, depth - 1, ply + 1, -beta, -alpha, rootMove, move, endTime);
                     result.score *= -1;
-//                    tt.addPosition(board->getZobristHash(), depth, result.score);
+                    tt.addPosition(board.getZobristHash(), depth, result.score);
+                } else {
+                    result = zwSearch(board, depth - 1, ply + 1, -alpha, rootMove, move, endTime);
+                    result.score *= -1;
+
+                    if (result.score > alpha) {
+                        result = search(board, depth - 1, ply + 1, -beta, -alpha, rootMove, move, endTime);
+                        result.score *= -1;
+                        tt.addPosition(board.getZobristHash(), depth, result.score);
+                    }
                 }
             }
-//            }
 
             board.unmakeMove();
 
             if (result.score >= beta) {
-//                tt.addKillerMove(move);
+                tt.addKillerMove(move);
                 return {rootMove, beta};
             }
 
             if (result.score > alpha) {
-/*                if (searchPv) {
+                if (searchPv) {
                     tt.addPVMove(move);
-                }*/
+                }
 
                 alpha = result.score;
                 searchPv = false;
@@ -200,6 +200,12 @@ namespace Chess {
 
         whiteScore += whitePawnsScore + whiteKnightsScore + whiteBishopsScore + whiteRooksScore + whiteQueensScore;
         blackScore += blackPawnsScore + blackKnightsScore + blackBishopsScore + blackRooksScore + blackQueensScore;
+
+        int whiteMobilityScore = generatePseudoLegalMoves(board, board.getMovingColor()).size();
+        int blackMobilityScore = generatePseudoLegalMoves(board, Bitboard::getOppositeColor(board.getMovingColor())).size();
+
+        whiteScore += whiteMobilityScore;
+        blackScore += blackMobilityScore;
 
         return (whiteScore - blackScore) * modifier;
     }

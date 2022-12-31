@@ -16,7 +16,6 @@ namespace Chess {
     Bitboard::Bitboard() {
         std::random_device rd;
         std::mt19937_64 gen(rd());
-        gen.seed(1);
         std::uniform_int_distribution<uint64_t> dis;
 
         for (uint64_t &zobristConstant : zobristConstants) {
@@ -277,6 +276,26 @@ namespace Chess {
         blackAttackMap = 0;
         movingColor = getOppositeColor(movingColor);
         zobristHash ^= zobristConstants[768];
+    }
+
+    void Bitboard::makeStrMove(const std::string& move) {
+        int fromSquare = getSquareFromString(move.substr(0, 2));
+        int toSquare = getSquareFromString(move.substr(2, 2));
+        PieceType promotionPiece = PieceType::EMPTY;
+
+        if (move.length() == 5) {
+            if (move.ends_with("q")) {
+                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN;
+            } else if (move.ends_with("r")) {
+                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK;
+            } else if (move.ends_with("b")) {
+                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP;
+            } else if (move.ends_with("n")) {
+                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT;
+            }
+        }
+
+        makeMove(fromSquare, toSquare, getPieceOnSquare(fromSquare), promotionPiece);
     }
 
     void Bitboard::unmakeMove() {
@@ -798,6 +817,13 @@ namespace Chess {
 
     PieceColor Bitboard::getOppositeColor(PieceColor color) {
         return oppositeColors[color];
+    }
+
+    int Bitboard::getSquareFromString(std::string notation) {
+        int file = notation[0] - 'a';
+        int rank = notation[1] - '1';
+
+        return 56 - (8 * rank) + file;
     }
 
     uint64_t soutOne(uint64_t b) {

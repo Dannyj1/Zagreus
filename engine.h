@@ -6,11 +6,12 @@
 
 #include <string>
 #include "senjo/ChessEngine.h"
+#include "bitboard.h"
 
 namespace Chess {
     class Engine : public senjo::ChessEngine {
     private:
-        //Board board;
+        Bitboard board;
         bool isEngineInitialized;
         //PieceColor engineColor = PieceColor::NONE;
     public:

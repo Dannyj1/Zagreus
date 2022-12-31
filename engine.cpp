@@ -5,11 +5,11 @@
 
 namespace Chess {
     std::string Engine::getEngineName() {
-        return "Chess";
+        return "Zagreus";
     }
 
     std::string Engine::getEngineVersion() {
-        return "v0.6";
+        return "v0.1";
     }
 
     std::string Engine::getAuthorName() {
@@ -33,7 +33,7 @@ namespace Chess {
     }
 
     void Engine::initialize() {
-/*        board = Board{};*/
+        board = Bitboard{};
         isEngineInitialized = true;
     }
 
@@ -42,49 +42,31 @@ namespace Chess {
     }
 
     bool Engine::setPosition(const std::string &fen, std::string* remain) {
-        //return board.setFromFEN(fen);
-        return true;
+        return board.setFromFEN(fen);
     }
 
     bool Engine::makeMove(const std::string &move) {
-        /*if (move.size() < 4 || move.size() > 5) {
-            return false;
+        if (move == "e1g1") {
+            board.makeStrMove("h1e1");
+            return true;
         }
 
-        TileLocation whiteKingLoc = board.getPiecePosition(WHITE_KING_ID);
-        TileLocation blackKingLoc = board.getPiecePosition(BLACK_KING_ID);
-        TileLocation whiteARookLoc = board.getPiecePosition(WHITE_A_ROOK_ID);
-        TileLocation whiteHRookLoc = board.getPiecePosition(WHITE_H_ROOK_ID);
-        TileLocation blackARookLoc = board.getPiecePosition(BLACK_A_ROOK_ID);
-        TileLocation blackHRookLoc = board.getPiecePosition(BLACK_H_ROOK_ID);
-        Piece* whiteKing = board.getTileUnsafe(whiteKingLoc.x, whiteKingLoc.y)->getPiece();
-        Piece* blackKing = board.getTileUnsafe(blackKingLoc.x, blackKingLoc.y)->getPiece();
-        Tile* whiteARookTile = board.getTile(whiteARookLoc.x, whiteARookLoc.y);
-        Tile* whiteHRookTile = board.getTile(whiteHRookLoc.x, whiteHRookLoc.y);
-        Tile* blackARookTile = board.getTile(blackARookLoc.x, blackARookLoc.y);
-        Tile* blackHRookTile = board.getTile(blackHRookLoc.x, blackHRookLoc.y);
-
-        if (move == "e1g1" && !whiteKing->getHasMoved() && whiteHRookTile &&
-            !whiteHRookTile->getPiece()->getHasMoved()) {
-            return board.makeStrMove("e1h1");
+        if (move == "e1c1") {
+            board.makeStrMove("a1e1");
+            return true;
         }
 
-        if (move == "e1c1" && !whiteKing->getHasMoved() && whiteARookTile &&
-            !whiteARookTile->getPiece()->getHasMoved()) {
-            return board.makeStrMove("e1a1");
+        if (move == "e8g8") {
+            board.makeStrMove("h8e8");
+            return true;
         }
 
-        if (move == "e8g8" && !blackKing->getHasMoved() && blackHRookTile &&
-            !blackHRookTile->getPiece()->getHasMoved()) {
-            return board.makeStrMove("e8h8");
+        if (move == "e8c8") {
+            board.makeStrMove("e8a8");
+            return true;
         }
 
-        if (move == "e8c8" && !blackKing->getHasMoved() && blackARookTile &&
-            !blackARookTile->getPiece()->getHasMoved()) {
-            return board.makeStrMove("e8a8");
-        }
-
-        return board.makeStrMove(move);*/
+        board.makeStrMove(move);
         return true;
     }
 

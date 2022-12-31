@@ -1,10 +1,11 @@
-/*
 //
 // Created by Danny on 30-4-2022.
 //
 
 #include <iostream>
+
 #include "tt.h"
+#include "bitboard.h"
 
 namespace Chess {
     void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score) {
@@ -44,12 +45,18 @@ namespace Chess {
         killerMoves.clear();
     }
 
-    void TranspositionTable::addKillerMove(const Move &move) {
+    void TranspositionTable::addKillerMove(Move move) {
         killerMoves.push_back(move);
     }
 
-    bool TranspositionTable::isKillerMove(const Move &move) {
-        return std::find(killerMoves.begin(), killerMoves.end(), move) != killerMoves.end();
+    bool TranspositionTable::isKillerMove(Move move) {
+        for (const Move &killerMove : killerMoves) {
+            if (killerMove.fromSquare == move.fromSquare && killerMove.toSquare == move.toSquare) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     bool TranspositionTable::isPositionInTable(uint64_t zobristHash) {
@@ -60,13 +67,17 @@ namespace Chess {
         pvMoves.clear();
     }
 
-    void TranspositionTable::addPVMove(const Move &move) {
+    void TranspositionTable::addPVMove(Move move) {
         pvMoves.push_back(move);
     }
 
-    bool TranspositionTable::isPVMove(const Move &move) {
-        return std::find(pvMoves.begin(), pvMoves.end(), move) != pvMoves.end();
-    }
+    bool TranspositionTable::isPVMove(Move move) {
+        for (const Move &pvMove : pvMoves) {
+            if (pvMove.fromSquare == move.fromSquare && pvMove.toSquare == move.toSquare) {
+                return true;
+            }
+        }
 
+        return false;
+    }
 }
-*/
