@@ -660,7 +660,7 @@ namespace Chess {
         int file = index % 8;
         int rank = index / 8;
 
-        notation += "hgfedcba"[file];
+        notation += "abcdefgh"[file];
         notation += "12345678"[rank];
 
         return notation;
@@ -823,7 +823,7 @@ namespace Chess {
         int file = notation[0] - 'a';
         int rank = notation[1] - '1';
 
-        return 56 - (8 * rank) + file;
+        return rank * 8 + file;
     }
 
     uint64_t soutOne(uint64_t b) {

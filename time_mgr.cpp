@@ -8,7 +8,7 @@
 
 namespace Chess {
     std::chrono::time_point<std::chrono::high_resolution_clock> TimeManager::getEndTime(Bitboard bitboard, PieceColor movingColor) {
-        int movesLeft = 100 - bitboard.getMovesMade();
+        int movesLeft = 80 - bitboard.getMovesMade();
 
         if (movesLeft < 5) {
             movesLeft = 5;
@@ -18,12 +18,12 @@ namespace Chess {
         uint64_t timePerMove = timeLeft / movesLeft;
 
         if (bitboard.getMovesMade() <= 30) {
-            timePerMove += 500 * (30 - bitboard.getMovesMade());
+            timePerMove += 500 * (25 - bitboard.getMovesMade());
         }
 
-        if (timePerMove > timeLeft * 0.15) {
+/*        if (timePerMove > timeLeft * 0.15) {
             timePerMove = timeLeft * 0.15;
-        }
+        }*/
 
         std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
         now += std::chrono::milliseconds(timePerMove);

@@ -111,10 +111,10 @@ int main() {
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         std::cout << "Depth " << i << " Nodes: " << nodes << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
-*//*
-        std::cout << "Depth " << i << " Nodes: " << nodes << ", Captures: " << captures << ", Checks: " << checks
-                  << ", E.p: " << ep << ", Castles: " << castles
-                  << ", Promotions: " << promotions << ", Took: " << elapsed_seconds.count() << "s" << std::endl;*//*
+
+//        std::cout << "Depth " << i << " Nodes: " << nodes << ", Captures: " << captures << ", Checks: " << checks
+//                  << ", E.p: " << ep << ", Castles: " << castles
+//                  << ", Promotions: " << promotions << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
 
         std::cout << std::endl;
     }*/

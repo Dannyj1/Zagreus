@@ -46,22 +46,22 @@ namespace Chess {
     }
 
     bool Engine::makeMove(const std::string &move) {
-        if (move == "e1g1") {
+        if (move == "e1g1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE) {
             board.makeStrMove("h1e1");
             return true;
         }
 
-        if (move == "e1c1") {
+        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE) {
             board.makeStrMove("a1e1");
             return true;
         }
 
-        if (move == "e8g8") {
+        if (move == "e8g8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE) {
             board.makeStrMove("h8e8");
             return true;
         }
 
-        if (move == "e8c8") {
+        if (move == "e8c8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE) {
             board.makeStrMove("e8a8");
             return true;
         }
