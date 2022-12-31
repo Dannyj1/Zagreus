@@ -179,6 +179,9 @@ namespace Chess {
         uint64_t zobristHash = 0;
         uint64_t zobristConstants[789]{};
 
+        int whiteTimeMsec = 0;
+        int blackTimeMsec = 0;
+
         std::vector<UndoData> undoStack{};
     public:
         Bitboard();
@@ -272,5 +275,11 @@ namespace Chess {
         bool isInsufficientMaterial();
 
         uint64_t getZobristHash() const;
+
+        int getMovesMade() const;
+
+        int getWhiteTimeMsec() const;
+
+        int getBlackTimeMsec() const;
     };
 }

@@ -1,4 +1,3 @@
-/*
 //
 // Created by Danny on 28-4-2022.
 //
@@ -8,32 +7,26 @@
 #include "bitboard.h"
 
 namespace Chess {
-    std::chrono::time_point<std::chrono::system_clock> TimeManager::getEndTime(Bitboard bitboard, PieceColor movingColor) {
-        int movesLeft = 80 - board->getMovesMade();
+    std::chrono::time_point<std::chrono::high_resolution_clock> TimeManager::getEndTime(Bitboard bitboard, PieceColor movingColor) {
+        int movesLeft = 100 - bitboard.getMovesMade();
 
-        if (movesLeft < 6) {
-            movesLeft = 6;
+        if (movesLeft < 5) {
+            movesLeft = 5;
         }
 
-        uint64_t timeLeft = movingColor == PieceColor::WHITE ? board->getWhiteTimeMsec() : board->getBlackTimeMsec();
-
-        if (timeLeft == 0) {
-            timeLeft = 300000;
-        }
-
+        uint64_t timeLeft = movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
         uint64_t timePerMove = timeLeft / movesLeft;
 
-        if (board->getMovesMade() <= 30) {
-            timePerMove += 500 * (30 - board->getMovesMade());
+        if (bitboard.getMovesMade() <= 30) {
+            timePerMove += 500 * (30 - bitboard.getMovesMade());
         }
 
         if (timePerMove > timeLeft * 0.15) {
             timePerMove = timeLeft * 0.15;
         }
 
-        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+        std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
         now += std::chrono::milliseconds(timePerMove);
         return now;
     }
 }
-*/

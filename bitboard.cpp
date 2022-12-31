@@ -574,6 +574,18 @@ namespace Chess {
         return isInsufficientMaterial();
     }
 
+    int Bitboard::getMovesMade() const {
+        return movesMade;
+    }
+
+    int Bitboard::getWhiteTimeMsec() const {
+        return whiteTimeMsec;
+    }
+
+    int Bitboard::getBlackTimeMsec() const {
+        return blackTimeMsec;
+    }
+
     bool Bitboard::isInsufficientMaterial() {
         int pieceCount = popcnt(getOccupiedBoard());
 
