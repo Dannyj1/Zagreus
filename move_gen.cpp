@@ -20,7 +20,7 @@ namespace Chess {
                             color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT, false);
         generateBishopMoves(moves, bitboard, ownPiecesBB, color,
                             color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP, false);
-        generateRookMoves(moves, bitboard, ownPiecesBB, color, color,
+        generateRookMoves(moves, bitboard, ownPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK, false);
         generateQueenMoves(moves, bitboard, ownPiecesBB, color,
                            color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN, false);
@@ -42,7 +42,7 @@ namespace Chess {
                             color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT, true);
         generateBishopMoves(moves, bitboard, ownPiecesBB, color,
                             color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP, true);
-        generateRookMoves(moves, bitboard, ownPiecesBB, color, color,
+        generateRookMoves(moves, bitboard, ownPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK, true);
         generateQueenMoves(moves, bitboard, ownPiecesBB, color,
                            color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN, true);
@@ -62,7 +62,7 @@ namespace Chess {
                             color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT, false);
         generateBishopMoves(moves, bitboard, ownPiecesBB, color,
                             color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP, false);
-        generateRookMoves(moves, bitboard, ownPiecesBB, color, color,
+        generateRookMoves(moves, bitboard, ownPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK, false);
         generateQueenMoves(moves, bitboard, ownPiecesBB, color,
                            color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN, false);
