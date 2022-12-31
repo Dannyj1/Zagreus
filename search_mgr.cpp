@@ -23,13 +23,17 @@ namespace Chess {
         while (std::chrono::high_resolution_clock::now() < endTime) {
             depth += 1;
 
-            if (depth > 30) {
+            if (depth > 50) {
                 break;
             }
 
-            if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * std::min(0.2, 0.9 - (depth * 0.1))) {
+            if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime)) {
                 break;
             }
+
+            /*if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * std::min(0.2, 1.05 - (depth * 0.05))) {
+                break;
+            }*/
 
             std::cout << "Searching depth " << depth << "..." << std::endl;
 
@@ -53,12 +57,12 @@ namespace Chess {
                 result.score *= -1;
                 board.unmakeMove();
 
-                if (result.score > iterationResult.score || iterationResult.move.pieceType == PieceType::EMPTY) {
+                if (result.score > iterationResult.score || bestResult.move.pieceType == PieceType::EMPTY) {
                     iterationResult = result;
                 }
             }
 
-            if (std::chrono::high_resolution_clock::now() < endTime || iterationResult.move.pieceType == PieceType::EMPTY) {
+            if (std::chrono::high_resolution_clock::now() < endTime || bestResult.move.pieceType == PieceType::EMPTY) {
                 bestResult = iterationResult;
             }
 
@@ -74,8 +78,7 @@ namespace Chess {
     SearchResult SearchManager::search(Bitboard board, int depth, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove, std::chrono::time_point<std::chrono::high_resolution_clock> endTime) {
         if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
         || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) || board.isDraw()) {
-//            return quiesce(board, ply, alpha, beta, rootMove, previousMove, endTime);
-            return {rootMove, evaluate(board, ply, endTime)};
+            return quiesce(board, ply, alpha, beta, rootMove, previousMove, endTime);
         }
 
         bool searchPv = true;
@@ -138,8 +141,7 @@ namespace Chess {
                             std::chrono::time_point<std::chrono::high_resolution_clock> endTime) {
         if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
         || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) || board.isDraw()) {
-//            return quiesce(board, ply, beta - 1, beta, rootMove, previousMove, endTime);
-            return {rootMove, evaluate(board, ply, endTime)};
+            return quiesce(board, ply, beta - 1, beta, rootMove, previousMove, endTime);
         }
 
         std::vector<Move> legalMoves = generatePseudoLegalMoves(board, board.getMovingColor());
@@ -168,9 +170,9 @@ namespace Chess {
     }
 
     int SearchManager::evaluate(Bitboard board, int ply, std::chrono::time_point<std::chrono::high_resolution_clock> endTime) {
-/*        if (std::chrono::high_resolution_clock::now() > endTime) {
+        if (std::chrono::high_resolution_clock::now() > endTime) {
             return 0;
-        }*/
+        }
 
         int whiteScore = 0;
         int blackScore = 0;
@@ -201,16 +203,22 @@ namespace Chess {
         whiteScore += whitePawnsScore + whiteKnightsScore + whiteBishopsScore + whiteRooksScore + whiteQueensScore;
         blackScore += blackPawnsScore + blackKnightsScore + blackBishopsScore + blackRooksScore + blackQueensScore;
 
-        int whiteMobilityScore = generatePseudoLegalMoves(board, board.getMovingColor()).size();
-        int blackMobilityScore = generatePseudoLegalMoves(board, Bitboard::getOppositeColor(board.getMovingColor())).size();
+        if (!board.isKingInCheck(board.getMovingColor())) {
+            int whiteMobilityScore = generateMobilityMoves(board, board.getMovingColor()).size();
 
-        whiteScore += whiteMobilityScore;
-        blackScore += blackMobilityScore;
+            whiteScore += whiteMobilityScore;
+        }
+
+        if (!board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()))) {
+            int blackMobilityScore = generateMobilityMoves(board, Bitboard::getOppositeColor(board.getMovingColor())).size();
+
+            blackScore += blackMobilityScore;
+        }
 
         return (whiteScore - blackScore) * modifier;
     }
 
-    /*SearchResult SearchManager::quiesce(Bitboard board, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
+    SearchResult SearchManager::quiesce(Bitboard board, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
                                         std::chrono::time_point<std::chrono::high_resolution_clock> endTime) {
         if (std::chrono::high_resolution_clock::now() > endTime) {
             return {rootMove, beta};
@@ -236,24 +244,21 @@ namespace Chess {
             alpha = standPat;
         }
 
-        for (Move move : board->getQuiescenceMoves(board->getMovingColor())) {
+        for (Move move : generateQuiescenceMoves(board, board.getMovingColor())) {
             if (std::chrono::high_resolution_clock::now() > endTime) {
                 break;
             }
 
-            Tile* toTile = move.tile;
-            Piece* piece = move.piece;
+            board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
-            board->makeMove(toTile->getX(), toTile->getY(), piece, move.promotionPiece);
-
-            if (board->isKingChecked(move.piece->getColor())) {
-                board->unmakeMove();
+            if (board.isKingInCheck(board.getMovingColor())) {
+                board.unmakeMove();
                 continue;
             }
 
             SearchResult result = quiesce(board, ply + 1, -beta, -alpha, rootMove, move, endTime);
             result.score *= -1;
-            board->unmakeMove();
+            board.unmakeMove();
 
             if (result.score >= beta) {
                 return {rootMove, beta};
@@ -265,7 +270,7 @@ namespace Chess {
         }
 
         return {rootMove, alpha};
-    }*/
+    }
 
     bool SearchManager::isCurrentlySearching() {
         return isSearching;

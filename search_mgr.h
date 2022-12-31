@@ -26,8 +26,8 @@ namespace Chess {
         SearchResult zwSearch(Bitboard board, int depth, int ply, int beta, const Move &rootMove, const Move &previousMove,
                               std::chrono::time_point<std::chrono::high_resolution_clock> endTime);
 
-/*        SearchResult quiesce(Bitboard board, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
-                             std::chrono::time_point<std::chrono::high_resolution_clock> endTime);*/
+        SearchResult quiesce(Bitboard board, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
+                             std::chrono::time_point<std::chrono::high_resolution_clock> endTime);
 
         int evaluate(Bitboard board, int ply, std::chrono::time_point<std::chrono::high_resolution_clock> endTime);
 

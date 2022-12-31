@@ -660,7 +660,7 @@ namespace Chess {
         int file = index % 8;
         int rank = index / 8;
 
-        notation += "abcdefgh"[file];
+        notation += "hgfedcba"[file];
         notation += "12345678"[rank];
 
         return notation;
@@ -820,7 +820,7 @@ namespace Chess {
     }
 
     int Bitboard::getSquareFromString(std::string notation) {
-        int file = notation[0] - 'a';
+        int file = 'h' - notation[0];
         int rank = notation[1] - '1';
 
         return rank * 8 + file;

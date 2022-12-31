@@ -46,22 +46,22 @@ namespace Chess {
     }
 
     bool Engine::makeMove(const std::string &move) {
-        if (move == "e1g1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE) {
+        if (move == "e1g1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE && board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING && board.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK) {
             board.makeStrMove("h1e1");
             return true;
         }
 
-        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE) {
+        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE && board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING && board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
             board.makeStrMove("a1e1");
             return true;
         }
 
-        if (move == "e8g8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE) {
+        if (move == "e8g8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE && board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING && board.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK) {
             board.makeStrMove("h8e8");
             return true;
         }
 
-        if (move == "e8c8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE) {
+        if (move == "e8c8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE && board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING && board.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK) {
             board.makeStrMove("e8a8");
             return true;
         }
@@ -144,15 +144,11 @@ namespace Chess {
     }
 
     std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
-        if (engineColor == PieceColor::NONE) {
-            engineColor = board.getMovingColor();
-        }
-
         board.setWhiteTimeMsec(params.wtime);
         board.setBlackTimeMsec(params.btime);
 
         board.print();
-        SearchResult bestResult = searchManager.getBestMove(board, engineColor);
+        SearchResult bestResult = searchManager.getBestMove(board, board.getMovingColor());
 
         if (bestResult.move.promotionPiece) {
             std::string result = Chess::Bitboard::getNotation(bestResult.move.fromSquare)

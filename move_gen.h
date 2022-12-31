@@ -11,18 +11,22 @@
 namespace Chess {
     std::vector<Move> generatePseudoLegalMoves(Bitboard bitboard, PieceColor color);
 
+    std::vector<Move> generateQuiescenceMoves(Bitboard bitboard, PieceColor color);
+
+    std::vector<Move> generateMobilityMoves(Bitboard bitboard, PieceColor color);
+
     void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color,
-                           PieceType pieceType);
+                           PieceType pieceType, bool quiesce);
 
-    void generateKnightMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType);
+    void generateKnightMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
 
-    void generateBishopMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType);
+    void generateBishopMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
 
-    void generateRookMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color,
-                           PieceType pieceType);
+    void generateRookMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceColor color,
+                           PieceType pieceType, bool quiesce);
 
-    void generateQueenMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType);
+    void generateQueenMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
 
-    void generateKingMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceType pieceType);
+    void generateKingMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
 }
 

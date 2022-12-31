@@ -17,9 +17,9 @@ namespace Chess {
         uint64_t timeLeft = movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
         uint64_t timePerMove = timeLeft / movesLeft;
 
-        if (bitboard.getMovesMade() <= 30) {
+/*        if (bitboard.getMovesMade() <= 30) {
             timePerMove += 500 * (25 - bitboard.getMovesMade());
-        }
+        }*/
 
 /*        if (timePerMove > timeLeft * 0.15) {
             timePerMove = timeLeft * 0.15;
