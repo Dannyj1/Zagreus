@@ -179,8 +179,8 @@ namespace Chess {
         uint64_t zobristHash = 0;
         uint64_t zobristConstants[789]{};
 
-        int whiteTimeMsec = 0;
-        int blackTimeMsec = 0;
+        unsigned int whiteTimeMsec = 0;
+        unsigned int blackTimeMsec = 0;
 
         std::vector<UndoData> undoStack{};
     public:
@@ -281,5 +281,9 @@ namespace Chess {
         int getWhiteTimeMsec() const;
 
         int getBlackTimeMsec() const;
+
+        void setWhiteTimeMsec(unsigned int whiteTimeMsec);
+
+        void setBlackTimeMsec(unsigned int blackTimeMsec);
     };
 }

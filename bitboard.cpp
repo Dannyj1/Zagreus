@@ -586,6 +586,14 @@ namespace Chess {
         return blackTimeMsec;
     }
 
+    void Bitboard::setWhiteTimeMsec(unsigned int whiteTimeMsec) {
+        Bitboard::whiteTimeMsec = whiteTimeMsec;
+    }
+
+    void Bitboard::setBlackTimeMsec(unsigned int blackTimeMsec) {
+        Bitboard::blackTimeMsec = blackTimeMsec;
+    }
+
     bool Bitboard::isInsufficientMaterial() {
         int pieceCount = popcnt(getOccupiedBoard());
 
