@@ -71,17 +71,17 @@ namespace Chess {
     }
 
     std::string Engine::getFEN() {
+        // TODO: implement
         //return board.getFEN();
         return "";
     }
 
     void Engine::printBoard() {
-        //board.print();
+        board.print();
     }
 
     bool Engine::whiteToMove() {
-/*        return board.getMovingColor() == PieceColor::WHITE;*/
-        return true;
+        return board.getMovingColor() == PieceColor::WHITE;
     }
 
     void Engine::clearSearchData() {
@@ -120,8 +120,7 @@ namespace Chess {
     }
 
     bool Engine::isSearching() {
-        //return searchManager.isCurrentlySearching();
-        return false;
+        return searchManager.isCurrentlySearching();
     }
 
     void Engine::stopSearching() {
@@ -134,9 +133,9 @@ namespace Chess {
     }
 
     void Engine::waitForSearchFinish() {
-/*        while (searchManager.isCurrentlySearching()) {
+        while (searchManager.isCurrentlySearching()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }*/
+        }
     }
 
     uint64_t Engine::perft(const int depth) {
@@ -145,7 +144,7 @@ namespace Chess {
     }
 
     std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
-        /*if (engineColor == PieceColor::NONE) {
+        if (engineColor == PieceColor::NONE) {
             engineColor = board.getMovingColor();
         }
 
@@ -153,30 +152,21 @@ namespace Chess {
         board.setBlackTimeMsec(params.btime);
 
         board.print();
-        SearchResult bestResult = searchManager.getBestMove(&board, engineColor);
-        TileLocation fromLoc = board.getPiecePosition(bestResult.move.piece->getId());
-        Tile* fromTile = board.getTileUnsafe(fromLoc.x, fromLoc.y);
+        SearchResult bestResult = searchManager.getBestMove(board, engineColor);
 
         if (bestResult.move.promotionPiece) {
-            switch (bestResult.move.promotionPiece->getPieceType()) {
-                case PieceType::QUEEN:
-                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "q";
-                case PAWN:
-                    break;
-                case KNIGHT:
-                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "n";
-                case BISHOP:
-                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "b";
-                case ROOK:
-                    return fromTile->getNotation() + bestResult.move.tile->getNotation() + "r";
-                case KING:
-                    break;
-            }
+            std::string result = Chess::Bitboard::getNotation(bestResult.move.fromSquare)
+                    + Chess::Bitboard::getNotation(bestResult.move.toSquare)
+                    + board.getCharacterForPieceType(bestResult.move.promotionPiece);
+
+            std::transform(result.begin(), result.end(), result.begin(),
+                           [](unsigned char c){ return std::tolower(c); });
+
+            return result;
         }
 
         std::cout << "Score: " << bestResult.score << std::endl;
-        return fromTile->getNotation() + bestResult.move.tile->getNotation();*/
-        return "a1a2";
+        return Chess::Bitboard::getNotation(bestResult.move.fromSquare) + Chess::Bitboard::getNotation(bestResult.move.toSquare);
     }
 
     senjo::SearchStats Engine::getSearchStats() {

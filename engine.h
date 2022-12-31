@@ -13,7 +13,7 @@ namespace Chess {
     private:
         Bitboard board;
         bool isEngineInitialized;
-        //PieceColor engineColor = PieceColor::NONE;
+        PieceColor engineColor = PieceColor::NONE;
     public:
         std::string getEngineName() override;
 
