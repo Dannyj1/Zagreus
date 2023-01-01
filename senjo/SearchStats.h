@@ -34,12 +34,14 @@ namespace senjo {
         uint64_t nodes = 0; // The number of nodes searched so far
         uint64_t qnodes = 0; // The number of quiescence nodes searched so far
         uint64_t msecs = 0; // The number of milliseconds spent searching so far
+        int score = 0;
     };
 
 //-----------------------------------------------------------------------------
     inline std::ostream &operator<<(std::ostream &os, const SearchStats &stats) {
         os << "depth " << stats.depth
            << " seldepth " << stats.seldepth
+           << " score cp " << stats.score
            << " nodes " << stats.nodes
            << " time " << stats.msecs
            << " nps " << static_cast<uint64_t>(rate(stats.nodes, stats.msecs));

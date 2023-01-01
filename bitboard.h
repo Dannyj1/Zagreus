@@ -6,6 +6,8 @@
 
 #include <cstdint>
 #include <stack>
+#include <iostream>
+#include <vector>
 
 namespace Chess {
     enum PieceType {
@@ -165,13 +167,16 @@ namespace Chess {
         int blackEnPassantSquare = -1;
         int whiteEnPassantSquare = -1;
         uint8_t castlingRights = 0b00001111;
+        uint64_t attacksFrom[64];
+        uint64_t attacksTo[64];
+
         uint64_t whiteAttackMap = 0;
         uint64_t blackAttackMap = 0;
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
 
-        PieceColor movingColor;
+        PieceColor movingColor = PieceColor::WHITE;
         int movesMade = 0;
         int halfmoveClock = 0;
         int fullmoveClock = 1;

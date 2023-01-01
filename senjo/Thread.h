@@ -25,6 +25,7 @@
 
 #include "Platform.h"
 #include <mutex>
+#include <memory>
 
 namespace senjo {
 

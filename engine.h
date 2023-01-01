@@ -15,6 +15,8 @@ namespace Chess {
         bool isEngineInitialized;
         PieceColor engineColor = PieceColor::NONE;
     public:
+        uint64_t doPerft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int startingDepth);
+
         std::string getEngineName() override;
 
         std::string getEngineVersion() override;

@@ -1,9 +1,87 @@
+#include <algorithm>
+
 #include "senjo/ChessEngine.h"
 #include "senjo/Output.h"
 #include "engine.h"
 #include "search_mgr.h"
+#include "move_gen.h"
 
 namespace Chess {
+    uint64_t captures = 0ULL;
+    uint64_t checks = 0ULL;
+    uint64_t ep = 0ULL;
+    uint64_t castles = 0ULL;
+    uint64_t promotions = 0ULL;
+
+    uint64_t Engine::doPerft(Chess::Bitboard &perftBoard, Chess::PieceColor color, int depth, int startingDepth) {
+        uint64_t nodes = 0ULL;
+
+        if (depth == 0) {
+            return 1ULL;
+        }
+
+        std::vector<Chess::Move> moves = generateLegalMoves(perftBoard, color);
+
+        for (const Chess::Move &move : moves) {
+            /*bool isCapture = false;
+            bool isEp = false;
+            bool isCastle = false;
+            Chess::PieceType fromPiece = perftBoard.getPieceOnSquare(move.fromSquare);
+            Chess::PieceType toPiece = perftBoard.getPieceOnSquare(move.toSquare);
+
+            if (toPiece != Chess::PieceType::EMPTY) {
+                isCapture = true;
+            }
+
+            if (fromPiece == Chess::PieceType::WHITE_PAWN || fromPiece == Chess::PieceType::BLACK_PAWN) {
+                if (toPiece == Chess::PieceType::EMPTY && std::abs((int) move.fromSquare - (int) move.toSquare) != 8
+                    && std::abs((int) move.fromSquare - (int) move.toSquare) != 16) {
+                    isEp = true;
+                }
+            }
+
+            if (toPiece == Chess::PieceType::WHITE_KING || toPiece == Chess::PieceType::BLACK_KING) {
+                isCastle = true;
+            }*/
+
+            perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
+
+/*            if (depth == 1) {
+                if (move.promotionPiece != Chess::PieceType::EMPTY) {
+                    promotions++;
+                }
+
+                if (perftBoard.isKingInCheck(Chess::Bitboard::getOppositeColor(color))) {
+                    checks++;
+                }
+
+                if (isCapture) {
+                    captures++;
+                }
+
+                if (isEp) {
+                    ep++;
+                }
+
+                if (isCastle) {
+                    castles++;
+                }
+            }*/
+
+            uint64_t nodeAmount = doPerft(perftBoard, Chess::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
+            nodes += nodeAmount;
+
+            if (depth == startingDepth && nodeAmount > 0LL) {
+                std::string notation = Chess::Bitboard::getNotation(move.fromSquare) + Chess::Bitboard::getNotation(move.toSquare);
+                std::cout << notation << ": " << nodeAmount << std::endl;
+            }
+
+            perftBoard.unmakeMove();
+        }
+
+        return nodes;
+    }
+
     std::string Engine::getEngineName() {
         return "Zagreus";
     }
@@ -139,21 +217,30 @@ namespace Chess {
     }
 
     uint64_t Engine::perft(const int depth) {
-        // TODO: implement
-        return 0;
+        auto start = std::chrono::high_resolution_clock::now();
+        uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end - start;
+
+        std::cout << "Depth " << depth << " Nodes: " << nodes << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
+        return nodes;
     }
 
     std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
+        if (engineColor == PieceColor::NONE) {
+            engineColor = board.getMovingColor();
+        }
+
         board.setWhiteTimeMsec(params.wtime);
         board.setBlackTimeMsec(params.btime);
 
         board.print();
-        SearchResult bestResult = searchManager.getBestMove(board, board.getMovingColor());
+        SearchResult bestResult = searchManager.getBestMove(board, engineColor);
 
-        if (bestResult.move.promotionPiece) {
+        if (bestResult.move.promotionPiece != PieceType::EMPTY) {
             std::string result = Chess::Bitboard::getNotation(bestResult.move.fromSquare)
                     + Chess::Bitboard::getNotation(bestResult.move.toSquare)
-                    + board.getCharacterForPieceType(bestResult.move.promotionPiece);
+                    + Chess::Bitboard::getCharacterForPieceType(bestResult.move.promotionPiece);
 
             std::transform(result.begin(), result.end(), result.begin(),
                            [](unsigned char c){ return std::tolower(c); });

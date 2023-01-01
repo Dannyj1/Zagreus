@@ -7,6 +7,7 @@
 #include <psdk_inc/intrin-impl.h>
 #include <map>
 #include <random>
+#include <algorithm>
 
 #include "bitboard.h"
 #include "move_gen.h"
@@ -158,6 +159,7 @@ namespace Chess {
     }
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
+        // TODO: update attack map on makeMove, restore old maps on unmakeMove. Incrementally update.
         PieceType capturedPiece = getPieceOnSquare(toSquare);
 
         moveHistory.push_back(zobristHash);
@@ -377,7 +379,11 @@ namespace Chess {
 
             if (spaces == 1) {
                 movingColor = character == 'w' ? PieceColor::WHITE : PieceColor::BLACK;
-                zobristHash ^= zobristConstants[768];
+
+                if (movingColor == PieceColor::BLACK) {
+                    zobristHash ^= zobristConstants[768];
+                }
+
                 continue;
             }
 
@@ -576,7 +582,7 @@ namespace Chess {
     }
 
     bool Bitboard::isDraw() {
-        std::vector<Move> availableMoves = generatePseudoLegalMoves(*this, movingColor);
+        std::vector<Move> availableMoves = generateLegalMoves(*this, movingColor);
 
         if (availableMoves.size() == 0 && !isKingInCheck(movingColor)) {
             return true;
@@ -746,7 +752,7 @@ namespace Chess {
             return false;
         }
 
-        std::vector<Move> moves = Chess::generatePseudoLegalMoves(*this, color);
+        std::vector<Move> moves = Chess::generateLegalMoves(*this, getOppositeColor(color));
 
         for (Move move : moves) {
             makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
@@ -789,6 +795,11 @@ namespace Chess {
             zobristHash ^= zobristConstants[768 + 3];
             zobristHash ^= zobristConstants[768 + 4];
         }
+
+        movingColor = getOppositeColor(movingColor);
+        zobristHash ^= zobristConstants[768];
+        whiteAttackMap = 0;
+        blackAttackMap = 0;
     }
 
     uint64_t Bitboard::getAttackedTilesForColor(PieceColor color) {

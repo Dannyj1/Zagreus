@@ -3,14 +3,15 @@
 //
 
 #include <iostream>
+#include <vector>
 
 #include "bitboard.h"
 #include "move_gen.h"
 
 namespace Chess {
-    std::vector<Move> generatePseudoLegalMoves(Bitboard bitboard, PieceColor color) {
+    std::vector<Move> generateLegalMoves(Bitboard &bitboard, PieceColor color) {
         std::vector<Move> moves;
-        moves.reserve(1000);
+        moves.reserve(75);
 
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
@@ -30,9 +31,9 @@ namespace Chess {
         return moves;
     }
 
-    std::vector<Move> generateQuiescenceMoves(Bitboard bitboard, PieceColor color) {
+    std::vector<Move> generateQuiescenceMoves(Bitboard &bitboard, PieceColor color) {
         std::vector<Move> moves;
-        moves.reserve(1000);
+        moves.reserve(75);
 
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
@@ -52,9 +53,9 @@ namespace Chess {
         return moves;
     }
 
-    std::vector<Move> generateMobilityMoves(Bitboard bitboard, PieceColor color) {
+    std::vector<Move> generateMobilityMoves(Bitboard &bitboard, PieceColor color) {
         std::vector<Move> moves;
-        moves.reserve(1000);
+        moves.reserve(75);
 
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
 
@@ -70,8 +71,48 @@ namespace Chess {
         return moves;
     }
 
+    std::vector<Move> generateSinglePieceMove(Bitboard &bitboard, PieceColor color, PieceType pieceType, int fromSquare) {
+        std::vector<Move> moves;
+        moves.reserve(75);
+
+/*
+        uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
+
+        switch (pieceType) {
+            case PieceType::WHITE_PAWN:
+            case PieceType::BLACK_PAWN:
+                generatePawnMoves(moves, bitboard, ownPiecesBB, color, pieceType, false, fromSquare);
+                break;
+            case PieceType::WHITE_KNIGHT:
+            case PieceType::BLACK_KNIGHT:
+                generateKnightMoves(moves, bitboard, ownPiecesBB, color, pieceType, false, fromSquare);
+                break;
+            case PieceType::WHITE_BISHOP:
+            case PieceType::BLACK_BISHOP:
+                generateBishopMoves(moves, bitboard, ownPiecesBB, color, pieceType, false, fromSquare);
+                break;
+            case PieceType::WHITE_ROOK:
+            case PieceType::BLACK_ROOK:
+                generateRookMoves(moves, bitboard, ownPiecesBB, color, pieceType, false, fromSquare);
+                break;
+            case PieceType::WHITE_QUEEN:
+            case PieceType::BLACK_QUEEN:
+                generateQueenMoves(moves, bitboard, ownPiecesBB, color, pieceType, false, fromSquare);
+                break;
+            case PieceType::WHITE_KING:
+            case PieceType::BLACK_KING:
+                generateKingMoves(moves, bitboard, ownPiecesBB, color, pieceType, false, fromSquare);
+                break;
+            default:
+                break;
+        }
+*/
+
+        return moves;
+    }
+
     // TODO: generate en passant
-    void generatePawnMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color,
+    void generatePawnMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color,
                            PieceType pieceType, bool quiesce) {
         uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
         uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));
@@ -94,6 +135,16 @@ namespace Chess {
 
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
+
+                bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
+
+                if (bitboard.isKingInCheck(color)) {
+                    bitboard.unmakeMove();
+                    genBB &= ~(1ULL << genIndex);
+                    continue;
+                }
+
+                bitboard.unmakeMove();
 
                 if (pieceType == PieceType::WHITE_PAWN && genIndex >= 56) {
                     result.push_back({index, genIndex, pieceType, PieceType::WHITE_QUEEN});
@@ -140,6 +191,16 @@ namespace Chess {
             while (attackBB > 0) {
                 uint64_t attackIndex = Chess::bitscanForward(attackBB);
 
+                bitboard.makeMove(index, attackIndex, pieceType, PieceType::EMPTY);
+
+                if (bitboard.isKingInCheck(color)) {
+                    bitboard.unmakeMove();
+                    attackBB &= ~(1ULL << attackIndex);
+                    continue;
+                }
+
+                bitboard.unmakeMove();
+
                 if (pieceType == PieceType::WHITE_PAWN && attackIndex >= 56) {
                     result.push_back({index, attackIndex, pieceType, PieceType::WHITE_QUEEN});
                     result.push_back({index, attackIndex, pieceType, PieceType::WHITE_ROOK});
@@ -161,7 +222,7 @@ namespace Chess {
         }
     }
 
-    void generateKnightMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
+    void generateKnightMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t knightBB = bitboard.getPieceBoard(pieceType);
         uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));
 
@@ -178,6 +239,16 @@ namespace Chess {
             while (genBB) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
+                bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
+
+                if (bitboard.isKingInCheck(color)) {
+                    bitboard.unmakeMove();
+                    genBB &= ~(1ULL << genIndex);
+                    continue;
+                }
+
+                bitboard.unmakeMove();
+
                 result.push_back({index, genIndex, pieceType});
                 genBB &= ~(1ULL << genIndex);
             }
@@ -186,7 +257,7 @@ namespace Chess {
         }
     }
 
-    void generateBishopMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
+    void generateBishopMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t bishopBB = bitboard.getPieceBoard(pieceType);
         uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));
 
@@ -203,6 +274,16 @@ namespace Chess {
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
+                bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
+
+                if (bitboard.isKingInCheck(color)) {
+                    bitboard.unmakeMove();
+                    genBB &= ~(1ULL << genIndex);
+                    continue;
+                }
+
+                bitboard.unmakeMove();
+
                 result.push_back({index, genIndex, pieceType});
                 genBB &= ~(1ULL << genIndex);
             }
@@ -211,7 +292,7 @@ namespace Chess {
         }
     }
 
-    void generateRookMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color,
+    void generateRookMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color,
                            PieceType pieceType, bool quiesce) {
         uint64_t rookBB = bitboard.getPieceBoard(pieceType);
         uint8_t castlingRights = bitboard.getCastlingRights();
@@ -220,9 +301,9 @@ namespace Chess {
 
         while (rookBB) {
             uint64_t index = Chess::bitscanForward(rookBB);
-
+            
+            // TODO: refactor, is very ugly
             if (!quiesce) {
-                // TODO: refactor, is very ugly
                 if (color == PieceColor::WHITE) {
                     if (castlingRights & CastlingRights::WHITE_KINGSIDE && index == Square::H1) {
                         uint64_t tilesBetween = (1ULL << Square::F1) | (1ULL << Square::G1);
@@ -289,6 +370,16 @@ namespace Chess {
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
+                bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
+
+                if (bitboard.isKingInCheck(color)) {
+                    bitboard.unmakeMove();
+                    genBB &= ~(1ULL << genIndex);
+                    continue;
+                }
+
+                bitboard.unmakeMove();
+
                 result.push_back({index, genIndex, pieceType});
                 genBB &= ~(1ULL << genIndex);
             }
@@ -297,7 +388,7 @@ namespace Chess {
         }
     }
 
-    void generateQueenMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
+    void generateQueenMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t queenBB = bitboard.getPieceBoard(pieceType);
         uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));
 
@@ -314,6 +405,16 @@ namespace Chess {
             while (genBB > 0) {
                 uint64_t genIndex = Chess::bitscanForward(genBB);
 
+                bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
+
+                if (bitboard.isKingInCheck(color)) {
+                    bitboard.unmakeMove();
+                    genBB &= ~(1ULL << genIndex);
+                    continue;
+                }
+
+                bitboard.unmakeMove();
+
                 result.push_back({index, genIndex, pieceType});
                 genBB &= ~(1ULL << genIndex);
             }
@@ -322,7 +423,7 @@ namespace Chess {
         }
     }
 
-    void generateKingMoves(std::vector<Move> &result, Bitboard bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
+    void generateKingMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t kingBB = bitboard.getPieceBoard(pieceType);
         uint64_t index = Chess::bitscanForward(kingBB);
         uint64_t genBB = bitboard.getKingAttacks(index);
@@ -336,6 +437,16 @@ namespace Chess {
 
         while (genBB > 0) {
             uint64_t genIndex = Chess::bitscanForward(genBB);
+
+            bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
+
+            if (bitboard.isKingInCheck(color)) {
+                bitboard.unmakeMove();
+                genBB &= ~(1ULL << genIndex);
+                continue;
+            }
+
+            bitboard.unmakeMove();
 
             result.push_back({index, genIndex, pieceType});
             genBB &= ~(1ULL << genIndex);

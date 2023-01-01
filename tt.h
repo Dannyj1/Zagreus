@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <map>
 #include "bitboard.h"
+#include "include/tsl/hopscotch_map.h"
 
 namespace Chess {
     struct TTEntry {
