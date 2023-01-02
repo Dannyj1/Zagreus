@@ -3,11 +3,41 @@
 
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
-#include "search_mgr.h"
 #include "bitboard.h"
 #include "senjo/Output.h"
-#include "bitboard.h"
 #include "move_gen.h"
+#include "types.h"
+
+Zagreus::MoveList moves;
+
+uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
+    uint64_t nodes = 0ULL;
+
+    if (depth == 0) {
+        return 1ULL;
+    }
+
+    Zagreus::MoveList moves;
+    generateLegalMoves(moves, perftBoard, color);
+
+    for (int i = 0; i < moves.size(); i++) {
+        Zagreus::Move move = moves[i];
+
+        perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
+        uint64_t nodeAmount = perft(perftBoard, Zagreus::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
+        nodes += nodeAmount;
+
+        if (depth == startingDepth && nodeAmount > 0LL) {
+            std::string notation =
+                    Zagreus::Bitboard::getNotation(move.fromSquare) + Zagreus::Bitboard::getNotation(move.toSquare);
+            std::cout << notation << ": " << nodeAmount << std::endl;
+        }
+
+        perftBoard.unmakeMove();
+    }
+
+    return nodes;
+}
 
 int main() {
     // Custom test pos 1: r3kb1r/pppbqppp/4pn2/n2p4/3P1B2/2PBPN2/PP1N1PPP/R2QK2R w KQkq - 5 8
@@ -33,7 +63,7 @@ int main() {
     std::cout << std::endl;
 
     try {
-        Chess::Engine engine;
+        Zagreus::Engine engine;
         senjo::UCIAdapter adapter(engine);
 
         std::string line;

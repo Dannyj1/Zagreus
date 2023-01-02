@@ -6,52 +6,55 @@
 #include "search_mgr.h"
 #include "move_gen.h"
 
-namespace Chess {
+namespace Zagreus {
     uint64_t captures = 0ULL;
     uint64_t checks = 0ULL;
     uint64_t ep = 0ULL;
     uint64_t castles = 0ULL;
     uint64_t promotions = 0ULL;
 
-    uint64_t Engine::doPerft(Chess::Bitboard &perftBoard, Chess::PieceColor color, int depth, int startingDepth) {
+    uint64_t Engine::doPerft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
         uint64_t nodes = 0ULL;
 
         if (depth == 0) {
             return 1ULL;
         }
 
-        std::vector<Chess::Move> moves = generateLegalMoves(perftBoard, color);
+        MoveList moves;
+        generateLegalMoves(moves, perftBoard, color);
 
-        for (const Chess::Move &move : moves) {
+        for (int i = 0; i < moves.size(); i++) {
+            Move move = moves[i];
+
             /*bool isCapture = false;
             bool isEp = false;
             bool isCastle = false;
-            Chess::PieceType fromPiece = perftBoard.getPieceOnSquare(move.fromSquare);
-            Chess::PieceType toPiece = perftBoard.getPieceOnSquare(move.toSquare);
+            Zagreus::PieceType fromPiece = perftBoard.getPieceOnSquare(move.fromSquare);
+            Zagreus::PieceType toPiece = perftBoard.getPieceOnSquare(move.toSquare);
 
-            if (toPiece != Chess::PieceType::EMPTY) {
+            if (toPiece != Zagreus::PieceType::EMPTY) {
                 isCapture = true;
             }
 
-            if (fromPiece == Chess::PieceType::WHITE_PAWN || fromPiece == Chess::PieceType::BLACK_PAWN) {
-                if (toPiece == Chess::PieceType::EMPTY && std::abs((int) move.fromSquare - (int) move.toSquare) != 8
+            if (fromPiece == Zagreus::PieceType::WHITE_PAWN || fromPiece == Zagreus::PieceType::BLACK_PAWN) {
+                if (toPiece == Zagreus::PieceType::EMPTY && std::abs((int) move.fromSquare - (int) move.toSquare) != 8
                     && std::abs((int) move.fromSquare - (int) move.toSquare) != 16) {
                     isEp = true;
                 }
             }
 
-            if (toPiece == Chess::PieceType::WHITE_KING || toPiece == Chess::PieceType::BLACK_KING) {
+            if (toPiece == Zagreus::PieceType::WHITE_KING || toPiece == Zagreus::PieceType::BLACK_KING) {
                 isCastle = true;
             }*/
 
             perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
 /*            if (depth == 1) {
-                if (move.promotionPiece != Chess::PieceType::EMPTY) {
+                if (move.promotionPiece != Zagreus::PieceType::EMPTY) {
                     promotions++;
                 }
 
-                if (perftBoard.isKingInCheck(Chess::Bitboard::getOppositeColor(color))) {
+                if (perftBoard.isKingInCheck(Zagreus::Bitboard::getOppositeColor(color))) {
                     checks++;
                 }
 
@@ -68,11 +71,13 @@ namespace Chess {
                 }
             }*/
 
-            uint64_t nodeAmount = doPerft(perftBoard, Chess::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
+            uint64_t nodeAmount = doPerft(perftBoard, Zagreus::Bitboard::getOppositeColor(color), depth - 1,
+                                          startingDepth);
             nodes += nodeAmount;
 
             if (depth == startingDepth && nodeAmount > 0LL) {
-                std::string notation = Chess::Bitboard::getNotation(move.fromSquare) + Chess::Bitboard::getNotation(move.toSquare);
+                std::string notation =
+                        Zagreus::Bitboard::getNotation(move.fromSquare) + Zagreus::Bitboard::getNotation(move.toSquare);
                 std::cout << notation << ": " << nodeAmount << std::endl;
             }
 
@@ -124,23 +129,31 @@ namespace Chess {
     }
 
     bool Engine::makeMove(const std::string &move) {
-        if (move == "e1g1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE && board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING && board.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK) {
-            board.makeStrMove("h1e1");
-            return true;
-        }
-
-        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE && board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING && board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
+        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
+            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
+            board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
             board.makeStrMove("a1e1");
             return true;
         }
 
-        if (move == "e8g8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE && board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING && board.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK) {
-            board.makeStrMove("h8e8");
+        if (move == "e1g1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE &&
+            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
+            board.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK) {
+            board.makeStrMove("h1e1");
             return true;
         }
 
-        if (move == "e8c8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE && board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING && board.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK) {
-            board.makeStrMove("e8a8");
+        if (move == "e8c8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE &&
+            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
+            board.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK) {
+            board.makeStrMove("a8e8");
+            return true;
+        }
+
+        if (move == "e8g8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE &&
+            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
+            board.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK) {
+            board.makeStrMove("h8e8");
             return true;
         }
 
@@ -222,7 +235,8 @@ namespace Chess {
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
-        std::cout << "Depth " << depth << " Nodes: " << nodes << ", Took: " << elapsed_seconds.count() << "s" << std::endl;
+        std::cout << "Depth " << depth << " Nodes: " << nodes << ", Took: " << elapsed_seconds.count() << "s"
+                  << std::endl;
         return nodes;
     }
 
@@ -238,18 +252,45 @@ namespace Chess {
         SearchResult bestResult = searchManager.getBestMove(board, engineColor);
 
         if (bestResult.move.promotionPiece != PieceType::EMPTY) {
-            std::string result = Chess::Bitboard::getNotation(bestResult.move.fromSquare)
-                    + Chess::Bitboard::getNotation(bestResult.move.toSquare)
-                    + Chess::Bitboard::getCharacterForPieceType(bestResult.move.promotionPiece);
+            std::string result = Zagreus::Bitboard::getNotation(bestResult.move.fromSquare)
+                                 + Zagreus::Bitboard::getNotation(bestResult.move.toSquare)
+                                 + Zagreus::Bitboard::getCharacterForPieceType(bestResult.move.promotionPiece);
 
             std::transform(result.begin(), result.end(), result.begin(),
-                           [](unsigned char c){ return std::tolower(c); });
+                           [](unsigned char c) { return std::tolower(c); });
 
             return result;
         }
 
+        std::string result = Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) + Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
+
+        if (result == "a1e1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
+            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
+            board.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK) {
+            return "e1c1";
+        }
+
+        if (result == "h1e1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE &&
+            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
+            board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
+            return "e1g1";
+        }
+
+        if (result == "a8e8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE &&
+            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
+            board.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK) {
+            return "e8c8";
+        }
+
+        if (result == "h8e8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE &&
+            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
+            board.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK) {
+            return "e8g8";
+        }
+
         std::cout << "Score: " << bestResult.score << std::endl;
-        return Chess::Bitboard::getNotation(bestResult.move.fromSquare) + Chess::Bitboard::getNotation(bestResult.move.toSquare);
+        return Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) +
+               Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
     }
 
     senjo::SearchStats Engine::getSearchStats() {

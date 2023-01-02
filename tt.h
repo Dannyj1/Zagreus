@@ -10,7 +10,7 @@
 #include "bitboard.h"
 #include "include/tsl/hopscotch_map.h"
 
-namespace Chess {
+namespace Zagreus {
     struct TTEntry {
         int score;
         int depth;

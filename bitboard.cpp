@@ -11,8 +11,9 @@
 
 #include "bitboard.h"
 #include "move_gen.h"
+#include "types.h"
 
-namespace Chess {
+namespace Zagreus {
 
     Bitboard::Bitboard() {
         std::random_device rd;
@@ -23,17 +24,14 @@ namespace Chess {
             zobristConstant = dis(gen);
         }
 
-        undoStack.reserve(200);
-        moveHistory.reserve(200);
-
         uint64_t sqBB = 1ULL;
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-            kingAttacks[sq] = calculateKingAttacks(sqBB);
+            kingAttacks[sq] = calculateKingAttacks(sqBB) & ~sqBB;
         }
 
         sqBB = 1ULL;
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-            knightAttacks[sq] = calculateKnightAttacks(sqBB);
+            knightAttacks[sq] = calculateKnightAttacks(sqBB) & ~sqBB;
         }
     }
 
@@ -42,11 +40,11 @@ namespace Chess {
     }
 
     uint64_t Bitboard::getWhiteBoard() {
-        return whiteBB;
+        return colorBB[PieceColor::WHITE];
     }
 
     uint64_t Bitboard::getBlackBoard() {
-        return blackBB;
+        return colorBB[PieceColor::BLACK];
     }
 
     uint64_t Bitboard::getEmptyBoard() {
@@ -136,14 +134,7 @@ namespace Chess {
     void Bitboard::setPiece(int index, PieceType pieceType) {
         pieceBB[pieceType] |= 1ULL << index;
         occupiedBB |= 1ULL << index;
-
-        if (pieceType % 2 == 0) {
-            whiteBB |= 1ULL << index;
-            whiteBB |= 1ULL << index;
-        } else {
-            blackBB |= 1ULL << index;
-        }
-
+        colorBB[pieceType % 2] |= 1ULL << index;
         pieceSquareMapping[index] = pieceType;
         zobristHash ^= zobristConstants[index * 12 + pieceType];
     }
@@ -151,23 +142,36 @@ namespace Chess {
     void Bitboard::removePiece(int index, PieceType pieceType) {
         pieceBB[pieceType] &= ~(1ULL << index);
         occupiedBB &= ~(1ULL << index);
-        whiteBB &= ~(1ULL << index);
-        blackBB &= ~(1ULL << index);
-
+        colorBB[pieceType % 2] &= ~(1ULL << index);
         pieceSquareMapping[index] = PieceType::EMPTY;
         zobristHash ^= zobristConstants[index * 12 + pieceType];
     }
 
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
-        // TODO: update attack map on makeMove, restore old maps on unmakeMove. Incrementally update.
         PieceType capturedPiece = getPieceOnSquare(toSquare);
 
-        moveHistory.push_back(zobristHash);
-        undoStack.push_back({{}, {}, whiteBB, blackBB, occupiedBB, whiteEnPassantSquare, blackEnPassantSquare, castlingRights,
-                 whiteAttackMap, blackAttackMap, zobristHash, movesMade, halfmoveClock, fullmoveClock});
+        moveHistory[moveHistoryIndex] = zobristHash;
+        moveHistoryIndex++;
 
-        std::copy(pieceBB, pieceBB + 12, undoStack.back().pieceBB);
-        std::copy(pieceSquareMapping, pieceSquareMapping + 64, undoStack.back().pieceSquareMapping);
+        undoStack.pushMove(pieceBB, pieceSquareMapping, colorBB, occupiedBB, whiteEnPassantSquare,
+                           blackEnPassantSquare, castlingRights, attacksFrom, attacksTo, zobristHash, movesMade,
+                           halfmoveClock, fullmoveClock);
+
+        uint64_t updateMask = attacksTo[fromSquare] | attacksFrom[fromSquare] | attacksTo[toSquare]
+                              | attacksFrom[toSquare] | (1ULL << fromSquare) | (1ULL << toSquare);
+
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::WHITE, updateMask);
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::BLACK, updateMask);
+
+        // Clear old attacks of affected pieces
+        for (int i = 0; i < generatedMoves.size(); i++) {
+            Move move = generatedMoves[i];
+
+            attacksTo[move.toSquare] &= ~(1ULL << move.fromSquare);
+            attacksFrom[move.fromSquare] &= ~(1ULL << move.toSquare);
+        }
+
+        generatedMoves.clear();
 
         movesMade += 1;
         halfmoveClock += 1;
@@ -274,26 +278,40 @@ namespace Chess {
             setPiece(toSquare, pieceType);
         }
 
-        whiteAttackMap = 0;
-        blackAttackMap = 0;
         movingColor = getOppositeColor(movingColor);
         zobristHash ^= zobristConstants[768];
+
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::WHITE, updateMask);
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::BLACK, updateMask);
+
+        // Add new attacks of affected pieces
+        for (int i = 0; i < generatedMoves.size(); i++) {
+            Move move = generatedMoves[i];
+
+            attacksTo[move.toSquare] |= (1ULL << move.fromSquare);
+            attacksFrom[move.fromSquare] |= (1ULL << move.toSquare);
+        }
+
+        generatedMoves.clear();
     }
 
-    void Bitboard::makeStrMove(const std::string& move) {
+    void Bitboard::makeStrMove(const std::string &move) {
         int fromSquare = getSquareFromString(move.substr(0, 2));
         int toSquare = getSquareFromString(move.substr(2, 2));
         PieceType promotionPiece = PieceType::EMPTY;
 
         if (move.length() == 5) {
             if (move.ends_with("q")) {
-                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN;
+                promotionPiece =
+                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN;
             } else if (move.ends_with("r")) {
                 promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK;
             } else if (move.ends_with("b")) {
-                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP;
+                promotionPiece =
+                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP;
             } else if (move.ends_with("n")) {
-                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT;
+                promotionPiece =
+                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT;
             }
         }
 
@@ -301,31 +319,31 @@ namespace Chess {
     }
 
     void Bitboard::unmakeMove() {
-        if (undoStack.empty()) {
-            std::cout << "Unmake move: Undo stack is empty!" << std::endl;
-            return;
+        moveHistoryIndex--;
+
+        UndoData* undoData = undoStack.pop();
+
+        for (int i = 0; i < 12; i++) {
+            pieceBB[i] = undoData->pieceBB[i];
         }
 
-        moveHistory.pop_back();
+        for (int i = 0; i < 64; i++) {
+            pieceSquareMapping[i] = undoData->pieceSquareMapping[i];
+            attacksTo[i] = undoData->attacksTo[i];
+            attacksFrom[i] = undoData->attacksFrom[i];
+        }
 
-        UndoData undoData = undoStack.back();
-        undoStack.pop_back();
-
-        std::copy(undoData.pieceBB, undoData.pieceBB + 12, pieceBB);
-        std::copy(undoData.pieceSquareMapping, undoData.pieceSquareMapping + 64, pieceSquareMapping);
-        whiteBB = undoData.whiteBB;
-        blackBB = undoData.blackBB;
-        occupiedBB = undoData.occupiedBB;
-        whiteEnPassantSquare = undoData.whiteEnPassantSquare;
-        blackEnPassantSquare = undoData.blackEnPassantSquare;
-        castlingRights = undoData.castlingRights;
-        whiteAttackMap = undoData.whiteAttackMap;
-        blackAttackMap = undoData.blackAttackMap;
+        colorBB[0] = undoData->colorBB[0];
+        colorBB[1] = undoData->colorBB[1];
+        occupiedBB = undoData->occupiedBB;
+        whiteEnPassantSquare = undoData->whiteEnPassantSquare;
+        blackEnPassantSquare = undoData->blackEnPassantSquare;
+        castlingRights = undoData->castlingRights;
         movingColor = getOppositeColor(movingColor);
-        zobristHash = undoData.zobristHash;
-        movesMade = undoData.movesMade;
-        halfmoveClock = undoData.halfMoveClock;
-        fullmoveClock = undoData.fullMoveClock;
+        zobristHash = undoData->zobristHash;
+        movesMade = undoData->movesMade;
+        halfmoveClock = undoData->halfMoveClock;
+        fullmoveClock = undoData->fullMoveClock;
     }
 
     int Bitboard::getBlackEnPassantSquare() const {
@@ -348,8 +366,11 @@ namespace Chess {
         blackEnPassantSquare = -1;
         whiteEnPassantSquare = -1;
         castlingRights = 0b00001111;
-        whiteAttackMap = 0;
-        blackAttackMap = 0;
+
+        for (int i = 0; i < 64; i++) {
+            attacksFrom[i] = 0;
+            attacksTo[i] = 0;
+        }
 
         for (const char character : fen) {
             if (character == ' ') {
@@ -369,6 +390,8 @@ namespace Chess {
 
                 if (character >= 'A' && character <= 'z') {
                     setPieceFromFENChar(character, index);
+                    undoStack.clear();
+                    moveHistoryIndex = 0;
                     index--;
                     continue;
                 } else {
@@ -434,6 +457,22 @@ namespace Chess {
     }
 
     void Bitboard::setPieceFromFENChar(const char character, int index) {
+        uint64_t updateMask = attacksTo[index] | attacksFrom[index] | (1ULL << index);
+
+        generatedMoves.clear();
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::WHITE, updateMask);
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::BLACK, updateMask);
+
+        // Clear old attacks of affected pieces
+        for (int i = 0; i < generatedMoves.size(); i++) {
+            Move move = generatedMoves[i];
+
+            attacksTo[move.toSquare] &= ~(1ULL << move.fromSquare);
+            attacksFrom[move.fromSquare] &= ~(1ULL << move.toSquare);
+        }
+
+        generatedMoves.clear();
+
         // Uppercase = WHITE, lowercase = black
         switch (character) {
             case 'P':
@@ -472,6 +511,17 @@ namespace Chess {
             case 'k':
                 setPiece(index, PieceType::BLACK_KING);
                 break;
+        }
+
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::WHITE, updateMask);
+        generateAttackMapMoves(generatedMoves, *this, PieceColor::BLACK, updateMask);
+
+        // Add new attacks of affected pieces
+        for (int i = 0; i < generatedMoves.size(); i++) {
+            Move move = generatedMoves[i];
+
+            attacksTo[move.toSquare] |= (1ULL << move.fromSquare);
+            attacksFrom[move.fromSquare] |= (1ULL << move.toSquare);
         }
     }
 
@@ -527,7 +577,7 @@ namespace Chess {
             }
         }
 
-        for (Move move : availableMoves) {
+        for (const Move &move : availableMoves) {
             boardChars[move.toSquare] = 'X';
         }
 
@@ -547,26 +597,16 @@ namespace Chess {
         std::cout << std::endl << "---------------------------------" << std::endl;
     }
 
-    uint64_t Bitboard::calculateAttackedTilesForColor(PieceColor color) {
-        uint64_t attacks = 0;
+    bool Bitboard::isSquareAttackedByColor(int square, PieceColor color) {
+        return attacksTo[square] & getBoardByColor(color);
+    }
 
-        if (color == PieceColor::WHITE) {
-            attacks |= getWhitePawnAttacks(getPieceBoard(PieceType::WHITE_PAWN));
-            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::WHITE_KNIGHT));
-            attacks |= getBishopAttacks(getPieceBoard(PieceType::WHITE_BISHOP));
-            attacks |= getRookAttacks(getPieceBoard(PieceType::WHITE_ROOK));
-            attacks |= getQueenAttacks(getPieceBoard(PieceType::WHITE_QUEEN));
-            attacks |= calculateKingAttacks(getPieceBoard(PieceType::WHITE_KING));
-        } else {
-            attacks |= getBlackPawnAttacks(getPieceBoard(PieceType::BLACK_PAWN));
-            attacks |= calculateKnightAttacks(getPieceBoard(PieceType::BLACK_KNIGHT));
-            attacks |= getBishopAttacks(getPieceBoard(PieceType::BLACK_BISHOP));
-            attacks |= getRookAttacks(getPieceBoard(PieceType::BLACK_ROOK));
-            attacks |= getQueenAttacks(getPieceBoard(PieceType::BLACK_QUEEN));
-            attacks |= calculateKingAttacks(getPieceBoard(PieceType::BLACK_KING));
-        }
+    uint64_t Bitboard::getSquareAttacks(int square) {
+        return attacksTo[square];
+    }
 
-        return attacks;
+    uint64_t Bitboard::getSquareAttacksByColor(int square, PieceColor color) {
+        return attacksTo[square] & getBoardByColor(color);
     }
 
     PieceColor Bitboard::getMovingColor() const {
@@ -575,16 +615,20 @@ namespace Chess {
 
     bool Bitboard::isKingInCheck(PieceColor color) {
         uint64_t kingBB = getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
-        uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t attacks = getAttackedTilesForColor(getOppositeColor(color));
 
-        return attacks & (1ULL << kingLocation);
+        if (!kingBB) {
+            return false;
+        }
+
+        uint64_t kingLocation = bitscanForward(kingBB);
+
+        return isSquareAttackedByColor(kingLocation, getOppositeColor(color));
     }
 
     bool Bitboard::isDraw() {
-        std::vector<Move> availableMoves = generateLegalMoves(*this, movingColor);
+        generateLegalMoves(generatedMoves, *this, movingColor);
 
-        if (availableMoves.size() == 0 && !isKingInCheck(movingColor)) {
+        if (generatedMoves.size() == 0 && !isKingInCheck(movingColor)) {
             return true;
         }
 
@@ -592,8 +636,15 @@ namespace Chess {
             return true;
         }
 
-        if (std::count(std::begin(moveHistory), std::end(moveHistory), zobristHash) >= 3) {
-            return true;
+        int repetitionCount = 0;
+        for (int i = moveHistoryIndex - 1; i >= 0; i--) {
+            if (moveHistory[i] == moveHistory[moveHistoryIndex]) {
+                repetitionCount++;
+            }
+
+            if (repetitionCount >= 3) {
+                return true;
+            }
         }
 
         return isInsufficientMaterial();
@@ -736,11 +787,7 @@ namespace Chess {
     }
 
     uint64_t Bitboard::getBoardByColor(PieceColor color) {
-        if (color == PieceColor::WHITE) {
-            return getWhiteBoard();
-        } else {
-            return getBlackBoard();
-        }
+        return colorBB[color];
     }
 
     PieceType Bitboard::getPieceOnSquare(int square) {
@@ -752,9 +799,11 @@ namespace Chess {
             return false;
         }
 
-        std::vector<Move> moves = Chess::generateLegalMoves(*this, getOppositeColor(color));
+        generateLegalMoves(generatedMoves, *this, getOppositeColor(color));
 
-        for (Move move : moves) {
+        for (int i = 0; i < generatedMoves.size(); i++) {
+            Move move = generatedMoves[i];
+
             makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
             bool isKingInCheck = this->isKingInCheck(getOppositeColor(color));
             unmakeMove();
@@ -798,36 +847,10 @@ namespace Chess {
 
         movingColor = getOppositeColor(movingColor);
         zobristHash ^= zobristConstants[768];
-        whiteAttackMap = 0;
-        blackAttackMap = 0;
-    }
-
-    uint64_t Bitboard::getAttackedTilesForColor(PieceColor color) {
-        if (color == PieceColor::WHITE) {
-            return getWhiteAttacksBB();
-        } else {
-            return getBlackAttacksBB();
-        }
-    }
-
-    uint64_t Bitboard::getWhiteAttacksBB() {
-        if (whiteAttackMap == 0) {
-            whiteAttackMap = calculateAttackedTilesForColor(PieceColor::WHITE);
-        }
-
-        return whiteAttackMap;
-    }
-
-    uint64_t Bitboard::getBlackAttacksBB() {
-        if (blackAttackMap == 0) {
-            blackAttackMap = calculateAttackedTilesForColor(PieceColor::BLACK);
-        }
-
-        return blackAttackMap;
     }
 
     PieceColor Bitboard::getOppositeColor(PieceColor color) {
-        return oppositeColors[color];
+        return static_cast<PieceColor>(color ^ 1);
     }
 
     int Bitboard::getSquareFromString(std::string notation) {

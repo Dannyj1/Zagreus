@@ -8,14 +8,14 @@
 #include "senjo/ChessEngine.h"
 #include "bitboard.h"
 
-namespace Chess {
+namespace Zagreus {
     class Engine : public senjo::ChessEngine {
     private:
         Bitboard board;
         bool isEngineInitialized;
         PieceColor engineColor = PieceColor::NONE;
     public:
-        uint64_t doPerft(Chess::Bitboard &board, Chess::PieceColor color, int depth, int startingDepth);
+        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int startingDepth);
 
         std::string getEngineName() override;
 

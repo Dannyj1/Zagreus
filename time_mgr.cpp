@@ -6,10 +6,12 @@
 #include "time_mgr.h"
 #include "bitboard.h"
 
-namespace Chess {
-    std::chrono::time_point<std::chrono::high_resolution_clock> TimeManager::getEndTime(Bitboard &bitboard, PieceColor movingColor) {
+namespace Zagreus {
+    std::chrono::time_point<std::chrono::high_resolution_clock>
+    TimeManager::getEndTime(Bitboard &bitboard, PieceColor movingColor) {
         int movesLeft = 40 - bitboard.getMovesMade() / 2;
-        uint64_t timeLeft = movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
+        uint64_t timeLeft =
+                movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
 
         if (movesLeft < 5) {
             movesLeft = 5;

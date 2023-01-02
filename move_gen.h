@@ -8,27 +8,35 @@
 
 #include "bitboard.h"
 
-namespace Chess {
-    std::vector<Move> generateLegalMoves(Bitboard &bitboard, PieceColor color);
+namespace Zagreus {
+    void generateLegalMoves(MoveList &moves, Bitboard &bitboard, PieceColor color);
 
-    std::vector<Move> generateQuiescenceMoves(Bitboard &bitboard, PieceColor color);
+    void generateQuiescenceMoves(MoveList &moves, Bitboard &bitboard, PieceColor color);
 
-    std::vector<Move> generateMobilityMoves(Bitboard &bitboard, PieceColor color);
+    void generateMobilityMoves(MoveList &moves, Bitboard &bitboard, PieceColor color);
 
-    std::vector<Move> generateSinglePieceMove(Bitboard &bitboard, PieceColor color, PieceType pieceType, int fromSquare);
+    void generateAttackMapMoves(MoveList &moves, Bitboard &bitboard, PieceColor color, uint64_t mask);
 
-    void generatePawnMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color,
-                           PieceType pieceType, bool quiesce);
+    void generatePawnMoves(MoveList &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                           PieceColor color,
+                           PieceType pieceType, bool quiesce = false, uint64_t mask = ~0);
 
-    void generateKnightMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
+    void generateKnightMoves(MoveList &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                             PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
 
-    void generateBishopMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
+    void generateBishopMoves(MoveList &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                             PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
 
-    void generateRookMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color,
-                           PieceType pieceType, bool quiesce);
+    void generateRookMoves(MoveList &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                           PieceColor color,
+                           PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
 
-    void generateQueenMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
+    void generateQueenMoves(MoveList &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                            PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
 
-    void generateKingMoves(std::vector<Move> &result, Bitboard &bitboard, uint64_t ownPiecesBB, PieceColor color, PieceType pieceType, bool quiesce);
+    void generateKingMoves(MoveList &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                           PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
+
+    bool sortLegalMoves(const Move &a, const Move &b);
 }
 

@@ -6,7 +6,7 @@
 
 #include "bitboard.h"
 
-namespace Chess {
+namespace Zagreus {
     class TimeManager {
     public:
         std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(Bitboard &board, PieceColor movingColor);

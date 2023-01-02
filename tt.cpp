@@ -7,7 +7,7 @@
 #include "tt.h"
 #include "bitboard.h"
 
-namespace Chess {
+namespace Zagreus {
     void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score) {
         if (table.contains(zobristHash)) {
             TTEntry entry = table.at(zobristHash);
