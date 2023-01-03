@@ -9,14 +9,14 @@
 namespace Zagreus {
     class UndoStack {
     private:
-        UndoData stack[256]{};
+        UndoData stack[128]{};
         int lastElementIndex = 0;
 
     public:
-        void pushMove(uint64_t pieceBB[12], PieceType pieceSquareMapping[64], uint64_t colorBB[2],
-                      uint64_t occupiedBB, int whiteEnPassantSquare, int blackEnPassantSquare,
-                      uint8_t castlingRights, uint64_t attacksFrom[64], uint64_t attacksTo[64],
-                      uint64_t zobristHash, int movesMade, int halfMoveClock, int fullMoveClock);
+        void pushMove(const uint64_t pieceBB[12], const PieceType pieceSquareMapping[64], const uint64_t colorBB[2],
+                      uint64_t occupiedBB, const int enPassantSquare[2],
+                      uint8_t castlingRights, const uint64_t attacksFrom[64], const uint64_t attacksTo[64],
+                      uint64_t zobristHash, unsigned int movesMade, unsigned int halfMoveClock, int fullMoveClock);
 
         void clear();
 

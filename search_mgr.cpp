@@ -9,21 +9,23 @@
 #include "time_mgr.h"
 #include "tt.h"
 #include "move_gen.h"
+#include "senjo/Output.h"
 
 namespace Zagreus {
     SearchResult SearchManager::getBestMove(Bitboard &board, PieceColor color) {
+        searchStats = {};
         isSearching = true;
         SearchResult bestResult;
         SearchResult iterationResult;
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(board, color);
-        MoveList moves;
-
-        generateLegalMoves(moves, board, color);
+        std::vector<Move> moves = generateLegalMoves(board, color);
         int depth = 0;
 
         while (std::chrono::high_resolution_clock::now() < endTime) {
             depth += 1;
+            searchStats.depth = depth;
+            searchStats.seldepth = 0;
 
             if (depth > 50) {
                 break;
@@ -43,8 +45,8 @@ namespace Zagreus {
                 return {moves[0], 0};
             }
 
-            for (int i = 0; i < moves.size(); i++) {
-                Move move = moves[i];
+            for (const Move &move : moves) {
+                assert(move.fromSquare != move.toSquare);
 
                 if (depth > 1 && std::chrono::high_resolution_clock::now() > endTime) {
                     break;
@@ -52,36 +54,45 @@ namespace Zagreus {
 
                 board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
-                if (depth == 1) {
+                if (depth == 1 && board.getWhiteTimeMsec() > 30000) {
                     endTime += std::chrono::minutes(2);
                 }
 
                 SearchResult result = search(board, depth, 0, -99999999, 99999999, move, move, endTime);
 
-                if (depth == 1) {
+                if (depth == 1 && board.getWhiteTimeMsec() > 30000) {
                     endTime -= std::chrono::minutes(2);
                 }
 
                 result.score *= -1;
                 board.unmakeMove();
 
-                if (depth == 1 || result.score > iterationResult.score ||
-                    iterationResult.move.pieceType == PieceType::EMPTY) {
+                if (result.score > iterationResult.score) {
+                    assert(result.move.pieceType != PieceType::EMPTY);
                     iterationResult = result;
+                    searchStats.score = iterationResult.score;
                 }
+
+                searchStats.msecs = duration_cast<std::chrono::milliseconds>(
+                        std::chrono::high_resolution_clock::now() - startTime).count();
+                senjo::Output(senjo::Output::NoPrefix) << searchStats;
             }
 
-            if (depth == 1 || std::chrono::high_resolution_clock::now() < endTime ||
-                bestResult.move.pieceType == PieceType::EMPTY) {
+            if (depth == 1 || std::chrono::high_resolution_clock::now() < endTime) {
+                assert(iterationResult.move.pieceType != PieceType::EMPTY);
                 bestResult = iterationResult;
+                searchStats.score = bestResult.score;
             }
 
             iterationResult = {};
         }
 
+        searchStats.score = bestResult.score;
+        searchStats.msecs = duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime).count();
         tt.clearKillerMoves();
         tt.clearPVMoves();
         isSearching = false;
+        senjo::Output(senjo::Output::NoPrefix) << searchStats;
         return bestResult;
     }
 
@@ -95,12 +106,13 @@ namespace Zagreus {
             return quiesce(board, ply, 10, alpha, beta, rootMove, previousMove, endTime);
         }
 
-        bool searchPv = true;
-        MoveList moves;
-        generateLegalMoves(moves, board, board.getMovingColor());
+        searchStats.nodes += 1;
 
-        for (int i = 0; i < moves.size(); i++) {
-            Move move = moves[i];
+        bool searchPv = true;
+        std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
+
+        for (const Move &move : moves) {
+            assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
                 break;
@@ -159,10 +171,11 @@ namespace Zagreus {
             return quiesce(board, ply, 10, beta - 1, beta, rootMove, previousMove, endTime);
         }
 
-        MoveList moves;
-        generateLegalMoves(moves, board, board.getMovingColor());
-        for (int i = 0; i < moves.size(); i++) {
-            Move move = moves[i];
+        searchStats.nodes += 1;
+
+        std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
+        for (const Move &move : moves) {
+            assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
                 break;
@@ -208,21 +221,20 @@ namespace Zagreus {
         whiteScore += whiteMaterialScore;
         blackScore += blackMaterialScore;
 
-        MoveList moves;
+        std::vector<Move> moves = generateMobilityMoves(board, board.getMovingColor());
+        int whiteMobilityScore = moves.size() * 3;
 
-        generateMobilityMoves(moves, board, board.getMovingColor());
-        int whiteMobilityScore = moves.size() * 2;
-
-        moves.clear();
-
-        generateMobilityMoves(moves, board, Bitboard::getOppositeColor(board.getMovingColor()));
-        int blackMobilityScore = moves.size() * 2;
+        moves = generateMobilityMoves(board, Bitboard::getOppositeColor(board.getMovingColor()));
+        int blackMobilityScore = moves.size() * 3;
 
         whiteScore += whiteMobilityScore;
         blackScore += blackMobilityScore;
 
         whiteScore += getWhiteConnectivityScore(board);
         blackScore += getBlackConnectivityScore(board);
+
+        whiteScore += getWhiteKingSafetyScore(board);
+        blackScore += getBlackKingSafetyScore(board);
 
         return (whiteScore - blackScore) * modifier;
     }
@@ -233,7 +245,8 @@ namespace Zagreus {
         int blackBishopsScore = popcnt(board.getPieceBoard(BLACK_BISHOP)) * 350;
         int blackRooksScore = popcnt(board.getPieceBoard(BLACK_ROOK)) * 525;
         int blackQueensScore = popcnt(board.getPieceBoard(BLACK_QUEEN)) * 1000;
-        int blackMaterialScore = blackPawnsScore + blackKnightsScore + blackBishopsScore + blackRooksScore + blackQueensScore;
+        int blackMaterialScore =
+                blackPawnsScore + blackKnightsScore + blackBishopsScore + blackRooksScore + blackQueensScore;
         return blackMaterialScore;
     }
 
@@ -243,13 +256,16 @@ namespace Zagreus {
         int whiteBishopsScore = popcnt(board.getPieceBoard(WHITE_BISHOP)) * 350;
         int whiteRooksScore = popcnt(board.getPieceBoard(WHITE_ROOK)) * 525;
         int whiteQueensScore = popcnt(board.getPieceBoard(WHITE_QUEEN)) * 1000;
-        int whiteMaterialScore = whitePawnsScore + whiteKnightsScore + whiteBishopsScore + whiteRooksScore + whiteQueensScore;
+        int whiteMaterialScore =
+                whitePawnsScore + whiteKnightsScore + whiteBishopsScore + whiteRooksScore + whiteQueensScore;
         return whiteMaterialScore;
     }
 
     SearchResult SearchManager::quiesce(Bitboard &board, int ply, int depth, int alpha, int beta, const Move &rootMove,
                                         const Move &previousMove,
                                         std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
+        searchStats.qnodes += 1;
+
         if (std::chrono::high_resolution_clock::now() > endTime) {
             return {rootMove, beta};
         }
@@ -274,10 +290,9 @@ namespace Zagreus {
             alpha = standPat;
         }
 
-        MoveList moves;
-        generateQuiescenceMoves(moves, board, board.getMovingColor());
-        for (int i = 0; i < moves.size(); i++) {
-            Move move = moves[i];
+        std::vector<Move> moves = generateQuiescenceMoves(board, board.getMovingColor());
+        for (const Move &move : moves) {
+            assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
                 break;
@@ -310,34 +325,70 @@ namespace Zagreus {
     }
 
     int SearchManager::getWhiteConnectivityScore(Bitboard &bitboard) {
-        uint64_t whitePieces = bitboard.getWhiteBoard();
+        uint64_t kingBB = bitboard.getPieceBoard(PieceType::WHITE_KING);
+        uint64_t whitePieces = bitboard.getWhiteBoard() & ~kingBB;
         int whiteConnectivityScore = 0;
 
         while (whitePieces) {
             uint64_t index = bitscanForward(whitePieces);
-            uint64_t attacks = bitboard.getSquareAttacksByColor(index, PieceColor::WHITE);
+            uint64_t attacks = bitboard.getSquareAttacksByColor(index, PieceColor::WHITE) & ~kingBB;
 
-            whiteConnectivityScore += popcnt(attacks);
+            whiteConnectivityScore += popcnt(whitePieces & attacks);
             whitePieces &= ~(1ULL << index);
         }
 
-        return whiteConnectivityScore;
+        return whiteConnectivityScore * 2;
     }
 
     int SearchManager::getBlackConnectivityScore(Bitboard &bitboard) {
-        uint64_t whitePieces = bitboard.getWhiteBoard();
-        int whiteConnectivityScore = 0;
+        uint64_t kingBB = bitboard.getPieceBoard(PieceType::BLACK_KING);
+        uint64_t blackPieces = bitboard.getBlackBoard() & ~kingBB;
+        int blackConnectivityScore = 0;
 
-        while (whitePieces) {
-            uint64_t index = bitscanForward(whitePieces);
-            uint64_t attacks = bitboard.getSquareAttacksByColor(index, PieceColor::BLACK);
+        while (blackPieces) {
+            uint64_t index = bitscanForward(blackPieces);
+            uint64_t attacks = bitboard.getSquareAttacksByColor(index, PieceColor::BLACK) & ~kingBB;
 
-            whiteConnectivityScore += popcnt(attacks);
-            whitePieces &= ~(1ULL << index);
+            blackConnectivityScore += popcnt(blackPieces & attacks);
+            blackPieces &= ~(1ULL << index);
         }
 
-        return whiteConnectivityScore;
+        return blackConnectivityScore * 2;
+    }
+
+    int SearchManager::getWhiteKingSafetyScore(Bitboard &bitboard) {
+        uint64_t kingBB = bitboard.getPieceBoard(PieceType::WHITE_KING);
+        uint64_t kingLocation = bitscanForward(kingBB);
+        uint64_t pawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN);
+        uint64_t safetyMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
+        safetyMask |= nortOne(safetyMask);
+        uint64_t pawnShield = pawnBB & safetyMask;
+        int whiteKingSafetyScore = std::min(30, (int) (popcnt(pawnShield) * 10));
+
+        if (kingLocation <= 15) {
+            whiteKingSafetyScore += 10;
+        }
+
+        return whiteKingSafetyScore;
+    }
+
+    int SearchManager::getBlackKingSafetyScore(Bitboard &bitboard) {
+        uint64_t kingBB = bitboard.getPieceBoard(PieceType::BLACK_KING);
+        uint64_t kingLocation = bitscanForward(kingBB);
+        uint64_t pawnBB = bitboard.getPieceBoard(PieceType::BLACK_PAWN);
+        uint64_t safetyMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
+        safetyMask |= nortOne(safetyMask);
+        uint64_t pawnShield = pawnBB & safetyMask;
+        int blackKingSafetyScore = std::min(30, (int) (popcnt(pawnShield) * 10));
+
+        if (kingLocation >= 48) {
+            blackKingSafetyScore += 10;
+        }
+
+        return blackKingSafetyScore;
+    }
+
+    void SearchManager::resetStats() {
+        searchStats = {};
     }
 }
-
-#pragma clang diagnostic pop

@@ -20,11 +20,8 @@ namespace Zagreus {
             return 1ULL;
         }
 
-        MoveList moves;
-        generateLegalMoves(moves, perftBoard, color);
-
-        for (int i = 0; i < moves.size(); i++) {
-            Move move = moves[i];
+        for (const Move &move : generateLegalMoves(perftBoard, color)) {
+            assert(move.fromSquare != move.toSquare);
 
             /*bool isCapture = false;
             bool isEp = false;
@@ -125,6 +122,7 @@ namespace Zagreus {
     }
 
     bool Engine::setPosition(const std::string &fen, std::string* remain) {
+        board = {};
         return board.setFromFEN(fen);
     }
 
@@ -176,7 +174,7 @@ namespace Zagreus {
     }
 
     void Engine::clearSearchData() {
-        // TODO: implement
+        searchManager.resetStats();
     }
 
     void Engine::ponderHit() {
@@ -294,12 +292,11 @@ namespace Zagreus {
     }
 
     senjo::SearchStats Engine::getSearchStats() {
-        // TODO: implement
-        return {};
+        return searchManager.getSearchStats();
     }
 
     void Engine::resetEngineStats() {
-        // TODO: implement
+
     }
 
     void Engine::showEngineStats() {

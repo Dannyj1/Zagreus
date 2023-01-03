@@ -11,8 +11,8 @@
 namespace Zagreus {
     class Engine : public senjo::ChessEngine {
     private:
-        Bitboard board;
-        bool isEngineInitialized;
+        Bitboard board{};
+        bool isEngineInitialized = false;
         PieceColor engineColor = PieceColor::NONE;
     public:
         uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int startingDepth);

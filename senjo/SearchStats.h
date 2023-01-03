@@ -39,12 +39,12 @@ namespace senjo {
 
 //-----------------------------------------------------------------------------
     inline std::ostream &operator<<(std::ostream &os, const SearchStats &stats) {
-        os << "depth " << stats.depth
+        os << "info depth " << stats.depth
            << " seldepth " << stats.seldepth
            << " score cp " << stats.score
-           << " nodes " << stats.nodes
+           << " nodes " << stats.nodes + stats.qnodes
            << " time " << stats.msecs
-           << " nps " << static_cast<uint64_t>(rate(stats.nodes, stats.msecs));
+           << " nps " << static_cast<uint64_t>(rate((stats.nodes + stats.qnodes), stats.msecs));
         return os;
     }
 

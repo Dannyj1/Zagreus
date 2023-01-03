@@ -9,36 +9,21 @@
 
 namespace Zagreus {
     void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score) {
-        if (table.contains(zobristHash)) {
-            TTEntry entry = table.at(zobristHash);
-
-            if (entry.depth >= depth) {
-                table.erase(zobristHash);
-                table.insert({zobristHash, {score, depth}});
-            }
-        } else {
-            table.insert({zobristHash, {score, depth}});
-        }
+        uint32_t index = (zobristHash & 0x1FFFFFF);
+        table[index] = TTEntry{score, depth, zobristHash};
     }
 
     bool TranspositionTable::isPositionInTable(uint64_t zobristHash, int depth) {
-        if (table.contains(zobristHash)) {
-            TTEntry entry = table.at(zobristHash);
+        uint32_t index = (zobristHash & 0x1FFFFFF);
+        TTEntry entry = table[index];
 
-            if (entry.depth >= depth) {
-                return true;
-            }
-        }
-
-        return false;
+        return entry.zobristHash == zobristHash && entry.depth >= depth;
     }
 
     int TranspositionTable::getPositionScore(uint64_t zobristHash) {
-        if (!table.contains(zobristHash)) {
-            return 0;
-        }
+        uint32_t index = (zobristHash & 0x1FFFFFF);
 
-        return table.at(zobristHash).score;
+        return table[index].score;
     }
 
     void TranspositionTable::clearKillerMoves() {
@@ -60,7 +45,10 @@ namespace Zagreus {
     }
 
     bool TranspositionTable::isPositionInTable(uint64_t zobristHash) {
-        return table.contains(zobristHash);
+        uint32_t index = (zobristHash & 0x1FFFFFF);
+        TTEntry entry = table[index];
+
+        return entry.zobristHash == zobristHash;
     }
 
     void TranspositionTable::clearPVMoves() {
@@ -79,5 +67,10 @@ namespace Zagreus {
         }
 
         return false;
+    }
+
+    TranspositionTable::TranspositionTable() {
+        pvMoves.reserve(500);
+        killerMoves.reserve(500);
     }
 }

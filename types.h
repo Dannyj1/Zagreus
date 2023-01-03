@@ -51,8 +51,8 @@ namespace Zagreus {
         uint64_t fromSquare;
         uint64_t toSquare;
         PieceType pieceType;
-        PieceType promotionPiece = PieceType::EMPTY;
         uint64_t zobristHash;
+        PieceType promotionPiece = PieceType::EMPTY;
     };
 
 
@@ -62,18 +62,17 @@ namespace Zagreus {
     };
 
     struct UndoData {
-        uint64_t pieceBB[12];
+        uint64_t pieceBB[12]{0};
         PieceType pieceSquareMapping[64]{PieceType::EMPTY};
-        uint64_t colorBB[2];
-        uint64_t occupiedBB;
-        int whiteEnPassantSquare;
-        int blackEnPassantSquare;
-        uint8_t castlingRights;
-        uint64_t attacksFrom[64];
-        uint64_t attacksTo[64];
-        uint64_t zobristHash;
-        int movesMade;
-        int halfMoveClock;
-        int fullMoveClock;
+        uint64_t colorBB[2]{0};
+        uint64_t occupiedBB = 0;
+        int enPassantSquare[2]{};
+        uint8_t castlingRights = 0;
+        uint64_t attacksFrom[64]{0};
+        uint64_t attacksTo[64]{0};
+        uint64_t zobristHash = 0;
+        unsigned int movesMade = 0;
+        unsigned int halfMoveClock = 0;
+        unsigned int fullMoveClock = 0;
     };
 }

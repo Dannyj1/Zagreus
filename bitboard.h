@@ -101,18 +101,18 @@ namespace Zagreus {
         PieceType pieceSquareMapping[64]{};
         uint64_t colorBB[2]{};
         uint64_t occupiedBB{};
-        int blackEnPassantSquare = -1;
-        int whiteEnPassantSquare = -1;
+        int enPassantSquare[2]{};
         uint8_t castlingRights = 0b00001111;
-        uint64_t attacksFrom[64];
-        uint64_t attacksTo[64];
+        uint64_t attacksFrom[64]{};
+        uint64_t attacksTo[64]{};
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
+        uint64_t pawnAttacks[2][64]{};
 
         PieceColor movingColor = PieceColor::WHITE;
-        int movesMade = 0;
-        int halfmoveClock = 0;
+        unsigned int movesMade = 0;
+        unsigned int halfMoveClock = 0;
         int fullmoveClock = 1;
         uint64_t moveHistory[256]{};
         int moveHistoryIndex = 0;
@@ -123,7 +123,7 @@ namespace Zagreus {
         unsigned int blackTimeMsec = 0;
 
         UndoStack undoStack{};
-        MoveList generatedMoves;
+        std::vector<Move> generatedMoves{};
     public:
         Bitboard();
 
@@ -133,7 +133,7 @@ namespace Zagreus {
 
         uint64_t getBlackBoard();
 
-        uint64_t getOccupiedBoard();
+        uint64_t getOccupiedBoard() const;
 
         uint64_t getKingAttacks(int square);
 
@@ -163,9 +163,7 @@ namespace Zagreus {
 
         void makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece);
 
-        PieceColor getPieceColor(PieceType type);
-
-        uint64_t getEmptyBoard();
+        uint64_t getEmptyBoard() const;
 
         bool setFromFEN(const std::string &fen);
 
@@ -193,11 +191,7 @@ namespace Zagreus {
 
         static std::string getNotation(int index);
 
-        int getBlackEnPassantSquare() const;
-
-        int getWhiteEnPassantSquare() const;
-
-        void handleCastling(Square rookSquare, Square kingSquare, PieceType rookType, PieceType kingType);
+        void handleCastling(Square rookSquare, Square kingSquare, PieceType rookType, PieceType kingType, uint64_t updateMask);
 
         uint8_t getCastlingRights() const;
 
@@ -228,5 +222,11 @@ namespace Zagreus {
         uint64_t getSquareAttacks(int square);
 
         uint64_t getSquareAttacksByColor(int square, PieceColor color);
+
+        uint64_t calculatePawnAttacks(uint64_t bb, PieceColor color);
+
+        uint64_t getPawnAttacks(int square, PieceColor color);
+
+        int getEnPassantSquare(PieceColor color);
     };
 }

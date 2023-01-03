@@ -8,20 +8,22 @@
 #include <cstdint>
 #include <map>
 #include "bitboard.h"
-#include "include/tsl/hopscotch_map.h"
 
 namespace Zagreus {
     struct TTEntry {
         int score;
         int depth;
+        uint64_t zobristHash;
     };
 
     class TranspositionTable {
     private:
-        std::map<uint64_t, TTEntry> table;
-        std::vector<Move> killerMoves;
-        std::vector<Move> pvMoves;
+        TTEntry table[1 << 25]{};
+        std::vector<Move> killerMoves{};
+        std::vector<Move> pvMoves{};
     public:
+        TranspositionTable();
+
         void addPosition(uint64_t zobristHash, int depth, int score);
 
         bool isPositionInTable(uint64_t zobristHash);

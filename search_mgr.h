@@ -12,8 +12,8 @@
 namespace Zagreus {
     class SearchManager {
     private:
-        bool isSearching;
-        senjo::SearchStats searchStats;
+        bool isSearching = false;
+        senjo::SearchStats searchStats{};
     public:
         SearchResult getBestMove(Bitboard &board, PieceColor color);
 
@@ -42,6 +42,12 @@ namespace Zagreus {
         int getWhiteConnectivityScore(Bitboard &bitboard);
 
         int getBlackConnectivityScore(Bitboard &bitboard);
+
+        int getWhiteKingSafetyScore(Bitboard &bitboard);
+
+        int getBlackKingSafetyScore(Bitboard &bitboard);
+
+        void resetStats();
     };
 
     static SearchManager searchManager{};

@@ -8,8 +8,6 @@
 #include "move_gen.h"
 #include "types.h"
 
-Zagreus::MoveList moves;
-
 uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0ULL;
 
@@ -17,11 +15,10 @@ uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int dep
         return 1ULL;
     }
 
-    Zagreus::MoveList moves;
-    generateLegalMoves(moves, perftBoard, color);
+    std::vector<Zagreus::Move> moves = generateLegalMoves(perftBoard, color);
 
-    for (int i = 0; i < moves.size(); i++) {
-        Zagreus::Move move = moves[i];
+    for (const Zagreus::Move &move : moves) {
+        assert(move.fromSquare != move.toSquare);
 
         perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
         uint64_t nodeAmount = perft(perftBoard, Zagreus::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
@@ -45,6 +42,7 @@ int main() {
     // Custom test pos 3: nk5b/2rBppP1/pPpp1R2/1NP1Qpr1/3PPPp1/3RKPN1/1Pq1np1b/3B4 w - - 0 1
     // Custom test pos 4: r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13
     // Custom test pos 5: r3k2r/1bp2pbp/1p1p1n2/1p1qp3/2nPP3/2NBBNP1/PPP1QPP1/2KR3R w kq - 0 1
+    // Custom test pos 6: r1bqk2r/pppp1ppp/2n5/2b1p3/2B1P1n1/5N2/PPPP1PPP/RNBQ1RK1 b kq - 9 6
     // eval test: 8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
