@@ -12,6 +12,7 @@
 #include "bitboard.h"
 #include "move_gen.h"
 #include "types.h"
+#include "senjo/Output.h"
 
 namespace Zagreus {
 
@@ -41,6 +42,8 @@ namespace Zagreus {
             pawnAttacks[PieceColor::WHITE][sq] = calculatePawnAttacks(sqBB, PieceColor::WHITE) & ~sqBB;
             pawnAttacks[PieceColor::BLACK][sq] = calculatePawnAttacks(sqBB, PieceColor::BLACK) & ~sqBB;
         }
+
+        initializeRayAttacks();
     }
 
     uint64_t Bitboard::getPieceBoard(int pieceType) {
@@ -71,6 +74,21 @@ namespace Zagreus {
         return this->knightAttacks[square];
     }
 
+    uint64_t Bitboard::getQueenMoves(int square) {
+        uint64_t queenMoves = 0ULL;
+
+        queenMoves |= getRayAttacks(getOccupiedBoard(), Direction::NORTH_WEST, square);
+        queenMoves |= getRayAttacks(getOccupiedBoard(), Direction::NORTH, square);
+        queenMoves |= getRayAttacks(getOccupiedBoard(), Direction::NORTH_EAST, square);
+        queenMoves |= getRayAttacks(getOccupiedBoard(), Direction::EAST, square);
+        queenMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::SOUTH_EAST, square);
+        queenMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::SOUTH, square);
+        queenMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::SOUTH_WEST, square);
+        queenMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::WEST, square);
+
+        return queenMoves;
+    }
+
     uint64_t Bitboard::getQueenAttacks(uint64_t bb) {
         uint64_t queenAttacks = 0ULL;
         uint64_t emptyBB = getEmptyBoard();
@@ -87,6 +105,17 @@ namespace Zagreus {
         return queenAttacks;
     }
 
+    uint64_t Bitboard::getBishopMoves(int square) {
+        uint64_t bishopMoves = 0ULL;
+
+        bishopMoves |= getRayAttacks(getOccupiedBoard(), Direction::NORTH_WEST, square);
+        bishopMoves |= getRayAttacks(getOccupiedBoard(), Direction::NORTH_EAST, square);
+        bishopMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::SOUTH_EAST, square);
+        bishopMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::SOUTH_WEST, square);
+
+        return bishopMoves;
+    }
+
     uint64_t Bitboard::getBishopAttacks(uint64_t bb) {
         uint64_t bishopAttacks = 0ULL;
         uint64_t emptyBB = getEmptyBoard();
@@ -97,6 +126,17 @@ namespace Zagreus {
         bishopAttacks |= soWeOccl(bb, emptyBB);
 
         return bishopAttacks;
+    }
+
+    uint64_t Bitboard::getRookMoves(int square) {
+        uint64_t rookMoves = 0ULL;
+
+        rookMoves |= getRayAttacks(getOccupiedBoard(), Direction::NORTH, square);
+        rookMoves |= getRayAttacks(getOccupiedBoard(), Direction::EAST, square);
+        rookMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::SOUTH, square);
+        rookMoves |= getNegativeRayAttacks(getOccupiedBoard(), Direction::WEST, square);
+
+        return rookMoves;
     }
 
     uint64_t Bitboard::getRookAttacks(uint64_t bb) {
@@ -156,7 +196,8 @@ namespace Zagreus {
 
     void Bitboard::removePiece(int index, PieceType pieceType) {
         assert(index < 64);
-        assert(pieceType <= 11 && pieceType >= 0);
+        assert(pieceType <= 11);
+        assert(pieceType >= 0);
         pieceBB[pieceType] &= ~(1ULL << index);
         occupiedBB &= ~(1ULL << index);
         assert(pieceType % 2 == 0 || pieceType % 2 == 1);
@@ -165,35 +206,40 @@ namespace Zagreus {
         zobristHash ^= zobristConstants[index * 12 + pieceType];
     }
 
+    void Bitboard::clearAttacksForPieces(uint64_t pieces) {
+        while (pieces) {
+            int index = bitscanForward(pieces);
+
+            while (attacksFrom[index]) {
+                int attackIndex = bitscanForward(attacksFrom[index]);
+
+                attacksTo[attackIndex] &= ~(1ULL << index);
+                attacksFrom[index] &= ~(1ULL << attackIndex);
+            }
+
+            pieces &= ~(1ULL << index);
+        }
+    }
+
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
         PieceType capturedPiece = getPieceOnSquare(toSquare);
 
-        assert(fromSquare < 64 && fromSquare >= 0);
-        assert(toSquare < 64 && toSquare >= 0);
+        assert(fromSquare >= 0);
+        assert(fromSquare <= 63);
+        assert(toSquare <= 63);
+        assert(toSquare >= 0);
         assert(moveHistoryIndex >= 0);
         assert(moveHistoryIndex < 256);
 
         moveHistory[moveHistoryIndex] = zobristHash;
         moveHistoryIndex++;
 
-        undoStack.pushMove(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, attacksFrom, attacksTo, zobristHash, movesMade,
+        pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, attacksFrom, attacksTo, zobristHash, movesMade,
                            halfMoveClock, fullmoveClock);
 
-        uint64_t updateMask = attacksTo[fromSquare] | attacksFrom[fromSquare] | attacksTo[toSquare]
-                              | attacksFrom[toSquare] | (1ULL << fromSquare) | (1ULL << toSquare);
+        uint64_t updateMask = attacksTo[fromSquare] | attacksTo[toSquare] | (1ULL << fromSquare) | (1ULL << toSquare);
 
-        generatedMoves.clear();
-        generateAttackMapMoves(generatedMoves, *this, PieceColor::WHITE, updateMask);
-        generateAttackMapMoves(generatedMoves, *this, PieceColor::BLACK, updateMask);
-
-        // Clear old attacks of affected pieces
-        for (const Move &move : generatedMoves) {
-            assert(move.fromSquare != move.toSquare);
-
-            attacksTo[move.toSquare] &= ~(1ULL << move.fromSquare);
-            attacksFrom[move.fromSquare] &= ~(1ULL << move.toSquare);
-        }
-
+        clearAttacksForPieces(updateMask);
         generatedMoves.clear();
 
         movesMade += 1;
@@ -344,34 +390,64 @@ namespace Zagreus {
         makeMove(fromSquare, toSquare, getPieceOnSquare(fromSquare), promotionPiece);
     }
 
+    void Bitboard::pushUndoData(const uint64_t pieceBB[12], const PieceType pieceSquareMapping[64], const uint64_t colorBB[2],
+                      uint64_t occupiedBB, const int enPassantSquare[2],
+                      uint8_t castlingRights, const uint64_t attacksFrom[64], const uint64_t attacksTo[64],
+                      uint64_t zobristHash, unsigned int movesMade, unsigned int halfMoveClock, int fullMoveClock) {
+        for (int i = 0; i < 12; i++) {
+            undoStack[undoStackIndex].pieceBB[i] = pieceBB[i];
+        }
+
+        for (int i = 0; i < 64; i++) {
+            undoStack[undoStackIndex].attacksFrom[i] = attacksFrom[i];
+            undoStack[undoStackIndex].attacksTo[i] = attacksTo[i];
+            undoStack[undoStackIndex].pieceSquareMapping[i] = pieceSquareMapping[i];
+        }
+
+        undoStack[undoStackIndex].colorBB[0] = colorBB[0];
+        undoStack[undoStackIndex].colorBB[1] = colorBB[1];
+        undoStack[undoStackIndex].occupiedBB = occupiedBB;
+        undoStack[undoStackIndex].enPassantSquare[0] = enPassantSquare[0];
+        undoStack[undoStackIndex].enPassantSquare[1] = enPassantSquare[1];
+        undoStack[undoStackIndex].castlingRights = castlingRights;
+        undoStack[undoStackIndex].zobristHash = zobristHash;
+        undoStack[undoStackIndex].movesMade = movesMade;
+        undoStack[undoStackIndex].halfMoveClock = halfMoveClock;
+        undoStack[undoStackIndex].fullMoveClock = fullMoveClock;
+
+        undoStackIndex++;
+        assert(undoStackIndex < 256);
+    }
+
     void Bitboard::unmakeMove() {
         moveHistoryIndex--;
         assert(moveHistoryIndex >= 0);
 
-        UndoData* undoData = undoStack.pop();
-        assert(undoData != nullptr);
+        undoStackIndex--;
+        UndoData undoData = undoStack[undoStackIndex];
+        assert(undoStackIndex >= 0);
 
         for (int i = 0; i < 12; i++) {
-            pieceBB[i] = undoData->pieceBB[i];
+            pieceBB[i] =  undoData.pieceBB[i];
         }
 
         for (int i = 0; i < 64; i++) {
-            pieceSquareMapping[i] = undoData->pieceSquareMapping[i];
-            attacksTo[i] = undoData->attacksTo[i];
-            attacksFrom[i] = undoData->attacksFrom[i];
+            pieceSquareMapping[i] =  undoData.pieceSquareMapping[i];
+            attacksTo[i] =  undoData.attacksTo[i];
+            attacksFrom[i] =  undoData.attacksFrom[i];
         }
 
-        colorBB[0] = undoData->colorBB[0];
-        colorBB[1] = undoData->colorBB[1];
-        occupiedBB = undoData->occupiedBB;
-        enPassantSquare[0] = undoData->enPassantSquare[0];
-        enPassantSquare[1] = undoData->enPassantSquare[1];
-        castlingRights = undoData->castlingRights;
+        colorBB[0] =  undoData.colorBB[0];
+        colorBB[1] =  undoData.colorBB[1];
+        occupiedBB =  undoData.occupiedBB;
+        enPassantSquare[0] =  undoData.enPassantSquare[0];
+        enPassantSquare[1] =  undoData.enPassantSquare[1];
+        castlingRights =  undoData.castlingRights;
         movingColor = getOppositeColor(movingColor);
-        zobristHash = undoData->zobristHash;
-        movesMade = undoData->movesMade;
-        halfMoveClock = undoData->halfMoveClock;
-        fullmoveClock = undoData->fullMoveClock;
+        zobristHash =  undoData.zobristHash;
+        movesMade =  undoData.movesMade;
+        halfMoveClock =  undoData.halfMoveClock;
+        fullmoveClock =  undoData.fullMoveClock;
     }
 
     int Bitboard::getEnPassantSquare(PieceColor color) {
@@ -413,12 +489,12 @@ namespace Zagreus {
 
                 if (character >= 'A' && character <= 'z') {
                     setPieceFromFENChar(character, index);
-                    undoStack.clear();
+                    undoStackIndex = 0;
                     moveHistoryIndex = 0;
                     index--;
                     continue;
                 } else {
-                    std::cout << "Invalid character!" << std::endl;
+                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid character!";
                     return false;
                 }
             }
@@ -468,7 +544,7 @@ namespace Zagreus {
             // TODO: en passant square, halfmove and fullmove clock
         }
 
-        undoStack.clear();
+        undoStackIndex = 0;
         moveHistoryIndex = 0;
         return true;
     }
@@ -476,6 +552,7 @@ namespace Zagreus {
     void Bitboard::setPieceFromFENChar(const char character, int index) {
         uint64_t updateMask = attacksTo[index] | attacksFrom[index] | (1ULL << index);
 
+        generatedMoves.clear();
         generateAttackMapMoves(generatedMoves, *this, PieceColor::WHITE, updateMask);
         generateAttackMapMoves(generatedMoves, *this, PieceColor::BLACK, updateMask);
 
@@ -902,6 +979,183 @@ namespace Zagreus {
         }
     }
 
+    int Bitboard::getPieceWeight(PieceType type) {
+        switch (type) {
+            case WHITE_PAWN:
+            case BLACK_PAWN:
+                return 100;
+            case WHITE_KNIGHT:
+            case BLACK_KNIGHT:
+            case WHITE_BISHOP:
+            case BLACK_BISHOP:
+                return 350;
+            case WHITE_ROOK:
+            case BLACK_ROOK:
+                return 525;
+            case WHITE_QUEEN:
+            case BLACK_QUEEN:
+                return 1000;
+            case WHITE_KING:
+            case BLACK_KING:
+                return 100000;
+            case EMPTY:
+                return 0;
+        }
+    }
+
+    int Bitboard::getLeastValuablePieceWeight(int attackedSquare, PieceColor color) {
+        PieceType pieceOnSquare = pieceSquareMapping[attackedSquare];
+        int leastValuableWeight = getPieceColor(pieceOnSquare) == color ? getPieceWeight(pieceOnSquare) : 9999999;
+        uint64_t attacks = getSquareAttacksByColor(attackedSquare, color);
+
+        while (attacks) {
+            int attackerSquare = bitscanForward(attacks);
+            PieceType pieceType = pieceSquareMapping[attackerSquare];
+            int weight = getPieceWeight(pieceType);
+
+            if (weight < leastValuableWeight) {
+                leastValuableWeight = weight;
+            }
+
+            attacks &= ~(1ULL << attackerSquare);
+        }
+
+        return leastValuableWeight;
+    }
+
+    int Bitboard::getSmallestAttackerSquare(int square, PieceColor attackingColor) {
+        uint64_t attacks = getSquareAttacksByColor(square, attackingColor);
+        int smallestAttackerSquare = -1;
+        int smallestAttackerWeight = 999999999;
+
+        while (attacks) {
+            int attackerSquare = bitscanForward(attacks);
+            PieceType pieceType = pieceSquareMapping[attackerSquare];
+            int weight = getPieceWeight(pieceType);
+
+            if (weight < smallestAttackerWeight) {
+                smallestAttackerWeight = weight;
+                smallestAttackerSquare = attackerSquare;
+            }
+
+            attacks &= ~(1ULL << attackerSquare);
+        }
+
+        return smallestAttackerSquare;
+    }
+
+    int Bitboard::seeCapture(int fromSquare, int toSquare, PieceColor attackingColor) {
+        assert(fromSquare >= 0);
+        assert(fromSquare <= 63);
+        assert(toSquare >= 0);
+        assert(toSquare <= 63);
+        int score = 0;
+        PieceType movingPiece = pieceSquareMapping[fromSquare];
+        PieceType capturedPieceType = pieceSquareMapping[toSquare];
+
+        makeMove(fromSquare, toSquare, movingPiece, PieceType::EMPTY);
+        score = getPieceWeight(capturedPieceType) - see(toSquare, getOppositeColor(attackingColor));
+        unmakeMove();
+
+        return score;
+    }
+
+    int Bitboard::see(int square, PieceColor attackingColor) {
+        assert(square >= 0);
+        assert(square <= 63);
+        int score = 0;
+        int smallestAttackerSquare = getSmallestAttackerSquare(square, attackingColor);
+
+        if (smallestAttackerSquare >= 0) {
+            PieceType movingPiece = pieceSquareMapping[smallestAttackerSquare];
+            PieceType capturedPieceType = pieceSquareMapping[square];
+
+            makeMove(smallestAttackerSquare, square, movingPiece, PieceType::EMPTY);
+            score = std::max(0, getPieceWeight(capturedPieceType) - see(square, getOppositeColor(attackingColor)));
+            unmakeMove();
+        }
+
+        return score;
+    }
+
+    int Bitboard::mvvlva(int attackedSquare, PieceColor attackingColor) {
+        return getMostValuablePieceWeight(attackedSquare, attackingColor) - getLeastValuablePieceWeight(attackedSquare, getOppositeColor(attackingColor));
+    }
+
+    int Bitboard::getMostValuablePieceWeight(int attackedSquare, PieceColor color) {
+        PieceType pieceOnSquare = pieceSquareMapping[attackedSquare];
+        int mostValuableWeight = getPieceColor(pieceOnSquare) == color ? getPieceWeight(pieceOnSquare) : -9999999;
+        uint64_t attacks = getSquareAttacksByColor(attackedSquare, color);
+
+        while (attacks) {
+            int attackerSquare = bitscanForward(attacks);
+            PieceType pieceType = pieceSquareMapping[attackerSquare];
+            int weight = getPieceWeight(pieceType);
+
+            if (weight > mostValuableWeight) {
+                mostValuableWeight = weight;
+            }
+
+            attacks &= ~(1ULL << attackerSquare);
+        }
+
+        return mostValuableWeight;
+    }
+
+    uint64_t Bitboard::getRayAttacks(uint64_t occupied, Direction direction, int square) {
+        uint64_t attacks = rayAttacks[direction][square];
+        uint64_t blocker = attacks & occupied;
+        int blockerSquare = bitscanForward(blocker | 0x8000000000000000ULL);
+
+        return attacks ^ rayAttacks[direction][blockerSquare];
+    }
+
+    uint64_t Bitboard::getNegativeRayAttacks(uint64_t occupied, Direction direction, int square) {
+        uint64_t attacks = rayAttacks[direction][square];
+        uint64_t blocker =  attacks & occupied;
+        int blockerSquare = bitscanReverse(blocker | 1ULL);
+
+        return attacks ^ rayAttacks[direction][blockerSquare];
+    }
+
+    PieceColor Bitboard::getPieceColor(PieceType type) {
+        return static_cast<PieceColor>(type % 2);
+    }
+
+    void Bitboard::initializeRayAttacks() {
+        uint64_t sqBB = 1ULL;
+        for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+            for (int direction = 0; direction < 8; direction++) {
+                switch (static_cast<Direction>(direction)) {
+                    case NORTH:
+                        rayAttacks[direction][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case SOUTH:
+                        rayAttacks[direction][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case EAST:
+                        rayAttacks[direction][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case WEST:
+                        rayAttacks[direction][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case NORTH_EAST:
+                        rayAttacks[direction][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case NORTH_WEST:
+                        rayAttacks[direction][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case SOUTH_EAST:
+                        rayAttacks[direction][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case SOUTH_WEST:
+                        rayAttacks[direction][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                }
+            }
+        }
+    }
+
     uint64_t soutOne(uint64_t b) {
         return b >> 8ULL;
     }
@@ -971,8 +1225,16 @@ namespace Zagreus {
         return __builtin_popcountll(b);
     }
 
-    unsigned long bitscanForward(uint64_t b) {
-        return __builtin_ctzll(b);
+    int bitscanForward(uint64_t b) {
+        int result = b ? __builtin_ffsll(b) - 1 : 0;
+        assert(result >= 0 && result < 64);
+        return result;
+    }
+
+    int bitscanReverse(uint64_t b) {
+        int result =  b ? __builtin_clzll(b) ^ 63 : 0;
+        assert(result >= 0 && result < 64);
+        return result;
     }
 
     uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {

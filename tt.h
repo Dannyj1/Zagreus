@@ -12,7 +12,7 @@
 namespace Zagreus {
     struct TTEntry {
         int score;
-        int depth;
+        uint8_t depth;
         uint64_t zobristHash;
     };
 

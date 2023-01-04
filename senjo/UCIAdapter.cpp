@@ -581,6 +581,7 @@ namespace senjo {
         lastPosition = fenstring;
 
         // consume "moves" token if present
+        params.popParam(token::StartPos);
         params.popParam(token::Moves);
 
         // apply moves (if any)

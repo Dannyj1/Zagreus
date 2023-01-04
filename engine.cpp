@@ -75,7 +75,7 @@ namespace Zagreus {
             if (depth == startingDepth && nodeAmount > 0LL) {
                 std::string notation =
                         Zagreus::Bitboard::getNotation(move.fromSquare) + Zagreus::Bitboard::getNotation(move.toSquare);
-                std::cout << notation << ": " << nodeAmount << std::endl;
+                senjo::Output(senjo::Output::InfoPrefix) << notation << ": " << nodeAmount;
             }
 
             perftBoard.unmakeMove();
@@ -233,8 +233,8 @@ namespace Zagreus {
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
-        std::cout << "Depth " << depth << " Nodes: " << nodes << ", Took: " << elapsed_seconds.count() << "s"
-                  << std::endl;
+        senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: " << elapsed_seconds.count() << "s"
+                 ;
         return nodes;
     }
 
@@ -246,7 +246,7 @@ namespace Zagreus {
         board.setWhiteTimeMsec(params.wtime);
         board.setBlackTimeMsec(params.btime);
 
-        board.print();
+//        board.print();
         SearchResult bestResult = searchManager.getBestMove(board, engineColor);
 
         if (bestResult.move.promotionPiece != PieceType::EMPTY) {
@@ -286,7 +286,7 @@ namespace Zagreus {
             return "e8g8";
         }
 
-        std::cout << "Score: " << bestResult.score << std::endl;
+        senjo::Output(senjo::Output::InfoPrefix) << "Score: " << bestResult.score;
         return Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) +
                Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
     }

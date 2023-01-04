@@ -13,7 +13,7 @@ namespace Zagreus {
 
     std::vector<Move> generateQuiescenceMoves(Bitboard &bitboard, PieceColor color);
 
-    std::vector<Move> generateMobilityMoves(Bitboard &bitboard, PieceColor color);
+    uint64_t generateMobilityMoves(Bitboard &bitboard, PieceColor color);
 
     void generateAttackMapMoves(std::vector<Move> &moves, Bitboard &bitboard, PieceColor color, uint64_t mask);
 

@@ -34,6 +34,17 @@ namespace Zagreus {
         H8, G8, F8, E8, D8, C8, B8, A8
     };
 
+    enum Direction {
+        NORTH,
+        NORTH_EAST,
+        EAST,
+        SOUTH_EAST,
+        SOUTH,
+        SOUTH_WEST,
+        WEST,
+        NORTH_WEST
+    };
+
     enum PieceColor {
         NONE = -1,
         WHITE = 0,
@@ -52,6 +63,7 @@ namespace Zagreus {
         uint64_t toSquare;
         PieceType pieceType;
         uint64_t zobristHash;
+        int captureScore;
         PieceType promotionPiece = PieceType::EMPTY;
     };
 

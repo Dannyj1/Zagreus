@@ -7,6 +7,7 @@
 #include "senjo/Output.h"
 #include "move_gen.h"
 #include "types.h"
+#include "search_mgr.h"
 
 uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0ULL;
@@ -27,7 +28,7 @@ uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int dep
         if (depth == startingDepth && nodeAmount > 0LL) {
             std::string notation =
                     Zagreus::Bitboard::getNotation(move.fromSquare) + Zagreus::Bitboard::getNotation(move.toSquare);
-            std::cout << notation << ": " << nodeAmount << std::endl;
+            senjo::Output(senjo::Output::InfoPrefix) << notation << ": " << nodeAmount;
         }
 
         perftBoard.unmakeMove();
@@ -47,18 +48,23 @@ int main() {
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
 
-    std::cout << " ______ " << std::endl;
-    std::cout << " |___  / " << std::endl;
-    std::cout << "    / /  __ _   __ _  _ __  ___  _   _  ___ " << std::endl;
-    std::cout << "   / /  / _` | / _` || '__|/ _ \\| | | |/ __|" << std::endl;
-    std::cout << "  / /__| (_| || (_| || |  |  __/| |_| |\\__ \\" << std::endl;
-    std::cout << R"( /_____|\__,_| \__, ||_|   \___| \__,_||___/)" << std::endl;
-    std::cout << "                __/ | " << std::endl;
-    std::cout << "               |___/ " << std::endl;
-    std::cout << std::endl;
+    senjo::Output(senjo::Output::InfoPrefix) << " ______ ";
+    senjo::Output(senjo::Output::InfoPrefix) << " |___  / ";
+    senjo::Output(senjo::Output::InfoPrefix) << "    / /  __ _   __ _  _ __  ___  _   _  ___ ";
+    senjo::Output(senjo::Output::InfoPrefix) << "   / /  / _` | / _` || '__|/ _ \\| | | |/ __|";
+    senjo::Output(senjo::Output::InfoPrefix) << "  / /__| (_| || (_| || |  |  __/| |_| |\\__ \\";
+    senjo::Output(senjo::Output::InfoPrefix) << R"( /_____|\__,_| \__, ||_|   \___| \__,_||___/)";
+    senjo::Output(senjo::Output::InfoPrefix) << "                __/ | ";
+    senjo::Output(senjo::Output::InfoPrefix) << "               |___/ ";
 
-    std::cout << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)" << std::endl;
-    std::cout << std::endl;
+    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
+
+
+    // TODO: position startpos moves e2e4 c7c5 g1f3 d7d6 b1c3 g8f6 d2d4 c5d4 f3d4 a7a6 c1e3 e7e5 d4b3 f8e7 f2f3 c8e6 f1d3 d6d5 e4d5 f6d5 c3d5 d8d5 e1g1 g7g6 f3f4 b7b5 f4e5
+/*    Zagreus::Bitboard bb;
+    bb.setFromFEN("r1bq1rk1/1pp1npp1/pb1p1n1p/3Pp3/2B1P3/2P2N1P/PP3PP1/RNBQR1K1 w - - 1 11");
+    bb.setWhiteTimeMsec(999999999);
+    Zagreus::searchManager.getBestMove(bb, bb.getMovingColor());*/
 
     try {
         Zagreus::Engine engine;
@@ -80,7 +86,7 @@ int main() {
 
         return 0;
     } catch (const std::exception &e) {
-        std::cout << "ERROR: " << e.what();
+        senjo::Output(senjo::Output::InfoPrefix) << "ERROR: " << e.what();
         return 1;
     }
 }

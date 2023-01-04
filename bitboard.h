@@ -10,8 +10,6 @@
 #include <vector>
 
 #include "types.h"
-#include "collections/move_list.h"
-#include "collections/undo_stack.h"
 
 namespace Zagreus {
     constexpr uint64_t A_FILE = 0x0101010101010101;
@@ -63,9 +61,9 @@ namespace Zagreus {
 
     uint64_t popcnt(uint64_t b);
 
-    unsigned long bitscanForward(uint64_t b);
+    int bitscanForward(uint64_t b);
 
-    unsigned long bitscanReverse(uint64_t b);
+    int bitscanReverse(uint64_t b);
 
     uint64_t soutOccl(uint64_t pieceBB, uint64_t empty);
 
@@ -96,7 +94,7 @@ namespace Zagreus {
     uint64_t calculateKingAttacks(uint64_t kingSet);
 
     class Bitboard {
-    public:
+    private:
         uint64_t pieceBB[12]{};
         PieceType pieceSquareMapping[64]{};
         uint64_t colorBB[2]{};
@@ -109,6 +107,7 @@ namespace Zagreus {
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
         uint64_t pawnAttacks[2][64]{};
+        uint64_t rayAttacks[8][64]{};
 
         PieceColor movingColor = PieceColor::WHITE;
         unsigned int movesMade = 0;
@@ -122,7 +121,8 @@ namespace Zagreus {
         unsigned int whiteTimeMsec = 0;
         unsigned int blackTimeMsec = 0;
 
-        UndoStack undoStack{};
+        UndoData undoStack[256]{};
+        int undoStackIndex = 0;
         std::vector<Move> generatedMoves{};
     public:
         Bitboard();
@@ -139,7 +139,7 @@ namespace Zagreus {
 
         uint64_t getKnightAttacks(int square);
 
-        uint64_t getQueenAttacks(uint64_t bb);
+        uint64_t getQueenAttacks(uint64_t square);
 
         uint64_t getBishopAttacks(uint64_t bb);
 
@@ -228,5 +228,42 @@ namespace Zagreus {
         uint64_t getPawnAttacks(int square, PieceColor color);
 
         int getEnPassantSquare(PieceColor color);
+
+        static int getPieceWeight(PieceType type);
+
+        int getMostValuablePieceWeight(int attackedSquare, PieceColor color);
+
+        int getLeastValuablePieceWeight(int attackedSquare, PieceColor color);
+
+        static PieceColor getPieceColor(PieceType type);
+
+        int mvvlva(int attackedSquare, PieceColor attackingColor);
+
+        uint64_t getRayAttacks(uint64_t occupied, Direction direction, int square);
+
+        uint64_t getNegativeRayAttacks(uint64_t occupied, Direction direction, int square);
+
+        void initializeRayAttacks();
+
+        uint64_t getQueenMoves(int square);
+
+        uint64_t getBishopMoves(int square);
+
+        uint64_t getRookMoves(int square);
+
+        void clearAttacksForPieces(uint64_t pieces);
+
+        void
+        pushUndoData(const uint64_t* pieceBB, const PieceType* pieceSquareMapping, const uint64_t* colorBB,
+                     uint64_t occupiedBB,
+                     const int* enPassantSquare, uint8_t castlingRights, const uint64_t* attacksFrom,
+                     const uint64_t* attacksTo,
+                     uint64_t zobristHash, unsigned int movesMade, unsigned int halfMoveClock, int fullMoveClock);
+
+        int see(int square, PieceColor attackingColor);
+
+        int getSmallestAttackerSquare(int square, PieceColor attackingColor);
+
+        int seeCapture(int fromSquare, int toSquare, PieceColor attackingColor);
     };
 }

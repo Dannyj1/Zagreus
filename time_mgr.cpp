@@ -23,6 +23,10 @@ namespace Zagreus {
 
         uint64_t timePerMove = timeLeft / movesLeft;
 
+        if (bitboard.getMovesMade() <= 25) {
+            timePerMove *= 2;
+        }
+
         std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
         now += std::chrono::milliseconds(timePerMove);
         return now;
