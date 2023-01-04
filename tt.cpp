@@ -10,7 +10,7 @@
 namespace Zagreus {
     void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score) {
         uint32_t index = (zobristHash & 0x1FFFFFF);
-        table[index] = TTEntry{score, (uint8_t) depth, zobristHash};
+        transpositionTable[index] = TTEntry{score, (uint8_t) depth, zobristHash};
     }
 
     bool TranspositionTable::isPositionInTable(uint64_t zobristHash, int depth) {
@@ -19,7 +19,7 @@ namespace Zagreus {
         }
 
         uint32_t index = (zobristHash & 0x1FFFFFF);
-        TTEntry entry = table[index];
+        TTEntry entry = transpositionTable[index];
 
         return entry.zobristHash == zobristHash && entry.depth >= depth;
     }
@@ -27,54 +27,45 @@ namespace Zagreus {
     int TranspositionTable::getPositionScore(uint64_t zobristHash) {
         uint32_t index = (zobristHash & 0x1FFFFFF);
 
-        return table[index].score;
-    }
-
-    void TranspositionTable::clearKillerMoves() {
-        killerMoves.clear();
-    }
-
-    void TranspositionTable::addKillerMove(Move move) {
-        killerMoves.push_back(move);
-    }
-
-    bool TranspositionTable::isKillerMove(Move move) {
-        for (const Move &killerMove : killerMoves) {
-            if (killerMove.fromSquare == move.fromSquare && killerMove.toSquare == move.toSquare) {
-                return true;
-            }
-        }
-
-        return false;
+        return transpositionTable[index].score;
     }
 
     bool TranspositionTable::isPositionInTable(uint64_t zobristHash) {
         uint32_t index = (zobristHash & 0x1FFFFFF);
-        TTEntry entry = table[index];
+        TTEntry entry = transpositionTable[index];
 
         return entry.zobristHash == zobristHash;
     }
 
-    void TranspositionTable::clearPVMoves() {
-        pvMoves.clear();
+    void TranspositionTable::addKillerMove(uint64_t zobristHash, int depth, int score) {
+        uint32_t index = (zobristHash & 0xFFFFF);
+        killerMoves[index] = TTEntry{score, (uint8_t) depth, zobristHash};
     }
 
-    void TranspositionTable::addPVMove(Move move) {
-        pvMoves.push_back(move);
-    }
-
-    bool TranspositionTable::isPVMove(Move move) {
-        for (const Move &pvMove : pvMoves) {
-            if (pvMove.fromSquare == move.fromSquare && pvMove.toSquare == move.toSquare) {
-                return true;
-            }
+    bool TranspositionTable::isKillerMove(uint64_t zobristHash) {
+        if (zobristHash == 0ULL) {
+            return false;
         }
 
-        return false;
+        uint32_t index = (zobristHash & 0xFFFFF);
+        TTEntry entry = killerMoves[index];
+
+        return entry.zobristHash == zobristHash;
     }
 
-    TranspositionTable::TranspositionTable() {
-        pvMoves.reserve(500);
-        killerMoves.reserve(500);
+    void TranspositionTable::addPVMove(uint64_t zobristHash, int depth, int score) {
+        uint32_t index = (zobristHash & 0xFFFFF);
+        pvMoves[index] = TTEntry{score, (uint8_t) depth, zobristHash};
+    }
+
+    bool TranspositionTable::isPVMove(uint64_t zobristHash) {
+        if (zobristHash == 0ULL) {
+            return false;
+        }
+
+        uint32_t index = (zobristHash & 0xFFFFF);
+        TTEntry entry = pvMoves[index];
+
+        return entry.zobristHash == zobristHash;
     }
 }

@@ -18,11 +18,16 @@ namespace Zagreus {
 
     class TranspositionTable {
     private:
-        TTEntry table[1 << 25]{};
-        std::vector<Move> killerMoves{};
-        std::vector<Move> pvMoves{};
+        TTEntry* transpositionTable = new TTEntry[1 << 25]{};
+        TTEntry* killerMoves = new TTEntry[1 << 20]{};
+        TTEntry* pvMoves = new TTEntry[1 << 20]{};
+
     public:
-        TranspositionTable();
+        ~TranspositionTable() {
+            delete[] transpositionTable;
+            delete[] killerMoves;
+            delete[] pvMoves;
+        }
 
         void addPosition(uint64_t zobristHash, int depth, int score);
 
@@ -32,17 +37,13 @@ namespace Zagreus {
 
         int getPositionScore(uint64_t zobristHash);
 
-        void clearKillerMoves();
+        void addKillerMove(uint64_t zobristHash, int depth, int score);
 
-        void addKillerMove(Move move);
+        bool isKillerMove(uint64_t zobristHash);
 
-        bool isKillerMove(Move move);
+        void addPVMove(uint64_t zobristHash, int depth, int score);
 
-        void clearPVMoves();
-
-        void addPVMove(Move move);
-
-        bool isPVMove(Move move);
+        bool isPVMove(uint64_t zobristHash);
     };
 
     static TranspositionTable tt{};

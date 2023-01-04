@@ -45,25 +45,25 @@ namespace Zagreus {
         assert(a.fromSquare != a.toSquare);
         assert(b.fromSquare != b.toSquare);
 
-        if (tt.isPVMove(a)) {
+        if (tt.isPVMove(a.zobristHash)) {
             aScore += 50000 + tt.getPositionScore(a.zobristHash);
         } else if (tt.isPositionInTable(a.zobristHash)) {
             aScore += 25000 + tt.getPositionScore(a.zobristHash);
-        /*} else if (aScore > 0) {
+        } else if (aScore > 0) {
             // Good capture
-            bScore += 10000;*/
-        } else if (tt.isKillerMove(a)) {
+            bScore += 10000;
+        } else if (tt.isKillerMove(a.zobristHash)) {
             aScore += 5000;
         }
 
-        if (tt.isPVMove(b)) {
+        if (tt.isPVMove(b.zobristHash)) {
             bScore += 50000 + tt.getPositionScore(b.zobristHash);
         } else if (tt.isPositionInTable(a.zobristHash)) {
             bScore += 25000 + tt.getPositionScore(b.zobristHash);
-            /*} else if (bScore > 0) {
-                // Good capture
-                bScore += 10000;*/
-        } else if (tt.isKillerMove(b)) {
+        } else if (bScore > 0) {
+            // Good capture
+            bScore += 10000;
+        } else if (tt.isKillerMove(b.zobristHash)) {
             bScore += 5000;
         }
 
@@ -136,6 +136,7 @@ namespace Zagreus {
 
         while (pawnBB) {
             uint64_t index = Zagreus::bitscanForward(pawnBB);
+            assert(index >= 0 && index < 64);
             uint64_t genBB;
 
             if (pieceType == PieceType::WHITE_PAWN) {
@@ -162,8 +163,11 @@ namespace Zagreus {
                 genBB &= opponentPiecesBB;
             }
 
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING));
+
             while (genBB) {
                 uint64_t genIndex = Zagreus::bitscanForward(genBB);
+                assert(genIndex >= 0 && genIndex < 64);
 
                 if (mask == ~0ULL) {
                     int captureScore = 0;
@@ -211,6 +215,7 @@ namespace Zagreus {
 
         while (knightBB) {
             uint64_t index = Zagreus::bitscanForward(knightBB);
+            assert(index >= 0 && index < 64);
             uint64_t genBB = bitboard.getKnightAttacks(index);
 
             if (mask == ~0ULL) {
@@ -223,8 +228,11 @@ namespace Zagreus {
                 genBB &= opponentPiecesBB;
             }
 
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING));
+
             while (genBB) {
                 uint64_t genIndex = Zagreus::bitscanForward(genBB);
+                assert(genIndex >= 0 && genIndex < 64);
 
                 if (mask == ~0ULL) {
                     int captureScore = 0;
@@ -260,6 +268,7 @@ namespace Zagreus {
 
         while (bishopBB) {
             uint64_t index = Zagreus::bitscanForward(bishopBB);
+            assert(index >= 0 && index < 64);
             uint64_t genBB = bitboard.getBishopMoves(index);
 
             if (mask == ~0ULL) {
@@ -272,8 +281,11 @@ namespace Zagreus {
                 genBB &= opponentPiecesBB;
             }
 
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING));
+
             while (genBB) {
                 uint64_t genIndex = Zagreus::bitscanForward(genBB);
+                assert(genIndex >= 0 && genIndex < 64);
 
                 if (mask == ~0ULL) {
                     int captureScore = 0;
@@ -312,6 +324,7 @@ namespace Zagreus {
 
         while (rookBB) {
             uint64_t index = Zagreus::bitscanForward(rookBB);
+            assert(index >= 0 && index < 64);
 
             // TODO: refactor, is very ugly
             if (!quiesce && mask == ~0ULL) {
@@ -379,8 +392,11 @@ namespace Zagreus {
                 genBB &= opponentPiecesBB;
             }
 
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING));
+
             while (genBB) {
                 uint64_t genIndex = Zagreus::bitscanForward(genBB);
+                assert(genIndex >= 0 && genIndex < 64);
 
                 if (mask == ~0ULL) {
                     int captureScore = 0;
@@ -415,6 +431,7 @@ namespace Zagreus {
 
         while (queenBB) {
             uint64_t index = Zagreus::bitscanForward(queenBB);
+            assert(index >= 0 && index < 64);
             uint64_t genBB = bitboard.getQueenMoves(index);
 
             if (mask == ~0ULL) {
@@ -427,8 +444,11 @@ namespace Zagreus {
                 genBB &= opponentPiecesBB;
             }
 
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING));
+
             while (genBB) {
                 uint64_t genIndex = Zagreus::bitscanForward(genBB);
+                assert(genIndex >= 0 && genIndex < 64);
 
                 if (mask == ~0ULL) {
                     int captureScore = 0;
@@ -461,8 +481,11 @@ namespace Zagreus {
     void generateKingMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
                            PieceColor color, PieceType pieceType, bool quiesce, uint64_t mask) {
         uint64_t kingBB = bitboard.getPieceBoard(pieceType) & mask;
+        uint64_t opponentKingBB = bitboard.getPieceBoard(color == PieceColor::WHITE ? PieceType::BLACK_KING : PieceType::WHITE_KING);
         uint64_t index = Zagreus::bitscanForward(kingBB);
+        assert(index >= 0 && index < 64);
         uint64_t genBB = bitboard.getKingAttacks(index);
+        uint64_t opponentKingAttacks = bitboard.getKingAttacks(Zagreus::bitscanForward(opponentKingBB));
 
         if (mask == ~0ULL) {
             genBB &= ~ownPiecesBB;
@@ -474,8 +497,11 @@ namespace Zagreus {
             genBB &= opponentPiecesBB;
         }
 
+        genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING) | opponentKingAttacks);
+
         while (genBB) {
             uint64_t genIndex = Zagreus::bitscanForward(genBB);
+            assert(genIndex >= 0 && genIndex < 64);
 
             if (mask == ~0ULL) {
                 int captureScore = 0;

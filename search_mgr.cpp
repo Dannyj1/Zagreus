@@ -70,8 +70,6 @@ namespace Zagreus {
 
         searchStats.score = bestResult.score;
         searchStats.msecs = duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime).count();
-        tt.clearKillerMoves();
-        tt.clearPVMoves();
         isSearching = false;
         senjo::Output(senjo::Output::NoPrefix) << searchStats;
         return bestResult;
@@ -124,13 +122,13 @@ namespace Zagreus {
             board.unmakeMove();
 
             if (result.score >= beta) {
-                tt.addKillerMove(move);
+                tt.addKillerMove(board.getZobristHash(), depth, beta);
                 return {rootMove, beta};
             }
 
             if (result.score > alpha) {
                 if (searchPv) {
-                    tt.addPVMove(move);
+                    tt.addPVMove(board.getZobristHash(), depth, result.score);
                 }
 
                 alpha = result.score;

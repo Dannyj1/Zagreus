@@ -185,7 +185,8 @@ namespace Zagreus {
 
     void Bitboard::setPiece(int index, PieceType pieceType) {
         assert(index < 64);
-        assert(pieceType <= 11 && pieceType >= 0);
+        assert(index >= 0);
+        assert(pieceType != PieceType::EMPTY);
         pieceBB[pieceType] |= 1ULL << index;
         occupiedBB |= 1ULL << index;
         assert(pieceType % 2 == 0 || pieceType % 2 == 1);
@@ -196,8 +197,8 @@ namespace Zagreus {
 
     void Bitboard::removePiece(int index, PieceType pieceType) {
         assert(index < 64);
-        assert(pieceType <= 11);
-        assert(pieceType >= 0);
+        assert(index >= 0);
+        assert(pieceType != PieceType::EMPTY);
         pieceBB[pieceType] &= ~(1ULL << index);
         occupiedBB &= ~(1ULL << index);
         assert(pieceType % 2 == 0 || pieceType % 2 == 1);
@@ -271,8 +272,10 @@ namespace Zagreus {
             } else {
                 if (std::abs(fromSquare - toSquare) == 7 || std::abs(fromSquare - toSquare) == 9) {
                     if (enPassantSquare[PieceColor::WHITE] == toSquare) {
+                        assert(pieceSquareMapping[toSquare + 8] != PieceType::EMPTY);
                         removePiece(toSquare + 8, PieceType::WHITE_PAWN);
                     } else if (enPassantSquare[PieceColor::BLACK] == toSquare) {
+                        assert(pieceSquareMapping[toSquare - 8] != PieceType::EMPTY);
                         removePiece(toSquare - 8, PieceType::BLACK_PAWN);
                     }
                 }
@@ -337,10 +340,14 @@ namespace Zagreus {
         }
 
         if (capturedPiece != PieceType::EMPTY) {
+            assert(capturedPiece != PieceType::EMPTY);
+            assert(capturedPiece != PieceType::WHITE_KING);
+            assert(capturedPiece != PieceType::BLACK_KING);
             removePiece(toSquare, capturedPiece);
             halfMoveClock = 0;
         }
 
+        assert(pieceType != PieceType::EMPTY);
         removePiece(fromSquare, pieceType);
 
         if (promotionPiece != PieceType::EMPTY) {
@@ -488,6 +495,7 @@ namespace Zagreus {
                 }
 
                 if (character >= 'A' && character <= 'z') {
+                    assert(index >= 0);
                     setPieceFromFENChar(character, index);
                     undoStackIndex = 0;
                     moveHistoryIndex = 0;
@@ -922,6 +930,8 @@ namespace Zagreus {
         auto it = destinations.find(rookSquare);
 
         assert(it != destinations.end());
+        assert(rookType != PieceType::EMPTY);
+        assert(kingType != PieceType::EMPTY);
         if (it == destinations.end()) {
             generatedMoves.clear();
             return;
@@ -1053,6 +1063,8 @@ namespace Zagreus {
         PieceType movingPiece = pieceSquareMapping[fromSquare];
         PieceType capturedPieceType = pieceSquareMapping[toSquare];
 
+        assert(movingPiece != PieceType::EMPTY);
+        assert(capturedPieceType != PieceType::EMPTY);
         makeMove(fromSquare, toSquare, movingPiece, PieceType::EMPTY);
         score = getPieceWeight(capturedPieceType) - see(toSquare, getOppositeColor(attackingColor));
         unmakeMove();
@@ -1070,6 +1082,8 @@ namespace Zagreus {
             PieceType movingPiece = pieceSquareMapping[smallestAttackerSquare];
             PieceType capturedPieceType = pieceSquareMapping[square];
 
+            assert(movingPiece != PieceType::EMPTY);
+            assert(capturedPieceType != PieceType::EMPTY);
             makeMove(smallestAttackerSquare, square, movingPiece, PieceType::EMPTY);
             score = std::max(0, getPieceWeight(capturedPieceType) - see(square, getOppositeColor(attackingColor)));
             unmakeMove();

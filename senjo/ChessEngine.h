@@ -145,7 +145,7 @@ namespace senjo {
 
         //---------------------------------------------------------------------------
         //! \brief Clear any engine data that can persist between searches
-        //! Examples of search data are the transposition table and killer moves.
+        //! Examples of search data are the transposition transpositionTable and killer moves.
         //---------------------------------------------------------------------------
         virtual void clearSearchData() = 0;
 

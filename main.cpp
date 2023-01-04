@@ -59,8 +59,6 @@ int main() {
 
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
 
-
-    // TODO: position startpos moves e2e4 c7c5 g1f3 d7d6 b1c3 g8f6 d2d4 c5d4 f3d4 a7a6 c1e3 e7e5 d4b3 f8e7 f2f3 c8e6 f1d3 d6d5 e4d5 f6d5 c3d5 d8d5 e1g1 g7g6 f3f4 b7b5 f4e5
 /*    Zagreus::Bitboard bb;
     bb.setFromFEN("r1bq1rk1/1pp1npp1/pb1p1n1p/3Pp3/2B1P3/2P2N1P/PP3PP1/RNBQR1K1 w - - 1 11");
     bb.setWhiteTimeMsec(999999999);
