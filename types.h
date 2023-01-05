@@ -59,8 +59,8 @@ namespace Zagreus {
     };
 
     struct Move {
-        uint64_t fromSquare;
-        uint64_t toSquare;
+        int fromSquare;
+        int toSquare;
         PieceType pieceType;
         uint64_t zobristHash;
         int captureScore;

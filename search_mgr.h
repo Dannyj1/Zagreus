@@ -53,6 +53,16 @@ namespace Zagreus {
         int getBlackBishopScore(Bitboard &bitboard);
 
         int getCenterScore(Bitboard &bitboard, PieceColor color);
+
+        int getWhiteDevelopmentScore(Bitboard &bitboard);
+
+        int getBlackDevelopmentScore(Bitboard &bitboard);
+
+        int getWhiteRookScore(Bitboard &bitboard);
+
+        int getBlackRookScore(Bitboard &bitboard);
+
+        int getPositionalScore(Bitboard &bitboard, PieceColor color);
     };
 
     static SearchManager searchManager{};

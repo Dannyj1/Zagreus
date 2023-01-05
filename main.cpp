@@ -57,12 +57,15 @@ int main() {
     senjo::Output(senjo::Output::InfoPrefix) << "                __/ | ";
     senjo::Output(senjo::Output::InfoPrefix) << "               |___/ ";
 
+    // TODO: test open/semi-open files code
+    // TODO: consider the forced capture when using mvvlva in move ordering
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
 
-/*    Zagreus::Bitboard bb;
-    bb.setFromFEN("r1bq1rk1/1pp1npp1/pb1p1n1p/3Pp3/2B1P3/2P2N1P/PP3PP1/RNBQR1K1 w - - 1 11");
+    Zagreus::Bitboard bb;
+    bb.setFromFEN("r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13");
     bb.setWhiteTimeMsec(999999999);
-    Zagreus::searchManager.getBestMove(bb, bb.getMovingColor());*/
+    bb.setBlackTimeMsec(999999999);
+    Zagreus::searchManager.getBestMove(bb, bb.getMovingColor());
 
     try {
         Zagreus::Engine engine;

@@ -31,11 +31,7 @@ namespace Zagreus {
 
         void addPosition(uint64_t zobristHash, int depth, int score);
 
-        bool isPositionInTable(uint64_t zobristHash);
-
-        bool isPositionInTable(uint64_t zobristHash, int depth);
-
-        int getPositionScore(uint64_t zobristHash);
+        TTEntry getPosition(uint64_t zobristHash);
 
         void addKillerMove(uint64_t zobristHash, int depth, int score);
 

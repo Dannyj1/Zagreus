@@ -108,18 +108,21 @@ namespace Zagreus {
         uint64_t knightAttacks[64]{};
         uint64_t pawnAttacks[2][64]{};
         uint64_t rayAttacks[8][64]{};
+        uint64_t betweenTable[64][64]{};
 
         PieceColor movingColor = PieceColor::WHITE;
         unsigned int movesMade = 0;
         unsigned int halfMoveClock = 0;
         int fullmoveClock = 1;
-        uint64_t moveHistory[256]{};
+        uint64_t moveHistory[256]{ 0ULL };
         int moveHistoryIndex = 0;
         uint64_t zobristHash = 0;
         uint64_t zobristConstants[789]{};
 
         unsigned int whiteTimeMsec = 0;
         unsigned int blackTimeMsec = 0;
+        unsigned int whiteTimeIncrement = 0;
+        unsigned int blackTimeIncrement = 0;
 
         UndoData undoStack[256]{};
         int undoStackIndex = 0;
@@ -229,7 +232,7 @@ namespace Zagreus {
 
         int getEnPassantSquare(PieceColor color);
 
-        static int getPieceWeight(PieceType type);
+        int getPieceWeight(PieceType type);
 
         int getMostValuablePieceWeight(int attackedSquare, PieceColor color);
 
@@ -265,5 +268,33 @@ namespace Zagreus {
         int getSmallestAttackerSquare(int square, PieceColor attackingColor);
 
         int seeCapture(int fromSquare, int toSquare, PieceColor attackingColor);
+
+        bool isOpenFile(int square);
+
+        bool isSemiOpenFile(int square, PieceColor color);
+
+        bool isSemiOpenFileLenient(int square, PieceColor color);
+
+        unsigned int getHalfMoveClock() const;
+
+        int getFullmoveClock() const;
+
+        bool isPinned(int attackedSquare, PieceColor attackingColor);
+
+        bool isPinnedStraight(int attackedSquare, PieceColor attackingColor);
+
+        void initializeBetweenLookup();
+
+        bool isPinnedDiagonally(int attackedSquare, PieceColor attackingColor);
+
+        uint64_t getTilesBetween(int from, int to);
+
+        unsigned int getWhiteTimeIncrement() const;
+
+        void setWhiteTimeIncrement(unsigned int whiteTimeIncrement);
+
+        unsigned int getBlackTimeIncrement() const;
+
+        void setBlackTimeIncrement(unsigned int blackTimeIncrement);
     };
 }

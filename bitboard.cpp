@@ -44,6 +44,7 @@ namespace Zagreus {
         }
 
         initializeRayAttacks();
+        initializeBetweenLookup();
     }
 
     uint64_t Bitboard::getPieceBoard(int pieceType) {
@@ -222,6 +223,37 @@ namespace Zagreus {
         }
     }
 
+    bool Bitboard::isOpenFile(int square) {
+        uint64_t fileMask = rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square];
+        uint64_t occupied = getPieceBoard(PieceType::WHITE_PAWN) | getPieceBoard(PieceType::BLACK_PAWN);
+
+        return fileMask == (fileMask & occupied);
+    }
+
+    bool Bitboard::isSemiOpenFile(int square, PieceColor color) {
+        uint64_t fileMask = rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square];
+        uint64_t ownOccupied = getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_PAWN : PieceType::BLACK_PAWN);
+        uint64_t opponentOccupied = getPieceBoard(color == PieceColor::WHITE ? PieceType::BLACK_PAWN : PieceType::WHITE_PAWN);
+
+        return fileMask == (fileMask & ownOccupied) && fileMask != (fileMask & opponentOccupied);
+    }
+
+    unsigned int Bitboard::getHalfMoveClock() const {
+        return halfMoveClock;
+    }
+
+    int Bitboard::getFullmoveClock() const {
+        return fullmoveClock;
+    }
+
+    // Also returns true when it is an open file
+    bool Bitboard::isSemiOpenFileLenient(int square, PieceColor color) {
+        uint64_t fileMask = rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square];
+        uint64_t ownOccupied = getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_PAWN : PieceType::BLACK_PAWN);
+
+        return fileMask == (fileMask & ownOccupied);
+    }
+
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
         PieceType capturedPiece = getPieceOnSquare(toSquare);
 
@@ -341,8 +373,8 @@ namespace Zagreus {
 
         if (capturedPiece != PieceType::EMPTY) {
             assert(capturedPiece != PieceType::EMPTY);
-            assert(capturedPiece != PieceType::WHITE_KING);
-            assert(capturedPiece != PieceType::BLACK_KING);
+//            assert(capturedPiece != PieceType::WHITE_KING);
+//            assert(capturedPiece != PieceType::BLACK_KING);
             removePiece(toSquare, capturedPiece);
             halfMoveClock = 0;
         }
@@ -740,7 +772,8 @@ namespace Zagreus {
         }
 
         int repetitionCount = 0;
-        for (int i = moveHistoryIndex - 1; i >= 0; i--) {
+        for (int i = moveHistoryIndex; i >= 0; i--) {
+            assert(moveHistory[i] != 0ULL);
             if (moveHistory[i] == moveHistory[moveHistoryIndex]) {
                 repetitionCount++;
             }
@@ -751,6 +784,10 @@ namespace Zagreus {
         }
 
         return isInsufficientMaterial();
+    }
+
+    uint64_t Bitboard::getTilesBetween(int from, int to) {
+        return betweenTable[from][to];
     }
 
     int Bitboard::getMovesMade() const {
@@ -995,13 +1032,16 @@ namespace Zagreus {
             case BLACK_PAWN:
                 return 100;
             case WHITE_KNIGHT:
+                return 350 - ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 10);
             case BLACK_KNIGHT:
+                return 350 - ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 10);
             case WHITE_BISHOP:
             case BLACK_BISHOP:
                 return 350;
             case WHITE_ROOK:
+                return 525 + ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 10);
             case BLACK_ROOK:
-                return 525;
+                return 525 + ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 10);
             case WHITE_QUEEN:
             case BLACK_QUEEN:
                 return 1000;
@@ -1011,6 +1051,230 @@ namespace Zagreus {
             case EMPTY:
                 return 0;
         }
+    }
+
+    bool Bitboard::isPinnedStraight(int attackedSquare, PieceColor attackingColor) {
+        uint64_t attackedBy = getSquareAttacksByColor(attackedSquare, attackingColor);
+        uint64_t straightSlidingPieces = getPieceBoard(attackingColor == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK) |
+                            getPieceBoard(attackingColor == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN);
+        uint64_t attackers = attackedBy & straightSlidingPieces;
+        uint64_t opponentPieces = getBoardByColor(getOppositeColor(attackingColor));
+        uint64_t ownPieces = getBoardByColor(attackingColor);
+
+        // TODO: refactor and find ways to improve performance
+        while (attackers) {
+            uint64_t index = bitscanForward(attackers);
+            attackers &= ~(1ULL << index);
+
+            uint64_t northRay = rayAttacks[Direction::NORTH][index];
+            uint64_t southRay = rayAttacks[Direction::SOUTH][index];
+            uint64_t eastRay = rayAttacks[Direction::EAST][index];
+            uint64_t westRay = rayAttacks[Direction::WEST][index];
+
+            if (popcnt(northRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanForward(northRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanForward(northRay & opponentPieces & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(getPieceOnSquare(pinnedPieceIndex));
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+
+            if (popcnt(southRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanReverse(southRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanReverse((southRay & opponentPieces) & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(getPieceOnSquare(pinnedPieceIndex));
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+
+            if (popcnt(eastRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanForward(eastRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanForward(eastRay & opponentPieces & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(getPieceOnSquare(pinnedPieceIndex));
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+
+            if (popcnt(westRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanReverse(westRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanReverse(westRay & opponentPieces & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(getPieceOnSquare(pinnedPieceIndex));
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool Bitboard::isPinnedDiagonally(int attackedSquare, PieceColor attackingColor) {
+        uint64_t attackedBy = getSquareAttacksByColor(attackedSquare, attackingColor);
+        uint64_t straightSlidingPieces = getPieceBoard(attackingColor == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP) |
+                                         getPieceBoard(attackingColor == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN);
+        uint64_t attackers = attackedBy & straightSlidingPieces;
+        uint64_t opponentPieces = getBoardByColor(getOppositeColor(attackingColor));
+        uint64_t ownPieces = getBoardByColor(attackingColor);
+
+        // TODO: refactor and find ways to improve performance
+        while (attackers) {
+            uint64_t index = bitscanForward(attackers);
+            attackers &= ~(1ULL << index);
+
+            uint64_t noWeRay = rayAttacks[Direction::NORTH_WEST][index];
+            uint64_t noEaRay = rayAttacks[Direction::NORTH_EAST][index];
+            uint64_t soEaRay = rayAttacks[Direction::SOUTH_EAST][index];
+            uint64_t soWeRay = rayAttacks[Direction::SOUTH_WEST][index];
+
+            if (popcnt(noWeRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanForward(noWeRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanForward(noWeRay & opponentPieces & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(pinnedPieceType);
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+
+            if (popcnt(noEaRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanForward(noEaRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanForward((noEaRay & opponentPieces) & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(pinnedPieceType);
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+
+            if (popcnt(soEaRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanReverse(soEaRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanReverse(soEaRay & opponentPieces & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(pinnedPieceType);
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+
+            if (popcnt(soWeRay & opponentPieces) >= 2) {
+                uint64_t pinnedPieceIndex = bitscanReverse(soWeRay & opponentPieces);
+                uint64_t pinnedToIndex = bitscanReverse(soWeRay & opponentPieces & ~(1ULL << pinnedPieceIndex));
+                PieceType pinnedToPieceType = getPieceOnSquare(pinnedToIndex);
+                PieceType pinnedPieceType = getPieceOnSquare(pinnedPieceIndex);
+                uint64_t between = betweenTable[pinnedPieceIndex][pinnedToIndex];
+
+                if (!(between & ownPieces)) {
+                    if ((pinnedToPieceType == PieceType::WHITE_KING || pinnedToPieceType == PieceType::BLACK_KING)
+                        && (pinnedPieceType != PieceType::WHITE_PAWN && pinnedPieceType != PieceType::BLACK_PAWN)) {
+                        return true;
+                    }
+
+                    int pinnedPieceValue = getPieceWeight(pinnedPieceType);
+                    int pinnedtoValue = getPieceWeight(pinnedToPieceType);
+
+                    if (pinnedtoValue > pinnedPieceValue) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool Bitboard::isPinned(int attackedSquare, PieceColor attackingColor) {
+        return isPinnedStraight(attackedSquare, attackingColor) || isPinnedDiagonally(attackedSquare, attackingColor);
     }
 
     int Bitboard::getLeastValuablePieceWeight(int attackedSquare, PieceColor color) {
@@ -1170,6 +1434,45 @@ namespace Zagreus {
         }
     }
 
+    unsigned int Bitboard::getWhiteTimeIncrement() const {
+        return whiteTimeIncrement;
+    }
+
+    void Bitboard::setWhiteTimeIncrement(unsigned int whiteTimeIncrement) {
+        Bitboard::whiteTimeIncrement = whiteTimeIncrement;
+    }
+
+    unsigned int Bitboard::getBlackTimeIncrement() const {
+        return blackTimeIncrement;
+    }
+
+    void Bitboard::setBlackTimeIncrement(unsigned int blackTimeIncrement) {
+        Bitboard::blackTimeIncrement = blackTimeIncrement;
+    }
+
+    void Bitboard::initializeBetweenLookup() {
+        for (int from = 0; from < 64; from++) {
+            for (int to = 0; to < 64; to++) {
+                uint64_t m1   = -1ULL;
+                uint64_t a2a7 = 0x0001010101010100ULL;
+                uint64_t b2g7 = 0x0040201008040200ULL;
+                uint64_t h1b7 = 0x0002040810204080ULL;
+                uint64_t btwn, line, rank, file;
+
+                btwn  = (m1 << from) ^ (m1 << to);
+                file  =   (to & 7) - (from   & 7);
+                rank  =  ((to | 7) -  from) >> 3;
+                line  =      (   (file  &  7) - 1) & a2a7; /* a2a7 if same file */
+                line += 2 * ((   (rank  &  7) - 1) >> 58); /* b1g1 if same rank */
+                line += (((rank - file) & 15) - 1) & b2g7; /* b2g7 if same diagonal */
+                line += (((rank + file) & 15) - 1) & h1b7; /* h1b7 if same antidiag */
+                line *= btwn & -btwn; /* mul acts like shift by smaller square */
+
+                betweenTable[from][to] = line & btwn;   /* return the bits on that line in-between */
+            }
+        }
+    }
+
     uint64_t soutOne(uint64_t b) {
         return b >> 8ULL;
     }
@@ -1240,15 +1543,11 @@ namespace Zagreus {
     }
 
     int bitscanForward(uint64_t b) {
-        int result = b ? __builtin_ffsll(b) - 1 : 0;
-        assert(result >= 0 && result < 64);
-        return result;
+        return  b ? __builtin_ffsll(b) - 1 : 0;
     }
 
     int bitscanReverse(uint64_t b) {
-        int result =  b ? __builtin_clzll(b) ^ 63 : 0;
-        assert(result >= 0 && result < 64);
-        return result;
+        return b ? __builtin_clzll(b) ^ 63 : 0;
     }
 
     uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {

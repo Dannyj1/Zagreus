@@ -10,8 +10,10 @@ namespace Zagreus {
     std::chrono::time_point<std::chrono::high_resolution_clock>
     TimeManager::getEndTime(Bitboard &bitboard, PieceColor movingColor) {
         int movesLeft = 80 - bitboard.getMovesMade();
-        uint64_t timeLeft =
-                movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
+        uint64_t timeLeft = movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
+        uint64_t increment = movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeIncrement() : bitboard.getBlackTimeIncrement();
+
+        timeLeft += increment / 2;
 
         if (movesLeft < 6) {
             movesLeft = 6;
