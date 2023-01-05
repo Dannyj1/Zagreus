@@ -17,18 +17,18 @@ namespace Zagreus {
         SearchResult getBestMove(Bitboard &board, PieceColor color);
 
         SearchResult
-        search(Bitboard &board, int depth, int ply, int alpha, int beta, const Move &rootMove, const Move &previousMove,
+        search(Bitboard &board, int depth, int alpha, int beta, const Move &rootMove, const Move &previousMove,
                std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
         SearchResult
-        zwSearch(Bitboard &board, int depth, int ply, int beta, const Move &rootMove, const Move &previousMove,
+        zwSearch(Bitboard &board, int depth, int beta, const Move &rootMove, const Move &previousMove,
                  std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
-        SearchResult quiesce(Bitboard &board, int ply, int depth, int alpha, int beta, const Move &rootMove,
+        SearchResult quiesce(Bitboard &board, int alpha, int beta, const Move &rootMove,
                              const Move &previousMove,
                              std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
-        int evaluate(Bitboard &board, int ply, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
+        int evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
         bool isCurrentlySearching();
 

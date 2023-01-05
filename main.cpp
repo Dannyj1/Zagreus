@@ -57,15 +57,9 @@ int main() {
     senjo::Output(senjo::Output::InfoPrefix) << "                __/ | ";
     senjo::Output(senjo::Output::InfoPrefix) << "               |___/ ";
 
-    // TODO: test open/semi-open files code
     // TODO: consider the forced capture when using mvvlva in move ordering
+    // TODO: use the same index system as move history for TT, so that the index can be reset on a new search
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
-
-    Zagreus::Bitboard bb;
-    bb.setFromFEN("r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13");
-    bb.setWhiteTimeMsec(999999999);
-    bb.setBlackTimeMsec(999999999);
-    Zagreus::searchManager.getBestMove(bb, bb.getMovingColor());
 
     try {
         Zagreus::Engine engine;

@@ -17,25 +17,19 @@ namespace Zagreus {
     };
 
     class TranspositionTable {
-    private:
-        TTEntry* transpositionTable = new TTEntry[1 << 25]{};
-        TTEntry* killerMoves = new TTEntry[1 << 20]{};
-        TTEntry* pvMoves = new TTEntry[1 << 20]{};
-
     public:
+        TTEntry* transpositionTable = new TTEntry[1 << 25]{};
+        TTEntry* pvMoves = new TTEntry[1 << 16]{};
+        uint32_t killerMoves[3][128]{};
+        uint32_t historyMoves[12][64]{};
+
         ~TranspositionTable() {
             delete[] transpositionTable;
-            delete[] killerMoves;
-            delete[] pvMoves;
         }
 
         void addPosition(uint64_t zobristHash, int depth, int score);
 
         TTEntry getPosition(uint64_t zobristHash);
-
-        void addKillerMove(uint64_t zobristHash, int depth, int score);
-
-        bool isKillerMove(uint64_t zobristHash);
 
         void addPVMove(uint64_t zobristHash, int depth, int score);
 

@@ -18,23 +18,8 @@ namespace Zagreus {
         return transpositionTable[index];
     }
 
-    void TranspositionTable::addKillerMove(uint64_t zobristHash, int depth, int score) {
-        uint32_t index = (zobristHash & 0xFFFFF);
-        killerMoves[index] = TTEntry{score, (uint8_t) depth, zobristHash};
-    }
-
-    bool TranspositionTable::isKillerMove(uint64_t zobristHash) {
-        if (zobristHash == 0ULL) {
-            return false;
-        }
-
-        uint32_t index = (zobristHash & 0xFFFFF);
-
-        return killerMoves[index].zobristHash == zobristHash;
-    }
-
     void TranspositionTable::addPVMove(uint64_t zobristHash, int depth, int score) {
-        uint32_t index = (zobristHash & 0xFFFFF);
+        uint32_t index = (zobristHash & 0xFFFF);
         pvMoves[index] = TTEntry{score, (uint8_t) depth, zobristHash};
     }
 
@@ -43,7 +28,7 @@ namespace Zagreus {
             return false;
         }
 
-        uint32_t index = (zobristHash & 0xFFFFF);
+        uint32_t index = (zobristHash & 0xFFFF);
 
         return pvMoves[index].zobristHash == zobristHash;
     }

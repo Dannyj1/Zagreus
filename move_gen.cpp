@@ -32,40 +32,59 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
 
-        std::sort(std::begin(moves), std::end(moves), sortLegalMoves);
+        std::sort(std::begin(moves), std::end(moves), sortMoves);
 
         return moves;
     }
 
-    bool sortLegalMoves(const Move &a, const Move &b) {
-        int aScore = a.captureScore;
-        int bScore = b.captureScore;
+    bool sortMoves(Move &a, Move &b) {
+        // TODO: implement proper killer heuristic
+        int aScore = 0;
+        int bScore = 0;
+        uint32_t aMoveCode = encodeMove(a);
+        uint32_t bMoveCode = encodeMove(b);
         TTEntry aEntry = tt.getPosition(a.zobristHash);
         TTEntry bEntry = tt.getPosition(b.zobristHash);
 
         assert(a.fromSquare != a.toSquare);
         assert(b.fromSquare != b.toSquare);
 
-        if (tt.isPVMove(a.zobristHash)) {
-            aScore += 50000;
+        if (tt.isPVMove(aMoveCode)) {
+            aScore = 50000;
         } else if (aEntry.zobristHash == a.zobristHash) {
-            aScore += 25000 + aEntry.score;
-        } else if (aScore > 0) {
+            aScore = 25000 + aEntry.score;
+        } else if (a.captureScore > 0) {
             // Good capture
-            aScore += 10000;
-        } else if (tt.isKillerMove(a.zobristHash)) {
-            aScore += 5000;
+            aScore = 10000 + a.captureScore;
+        } else if (tt.killerMoves[0][a.ply] == aMoveCode) {
+            aScore = 5000;
+        } else if (tt.killerMoves[1][a.ply] == aMoveCode) {
+            aScore = 4000;
+        } else if (tt.killerMoves[2][a.ply] == aMoveCode) {
+            aScore = 3000;
+        } else {
+            assert(a.fromSquare >= 0);
+            assert(a.toSquare >= 0);
+            aScore = tt.historyMoves[a.pieceType][a.toSquare];
         }
 
         if (tt.isPVMove(b.zobristHash)) {
-            bScore += 50000;
+            bScore = 50000;
         } else if (bEntry.zobristHash == b.zobristHash) {
-            bScore += 25000 + bEntry.score;
-        } else if (bScore > 0) {
+            bScore = 25000 + bEntry.score;
+        } else if (b.captureScore > 0) {
             // Good capture
-            bScore += 10000;
-        } else if (tt.isKillerMove(b.zobristHash)) {
-            bScore += 5000;
+            bScore = 10000 + b.captureScore;
+        } else if (tt.killerMoves[0][b.ply] == bMoveCode) {
+            bScore = 5000;
+        } else if (tt.killerMoves[1][b.ply] == bMoveCode) {
+            bScore = 4000;
+        } else if (tt.killerMoves[2][b.ply] == bMoveCode) {
+            bScore = 3000;
+        } else {
+            assert(b.fromSquare >= 0);
+            assert(b.toSquare >= 0);
+            bScore = tt.historyMoves[b.pieceType][b.toSquare];
         }
 
         return aScore > bScore;
@@ -91,7 +110,7 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING, true);
 
-        std::sort(std::begin(moves), std::end(moves), sortLegalMoves);
+        std::sort(std::begin(moves), std::end(moves), sortMoves);
         return moves;
     }
 
@@ -189,21 +208,21 @@ namespace Zagreus {
                     }
 
                     if (genIndex >= 56 || genIndex <= 7) {
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore,
+                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
                                          static_cast<PieceType>(PieceType::WHITE_QUEEN + color)});
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore,
+                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
                                          static_cast<PieceType>(PieceType::WHITE_ROOK + color)});
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore,
+                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
                                          static_cast<PieceType>(PieceType::WHITE_BISHOP + color)});
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore,
+                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
                                          static_cast<PieceType>(PieceType::WHITE_KNIGHT + color)});
                     } else {
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore});
+                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
                     }
 
                     bitboard.unmakeMove();
                 } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), 0});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
                 }
 
                 genBB &= ~(1ULL << genIndex);
@@ -256,10 +275,10 @@ namespace Zagreus {
                         continue;
                     }
 
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
                     bitboard.unmakeMove();
                 } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), 0});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
                 }
 
                 genBB &= ~(1ULL << genIndex);
@@ -312,10 +331,10 @@ namespace Zagreus {
                         continue;
                     }
 
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
                     bitboard.unmakeMove();
                 } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), 0});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
                 }
 
                 genBB &= ~(1ULL << genIndex);
@@ -426,10 +445,10 @@ namespace Zagreus {
                         continue;
                     }
 
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
                     bitboard.unmakeMove();
                 } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), 0});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
                 }
                 genBB &= ~(1ULL << genIndex);
             }
@@ -481,10 +500,10 @@ namespace Zagreus {
                         continue;
                     }
 
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
                     bitboard.unmakeMove();
                 } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), 0});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
                 }
 
                 genBB &= ~(1ULL << genIndex);
@@ -534,10 +553,10 @@ namespace Zagreus {
                     continue;
                 }
 
-                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), captureScore});
+                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
                 bitboard.unmakeMove();
             } else {
-                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), 0});
+                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
             }
 
             genBB &= ~(1ULL << genIndex);

@@ -75,6 +75,22 @@ namespace Zagreus {
         return this->knightAttacks[square];
     }
 
+    void Bitboard::makeNullMove() {
+        moveHistoryIndex++;
+
+        pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, attacksFrom,
+                     attacksTo, zobristHash, ply,
+                     halfMoveClock, fullmoveClock);
+
+        movingColor = getOppositeColor(movingColor);
+
+        if (getMovingColor() == PieceColor::BLACK) {
+            fullmoveClock += 1;
+        }
+
+        zobristHash ^= zobristConstants[768];
+    }
+
     uint64_t Bitboard::getQueenMoves(int square) {
         uint64_t queenMoves = 0ULL;
 
@@ -267,15 +283,15 @@ namespace Zagreus {
         moveHistory[moveHistoryIndex] = zobristHash;
         moveHistoryIndex++;
 
-        pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, attacksFrom, attacksTo, zobristHash, movesMade,
-                           halfMoveClock, fullmoveClock);
+        pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, attacksFrom, attacksTo, zobristHash, ply,
+                     halfMoveClock, fullmoveClock);
 
         uint64_t updateMask = attacksTo[fromSquare] | attacksTo[toSquare] | (1ULL << fromSquare) | (1ULL << toSquare);
 
         clearAttacksForPieces(updateMask);
         generatedMoves.clear();
 
-        movesMade += 1;
+        ply += 1;
         halfMoveClock += 1;
 
         if (enPassantSquare[PieceColor::WHITE] != -1) {
@@ -484,7 +500,7 @@ namespace Zagreus {
         castlingRights =  undoData.castlingRights;
         movingColor = getOppositeColor(movingColor);
         zobristHash =  undoData.zobristHash;
-        movesMade =  undoData.movesMade;
+        ply =  undoData.movesMade;
         halfMoveClock =  undoData.halfMoveClock;
         fullmoveClock =  undoData.fullMoveClock;
     }
@@ -499,7 +515,7 @@ namespace Zagreus {
 
         castlingRights = 0;
         zobristHash = 0;
-        movesMade = 0;
+        ply = 0;
         halfMoveClock = 0;
         fullmoveClock = 1;
         enPassantSquare[0] = -1;
@@ -790,8 +806,8 @@ namespace Zagreus {
         return betweenTable[from][to];
     }
 
-    int Bitboard::getMovesMade() const {
-        return movesMade;
+    int Bitboard::getPly() const {
+        return ply;
     }
 
     int Bitboard::getWhiteTimeMsec() const {
@@ -1471,6 +1487,10 @@ namespace Zagreus {
                 betweenTable[from][to] = line & btwn;   /* return the bits on that line in-between */
             }
         }
+    }
+
+    uint32_t encodeMove(Move &move) {
+        return (move.promotionPiece << 25) | (move.promotionPiece << 20) | (move.pieceType << 15) | (move.fromSquare << 7) | move.toSquare;
     }
 
     uint64_t soutOne(uint64_t b) {

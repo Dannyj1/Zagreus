@@ -37,6 +37,6 @@ namespace Zagreus {
     void generateKingMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
                            PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
 
-    bool sortLegalMoves(const Move &a, const Move &b);
+    bool sortMoves(Move &a, Move &b);
 }
 

@@ -63,6 +63,7 @@ namespace Zagreus {
         int toSquare;
         PieceType pieceType;
         uint64_t zobristHash;
+        int ply;
         int captureScore;
         PieceType promotionPiece = PieceType::EMPTY;
     };

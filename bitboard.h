@@ -93,6 +93,8 @@ namespace Zagreus {
 
     uint64_t calculateKingAttacks(uint64_t kingSet);
 
+    uint32_t encodeMove(Move &move);
+
     class Bitboard {
     private:
         uint64_t pieceBB[12]{};
@@ -111,7 +113,7 @@ namespace Zagreus {
         uint64_t betweenTable[64][64]{};
 
         PieceColor movingColor = PieceColor::WHITE;
-        unsigned int movesMade = 0;
+        unsigned int ply = 0;
         unsigned int halfMoveClock = 0;
         int fullmoveClock = 1;
         uint64_t moveHistory[256]{ 0ULL };
@@ -206,7 +208,7 @@ namespace Zagreus {
 
         uint64_t getZobristHash() const;
 
-        int getMovesMade() const;
+        int getPly() const;
 
         int getWhiteTimeMsec() const;
 
@@ -296,5 +298,7 @@ namespace Zagreus {
         unsigned int getBlackTimeIncrement() const;
 
         void setBlackTimeIncrement(unsigned int blackTimeIncrement);
+
+        void makeNullMove();
     };
 }
