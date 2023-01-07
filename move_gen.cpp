@@ -42,8 +42,8 @@ namespace Zagreus {
 
     bool sortMoves(Move &a, Move &b) {
         // TODO: implement proper killer heuristic
-        int aScore = tt.historyMoves[a.pieceType][a.toSquare];
-        int bScore = tt.historyMoves[b.pieceType][b.toSquare];
+        int aScore;
+        int bScore;
         uint32_t aMoveCode = encodeMove(a);
         uint32_t bMoveCode = encodeMove(b);
         TTEntry* aEntry = tt.getPosition(a.zobristHash);
@@ -53,35 +53,39 @@ namespace Zagreus {
         assert(b.fromSquare != b.toSquare);
 
         if (tt.isPVMove(aMoveCode)) {
-            aScore += 50000;
+            aScore = 50000;
         } else if (aEntry->zobristHash == a.zobristHash) {
-            aScore += 25000 + aEntry->score;
+            aScore = 25000 + aEntry->score;
         } else if (a.captureScore >= 0) {
-            aScore += 10000 + a.captureScore;
+            aScore = 10000 + a.captureScore;
         } else if (tt.killerMoves[0][a.ply] == aMoveCode) {
-            aScore += 5000;
+            aScore = 5000;
         } else if (tt.killerMoves[1][a.ply] == aMoveCode) {
-            aScore += 4000;
+            aScore = 4000;
         } else if (tt.killerMoves[2][a.ply] == aMoveCode) {
-            aScore += 3000;
+            aScore = 3000;
         } else if (a.captureScore < -1) {
-            aScore += a.captureScore - 5000;
+            aScore = a.captureScore - 5000;
+        } else {
+            aScore = tt.historyMoves[a.pieceType][a.toSquare];
         }
 
-        if (tt.isPVMove(b.zobristHash)) {
-            bScore += 50000;
+        if (tt.isPVMove(bMoveCode)) {
+            bScore = 50000;
         } else if (bEntry->zobristHash == b.zobristHash) {
-            bScore += 25000 + bEntry->score;
+            bScore = 25000 + bEntry->score;
         } else if (b.captureScore >= 0) {
-            bScore += 10000 + b.captureScore;
+            bScore = 10000 + b.captureScore;
         } else if (tt.killerMoves[0][b.ply] == bMoveCode) {
-            bScore += 5000;
+            bScore = 5000;
         } else if (tt.killerMoves[1][b.ply] == bMoveCode) {
-            bScore += 4000;
+            bScore = 4000;
         } else if (tt.killerMoves[2][b.ply] == bMoveCode) {
-            bScore += 3000;
+            bScore = 3000;
         } else if (b.captureScore < -1) {
-            aScore += a.captureScore - 5000;
+            bScore = b.captureScore - 5000;
+        } else {
+            bScore = tt.historyMoves[b.pieceType][b.toSquare];
         }
 
         return aScore > bScore;

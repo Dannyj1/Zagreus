@@ -1301,8 +1301,9 @@ namespace Zagreus {
         return score;
     }
 
+    // TODO: make implementation faster. It's either too slow or broken, causing very bad results.
     int Bitboard::mvvlva(int attackedSquare, PieceColor attackingColor) {
-        int mvv = getMostValuablePieceWeight(attackedSquare, attackingColor);
+/*        int mvv = getMostValuablePieceWeight(attackedSquare, attackingColor);
         int lva = getLeastValuablePieceWeight(attackedSquare, attackingColor);
 
         // -1 means there were no attacks
@@ -1310,17 +1311,14 @@ namespace Zagreus {
             return -1;
         }
 
-        return mvv - lva;
+        return mvv - lva;*/
+        return -1;
     }
 
     int Bitboard::getMostValuablePieceWeight(int attackedSquare, PieceColor attackingColor) {
         PieceType pieceOnSquare = pieceSquareMapping[attackedSquare];
-        int mostValuableWeight = getPieceColor(pieceOnSquare) == getOppositeColor(attackingColor) ? getPieceWeight(pieceOnSquare) : -200000;
+        int mostValuableWeight = getPieceColor(pieceOnSquare) == getOppositeColor(attackingColor) ? getPieceWeight(pieceOnSquare) : -1;
         uint64_t attacks = getSquareAttacksByColor(attackedSquare, getOppositeColor(attackingColor));
-
-        if (!attacks) {
-            return -1;
-        }
 
         while (attacks) {
             int attackerSquare = bitscanForward(attacks);

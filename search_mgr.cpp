@@ -254,7 +254,6 @@ namespace Zagreus {
             alpha = standPat;
         }
 
-        // TODO: consider not ending search if over endtime.
         std::vector<Move> moves = generateQuiescenceMoves(board, board.getMovingColor());
         for (Move &move : moves) {
             assert(move.fromSquare != move.toSquare);
@@ -298,7 +297,6 @@ namespace Zagreus {
         return searchStats;
     }
 
-    // TODO: create bitboards with default positions to calcualte "tempo"
     int SearchManager::evaluate(Bitboard &board,
                                 std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
         if (std::chrono::high_resolution_clock::now() > endTime) {
