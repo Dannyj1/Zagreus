@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "types.h"
-#include "move_pool.h"
 
 namespace Zagreus {
     constexpr uint64_t A_FILE = 0x0101010101010101;
