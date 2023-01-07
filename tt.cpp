@@ -12,10 +12,10 @@ namespace Zagreus {
         transpositionTable[index] = TTEntry{score, (uint8_t) depth, zobristHash};
     }
 
-    TTEntry TranspositionTable::getPosition(uint64_t zobristHash) {
+    TTEntry* TranspositionTable::getPosition(uint64_t zobristHash) {
         uint32_t index = (zobristHash & 0x1FFFFFF);
 
-        return transpositionTable[index];
+        return &transpositionTable[index];
     }
 
     void TranspositionTable::addPVMove(uint64_t zobristHash, int depth, int score) {

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <cassert>
+#include <immintrin.h>
 
 #include "bitboard.h"
 #include "move_gen.h"
@@ -11,6 +12,8 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+
+// TODO: apply _blsr_u64 everywhere
 namespace Zagreus {
     std::vector<Move> generateLegalMoves(Bitboard &bitboard, PieceColor color) {
         std::vector<Move> moves;
@@ -32,59 +35,53 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
 
-        std::sort(std::begin(moves), std::end(moves), sortMoves);
+        std::sort(moves.begin(), moves.end(), sortMoves);
 
         return moves;
     }
 
     bool sortMoves(Move &a, Move &b) {
         // TODO: implement proper killer heuristic
-        int aScore = 0;
-        int bScore = 0;
+        int aScore = tt.historyMoves[a.pieceType][a.toSquare];
+        int bScore = tt.historyMoves[b.pieceType][b.toSquare];
         uint32_t aMoveCode = encodeMove(a);
         uint32_t bMoveCode = encodeMove(b);
-        TTEntry aEntry = tt.getPosition(a.zobristHash);
-        TTEntry bEntry = tt.getPosition(b.zobristHash);
+        TTEntry* aEntry = tt.getPosition(a.zobristHash);
+        TTEntry* bEntry = tt.getPosition(b.zobristHash);
 
         assert(a.fromSquare != a.toSquare);
         assert(b.fromSquare != b.toSquare);
 
         if (tt.isPVMove(aMoveCode)) {
-            aScore = 50000;
-        } else if (aEntry.zobristHash == a.zobristHash) {
-            aScore = 25000 + aEntry.score;
-        } else if (a.captureScore > 0) {
-            // Good capture
-            aScore = 10000 + a.captureScore;
+            aScore += 50000;
+        } else if (aEntry->zobristHash == a.zobristHash) {
+            aScore += 25000 + aEntry->score;
+        } else if (a.captureScore >= 0) {
+            aScore += 10000 + a.captureScore;
         } else if (tt.killerMoves[0][a.ply] == aMoveCode) {
-            aScore = 5000;
+            aScore += 5000;
         } else if (tt.killerMoves[1][a.ply] == aMoveCode) {
-            aScore = 4000;
+            aScore += 4000;
         } else if (tt.killerMoves[2][a.ply] == aMoveCode) {
-            aScore = 3000;
-        } else {
-            assert(a.fromSquare >= 0);
-            assert(a.toSquare >= 0);
-            aScore = tt.historyMoves[a.pieceType][a.toSquare];
+            aScore += 3000;
+        } else if (a.captureScore < 0) {
+            aScore -= 5000 + a.captureScore;
         }
 
         if (tt.isPVMove(b.zobristHash)) {
-            bScore = 50000;
-        } else if (bEntry.zobristHash == b.zobristHash) {
-            bScore = 25000 + bEntry.score;
-        } else if (b.captureScore > 0) {
-            // Good capture
-            bScore = 10000 + b.captureScore;
+            bScore += 50000;
+        } else if (bEntry->zobristHash == b.zobristHash) {
+            bScore += 25000 + bEntry->score;
+        } else if (b.captureScore >= 0) {
+            bScore += 10000 + b.captureScore;
         } else if (tt.killerMoves[0][b.ply] == bMoveCode) {
-            bScore = 5000;
+            bScore += 5000;
         } else if (tt.killerMoves[1][b.ply] == bMoveCode) {
-            bScore = 4000;
+            bScore += 4000;
         } else if (tt.killerMoves[2][b.ply] == bMoveCode) {
-            bScore = 3000;
-        } else {
-            assert(b.fromSquare >= 0);
-            assert(b.toSquare >= 0);
-            bScore = tt.historyMoves[b.pieceType][b.toSquare];
+            bScore += 3000;
+        } else if (b.captureScore < 0) {
+            bScore -= 5000 + b.captureScore;
         }
 
         return aScore > bScore;
@@ -110,52 +107,19 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING, true);
 
-        std::sort(std::begin(moves), std::end(moves), sortMoves);
+        std::sort(moves.begin(), moves.end(), sortMoves);
+
         return moves;
-    }
-
-    uint64_t generateMobilityMoves(Bitboard &bitboard, PieceColor color) {
-        uint64_t results = 0ULL;
-        uint64_t knightBB = bitboard.getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT);
-        uint64_t bishopBB = bitboard.getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP);
-        uint64_t rookBB = bitboard.getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK);
-        uint64_t queenBB = bitboard.getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN);
-
-        results |= calculateKnightAttacks(knightBB);
-        results |= bitboard.getBishopAttacks(bishopBB);
-        results |= bitboard.getRookAttacks(rookBB);
-        results |= bitboard.getQueenAttacks(queenBB);
-
-        return results;
-    }
-
-    void generateAttackMapMoves(std::vector<Move> &moves, Bitboard &bitboard, PieceColor color, uint64_t mask) {
-        uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
-        uint64_t opponentPiecesBB = bitboard.getBoardByColor(Bitboard::getOppositeColor(color));
-
-        generatePawnMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
-                          color == PieceColor::WHITE ? PieceType::WHITE_PAWN : PieceType::BLACK_PAWN, false, mask);
-        generateKnightMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
-                            color == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT, false,
-                            mask);
-        generateBishopMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
-                            color == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP, false,
-                            mask);
-        generateRookMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
-                          color == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK, false, mask);
-        generateQueenMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
-                           color == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN, false, mask);
-        generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
-                          color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING, false, mask);
     }
 
     void generatePawnMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
                            PieceColor color,
-                           PieceType pieceType, bool quiesce, uint64_t mask) {
-        uint64_t pawnBB = bitboard.getPieceBoard(pieceType) & mask;
+                           PieceType pieceType, bool quiesce) {
+        uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
 
         while (pawnBB) {
-            int index = Zagreus::bitscanForward(pawnBB);
+            int index = bitscanForward(pawnBB);
+            pawnBB = _blsr_u64(pawnBB);
             assert(index >= 0 && index < 64);
             uint64_t genBB;
 
@@ -166,197 +130,149 @@ namespace Zagreus {
             }
 
             uint64_t attackBB = bitboard.getPawnAttacks(index, color);
-            if (mask == ~0ULL) {
-                if (bitboard.getEnPassantSquare(Bitboard::getOppositeColor(color)) >= 0) {
-                    attackBB &= opponentPiecesBB | (1ULL << bitboard.getEnPassantSquare(Bitboard::getOppositeColor(color)));
-                } else {
-                    attackBB &= opponentPiecesBB;
-                }
 
-                attackBB &= ~ownPiecesBB;
-                genBB &= ~ownPiecesBB;
+            if (bitboard.getEnPassantSquare(Bitboard::getOppositeColor(color)) >= 0) {
+                attackBB &=
+                        opponentPiecesBB | (1ULL << bitboard.getEnPassantSquare(Bitboard::getOppositeColor(color)));
+            } else {
+                attackBB &= opponentPiecesBB;
             }
 
+            attackBB &= ~ownPiecesBB;
+            genBB &= ~ownPiecesBB;
             genBB |= attackBB;
 
             if (quiesce) {
                 genBB &= opponentPiecesBB;
             }
 
-            if (mask == ~0ULL) {
-                genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
-                           bitboard.getPieceBoard(PieceType::BLACK_KING));
-            }
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
+                       bitboard.getPieceBoard(PieceType::BLACK_KING));
 
             while (genBB) {
-                int genIndex = Zagreus::bitscanForward(genBB);
+                int genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                if (mask == ~0ULL) {
-                    int captureScore = 0;
+                int captureScore = 0;
 
-                    if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex, color);
-                    }
+                if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex,
+                                                                                                           color);
+                }
 
-                    bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
-
-                    if (bitboard.isKingInCheck(color)) {
-                        bitboard.unmakeMove();
-                        genBB &= ~(1ULL << genIndex);
-                        continue;
-                    }
-
-                    if (genIndex >= 56 || genIndex <= 7) {
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
-                                         static_cast<PieceType>(PieceType::WHITE_QUEEN + color)});
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
-                                         static_cast<PieceType>(PieceType::WHITE_ROOK + color)});
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
-                                         static_cast<PieceType>(PieceType::WHITE_BISHOP + color)});
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore,
-                                         static_cast<PieceType>(PieceType::WHITE_KNIGHT + color)});
-                    } else {
-                        moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
-                    }
-
-                    bitboard.unmakeMove();
+                if (genIndex >= 56 || genIndex <= 7) {
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                     captureScore,
+                                     static_cast<PieceType>(PieceType::WHITE_QUEEN + color)});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                     captureScore,
+                                     static_cast<PieceType>(PieceType::WHITE_ROOK + color)});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                     captureScore,
+                                     static_cast<PieceType>(PieceType::WHITE_BISHOP + color)});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                     captureScore,
+                                     static_cast<PieceType>(PieceType::WHITE_KNIGHT + color)});
                 } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
+                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                     captureScore});
                 }
 
                 genBB &= ~(1ULL << genIndex);
             }
-
-            pawnBB &= ~(1ULL << index);
         }
     }
 
     void generateKnightMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                             PieceColor color, PieceType pieceType, bool quiesce, uint64_t mask) {
-        uint64_t knightBB = bitboard.getPieceBoard(pieceType) & mask;
+                             PieceColor color, PieceType pieceType, bool quiesce) {
+        uint64_t knightBB = bitboard.getPieceBoard(pieceType);
 
         while (knightBB) {
-            int index = Zagreus::bitscanForward(knightBB);
+            int index = bitscanForward(knightBB);
+            knightBB = _blsr_u64(knightBB);
             assert(index >= 0 && index < 64);
             uint64_t genBB = bitboard.getKnightAttacks(index);
 
-            if (mask == ~0ULL) {
-                genBB &= ~ownPiecesBB;
-            } else {
-                genBB &= ~(1ULL << index);
-            }
+            genBB &= ~ownPiecesBB;
 
             if (quiesce) {
                 genBB &= opponentPiecesBB;
             }
 
-            if (mask == ~0ULL) {
-                genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
-                           bitboard.getPieceBoard(PieceType::BLACK_KING));
-            }
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
+                       bitboard.getPieceBoard(PieceType::BLACK_KING));
 
             while (genBB) {
-                int genIndex = Zagreus::bitscanForward(genBB);
+                int genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                if (mask == ~0ULL) {
-                    int captureScore = 0;
+                int captureScore = 0;
 
-                    if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex, color);
-                    }
-
-                    bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
-
-                    if (bitboard.isKingInCheck(color)) {
-                        bitboard.unmakeMove();
-                        genBB &= ~(1ULL << genIndex);
-                        continue;
-                    }
-
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
-                    bitboard.unmakeMove();
-                } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
+                if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex,
+                                                                                                           color);
                 }
+
+                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                 captureScore});
 
                 genBB &= ~(1ULL << genIndex);
             }
-
-            knightBB &= ~(1ULL << index);
         }
     }
 
     void generateBishopMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                             PieceColor color, PieceType pieceType, bool quiesce, uint64_t mask) {
-        uint64_t bishopBB = bitboard.getPieceBoard(pieceType) & mask;
+                             PieceColor color, PieceType pieceType, bool quiesce) {
+        uint64_t bishopBB = bitboard.getPieceBoard(pieceType);
 
         while (bishopBB) {
-            int index = Zagreus::bitscanForward(bishopBB);
+            int index = bitscanForward(bishopBB);
+            bishopBB = _blsr_u64(bishopBB);
             assert(index >= 0 && index < 64);
-            uint64_t genBB = bitboard.getBishopMoves(index);
+            uint64_t genBB = bitboard.getBishopAttacks(index, bitboard.getOccupiedBoard());
 
-            if (mask == ~0ULL) {
-                genBB &= ~ownPiecesBB;
-            } else {
-                genBB &= ~(1ULL << index);
-            }
+            genBB &= ~ownPiecesBB;
 
             if (quiesce) {
                 genBB &= opponentPiecesBB;
             }
 
-            if (mask == ~0ULL) {
-                genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
-                           bitboard.getPieceBoard(PieceType::BLACK_KING));
-            }
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
+                       bitboard.getPieceBoard(PieceType::BLACK_KING));
 
             while (genBB) {
-                int genIndex = Zagreus::bitscanForward(genBB);
+                int genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                if (mask == ~0ULL) {
-                    int captureScore = 0;
+                int captureScore = 0;
 
-                    if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex, color);
-                    }
-
-                    bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
-
-                    if (bitboard.isKingInCheck(color)) {
-                        bitboard.unmakeMove();
-                        genBB &= ~(1ULL << genIndex);
-                        continue;
-                    }
-
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
-                    bitboard.unmakeMove();
-                } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
+                if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex,
+                                                                                                           color);
                 }
+
+                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                 captureScore});
 
                 genBB &= ~(1ULL << genIndex);
             }
-
-            bishopBB &= ~(1ULL << index);
         }
     }
 
     void generateRookMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
                            PieceColor color,
-                           PieceType pieceType, bool quiesce, uint64_t mask) {
-        uint64_t rookBB = bitboard.getPieceBoard(pieceType) & mask;
+                           PieceType pieceType, bool quiesce) {
+        uint64_t rookBB = bitboard.getPieceBoard(pieceType);
         uint8_t castlingRights = bitboard.getCastlingRights();
         uint64_t occupiedBB = bitboard.getOccupiedBoard();
 
         while (rookBB) {
-            int index = Zagreus::bitscanForward(rookBB);
+            int index = bitscanForward(rookBB);
+            rookBB = _blsr_u64(rookBB);
             assert(index >= 0 && index < 64);
 
             // TODO: refactor, is very ugly
-            if (!quiesce && mask == ~0ULL) {
+            if (!quiesce) {
                 if (color == PieceColor::WHITE) {
                     if (castlingRights & CastlingRights::WHITE_KINGSIDE && index == Square::H1) {
                         uint64_t tilesBetween = (1ULL << Square::F1) | (1ULL << Square::G1);
@@ -365,7 +281,8 @@ namespace Zagreus {
                             if (!bitboard.isSquareAttackedByColor(Square::F1, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::G1, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::E1, Bitboard::getOppositeColor(color))) {
-                                moves.push_back({Square::H1, Square::E1, PieceType::WHITE_ROOK, bitboard.getZobristHash(), 0});
+                                moves.push_back({Square::H1, Square::E1, PieceType::WHITE_ROOK,
+                                                 bitboard.getZobristHash(), 0, 0});
                             }
                         }
                     }
@@ -377,7 +294,8 @@ namespace Zagreus {
                             if (!bitboard.isSquareAttackedByColor(Square::C1, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::D1, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::E1, Bitboard::getOppositeColor(color))) {
-                                moves.push_back({Square::A1, Square::E1, PieceType::WHITE_ROOK, bitboard.getZobristHash(), 0});
+                                moves.push_back({Square::A1, Square::E1, PieceType::WHITE_ROOK,
+                                                 bitboard.getZobristHash(), 0, 0});
                             }
                         }
                     }
@@ -389,7 +307,8 @@ namespace Zagreus {
                             if (!bitboard.isSquareAttackedByColor(Square::F8, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::G8, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::E8, Bitboard::getOppositeColor(color))) {
-                                moves.push_back({Square::H8, Square::E8, PieceType::BLACK_ROOK, bitboard.getZobristHash(), 0});
+                                moves.push_back({Square::H8, Square::E8, PieceType::BLACK_ROOK,
+                                                 bitboard.getZobristHash(), 0, 0});
                             }
                         }
                     }
@@ -402,162 +321,114 @@ namespace Zagreus {
                             if (!bitboard.isSquareAttackedByColor(Square::C8, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::D8, Bitboard::getOppositeColor(color))
                                 && !bitboard.isSquareAttackedByColor(Square::E8, Bitboard::getOppositeColor(color))) {
-                                moves.push_back({Square::A8, Square::E8, PieceType::BLACK_ROOK, bitboard.getZobristHash(), 0});
+                                moves.push_back({Square::A8, Square::E8, PieceType::BLACK_ROOK,
+                                                 bitboard.getZobristHash(), 0, 0});
                             }
                         }
                     }
                 }
             }
 
-            uint64_t genBB = bitboard.getRookMoves(index);
+            uint64_t genBB = bitboard.getRookAttacks(index, bitboard.getOccupiedBoard());;
 
-            if (mask == ~0ULL) {
-                genBB &= ~ownPiecesBB;
-            } else {
-                genBB &= ~(1ULL << index);
-            }
+            genBB &= ~ownPiecesBB;
 
             if (quiesce) {
                 genBB &= opponentPiecesBB;
             }
 
-            if (mask == ~0ULL) {
-                genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
-                           bitboard.getPieceBoard(PieceType::BLACK_KING));
-            }
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
+                       bitboard.getPieceBoard(PieceType::BLACK_KING));
 
             while (genBB) {
-                int genIndex = Zagreus::bitscanForward(genBB);
+                int genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                if (mask == ~0ULL) {
-                    int captureScore = 0;
+                int captureScore = 0;
 
-                    if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex, color);
-                    }
-
-                    bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
-
-                    if (bitboard.isKingInCheck(color)) {
-                        bitboard.unmakeMove();
-                        genBB &= ~(1ULL << genIndex);
-                        continue;
-                    }
-
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
-                    bitboard.unmakeMove();
-                } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
+                if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex,
+                                                                                                           color);
                 }
+
+                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                 captureScore});
+
                 genBB &= ~(1ULL << genIndex);
             }
-
-            rookBB &= ~(1ULL << index);
         }
     }
 
     void generateQueenMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                            PieceColor color, PieceType pieceType, bool quiesce, uint64_t mask) {
-        uint64_t queenBB = bitboard.getPieceBoard(pieceType) & mask;
+                            PieceColor color, PieceType pieceType, bool quiesce) {
+        uint64_t queenBB = bitboard.getPieceBoard(pieceType);
 
         while (queenBB) {
-            int index = Zagreus::bitscanForward(queenBB);
+            int index = bitscanForward(queenBB);
+            queenBB = _blsr_u64(queenBB);
             assert(index >= 0 && index < 64);
-            uint64_t genBB = bitboard.getQueenMoves(index);
+            uint64_t genBB = bitboard.getQueenAttacks(index, bitboard.getOccupiedBoard());
 
-            if (mask == ~0ULL) {
-                genBB &= ~ownPiecesBB;
-            } else {
-                genBB &= ~(1ULL << index);
-            }
+            genBB &= ~ownPiecesBB;
 
             if (quiesce) {
                 genBB &= opponentPiecesBB;
             }
 
-            if (mask == ~0ULL) {
-                genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
-                           bitboard.getPieceBoard(PieceType::BLACK_KING));
-            }
+            genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) |
+                       bitboard.getPieceBoard(PieceType::BLACK_KING));
 
             while (genBB) {
-                int genIndex = Zagreus::bitscanForward(genBB);
+                int genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                if (mask == ~0ULL) {
-                    int captureScore = 0;
+                int captureScore = 0;
 
-                    if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex, color);
-                    }
-
-                    bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
-
-                    if (bitboard.isKingInCheck(color)) {
-                        bitboard.unmakeMove();
-                        genBB &= ~(1ULL << genIndex);
-                        continue;
-                    }
-
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
-                    bitboard.unmakeMove();
-                } else {
-                    moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
+                if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex,
+                                                                                                           color);
                 }
+
+                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                                 captureScore});
 
                 genBB &= ~(1ULL << genIndex);
             }
-
-            queenBB &= ~(1ULL << index);
         }
     }
 
     void generateKingMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                           PieceColor color, PieceType pieceType, bool quiesce, uint64_t mask) {
-        uint64_t kingBB = bitboard.getPieceBoard(pieceType) & mask;
-        uint64_t opponentKingBB = bitboard.getPieceBoard(color == PieceColor::WHITE ? PieceType::BLACK_KING : PieceType::WHITE_KING);
-        int index = Zagreus::bitscanForward(kingBB);
+                           PieceColor color, PieceType pieceType, bool quiesce) {
+        uint64_t kingBB = bitboard.getPieceBoard(pieceType);
+        uint64_t opponentKingBB = bitboard.getPieceBoard(
+                color == PieceColor::WHITE ? PieceType::BLACK_KING : PieceType::WHITE_KING);
+        int index = bitscanForward(kingBB);
         assert(index >= 0 && index < 64);
         uint64_t genBB = bitboard.getKingAttacks(index);
-        uint64_t opponentKingAttacks = bitboard.getKingAttacks(Zagreus::bitscanForward(opponentKingBB));
+        uint64_t opponentKingAttacks = bitboard.getKingAttacks(bitscanForward(opponentKingBB));
 
-        if (mask == ~0ULL) {
-            genBB &= ~ownPiecesBB;
-        } else {
-            genBB &= ~(1ULL << index);
-        }
+        genBB &= ~ownPiecesBB;
 
         if (quiesce) {
             genBB &= opponentPiecesBB;
         }
 
-        genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING) | opponentKingAttacks);
+        genBB &= ~(bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::BLACK_KING) |
+                   opponentKingAttacks);
 
         while (genBB) {
-            int genIndex = Zagreus::bitscanForward(genBB);
+            int genIndex = bitscanForward(genBB);
             assert(genIndex >= 0 && genIndex < 64);
 
-            if (mask == ~0ULL) {
-                int captureScore = 0;
+            int captureScore = 0;
 
-                if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex, color);
-                }
-
-                bitboard.makeMove(index, genIndex, pieceType, PieceType::EMPTY);
-
-                if (bitboard.isKingInCheck(color)) {
-                    bitboard.unmakeMove();
-                    genBB &= ~(1ULL << genIndex);
-                    continue;
-                }
-
-                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), captureScore});
-                bitboard.unmakeMove();
-            } else {
-                moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(), 0});
+            if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
+                captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.mvvlva(genIndex,
+                                                                                                       color);
             }
+
+            moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
+                             captureScore});
 
             genBB &= ~(1ULL << genIndex);
         }

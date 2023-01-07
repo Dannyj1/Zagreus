@@ -13,29 +13,25 @@ namespace Zagreus {
 
     std::vector<Move> generateQuiescenceMoves(Bitboard &bitboard, PieceColor color);
 
-    uint64_t generateMobilityMoves(Bitboard &bitboard, PieceColor color);
-
-    void generateAttackMapMoves(std::vector<Move> &moves, Bitboard &bitboard, PieceColor color, uint64_t mask);
-
     void generatePawnMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
                            PieceColor color,
-                           PieceType pieceType, bool quiesce = false, uint64_t mask = ~0);
+                           PieceType pieceType, bool quiesce = false);
 
     void generateKnightMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                             PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
+                             PieceColor color, PieceType pieceType, bool quiesce = false);
 
     void generateBishopMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                             PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
+                             PieceColor color, PieceType pieceType, bool quiesce = false);
 
     void generateRookMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
                            PieceColor color,
-                           PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
+                           PieceType pieceType, bool quiesce = false);
 
     void generateQueenMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                            PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
+                            PieceColor color, PieceType pieceType, bool quiesce = false);
 
     void generateKingMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                           PieceColor color, PieceType pieceType, bool quiesce = false, uint64_t mask = ~0ULL);
+                           PieceColor color, PieceType pieceType, bool quiesce = false);
 
     bool sortMoves(Move &a, Move &b);
 }

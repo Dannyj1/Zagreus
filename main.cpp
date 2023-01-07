@@ -8,6 +8,7 @@
 #include "move_gen.h"
 #include "types.h"
 #include "search_mgr.h"
+#include "magics.h"
 
 uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0ULL;
@@ -15,13 +16,19 @@ uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int dep
     if (depth == 0) {
         return 1ULL;
     }
-
+    
     std::vector<Zagreus::Move> moves = generateLegalMoves(perftBoard, color);
 
-    for (const Zagreus::Move &move : moves) {
+    for (Zagreus::Move &move : moves) {
         assert(move.fromSquare != move.toSquare);
 
         perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
+
+        if (perftBoard.isKingInCheck(color)) {
+            perftBoard.unmakeMove();
+            continue;
+        }
+
         uint64_t nodeAmount = perft(perftBoard, Zagreus::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
         nodes += nodeAmount;
 
@@ -48,6 +55,8 @@ int main() {
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
 
+    Zagreus::initializeMagicBitboards();
+
     senjo::Output(senjo::Output::InfoPrefix) << " ______ ";
     senjo::Output(senjo::Output::InfoPrefix) << " |___  / ";
     senjo::Output(senjo::Output::InfoPrefix) << "    / /  __ _   __ _  _ __  ___  _   _  ___ ";
@@ -57,9 +66,13 @@ int main() {
     senjo::Output(senjo::Output::InfoPrefix) << "                __/ | ";
     senjo::Output(senjo::Output::InfoPrefix) << "               |___/ ";
 
-    // TODO: consider the forced capture when using mvvlva in move ordering
-    // TODO: use the same index system as move history for TT, so that the index can be reset on a new search
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
+
+    // TODO: crashes on linux... Why? idfk. Only when using go command. Not with any other commands and not when directly calling getBestMove
+/*    Zagreus::Bitboard bb;
+    bb.setFromFEN("r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13");
+    bb.setWhiteTimeMsec(999999999);
+    Zagreus::searchManager.getBestMove(bb, Zagreus::PieceColor::WHITE);*/
 
     try {
         Zagreus::Engine engine;

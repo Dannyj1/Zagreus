@@ -17,18 +17,22 @@ namespace Zagreus {
         SearchResult getBestMove(Bitboard &board, PieceColor color);
 
         SearchResult
-        search(Bitboard &board, int depth, int alpha, int beta, const Move &rootMove, const Move &previousMove,
-               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
+        search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
+               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime,
+               std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
         SearchResult
-        zwSearch(Bitboard &board, int depth, int beta, const Move &rootMove, const Move &previousMove,
-                 std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
+        zwSearch(Bitboard &board, int depth, int beta, Move &rootMove, Move &previousMove,
+                 std::chrono::time_point<std::chrono::high_resolution_clock> &endTime,
+                 std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
-        SearchResult quiesce(Bitboard &board, int alpha, int beta, const Move &rootMove,
-                             const Move &previousMove,
-                             std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
+        SearchResult quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
+                             Move &previousMove,
+                             std::chrono::time_point<std::chrono::high_resolution_clock> &endTime,
+                             std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
-        int evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
+        int evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime,
+                     std::chrono::time_point<std::chrono::high_resolution_clock> &startTime);
 
         bool isCurrentlySearching();
 

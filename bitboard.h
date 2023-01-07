@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "types.h"
+#include "move_pool.h"
 
 namespace Zagreus {
     constexpr uint64_t A_FILE = 0x0101010101010101;
@@ -26,6 +27,203 @@ namespace Zagreus {
     constexpr uint64_t H1_A8_DIAG = 0x0102040810204080;
     constexpr uint64_t LIGHT_SQUARES = 0x55AA55AA55AA55AA;
     constexpr uint64_t DARK_SQUARES = 0xAA55AA55AA55AA55;
+
+    class Bitboard {
+    private:
+        uint64_t pieceBB[12]{};
+        PieceType pieceSquareMapping[64]{};
+        uint64_t colorBB[2]{};
+        uint64_t occupiedBB{};
+        int enPassantSquare[2]{};
+        uint8_t castlingRights = 0b00001111;
+
+        uint64_t kingAttacks[64]{};
+        uint64_t knightAttacks[64]{};
+        uint64_t pawnAttacks[2][64]{};
+        uint64_t rayAttacks[8][64]{};
+        uint64_t betweenTable[64][64]{};
+
+        PieceColor movingColor = PieceColor::NONE;
+        unsigned int ply = 0;
+        unsigned int halfMoveClock = 0;
+        int fullmoveClock = 1;
+        uint64_t moveHistory[256]{0ULL};
+        int moveHistoryIndex = 0;
+        uint64_t zobristHash = 0;
+        uint64_t zobristConstants[789]{};
+
+        unsigned int whiteTimeMsec = 0;
+        unsigned int blackTimeMsec = 0;
+        unsigned int whiteTimeIncrement = 0;
+        unsigned int blackTimeIncrement = 0;
+
+        UndoData undoStack[256]{};
+        int undoStackIndex = 0;
+    public:
+        Bitboard();
+
+        uint64_t getPieceBoard(int pieceType);
+
+        uint64_t getWhiteBoard();
+
+        uint64_t getBlackBoard();
+
+        uint64_t getOccupiedBoard() const;
+
+        uint64_t getKingAttacks(int square);
+
+        uint64_t getKnightAttacks(int square);
+
+        uint64_t getQueenAttacks(int square, uint64_t occupancy);
+
+        uint64_t getBishopAttacks(int square, uint64_t occupancy);
+
+        uint64_t getRookAttacks(int square, uint64_t occupancy);
+
+        uint64_t getWhitePawnAttacks(uint64_t wPawns);
+
+        uint64_t getBlackPawnAttacks(uint64_t wPawns);
+
+        uint64_t getWhitePawnSinglePush(uint64_t wPawns);
+
+        uint64_t getWhitePawnDoublePush(uint64_t wPawns);
+
+        uint64_t getBlackPawnSinglePush(uint64_t bPawns);
+
+        uint64_t getBlackPawnDoublePush(uint64_t bPawns);
+
+        void setPiece(int index, PieceType pieceType);
+
+        void removePiece(int index, PieceType pieceType);
+
+        void makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece);
+
+        uint64_t getEmptyBoard() const;
+
+        bool setFromFEN(const std::string &fen);
+
+        void setPieceFromFENChar(char character, int index);
+
+        void print();
+
+        static PieceColor getOppositeColor(PieceColor color);
+
+        static char getCharacterForPieceType(PieceType pieceType);
+
+        void printAvailableMoves(uint64_t availableMoves);
+
+        void printAvailableMoves(const std::vector<Move>& moves);
+
+        uint64_t getBoardByColor(PieceColor color);
+
+        void unmakeMove();
+
+        PieceType getPieceOnSquare(int square);
+
+        bool isKingInCheck(PieceColor color);
+
+        bool isWinner(PieceColor color);
+
+        static std::string getNotation(int index);
+
+        void handleCastling(Square rookSquare, Square kingSquare, PieceType rookType, PieceType kingType);
+
+        uint8_t getCastlingRights() const;
+
+        PieceColor getMovingColor() const;
+
+        bool isDraw();
+
+        bool isInsufficientMaterial();
+
+        uint64_t getZobristHash() const;
+
+        int getPly() const;
+
+        int getWhiteTimeMsec() const;
+
+        int getBlackTimeMsec() const;
+
+        void setWhiteTimeMsec(unsigned int whiteTimeMsec);
+
+        void setBlackTimeMsec(unsigned int blackTimeMsec);
+
+        void makeStrMove(const std::string &move);
+
+        int getSquareFromString(std::string notation);
+
+        bool isSquareAttackedByColor(int square, PieceColor color);
+
+        uint64_t getSquareAttacks(int square);
+
+        uint64_t getSquareAttacksByColor(int square, PieceColor color);
+
+        uint64_t calculatePawnAttacks(uint64_t bb, PieceColor color);
+
+        uint64_t getPawnAttacks(int square, PieceColor color);
+
+        int getEnPassantSquare(PieceColor color);
+
+        int getPieceWeight(PieceType type);
+
+        int getMostValuablePieceWeight(int attackedSquare, PieceColor color);
+
+        int getLeastValuablePieceWeight(int attackedSquare, PieceColor color);
+
+        static PieceColor getPieceColor(PieceType type);
+
+        int mvvlva(int attackedSquare, PieceColor attackingColor);
+
+        uint64_t getRayAttacks(uint64_t occupied, Direction direction, int square);
+
+        uint64_t getNegativeRayAttacks(uint64_t occupied, Direction direction, int square);
+
+        void initializeRayAttacks();
+
+        void
+        pushUndoData(const uint64_t* pieceBB, const PieceType* pieceSquareMapping, const uint64_t* colorBB,
+                     uint64_t occupiedBB,
+                     const int* enPassantSquare, uint8_t castlingRights,
+                     uint64_t zobristHash, unsigned int movesMade, unsigned int halfMoveClock, int fullMoveClock);
+
+        int see(int square, PieceColor attackingColor);
+
+        int getSmallestAttackerSquare(int square, PieceColor attackingColor);
+
+        int seeCapture(int fromSquare, int toSquare, PieceColor attackingColor);
+
+        bool isOpenFile(int square);
+
+        bool isSemiOpenFile(int square, PieceColor color);
+
+        bool isSemiOpenFileLenient(int square, PieceColor color);
+
+        unsigned int getHalfMoveClock() const;
+
+        int getFullmoveClock() const;
+
+        bool isPinned(int attackedSquare, PieceColor attackingColor);
+
+        bool isPinnedStraight(int attackedSquare, PieceColor attackingColor);
+
+        void initializeBetweenLookup();
+
+        bool isPinnedDiagonally(int attackedSquare, PieceColor attackingColor);
+
+        uint64_t getTilesBetween(int from, int to);
+
+        unsigned int getWhiteTimeIncrement() const;
+
+        void setWhiteTimeIncrement(unsigned int whiteTimeIncrement);
+
+        unsigned int getBlackTimeIncrement() const;
+
+        void setBlackTimeIncrement(unsigned int blackTimeIncrement);
+
+        void makeNullMove();
+
+        bool isPawnEndgame();
+    };
 
     uint64_t soutOne(uint64_t b);
 
@@ -94,211 +292,4 @@ namespace Zagreus {
     uint64_t calculateKingAttacks(uint64_t kingSet);
 
     uint32_t encodeMove(Move &move);
-
-    class Bitboard {
-    private:
-        uint64_t pieceBB[12]{};
-        PieceType pieceSquareMapping[64]{};
-        uint64_t colorBB[2]{};
-        uint64_t occupiedBB{};
-        int enPassantSquare[2]{};
-        uint8_t castlingRights = 0b00001111;
-        uint64_t attacksFrom[64]{};
-        uint64_t attacksTo[64]{};
-
-        uint64_t kingAttacks[64]{};
-        uint64_t knightAttacks[64]{};
-        uint64_t pawnAttacks[2][64]{};
-        uint64_t rayAttacks[8][64]{};
-        uint64_t betweenTable[64][64]{};
-
-        PieceColor movingColor = PieceColor::WHITE;
-        unsigned int ply = 0;
-        unsigned int halfMoveClock = 0;
-        int fullmoveClock = 1;
-        uint64_t moveHistory[256]{ 0ULL };
-        int moveHistoryIndex = 0;
-        uint64_t zobristHash = 0;
-        uint64_t zobristConstants[789]{};
-
-        unsigned int whiteTimeMsec = 0;
-        unsigned int blackTimeMsec = 0;
-        unsigned int whiteTimeIncrement = 0;
-        unsigned int blackTimeIncrement = 0;
-
-        UndoData undoStack[256]{};
-        int undoStackIndex = 0;
-        std::vector<Move> generatedMoves{};
-    public:
-        Bitboard();
-
-        uint64_t getPieceBoard(int pieceType);
-
-        uint64_t getWhiteBoard();
-
-        uint64_t getBlackBoard();
-
-        uint64_t getOccupiedBoard() const;
-
-        uint64_t getKingAttacks(int square);
-
-        uint64_t getKnightAttacks(int square);
-
-        uint64_t getQueenAttacks(uint64_t square);
-
-        uint64_t getBishopAttacks(uint64_t bb);
-
-        uint64_t getRookAttacks(uint64_t bb);
-
-        uint64_t getWhitePawnAttacks(uint64_t wPawns);
-
-        uint64_t getBlackPawnAttacks(uint64_t wPawns);
-
-        uint64_t getWhitePawnSinglePush(uint64_t wPawns);
-
-        uint64_t getWhitePawnDoublePush(uint64_t wPawns);
-
-        uint64_t getBlackPawnSinglePush(uint64_t bPawns);
-
-        uint64_t getBlackPawnDoublePush(uint64_t bPawns);
-
-        void setPiece(int index, PieceType pieceType);
-
-        void removePiece(int index, PieceType pieceType);
-
-        void makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece);
-
-        uint64_t getEmptyBoard() const;
-
-        bool setFromFEN(const std::string &fen);
-
-        void setPieceFromFENChar(char character, int index);
-
-        void print();
-
-        static PieceColor getOppositeColor(PieceColor color);
-
-        static char getCharacterForPieceType(PieceType pieceType);
-
-        void printAvailableMoves(uint64_t availableMoves);
-
-        void printAvailableMoves(const std::vector<Move> &availableMoves);
-
-        uint64_t getBoardByColor(PieceColor color);
-
-        void unmakeMove();
-
-        PieceType getPieceOnSquare(int square);
-
-        bool isKingInCheck(PieceColor color);
-
-        bool isWinner(PieceColor color);
-
-        static std::string getNotation(int index);
-
-        void handleCastling(Square rookSquare, Square kingSquare, PieceType rookType, PieceType kingType, uint64_t updateMask);
-
-        uint8_t getCastlingRights() const;
-
-        PieceColor getMovingColor() const;
-
-        bool isDraw();
-
-        bool isInsufficientMaterial();
-
-        uint64_t getZobristHash() const;
-
-        int getPly() const;
-
-        int getWhiteTimeMsec() const;
-
-        int getBlackTimeMsec() const;
-
-        void setWhiteTimeMsec(unsigned int whiteTimeMsec);
-
-        void setBlackTimeMsec(unsigned int blackTimeMsec);
-
-        void makeStrMove(const std::string &move);
-
-        int getSquareFromString(std::string notation);
-
-        bool isSquareAttackedByColor(int square, PieceColor color);
-
-        uint64_t getSquareAttacks(int square);
-
-        uint64_t getSquareAttacksByColor(int square, PieceColor color);
-
-        uint64_t calculatePawnAttacks(uint64_t bb, PieceColor color);
-
-        uint64_t getPawnAttacks(int square, PieceColor color);
-
-        int getEnPassantSquare(PieceColor color);
-
-        int getPieceWeight(PieceType type);
-
-        int getMostValuablePieceWeight(int attackedSquare, PieceColor color);
-
-        int getLeastValuablePieceWeight(int attackedSquare, PieceColor color);
-
-        static PieceColor getPieceColor(PieceType type);
-
-        int mvvlva(int attackedSquare, PieceColor attackingColor);
-
-        uint64_t getRayAttacks(uint64_t occupied, Direction direction, int square);
-
-        uint64_t getNegativeRayAttacks(uint64_t occupied, Direction direction, int square);
-
-        void initializeRayAttacks();
-
-        uint64_t getQueenMoves(int square);
-
-        uint64_t getBishopMoves(int square);
-
-        uint64_t getRookMoves(int square);
-
-        void clearAttacksForPieces(uint64_t pieces);
-
-        void
-        pushUndoData(const uint64_t* pieceBB, const PieceType* pieceSquareMapping, const uint64_t* colorBB,
-                     uint64_t occupiedBB,
-                     const int* enPassantSquare, uint8_t castlingRights, const uint64_t* attacksFrom,
-                     const uint64_t* attacksTo,
-                     uint64_t zobristHash, unsigned int movesMade, unsigned int halfMoveClock, int fullMoveClock);
-
-        int see(int square, PieceColor attackingColor);
-
-        int getSmallestAttackerSquare(int square, PieceColor attackingColor);
-
-        int seeCapture(int fromSquare, int toSquare, PieceColor attackingColor);
-
-        bool isOpenFile(int square);
-
-        bool isSemiOpenFile(int square, PieceColor color);
-
-        bool isSemiOpenFileLenient(int square, PieceColor color);
-
-        unsigned int getHalfMoveClock() const;
-
-        int getFullmoveClock() const;
-
-        bool isPinned(int attackedSquare, PieceColor attackingColor);
-
-        bool isPinnedStraight(int attackedSquare, PieceColor attackingColor);
-
-        void initializeBetweenLookup();
-
-        bool isPinnedDiagonally(int attackedSquare, PieceColor attackingColor);
-
-        uint64_t getTilesBetween(int from, int to);
-
-        unsigned int getWhiteTimeIncrement() const;
-
-        void setWhiteTimeIncrement(unsigned int whiteTimeIncrement);
-
-        unsigned int getBlackTimeIncrement() const;
-
-        void setBlackTimeIncrement(unsigned int blackTimeIncrement);
-
-        void makeNullMove();
-    };
 }

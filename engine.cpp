@@ -20,22 +20,24 @@ namespace Zagreus {
             return 1ULL;
         }
 
-        for (const Move &move : generateLegalMoves(perftBoard, color)) {
-            assert(move.fromSquare != move.toSquare);
+        std::vector<Move> moves = generateLegalMoves(perftBoard, color);
+
+        for (Move &move : moves) {
+            assert(move->fromSquare != move->toSquare);
 
             /*bool isCapture = false;
             bool isEp = false;
             bool isCastle = false;
-            Zagreus::PieceType fromPiece = perftBoard.getPieceOnSquare(move.fromSquare);
-            Zagreus::PieceType toPiece = perftBoard.getPieceOnSquare(move.toSquare);
+            Zagreus::PieceType fromPiece = perftBoard.getPieceOnSquare(move->fromSquare);
+            Zagreus::PieceType toPiece = perftBoard.getPieceOnSquare(move->toSquare);
 
             if (toPiece != Zagreus::PieceType::EMPTY) {
                 isCapture = true;
             }
 
             if (fromPiece == Zagreus::PieceType::WHITE_PAWN || fromPiece == Zagreus::PieceType::BLACK_PAWN) {
-                if (toPiece == Zagreus::PieceType::EMPTY && std::abs((int) move.fromSquare - (int) move.toSquare) != 8
-                    && std::abs((int) move.fromSquare - (int) move.toSquare) != 16) {
+                if (toPiece == Zagreus::PieceType::EMPTY && std::abs((int) move->fromSquare - (int) move->toSquare) != 8
+                    && std::abs((int) move->fromSquare - (int) move->toSquare) != 16) {
                     isEp = true;
                 }
             }
@@ -46,8 +48,13 @@ namespace Zagreus {
 
             perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
+            if (perftBoard.isKingInCheck(color)) {
+                perftBoard.unmakeMove();
+                continue;
+            }
+
 /*            if (depth == 1) {
-                if (move.promotionPiece != Zagreus::PieceType::EMPTY) {
+                if (move->promotionPiece != Zagreus::PieceType::EMPTY) {
                     promotions++;
                 }
 
@@ -74,7 +81,8 @@ namespace Zagreus {
 
             if (depth == startingDepth && nodeAmount > 0LL) {
                 std::string notation =
-                        Zagreus::Bitboard::getNotation(move.fromSquare) + Zagreus::Bitboard::getNotation(move.toSquare);
+                        Zagreus::Bitboard::getNotation(move.fromSquare) +
+                        Zagreus::Bitboard::getNotation(move.toSquare);
                 senjo::Output(senjo::Output::InfoPrefix) << notation << ": " << nodeAmount;
             }
 
@@ -233,8 +241,8 @@ namespace Zagreus {
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
-        senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: " << elapsed_seconds.count() << "s"
-                 ;
+        senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: "
+                                                 << elapsed_seconds.count() << "s";
         return nodes;
     }
 
@@ -262,7 +270,8 @@ namespace Zagreus {
             return result;
         }
 
-        std::string result = Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) + Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
+        std::string result = Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) +
+                             Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
 
         if (result == "a1e1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
             board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
