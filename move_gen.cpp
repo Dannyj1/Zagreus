@@ -65,7 +65,7 @@ namespace Zagreus {
         } else if (tt.killerMoves[2][a.ply] == aMoveCode) {
             aScore += 3000;
         } else if (a.captureScore < -1) {
-            aScore -= 5000 - a.captureScore;
+            aScore += a.captureScore - 5000;
         }
 
         if (tt.isPVMove(b.zobristHash)) {
@@ -81,7 +81,7 @@ namespace Zagreus {
         } else if (tt.killerMoves[2][b.ply] == bMoveCode) {
             bScore += 3000;
         } else if (b.captureScore < -1) {
-            bScore -= 5000 - b.captureScore;
+            aScore += a.captureScore - 5000;
         }
 
         return aScore > bScore;

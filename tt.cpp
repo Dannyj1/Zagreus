@@ -8,6 +8,10 @@
 
 namespace Zagreus {
     void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score) {
+        if (score >= 90000000 || score <= -90000000) {
+            return;
+        }
+
         uint32_t index = (zobristHash & 0x1FFFFFF);
         transpositionTable[index] = TTEntry{score, (uint8_t) depth, zobristHash};
     }
@@ -19,6 +23,10 @@ namespace Zagreus {
     }
 
     void TranspositionTable::addPVMove(uint64_t zobristHash, int depth, int score) {
+        if (score >= 90000000 || score <= -90000000) {
+            return;
+        }
+
         uint32_t index = (zobristHash & 0xFFFF);
         pvMoves[index] = TTEntry{score, (uint8_t) depth, zobristHash};
     }
