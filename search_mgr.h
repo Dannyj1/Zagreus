@@ -67,6 +67,8 @@ namespace Zagreus {
         int getBlackRookScore(Bitboard &bitboard);
 
         int getPositionalScore(Bitboard &bitboard, PieceColor color);
+
+        int getMobilityScore(Bitboard &bitboard, PieceColor color);
     };
 
     static SearchManager searchManager{};

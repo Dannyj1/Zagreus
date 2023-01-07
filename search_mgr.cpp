@@ -11,6 +11,8 @@
 #include "move_gen.h"
 #include "senjo/Output.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
     SearchResult SearchManager::getBestMove(Bitboard &board, PieceColor color) {
         searchStats = {};
@@ -22,7 +24,7 @@ namespace Zagreus {
         std::vector<Move> moves = generateLegalMoves(board, color);
         int depth = 0;
 
-        while (std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.75) {
+        while (std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
             depth += 1;
             searchStats.depth = depth;
             searchStats.seldepth = 0;
@@ -32,13 +34,13 @@ namespace Zagreus {
             }
 
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
-            
+
             for (Move &move : moves) {
                 assert(move.fromSquare != move.toSquare);
                 assert(move.fromSquare >= 0 && move.fromSquare < 64);
                 assert(move.toSquare >= 0 && move.toSquare < 64);
 
-                if (depth > 1 && std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * 2.0) {
+                if (depth > 1 && std::chrono::high_resolution_clock::now() > endTime) {
                     break;
                 }
 
@@ -85,7 +87,7 @@ namespace Zagreus {
                                        Move &previousMove,
                                        std::chrono::time_point<std::chrono::high_resolution_clock> &endTime,
                                        std::chrono::time_point<std::chrono::high_resolution_clock> &startTime) {
-        if (depth == 0 || std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * 2.0
+        if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
             || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) ||
             board.isWinner(board.getMovingColor())
             || board.isDraw()) {
@@ -108,7 +110,7 @@ namespace Zagreus {
 
         bool searchPv = true;
         std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
-        
+
         for (Move &move : moves) {
             assert(move.fromSquare != move.toSquare);
 
@@ -132,6 +134,12 @@ namespace Zagreus {
                 if (searchPv) {
                     result = search(board, depth - 1, -beta, -alpha, rootMove, move, endTime, startTime);
                     result.score *= -1;
+
+                    if (std::chrono::high_resolution_clock::now() > endTime) {
+                        board.unmakeMove();
+                        break;
+                    }
+
                     tt.addPosition(board.getZobristHash(), depth, result.score);
                 } else {
                     result = zwSearch(board, depth - 1, -alpha, rootMove, move, endTime, startTime);
@@ -140,6 +148,12 @@ namespace Zagreus {
                     if (result.score > alpha) {
                         result = search(board, depth - 1, -beta, -alpha, rootMove, move, endTime, startTime);
                         result.score *= -1;
+
+                        if (std::chrono::high_resolution_clock::now() > endTime) {
+                            board.unmakeMove();
+                            break;
+                        }
+
                         tt.addPosition(board.getZobristHash(), depth, result.score);
                     }
                 }
@@ -147,11 +161,15 @@ namespace Zagreus {
 
             board.unmakeMove();
 
+            if (std::chrono::high_resolution_clock::now() > endTime) {
+                break;
+            }
+
             if (result.score >= beta) {
                 tt.killerMoves[2][board.getPly()] = tt.killerMoves[1][depth];
                 tt.killerMoves[1][board.getPly()] = tt.killerMoves[0][depth];
                 tt.killerMoves[0][board.getPly()] = encodeMove(move);
-                
+
                 return {rootMove, beta};
             }
 
@@ -167,7 +185,7 @@ namespace Zagreus {
                 searchPv = false;
             }
         }
-        
+
         return {rootMove, alpha};
     }
 
@@ -176,7 +194,7 @@ namespace Zagreus {
                             Move &previousMove,
                             std::chrono::time_point<std::chrono::high_resolution_clock> &endTime,
                             std::chrono::time_point<std::chrono::high_resolution_clock> &startTime) {
-        if (depth == 0 || std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * 2.0
+        if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
             || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) ||
             board.isWinner(board.getMovingColor())
             || board.isDraw()) {
@@ -231,7 +249,7 @@ namespace Zagreus {
                                         std::chrono::time_point<std::chrono::high_resolution_clock> &startTime) {
         searchStats.qnodes += 1;
 
-        if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * 2.0) {
+        if (std::chrono::high_resolution_clock::now() > endTime) {
             return {rootMove, beta};
         }
 
@@ -303,7 +321,7 @@ namespace Zagreus {
     int SearchManager::evaluate(Bitboard &board,
                                 std::chrono::time_point<std::chrono::high_resolution_clock> &endTime,
                                 std::chrono::time_point<std::chrono::high_resolution_clock> &startTime) {
-        if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * 2.0) {
+        if (std::chrono::high_resolution_clock::now() > endTime) {
             return 0;
         }
 
@@ -327,9 +345,8 @@ namespace Zagreus {
         whiteScore += whiteMaterialScore;
         blackScore += blackMaterialScore;
 
-        // TODO: readd mobility score
-/*        whiteScore += board.getWhiteMobility() * 7;
-        blackScore += board.getBlackMobility() * 7;*/
+        whiteScore += getMobilityScore(board, PieceColor::WHITE);
+        blackScore += getMobilityScore(board, PieceColor::BLACK);
 
         whiteScore += getWhiteConnectivityScore(board);
         blackScore += getBlackConnectivityScore(board);
@@ -697,4 +714,54 @@ namespace Zagreus {
 
         return score;
     }
+
+    int SearchManager::getMobilityScore(Bitboard &bitboard, PieceColor color) {
+        int score = 0;
+        uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
+        uint64_t knightBB = bitboard.getPieceBoard(PieceType::WHITE_KNIGHT + color);
+        uint64_t bishopBB = bitboard.getPieceBoard(PieceType::WHITE_BISHOP + color);
+        uint64_t rookBB = bitboard.getPieceBoard(PieceType::WHITE_ROOK + color);
+        uint64_t queenBB = bitboard.getPieceBoard(PieceType::WHITE_QUEEN + color);
+
+        uint64_t knightAttacks = calculateKnightAttacks(knightBB) & ~ownPiecesBB;
+        uint64_t bishopAttacks = 0;
+        uint64_t rookAttacks = 0;
+        uint64_t queenAttacks = 0;
+
+        uint64_t occupied = bitboard.getOccupiedBoard();
+
+        while (bishopBB) {
+            uint64_t index = bitscanForward(bishopBB);
+            bishopAttacks |= bitboard.getBishopAttacks(index, occupied) & ~ownPiecesBB;
+            bishopBB &= ~(1ULL << index);
+        }
+
+        while (rookBB) {
+            uint64_t index = bitscanForward(rookBB);
+            rookAttacks |= bitboard.getRookAttacks(index, occupied) & ~ownPiecesBB;
+            rookBB &= ~(1ULL << index);
+        }
+
+        while (queenBB) {
+            uint64_t index = bitscanForward(queenBB);
+            queenAttacks |= bitboard.getQueenAttacks(index, occupied) & ~ownPiecesBB;
+            queenBB &= ~(1ULL << index);
+        }
+
+        if (bitboard.getFullmoveClock() > 12) {
+            score += popcnt(knightAttacks) * 2;
+            score += popcnt(bishopAttacks) * 2;
+            score += popcnt(rookAttacks) * 5;
+        } else {
+            score += popcnt(knightAttacks) * 5;
+            score += popcnt(bishopAttacks) * 5;
+            score += popcnt(rookAttacks) * 2;
+        }
+
+        score += popcnt(queenAttacks) * 7;
+
+        return score;
+    }
 }
+
+#pragma clang diagnostic pop

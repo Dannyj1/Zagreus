@@ -1311,10 +1311,13 @@ namespace Zagreus {
             int attackerSquare = bitscanForward(attacks);
             attacks = _blsr_u64(attacks);
             PieceType pieceType = pieceSquareMapping[attackerSquare];
-            int weight = getPieceWeight(pieceType);
 
-            if (weight > mostValuableWeight) {
-                mostValuableWeight = weight;
+            if (pieceType != PieceType::WHITE_KING && pieceType != PieceType::BLACK_KING) {
+                int weight = getPieceWeight(pieceType);
+
+                if (weight > mostValuableWeight) {
+                    mostValuableWeight = weight;
+                }
             }
         }
 
