@@ -1222,8 +1222,12 @@ namespace Zagreus {
 
     int Bitboard::getLeastValuablePieceWeight(int attackedSquare, PieceColor color) {
         PieceType pieceOnSquare = pieceSquareMapping[attackedSquare];
-        int leastValuableWeight = getPieceColor(pieceOnSquare) == color ? getPieceWeight(pieceOnSquare) : 9999999;
+        int leastValuableWeight = getPieceColor(pieceOnSquare) == color ? getPieceWeight(pieceOnSquare) : 200000;
         uint64_t attacks = getSquareAttacksByColor(attackedSquare, color);
+
+        if (!attacks) {
+            return -1;
+        }
 
         while (attacks) {
             int attackerSquare = bitscanForward(attacks);
@@ -1298,14 +1302,25 @@ namespace Zagreus {
     }
 
     int Bitboard::mvvlva(int attackedSquare, PieceColor attackingColor) {
-        return getMostValuablePieceWeight(attackedSquare, attackingColor) -
-               getLeastValuablePieceWeight(attackedSquare, getOppositeColor(attackingColor));
+        int mvv = getMostValuablePieceWeight(attackedSquare, attackingColor);
+        int lva = getLeastValuablePieceWeight(attackedSquare, attackingColor);
+
+        // -1 means there were no attacks
+        if (mvv == -1 || lva == -1) {
+            return -1;
+        }
+
+        return mvv - lva;
     }
 
-    int Bitboard::getMostValuablePieceWeight(int attackedSquare, PieceColor color) {
+    int Bitboard::getMostValuablePieceWeight(int attackedSquare, PieceColor attackingColor) {
         PieceType pieceOnSquare = pieceSquareMapping[attackedSquare];
-        int mostValuableWeight = getPieceColor(pieceOnSquare) == color ? getPieceWeight(pieceOnSquare) : -9999999;
-        uint64_t attacks = getSquareAttacksByColor(attackedSquare, color);
+        int mostValuableWeight = getPieceColor(pieceOnSquare) == getOppositeColor(attackingColor) ? getPieceWeight(pieceOnSquare) : -200000;
+        uint64_t attacks = getSquareAttacksByColor(attackedSquare, getOppositeColor(attackingColor));
+
+        if (!attacks) {
+            return -1;
+        }
 
         while (attacks) {
             int attackerSquare = bitscanForward(attacks);

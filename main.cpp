@@ -68,7 +68,6 @@ int main() {
 
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
 
-    // TODO: crashes on linux... Why? idfk. Only when using go command. Not with any other commands and not when directly calling getBestMove
 /*    Zagreus::Bitboard bb;
     bb.setFromFEN("r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13");
     bb.setWhiteTimeMsec(999999999);

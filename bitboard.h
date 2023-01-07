@@ -165,7 +165,7 @@ namespace Zagreus {
 
         int getPieceWeight(PieceType type);
 
-        int getMostValuablePieceWeight(int attackedSquare, PieceColor color);
+        int getMostValuablePieceWeight(int attackedSquare, PieceColor attackingColor);
 
         int getLeastValuablePieceWeight(int attackedSquare, PieceColor color);
 
