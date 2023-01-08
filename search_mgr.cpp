@@ -85,8 +85,7 @@ namespace Zagreus {
                                        Move &previousMove,
                                        std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
         if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
-            || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) ||
-            board.isWinner(board.getMovingColor())
+            || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor()))
             || board.isDraw()) {
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime);
         }
@@ -198,8 +197,7 @@ namespace Zagreus {
                             Move &previousMove,
                             std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
         if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
-            || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) ||
-            board.isWinner(board.getMovingColor())
+            || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor()))
             || board.isDraw()) {
             return quiesce(board, beta - 1, beta, rootMove, previousMove, endTime);
         }
