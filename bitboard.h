@@ -27,14 +27,20 @@ namespace Zagreus {
     constexpr uint64_t LIGHT_SQUARES = 0x55AA55AA55AA55AA;
     constexpr uint64_t DARK_SQUARES = 0xAA55AA55AA55AA55;
 
+    constexpr uint8_t WHITE_KING_CHECK_BIT = 1 << 0;
+    constexpr uint8_t BLACK_KING_CHECK_BIT = 1 << 1;
+    constexpr uint8_t WHITE_KING_CHECK_RESET_BIT = 1 << 2;
+    constexpr uint8_t BLACK_KING_CHECK_RESET_BIT = 1 << 3;
+
     class Bitboard {
     private:
         uint64_t pieceBB[12]{};
         PieceType pieceSquareMapping[64]{};
         uint64_t colorBB[2]{};
         uint64_t occupiedBB{};
-        int enPassantSquare[2]{};
+        int8_t enPassantSquare[2]{};
         uint8_t castlingRights = 0b00001111;
+        uint8_t kingInCheck = 0b00001100;
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
@@ -43,11 +49,11 @@ namespace Zagreus {
         uint64_t betweenTable[64][64]{};
 
         PieceColor movingColor = PieceColor::NONE;
-        unsigned int ply = 0;
-        unsigned int halfMoveClock = 0;
-        int fullmoveClock = 1;
-        uint64_t moveHistory[256]{0ULL};
-        int moveHistoryIndex = 0;
+        uint8_t ply = 0;
+        uint8_t halfMoveClock = 0;
+        uint8_t fullmoveClock = 1;
+        uint64_t moveHistory[256]{};
+        uint16_t moveHistoryIndex = 0;
         uint64_t zobristHash = 0;
         uint64_t zobristConstants[789]{};
 
@@ -57,7 +63,7 @@ namespace Zagreus {
         unsigned int blackTimeIncrement = 0;
 
         UndoData undoStack[256]{};
-        int undoStackIndex = 0;
+        uint16_t undoStackIndex = 0;
     public:
         Bitboard();
 
@@ -137,7 +143,7 @@ namespace Zagreus {
 
         uint64_t getZobristHash() const;
 
-        int getPly() const;
+        uint8_t getPly() const;
 
         int getWhiteTimeMsec() const;
 
@@ -161,9 +167,9 @@ namespace Zagreus {
 
         uint64_t getPawnAttacks(int square, PieceColor color);
 
-        int getEnPassantSquare(PieceColor color);
+        int8_t getEnPassantSquare(PieceColor color);
 
-        int getPieceWeight(PieceType type);
+        uint16_t getPieceWeight(PieceType type);
 
         int getMostValuablePieceWeight(int attackedSquare, PieceColor attackingColor);
 
@@ -180,10 +186,11 @@ namespace Zagreus {
         void initializeRayAttacks();
 
         void
-        pushUndoData(const uint64_t* pieceBB, const PieceType* pieceSquareMapping, const uint64_t* colorBB,
-                     uint64_t occupiedBB,
-                     const int* enPassantSquare, uint8_t castlingRights,
-                     uint64_t zobristHash, unsigned int movesMade, unsigned int halfMoveClock, int fullMoveClock);
+        pushUndoData(const uint64_t pieceBB[12], const PieceType pieceSquareMapping[64],
+                     const uint64_t colorBB[2],
+                     uint64_t occupiedBB, int8_t enPassantSquare[2],
+                     uint8_t castlingRights, uint64_t zobristHash, uint8_t ply,
+                     uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck);
 
         int see(int square, PieceColor attackingColor);
 
@@ -197,9 +204,9 @@ namespace Zagreus {
 
         bool isSemiOpenFileLenient(int square, PieceColor color);
 
-        unsigned int getHalfMoveClock() const;
+        uint8_t getHalfMoveClock() const;
 
-        int getFullmoveClock() const;
+        uint8_t getFullmoveClock() const;
 
         bool isPinned(int attackedSquare, PieceColor attackingColor);
 
@@ -222,6 +229,12 @@ namespace Zagreus {
         void makeNullMove();
 
         bool isPawnEndgame();
+
+        uint64_t getPawnsOnSameFile(int square, PieceColor color);
+
+        bool isIsolatedPawn(int square, PieceColor pawnColor);
+
+        bool isPassedPawn(int square, PieceColor pawnColor);
     };
 
     uint64_t soutOne(uint64_t b);

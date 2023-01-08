@@ -65,6 +65,8 @@ namespace Zagreus {
         int getPositionalScore(Bitboard &bitboard, PieceColor color);
 
         int getMobilityScore(Bitboard &bitboard, PieceColor color);
+
+        int getPawnScore(Bitboard &bitboard, PieceColor color);
     };
 
     static SearchManager searchManager{};

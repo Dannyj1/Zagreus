@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unordered_map>
+#include <random>
 
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
@@ -9,6 +10,7 @@
 #include "types.h"
 #include "search_mgr.h"
 #include "magics.h"
+#include "pst.h"
 
 uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0ULL;
@@ -56,6 +58,7 @@ int main() {
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
 
     Zagreus::initializeMagicBitboards();
+    Zagreus::initializePst();
 
     senjo::Output(senjo::Output::InfoPrefix) << " ______ ";
     senjo::Output(senjo::Output::InfoPrefix) << " |___  / ";
@@ -68,10 +71,10 @@ int main() {
 
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
 
-    Zagreus::Bitboard bb;
+   /* Zagreus::Bitboard bb;
     bb.setFromFEN("r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13");
     bb.setWhiteTimeMsec(999999999);
-    Zagreus::searchManager.getBestMove(bb, Zagreus::PieceColor::WHITE);
+    Zagreus::searchManager.getBestMove(bb, Zagreus::PieceColor::WHITE);*/
 
     try {
         Zagreus::Engine engine;

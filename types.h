@@ -59,11 +59,11 @@ namespace Zagreus {
     };
 
     struct Move {
-        int fromSquare = 0;
-        int toSquare = 0;
+        uint8_t fromSquare = 0;
+        uint8_t toSquare = 0;
         PieceType pieceType = PieceType::EMPTY;
         uint64_t zobristHash = 0;
-        int ply = 0;
+        uint8_t ply = 0;
         int captureScore = 0;
         PieceType promotionPiece = PieceType::EMPTY;
     };
@@ -79,13 +79,12 @@ namespace Zagreus {
         PieceType pieceSquareMapping[64]{PieceType::EMPTY};
         uint64_t colorBB[2]{0};
         uint64_t occupiedBB = 0;
-        int enPassantSquare[2]{};
+        int8_t enPassantSquare[2]{};
         uint8_t castlingRights = 0;
-        uint64_t attacksFrom[64]{0};
-        uint64_t attacksTo[64]{0};
         uint64_t zobristHash = 0;
-        unsigned int movesMade = 0;
-        unsigned int halfMoveClock = 0;
-        unsigned int fullMoveClock = 0;
+        uint8_t ply = 0;
+        uint8_t halfMoveClock = 0;
+        uint8_t fullMoveClock = 0;
+        uint8_t kingInCheck = 0;
     };
 }

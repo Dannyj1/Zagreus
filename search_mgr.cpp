@@ -4,12 +4,14 @@
 
 #include <iostream>
 #include <chrono>
+#include <immintrin.h>
 
 #include "search_mgr.h"
 #include "time_mgr.h"
 #include "tt.h"
 #include "move_gen.h"
 #include "senjo/Output.h"
+#include "pst.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
@@ -95,22 +97,11 @@ namespace Zagreus {
 
         searchStats.nodes += 1;
 
-        if (board.isKingInCheck(board.getMovingColor())) {
-            depth++;
-        } else if (depth >= 3 && !board.isPawnEndgame()) {
-            board.makeNullMove();
-            int score = zwSearch(board, depth - 3, -alpha, rootMove, rootMove, endTime).score * -1;
-            board.unmakeMove();
-
-            if (score >= beta) {
-                return {rootMove, beta};
-            }
-        }
-
         bool searchPv = true;
         std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
 
-        for (Move &move : moves) {
+        for (int i = 0; i < moves.size(); i++) {
+            Move &move = moves[i];
             assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
@@ -133,15 +124,43 @@ namespace Zagreus {
                 if (searchPv) {
                     result = search(board, depth - 1, -beta, -alpha, rootMove, move, endTime);
                     result.score *= -1;
-                    tt.addPosition(board.getZobristHash(), depth, result.score);
+                    tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                 } else {
-                    result = zwSearch(board, depth - 1, -alpha, rootMove, move, endTime);
+                    int depthReduction = 1;
+                    int depthExtension = 0;
+                    bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
+                    bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
+
+                    if (ownKingInCheck || opponentKingInCheck) {
+                        depthExtension++;
+                    } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
+                        if (depth >= 3 && !board.isPawnEndgame() && !depthExtension) {
+                            board.makeNullMove();
+                            int score = zwSearch(board, depth - 3, -alpha, rootMove, rootMove, endTime).score * -1;
+                            board.unmakeMove();
+
+                            if (score >= beta) {
+                                board.unmakeMove();
+                                return {rootMove, beta};
+                            }
+                        }
+
+                        if (depth > 2 && move.captureScore < 0) {
+                            if (i > 3) {
+                                depthReduction += 1;
+                            } else if (i > 6) {
+                                depthReduction += depth / 3;
+                            }
+                        }
+                    }
+
+                    result = zwSearch(board, depth + depthExtension - depthReduction, -alpha, rootMove, move, endTime);
                     result.score *= -1;
 
                     if (result.score > alpha) {
                         result = search(board, depth - 1, -beta, -alpha, rootMove, move, endTime);
                         result.score *= -1;
-                        tt.addPosition(board.getZobristHash(), depth, result.score);
+                        tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                     }
                 }
             }
@@ -149,7 +168,6 @@ namespace Zagreus {
             board.unmakeMove();
 
             if (result.score >= beta) {
-                tt.killerMoves[2][board.getPly()] = tt.killerMoves[1][depth];
                 tt.killerMoves[1][board.getPly()] = tt.killerMoves[0][depth];
                 tt.killerMoves[0][board.getPly()] = encodeMove(move);
 
@@ -158,7 +176,7 @@ namespace Zagreus {
 
             if (result.score > alpha) {
                 if (searchPv) {
-                    tt.addPVMove(board.getZobristHash(), depth, result.score);
+                    tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                 }
 
                 assert(move.fromSquare >= 0);
@@ -185,21 +203,10 @@ namespace Zagreus {
 
         searchStats.nodes += 1;
 
-        if (board.isKingInCheck(board.getMovingColor())) {
-            depth++;
-        } else if (depth >= 3 && !board.isPawnEndgame()) {
-            board.makeNullMove();
-            int score = zwSearch(board, depth - 3, 1 - beta, rootMove, rootMove, endTime).score * -1;
-            board.unmakeMove();
-
-            if (score >= beta) {
-                return {rootMove, beta};
-            }
-        }
-
         std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
 
-        for (Move &move : moves) {
+        for (int i = 0; i < moves.size(); i++) {
+            Move &move = moves[i];
             assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
@@ -213,7 +220,24 @@ namespace Zagreus {
                 continue;
             }
 
-            SearchResult result = zwSearch(board, depth - 1, 1 - beta, rootMove, move, endTime);
+            int depthReduction = 1;
+            int depthExtension = 0;
+            bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
+            bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
+
+            if (ownKingInCheck || opponentKingInCheck) {
+                depthExtension++;
+            } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
+                if (depth > 2 && move.captureScore < 0) {
+                    if (i > 3) {
+                        depthReduction += 1;
+                    } else if (i > 6) {
+                        depthReduction += depth / 3;
+                    }
+                }
+            }
+
+            SearchResult result = zwSearch(board, depth + depthExtension - depthReduction, 1 - beta, rootMove, move, endTime);
             result.score *= -1;
             board.unmakeMove();
 
@@ -331,6 +355,9 @@ namespace Zagreus {
 
         whiteScore += getWhiteKingScore(board);
         blackScore += getBlackKingScore(board);
+
+        whiteScore += getPawnScore(board, PieceColor::WHITE);
+        blackScore += getPawnScore(board, PieceColor::BLACK);
 
         whiteScore += getWhiteBishopScore(board);
         blackScore += getBlackBishopScore(board);
@@ -487,8 +514,8 @@ namespace Zagreus {
 
     int SearchManager::getWhiteBishopScore(Bitboard &bitboard) {
         int score = 0;
-        int bishopAmount = popcnt(bitboard.getPieceBoard(PieceType::WHITE_BISHOP));
         uint64_t bishopBB = bitboard.getPieceBoard(PieceType::WHITE_BISHOP);
+        int bishopAmount = popcnt(bishopBB);
         uint64_t pawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN);
 
         if (bishopAmount == 1) {
@@ -515,8 +542,8 @@ namespace Zagreus {
 
     int SearchManager::getBlackBishopScore(Bitboard &bitboard) {
         int score = 0;
-        int bishopAmount = popcnt(bitboard.getPieceBoard(PieceType::BLACK_BISHOP));
         uint64_t bishopBB = bitboard.getPieceBoard(PieceType::BLACK_BISHOP);
+        int bishopAmount = popcnt(bishopBB);
         uint64_t pawnBB = bitboard.getPieceBoard(PieceType::BLACK_PAWN);
 
         if (bishopAmount == 1) {
@@ -556,7 +583,7 @@ namespace Zagreus {
             }
 
             score += popcnt(attacks) * 7;
-            centerPattern &= ~(1ULL << index);
+            centerPattern = _blsr_u64(centerPattern);
         }
 
         while (extendedCenterPattern) {
@@ -564,7 +591,7 @@ namespace Zagreus {
             uint64_t attacks = bitboard.getSquareAttacksByColor(index, color);
 
             score += popcnt(attacks) * 4;
-            extendedCenterPattern &= ~(1ULL << index);
+            extendedCenterPattern = _blsr_u64(extendedCenterPattern);
         }
 
         return score;
@@ -677,6 +704,7 @@ namespace Zagreus {
     }
 
     int SearchManager::getPositionalScore(Bitboard &bitboard, PieceColor color) {
+        uint64_t occupiedBB = bitboard.getOccupiedBoard();
         uint64_t opponentPieces = bitboard.getBoardByColor(color);
         int score = 0;
 
@@ -687,7 +715,15 @@ namespace Zagreus {
                 score -= 5;
             }
 
-            opponentPieces &= ~(1ULL << index);
+            opponentPieces = _blsr_u64(opponentPieces);
+        }
+
+        while (occupiedBB) {
+            uint64_t index = bitscanForward(occupiedBB);
+            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
+
+            score += getPstValue(pieceOnSquare, index);
+            occupiedBB = _blsr_u64(occupiedBB);
         }
 
         return score;
@@ -737,6 +773,34 @@ namespace Zagreus {
         }
 
         score += popcnt(queenAttacks) * 7;
+
+        return score;
+    }
+
+    int SearchManager::getPawnScore(Bitboard &bitboard, PieceColor color) {
+        int score = 0;
+
+        for (int i = 0; i < 8; i++) {
+            uint64_t pawnsOnFile = bitboard.getPawnsOnSameFile(i, color);
+            bool isPassed = bitboard.isPassedPawn(i, color);
+            bool isIsolated = bitboard.isIsolatedPawn(i, color);
+            bool isSemiOpen = bitboard.isSemiOpenFile(i, color);
+            int amountOfPawns = popcnt(pawnsOnFile);
+
+            score -= 10 * (amountOfPawns - 1);
+
+            if (isPassed) {
+                score += 10;
+            } else if (isIsolated) {
+                if (isSemiOpen) {
+                    score -= 20;
+                } else {
+                    score -= 10;
+                }
+            } else if (isSemiOpen) {
+                score += 3;
+            }
+        }
 
         return score;
     }

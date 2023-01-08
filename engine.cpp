@@ -122,6 +122,7 @@ namespace Zagreus {
 
     void Engine::initialize() {
         board = Bitboard{};
+        engineColor = PieceColor::NONE;
         isEngineInitialized = true;
     }
 
@@ -131,6 +132,7 @@ namespace Zagreus {
 
     bool Engine::setPosition(const std::string &fen, std::string* remain) {
         board = {};
+        engineColor = PieceColor::NONE;
         return board.setFromFEN(fen);
     }
 
