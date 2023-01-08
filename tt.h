@@ -20,10 +20,10 @@ namespace Zagreus {
     class TranspositionTable {
     public:
         TTEntry* transpositionTable = new TTEntry[1 << 26]{};
-        uint32_t** killerMoves = new uint32_t*[3]{};
+        uint32_t** killerMoves = new uint32_t* [3]{};
         // TODO: make 1d
-        uint32_t** historyMoves = new uint32_t*[12]{};
-        uint32_t** counterMoves = new uint32_t*[64]{};
+        uint32_t** historyMoves = new uint32_t* [12]{};
+        uint32_t** counterMoves = new uint32_t* [64]{};
 
         TranspositionTable() {
             for (int i = 0; i < 3; i++) {

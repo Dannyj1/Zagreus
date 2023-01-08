@@ -12,29 +12,24 @@ namespace Zagreus {
         int movesLeft = 90 - bitboard.getPly();
         uint64_t timeLeft =
                 movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
-        // Lichess API latency
         timeLeft -= 200;
         uint64_t increment =
                 movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeIncrement() : bitboard.getBlackTimeIncrement();
 
         timeLeft += increment / 2;
 
-        if (movesLeft < 7) {
-            movesLeft = 7;
+        if (movesLeft < 6) {
+            movesLeft = 6;
         }
 
         if (timeLeft == 0) {
-            timeLeft = 200;
+            timeLeft = 100;
         }
 
         uint64_t timePerMove = timeLeft / movesLeft;
 
         if (bitboard.getPly() <= 25) {
             timePerMove *= 2;
-        }
-
-        if (timeLeft < 30000) {
-            timePerMove = timeLeft / 2;
         }
 
         std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();

@@ -119,7 +119,7 @@ namespace Zagreus {
 
         void printAvailableMoves(uint64_t availableMoves);
 
-        void printAvailableMoves(const std::vector<Move>& moves);
+        void printAvailableMoves(const std::vector<Move> &moves);
 
         uint64_t getBoardByColor(PieceColor color);
 
@@ -192,7 +192,8 @@ namespace Zagreus {
                      const uint64_t colorBB[2],
                      uint64_t occupiedBB, int8_t enPassantSquare[2],
                      uint8_t castlingRights, uint64_t zobristHash, uint8_t ply,
-                     uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck, uint8_t previousMoveFrom, uint8_t previousMoveTo);
+                     uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck, uint8_t previousMoveFrom,
+                     uint8_t previousMoveTo);
 
         int see(int square, PieceColor attackingColor);
 

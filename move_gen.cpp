@@ -127,9 +127,10 @@ namespace Zagreus {
         return moves;
     }
 
-    void generatePawnMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                           PieceColor color,
-                           PieceType pieceType, bool quiesce) {
+    void
+    generatePawnMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                      PieceColor color,
+                      PieceType pieceType, bool quiesce) {
         uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
 
         while (pawnBB) {
@@ -170,7 +171,9 @@ namespace Zagreus {
                 int captureScore = 0;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) - bitboard.getPieceWeight(pieceType);
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
+                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
+                                   bitboard.getPieceWeight(pieceType);
                 }
 
                 if (genIndex >= 56 || genIndex <= 7) {
@@ -196,8 +199,9 @@ namespace Zagreus {
         }
     }
 
-    void generateKnightMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                             PieceColor color, PieceType pieceType, bool quiesce) {
+    void
+    generateKnightMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                        PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t knightBB = bitboard.getPieceBoard(pieceType);
 
         while (knightBB) {
@@ -222,7 +226,9 @@ namespace Zagreus {
                 int captureScore = 0;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) - bitboard.getPieceWeight(pieceType);
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
+                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
+                                   bitboard.getPieceWeight(pieceType);
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
@@ -233,8 +239,9 @@ namespace Zagreus {
         }
     }
 
-    void generateBishopMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                             PieceColor color, PieceType pieceType, bool quiesce) {
+    void
+    generateBishopMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                        PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t bishopBB = bitboard.getPieceBoard(pieceType);
 
         while (bishopBB) {
@@ -259,7 +266,9 @@ namespace Zagreus {
                 int captureScore = 0;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) - bitboard.getPieceWeight(pieceType);
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
+                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
+                                   bitboard.getPieceWeight(pieceType);
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
@@ -270,9 +279,10 @@ namespace Zagreus {
         }
     }
 
-    void generateRookMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                           PieceColor color,
-                           PieceType pieceType, bool quiesce) {
+    void
+    generateRookMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                      PieceColor color,
+                      PieceType pieceType, bool quiesce) {
         uint64_t rookBB = bitboard.getPieceBoard(pieceType);
         uint8_t castlingRights = bitboard.getCastlingRights();
         uint64_t occupiedBB = bitboard.getOccupiedBoard();
@@ -354,7 +364,9 @@ namespace Zagreus {
                 int captureScore = 0;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) - bitboard.getPieceWeight(pieceType);
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
+                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
+                                   bitboard.getPieceWeight(pieceType);
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
@@ -365,8 +377,9 @@ namespace Zagreus {
         }
     }
 
-    void generateQueenMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                            PieceColor color, PieceType pieceType, bool quiesce) {
+    void
+    generateQueenMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                       PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t queenBB = bitboard.getPieceBoard(pieceType);
 
         while (queenBB) {
@@ -391,7 +404,9 @@ namespace Zagreus {
                 int captureScore = 0;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) - bitboard.getPieceWeight(pieceType);
+                    captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
+                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
+                                   bitboard.getPieceWeight(pieceType);
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
@@ -402,8 +417,9 @@ namespace Zagreus {
         }
     }
 
-    void generateKingMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
-                           PieceColor color, PieceType pieceType, bool quiesce) {
+    void
+    generateKingMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,
+                      PieceColor color, PieceType pieceType, bool quiesce) {
         uint64_t kingBB = bitboard.getPieceBoard(pieceType);
         uint64_t opponentKingBB = bitboard.getPieceBoard(
                 color == PieceColor::WHITE ? PieceType::BLACK_KING : PieceType::WHITE_KING);
@@ -428,7 +444,9 @@ namespace Zagreus {
             int captureScore = 0;
 
             if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
-                captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) : bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) - bitboard.getPieceWeight(pieceType);
+                captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
+                               bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
+                               bitboard.getPieceWeight(pieceType);
             }
 
             moves.push_back({index, genIndex, pieceType, bitboard.getZobristHash(), bitboard.getPly(),
