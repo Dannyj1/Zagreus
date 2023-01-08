@@ -31,10 +31,6 @@ namespace Zagreus {
             searchStats.depth = depth;
             searchStats.seldepth = 0;
 
-            if (depth > 50) {
-                break;
-            }
-
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
 
             for (Move &move : moves) {
@@ -121,44 +117,51 @@ namespace Zagreus {
             if (entry->zobristHash == board.getZobristHash() && entry->depth >= depth) {
                 result = {rootMove, entry->score};
             } else {
-                if (searchPv) {
-                    result = search(board, depth - 1, -beta, -alpha, rootMove, move, endTime);
-                    result.score *= -1;
-                    tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
-                } else {
-                    int depthReduction = 1;
-                    int depthExtension = 0;
-                    bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
-                    bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
+                bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
+                bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
+                int depthExtension = 0;
 
-                    if (ownKingInCheck || opponentKingInCheck) {
-                        depthExtension++;
-                    } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
-                        if (depth >= 3 && !board.isPawnEndgame() && !depthExtension) {
-                            board.makeNullMove();
-                            int score = zwSearch(board, depth - 3, -alpha, rootMove, rootMove, endTime).score * -1;
+                if (ownKingInCheck || opponentKingInCheck) {
+                    depthExtension++;
+                } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
+                    if (depth >= 3 && !board.isPawnEndgame() && !depthExtension) {
+                        board.makeNullMove();
+                        int score = zwSearch(board, depth - 3, -alpha, rootMove, rootMove, endTime).score * -1;
+                        board.unmakeMove();
+
+                        if (score >= beta) {
                             board.unmakeMove();
-
-                            if (score >= beta) {
-                                board.unmakeMove();
-                                return {rootMove, beta};
-                            }
-                        }
-
-                        if (depth > 2 && move.captureScore < 0) {
-                            if (i > 3) {
-                                depthReduction += 1;
-                            } else if (i > 6) {
-                                depthReduction += depth / 3;
-                            }
+                            return {rootMove, beta};
                         }
                     }
 
-                    result = zwSearch(board, depth + depthExtension - depthReduction, -alpha, rootMove, move, endTime);
+                    if (depth >= 3 && move.captureScore < 0 && i > 5) {
+                        if (searchPv) {
+                            result = search(board, depth / 2, -beta, -alpha, rootMove, move, endTime);
+                        } else {
+                            result = zwSearch(board, depth / 4, -alpha, rootMove, rootMove,
+                                              endTime);
+                        }
+
+                        result.score *= -1;
+
+                        if (result.score <= alpha) {
+                            board.unmakeMove();
+                            continue;
+                        }
+                    }
+                }
+
+                if (searchPv) {
+                    result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime);
+                    result.score *= -1;
+                    tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
+                } else {
+                    result = zwSearch(board, depth - 1 + depthExtension, -alpha, rootMove, move, endTime);
                     result.score *= -1;
 
                     if (result.score > alpha) {
-                        result = search(board, depth - 1, -beta, -alpha, rootMove, move, endTime);
+                        result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime);
                         result.score *= -1;
                         tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                     }
@@ -220,25 +223,27 @@ namespace Zagreus {
                 continue;
             }
 
-            int depthReduction = 1;
             int depthExtension = 0;
             bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
             bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
+            SearchResult result;
 
             if (ownKingInCheck || opponentKingInCheck) {
                 depthExtension++;
-            } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
-                if (depth > 2 && move.captureScore < 0) {
-                    if (i > 3) {
-                        depthReduction += 1;
-                    } else if (i > 6) {
-                        depthReduction += depth / 3;
-                    }
+            } else if (depth >= 3 && !depthExtension && move.captureScore < 0 && i > 5) {
+                result = zwSearch(board, depth / 4, 1 - beta, rootMove, rootMove, endTime);
+                result.score *= -1;
+
+                if (result.score <= beta - 1) {
+                    board.unmakeMove();
+                    continue;
                 }
             }
 
-            SearchResult result = zwSearch(board, depth + depthExtension - depthReduction, 1 - beta, rootMove, move, endTime);
+
+            result = zwSearch(board, depth - 1 + depthExtension, 1 - beta, rootMove, move, endTime);
             result.score *= -1;
+
             board.unmakeMove();
 
             if (result.score >= beta) {

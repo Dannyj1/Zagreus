@@ -50,7 +50,7 @@ namespace Zagreus {
         assert(b.fromSquare != b.toSquare);
 
         if (aEntry->zobristHash == a.zobristHash && aEntry->isPVMove) {
-            aScore = 50000;
+            aScore = 50000 + aEntry->score;
         } else if (aEntry->zobristHash == a.zobristHash) {
             aScore = 25000 + aEntry->score;
         } else if (a.captureScore >= 0) {
@@ -70,7 +70,7 @@ namespace Zagreus {
         }
 
         if (bEntry->zobristHash == b.zobristHash && bEntry->isPVMove) {
-            bScore = 50000;
+            bScore = 50000 + bEntry->score;
         } else if (bEntry->zobristHash == b.zobristHash) {
             bScore = 25000 + bEntry->score;
         } else if (b.captureScore >= 0) {
