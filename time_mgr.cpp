@@ -9,27 +9,32 @@
 namespace Zagreus {
     std::chrono::time_point<std::chrono::high_resolution_clock>
     TimeManager::getEndTime(Bitboard &bitboard, PieceColor movingColor) {
-        int movesLeft = 80 - bitboard.getPly();
+        int movesLeft = 90 - bitboard.getPly();
         uint64_t timeLeft =
                 movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
-        timeLeft -= 100;
+        // Lichess API latency
+        timeLeft -= 200;
         uint64_t increment =
                 movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeIncrement() : bitboard.getBlackTimeIncrement();
 
         timeLeft += increment / 2;
 
-        if (movesLeft < 6) {
-            movesLeft = 6;
+        if (movesLeft < 7) {
+            movesLeft = 7;
         }
 
         if (timeLeft == 0) {
-            timeLeft = 100;
+            timeLeft = 200;
         }
 
         uint64_t timePerMove = timeLeft / movesLeft;
 
         if (bitboard.getPly() <= 25) {
             timePerMove *= 2;
+        }
+
+        if (timeLeft < 30000) {
+            timePerMove = timeLeft / 2;
         }
 
         std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();

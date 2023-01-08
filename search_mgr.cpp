@@ -709,20 +709,22 @@ namespace Zagreus {
     }
 
     int SearchManager::getPositionalScore(Bitboard &bitboard, PieceColor color) {
-        uint64_t occupiedBB = bitboard.getOccupiedBoard();
-        uint64_t opponentPieces = bitboard.getBoardByColor(color);
+/*        uint64_t occupiedBB = bitboard.getOccupiedBoard();
+        uint64_t ownPieces = bitboard.getBoardByColor(color);
         int score = 0;
 
-        while (opponentPieces) {
-            uint64_t index = bitscanForward(opponentPieces);
+        while (ownPieces) {
+            uint64_t index = bitscanForward(ownPieces);
 
             if (bitboard.isPinned(index, color)) {
-                score -= 5;
+                score += bitboard.getPieceWeight(bitboard.getPieceOnSquare(index)) / 100;
             }
 
-            opponentPieces = _blsr_u64(opponentPieces);
-        }
+            ownPieces = _blsr_u64(ownPieces);
+        }*/
 
+        int score = 0;
+        uint64_t occupiedBB = bitboard.getOccupiedBoard();
         while (occupiedBB) {
             uint64_t index = bitscanForward(occupiedBB);
             PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
@@ -737,6 +739,8 @@ namespace Zagreus {
     int SearchManager::getMobilityScore(Bitboard &bitboard, PieceColor color) {
         int score = 0;
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
+        uint64_t opponentPawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN + Bitboard::getOppositeColor(color));
+        uint64_t opponentPawnAttacks = bitboard.calculatePawnAttacks(opponentPawnBB, Bitboard::getOppositeColor(color));
         uint64_t knightBB = bitboard.getPieceBoard(PieceType::WHITE_KNIGHT + color);
         uint64_t bishopBB = bitboard.getPieceBoard(PieceType::WHITE_BISHOP + color);
         uint64_t rookBB = bitboard.getPieceBoard(PieceType::WHITE_ROOK + color);
@@ -751,33 +755,50 @@ namespace Zagreus {
 
         while (bishopBB) {
             uint64_t index = bitscanForward(bishopBB);
-            bishopAttacks |= bitboard.getBishopAttacks(index, occupied) & ~ownPiecesBB;
+
+            if (!bitboard.isPinned(index, color)) {
+                bishopAttacks |= bitboard.getBishopAttacks(index, occupied) & ~ownPiecesBB;
+            }
+
             bishopBB &= ~(1ULL << index);
         }
 
         while (rookBB) {
             uint64_t index = bitscanForward(rookBB);
-            rookAttacks |= bitboard.getRookAttacks(index, occupied) & ~ownPiecesBB;
+
+            if (!bitboard.isPinned(index, color)) {
+                rookAttacks |= bitboard.getRookAttacks(index, occupied) & ~ownPiecesBB;
+            }
+
             rookBB &= ~(1ULL << index);
         }
 
         while (queenBB) {
             uint64_t index = bitscanForward(queenBB);
-            queenAttacks |= bitboard.getQueenAttacks(index, occupied) & ~ownPiecesBB;
+
+            if (!bitboard.isPinned(index, color)) {
+                queenAttacks |= bitboard.getQueenAttacks(index, occupied) & ~ownPiecesBB;
+            }
+
             queenBB &= ~(1ULL << index);
         }
+
+        knightAttacks &= ~opponentPawnAttacks;
+        bishopAttacks &= ~opponentPawnAttacks;
+        rookAttacks &= ~opponentPawnAttacks;
+        queenAttacks &= ~opponentPawnAttacks;
 
         if (bitboard.getFullmoveClock() > 12) {
             score += popcnt(knightAttacks) * 2;
             score += popcnt(bishopAttacks) * 2;
             score += popcnt(rookAttacks) * 5;
+            score += popcnt(queenAttacks) * 7;
         } else {
             score += popcnt(knightAttacks) * 5;
             score += popcnt(bishopAttacks) * 5;
-            score += popcnt(rookAttacks) * 2;
+            score += popcnt(rookAttacks);
+            score += popcnt(queenAttacks) * 2;
         }
-
-        score += popcnt(queenAttacks) * 7;
 
         return score;
     }
