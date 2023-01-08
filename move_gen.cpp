@@ -49,15 +49,17 @@ namespace Zagreus {
         assert(a.fromSquare != a.toSquare);
         assert(b.fromSquare != b.toSquare);
 
-        if (aEntry->zobristHash == a.zobristHash && aEntry->isPVMove) {
-            aScore = 50000 + aEntry->score;
-        } else if (aEntry->zobristHash == a.zobristHash) {
-            aScore = 25000 + aEntry->score;
+        if (aEntry->zobristHash == a.zobristHash) {
+            if (aEntry->isPVMove) {
+                aScore = 50000 + aEntry->score;
+            } else {
+                aScore = 25000 + aEntry->score;
+            }
         } else if (a.captureScore >= 0) {
             aScore = 10000 + a.captureScore;
         } else {
             uint32_t aMoveCode = encodeMove(a);
-            
+
             if (tt.killerMoves[0][a.ply] == aMoveCode) {
                 aScore = 5000;
             } else if (tt.killerMoves[1][a.ply] == aMoveCode) {
@@ -67,10 +69,12 @@ namespace Zagreus {
             }
         }
 
-        if (bEntry->zobristHash == b.zobristHash && bEntry->isPVMove) {
-            bScore = 50000 + bEntry->score;
-        } else if (bEntry->zobristHash == b.zobristHash) {
-            bScore = 25000 + bEntry->score;
+        if (bEntry->zobristHash == b.zobristHash) {
+            if (bEntry->isPVMove) {
+                bScore = 50000 + bEntry->score;
+            } else {
+                bScore = 25000 + bEntry->score;
+            }
         } else if (b.captureScore >= 0) {
             bScore = 10000 + b.captureScore;
         } else {
