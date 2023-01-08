@@ -41,6 +41,8 @@ namespace Zagreus {
         int8_t enPassantSquare[2]{};
         uint8_t castlingRights = 0b00001111;
         uint8_t kingInCheck = 0b00001100;
+        uint8_t previousMoveFrom = 0;
+        uint8_t previousMoveTo = 0;
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
@@ -190,7 +192,7 @@ namespace Zagreus {
                      const uint64_t colorBB[2],
                      uint64_t occupiedBB, int8_t enPassantSquare[2],
                      uint8_t castlingRights, uint64_t zobristHash, uint8_t ply,
-                     uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck);
+                     uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck, uint8_t previousMoveFrom, uint8_t previousMoveTo);
 
         int see(int square, PieceColor attackingColor);
 
@@ -235,6 +237,10 @@ namespace Zagreus {
         bool isIsolatedPawn(int square, PieceColor pawnColor);
 
         bool isPassedPawn(int square, PieceColor pawnColor);
+
+        uint8_t getPreviousMoveFrom() const;
+
+        uint8_t getPreviousMoveTo() const;
     };
 
     uint64_t soutOne(uint64_t b);
@@ -304,4 +310,6 @@ namespace Zagreus {
     uint64_t calculateKingAttacks(uint64_t kingSet);
 
     uint32_t encodeMove(Move &move);
+
+    uint32_t encodeMove(int fromSquare, int toSquare, PieceType pieceType);
 }

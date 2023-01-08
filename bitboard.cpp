@@ -82,7 +82,7 @@ namespace Zagreus {
 
         pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, zobristHash,
                      ply,
-                     halfMoveClock, fullmoveClock, kingInCheck);
+                     halfMoveClock, fullmoveClock, kingInCheck, previousMoveFrom, previousMoveTo);
 
         movingColor = getOppositeColor(movingColor);
 
@@ -237,6 +237,14 @@ namespace Zagreus {
         return fileMask == (fileMask & ownOccupied);
     }
 
+    uint8_t Bitboard::getPreviousMoveFrom() const {
+        return previousMoveFrom;
+    }
+
+    uint8_t Bitboard::getPreviousMoveTo() const {
+        return previousMoveTo;
+    }
+
     void Bitboard::makeMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
         PieceType capturedPiece = getPieceOnSquare(toSquare);
 
@@ -252,8 +260,10 @@ namespace Zagreus {
 
         pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, zobristHash,
                      ply,
-                     halfMoveClock, fullmoveClock, kingInCheck);
+                     halfMoveClock, fullmoveClock, kingInCheck, previousMoveFrom, previousMoveTo);
 
+        previousMoveFrom = fromSquare;
+        previousMoveTo = toSquare;
         kingInCheck = 0b00001100;
         ply += 1;
         halfMoveClock += 1;
@@ -399,7 +409,7 @@ namespace Zagreus {
                                 const uint64_t colorBB[2],
                                 uint64_t occupiedBB, int8_t enPassantSquare[2],
                                 uint8_t castlingRights, uint64_t zobristHash, uint8_t ply,
-                                uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck) {
+                                uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck, uint8_t previousMoveFrom, uint8_t previousMoveTo) {
         for (int i = 0; i < 12; i++) {
             undoStack[undoStackIndex].pieceBB[i] = pieceBB[i];
         }
@@ -419,6 +429,8 @@ namespace Zagreus {
         undoStack[undoStackIndex].halfMoveClock = halfMoveClock;
         undoStack[undoStackIndex].fullMoveClock = fullMoveClock;
         undoStack[undoStackIndex].kingInCheck = kingInCheck;
+        undoStack[undoStackIndex].previousMoveFrom = previousMoveFrom;
+        undoStack[undoStackIndex].previousMoveTo = previousMoveTo;
 
         undoStackIndex++;
         assert(undoStackIndex < 256);
@@ -452,6 +464,8 @@ namespace Zagreus {
         halfMoveClock = undoData.halfMoveClock;
         fullmoveClock = undoData.fullMoveClock;
         kingInCheck = undoData.kingInCheck;
+        previousMoveFrom = undoData.previousMoveFrom;
+        previousMoveTo = undoData.previousMoveTo;
     }
 
     int8_t Bitboard::getEnPassantSquare(PieceColor color) {
@@ -1489,6 +1503,10 @@ namespace Zagreus {
     uint32_t encodeMove(Move &move) {
         return (move.promotionPiece << 25) | (move.promotionPiece << 20) | (move.pieceType << 15) |
                (move.fromSquare << 7) | move.toSquare;
+    }
+
+    uint32_t encodeMove(int fromSquare, int toSquare, PieceType pieceType) {
+        return (pieceType << 15) | (fromSquare << 7) | toSquare;
     }
 
     uint64_t soutOne(uint64_t b) {

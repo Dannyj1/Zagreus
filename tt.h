@@ -22,6 +22,7 @@ namespace Zagreus {
         TTEntry* transpositionTable = new TTEntry[1 << 26]{};
         uint32_t** killerMoves = new uint32_t*[3]{};
         uint32_t** historyMoves = new uint32_t*[12]{};
+        uint32_t** counterMoves = new uint32_t*[64]{};
 
         TranspositionTable() {
             for (int i = 0; i < 3; i++) {
@@ -30,6 +31,10 @@ namespace Zagreus {
 
             for (int i = 0; i < 12; i++) {
                 historyMoves[i] = new uint32_t[64]{};
+            }
+
+            for (int i = 0; i < 64; i++) {
+                counterMoves[i] = new uint32_t[64]{};
             }
         }
 
@@ -44,8 +49,13 @@ namespace Zagreus {
                 delete[] historyMoves[i];
             }
 
+            for (int i = 0; i < 64; i++) {
+                delete[] counterMoves[i];
+            }
+
             delete[] killerMoves;
             delete[] historyMoves;
+            delete[] counterMoves;
         }
 
         void addPosition(uint64_t zobristHash, int depth, int score, bool isPVMove);

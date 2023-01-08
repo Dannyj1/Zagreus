@@ -86,5 +86,7 @@ namespace Zagreus {
         uint8_t halfMoveClock = 0;
         uint8_t fullMoveClock = 0;
         uint8_t kingInCheck = 0;
+        uint32_t previousMoveFrom = 0;
+        uint32_t previousMoveTo = 0;
     };
 }

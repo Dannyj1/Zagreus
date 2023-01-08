@@ -35,12 +35,16 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
 
-        std::sort(moves.begin(), moves.end(), sortMoves);
+        std::sort(moves.begin(), moves.end(), [&bitboard](Move &a, Move &b) {
+            return sortMoves(bitboard, a, b);
+        });
+
 
         return moves;
     }
 
-    bool sortMoves(Move &a, Move &b) {
+    bool sortMoves(Bitboard &bitboard, Move &a, Move &b) {
+        // TODO: implement countermoves heuristic. Need to have previousMoveFrom available in this function.
         int aScore = tt.historyMoves[a.pieceType][a.toSquare];
         int bScore = tt.historyMoves[b.pieceType][b.toSquare];
         TTEntry* aEntry = tt.getPosition(a.zobristHash);
@@ -51,41 +55,45 @@ namespace Zagreus {
 
         if (aEntry->zobristHash == a.zobristHash) {
             if (aEntry->isPVMove) {
-                aScore = 50000 + aEntry->score;
+                aScore += 50000 + aEntry->score;
             } else {
-                aScore = 25000 + aEntry->score;
+                aScore += 25000 + aEntry->score;
             }
         } else if (a.captureScore >= 0) {
-            aScore = 10000 + a.captureScore;
+            aScore += 10000 + a.captureScore;
         } else {
             uint32_t aMoveCode = encodeMove(a);
 
             if (tt.killerMoves[0][a.ply] == aMoveCode) {
-                aScore = 5000;
+                aScore += 5000;
             } else if (tt.killerMoves[1][a.ply] == aMoveCode) {
-                aScore = 4000;
+                aScore += 4000;
+            } else if (tt.counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == aMoveCode) {
+                aScore += 3000;
             } else if (a.captureScore < -1) {
-                aScore = a.captureScore - 5000;
+                aScore += a.captureScore - 5000;
             }
         }
 
         if (bEntry->zobristHash == b.zobristHash) {
             if (bEntry->isPVMove) {
-                bScore = 50000 + bEntry->score;
+                bScore += 50000 + bEntry->score;
             } else {
-                bScore = 25000 + bEntry->score;
+                bScore += 25000 + bEntry->score;
             }
         } else if (b.captureScore >= 0) {
-            bScore = 10000 + b.captureScore;
+            bScore += 10000 + b.captureScore;
         } else {
             uint32_t bMoveCode = encodeMove(b);
 
             if (tt.killerMoves[0][b.ply] == bMoveCode) {
-                bScore = 5000;
+                bScore += 5000;
             } else if (tt.killerMoves[1][b.ply] == bMoveCode) {
-                bScore = 4000;
+                bScore += 4000;
+            } else if (tt.counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == bMoveCode) {
+                bScore += 3000;
             } else if (b.captureScore < -1) {
-                bScore = b.captureScore - 5000;
+                bScore += b.captureScore - 5000;
             }
         }
 
@@ -112,7 +120,9 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING, true);
 
-        std::sort(moves.begin(), moves.end(), sortMoves);
+        std::sort(moves.begin(), moves.end(), [&bitboard](Move &a, Move &b) {
+            return sortMoves(bitboard, a, b);
+        });
 
         return moves;
     }

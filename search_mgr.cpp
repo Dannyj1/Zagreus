@@ -49,7 +49,8 @@ namespace Zagreus {
                     continue;
                 }
 
-                SearchResult result = search(board, depth, -99999999, 99999999, move, move, endTime);
+                Move previousMove = {board.getPreviousMoveFrom(), board.getPreviousMoveTo()};
+                SearchResult result = search(board, depth, -99999999, 99999999, move, previousMove, endTime);
                 result.score *= -1;
                 board.unmakeMove();
 
@@ -172,6 +173,7 @@ namespace Zagreus {
             if (result.score >= beta) {
                 tt.killerMoves[1][board.getPly()] = tt.killerMoves[0][depth];
                 tt.killerMoves[0][board.getPly()] = encodeMove(move);
+                tt.counterMoves[previousMove.fromSquare][previousMove.toSquare] = encodeMove(previousMove);
 
                 return {rootMove, beta};
             }
