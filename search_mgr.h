@@ -23,6 +23,23 @@
 #include "bitboard.h"
 
 namespace Zagreus {
+    struct EvalContext {
+        int whiteScore = 0;
+        int blackScore = 0;
+        uint64_t whitePawnAttacks = 0;
+        uint64_t whiteKnightAttacks = 0;
+        uint64_t whiteBishopAttacks = 0;
+        uint64_t whiteRookAttacks = 0;
+        uint64_t whiteQueenAttacks = 0;
+        uint64_t whiteCombinedAttacks = 0;
+        uint64_t blackPawnAttacks = 0;
+        uint64_t blackKnightAttacks = 0;
+        uint64_t blackBishopAttacks = 0;
+        uint64_t blackRookAttacks = 0;
+        uint64_t blackQueenAttacks = 0;
+        uint64_t blackCombinedAttacks = 0;
+    };
+
     class SearchManager {
     private:
         bool isSearching = false;
@@ -48,37 +65,41 @@ namespace Zagreus {
 
         senjo::SearchStats getSearchStats();
 
-        int getWhiteMaterialScore(Bitboard &board) const;
+        void getWhiteMaterialScore(EvalContext &evalContext, Bitboard &board) const;
 
-        int getBlackMaterialScore(Bitboard &board) const;
+        void getBlackMaterialScore(EvalContext &evalContext, Bitboard &board) const;
 
-        int getWhiteConnectivityScore(Bitboard &bitboard);
+        void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getBlackConnectivityScore(Bitboard &bitboard);
+        void getBlackConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getWhiteKingScore(Bitboard &bitboard);
+        void getWhiteKingScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getBlackKingScore(Bitboard &bitboard);
+        void getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard);
 
         void resetStats();
 
-        int getWhiteBishopScore(Bitboard &bitboard);
+        void getWhiteBishopScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getBlackBishopScore(Bitboard &bitboard);
+        void getBlackBishopScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getWhiteDevelopmentScore(Bitboard &bitboard);
+        void getWhiteDevelopmentScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getBlackDevelopmentScore(Bitboard &bitboard);
+        void getBlackDevelopmentScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getWhiteRookScore(Bitboard &bitboard);
+        void getWhiteRookScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getBlackRookScore(Bitboard &bitboard);
+        void getBlackRookScore(EvalContext &evalContext, Bitboard &bitboard);
 
-        int getPositionalScore(Bitboard &bitboard, PieceColor color);
+        void getPositionalScore(EvalContext &evalContext, Bitboard &bitboard, PieceColor color);
 
-        int getMobilityScore(Bitboard &bitboard, PieceColor color);
+        void getPawnScore(EvalContext &evalContext, Bitboard &bitboard, PieceColor color);
 
-        int getPawnScore(Bitboard &bitboard, PieceColor color);
+        EvalContext createEvalContext(Bitboard &bitboard);
+
+        void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
+
+        void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
     };
 
     static SearchManager searchManager{};

@@ -115,11 +115,11 @@ namespace Zagreus {
     }
 
     std::string Engine::getEngineVersion() {
-        return "v0.4";
+        return "v0.5";
     }
 
     std::string Engine::getAuthorName() {
-        return "Dannyj1";
+        return "Danny Jelsma";
     }
 
     std::string Engine::getEmailAddress() {

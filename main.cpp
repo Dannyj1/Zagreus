@@ -94,7 +94,7 @@ int main() {
     senjo::Output(senjo::Output::InfoPrefix) << "               |___/ ";
     senjo::Output(senjo::Output::InfoPrefix) << "";
 
-    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Danny Jelsma (https://github.com/Dannyj1)";
+    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1)";
     senjo::Output(senjo::Output::InfoPrefix) << "";
 
     // TODO: calculate pieceweight on makemove? Same for updating material balance

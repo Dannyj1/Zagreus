@@ -254,8 +254,7 @@ namespace Zagreus {
     bool Bitboard::isSemiOpenFileLenient(int square, PieceColor color) {
         uint64_t fileMask =
                 rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
-        uint64_t ownOccupied = getPieceBoard(
-                color == PieceColor::WHITE ? PieceType::WHITE_PAWN : PieceType::BLACK_PAWN);
+        uint64_t ownOccupied = getPieceBoard(PieceType::WHITE_PAWN + color);
 
         return fileMask == (fileMask & ownOccupied);
     }
