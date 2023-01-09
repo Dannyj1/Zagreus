@@ -1,3 +1,21 @@
+/*
+ Zagreus is a UCI Chess Engine
+ Copyright (C) 2023  Danny Jelsma
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include <iostream>
 #include <unordered_map>
 #include <random>
@@ -60,6 +78,12 @@ int main() {
     Zagreus::initializeMagicBitboards();
     Zagreus::initializePst();
 
+    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
+    senjo::Output(senjo::Output::InfoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY";
+    senjo::Output(senjo::Output::InfoPrefix) << "This is free software, and you are welcome to redistribute it";
+    senjo::Output(senjo::Output::InfoPrefix) << "under certain conditions; See the LICENSE file for details";
+    senjo::Output(senjo::Output::InfoPrefix) << "";
+
     senjo::Output(senjo::Output::InfoPrefix) << " ______ ";
     senjo::Output(senjo::Output::InfoPrefix) << " |___  / ";
     senjo::Output(senjo::Output::InfoPrefix) << "    / /  __ _   __ _  _ __  ___  _   _  ___ ";
@@ -68,8 +92,10 @@ int main() {
     senjo::Output(senjo::Output::InfoPrefix) << R"( /_____|\__,_| \__, ||_|   \___| \__,_||___/)";
     senjo::Output(senjo::Output::InfoPrefix) << "                __/ | ";
     senjo::Output(senjo::Output::InfoPrefix) << "               |___/ ";
+    senjo::Output(senjo::Output::InfoPrefix) << "";
 
-    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Dannyj1 (https://github.com/Dannyj1)";
+    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus chess engine by Danny Jelsma (https://github.com/Dannyj1)";
+    senjo::Output(senjo::Output::InfoPrefix) << "";
 
     // TODO: calculate pieceweight on makemove? Same for updating material balance
 /*    Zagreus::Bitboard bb;
