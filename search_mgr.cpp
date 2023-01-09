@@ -370,9 +370,6 @@ namespace Zagreus {
         whiteScore += getWhiteRookScore(board);
         blackScore += getBlackRookScore(board);
 
-        whiteScore += getCenterScore(board, PieceColor::WHITE);
-        blackScore += getCenterScore(board, PieceColor::BLACK);
-
         whiteScore += getWhiteDevelopmentScore(board);
         blackScore += getBlackDevelopmentScore(board);
 
@@ -573,35 +570,6 @@ namespace Zagreus {
         return score;
     }
 
-    int SearchManager::getCenterScore(Bitboard &bitboard, PieceColor color) {
-        int score = 0;
-        uint64_t centerPattern = 0x0000001818000000;
-        uint64_t extendedCenterPattern = 0x00003C3C3C3C0000 & ~centerPattern;
-
-        while (centerPattern) {
-            uint64_t index = bitscanForward(centerPattern);
-            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
-            uint64_t attacks = bitboard.getSquareAttacksByColor(index, color);
-
-            if (pieceOnSquare != PieceType::EMPTY && bitboard.getPieceColor(pieceOnSquare) == color) {
-                score += 15;
-            }
-
-            score += popcnt(attacks) * 7;
-            centerPattern = _blsr_u64(centerPattern);
-        }
-
-        while (extendedCenterPattern) {
-            uint64_t index = bitscanForward(extendedCenterPattern);
-            uint64_t attacks = bitboard.getSquareAttacksByColor(index, color);
-
-            score += popcnt(attacks) * 4;
-            extendedCenterPattern = _blsr_u64(extendedCenterPattern);
-        }
-
-        return score;
-    }
-
     uint64_t whiteMinorPiecesStartBB = 0x66ULL;
     uint64_t whiteRookStartBB = 0x81ULL;
     uint64_t whiteQueenStartBB = 0x10ULL;
@@ -736,17 +704,22 @@ namespace Zagreus {
         return score;
     }
 
+    uint64_t centerPattern = 0x0000001818000000;
+    uint64_t extendedCenterPattern = 0x00003C3C3C3C0000 & ~centerPattern;
     int SearchManager::getMobilityScore(Bitboard &bitboard, PieceColor color) {
         int score = 0;
         uint64_t ownPiecesBB = bitboard.getBoardByColor(color);
         uint64_t opponentPawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN + Bitboard::getOppositeColor(color));
         uint64_t opponentPawnAttacks = bitboard.calculatePawnAttacks(opponentPawnBB, Bitboard::getOppositeColor(color));
+        uint64_t pawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN + color);
         uint64_t knightBB = bitboard.getPieceBoard(PieceType::WHITE_KNIGHT + color);
         uint64_t bishopBB = bitboard.getPieceBoard(PieceType::WHITE_BISHOP + color);
         uint64_t rookBB = bitboard.getPieceBoard(PieceType::WHITE_ROOK + color);
         uint64_t queenBB = bitboard.getPieceBoard(PieceType::WHITE_QUEEN + color);
+        uint64_t kingBB = bitboard.getPieceBoard(PieceType::WHITE_KING + color);
 
-        uint64_t knightAttacks = calculateKnightAttacks(knightBB) & ~ownPiecesBB;
+        uint64_t pawnAttacks = bitboard.calculatePawnAttacks(pawnBB, color);
+        uint64_t knightAttacks = calculateKnightAttacks(knightBB);
         uint64_t bishopAttacks = 0;
         uint64_t rookAttacks = 0;
         uint64_t queenAttacks = 0;
@@ -757,7 +730,7 @@ namespace Zagreus {
             uint64_t index = bitscanForward(bishopBB);
 
             if (!bitboard.isPinned(index, color)) {
-                bishopAttacks |= bitboard.getBishopAttacks(index, occupied) & ~ownPiecesBB;
+                bishopAttacks |= bitboard.getBishopAttacks(index, occupied);
             }
 
             bishopBB &= ~(1ULL << index);
@@ -767,7 +740,7 @@ namespace Zagreus {
             uint64_t index = bitscanForward(rookBB);
 
             if (!bitboard.isPinned(index, color)) {
-                rookAttacks |= bitboard.getRookAttacks(index, occupied) & ~ownPiecesBB;
+                rookAttacks |= bitboard.getRookAttacks(index, occupied);
             }
 
             rookBB &= ~(1ULL << index);
@@ -777,7 +750,7 @@ namespace Zagreus {
             uint64_t index = bitscanForward(queenBB);
 
             if (!bitboard.isPinned(index, color)) {
-                queenAttacks |= bitboard.getQueenAttacks(index, occupied) & ~ownPiecesBB;
+                queenAttacks |= bitboard.getQueenAttacks(index, occupied);
             }
 
             queenBB &= ~(1ULL << index);
@@ -787,17 +760,30 @@ namespace Zagreus {
         bishopAttacks &= ~opponentPawnAttacks;
         rookAttacks &= ~opponentPawnAttacks;
         queenAttacks &= ~opponentPawnAttacks;
+        pawnAttacks &= ~opponentPawnAttacks;
+        uint64_t combinedAttacks = knightAttacks | bishopAttacks | rookAttacks | queenAttacks | pawnAttacks;
+
+        // Center score
+        score += popcnt(combinedAttacks & centerPattern) * 10;
+        score += popcnt(combinedAttacks & extendedCenterPattern) * 5;
+        score += popcnt(ownPiecesBB & centerPattern) * 4;
+        score += popcnt(ownPiecesBB & extendedCenterPattern) * 2;
+        // Slight bonus for squares defended by own pawn
+        score += popcnt(combinedAttacks & pawnAttacks);
+
+        // Connectivity score
+        score += popcnt(combinedAttacks & ownPiecesBB);
 
         if (bitboard.getFullmoveClock() > 12) {
-            score += popcnt(knightAttacks) * 2;
-            score += popcnt(bishopAttacks) * 2;
-            score += popcnt(rookAttacks) * 5;
-            score += popcnt(queenAttacks) * 7;
+            score += popcnt(knightAttacks & ~ownPiecesBB) * 2;
+            score += popcnt(bishopAttacks & ~ownPiecesBB) * 2;
+            score += popcnt(rookAttacks & ~ownPiecesBB) * 5;
+            score += popcnt(queenAttacks & ~ownPiecesBB) * 7;
         } else {
-            score += popcnt(knightAttacks) * 5;
-            score += popcnt(bishopAttacks) * 5;
-            score += popcnt(rookAttacks);
-            score += popcnt(queenAttacks) * 2;
+            score += popcnt(knightAttacks & ~ownPiecesBB) * 5;
+            score += popcnt(bishopAttacks & ~ownPiecesBB) * 5;
+            score += popcnt(rookAttacks & ~ownPiecesBB);
+            score += popcnt(queenAttacks & ~ownPiecesBB) * 2;
         }
 
         return score;
