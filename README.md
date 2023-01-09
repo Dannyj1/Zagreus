@@ -17,6 +17,27 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 - Late Move Reduction
 - And more! This list is constantly growing and changing, but it is difficult to keep track of all features and changes.
 
+# Build Instructions
+To build Zagreus, you will need to use LLVM. On Windows, I use [LLVM MinGW](https://github.com/mstorsjo/llvm-mingw). On Linux I just use [LLVM](https://releases.llvm.org/download.html).
+Zagreus uses CMake to build. On Windows you can use the [CMake-GUI](https://cmake.org/runningcmake/).  On Linux, use the following commands:
+
+Clone the repository:
+```bash
+git clone https://github.com/Dannyj1/ZagreusEngine.git
+```
+
+Set the compiler to clang++:
+```bash
+export CC=/usr/bin/clang-15
+export CXX=/usr/bin/clang++-15
+```
+Build:
+```bash
+cd <directory of Zagreus engine>
+cmake -DCMAKE_BUILD_TYPE=Release .
+cmake --build .
+```
+
 # Credits
 Thanks to:
 - [zd3nik](https://github.com/zd3nik) for the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter), which I slightly modified
