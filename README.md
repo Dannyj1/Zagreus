@@ -17,8 +17,8 @@ You can download binaries here: https://github.com/Dannyj1/ZagreusEngine/release
 
 # Credits
 Thanks to:
-- zd3nik for the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter) that I use a slightly modified version of
-- The [Chessprogramming wiki](https://www.chessprogramming.org/Main_Page) contributors for all the knowledge
+- zd3nik for the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter), which I slightly modified
+- The [Chessprogramming wiki](https://www.chessprogramming.org/Main_Page) contributors for all the information about chess programming
 
 
 # License
