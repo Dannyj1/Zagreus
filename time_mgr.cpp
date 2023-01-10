@@ -17,16 +17,18 @@
  */
 
 #include <chrono>
+
 #include "time_mgr.h"
 #include "bitboard.h"
+#include "engine.h"
 
 namespace Zagreus {
     std::chrono::time_point<std::chrono::high_resolution_clock>
-    TimeManager::getEndTime(Bitboard &bitboard, PieceColor movingColor) {
+    TimeManager::getEndTime(ZagreusEngine &engine, Bitboard &bitboard, PieceColor movingColor) {
         int movesLeft = 80 - bitboard.getPly();
         uint64_t timeLeft =
                 movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
-        timeLeft -= 100;
+        timeLeft -= engine.getOption("Move Overhead").getIntValue();
         uint64_t increment =
                 movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeIncrement() : bitboard.getBlackTimeIncrement();
 

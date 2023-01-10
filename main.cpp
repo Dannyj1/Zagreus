@@ -103,7 +103,7 @@ int main() {
     Zagreus::searchManager.getBestMove(bb, Zagreus::PieceColor::WHITE);*/
 
     try {
-        Zagreus::Engine engine;
+        Zagreus::ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
 
         std::string line;

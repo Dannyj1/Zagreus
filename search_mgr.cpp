@@ -30,13 +30,13 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
-    SearchResult SearchManager::getBestMove(Bitboard &board, PieceColor color) {
+    SearchResult SearchManager::getBestMove(ZagreusEngine &engine, Bitboard &board, PieceColor color) {
         searchStats = {};
         isSearching = true;
         SearchResult bestResult;
         SearchResult iterationResult;
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
-        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(board, color);
+        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(engine, board, color);
         std::vector<Move> moves = generateLegalMoves(board, color);
         int depth = 0;
 

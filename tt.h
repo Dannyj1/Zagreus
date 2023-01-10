@@ -32,11 +32,13 @@ namespace Zagreus {
 
     class TranspositionTable {
     public:
-        TTEntry* transpositionTable = new TTEntry[1 << 26]{};
+        TTEntry* transpositionTable = new TTEntry[1]{};
         uint32_t** killerMoves = new uint32_t* [3]{};
         // TODO: make 1d
         uint32_t** historyMoves = new uint32_t* [12]{};
         uint32_t** counterMoves = new uint32_t* [64]{};
+
+        uint64_t hashSize = 0;
 
         TranspositionTable() {
             for (int i = 0; i < 3; i++) {
@@ -71,6 +73,8 @@ namespace Zagreus {
             delete[] historyMoves;
             delete[] counterMoves;
         }
+
+        void setTableSize(int megaBytes);
 
         void addPosition(uint64_t zobristHash, int depth, int score, bool isPVMove);
 

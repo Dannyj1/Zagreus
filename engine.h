@@ -23,11 +23,17 @@
 #include "bitboard.h"
 
 namespace Zagreus {
-    class Engine : public senjo::ChessEngine {
+    class ZagreusEngine : public senjo::ChessEngine {
     private:
         Bitboard board{};
         bool isEngineInitialized = false;
         PieceColor engineColor = PieceColor::NONE;
+
+        std::list<senjo::EngineOption> options{
+            senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, INT64_MAX),
+            senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, INT64_MAX),
+        };
+
     public:
         uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int startingDepth);
 
@@ -94,5 +100,7 @@ namespace Zagreus {
         void resetEngineStats() override;
 
         void showEngineStats() override;
+
+        senjo::EngineOption getOption(const std::string &optionName);
     };
 }

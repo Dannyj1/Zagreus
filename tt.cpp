@@ -26,13 +26,26 @@ namespace Zagreus {
             return;
         }
 
-        uint32_t index = (zobristHash & 0x3FFFFFF);
+        uint32_t index = (zobristHash & hashSize);
         transpositionTable[index] = TTEntry{score, (uint8_t) depth, zobristHash, isPVMove};
     }
 
     TTEntry* TranspositionTable::getPosition(uint64_t zobristHash) {
-        uint32_t index = (zobristHash & 0x3FFFFFF);
+        uint32_t index = (zobristHash & hashSize);
 
         return &transpositionTable[index];
+    }
+
+    void TranspositionTable::setTableSize(int megaBytes) {
+        if ((megaBytes & (megaBytes - 1)) != 0) {
+            megaBytes = 1 << (int) (log2(megaBytes));
+        }
+
+        int byteSize = megaBytes * 1024 * 1024;
+        int entryCount = byteSize / sizeof(TTEntry);
+
+        delete[] transpositionTable;
+        transpositionTable = new TTEntry[entryCount]{};
+        hashSize = entryCount - 1;
     }
 }

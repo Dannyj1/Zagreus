@@ -23,15 +23,10 @@
 #include "engine.h"
 #include "search_mgr.h"
 #include "move_gen.h"
+#include "tt.h"
 
 namespace Zagreus {
-    uint64_t captures = 0ULL;
-    uint64_t checks = 0ULL;
-    uint64_t ep = 0ULL;
-    uint64_t castles = 0ULL;
-    uint64_t promotions = 0ULL;
-
-    uint64_t Engine::doPerft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
+    uint64_t ZagreusEngine::doPerft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
         uint64_t nodes = 0ULL;
 
         if (depth == 0) {
@@ -43,55 +38,12 @@ namespace Zagreus {
         for (Move &move : moves) {
             assert(move.fromSquare != move.toSquare);
 
-            /*bool isCapture = false;
-            bool isEp = false;
-            bool isCastle = false;
-            Zagreus::PieceType fromPiece = perftBoard.getPieceOnSquare(move.fromSquare);
-            Zagreus::PieceType toPiece = perftBoard.getPieceOnSquare(move.toSquare);
-
-            if (toPiece != Zagreus::PieceType::EMPTY) {
-                isCapture = true;
-            }
-
-            if (fromPiece == Zagreus::PieceType::WHITE_PAWN || fromPiece == Zagreus::PieceType::BLACK_PAWN) {
-                if (toPiece == Zagreus::PieceType::EMPTY && std::abs((int) move.fromSquare - (int) move.toSquare) != 8
-                    && std::abs((int) move.fromSquare - (int) move.toSquare) != 16) {
-                    isEp = true;
-                }
-            }
-
-            if (toPiece == Zagreus::PieceType::WHITE_KING || toPiece == Zagreus::PieceType::BLACK_KING) {
-                isCastle = true;
-            }*/
-
             perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
             if (perftBoard.isKingInCheck(color)) {
                 perftBoard.unmakeMove();
                 continue;
             }
-
-/*            if (depth == 1) {
-                if (move.promotionPiece != Zagreus::PieceType::EMPTY) {
-                    promotions++;
-                }
-
-                if (perftBoard.isKingInCheck(Zagreus::Bitboard::getOppositeColor(color))) {
-                    checks++;
-                }
-
-                if (isCapture) {
-                    captures++;
-                }
-
-                if (isEp) {
-                    ep++;
-                }
-
-                if (isCastle) {
-                    castles++;
-                }
-            }*/
 
             uint64_t nodeAmount = doPerft(perftBoard, Zagreus::Bitboard::getOppositeColor(color), depth - 1,
                                           startingDepth);
@@ -110,51 +62,74 @@ namespace Zagreus {
         return nodes;
     }
 
-    std::string Engine::getEngineName() {
+    std::string ZagreusEngine::getEngineName() {
         return "Zagreus";
     }
 
-    std::string Engine::getEngineVersion() {
+    std::string ZagreusEngine::getEngineVersion() {
         return "v0.5";
     }
 
-    std::string Engine::getAuthorName() {
+    std::string ZagreusEngine::getAuthorName() {
         return "Danny Jelsma";
     }
 
-    std::string Engine::getEmailAddress() {
+    std::string ZagreusEngine::getEmailAddress() {
         return "";
     }
 
-    std::string Engine::getCountryName() {
+    std::string ZagreusEngine::getCountryName() {
         return "The Netherlands";
     }
 
-    std::list<senjo::EngineOption> Engine::getOptions() {
-        return {};
+    std::list<senjo::EngineOption> ZagreusEngine::getOptions() {
+        return options;
     }
 
-    bool Engine::setEngineOption(const std::string &optionName, const std::string &optionValue) {
+    senjo::EngineOption ZagreusEngine::getOption(const std::string &optionName) {
+        for (senjo::EngineOption &option : options) {
+            if (option.getName() == optionName) {
+                return option;
+            }
+        }
+
+        return senjo::EngineOption("Invalid Option");
+    }
+
+    bool ZagreusEngine::setEngineOption(const std::string &optionName, const std::string &optionValue) {
+        for (senjo::EngineOption &option : options) {
+            if (option.getName() == optionName) {
+                option.setValue(optionValue);
+
+                if (option.getName() == "Hash") {
+                    tt.setTableSize(option.getIntValue());
+                }
+
+                return true;
+            }
+        }
+
         return false;
     }
 
-    void Engine::initialize() {
+    void ZagreusEngine::initialize() {
         board = Bitboard{};
         engineColor = PieceColor::NONE;
+        tt.setTableSize(getOption("Hash").getIntValue());
         isEngineInitialized = true;
     }
 
-    bool Engine::isInitialized() {
+    bool ZagreusEngine::isInitialized() {
         return isEngineInitialized;
     }
 
-    bool Engine::setPosition(const std::string &fen, std::string* remain) {
+    bool ZagreusEngine::setPosition(const std::string &fen, std::string* remain) {
         board = {};
         engineColor = PieceColor::NONE;
         return board.setFromFEN(fen);
     }
 
-    bool Engine::makeMove(const std::string &move) {
+    bool ZagreusEngine::makeMove(const std::string &move) {
         if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
             board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
             board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
@@ -187,75 +162,75 @@ namespace Zagreus {
         return true;
     }
 
-    std::string Engine::getFEN() {
+    std::string ZagreusEngine::getFEN() {
         // TODO: implement
         //return board.getFEN();
         return "";
     }
 
-    void Engine::printBoard() {
+    void ZagreusEngine::printBoard() {
         board.print();
     }
 
-    bool Engine::whiteToMove() {
+    bool ZagreusEngine::whiteToMove() {
         return board.getMovingColor() == PieceColor::WHITE;
     }
 
-    void Engine::clearSearchData() {
+    void ZagreusEngine::clearSearchData() {
         searchManager.resetStats();
     }
 
-    void Engine::ponderHit() {
+    void ZagreusEngine::ponderHit() {
     }
 
-    bool Engine::isRegistered() {
+    bool ZagreusEngine::isRegistered() {
         return true;
     }
 
-    void Engine::registerLater() {
+    void ZagreusEngine::registerLater() {
 
     }
 
-    bool Engine::doRegistration(const std::string &name, const std::string &code) {
+    bool ZagreusEngine::doRegistration(const std::string &name, const std::string &code) {
         return true;
     }
 
-    bool Engine::isCopyProtected() {
+    bool ZagreusEngine::isCopyProtected() {
         return false;
     }
 
-    bool Engine::copyIsOK() {
+    bool ZagreusEngine::copyIsOK() {
         return true;
     }
 
-    void Engine::setDebug(const bool flag) {
+    void ZagreusEngine::setDebug(const bool flag) {
 
     }
 
-    bool Engine::isDebugOn() {
+    bool ZagreusEngine::isDebugOn() {
         return false;
     }
 
-    bool Engine::isSearching() {
+    bool ZagreusEngine::isSearching() {
         return searchManager.isCurrentlySearching();
     }
 
-    void Engine::stopSearching() {
+    void ZagreusEngine::stopSearching() {
         // TODO: implement
     }
 
-    bool Engine::stopRequested() {
+    bool ZagreusEngine::stopRequested() {
         // TODO: implement
         return false;
     }
 
-    void Engine::waitForSearchFinish() {
+    void ZagreusEngine::waitForSearchFinish() {
         while (searchManager.isCurrentlySearching()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
 
-    uint64_t Engine::perft(const int depth) {
+    uint64_t ZagreusEngine::perft(const int depth) {
         auto start = std::chrono::high_resolution_clock::now();
         uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
         auto end = std::chrono::high_resolution_clock::now();
@@ -266,7 +241,7 @@ namespace Zagreus {
         return nodes;
     }
 
-    std::string Engine::go(const senjo::GoParams &params, std::string* ponder) {
+    std::string ZagreusEngine::go(const senjo::GoParams &params, std::string* ponder) {
         if (engineColor == PieceColor::NONE) {
             engineColor = board.getMovingColor();
         }
@@ -277,7 +252,7 @@ namespace Zagreus {
         board.setBlackTimeIncrement(params.binc);
 
 //        board.print();
-        SearchResult bestResult = searchManager.getBestMove(board, engineColor);
+        SearchResult bestResult = searchManager.getBestMove(*this, board, engineColor);
 
         if (bestResult.move.promotionPiece != PieceType::EMPTY) {
             std::string result = Zagreus::Bitboard::getNotation(bestResult.move.fromSquare)
@@ -322,15 +297,15 @@ namespace Zagreus {
                Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
     }
 
-    senjo::SearchStats Engine::getSearchStats() {
+    senjo::SearchStats ZagreusEngine::getSearchStats() {
         return searchManager.getSearchStats();
     }
 
-    void Engine::resetEngineStats() {
+    void ZagreusEngine::resetEngineStats() {
 
     }
 
-    void Engine::showEngineStats() {
+    void ZagreusEngine::showEngineStats() {
         // TODO: implement
     }
 }

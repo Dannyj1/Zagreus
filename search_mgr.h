@@ -21,6 +21,7 @@
 #include "senjo/SearchStats.h"
 #include "types.h"
 #include "bitboard.h"
+#include "engine.h"
 
 namespace Zagreus {
     struct EvalContext {
@@ -45,7 +46,7 @@ namespace Zagreus {
         bool isSearching = false;
         senjo::SearchStats searchStats{};
     public:
-        SearchResult getBestMove(Bitboard &board, PieceColor color);
+        SearchResult getBestMove(ZagreusEngine &engine, Bitboard &board, PieceColor color);
 
         SearchResult
         search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,

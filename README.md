@@ -17,6 +17,12 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 - Late Move Reduction
 - And more! This list is constantly growing and changing, but it is difficult to keep track of all features and changes.
 
+# UCI Options
+Zagreus Engine has the following UCI options that can be changed:
+
+- `Move Overhead` - The amount of time that will be substracted from the internal timer for each move. This helps when using the engine over the internet, to prevent it from losing on time due to lag. The default is 0.
+- `Hash` - The size of the transposition table in megabytes, rounded to the nearest power of 2. The default is 512MB.
+
 # Build Instructions
 To build Zagreus, you will need to use LLVM. On Windows, I use [LLVM MinGW](https://github.com/mstorsjo/llvm-mingw). On Linux I just use [LLVM](https://releases.llvm.org/download.html).
 Zagreus uses CMake to build. On Windows you can use the [CMake-GUI](https://cmake.org/runningcmake/).  On Linux, use the following commands:
