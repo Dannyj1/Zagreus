@@ -31,7 +31,7 @@ namespace Zagreus {
 
         std::list<senjo::EngineOption> options{
             senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, INT64_MAX),
-            senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, INT64_MAX),
+            senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, INT64_MAX)
         };
 
     public:

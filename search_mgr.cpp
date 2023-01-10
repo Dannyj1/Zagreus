@@ -30,6 +30,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
+    // TODO: encourage walking pawns to the end of the board in the endgame
     SearchResult SearchManager::getBestMove(ZagreusEngine &engine, Bitboard &board, PieceColor color) {
         searchStats = {};
         isSearching = true;

@@ -824,7 +824,7 @@ namespace Zagreus {
         }
 
         // Check if the same position has occurred 3 times using the movehistory array
-        int samePositionCount = 0;
+        int samePositionCount = 1;
         uint64_t boardHash = getZobristHash();
 
         for (int i = moveHistoryIndex; i >= 0; i--) {
