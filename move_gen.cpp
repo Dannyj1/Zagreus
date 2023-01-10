@@ -53,7 +53,6 @@ namespace Zagreus {
             return sortMoves(bitboard, a, b);
         });
 
-
         return moves;
     }
 
@@ -64,9 +63,7 @@ namespace Zagreus {
         return aScore > bScore;
     }
 
-    // TODO: different faster moe
     bool sortMoves(Bitboard &bitboard, Move &a, Move &b) {
-        // TODO: implement countermoves heuristic. Need to have previousMoveFrom available in this function.
         int aScore = tt.historyMoves[a.pieceType][a.toSquare];
         int bScore = tt.historyMoves[b.pieceType][b.toSquare];
         TTEntry* aEntry = tt.getPosition(a.zobristHash);

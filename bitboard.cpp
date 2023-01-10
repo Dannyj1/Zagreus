@@ -96,7 +96,7 @@ namespace Zagreus {
 
         pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, zobristHash,
                      ply,
-                     halfMoveClock, fullmoveClock, kingInCheck, previousMoveFrom, previousMoveTo);
+                     halfMoveClock, fullmoveClock, kingInCheck, previousMoveFrom, previousMoveTo, hasWhiteCastled, hasBlackCastled);
 
         movingColor = getOppositeColor(movingColor);
 
@@ -282,7 +282,7 @@ namespace Zagreus {
 
         pushUndoData(pieceBB, pieceSquareMapping, colorBB, occupiedBB, enPassantSquare, castlingRights, zobristHash,
                      ply,
-                     halfMoveClock, fullmoveClock, kingInCheck, previousMoveFrom, previousMoveTo);
+                     halfMoveClock, fullmoveClock, kingInCheck, previousMoveFrom, previousMoveTo, hasWhiteCastled, hasBlackCastled);
 
         previousMoveFrom = fromSquare;
         previousMoveTo = toSquare;
@@ -432,7 +432,7 @@ namespace Zagreus {
                                 uint64_t occupiedBB, int8_t enPassantSquare[2],
                                 uint8_t castlingRights, uint64_t zobristHash, uint8_t ply,
                                 uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck,
-                                uint8_t previousMoveFrom, uint8_t previousMoveTo) {
+                                uint8_t previousMoveFrom, uint8_t previousMoveTo, bool hasWhiteCastled, bool hasBlackCastled) {
         for (int i = 0; i < 12; i++) {
             undoStack[undoStackIndex].pieceBB[i] = pieceBB[i];
         }
@@ -454,9 +454,19 @@ namespace Zagreus {
         undoStack[undoStackIndex].kingInCheck = kingInCheck;
         undoStack[undoStackIndex].previousMoveFrom = previousMoveFrom;
         undoStack[undoStackIndex].previousMoveTo = previousMoveTo;
+        undoStack[undoStackIndex].hasWhiteCastled = hasWhiteCastled;
+        undoStack[undoStackIndex].hasBlackCastled = hasBlackCastled;
 
         undoStackIndex++;
         assert(undoStackIndex < 256);
+    }
+
+    bool Bitboard::isHasWhiteCastled() const {
+        return hasWhiteCastled;
+    }
+
+    bool Bitboard::isHasBlackCastled() const {
+        return hasBlackCastled;
     }
 
     void Bitboard::unmakeMove() {
@@ -489,6 +499,8 @@ namespace Zagreus {
         kingInCheck = undoData.kingInCheck;
         previousMoveFrom = undoData.previousMoveFrom;
         previousMoveTo = undoData.previousMoveTo;
+        hasWhiteCastled = undoData.hasWhiteCastled;
+        hasBlackCastled = undoData.hasBlackCastled;
     }
 
     int8_t Bitboard::getEnPassantSquare(PieceColor color) {
@@ -1029,10 +1041,12 @@ namespace Zagreus {
         setPiece(it->second.second, rookType);
 
         if (kingType == PieceType::WHITE_KING) {
+            hasWhiteCastled = true;
             castlingRights &= ~(CastlingRights::WHITE_QUEENSIDE | CastlingRights::WHITE_KINGSIDE);
             zobristHash ^= zobristConstants[768 + 1];
             zobristHash ^= zobristConstants[768 + 2];
         } else {
+            hasBlackCastled = true;
             castlingRights &= ~(CastlingRights::BLACK_QUEENSIDE | CastlingRights::BLACK_KINGSIDE);
             zobristHash ^= zobristConstants[768 + 3];
             zobristHash ^= zobristConstants[768 + 4];

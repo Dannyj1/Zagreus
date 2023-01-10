@@ -454,6 +454,12 @@ namespace Zagreus {
             evalContext.whiteScore -= 50;
         }
 
+        uint8_t castlingRights = bitboard.getCastlingRights();
+
+        if (!(castlingRights & CastlingRights::WHITE_QUEENSIDE) && !(castlingRights & CastlingRights::WHITE_KINGSIDE) && !bitboard.isHasWhiteCastled()) {
+            evalContext.whiteScore -= 40;
+        }
+
         evalContext.whiteScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (bitboard.getPieceWeight(PieceType::BLACK_PAWN) / 100);
         evalContext.whiteScore -= popcnt(evalContext.blackKnightAttacks & kingAttacks) * (bitboard.getPieceWeight(PieceType::BLACK_KNIGHT) / 100);
         evalContext.whiteScore -= popcnt(evalContext.blackBishopAttacks & kingAttacks) * (bitboard.getPieceWeight(PieceType::BLACK_BISHOP) / 100);
@@ -478,6 +484,11 @@ namespace Zagreus {
 
         if (bitboard.getPly() < 40 && bitboard.isSemiOpenFileLenient(kingLocation, PieceColor::BLACK)) {
             evalContext.blackScore -= 50;
+        }
+
+        uint8_t castlingRights = bitboard.getCastlingRights();
+        if (!(castlingRights & CastlingRights::BLACK_QUEENSIDE) && !(castlingRights & CastlingRights::BLACK_KINGSIDE) && !bitboard.isHasBlackCastled()) {
+            evalContext.blackScore -= 40;
         }
 
         evalContext.blackScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (bitboard.getPieceWeight(PieceType::WHITE_PAWN) / 100);
@@ -664,7 +675,7 @@ namespace Zagreus {
     uint64_t centerPattern = 0x0000001818000000;
     uint64_t extendedCenterPattern = 0x00003C3C3C3C0000 & ~centerPattern;
     void SearchManager::getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
-        uint64_t ownPiecesBB = bitboard.getWhiteBoard() | evalContext.blackPawnAttacks;
+        uint64_t ownPiecesBB = bitboard.getWhiteBoard();
 
         // Slight bonus for squares defended by own pawn
         evalContext.whiteScore += popcnt((evalContext.whiteCombinedAttacks & ~ownPiecesBB) & evalContext.whitePawnAttacks);
@@ -674,18 +685,25 @@ namespace Zagreus {
         evalContext.whiteScore += popcnt((evalContext.whiteCombinedAttacks & ~ownPiecesBB) & extendedCenterPattern) * 4;
 
         if (bitboard.getFullmoveClock() > 12) {
-            evalContext.whiteScore += popcnt(evalContext.whiteKnightAttacks & ~ownPiecesBB) * 2;
-            evalContext.whiteScore += popcnt(evalContext.whiteBishopAttacks & ~ownPiecesBB) * 2;
-            evalContext.whiteScore += popcnt(evalContext.whiteRookAttacks & ~ownPiecesBB) * 5;
-            evalContext.whiteScore += popcnt(evalContext.whiteQueenAttacks & ~ownPiecesBB) * 7;
+            evalContext.whiteScore += popcnt(evalContext.whiteKnightAttacks & ~ownPiecesBB) * 3;
+            evalContext.whiteScore += popcnt(evalContext.whiteBishopAttacks & ~ownPiecesBB) * 3;
+            evalContext.whiteScore += popcnt(evalContext.whiteRookAttacks & ~ownPiecesBB) * 7;
+            evalContext.whiteScore += popcnt(evalContext.whiteQueenAttacks & ~ownPiecesBB) * 10;
         } else {
-            evalContext.whiteScore += popcnt(evalContext.whiteKnightAttacks & ~ownPiecesBB) * 5;
-            evalContext.whiteScore += popcnt(evalContext.whiteBishopAttacks & ~ownPiecesBB) * 5;
-            evalContext.whiteScore += popcnt(evalContext.whiteRookAttacks & ~ownPiecesBB);
-            evalContext.whiteScore += popcnt(evalContext.whiteQueenAttacks & ~ownPiecesBB) * 2;
+            evalContext.whiteScore += popcnt(evalContext.whiteKnightAttacks & ~ownPiecesBB) * 8;
+            evalContext.whiteScore += popcnt(evalContext.whiteBishopAttacks & ~ownPiecesBB) * 8;
+            evalContext.whiteScore += popcnt(evalContext.whiteRookAttacks & ~ownPiecesBB) * 2;
+            evalContext.whiteScore += popcnt(evalContext.whiteQueenAttacks & ~ownPiecesBB) * 4;
         }
+
+        evalContext.whiteScore -= popcnt(evalContext.whiteCombinedAttacks & evalContext.blackPawnAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_PAWN) / 100));
+        evalContext.whiteScore -= popcnt(evalContext.whiteCombinedAttacks & evalContext.blackKnightAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_KNIGHT) / 100));
+        evalContext.whiteScore -= popcnt(evalContext.whiteCombinedAttacks & evalContext.blackBishopAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_BISHOP) / 100));
+        evalContext.whiteScore -= popcnt(evalContext.whiteCombinedAttacks & evalContext.blackRookAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_ROOK) / 100));
+        evalContext.whiteScore -= popcnt(evalContext.whiteCombinedAttacks & evalContext.blackQueenAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_QUEEN) / 100));
     }
 
+    // TODO: new mobility causes very low NPS??
     void SearchManager::getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getBlackBoard() | evalContext.whitePawnAttacks;
 
@@ -697,16 +715,22 @@ namespace Zagreus {
         evalContext.blackScore += popcnt((evalContext.blackCombinedAttacks & ~ownPiecesBB) & extendedCenterPattern) * 4;
 
         if (bitboard.getFullmoveClock() > 12) {
-            evalContext.blackScore += popcnt(evalContext.blackKnightAttacks & ~ownPiecesBB) * 2;
-            evalContext.blackScore += popcnt(evalContext.blackBishopAttacks & ~ownPiecesBB) * 2;
-            evalContext.blackScore += popcnt(evalContext.blackRookAttacks & ~ownPiecesBB) * 5;
-            evalContext.blackScore += popcnt(evalContext.blackQueenAttacks & ~ownPiecesBB) * 7;
+            evalContext.blackScore += popcnt(evalContext.blackKnightAttacks & ~ownPiecesBB) * 3;
+            evalContext.blackScore += popcnt(evalContext.blackBishopAttacks & ~ownPiecesBB) * 3;
+            evalContext.blackScore += popcnt(evalContext.blackRookAttacks & ~ownPiecesBB) * 7;
+            evalContext.blackScore += popcnt(evalContext.blackQueenAttacks & ~ownPiecesBB) * 10;
         } else {
-            evalContext.blackScore += popcnt(evalContext.blackKnightAttacks & ~ownPiecesBB) * 5;
-            evalContext.blackScore += popcnt(evalContext.blackBishopAttacks & ~ownPiecesBB) * 5;
-            evalContext.blackScore += popcnt(evalContext.blackRookAttacks & ~ownPiecesBB);
-            evalContext.blackScore += popcnt(evalContext.blackQueenAttacks & ~ownPiecesBB) * 2;
+            evalContext.blackScore += popcnt(evalContext.blackKnightAttacks & ~ownPiecesBB) * 8;
+            evalContext.blackScore += popcnt(evalContext.blackBishopAttacks & ~ownPiecesBB) * 8;
+            evalContext.blackScore += popcnt(evalContext.blackRookAttacks & ~ownPiecesBB) * 2;
+            evalContext.blackScore += popcnt(evalContext.blackQueenAttacks & ~ownPiecesBB) * 4;
         }
+
+        evalContext.blackScore -= popcnt(evalContext.blackCombinedAttacks & evalContext.whitePawnAttacks) * (11 - (bitboard.getPieceWeight(PieceType::WHITE_PAWN) / 100));
+        evalContext.blackScore -= popcnt(evalContext.blackCombinedAttacks & evalContext.whiteKnightAttacks) * (11 - (bitboard.getPieceWeight(PieceType::WHITE_KNIGHT) / 100));
+        evalContext.blackScore -= popcnt(evalContext.blackCombinedAttacks & evalContext.whiteBishopAttacks) * (11 - (bitboard.getPieceWeight(PieceType::WHITE_BISHOP) / 100));
+        evalContext.blackScore -= popcnt(evalContext.blackCombinedAttacks & evalContext.whiteRookAttacks) * (11 - (bitboard.getPieceWeight(PieceType::WHITE_ROOK) / 100));
+        evalContext.blackScore -= popcnt(evalContext.blackCombinedAttacks & evalContext.whiteQueenAttacks) * (11 - (bitboard.getPieceWeight(PieceType::WHITE_QUEEN) / 100));
     }
 
     void SearchManager::getPawnScore(EvalContext &evalContext, Bitboard &bitboard, PieceColor color) {

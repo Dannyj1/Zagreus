@@ -102,5 +102,7 @@ namespace Zagreus {
         uint8_t kingInCheck = 0;
         uint32_t previousMoveFrom = 0;
         uint32_t previousMoveTo = 0;
+        bool hasWhiteCastled = false;
+        bool hasBlackCastled = false;
     };
 }

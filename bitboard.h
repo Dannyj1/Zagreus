@@ -78,6 +78,9 @@ namespace Zagreus {
         unsigned int whiteTimeIncrement = 0;
         unsigned int blackTimeIncrement = 0;
 
+        bool hasWhiteCastled = false;
+        bool hasBlackCastled = false;
+
         UndoData undoStack[256]{};
         uint16_t undoStackIndex = 0;
     public:
@@ -207,7 +210,7 @@ namespace Zagreus {
                      uint64_t occupiedBB, int8_t enPassantSquare[2],
                      uint8_t castlingRights, uint64_t zobristHash, uint8_t ply,
                      uint8_t halfMoveClock, uint8_t fullMoveClock, uint8_t kingInCheck, uint8_t previousMoveFrom,
-                     uint8_t previousMoveTo);
+                     uint8_t previousMoveTo, bool hasWhiteCastled, bool hasBlackCastled);
 
         int see(int square, PieceColor attackingColor);
 
@@ -256,6 +259,10 @@ namespace Zagreus {
         uint8_t getPreviousMoveFrom() const;
 
         uint8_t getPreviousMoveTo() const;
+
+        bool isHasWhiteCastled() const;
+
+        bool isHasBlackCastled() const;
     };
 
     uint64_t soutOne(uint64_t b);
