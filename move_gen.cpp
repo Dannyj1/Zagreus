@@ -57,6 +57,13 @@ namespace Zagreus {
         return moves;
     }
 
+    bool sortQuiesceMoves(Move &a, Move &b) {
+        int aScore = a.captureScore;
+        int bScore = b.captureScore;
+
+        return aScore > bScore;
+    }
+
     // TODO: different faster moe
     bool sortMoves(Bitboard &bitboard, Move &a, Move &b) {
         // TODO: implement countermoves heuristic. Need to have previousMoveFrom available in this function.
@@ -135,9 +142,7 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING, true);
 
-        std::sort(moves.begin(), moves.end(), [&bitboard](Move &a, Move &b) {
-            return sortMoves(bitboard, a, b);
-        });
+        std::sort(moves.begin(), moves.end(), sortQuiesceMoves);
 
         return moves;
     }
