@@ -41,6 +41,11 @@ namespace Zagreus {
         uint64_t blackCombinedAttacks = 0;
     };
 
+    struct Line {
+        int moveCount = 0;
+        Move moves[64];
+    };
+
     class SearchManager {
     private:
         bool isSearching = false;
@@ -50,7 +55,7 @@ namespace Zagreus {
 
         SearchResult
         search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
-               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime);
+               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine);
 
         SearchResult
         zwSearch(Bitboard &board, int depth, int beta, Move &rootMove, Move &previousMove,

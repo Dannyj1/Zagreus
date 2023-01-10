@@ -40,6 +40,9 @@ namespace Zagreus {
         std::vector<Move> moves = generateLegalMoves(board, color);
         int depth = 0;
 
+        std::cout << color;
+
+        Line iterationPvLine = {};
         while (std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
             depth += 1;
             searchStats.depth = depth;
@@ -63,15 +66,32 @@ namespace Zagreus {
                     continue;
                 }
 
+                Line pvLine = {};
                 Move previousMove = {board.getPreviousMoveFrom(), board.getPreviousMoveTo()};
-                SearchResult result = search(board, depth, -99999999, 99999999, move, previousMove, endTime);
+                SearchResult result = search(board, depth, -99999999, 99999999, move, previousMove, endTime, pvLine);
                 result.score *= -1;
                 board.unmakeMove();
 
-                if (result.score > iterationResult.score) {
+                if (result.score > iterationResult.score && std::chrono::high_resolution_clock::now() < endTime) {
                     assert(result.move.pieceType != PieceType::EMPTY);
                     iterationResult = result;
+
+                    iterationPvLine.moves[0] = move;
+                    memcpy(iterationPvLine.moves + 1, pvLine.moves, pvLine.moveCount * sizeof(Move));
+                    iterationPvLine.moveCount = pvLine.moveCount + 1;
+
                     searchStats.score = iterationResult.score;
+                }
+
+                searchStats.pv = "";
+                for (int i = 0; i < iterationPvLine.moveCount; i++) {
+                    Move move = iterationPvLine.moves[i];
+
+                    searchStats.pv += board.getNotation(move.fromSquare) + board.getNotation(move.toSquare);
+
+                    if (i != iterationPvLine.moveCount - 1) {
+                        searchStats.pv += " ";
+                    }
                 }
 
                 searchStats.msecs = duration_cast<std::chrono::milliseconds>(
@@ -88,6 +108,17 @@ namespace Zagreus {
             iterationResult = {};
         }
 
+        searchStats.pv = "";
+        for (int i = 0; i < iterationPvLine.moveCount; i++) {
+            Move move = iterationPvLine.moves[i];
+
+            searchStats.pv += board.getNotation(move.fromSquare) + board.getNotation(move.toSquare);
+
+            if (i != iterationPvLine.moveCount - 1) {
+                searchStats.pv += " ";
+            }
+        }
+
         searchStats.score = bestResult.score;
         searchStats.msecs = duration_cast<std::chrono::milliseconds>(
                 std::chrono::high_resolution_clock::now() - startTime).count();
@@ -98,13 +129,15 @@ namespace Zagreus {
 
     SearchResult SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                                        Move &previousMove,
-                                       std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
+                                       std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine) {
         if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
             || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) || board.isWinner(board.getMovingColor())
             || board.isDraw()) {
+            pvLine.moveCount = 0;
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime);
         }
 
+        Line line{};
         searchStats.nodes += 1;
 
         bool searchPv = true;
@@ -137,7 +170,7 @@ namespace Zagreus {
 
                 if (ownKingInCheck || opponentKingInCheck) {
                     depthExtension++;
-                } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
+                } else if (!searchPv && !depthExtension && move.promotionPiece == PieceType::EMPTY) {
                     if (depth >= 3 && !board.isPawnEndgame() && !depthExtension) {
                         board.makeNullMove();
                         int score = zwSearch(board, depth - 3, -alpha, rootMove, rootMove, endTime).score * -1;
@@ -150,12 +183,7 @@ namespace Zagreus {
                     }
 
                     if (depth >= 3 && move.captureScore < 0 && i > 5) {
-                        if (searchPv) {
-                            result = search(board, depth / 2, -beta, -alpha, rootMove, move, endTime);
-                        } else {
-                            result = zwSearch(board, depth / 4, -alpha, rootMove, rootMove,
-                                              endTime);
-                        }
+                        result = zwSearch(board, depth / 4, -alpha, rootMove, rootMove, endTime);
 
                         result.score *= -1;
 
@@ -167,7 +195,7 @@ namespace Zagreus {
                 }
 
                 if (searchPv) {
-                    result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime);
+                    result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
                     result.score *= -1;
                     tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                 } else {
@@ -175,7 +203,7 @@ namespace Zagreus {
                     result.score *= -1;
 
                     if (result.score > alpha) {
-                        result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime);
+                        result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
                         result.score *= -1;
                         tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                     }
@@ -193,9 +221,12 @@ namespace Zagreus {
             }
 
             if (result.score > alpha) {
-                if (searchPv) {
-                    tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
-                }
+                tt.addPosition(board.getZobristHash(), depth, result.score, true);
+
+                pvLine.moves[0] = move;
+                pvLine.moveCount = 1;
+                memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
+                pvLine.moveCount = line.moveCount + 1;
 
                 assert(move.fromSquare >= 0);
                 assert(move.toSquare >= 0);

@@ -29,6 +29,7 @@
 #include "search_mgr.h"
 #include "magics.h"
 #include "pst.h"
+#include "tt.h"
 
 uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
     uint64_t nodes = 0ULL;
@@ -75,6 +76,7 @@ int main() {
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
 
+    Zagreus::tt.setTableSize(512);
     Zagreus::initializeMagicBitboards();
     Zagreus::initializePst();
 

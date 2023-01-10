@@ -35,6 +35,7 @@ namespace senjo {
         uint64_t qnodes = 0; // The number of quiescence nodes searched so far
         uint64_t msecs = 0; // The number of milliseconds spent searching so far
         int score = 0;
+        std::string pv = "";
     };
 
 //-----------------------------------------------------------------------------
@@ -44,7 +45,9 @@ namespace senjo {
            << " score cp " << stats.score
            << " nodes " << stats.nodes + stats.qnodes
            << " time " << stats.msecs
-           << " nps " << static_cast<uint64_t>(rate((stats.nodes + stats.qnodes), stats.msecs));
+           << " nps " << static_cast<uint64_t>(rate((stats.nodes + stats.qnodes), stats.msecs))
+           << " pv " << stats.pv;
+
         return os;
     }
 
