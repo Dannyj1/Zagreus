@@ -386,7 +386,8 @@ namespace Zagreus {
         }
 
         if (board.isDraw()) {
-            return 0;
+            // Thanks stockfish for the "3-fold blindness avoidance"
+            return 0 - 1 + (searchStats.nodes & 0x2);
         }
 
         EvalContext evalContext = createEvalContext(board);
