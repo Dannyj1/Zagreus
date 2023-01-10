@@ -308,7 +308,7 @@ namespace Zagreus {
             if (fromSquare - toSquare == 16) {
                 enPassantSquare[PieceColor::WHITE] = -1;
                 enPassantSquare[PieceColor::BLACK] = toSquare + 8;
-                zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::BLACK] % 8) + 768 + 5];
+                zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::BLACK] % 8) + 768 + 13];
             } else if (fromSquare - toSquare == -16) {
                 enPassantSquare[PieceColor::WHITE] = toSquare - 8;
                 enPassantSquare[PieceColor::BLACK] = -1;
