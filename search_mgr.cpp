@@ -468,6 +468,8 @@ namespace Zagreus {
         }
     }
 
+    uint64_t whiteQueenCastlingAttackPattern = 0x70;
+    uint64_t whiteKingCastlingAttackPattern = 0x6;
     void SearchManager::getWhiteKingScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard(PieceType::WHITE_KING);
         uint64_t kingLocation = bitscanForward(kingBB);
@@ -488,8 +490,18 @@ namespace Zagreus {
 
         uint8_t castlingRights = bitboard.getCastlingRights();
 
-        if (!(castlingRights & CastlingRights::WHITE_QUEENSIDE) && !(castlingRights & CastlingRights::WHITE_KINGSIDE) && !bitboard.isHasWhiteCastled()) {
-            evalContext.whiteScore -= 40;
+        if (!(castlingRights & CastlingRights::WHITE_QUEENSIDE) && !(castlingRights & CastlingRights::WHITE_KINGSIDE)) {
+            if (!bitboard.isHasBlackCastled()) {
+                evalContext.whiteScore -= 40;
+            }
+        } else {
+            if ((castlingRights & CastlingRights::WHITE_QUEENSIDE) && (evalContext.blackCombinedAttacks & whiteQueenCastlingAttackPattern)) {
+                evalContext.whiteScore -= 15;
+            }
+
+            if ((castlingRights & CastlingRights::WHITE_KINGSIDE) && (evalContext.blackCombinedAttacks & whiteKingCastlingAttackPattern)) {
+                evalContext.whiteScore -= 20;
+            }
         }
 
         evalContext.whiteScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (bitboard.getPieceWeight(PieceType::BLACK_PAWN) / 100);
@@ -500,6 +512,8 @@ namespace Zagreus {
     }
 
     // TODO: add proper game phase stuff
+    uint64_t blackQueenCastlingAttackPattern = 0x7000000000000000;
+    uint64_t blackKingCastlingAttackPattern = 0x600000000000000;
     void SearchManager::getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard(PieceType::BLACK_KING);
         uint64_t kingLocation = bitscanForward(kingBB);
@@ -519,8 +533,18 @@ namespace Zagreus {
         }
 
         uint8_t castlingRights = bitboard.getCastlingRights();
-        if (!(castlingRights & CastlingRights::BLACK_QUEENSIDE) && !(castlingRights & CastlingRights::BLACK_KINGSIDE) && !bitboard.isHasBlackCastled()) {
-            evalContext.blackScore -= 40;
+        if (!(castlingRights & CastlingRights::BLACK_QUEENSIDE) && !(castlingRights & CastlingRights::BLACK_KINGSIDE)) {
+            if (!bitboard.isHasBlackCastled()) {
+                evalContext.blackScore -= 40;
+            }
+        } else {
+            if ((castlingRights & CastlingRights::BLACK_QUEENSIDE) && (evalContext.whiteCombinedAttacks & blackQueenCastlingAttackPattern)) {
+                evalContext.blackScore -= 15;
+            }
+
+            if ((castlingRights & CastlingRights::BLACK_KINGSIDE) && (evalContext.whiteCombinedAttacks & blackKingCastlingAttackPattern)) {
+                evalContext.blackScore -= 20;
+            }
         }
 
         evalContext.blackScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (bitboard.getPieceWeight(PieceType::WHITE_PAWN) / 100);
