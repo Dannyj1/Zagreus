@@ -25,8 +25,11 @@
 
 namespace Zagreus {
     struct EvalContext {
-        int whiteScore = 0;
-        int blackScore = 0;
+        int phase = 0;
+        int whiteMidgameScore = 0;
+        int blackMidgameScore = 0;
+        int whiteEndgameScore = 0;
+        int blackEndgameScore = 0;
         uint64_t whitePawnAttacks = 0;
         uint64_t whiteKnightAttacks = 0;
         uint64_t whiteBishopAttacks = 0;
@@ -106,6 +109,8 @@ namespace Zagreus {
         void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
 
         void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
+
+        int getGamePhase(Bitboard &bitboard);
     };
 
     static SearchManager searchManager{};

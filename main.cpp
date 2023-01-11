@@ -99,14 +99,15 @@ int main() {
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1)";
 
     // TODO: calculate pieceweight on makemove? Same for updating material balance
-/*    Zagreus::Bitboard bb;
-    bb.setFromFEN("r1bqk2r/1pp2pp1/p1np1n1p/4p3/2B1P3/3PNN2/PPP2PPP/R2Q1RK1 b kq - 0 9");
-    bb.setWhiteTimeMsec(999999999);
-    Zagreus::searchManager.getBestMove(bb, Zagreus::PieceColor::WHITE);*/
 
     try {
         Zagreus::ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
+
+/*        Zagreus::Bitboard bb;
+        bb.setFromFEN("r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13");
+        bb.setWhiteTimeMsec(999999999);
+        Zagreus::searchManager.getBestMove(engine, bb, Zagreus::PieceColor::WHITE);*/
 
         std::string line;
         line.reserve(16384);

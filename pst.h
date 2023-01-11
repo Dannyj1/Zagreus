@@ -24,5 +24,7 @@ namespace Zagreus {
 // PST tables from https://www.chessprogramming.org/Simplified_Evaluation_Function
     void initializePst();
 
-    int getPstValue(PieceType piece, int square);
+    int getMidgamePstValue(PieceType piece, int square);
+
+    int getEndgamePstValue(PieceType piece, int square);
 }
