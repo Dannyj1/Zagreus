@@ -343,7 +343,7 @@ namespace Zagreus {
 
             castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
         } else if (pieceType == PieceType::BLACK_KING) {
-            if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+            if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
                 zobristHash ^= zobristConstants[768 + 3];
             }
 
@@ -374,7 +374,6 @@ namespace Zagreus {
                 return;
             }
         }
-
 
         if (pieceType == PieceType::WHITE_ROOK) {
             if (fromSquare == Square::A1) {
@@ -891,39 +890,131 @@ namespace Zagreus {
         Bitboard::blackTimeMsec = blackTimeMsec;
     }
 
-    /*uint64_t Bitboard::getZobristForMove(Move &move) {
+    uint64_t Bitboard::getZobristForMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece) {
         uint64_t hash = getZobristHash();
 
         if (enPassantSquare[PieceColor::WHITE] != -1) {
-            zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::WHITE] % 8) + 768 + 5];
+            hash ^= zobristConstants[(enPassantSquare[PieceColor::WHITE] % 8) + 768 + 5];
         }
 
         if (enPassantSquare[PieceColor::BLACK] != -1) {
-            zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::BLACK] % 8) + 768 + 13];
+            hash ^= zobristConstants[(enPassantSquare[PieceColor::BLACK] % 8) + 768 + 13];
         }
 
-        if (move.pieceType == PieceType::WHITE_PAWN || move.pieceType == PieceType::BLACK_PAWN) {
-            halfMoveClock = 0;
-
-            if (move.fromSquare - move.toSquare == 16) {
-                zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::BLACK] % 8) + 768 + 13];
-            } else if (move.fromSquare - move.toSquare == -16) {
-                zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::WHITE] % 8) + 768 + 5];
+        if (pieceType == PieceType::WHITE_PAWN || pieceType == PieceType::BLACK_PAWN) {
+            if (fromSquare - toSquare == 16) {
+                hash ^= zobristConstants[((toSquare + 8) % 8) + 768 + 13];
+            } else if (fromSquare - toSquare == -16) {
+                hash ^= zobristConstants[((toSquare - 8) % 8) + 768 + 5];
+            } else {
+                if (std::abs(fromSquare - toSquare) == 7 || std::abs(fromSquare - toSquare) == 9) {
+                    if (enPassantSquare[PieceColor::WHITE] == toSquare) {
+                        hash ^= zobristConstants[(toSquare + 8) * 12 + PieceType::WHITE_PAWN];
+                    } else if (enPassantSquare[PieceColor::BLACK] == toSquare) {
+                        hash ^= zobristConstants[(toSquare - 8) * 12 + PieceType::BLACK_PAWN];
+                    }
+                }
             }
         }
 
         if (pieceType == PieceType::WHITE_KING) {
-            castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
-            zobristHash ^= zobristConstants[768 + 1];
-            zobristHash ^= zobristConstants[768 + 2];
+            if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                hash ^= zobristConstants[768 + 1];
+            }
+
+            if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                hash ^= zobristConstants[768 + 2];
+            }
         } else if (pieceType == PieceType::BLACK_KING) {
-            castlingRights &= ~(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
-            zobristHash ^= zobristConstants[768 + 3];
-            zobristHash ^= zobristConstants[768 + 4];
+            if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                hash ^= zobristConstants[768 + 3];
+            }
+
+            if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                hash ^= zobristConstants[768 + 4];
+            }
         }
 
+        if (pieceType == PieceType::WHITE_ROOK && toSquare == Square::E1) {
+            if (fromSquare == Square::A1 && (castlingRights & CastlingRights::WHITE_QUEENSIDE)) {
+                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                    hash ^= zobristConstants[768 + 1];
+                }
+
+                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                    hash ^= zobristConstants[768 + 2];
+                }
+            } else if (fromSquare == Square::H1 && (castlingRights & CastlingRights::WHITE_KINGSIDE)) {
+                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                    hash ^= zobristConstants[768 + 1];
+                }
+
+                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                    hash ^= zobristConstants[768 + 2];
+                }
+            }
+        }
+
+        if (pieceType == PieceType::BLACK_ROOK && toSquare == Square::E8) {
+            if (fromSquare == Square::A8 && (castlingRights & CastlingRights::BLACK_QUEENSIDE)) {
+                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                    hash ^= zobristConstants[768 + 3];
+                }
+
+                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                    hash ^= zobristConstants[768 + 4];
+                }
+            } else if (fromSquare == Square::H8 && (castlingRights & CastlingRights::BLACK_KINGSIDE)) {
+                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                    hash ^= zobristConstants[768 + 3];
+                }
+
+                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                    hash ^= zobristConstants[768 + 4];
+                }
+            }
+        }
+
+        if (pieceType == PieceType::WHITE_ROOK) {
+            if (fromSquare == Square::A1) {
+                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                    hash ^= zobristConstants[768 + 2];
+                }
+            } else if (fromSquare == Square::H1) {
+                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                    hash ^= zobristConstants[768 + 1];
+                }
+            }
+        }
+
+        if (pieceType == PieceType::BLACK_ROOK) {
+            if (fromSquare == Square::A8) {
+                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                    zobristHash ^= zobristConstants[768 + 4];
+                }
+            } else if (fromSquare == Square::H8) {
+                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                    zobristHash ^= zobristConstants[768 + 3];
+                }
+            }
+        }
+
+        PieceType capturedPiece = getPieceOnSquare(toSquare);
+        if (capturedPiece != PieceType::EMPTY) {
+            hash ^= zobristConstants[toSquare * 12 + capturedPiece];
+        }
+
+        hash ^= zobristConstants[fromSquare * 12 + pieceType];
+
+        if (promotionPiece != PieceType::EMPTY) {
+            hash ^= zobristConstants[toSquare * 12 + promotionPiece];
+        } else {
+            hash ^= zobristConstants[toSquare * 12 + pieceType];
+        }
+
+        hash ^= zobristConstants[768];
         return hash;
-    }*/
+    }
 
     bool Bitboard::isInsufficientMaterial() {
         int pieceCount = popcnt(getOccupiedBoard());

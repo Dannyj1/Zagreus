@@ -67,7 +67,7 @@ namespace Zagreus {
     }
 
     std::string ZagreusEngine::getEngineVersion() {
-        return "v1.0.0";
+        return "v1.0.1";
     }
 
     std::string ZagreusEngine::getAuthorName() {

@@ -263,6 +263,8 @@ namespace Zagreus {
         bool isHasWhiteCastled() const;
 
         bool isHasBlackCastled() const;
+
+        uint64_t getZobristForMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece);
     };
 
     uint64_t soutOne(uint64_t b);
