@@ -1573,17 +1573,8 @@ namespace Zagreus {
     }
 
     // TODO: make implementation faster. It's either too slow or broken, causing very bad results.
-    int Bitboard::mvvlva(int attackedSquare, PieceColor attackingColor) {
-//        int mvv = getMostValuableVictimWeight(attackedSquare, attackingColor);
-        int mvv = getPieceWeight(pieceSquareMapping[attackedSquare]);
-        int lva = getLeastValuableAttackerWeight(attackedSquare, attackingColor);
-
-        // -1 means there were no attacks
-        if (mvv == -1 || lva == -1) {
-            return -1;
-        }
-
-        return mvv - lva;
+    int Bitboard::mvvlva(PieceType attacker, PieceType victim) {
+        return mvvlvaTable[attacker][victim];
     }
 
     int Bitboard::getMostValuableVictimWeight(int attackedSquare, PieceColor attackingColor) {

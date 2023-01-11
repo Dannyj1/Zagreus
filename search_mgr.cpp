@@ -30,7 +30,6 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
-    // TODO: encourage walking pawns to the end of the board in the endgame
     SearchResult SearchManager::getBestMove(ZagreusEngine &engine, Bitboard &board, PieceColor color) {
         searchStats = {};
         isSearching = true;
@@ -541,7 +540,6 @@ namespace Zagreus {
         evalContext.whiteEndgameScore -= popcnt(evalContext.blackQueenAttacks & kingAttacks) * (bitboard.getPieceWeight(PieceType::BLACK_QUEEN) / 100);
     }
 
-    // TODO: add proper game phase stuff
     uint64_t blackQueenCastlingAttackPattern = 0x7000000000000000;
     uint64_t blackKingCastlingAttackPattern = 0x600000000000000;
     void SearchManager::getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard) {
@@ -793,7 +791,6 @@ namespace Zagreus {
         evalContext.whiteEndgameScore -= popcnt(evalContext.whiteCombinedAttacks & evalContext.blackQueenAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_QUEEN) / 100));
     }
 
-    // TODO: new mobility causes very low NPS??
     void SearchManager::getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getBlackBoard() | evalContext.whitePawnAttacks;
 

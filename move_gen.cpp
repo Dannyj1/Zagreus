@@ -189,8 +189,7 @@ namespace Zagreus {
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
-                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
-                                   bitboard.getPieceWeight(pieceType);
+                                   bitboard.mvvlva(pieceType, bitboard.getPieceOnSquare(genIndex));
                 }
 
                 if (genIndex >= 56 || genIndex <= 7) {
@@ -244,8 +243,7 @@ namespace Zagreus {
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
-                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
-                                   bitboard.getPieceWeight(pieceType);
+                                   bitboard.mvvlva(pieceType, bitboard.getPieceOnSquare(genIndex));
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristForMove(index, genIndex, pieceType, PieceType::EMPTY), bitboard.getPly(),
@@ -284,8 +282,7 @@ namespace Zagreus {
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
-                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
-                                   bitboard.getPieceWeight(pieceType);
+                                   bitboard.mvvlva(pieceType, bitboard.getPieceOnSquare(genIndex));
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristForMove(index, genIndex, pieceType, PieceType::EMPTY), bitboard.getPly(),
@@ -382,8 +379,7 @@ namespace Zagreus {
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
-                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
-                                   bitboard.getPieceWeight(pieceType);
+                                   bitboard.mvvlva(pieceType, bitboard.getPieceOnSquare(genIndex));
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristForMove(index, genIndex, pieceType, PieceType::EMPTY), bitboard.getPly(),
@@ -422,8 +418,7 @@ namespace Zagreus {
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
-                                   bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
-                                   bitboard.getPieceWeight(pieceType);
+                                   bitboard.mvvlva(pieceType, bitboard.getPieceOnSquare(genIndex));
                 }
 
                 moves.push_back({index, genIndex, pieceType, bitboard.getZobristForMove(index, genIndex, pieceType, PieceType::EMPTY), bitboard.getPly(),
@@ -462,8 +457,7 @@ namespace Zagreus {
 
             if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                 captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
-                               bitboard.getPieceWeight(bitboard.getPieceOnSquare(genIndex)) -
-                               bitboard.getPieceWeight(pieceType);
+                               bitboard.mvvlva(pieceType, bitboard.getPieceOnSquare(genIndex));
             }
 
             moves.push_back({index, genIndex, pieceType, bitboard.getZobristForMove(index, genIndex, pieceType, PieceType::EMPTY), bitboard.getPly(),

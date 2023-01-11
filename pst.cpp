@@ -142,7 +142,6 @@ namespace Zagreus {
             -15,  36,  12, -54,   8, -28,  24,  14,
     };
 
-    // TODO: use this in lategame, implement tapered eval.
     const int endgameKingTable[64] = {
             -74, -35, -18, -18, -11,  15,   4, -17,
             -12,  17,  14,  17,  17,  38,  23,  11,
