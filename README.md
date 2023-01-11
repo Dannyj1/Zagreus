@@ -12,7 +12,7 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 - Quiescence Search with delta pruning and SEE move ordering
 - Move ordering using MVV/LVA, killer moves, history heuristic, countermove heuristic
 - Transposition Table
-- Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square tables and more
+- Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square tables and more
 - Null Move Pruning
 - Late Move Reduction
 - And more! This list is constantly growing and changing, but it is difficult to keep track of all features and changes.

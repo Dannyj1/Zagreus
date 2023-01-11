@@ -333,13 +333,25 @@ namespace Zagreus {
         }
 
         if (pieceType == PieceType::WHITE_KING) {
+            if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                zobristHash ^= zobristConstants[768 + 1];
+            }
+
+            if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                zobristHash ^= zobristConstants[768 + 2];
+            }
+
             castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
-            zobristHash ^= zobristConstants[768 + 1];
-            zobristHash ^= zobristConstants[768 + 2];
         } else if (pieceType == PieceType::BLACK_KING) {
+            if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                zobristHash ^= zobristConstants[768 + 3];
+            }
+
+            if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                zobristHash ^= zobristConstants[768 + 4];
+            }
+
             castlingRights &= ~(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
-            zobristHash ^= zobristConstants[768 + 3];
-            zobristHash ^= zobristConstants[768 + 4];
         }
 
         // TODO: refactor. Really ugly
@@ -363,23 +375,36 @@ namespace Zagreus {
             }
         }
 
+
         if (pieceType == PieceType::WHITE_ROOK) {
             if (fromSquare == Square::A1) {
+                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                    zobristHash ^= zobristConstants[768 + 2];
+                }
+
                 castlingRights &= ~CastlingRights::WHITE_QUEENSIDE;
-                zobristHash ^= zobristConstants[768 + 2];
             } else if (fromSquare == Square::H1) {
+                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                    zobristHash ^= zobristConstants[768 + 1];
+                }
+
                 castlingRights &= ~CastlingRights::WHITE_KINGSIDE;
-                zobristHash ^= zobristConstants[768 + 1];
             }
         }
 
         if (pieceType == PieceType::BLACK_ROOK) {
             if (fromSquare == Square::A8) {
+                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                    zobristHash ^= zobristConstants[768 + 4];
+                }
+
                 castlingRights &= ~CastlingRights::BLACK_QUEENSIDE;
-                zobristHash ^= zobristConstants[768 + 4];
             } else if (fromSquare == Square::H8) {
+                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                    zobristHash ^= zobristConstants[768 + 3];
+                }
+
                 castlingRights &= ~CastlingRights::BLACK_KINGSIDE;
-                zobristHash ^= zobristConstants[768 + 3];
             }
         }
 
@@ -866,6 +891,40 @@ namespace Zagreus {
         Bitboard::blackTimeMsec = blackTimeMsec;
     }
 
+    /*uint64_t Bitboard::getZobristForMove(Move &move) {
+        uint64_t hash = getZobristHash();
+
+        if (enPassantSquare[PieceColor::WHITE] != -1) {
+            zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::WHITE] % 8) + 768 + 5];
+        }
+
+        if (enPassantSquare[PieceColor::BLACK] != -1) {
+            zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::BLACK] % 8) + 768 + 13];
+        }
+
+        if (move.pieceType == PieceType::WHITE_PAWN || move.pieceType == PieceType::BLACK_PAWN) {
+            halfMoveClock = 0;
+
+            if (move.fromSquare - move.toSquare == 16) {
+                zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::BLACK] % 8) + 768 + 13];
+            } else if (move.fromSquare - move.toSquare == -16) {
+                zobristHash ^= zobristConstants[(enPassantSquare[PieceColor::WHITE] % 8) + 768 + 5];
+            }
+        }
+
+        if (pieceType == PieceType::WHITE_KING) {
+            castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
+            zobristHash ^= zobristConstants[768 + 1];
+            zobristHash ^= zobristConstants[768 + 2];
+        } else if (pieceType == PieceType::BLACK_KING) {
+            castlingRights &= ~(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
+            zobristHash ^= zobristConstants[768 + 3];
+            zobristHash ^= zobristConstants[768 + 4];
+        }
+
+        return hash;
+    }*/
+
     bool Bitboard::isInsufficientMaterial() {
         int pieceCount = popcnt(getOccupiedBoard());
 
@@ -1042,14 +1101,28 @@ namespace Zagreus {
 
         if (kingType == PieceType::WHITE_KING) {
             hasWhiteCastled = true;
+
+            if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                zobristHash ^= zobristConstants[768 + 1];
+            }
+
+            if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                zobristHash ^= zobristConstants[768 + 2];
+            }
+
             castlingRights &= ~(CastlingRights::WHITE_QUEENSIDE | CastlingRights::WHITE_KINGSIDE);
-            zobristHash ^= zobristConstants[768 + 1];
-            zobristHash ^= zobristConstants[768 + 2];
         } else {
             hasBlackCastled = true;
+
+            if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                zobristHash ^= zobristConstants[768 + 3];
+            }
+
+            if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                zobristHash ^= zobristConstants[768 + 4];
+            }
+
             castlingRights &= ~(CastlingRights::BLACK_QUEENSIDE | CastlingRights::BLACK_KINGSIDE);
-            zobristHash ^= zobristConstants[768 + 3];
-            zobristHash ^= zobristConstants[768 + 4];
         }
 
         movingColor = getOppositeColor(movingColor);
