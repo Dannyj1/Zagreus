@@ -40,7 +40,7 @@ namespace Zagreus {
     public:
         static TranspositionTable* instance;
 
-        TTEntry* transpositionTable = new TTEntry[1]{};
+        TTEntry** transpositionTable = new TTEntry*[1]{};
         uint32_t** killerMoves = new uint32_t*[3]{};
         // TODO: make 1d
         uint32_t** historyMoves = new uint32_t*[12]{};

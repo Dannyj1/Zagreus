@@ -371,8 +371,7 @@ namespace Zagreus {
         return searchStats;
     }
 
-    int SearchManager::evaluate(Bitboard &board,
-                                std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
+    int SearchManager::evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
         if (std::chrono::high_resolution_clock::now() > endTime) {
             return 0;
         }
