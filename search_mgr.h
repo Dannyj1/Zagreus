@@ -44,11 +44,6 @@ namespace Zagreus {
         uint64_t blackCombinedAttacks = 0;
     };
 
-    struct Line {
-        int moveCount = 0;
-        Move moves[64];
-    };
-
     class SearchManager {
     private:
         bool isSearching = false;

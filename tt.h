@@ -23,20 +23,28 @@
 #include "bitboard.h"
 
 namespace Zagreus {
+    enum NodeType {
+        PV_NODE,  // Exact score
+        FAIL_LOW_NODE, // Alpha score
+        FAIL_HIGH_NODE // Beta score
+    };
+
     struct TTEntry {
         int score = 0;
         uint8_t depth = 0;
         uint64_t zobristHash = 0;
-        bool isPVMove = false;
+        NodeType nodeType = NodeType::PV_NODE;
     };
 
     class TranspositionTable {
     public:
+        static TranspositionTable* instance;
+
         TTEntry* transpositionTable = new TTEntry[1]{};
-        uint32_t** killerMoves = new uint32_t* [3]{};
+        uint32_t** killerMoves = new uint32_t*[3]{};
         // TODO: make 1d
-        uint32_t** historyMoves = new uint32_t* [12]{};
-        uint32_t** counterMoves = new uint32_t* [64]{};
+        uint32_t** historyMoves = new uint32_t*[12]{};
+        uint32_t** counterMoves = new uint32_t*[64]{};
 
         uint64_t hashSize = 0;
 
@@ -74,12 +82,18 @@ namespace Zagreus {
             delete[] counterMoves;
         }
 
+        TranspositionTable(TranspositionTable &other) = delete;
+
+        void operator=(const TranspositionTable &) = delete;
+
+        static TranspositionTable* getTT();
+
         void setTableSize(int megaBytes);
 
-        void addPosition(uint64_t zobristHash, int depth, int score, bool isPVMove);
+        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType);
 
-        TTEntry* getPosition(uint64_t zobristHash);
+        int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
+
+        TTEntry* getEntry(uint64_t zobristHash);
     };
-
-    static TranspositionTable tt{};
 }

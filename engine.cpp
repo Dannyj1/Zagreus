@@ -67,7 +67,7 @@ namespace Zagreus {
     }
 
     std::string ZagreusEngine::getEngineVersion() {
-        return "v1.0.1";
+        return "v1.1.0";
     }
 
     std::string ZagreusEngine::getAuthorName() {
@@ -102,7 +102,7 @@ namespace Zagreus {
                 option.setValue(optionValue);
 
                 if (option.getName() == "Hash") {
-                    tt.setTableSize(option.getIntValue());
+                    TranspositionTable::getTT()->setTableSize(option.getIntValue());
                 }
 
                 return true;
@@ -115,7 +115,7 @@ namespace Zagreus {
     void ZagreusEngine::initialize() {
         board = Bitboard{};
         engineColor = PieceColor::NONE;
-        tt.setTableSize(getOption("Hash").getIntValue());
+        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
         isEngineInitialized = true;
     }
 

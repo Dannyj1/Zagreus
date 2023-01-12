@@ -64,16 +64,16 @@ namespace Zagreus {
     }
 
     bool sortMoves(Bitboard &bitboard, Move &a, Move &b) {
-        int aScore = tt.historyMoves[a.pieceType][a.toSquare];
-        int bScore = tt.historyMoves[b.pieceType][b.toSquare];
-        TTEntry* aEntry = tt.getPosition(a.zobristHash);
-        TTEntry* bEntry = tt.getPosition(b.zobristHash);
+        int aScore = 0;
+        int bScore = 0;
+        TTEntry* aEntry = TranspositionTable::getTT()->getEntry(a.zobristHash);
+        TTEntry* bEntry = TranspositionTable::getTT()->getEntry(b.zobristHash);
 
         assert(a.fromSquare != a.toSquare);
         assert(b.fromSquare != b.toSquare);
 
         if (aEntry->zobristHash == a.zobristHash) {
-            if (aEntry->isPVMove) {
+            if (aEntry->nodeType == NodeType::PV_NODE) {
                 aScore += 50000 + aEntry->score;
             } else {
                 aScore += 25000 + aEntry->score;
@@ -83,36 +83,42 @@ namespace Zagreus {
         } else {
             uint32_t aMoveCode = encodeMove(a);
 
-            if (tt.killerMoves[0][a.ply] == aMoveCode) {
+            if (TranspositionTable::getTT()->killerMoves[0][a.ply] == aMoveCode) {
                 aScore += 5000;
-            } else if (tt.killerMoves[1][a.ply] == aMoveCode) {
+            } else if (TranspositionTable::getTT()->killerMoves[1][a.ply] == aMoveCode) {
                 aScore += 4000;
-            } else if (tt.counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == aMoveCode) {
+            } else if (TranspositionTable::getTT()->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == aMoveCode) {
                 aScore += 3000;
             } else if (a.captureScore < -1) {
                 aScore += a.captureScore - 5000;
+            } else {
+                aScore += TranspositionTable::getTT()->historyMoves[a.pieceType][a.toSquare];
             }
         }
 
         if (bEntry->zobristHash == b.zobristHash) {
-            if (bEntry->isPVMove) {
+            if (bEntry->nodeType == NodeType::PV_NODE) {
                 bScore += 50000 + bEntry->score;
             } else {
                 bScore += 25000 + bEntry->score;
             }
+        } else if (bEntry->zobristHash == b.zobristHash) {
+            bScore += 25000 + bEntry->score;
         } else if (b.captureScore >= 0) {
             bScore += 10000 + b.captureScore;
         } else {
             uint32_t bMoveCode = encodeMove(b);
 
-            if (tt.killerMoves[0][b.ply] == bMoveCode) {
+            if (TranspositionTable::getTT()->killerMoves[0][b.ply] == bMoveCode) {
                 bScore += 5000;
-            } else if (tt.killerMoves[1][b.ply] == bMoveCode) {
+            } else if (TranspositionTable::getTT()->killerMoves[1][b.ply] == bMoveCode) {
                 bScore += 4000;
-            } else if (tt.counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == bMoveCode) {
+            } else if (TranspositionTable::getTT()->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == bMoveCode) {
                 bScore += 3000;
             } else if (b.captureScore < -1) {
                 bScore += b.captureScore - 5000;
+            } else {
+                bScore += TranspositionTable::getTT()->historyMoves[b.pieceType][b.toSquare];
             }
         }
 
@@ -185,7 +191,7 @@ namespace Zagreus {
                 uint8_t genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                int captureScore = 0;
+                int captureScore = -1;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
@@ -239,7 +245,7 @@ namespace Zagreus {
                 uint8_t genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                int captureScore = 0;
+                int captureScore = -1;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
@@ -278,7 +284,7 @@ namespace Zagreus {
                 uint8_t genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                int captureScore = 0;
+                int captureScore = -1;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
@@ -375,7 +381,7 @@ namespace Zagreus {
                 uint8_t genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                int captureScore = 0;
+                int captureScore = -1;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
@@ -414,7 +420,7 @@ namespace Zagreus {
                 uint8_t genIndex = bitscanForward(genBB);
                 assert(genIndex >= 0 && genIndex < 64);
 
-                int captureScore = 0;
+                int captureScore = -1;
 
                 if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                     captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :
@@ -453,7 +459,7 @@ namespace Zagreus {
             uint8_t genIndex = bitscanForward(genBB);
             assert(genIndex >= 0 && genIndex < 64);
 
-            int captureScore = 0;
+            int captureScore = -1;
 
             if (bitboard.getPieceOnSquare(genIndex) != PieceType::EMPTY) {
                 captureScore = quiesce ? bitboard.seeCapture(index, genIndex, color) :

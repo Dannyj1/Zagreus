@@ -22,17 +22,40 @@
 #include "tt.h"
 
 namespace Zagreus {
-    void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score, bool isPVMove) {
+    TranspositionTable* TranspositionTable::instance = new TranspositionTable();
+
+    void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType) {
         if (score >= 90000000 || score <= -90000000) {
             return;
         }
 
-        uint32_t index = (zobristHash & hashSize);
-        transpositionTable[index] = TTEntry{score, (uint8_t) depth, zobristHash, isPVMove};
+        uint64_t index = (zobristHash & hashSize);
+        transpositionTable[index] = TTEntry{score, (uint8_t) depth, zobristHash, nodeType};
     }
 
-    TTEntry* TranspositionTable::getPosition(uint64_t zobristHash) {
-        uint32_t index = (zobristHash & hashSize);
+    int TranspositionTable::getScore(uint64_t zobristHash, int depth, int alpha, int beta) {
+        uint64_t index = (zobristHash & hashSize);
+        TTEntry entry = transpositionTable[index];
+
+        if (entry.zobristHash == zobristHash && entry.depth >= depth) {
+            if (entry.nodeType == PV_NODE) {
+                return entry.score;
+            } else if (entry.nodeType == FAIL_LOW_NODE) {
+                if (entry.score <= alpha) {
+                    return alpha;
+                }
+            } else if (entry.nodeType == FAIL_HIGH_NODE) {
+                if (entry.score >= beta) {
+                    return beta;
+                }
+            }
+        }
+
+        return INT32_MIN;
+    }
+
+    TTEntry* TranspositionTable::getEntry(uint64_t zobristHash) {
+        uint64_t index = (zobristHash & hashSize);
 
         return &transpositionTable[index];
     }
@@ -42,11 +65,15 @@ namespace Zagreus {
             megaBytes = 1 << (int) (log2(megaBytes));
         }
 
-        int byteSize = megaBytes * 1024 * 1024;
-        int entryCount = byteSize / sizeof(TTEntry);
+        uint64_t byteSize = megaBytes * 1024 * 1024;
+        uint64_t entryCount = byteSize / sizeof(TTEntry);
 
         delete[] transpositionTable;
         transpositionTable = new TTEntry[entryCount]{};
         hashSize = entryCount - 1;
+    }
+
+    TranspositionTable* TranspositionTable::TranspositionTable::getTT() {
+        return instance;
     }
 }

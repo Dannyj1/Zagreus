@@ -88,6 +88,11 @@ namespace Zagreus {
         int score = -2147483647 / 2;
     };
 
+    struct Line {
+        int moveCount = 0;
+        Move moves[64];
+    };
+
     struct UndoData {
         uint64_t pieceBB[12]{0};
         PieceType pieceSquareMapping[64]{PieceType::EMPTY};

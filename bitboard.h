@@ -349,7 +349,7 @@ namespace Zagreus {
 
     uint64_t calculateKingAttacks(uint64_t kingSet);
 
-    uint32_t encodeMove(Move &move);
+    uint32_t encodeMove(const Move &move);
 
     uint32_t encodeMove(int fromSquare, int toSquare, PieceType pieceType);
 }

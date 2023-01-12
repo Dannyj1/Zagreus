@@ -142,6 +142,7 @@ namespace Zagreus {
 
         bool searchPv = true;
         std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
+        NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
         for (int i = 0; i < moves.size(); i++) {
             Move &move = moves[i];
@@ -159,10 +160,10 @@ namespace Zagreus {
                 continue;
             }
 
-            TTEntry* entry = tt.getPosition(board.getZobristHash());
+            int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
 
-            if (entry->zobristHash == board.getZobristHash() && entry->depth >= depth) {
-                result = {rootMove, entry->score};
+            if (ttScore != INT32_MIN) {
+                result = {rootMove, ttScore};
             } else {
                 bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
                 bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
@@ -197,7 +198,6 @@ namespace Zagreus {
                 if (searchPv) {
                     result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
                     result.score *= -1;
-                    tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                 } else {
                     result = zwSearch(board, depth - 1 + depthExtension, -alpha, rootMove, move, endTime);
                     result.score *= -1;
@@ -205,7 +205,6 @@ namespace Zagreus {
                     if (result.score > alpha) {
                         result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
                         result.score *= -1;
-                        tt.addPosition(board.getZobristHash(), depth, result.score, searchPv);
                     }
                 }
             }
@@ -213,16 +212,15 @@ namespace Zagreus {
             board.unmakeMove();
 
             if (result.score >= beta) {
-                tt.killerMoves[1][board.getPly()] = tt.killerMoves[0][depth];
-                tt.killerMoves[0][board.getPly()] = encodeMove(move);
-                tt.counterMoves[previousMove.fromSquare][previousMove.toSquare] = encodeMove(previousMove);
+                TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][depth];
+                TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
+                TranspositionTable::getTT()->counterMoves[previousMove.fromSquare][previousMove.toSquare] = encodeMove(previousMove);
 
+                TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
                 return {rootMove, beta};
             }
 
             if (result.score > alpha) {
-                tt.addPosition(board.getZobristHash(), depth, result.score, true);
-
                 pvLine.moves[0] = move;
                 pvLine.moveCount = 1;
                 memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
@@ -230,12 +228,14 @@ namespace Zagreus {
 
                 assert(move.fromSquare >= 0);
                 assert(move.toSquare >= 0);
-                tt.historyMoves[move.pieceType][move.toSquare] += depth * depth;
+                TranspositionTable::getTT()->historyMoves[move.pieceType][move.toSquare] += depth * depth;
                 alpha = result.score;
+                nodeType = NodeType::PV_NODE;
                 searchPv = false;
             }
         }
 
+        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType);
         return {rootMove, alpha};
     }
 
@@ -615,7 +615,6 @@ namespace Zagreus {
     }
 
     void SearchManager::getBlackBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
-        int score = 0;
         uint64_t bishopBB = bitboard.getPieceBoard(PieceType::BLACK_BISHOP);
         int bishopAmount = popcnt(bishopBB);
         uint64_t pawnBB = bitboard.getPieceBoard(PieceType::BLACK_PAWN);

@@ -1693,7 +1693,7 @@ namespace Zagreus {
         }
     }
 
-    uint32_t encodeMove(Move &move) {
+    uint32_t encodeMove(const Move &move) {
         return (move.promotionPiece << 25) | (move.promotionPiece << 20) | (move.pieceType << 15) |
                (move.fromSquare << 7) | move.toSquare;
     }
