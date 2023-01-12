@@ -30,8 +30,11 @@ namespace Zagreus {
         }
 
         uint64_t index = (zobristHash & hashSize);
-        delete transpositionTable[index];
-        transpositionTable[index] = new TTEntry{score, (uint8_t) depth, zobristHash, nodeType};
+
+        if (transpositionTable[index]->depth <= depth) {
+            delete transpositionTable[index];
+            transpositionTable[index] = new TTEntry{score, (uint8_t) depth, zobristHash, nodeType};
+        }
     }
 
     int TranspositionTable::getScore(uint64_t zobristHash, int depth, int alpha, int beta) {
