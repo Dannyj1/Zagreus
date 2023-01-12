@@ -73,6 +73,7 @@ namespace Zagreus {
         uint8_t kingInCheck = 0b00001100;
         uint8_t previousMoveFrom = 0;
         uint8_t previousMoveTo = 0;
+        Line previousPvLine = {};
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
@@ -281,6 +282,10 @@ namespace Zagreus {
         bool isHasBlackCastled() const;
 
         uint64_t getZobristForMove(int fromSquare, int toSquare, PieceType pieceType, PieceType promotionPiece);
+
+        Line& getPreviousPvLine();
+
+        void setPreviousPvLine(Line &previousPvLine);
     };
 
     uint64_t soutOne(uint64_t b);

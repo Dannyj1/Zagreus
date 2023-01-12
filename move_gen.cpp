@@ -27,8 +27,47 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 
-// TODO: apply _blsr_u64 everywhere
 namespace Zagreus {
+    int scoreMove(Bitboard &bitboard, Move &move, Line &previousPv) {
+        for (int i = 0; i < previousPv.moveCount; i++) {
+            Move pvMove = previousPv.moves[i];
+
+            if (move.fromSquare == pvMove.fromSquare && move.toSquare == pvMove.toSquare && move.pieceType == pvMove.pieceType) {
+                return 50000 - i;
+            }
+        }
+
+        TTEntry* entry = TranspositionTable::getTT()->getEntry(move.zobristHash);
+
+        if (entry->zobristHash == move.zobristHash) {
+            return 25000 + entry->score;
+        }
+
+        if (move.captureScore >= 0) {
+            return 10000 + move.captureScore;
+        }
+
+        uint32_t aMoveCode = encodeMove(move);
+        if (TranspositionTable::getTT()->killerMoves[0][move.ply] == aMoveCode) {
+            return 5000;
+        }
+
+        if (TranspositionTable::getTT()->killerMoves[1][move.ply] == aMoveCode) {
+            return 4000;
+        }
+
+        if (TranspositionTable::getTT()->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] ==
+            aMoveCode) {
+            return 3000;
+        }
+
+        if (move.captureScore < -1) {
+            return move.captureScore - 5000;
+        }
+
+        return TranspositionTable::getTT()->historyMoves[move.pieceType][move.toSquare];
+    }
+
     std::vector<Move> generateLegalMoves(Bitboard &bitboard, PieceColor color) {
         std::vector<Move> moves;
         moves.reserve(50);
@@ -49,80 +88,17 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
 
-        std::sort(moves.begin(), moves.end(), [&bitboard](Move &a, Move &b) {
-            return sortMoves(bitboard, a, b);
+        Line &pvLine = bitboard.getPreviousPvLine();
+
+        std::sort(moves.begin(), moves.end(), [&bitboard, &pvLine](Move &a, Move &b) {
+            return scoreMove(bitboard, a, pvLine) > scoreMove(bitboard, b, pvLine);
         });
 
         return moves;
     }
 
     bool sortQuiesceMoves(Move &a, Move &b) {
-        int aScore = a.captureScore;
-        int bScore = b.captureScore;
-
-        return aScore > bScore;
-    }
-
-    bool sortMoves(Bitboard &bitboard, Move &a, Move &b) {
-        int aScore = 0;
-        int bScore = 0;
-        TTEntry* aEntry = TranspositionTable::getTT()->getEntry(a.zobristHash);
-        TTEntry* bEntry = TranspositionTable::getTT()->getEntry(b.zobristHash);
-
-        assert(a.fromSquare != a.toSquare);
-        assert(b.fromSquare != b.toSquare);
-
-        if (aEntry->zobristHash == a.zobristHash) {
-            if (aEntry->nodeType == NodeType::PV_NODE) {
-                aScore += 50000 + aEntry->score;
-            } else {
-                aScore += 25000 + aEntry->score;
-            }
-        } else if (a.captureScore >= 0) {
-            aScore += 10000 + a.captureScore;
-        } else {
-            uint32_t aMoveCode = encodeMove(a);
-
-            if (TranspositionTable::getTT()->killerMoves[0][a.ply] == aMoveCode) {
-                aScore += 5000;
-            } else if (TranspositionTable::getTT()->killerMoves[1][a.ply] == aMoveCode) {
-                aScore += 4000;
-            } else if (TranspositionTable::getTT()->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == aMoveCode) {
-                aScore += 3000;
-            } else if (a.captureScore < -1) {
-                aScore += a.captureScore - 5000;
-            } else {
-                aScore += TranspositionTable::getTT()->historyMoves[a.pieceType][a.toSquare];
-            }
-        }
-
-        if (bEntry->zobristHash == b.zobristHash) {
-            if (bEntry->nodeType == NodeType::PV_NODE) {
-                bScore += 50000 + bEntry->score;
-            } else {
-                bScore += 25000 + bEntry->score;
-            }
-        } else if (bEntry->zobristHash == b.zobristHash) {
-            bScore += 25000 + bEntry->score;
-        } else if (b.captureScore >= 0) {
-            bScore += 10000 + b.captureScore;
-        } else {
-            uint32_t bMoveCode = encodeMove(b);
-
-            if (TranspositionTable::getTT()->killerMoves[0][b.ply] == bMoveCode) {
-                bScore += 5000;
-            } else if (TranspositionTable::getTT()->killerMoves[1][b.ply] == bMoveCode) {
-                bScore += 4000;
-            } else if (TranspositionTable::getTT()->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] == bMoveCode) {
-                bScore += 3000;
-            } else if (b.captureScore < -1) {
-                bScore += b.captureScore - 5000;
-            } else {
-                bScore += TranspositionTable::getTT()->historyMoves[b.pieceType][b.toSquare];
-            }
-        }
-
-        return aScore > bScore;
+        return a.captureScore > b.captureScore;
     }
 
     std::vector<Move> generateQuiescenceMoves(Bitboard &bitboard, PieceColor color) {

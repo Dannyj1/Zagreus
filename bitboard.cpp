@@ -749,6 +749,14 @@ namespace Zagreus {
         std::cout << std::endl << "---------------------------------" << std::endl;
     }
 
+    Line& Bitboard::getPreviousPvLine() {
+        return previousPvLine;
+    }
+
+    void Bitboard::setPreviousPvLine(Line &previousPvLine) {
+        Bitboard::previousPvLine = previousPvLine;
+    }
+
     bool Bitboard::isSquareAttackedByColor(int square, PieceColor color) {
         return getSquareAttacksByColor(square, color) != 0;
     }

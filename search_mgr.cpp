@@ -37,7 +37,6 @@ namespace Zagreus {
         SearchResult iterationResult;
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(engine, board, color);
-        std::vector<Move> moves = generateLegalMoves(board, color);
         int depth = 0;
 
         std::cout << color;
@@ -49,6 +48,8 @@ namespace Zagreus {
             searchStats.seldepth = 0;
 
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
+            board.setPreviousPvLine(iterationPvLine);
+            std::vector<Move> moves = generateLegalMoves(board, color);
 
             for (Move &move : moves) {
                 assert(move.fromSquare != move.toSquare);
@@ -160,7 +161,7 @@ namespace Zagreus {
                 continue;
             }
 
-            int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
+            int ttScore = searchPv ? INT32_MIN : TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
 
             if (ttScore != INT32_MIN) {
                 result = {rootMove, ttScore};
@@ -168,6 +169,7 @@ namespace Zagreus {
                 bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
                 bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
                 int depthExtension = 0;
+                int depthReduction = 1;
 
                 if (ownKingInCheck || opponentKingInCheck) {
                     depthExtension++;
@@ -183,27 +185,20 @@ namespace Zagreus {
                         }
                     }
 
-                    if (depth >= 3 && move.captureScore < 0 && i > 5) {
-                        result = zwSearch(board, depth / 4, -alpha, rootMove, rootMove, endTime);
-
-                        result.score *= -1;
-
-                        if (result.score <= alpha) {
-                            board.unmakeMove();
-                            continue;
-                        }
+                    if (depth >= 3 && move.captureScore < 0 && i > 4) {
+                        depthReduction += depth / 2;
                     }
                 }
 
                 if (searchPv) {
-                    result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
+                    result = search(board, depth - depthReduction + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
                     result.score *= -1;
                 } else {
-                    result = zwSearch(board, depth - 1 + depthExtension, -alpha, rootMove, move, endTime);
+                    result = zwSearch(board, depth - depthReduction + depthExtension, -alpha, rootMove, move, endTime);
                     result.score *= -1;
 
                     if (result.score > alpha) {
-                        result = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
+                        result = search(board, depth - depthReduction + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
                         result.score *= -1;
                     }
                 }
@@ -269,24 +264,18 @@ namespace Zagreus {
             }
 
             int depthExtension = 0;
+            int depthReduction = 1;
             bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
             bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
             SearchResult result;
 
             if (ownKingInCheck || opponentKingInCheck) {
                 depthExtension++;
-            } else if (depth >= 3 && !depthExtension && move.captureScore < 0 && i > 5) {
-                result = zwSearch(board, depth / 4, 1 - beta, rootMove, rootMove, endTime);
-                result.score *= -1;
-
-                if (result.score <= beta - 1) {
-                    board.unmakeMove();
-                    continue;
-                }
+            } else if (depth >= 3 && !depthExtension && move.captureScore < 0 && i > 4) {
+                depthReduction += depth / 2;
             }
 
-
-            result = zwSearch(board, depth - 1 + depthExtension, 1 - beta, rootMove, move, endTime);
+            result = zwSearch(board, depth - depthReduction + depthExtension, 1 - beta, rootMove, move, endTime);
             result.score *= -1;
 
             board.unmakeMove();

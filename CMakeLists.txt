@@ -11,5 +11,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -march=native -Wa
 
 file(GLOB inc_zagreus "*.h" "*.cpp")
 file(GLOB inc_senjo "senjo/*.h" "senjo/*.cpp")
+
 find_package(Boost REQUIRED)
 add_executable(Zagreus main.cpp ${inc_senjo} ${inc_zagreus})
