@@ -904,9 +904,9 @@ namespace Zagreus {
         while (whiteBishopBB) {
             uint64_t index = bitscanForward(whiteBishopBB);
 
-            if (!bitboard.isPinned(index, PieceColor::WHITE)) {
+//            if (!bitboard.isPinned(index, PieceColor::WHITE)) {
                 whiteBishopAttacks |= bitboard.getBishopAttacks(index, occupied);
-            }
+//            }
 
             whiteBishopBB &= ~(1ULL << index);
         }
@@ -914,9 +914,9 @@ namespace Zagreus {
         while (whiteRookBB) {
             uint64_t index = bitscanForward(whiteRookBB);
 
-            if (!bitboard.isPinned(index, PieceColor::WHITE)) {
+//            if (!bitboard.isPinned(index, PieceColor::WHITE)) {
                 whiteRookAttacks |= bitboard.getRookAttacks(index, occupied);
-            }
+//            }
 
             whiteRookBB &= ~(1ULL << index);
         }
@@ -924,9 +924,9 @@ namespace Zagreus {
         while (whiteQueenBB) {
             uint64_t index = bitscanForward(whiteQueenBB);
 
-            if (!bitboard.isPinned(index, PieceColor::WHITE)) {
+//            if (!bitboard.isPinned(index, PieceColor::WHITE)) {
                 whiteQueenAttacks |= bitboard.getQueenAttacks(index, occupied);
-            }
+//            }
 
             whiteQueenBB &= ~(1ULL << index);
         }
@@ -934,9 +934,9 @@ namespace Zagreus {
         while (blackBishopBB) {
             uint64_t index = bitscanForward(blackBishopBB);
 
-            if (!bitboard.isPinned(index, PieceColor::BLACK)) {
+//            if (!bitboard.isPinned(index, PieceColor::BLACK)) {
                 blackBishopAttacks |= bitboard.getBishopAttacks(index, occupied);
-            }
+//            }
 
             blackBishopBB &= ~(1ULL << index);
         }
@@ -944,9 +944,9 @@ namespace Zagreus {
         while (blackRookBB) {
             uint64_t index = bitscanForward(blackRookBB);
 
-            if (!bitboard.isPinned(index, PieceColor::BLACK)) {
+//            if (!bitboard.isPinned(index, PieceColor::BLACK)) {
                 blackRookAttacks |= bitboard.getRookAttacks(index, occupied);
-            }
+//            }
 
             blackRookBB &= ~(1ULL << index);
         }
@@ -954,9 +954,9 @@ namespace Zagreus {
         while (blackQueenBB) {
             uint64_t index = bitscanForward(blackQueenBB);
 
-            if (!bitboard.isPinned(index, PieceColor::BLACK)) {
+//            if (!bitboard.isPinned(index, PieceColor::BLACK)) {
                 blackQueenAttacks |= bitboard.getQueenAttacks(index, occupied);
-            }
+//            }
 
             blackQueenBB &= ~(1ULL << index);
         }
