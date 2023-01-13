@@ -38,8 +38,10 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(engine, board, color);
         int depth = 0;
-        int alpha = -99999999;
-        int beta = 99999999;
+        int alpha = -9999999;
+        int beta = 9999999;
+        int alphaMargin = 50;
+        int betaMargin = 50;
 
         std::cout << color;
 
@@ -101,15 +103,6 @@ namespace Zagreus {
                         std::chrono::high_resolution_clock::now() - startTime).count();
                 senjo::Output(senjo::Output::NoPrefix) << searchStats;
             }
-
-            if (bestResult.score <= alpha || bestResult.score >= beta) {
-                alpha = -99999999;
-                beta = 99999999;
-                continue;
-            }
-
-            alpha = bestResult.score - 50;
-            beta = bestResult.score + 50;
 
             if (depth == 1 || std::chrono::high_resolution_clock::now() < endTime) {
                 assert(iterationResult.move.pieceType != PieceType::EMPTY);

@@ -104,11 +104,11 @@ int main() {
         Zagreus::ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
 
-/*        Zagreus::Bitboard bb;
+        Zagreus::Bitboard bb;
         bb.setFromFEN("3rq1k1/1pp1rpp1/p2p1n1p/4p3/1PN1P3/2PPRN2/P1QK1P2/4R3 w - - 5 25");
         bb.makeMove(0, 1, Zagreus::PieceType::WHITE_ROOK, Zagreus::PieceType::EMPTY);
         bb.setWhiteTimeMsec(999999999);
-        Zagreus::searchManager.getBestMove(engine, bb, Zagreus::PieceColor::WHITE);*/
+        Zagreus::searchManager.getBestMove(engine, bb, Zagreus::PieceColor::WHITE);
 
         std::string line;
         line.reserve(16384);
