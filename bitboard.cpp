@@ -1255,22 +1255,22 @@ namespace Zagreus {
             case BLACK_PAWN:
                 return 100;
             case WHITE_KNIGHT:
-                return 350 - ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 5);
+                return 350 - ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 3);
             case BLACK_KNIGHT:
-                return 350 - ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 5);
+                return 350 - ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 3);
             case WHITE_BISHOP:
             case BLACK_BISHOP:
                 return 350;
             case WHITE_ROOK:
-                return 525 + ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 5);
+                return 525 + ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 3);
             case BLACK_ROOK:
-                return 525 + ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 5);
+                return 525 + ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 3);
             case WHITE_QUEEN:
             case BLACK_QUEEN:
                 return 1000;
             case WHITE_KING:
             case BLACK_KING:
-                return 100000;
+                return 65535;
             case EMPTY:
                 return 0;
         }

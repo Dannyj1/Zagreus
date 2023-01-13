@@ -161,7 +161,7 @@ namespace Zagreus {
     }
 
     int getEndgamePstValue(PieceType piece, int square) {
-        return midgamePst[piece][square];
+        return endgamePst[piece][square];
     }
 
 
