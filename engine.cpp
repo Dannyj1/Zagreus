@@ -33,9 +33,10 @@ namespace Zagreus {
             return 1ULL;
         }
 
-        std::vector<Move> moves = generateLegalMoves(perftBoard, color);
+        MovePicker moves = generateLegalMoves(perftBoard, color);
 
-        for (Move &move : moves) {
+        while (moves.hasNext()) {
+            Move move = moves.getNextMove();
             assert(move.fromSquare != move.toSquare);
 
             perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);

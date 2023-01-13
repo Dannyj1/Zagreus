@@ -832,10 +832,11 @@ namespace Zagreus {
     }
 
     bool Bitboard::isDraw() {
-        std::vector<Move> moves = generateLegalMoves(*this, movingColor);
+        MovePicker moves = generateLegalMoves(*this, movingColor);
         bool hasLegalMove = false;
 
-        for (Move &move : moves) {
+        while (moves.hasNext()) {
+            Move move = moves.getNextMove();
             makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
             if (!isKingInCheck(getOppositeColor(movingColor))) {
@@ -1153,9 +1154,10 @@ namespace Zagreus {
             return false;
         }
 
-        std::vector<Move> moves = generateLegalMoves(*this, getOppositeColor(color));
+        MovePicker moves = generateLegalMoves(*this, getOppositeColor(color));
 
-        for (Move &move : moves) {
+        while (moves.hasNext()) {
+            Move move = moves.getNextMove();
             assert(move.fromSquare != move.toSquare);
 
             makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);

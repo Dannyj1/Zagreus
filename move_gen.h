@@ -21,11 +21,12 @@
 #include <vector>
 
 #include "bitboard.h"
+#include "move_picker.h"
 
 namespace Zagreus {
-    std::vector<Move> generateLegalMoves(Bitboard &bitboard, PieceColor color);
+    MovePicker generateLegalMoves(Bitboard &bitboard, PieceColor color);
 
-    std::vector<Move> generateQuiescenceMoves(Bitboard &bitboard, PieceColor color);
+    MovePicker generateQuiescenceMoves(Bitboard &bitboard, PieceColor color);
 
     void
     generatePawnMoves(std::vector<Move> &moves, Bitboard &bitboard, uint64_t ownPiecesBB, uint64_t opponentPiecesBB,

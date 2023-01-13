@@ -49,9 +49,10 @@ namespace Zagreus {
 
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
             board.setPreviousPvLine(iterationPvLine);
-            std::vector<Move> moves = generateLegalMoves(board, color);
+            MovePicker moves = generateLegalMoves(board, color);
 
-            for (Move &move : moves) {
+            while (moves.hasNext()) {
+                Move move = moves.getNextMove();
                 assert(move.fromSquare != move.toSquare);
                 assert(move.fromSquare >= 0 && move.fromSquare < 64);
                 assert(move.toSquare >= 0 && move.toSquare < 64);
@@ -143,11 +144,13 @@ namespace Zagreus {
 
 
         bool searchPv = true;
-        std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
+        MovePicker moves = generateLegalMoves(board, board.getMovingColor());
+        int finalReductionStep = moves.size() * 0.75;
+        int moveCounter = 0;
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
-        for (int i = 0; i < moves.size(); i++) {
-            Move &move = moves[i];
+        while (moves.hasNext()) {
+            Move move = moves.getNextMove();
             assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
@@ -186,8 +189,9 @@ namespace Zagreus {
                         }
                     }
 
-                    if (depth >= 3 && move.captureScore < 0 && i > 4) {
-                        depthReduction += depth / 2;
+                    if (depth >= 3 && move.captureScore < 0 && moveCounter > 4) {
+                        int reductionValue = 0 + ((depth - 1) - 0) * (moveCounter / finalReductionStep);
+                        depthReduction += reductionValue;
                     }
                 }
 
@@ -229,6 +233,8 @@ namespace Zagreus {
                 nodeType = NodeType::PV_NODE;
                 searchPv = false;
             }
+
+            moveCounter++;
         }
 
         TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType);
@@ -247,10 +253,12 @@ namespace Zagreus {
 
         searchStats.nodes += 1;
 
-        std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
+        MovePicker moves = generateLegalMoves(board, board.getMovingColor());
+        int moveCounter = 0;
+        int finalReductionStep = moves.size() * 0.75;
 
-        for (int i = 0; i < moves.size(); i++) {
-            Move &move = moves[i];
+        while (moves.hasNext()) {
+            Move move = moves.getNextMove();
             assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
@@ -272,8 +280,9 @@ namespace Zagreus {
             if (ownKingInCheck) {
                 depthExtension++;
             } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
-                if (depth >= 3 && move.captureScore < 0 && i > 4) {
-                    depthReduction += depth / 2;
+                if (depth >= 3 && move.captureScore < 0 && moveCounter > 4) {
+                    int reductionValue = 0 + ((depth - 1) - 0) * (moveCounter / finalReductionStep);
+                    depthReduction += reductionValue;
                 }
             }
 
@@ -285,6 +294,8 @@ namespace Zagreus {
             if (result.score >= beta) {
                 return {rootMove, beta};
             }
+
+            moveCounter++;
         }
 
         return {rootMove, beta - 1};
@@ -319,8 +330,9 @@ namespace Zagreus {
             alpha = standPat;
         }
 
-        std::vector<Move> moves = generateQuiescenceMoves(board, board.getMovingColor());
-        for (Move &move : moves) {
+        MovePicker moves = generateQuiescenceMoves(board, board.getMovingColor());
+        while (moves.hasNext()) {
+            Move move = moves.getNextMove();
             assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {

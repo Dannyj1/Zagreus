@@ -23,6 +23,7 @@
 #include "bitboard.h"
 #include "move_gen.h"
 #include "tt.h"
+#include "move_picker.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
@@ -68,7 +69,7 @@ namespace Zagreus {
         return tt->historyMoves[move.pieceType][move.toSquare];
     }
 
-    std::vector<Move> generateLegalMoves(Bitboard &bitboard, PieceColor color) {
+    MovePicker generateLegalMoves(Bitboard &bitboard, PieceColor color) {
         std::vector<Move> moves;
         moves.reserve(50);
 
@@ -91,18 +92,18 @@ namespace Zagreus {
         Line &pvLine = bitboard.getPreviousPvLine();
         TranspositionTable* tt = TranspositionTable::getTT();
 
-        std::sort(moves.begin(), moves.end(), [&bitboard, &pvLine, tt](Move &a, Move &b) {
-            return scoreMove(bitboard, a, pvLine, tt) > scoreMove(bitboard, b, pvLine, tt);
-        });
+        for (Move &move : moves) {
+            move.score = scoreMove(bitboard, move, pvLine, tt);
+        }
 
-        return moves;
+        return MovePicker(moves);
     }
 
     bool sortQuiesceMoves(Move &a, Move &b) {
         return a.captureScore > b.captureScore;
     }
 
-    std::vector<Move> generateQuiescenceMoves(Bitboard &bitboard, PieceColor color) {
+    MovePicker generateQuiescenceMoves(Bitboard &bitboard, PieceColor color) {
         std::vector<Move> moves;
         moves.reserve(50);
 
@@ -122,9 +123,11 @@ namespace Zagreus {
         generateKingMoves(moves, bitboard, ownPiecesBB, opponentPiecesBB, color,
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING, true);
 
-        std::sort(moves.begin(), moves.end(), sortQuiesceMoves);
+        for (Move &move : moves) {
+            move.score = move.captureScore;
+        }
 
-        return moves;
+        return MovePicker(moves);
     }
 
     void

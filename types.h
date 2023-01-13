@@ -80,6 +80,7 @@ namespace Zagreus {
         uint8_t ply = 0;
         int captureScore = 0;
         PieceType promotionPiece = PieceType::EMPTY;
+        int score = 0;
     };
 
 
