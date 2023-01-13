@@ -272,17 +272,6 @@ namespace Zagreus {
             if (ownKingInCheck) {
                 depthExtension++;
             } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
-                if (depth >= 3 && !board.isPawnEndgame() && !depthExtension) {
-                    board.makeNullMove();
-                    int score = zwSearch(board, depth - 3, 1 - beta, rootMove, rootMove, endTime).score * -1;
-                    board.unmakeMove();
-
-                    if (score >= beta) {
-                        board.unmakeMove();
-                        return {rootMove, beta};
-                    }
-                }
-
                 if (depth >= 3 && move.captureScore < 0 && i > 4) {
                     depthReduction += depth / 2;
                 }
