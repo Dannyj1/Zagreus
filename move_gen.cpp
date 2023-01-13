@@ -28,16 +28,16 @@
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 
 namespace Zagreus {
-    int scoreMove(Bitboard &bitboard, Move &move, Line &previousPv) {
+    int scoreMove(Bitboard &bitboard, Move &move, Line &previousPv, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
-            Move pvMove = previousPv.moves[i];
+            Move &pvMove = previousPv.moves[i];
 
             if (move.fromSquare == pvMove.fromSquare && move.toSquare == pvMove.toSquare && move.pieceType == pvMove.pieceType) {
                 return 50000 - i;
             }
         }
 
-        TTEntry* entry = TranspositionTable::getTT()->getEntry(move.zobristHash);
+        TTEntry* entry = tt->getEntry(move.zobristHash);
 
         if (entry->zobristHash == move.zobristHash) {
             return 25000 + entry->score;
@@ -48,15 +48,15 @@ namespace Zagreus {
         }
 
         uint32_t aMoveCode = encodeMove(move);
-        if (TranspositionTable::getTT()->killerMoves[0][move.ply] == aMoveCode) {
+        if (tt->killerMoves[0][move.ply] == aMoveCode) {
             return 5000;
         }
 
-        if (TranspositionTable::getTT()->killerMoves[1][move.ply] == aMoveCode) {
+        if (tt->killerMoves[1][move.ply] == aMoveCode) {
             return 4000;
         }
 
-        if (TranspositionTable::getTT()->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] ==
+        if (tt->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] ==
             aMoveCode) {
             return 3000;
         }
@@ -65,7 +65,7 @@ namespace Zagreus {
             return move.captureScore - 5000;
         }
 
-        return TranspositionTable::getTT()->historyMoves[move.pieceType][move.toSquare];
+        return tt->historyMoves[move.pieceType][move.toSquare];
     }
 
     std::vector<Move> generateLegalMoves(Bitboard &bitboard, PieceColor color) {
@@ -89,9 +89,10 @@ namespace Zagreus {
                           color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
 
         Line &pvLine = bitboard.getPreviousPvLine();
+        TranspositionTable* tt = TranspositionTable::getTT();
 
-        std::sort(moves.begin(), moves.end(), [&bitboard, &pvLine](Move &a, Move &b) {
-            return scoreMove(bitboard, a, pvLine) > scoreMove(bitboard, b, pvLine);
+        std::sort(moves.begin(), moves.end(), [&bitboard, &pvLine, tt](Move &a, Move &b) {
+            return scoreMove(bitboard, a, pvLine, tt) > scoreMove(bitboard, b, pvLine, tt);
         });
 
         return moves;

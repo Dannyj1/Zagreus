@@ -141,6 +141,7 @@ namespace Zagreus {
         Line line{};
         searchStats.nodes += 1;
 
+
         bool searchPv = true;
         std::vector<Move> moves = generateLegalMoves(board, board.getMovingColor());
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
