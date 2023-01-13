@@ -508,7 +508,7 @@ namespace Zagreus {
         uint8_t castlingRights = bitboard.getCastlingRights();
 
         if (!(castlingRights & CastlingRights::WHITE_QUEENSIDE) && !(castlingRights & CastlingRights::WHITE_KINGSIDE)) {
-            if (!bitboard.isHasBlackCastled()) {
+            if (!bitboard.isHasWhiteCastled()) {
                 evalContext.whiteMidgameScore -= 40;
                 evalContext.whiteEndgameScore -= 0;
             }
@@ -760,13 +760,13 @@ namespace Zagreus {
         uint64_t ownPiecesBB = bitboard.getWhiteBoard();
 
         // Slight bonus for squares defended by own pawn
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks & ~ownPiecesBB) & evalContext.whitePawnAttacks);
-        evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks & ~ownPiecesBB) & evalContext.whitePawnAttacks);
+        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks);
+        evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks);
 
         // Bonus for center control
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks & ~ownPiecesBB) & centerPattern) * 10;
+        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & centerPattern) * 10;
         evalContext.whiteEndgameScore += 0;
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks & ~ownPiecesBB) & extendedCenterPattern) * 4;
+        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & extendedCenterPattern) * 4;
         evalContext.whiteEndgameScore += 0;
 
         evalContext.whiteMidgameScore += popcnt(evalContext.whiteKnightAttacks & ~ownPiecesBB) * 3;
@@ -795,13 +795,13 @@ namespace Zagreus {
         uint64_t ownPiecesBB = bitboard.getBlackBoard();
 
         // Slight bonus for squares defended by own pawn
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks & ~ownPiecesBB) & evalContext.blackPawnAttacks);
-        evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks & ~ownPiecesBB) & evalContext.blackPawnAttacks);
+        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks);
+        evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks);
 
         // Bonus for center control
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks & ~ownPiecesBB) & centerPattern) * 10;
+        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & centerPattern) * 10;
         evalContext.blackEndgameScore += 0;
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks & ~ownPiecesBB) & extendedCenterPattern) * 4;
+        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & extendedCenterPattern) * 4;
         evalContext.blackEndgameScore += 0;
 
         evalContext.blackMidgameScore += popcnt(evalContext.blackKnightAttacks & ~ownPiecesBB) * 3;
