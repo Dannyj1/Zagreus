@@ -38,10 +38,6 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(engine, board, color);
         int depth = 0;
-        int alpha = -9999999;
-        int beta = 9999999;
-        int alphaMargin = 50;
-        int betaMargin = 50;
 
         std::cout << color;
 
@@ -73,7 +69,7 @@ namespace Zagreus {
 
                 Line pvLine = {};
                 Move previousMove = {board.getPreviousMoveFrom(), board.getPreviousMoveTo()};
-                SearchResult result = search(board, depth, alpha, beta, move, previousMove, endTime, pvLine);
+                SearchResult result = search(board, depth, -99999999, 99999999, move, previousMove, endTime, pvLine);
                 result.score *= -1;
                 board.unmakeMove();
 
@@ -147,7 +143,6 @@ namespace Zagreus {
 
         bool searchPv = true;
         MovePicker moves = generateLegalMoves(board, board.getMovingColor());
-        int finalReductionStep = moves.size() * 0.75;
         int moveCounter = 0;
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
@@ -192,8 +187,7 @@ namespace Zagreus {
                     }
 
                     if (depth >= 3 && move.captureScore < 0 && moveCounter > 4) {
-                        int reductionValue = 0 + ((depth - 1) - 0) * (moveCounter / finalReductionStep);
-                        depthReduction += reductionValue;
+                        depthReduction += depth / 2;
                     }
                 }
 
@@ -257,7 +251,6 @@ namespace Zagreus {
 
         MovePicker moves = generateLegalMoves(board, board.getMovingColor());
         int moveCounter = 0;
-        int finalReductionStep = moves.size() * 0.75;
 
         while (moves.hasNext()) {
             Move move = moves.getNextMove();
@@ -283,8 +276,7 @@ namespace Zagreus {
                 depthExtension++;
             } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
                 if (depth >= 3 && move.captureScore < 0 && moveCounter > 4) {
-                    int reductionValue = 0 + ((depth - 1) - 0) * (moveCounter / finalReductionStep);
-                    depthReduction += reductionValue;
+                    depthReduction += depth / 2;
                 }
             }
 
@@ -557,21 +549,26 @@ namespace Zagreus {
         evalContext.blackMidgameScore += std::min(60, (int) (popcnt(pawnShield) * 20));
         evalContext.blackEndgameScore += 0;
 
+        if (bitboard.isSemiOpenFileLenient(kingLocation, PieceColor::BLACK)) {
+            evalContext.blackMidgameScore -= 50;
+            evalContext.blackEndgameScore -= 0;
+        }
+
         uint8_t castlingRights = bitboard.getCastlingRights();
         if (!(castlingRights & CastlingRights::BLACK_QUEENSIDE) && !(castlingRights & CastlingRights::BLACK_KINGSIDE)) {
             if (!bitboard.isHasBlackCastled()) {
                 evalContext.blackMidgameScore -= 40;
-                evalContext.blackMidgameScore -= 0;
+                evalContext.blackEndgameScore -= 0;
             }
         } else {
             if ((castlingRights & CastlingRights::BLACK_QUEENSIDE) && (evalContext.whiteCombinedAttacks & blackQueenCastlingAttackPattern)) {
                 evalContext.blackMidgameScore -= 15;
-                evalContext.blackMidgameScore -= 0;
+                evalContext.blackEndgameScore -= 0;
             }
 
             if ((castlingRights & CastlingRights::BLACK_KINGSIDE) && (evalContext.whiteCombinedAttacks & blackKingCastlingAttackPattern)) {
                 evalContext.blackMidgameScore -= 20;
-                evalContext.blackMidgameScore -= 0;
+                evalContext.blackEndgameScore -= 0;
             }
         }
 
@@ -795,7 +792,7 @@ namespace Zagreus {
     }
 
     void SearchManager::getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
-        uint64_t ownPiecesBB = bitboard.getBlackBoard() | evalContext.whitePawnAttacks;
+        uint64_t ownPiecesBB = bitboard.getBlackBoard();
 
         // Slight bonus for squares defended by own pawn
         evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks & ~ownPiecesBB) & evalContext.blackPawnAttacks);

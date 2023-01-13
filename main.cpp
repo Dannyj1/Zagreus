@@ -105,7 +105,7 @@ int main() {
         senjo::UCIAdapter adapter(engine);
 
         Zagreus::Bitboard bb;
-        bb.setFromFEN("3rq1k1/1pp1rpp1/p2p1n1p/4p3/1PN1P3/2PPRN2/P1QK1P2/4R3 w - - 5 25");
+        bb.setFromFEN("r1bq1rk1/pp2p1b1/2pp1nnp/3P2p1/2P2p1P/2N1PNB1/PP2BPP1/R2QK2R w KQ - 0 13");
         bb.makeMove(0, 1, Zagreus::PieceType::WHITE_ROOK, Zagreus::PieceType::EMPTY);
         bb.setWhiteTimeMsec(999999999);
         Zagreus::searchManager.getBestMove(engine, bb, Zagreus::PieceColor::WHITE);
