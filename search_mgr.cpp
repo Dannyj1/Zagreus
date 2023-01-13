@@ -38,6 +38,8 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(engine, board, color);
         int depth = 0;
+        int alpha = -99999999;
+        int beta = 99999999;
 
         std::cout << color;
 
@@ -60,7 +62,6 @@ namespace Zagreus {
                 if (depth > 1 && std::chrono::high_resolution_clock::now() > endTime) {
                     break;
                 }
-
                 board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
                 if (board.isKingInCheck(color)) {
@@ -70,7 +71,7 @@ namespace Zagreus {
 
                 Line pvLine = {};
                 Move previousMove = {board.getPreviousMoveFrom(), board.getPreviousMoveTo()};
-                SearchResult result = search(board, depth, -99999999, 99999999, move, previousMove, endTime, pvLine);
+                SearchResult result = search(board, depth, alpha, beta, move, previousMove, endTime, pvLine);
                 result.score *= -1;
                 board.unmakeMove();
 
@@ -100,6 +101,15 @@ namespace Zagreus {
                         std::chrono::high_resolution_clock::now() - startTime).count();
                 senjo::Output(senjo::Output::NoPrefix) << searchStats;
             }
+
+            if (bestResult.score <= alpha || bestResult.score >= beta) {
+                alpha = -99999999;
+                beta = 99999999;
+                continue;
+            }
+
+            alpha = bestResult.score - 50;
+            beta = bestResult.score + 50;
 
             if (depth == 1 || std::chrono::high_resolution_clock::now() < endTime) {
                 assert(iterationResult.move.pieceType != PieceType::EMPTY);
@@ -141,7 +151,6 @@ namespace Zagreus {
 
         Line line{};
         searchStats.nodes += 1;
-
 
         bool searchPv = true;
         MovePicker moves = generateLegalMoves(board, board.getMovingColor());
@@ -202,7 +211,7 @@ namespace Zagreus {
                     result = zwSearch(board, depth - depthReduction + depthExtension, -alpha, rootMove, move, endTime);
                     result.score *= -1;
 
-                    if (result.score > alpha) {
+                    if (result.score > alpha && result.score < beta) {
                         result = search(board, depth - depthReduction + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
                         result.score *= -1;
                     }
