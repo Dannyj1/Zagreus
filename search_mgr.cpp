@@ -216,7 +216,7 @@ namespace Zagreus {
                 return {rootMove, beta};
             }
 
-            if (result.score > alpha) {
+            if (result.score > alpha && result.score < beta) {
                 pvLine.moves[0] = move;
                 pvLine.moveCount = 1;
                 memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
@@ -268,14 +268,13 @@ namespace Zagreus {
             int depthExtension = 0;
             int depthReduction = 1;
             bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
-            bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
 
-            if (ownKingInCheck || opponentKingInCheck) {
+            if (ownKingInCheck) {
                 depthExtension++;
             } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
                 if (depth >= 3 && !board.isPawnEndgame() && !depthExtension) {
                     board.makeNullMove();
-                    int score = zwSearch(board, depth - 3, beta - 1, rootMove, rootMove, endTime).score * -1;
+                    int score = zwSearch(board, depth - 3, 1 - beta, rootMove, rootMove, endTime).score * -1;
                     board.unmakeMove();
 
                     if (score >= beta) {
