@@ -55,10 +55,6 @@ namespace Zagreus {
         search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
                std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine);
 
-        SearchResult
-        zwSearch(Bitboard &board, int depth, int beta, Move &rootMove, Move &previousMove,
-                 std::chrono::time_point<std::chrono::high_resolution_clock> &endTime);
-
         SearchResult quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                              Move &previousMove,
                              std::chrono::time_point<std::chrono::high_resolution_clock> &endTime);

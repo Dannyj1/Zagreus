@@ -29,7 +29,7 @@ namespace Zagreus {
         std::vector<Move> moves;
         int searchStartIndex = 0;
     public:
-        MovePicker(std::vector<Move> &moves);
+        MovePicker(std::vector<Move> moves);
 
         Move getNextMove();
 

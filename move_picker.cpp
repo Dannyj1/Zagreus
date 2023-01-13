@@ -20,7 +20,7 @@
 
 namespace Zagreus {
 
-    MovePicker::MovePicker(std::vector<Move> &moves) {
+    MovePicker::MovePicker(std::vector<Move> moves) {
         this->moves = moves;
     }
 

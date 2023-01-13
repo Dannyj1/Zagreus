@@ -51,6 +51,10 @@ namespace Zagreus {
             board.setPreviousPvLine(iterationPvLine);
             MovePicker moves = generateLegalMoves(board, color);
 
+            if (moves.size() == 1) {
+                return {moves.getNextMove(), 0};
+            }
+
             while (moves.hasNext()) {
                 Move move = moves.getNextMove();
                 assert(move.fromSquare != move.toSquare);
@@ -58,8 +62,9 @@ namespace Zagreus {
                 assert(move.toSquare >= 0 && move.toSquare < 64);
 
                 if (depth > 1 && std::chrono::high_resolution_clock::now() > endTime) {
-                    break;
+                    return bestResult;
                 }
+
                 board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
                 if (board.isKingInCheck(color)) {
@@ -138,23 +143,24 @@ namespace Zagreus {
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime);
         }
 
-        Line line{};
         searchStats.nodes += 1;
 
-        bool searchPv = true;
+        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
+
+        if (ttScore != INT32_MIN) {
+            return {rootMove, ttScore};
+        }
+
+        Line line{};
+
         MovePicker moves = generateLegalMoves(board, board.getMovingColor());
         int moveCounter = 0;
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
+        bool searchedFirstLegalMove = false;
 
-        while (moves.hasNext()) {
+        while (!searchedFirstLegalMove && moves.hasNext()) {
             Move move = moves.getNextMove();
-            assert(move.fromSquare != move.toSquare);
 
-            if (std::chrono::high_resolution_clock::now() > endTime) {
-                break;
-            }
-
-            SearchResult result;
             board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
 
             if (board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()))) {
@@ -162,72 +168,110 @@ namespace Zagreus {
                 continue;
             }
 
-            int ttScore = searchPv ? INT32_MIN : TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
-
-            if (ttScore != INT32_MIN) {
-                result = {rootMove, ttScore};
-            } else {
-                bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
-                bool opponentKingInCheck = board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()));
-                int depthExtension = 0;
-                int depthReduction = 1;
-
-                if (ownKingInCheck || opponentKingInCheck) {
-                    depthExtension++;
-                } else if (!searchPv && !depthExtension && move.promotionPiece == PieceType::EMPTY) {
-                    if (depth >= 3 && !board.isPawnEndgame() && !depthExtension) {
-                        board.makeNullMove();
-                        int score = zwSearch(board, depth - 3, -alpha, rootMove, rootMove, endTime).score * -1;
-                        board.unmakeMove();
-
-                        if (score >= beta) {
-                            board.unmakeMove();
-                            return {rootMove, beta};
-                        }
-                    }
-
-                    if (depth >= 3 && move.captureScore < 0 && moveCounter > 4) {
-                        depthReduction += depth / 2;
-                    }
-                }
-
-                if (searchPv) {
-                    result = search(board, depth - depthReduction + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
-                    result.score *= -1;
-                } else {
-                    result = zwSearch(board, depth - depthReduction + depthExtension, -alpha, rootMove, move, endTime);
-                    result.score *= -1;
-
-                    if (result.score > alpha && result.score < beta) {
-                        result = search(board, depth - depthReduction + depthExtension, -beta, -alpha, rootMove, move, endTime, line);
-                        result.score *= -1;
-                    }
-                }
-            }
+            SearchResult result = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line);
+            result.score *= -1;
 
             board.unmakeMove();
 
-            if (result.score >= beta) {
-                TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][depth];
-                TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
-                TranspositionTable::getTT()->counterMoves[previousMove.fromSquare][previousMove.toSquare] = encodeMove(previousMove);
+            if (result.score > alpha) {
+                if (result.score >= beta) {
+                    int moveCode = encodeMove(move);
+                    TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][depth];
+                    TranspositionTable::getTT()->killerMoves[0][board.getPly()] = moveCode;
 
-                TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
-                return {rootMove, beta};
-            }
+                    if (move.captureScore == -1) {
+                        TranspositionTable::getTT()->historyMoves[move.pieceType][move.toSquare] += depth * depth;
+                        TranspositionTable::getTT()->counterMoves[previousMove.fromSquare][previousMove.toSquare] = moveCode;
+                    }
 
-            if (result.score > alpha && result.score < beta) {
+                    TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
+                    return {rootMove, beta};
+                }
+
                 pvLine.moves[0] = move;
                 pvLine.moveCount = 1;
                 memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
                 pvLine.moveCount = line.moveCount + 1;
-
-                assert(move.fromSquare >= 0);
-                assert(move.toSquare >= 0);
-                TranspositionTable::getTT()->historyMoves[move.pieceType][move.toSquare] += depth * depth;
                 alpha = result.score;
                 nodeType = NodeType::PV_NODE;
-                searchPv = false;
+            }
+
+            searchedFirstLegalMove = true;
+        }
+
+        if (!searchedFirstLegalMove) {
+            return {rootMove, beta};
+        }
+
+        while (moves.hasNext()) {
+            if (std::chrono::high_resolution_clock::now() > endTime) {
+                return {rootMove, beta};
+            }
+
+            Move move = moves.getNextMove();
+
+            board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
+
+            if (board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()))) {
+                board.unmakeMove();
+                continue;
+            }
+
+            bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
+            int depthExtension = 0;
+            int depthReduction = 0;
+
+            if (ownKingInCheck) {
+                depthExtension++;
+            } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
+/*                if (depth >= 3 && !board.isPawnEndgame()) {
+                    board.makeNullMove();
+                    int score = search(board, depth > 6 ? depth - 4 : depth - 3, -beta, -alpha, rootMove, previousMove, endTime, line).score * -1;
+                    board.unmakeMove();
+
+                    if (score >= beta) {
+                        board.unmakeMove();
+                        return {rootMove, beta};
+                    }
+                }*/
+
+                if (depth >= 3 && move.captureScore < 0 && moveCounter > 4) {
+                    depthReduction += depth / 2;
+                }
+            }
+
+            SearchResult result;
+            result = search(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove, previousMove, endTime, line);
+            result.score *= -1;
+
+            if (result.score > alpha && result.score < beta) {
+                result = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line);
+                result.score *= -1;
+            }
+
+            board.unmakeMove();
+
+            if (result.score > alpha) {
+                if (result.score >= beta) {
+                    int moveCode = encodeMove(move);
+                    TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][depth];
+                    TranspositionTable::getTT()->killerMoves[0][board.getPly()] = moveCode;
+
+                    if (move.captureScore == -1) {
+                        TranspositionTable::getTT()->historyMoves[move.pieceType][move.toSquare] += depth * depth;
+                        TranspositionTable::getTT()->counterMoves[previousMove.fromSquare][previousMove.toSquare] = moveCode;
+                    }
+
+                    TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, result.score, NodeType::FAIL_HIGH_NODE);
+                    return {rootMove, beta};
+                }
+
+                nodeType = NodeType::PV_NODE;
+                pvLine.moves[0] = move;
+                pvLine.moveCount = 1;
+                memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
+                pvLine.moveCount = line.moveCount + 1;
+                alpha = result.score;
             }
 
             moveCounter++;
@@ -235,64 +279,6 @@ namespace Zagreus {
 
         TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType);
         return {rootMove, alpha};
-    }
-
-    SearchResult
-    SearchManager::zwSearch(Bitboard &board, int depth, int beta, Move &rootMove,
-                            Move &previousMove,
-                            std::chrono::time_point<std::chrono::high_resolution_clock> &endTime) {
-        if (depth == 0 || std::chrono::high_resolution_clock::now() > endTime
-            || board.isWinner(Bitboard::getOppositeColor(board.getMovingColor())) || board.isWinner(board.getMovingColor())
-            || board.isDraw()) {
-            return quiesce(board, beta - 1, beta, rootMove, previousMove, endTime);
-        }
-
-        searchStats.nodes += 1;
-
-        MovePicker moves = generateLegalMoves(board, board.getMovingColor());
-        int moveCounter = 0;
-
-        while (moves.hasNext()) {
-            Move move = moves.getNextMove();
-            assert(move.fromSquare != move.toSquare);
-
-            if (std::chrono::high_resolution_clock::now() > endTime) {
-                break;
-            }
-
-            board.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
-
-            if (board.isKingInCheck(Bitboard::getOppositeColor(board.getMovingColor()))) {
-                board.unmakeMove();
-                continue;
-            }
-
-            SearchResult result;
-            int depthExtension = 0;
-            int depthReduction = 1;
-            bool ownKingInCheck = board.isKingInCheck(board.getMovingColor());
-
-            if (ownKingInCheck) {
-                depthExtension++;
-            } else if (!depthExtension && move.promotionPiece == PieceType::EMPTY) {
-                if (depth >= 3 && move.captureScore < 0 && moveCounter > 4) {
-                    depthReduction += depth / 2;
-                }
-            }
-
-            result = zwSearch(board, depth - depthReduction + depthExtension, 1 - beta, rootMove, move, endTime);
-            result.score *= -1;
-
-            board.unmakeMove();
-
-            if (result.score >= beta) {
-                return {rootMove, beta};
-            }
-
-            moveCounter++;
-        }
-
-        return {rootMove, beta - 1};
     }
 
     SearchResult SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
@@ -330,7 +316,7 @@ namespace Zagreus {
             assert(move.fromSquare != move.toSquare);
 
             if (std::chrono::high_resolution_clock::now() > endTime) {
-                break;
+                return {rootMove, beta};
             }
 
             if (move.captureScore < 0) {
@@ -962,7 +948,7 @@ namespace Zagreus {
 
             blackQueenBB &= ~(1ULL << index);
         }
-        
+
         uint64_t whiteCombinedAttacks = whiteKnightAttacks | whiteBishopAttacks | whiteRookAttacks | whiteQueenAttacks | whitePawnAttacks;
         uint64_t blackCombinedAttacks = blackKnightAttacks | blackBishopAttacks | blackRookAttacks | blackQueenAttacks | blackPawnAttacks;
         
