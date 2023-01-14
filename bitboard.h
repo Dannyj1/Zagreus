@@ -100,6 +100,8 @@ namespace Zagreus {
 
         UndoData undoStack[256]{};
         uint16_t undoStackIndex = 0;
+
+        bool benchmarking = false;
     public:
         Bitboard();
 
@@ -286,6 +288,10 @@ namespace Zagreus {
         Line& getPreviousPvLine();
 
         void setPreviousPvLine(Line &previousPvLine);
+
+        bool isBenchmarking() const;
+
+        void setBenchmarking(bool benchmarking);
     };
 
     uint64_t soutOne(uint64_t b);

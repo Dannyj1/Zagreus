@@ -168,11 +168,13 @@ void benchmark() {
             Zagreus::PieceColor color = i == 0 ? Zagreus::PieceColor::WHITE : Zagreus::PieceColor::BLACK;
 
             bb.setFromFEN(position);
-            bb.setWhiteTimeMsec(30000);
-            bb.setBlackTimeMsec(30000);
+            bb.setBenchmarking(true);
+            bb.setWhiteTimeMsec(999999999);
+            bb.setBlackTimeMsec(999999999);
 
             auto start = std::chrono::high_resolution_clock::now();
             Zagreus::searchManager.getBestMove(engine, bb, color);
+
             auto end = std::chrono::high_resolution_clock::now();
             nodes += Zagreus::searchManager.getSearchStats().nodes + Zagreus::searchManager.getSearchStats().qnodes;
             totalMs += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();

@@ -40,7 +40,7 @@ namespace Zagreus {
 
         TTEntry* entry = tt->getEntry(move.zobristHash);
 
-        if (entry->zobristHash == move.zobristHash) {
+        if (entry->zobristHash == move.zobristHash && !bitboard.isBenchmarking()) {
             return 25000 + entry->score;
         }
 

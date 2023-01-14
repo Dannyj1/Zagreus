@@ -91,6 +91,14 @@ namespace Zagreus {
         return this->knightAttacks[square];
     }
 
+    bool Bitboard::isBenchmarking() const {
+        return benchmarking;
+    }
+
+    void Bitboard::setBenchmarking(bool benchmarking) {
+        Bitboard::benchmarking = benchmarking;
+    }
+
     void Bitboard::makeNullMove() {
         moveHistoryIndex++;
 

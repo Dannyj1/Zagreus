@@ -42,6 +42,11 @@ namespace Zagreus {
         Line iterationPvLine = {};
         while (std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
             depth += 1;
+
+            if (board.isBenchmarking() && depth >= 3) {
+                return bestResult;
+            }
+
             searchStats.depth = depth;
             searchStats.seldepth = 0;
 
@@ -145,7 +150,7 @@ namespace Zagreus {
 
         int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
 
-        if (ttScore != INT32_MIN) {
+        if (ttScore != INT32_MIN && !board.isBenchmarking()) {
             return {rootMove, ttScore};
         }
 
