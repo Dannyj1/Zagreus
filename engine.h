@@ -31,9 +31,9 @@ namespace Zagreus {
         senjo::SearchStats searchStats{};
 
         std::list<senjo::EngineOption> options{
-            senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, INT64_MAX),
-            senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, INT64_MAX),
-            senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, INT64_MAX),
+            senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, 5000),
+            senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, 33554432),
+            senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 64),
         };
 
     public:
