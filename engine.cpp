@@ -299,7 +299,7 @@ namespace Zagreus {
     }
 
     senjo::SearchStats ZagreusEngine::getSearchStats() {
-        return searchManager.getSearchStats();
+        return searchStats;
     }
 
     void ZagreusEngine::resetEngineStats() {

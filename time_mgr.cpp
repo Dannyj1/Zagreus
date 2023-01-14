@@ -25,7 +25,7 @@
 namespace Zagreus {
     std::chrono::time_point<std::chrono::high_resolution_clock>
     TimeManager::getEndTime(ZagreusEngine &engine, Bitboard &bitboard, PieceColor movingColor) {
-        int movesLeft = 80 - bitboard.getPly();
+        int movesLeft = 100 - bitboard.getPly();
         uint64_t timeLeft =
                 movingColor == PieceColor::WHITE ? bitboard.getWhiteTimeMsec() : bitboard.getBlackTimeMsec();
         timeLeft -= engine.getOption("Move Overhead").getIntValue();
@@ -34,8 +34,8 @@ namespace Zagreus {
 
         timeLeft += increment / 2;
 
-        if (movesLeft < 6) {
-            movesLeft = 6;
+        if (movesLeft < 7) {
+            movesLeft = 7;
         }
 
         if (timeLeft == 0) {
@@ -48,7 +48,7 @@ namespace Zagreus {
             timePerMove *= 2;
         }
 
-        if (bitboard.getPly() >= 40) {
+        if (bitboard.getPly() >= 50) {
             timePerMove /= 2;
         }
 

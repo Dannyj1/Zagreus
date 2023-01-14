@@ -39,8 +39,6 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = timeManager.getEndTime(engine, board, color);
         int depth = 0;
 
-        std::cout << color;
-
         Line iterationPvLine = {};
         while (std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
             depth += 1;
@@ -74,7 +72,7 @@ namespace Zagreus {
 
                 Line pvLine = {};
                 Move previousMove = {board.getPreviousMoveFrom(), board.getPreviousMoveTo()};
-                SearchResult result = search(board, depth, -99999999, 99999999, move, previousMove, endTime, pvLine);
+                SearchResult result = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine);
                 result.score *= -1;
                 board.unmakeMove();
 
@@ -571,7 +569,6 @@ namespace Zagreus {
     }
 
     void SearchManager::resetStats() {
-        searchStats = {};
     }
 
     void SearchManager::getWhiteBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
