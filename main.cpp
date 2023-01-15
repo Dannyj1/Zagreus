@@ -78,7 +78,7 @@ int main(int argc , char *argv[]) {
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
 
-    Zagreus::TranspositionTable::getTT()->setTableSize(512);
+    Zagreus::TranspositionTable::getTT()->setTableSize(1);
     Zagreus::initializeMagicBitboards();
     Zagreus::initializePst();
 
