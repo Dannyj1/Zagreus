@@ -1257,31 +1257,11 @@ namespace Zagreus {
         }
     }
 
+    uint16_t pieceWeights[12] = {
+            100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 65535, 65535
+    };
     uint16_t Bitboard::getPieceWeight(PieceType type) {
-        switch (type) {
-            case WHITE_PAWN:
-            case BLACK_PAWN:
-                return 100;
-            case WHITE_KNIGHT:
-                return 350 - ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 3);
-            case BLACK_KNIGHT:
-                return 350 - ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 3);
-            case WHITE_BISHOP:
-            case BLACK_BISHOP:
-                return 350;
-            case WHITE_ROOK:
-                return 525 + ((8 - popcnt(getPieceBoard(PieceType::WHITE_PAWN))) * 3);
-            case BLACK_ROOK:
-                return 525 + ((8 - popcnt(getPieceBoard(PieceType::BLACK_PAWN))) * 3);
-            case WHITE_QUEEN:
-            case BLACK_QUEEN:
-                return 1000;
-            case WHITE_KING:
-            case BLACK_KING:
-                return 65535;
-            case EMPTY:
-                return 0;
-        }
+        return pieceWeights[type];
     }
 
     bool Bitboard::isPinnedStraight(int attackedSquare, PieceColor attackingColor) {

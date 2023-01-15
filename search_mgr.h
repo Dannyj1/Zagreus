@@ -102,6 +102,10 @@ namespace Zagreus {
         void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
 
         int getGamePhase(Bitboard &bitboard);
+
+        void getWhiteKnightScore(EvalContext &context, Bitboard &bitboard);
+
+        void getBlackKnightScore(EvalContext &context, Bitboard &bitboard);
     };
 
     static SearchManager searchManager{};

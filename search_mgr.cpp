@@ -398,6 +398,9 @@ namespace Zagreus {
         getWhiteRookScore(evalContext, board);
         getBlackRookScore(evalContext, board);
 
+        getWhiteKnightScore(evalContext, board);
+        getBlackKnightScore(evalContext, board);
+
         getWhiteDevelopmentScore(evalContext, board);
         getBlackDevelopmentScore(evalContext, board);
 
@@ -686,6 +689,7 @@ namespace Zagreus {
 
     void SearchManager::getWhiteRookScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t rookBB = bitboard.getPieceBoard(PieceType::WHITE_ROOK);
+        int rookAmount = popcnt(rookBB);
         int score = 0;
 
         while (rookBB) {
@@ -700,12 +704,15 @@ namespace Zagreus {
             rookBB &= ~(1ULL << index);
         }
 
+        score += ((8 - popcnt(bitboard.getPieceBoard(PieceType::WHITE_PAWN))) * 4) * rookAmount;
+
         evalContext.whiteMidgameScore += score;
         evalContext.whiteEndgameScore += score;
     }
 
     void SearchManager::getBlackRookScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t rookBB = bitboard.getPieceBoard(PieceType::BLACK_ROOK);
+        int rookAmount = popcnt(rookBB);
         int score = 0;
 
         while (rookBB) {
@@ -719,6 +726,8 @@ namespace Zagreus {
 
             rookBB &= ~(1ULL << index);
         }
+
+        score += ((8 - popcnt(bitboard.getPieceBoard(PieceType::BLACK_PAWN))) * 4) * rookAmount;
 
         evalContext.blackMidgameScore += score;
         evalContext.blackEndgameScore += score;
@@ -973,6 +982,22 @@ namespace Zagreus {
             blackQueenAttacks,
             blackCombinedAttacks
         };
+    }
+
+    void SearchManager::getWhiteKnightScore(EvalContext &context, Bitboard &bitboard) {
+        uint64_t whiteKnightBB = bitboard.getPieceBoard(PieceType::WHITE_KNIGHT);
+        int knightAmount = popcnt(whiteKnightBB);
+
+        context.whiteMidgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::WHITE_PAWN))) * 3) * knightAmount;
+        context.whiteEndgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::WHITE_PAWN))) * 3) * knightAmount;
+    }
+
+    void SearchManager::getBlackKnightScore(EvalContext &context, Bitboard &bitboard) {
+        uint64_t blackKnightBB = bitboard.getPieceBoard(PieceType::BLACK_KNIGHT);
+        int knightAmount = popcnt(blackKnightBB);
+
+        context.blackMidgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::BLACK_PAWN))) * 3) * knightAmount;
+        context.blackEndgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::BLACK_PAWN))) * 3) * knightAmount;
     }
 }
 
