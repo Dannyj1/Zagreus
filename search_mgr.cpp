@@ -988,16 +988,16 @@ namespace Zagreus {
         uint64_t whiteKnightBB = bitboard.getPieceBoard(PieceType::WHITE_KNIGHT);
         int knightAmount = popcnt(whiteKnightBB);
 
-        context.whiteMidgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::WHITE_PAWN))) * 3) * knightAmount;
-        context.whiteEndgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::WHITE_PAWN))) * 3) * knightAmount;
+        context.whiteMidgameScore -= ((8 - popcnt(bitboard.getPieceBoard(PieceType::WHITE_PAWN))) * 4) * knightAmount;
+        context.whiteEndgameScore -= ((8 - popcnt(bitboard.getPieceBoard(PieceType::WHITE_PAWN))) * 4) * knightAmount;
     }
 
     void SearchManager::getBlackKnightScore(EvalContext &context, Bitboard &bitboard) {
         uint64_t blackKnightBB = bitboard.getPieceBoard(PieceType::BLACK_KNIGHT);
         int knightAmount = popcnt(blackKnightBB);
 
-        context.blackMidgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::BLACK_PAWN))) * 3) * knightAmount;
-        context.blackEndgameScore += ((8 - popcnt(bitboard.getPieceBoard(PieceType::BLACK_PAWN))) * 3) * knightAmount;
+        context.blackMidgameScore -= ((8 - popcnt(bitboard.getPieceBoard(PieceType::BLACK_PAWN))) * 4) * knightAmount;
+        context.blackEndgameScore -= ((8 - popcnt(bitboard.getPieceBoard(PieceType::BLACK_PAWN))) * 4) * knightAmount;
     }
 }
 
