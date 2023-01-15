@@ -75,6 +75,10 @@ namespace Zagreus {
         uint64_t byteSize = megaBytes * 1024 * 1024;
         uint64_t entryCount = byteSize / sizeof(TTEntry);
 
+        for (int i = 0; i < hashSize + 1; i++) {
+            delete transpositionTable[i];
+        }
+
         delete[] transpositionTable;
         transpositionTable = new TTEntry*[entryCount]{};
         hashSize = entryCount - 1;
