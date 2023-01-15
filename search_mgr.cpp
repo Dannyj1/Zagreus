@@ -857,9 +857,9 @@ namespace Zagreus {
             uint64_t tilesBetween = bitboard.getTilesBetween(index, promotionSquare);
 
             if (color == PieceColor::WHITE) {
-                evalContext.whiteEndgameScore += popcnt(tilesBetween) * 10;
+                evalContext.whiteEndgameScore -= popcnt(tilesBetween) * 10;
             } else {
-                evalContext.blackEndgameScore += popcnt(tilesBetween) * 10;
+                evalContext.blackEndgameScore -= popcnt(tilesBetween) * 10;
             }
 
             pawnBB &= ~(1ULL << index);
