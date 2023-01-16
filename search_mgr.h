@@ -42,6 +42,7 @@ namespace Zagreus {
         uint64_t blackRookAttacks = 0;
         uint64_t blackQueenAttacks = 0;
         uint64_t blackCombinedAttacks = 0;
+        uint64_t attacksFrom[64] = { 0ULL };
     };
 
     class SearchManager {
