@@ -47,8 +47,9 @@ cmake --build .
 # Credits
 Thanks to:
 - [zd3nik](https://github.com/zd3nik) for the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter), which I slightly modified
+- [AndyGrant](https://github.com/AndyGrant) for the easy to use and open source [OpenBench Testing Framework](https://github.com/AndyGrant/OpenBench), making engine testing SO much easier and allowing testing using multiple devices. (I use a private instance of OpenBench)
+- [maksimKorzh](https://github.com/maksimKorzh) for the great [tutorials](https://www.youtube.com/channel/UCB9-prLkPwgvlKKqDgXhsMQ) and [engine](https://github.com/maksimKorzh/chess_programming)
 - The [Chessprogramming wiki](https://www.chessprogramming.org/Main_Page) contributors for all the information about chess programming
-
 
 # License
 Copyright (C) 2023  Danny Jelsma
