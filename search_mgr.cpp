@@ -383,8 +383,8 @@ namespace Zagreus {
         getWhiteMobilityScore(evalContext, board);
         getBlackMobilityScore(evalContext,board);
 
-        getWhiteConnectivityScore(evalContext, board);
-        getBlackConnectivityScore(evalContext, board);
+        /*getWhiteConnectivityScore(evalContext, board);
+        getBlackConnectivityScore(evalContext, board);*/
 
         getWhiteKingScore(evalContext, board);
         getBlackKingScore(evalContext, board);
