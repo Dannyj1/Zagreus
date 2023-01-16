@@ -899,7 +899,7 @@ namespace Zagreus {
         uint64_t whiteQueenAttacks = 0;
 
         uint64_t blackPawnAttacks = bitboard.calculatePawnAttacks(blackPawnBB, PieceColor::BLACK);
-        uint64_t blackKnightAttacks = calculateKnightAttacks(blackKnightBB);
+        uint64_t blackKnightAttacks = 0;
         uint64_t blackBishopAttacks = 0;
         uint64_t blackRookAttacks = 0;
         uint64_t blackQueenAttacks = 0;
