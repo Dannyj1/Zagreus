@@ -466,16 +466,16 @@ namespace Zagreus {
     void SearchManager::getBlackConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard(PieceType::BLACK_KING);
         uint64_t blackPieces = bitboard.getBlackBoard() & ~kingBB;
-        uint64_t protectedPieces = blackPieces & evalContext.blackCombinedAttacks;
+        uint64_t unprotectedPieces = blackPieces & ~(evalContext.blackCombinedAttacks);
 
-        while (protectedPieces) {
-            uint64_t index = bitscanForward(protectedPieces);
+        while (unprotectedPieces) {
+            uint64_t index = bitscanForward(unprotectedPieces);
             PieceType pieceType = bitboard.getPieceOnSquare(index);
             int weight = bitboard.getPieceWeight(pieceType);
 
-            evalContext.blackMidgameScore += 11 - (weight / 100);
-            evalContext.blackEndgameScore += 11 - (weight / 100);
-            protectedPieces &= ~(1ULL << index);
+            evalContext.blackMidgameScore -= 11 - (weight / 100);
+            evalContext.blackEndgameScore -= 11 - (weight / 100);
+            unprotectedPieces &= ~(1ULL << index);
         }
     }
 
