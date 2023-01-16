@@ -383,8 +383,8 @@ namespace Zagreus {
         getWhiteMobilityScore(evalContext, board);
         getBlackMobilityScore(evalContext,board);
 
-        /*getWhiteConnectivityScore(evalContext, board);
-        getBlackConnectivityScore(evalContext, board);*/
+        getWhiteConnectivityScore(evalContext, board);
+        getBlackConnectivityScore(evalContext, board);
 
         getWhiteKingScore(evalContext, board);
         getBlackKingScore(evalContext, board);
@@ -450,16 +450,16 @@ namespace Zagreus {
     void SearchManager::getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard(PieceType::WHITE_KING);
         uint64_t whitePieces = bitboard.getWhiteBoard() & ~kingBB;
-        uint64_t protectedPieces = whitePieces & evalContext.whiteCombinedAttacks;
+        uint64_t unprotectedPieces = whitePieces & ~(evalContext.whiteCombinedAttacks);
 
-        while (protectedPieces) {
-            uint64_t index = bitscanForward(protectedPieces);
+        while (unprotectedPieces) {
+            uint64_t index = bitscanForward(unprotectedPieces);
             PieceType pieceType = bitboard.getPieceOnSquare(index);
             int weight = bitboard.getPieceWeight(pieceType);
 
-            evalContext.whiteMidgameScore += 11 - (weight / 100);
-            evalContext.whiteEndgameScore += 11 - (weight / 100);
-            protectedPieces &= ~(1ULL << index);
+            evalContext.whiteMidgameScore -= 11 - (weight / 100);
+            evalContext.whiteEndgameScore -= 11 - (weight / 100);
+            unprotectedPieces &= ~(1ULL << index);
         }
     }
 
