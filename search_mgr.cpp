@@ -386,8 +386,8 @@ namespace Zagreus {
         getWhiteConnectivityScore(evalContext, board);
         getBlackConnectivityScore(evalContext, board);
 
-        /*getWhiteKingScore(evalContext, board);
-        getBlackKingScore(evalContext, board);*/
+        getWhiteKingScore(evalContext, board);
+        getBlackKingScore(evalContext, board);
 
         getPawnScore(evalContext, board, PieceColor::WHITE);
         getPawnScore(evalContext, board, PieceColor::BLACK);
@@ -401,8 +401,8 @@ namespace Zagreus {
         getWhiteKnightScore(evalContext, board);
         getBlackKnightScore(evalContext, board);
 
-        getWhiteDevelopmentScore(evalContext, board);
-        getBlackDevelopmentScore(evalContext, board);
+/*        getWhiteDevelopmentScore(evalContext, board);
+        getBlackDevelopmentScore(evalContext, board);*/
 
         getPositionalScore(evalContext, board, PieceColor::WHITE);
         getPositionalScore(evalContext, board, PieceColor::BLACK);
