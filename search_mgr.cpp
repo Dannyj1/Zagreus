@@ -911,7 +911,7 @@ namespace Zagreus {
             uint64_t index = bitscanForward(whiteKnightBB);
 
             uint64_t attacks = bitboard.getKnightAttacks(index);
-            whiteKnightBB |= attacks;
+            whiteKnightAttacks |= attacks;
             attacksFrom[index] = attacks;
 
             whiteKnightBB &= ~(1ULL << index);
@@ -921,7 +921,7 @@ namespace Zagreus {
             uint64_t index = bitscanForward(blackKnightBB);
 
             uint64_t attacks = bitboard.getKnightAttacks(index);
-            blackKnightBB |= attacks;
+            blackKnightAttacks |= attacks;
             attacksFrom[index] = attacks;
 
             blackKnightBB &= ~(1ULL << index);
