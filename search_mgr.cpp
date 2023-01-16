@@ -848,6 +848,23 @@ namespace Zagreus {
             }
         }
 
+        uint64_t pawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN + color);
+
+        while (pawnBB) {
+            int index = bitscanForward(pawnBB);
+            int fileNumber = index % 8;
+            int promotionSquare = (color == PieceColor::WHITE) ? 56 + fileNumber : fileNumber;
+            uint64_t tilesBetween = bitboard.getTilesBetween(index, promotionSquare);
+
+            if (color == PieceColor::WHITE) {
+                evalContext.whiteEndgameScore -= popcnt(tilesBetween) * 10;
+            } else {
+                evalContext.blackEndgameScore -= popcnt(tilesBetween) * 10;
+            }
+
+            pawnBB &= ~(1ULL << index);
+        }
+
         if (color == PieceColor::WHITE) {
             evalContext.whiteMidgameScore += score;
             evalContext.whiteEndgameScore += score;
