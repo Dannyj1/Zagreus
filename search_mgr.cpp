@@ -401,9 +401,6 @@ namespace Zagreus {
         getWhiteKnightScore(evalContext, board);
         getBlackKnightScore(evalContext, board);
 
-        getWhiteDevelopmentScore(evalContext, board);
-        getBlackDevelopmentScore(evalContext, board);
-
         getPositionalScore(evalContext, board, PieceColor::WHITE);
         getPositionalScore(evalContext, board, PieceColor::BLACK);
 
@@ -630,60 +627,6 @@ namespace Zagreus {
             }
 
             bishopBB &= ~(1ULL << index);
-        }
-    }
-
-    uint64_t whiteMinorPiecesStartBB = 0x66ULL;
-    uint64_t whiteRookStartBB = 0x81ULL;
-    uint64_t whiteQueenStartBB = 0x10ULL;
-
-    void SearchManager::getWhiteDevelopmentScore(EvalContext &evalContext, Bitboard &bitboard) {
-        uint64_t minorPiecesOnStart =
-                (bitboard.getPieceBoard(PieceType::WHITE_KNIGHT) | bitboard.getPieceBoard(PieceType::WHITE_BISHOP)) &
-                whiteMinorPiecesStartBB;
-        uint64_t minorPiecesOnStartAmount = popcnt(minorPiecesOnStart);
-        uint64_t rooksOnStart = bitboard.getPieceBoard(PieceType::WHITE_ROOK) & whiteRookStartBB;
-        uint64_t rooksOnStartAmount = popcnt(rooksOnStart);
-        uint64_t queenOnStart = bitboard.getPieceBoard(PieceType::WHITE_QUEEN) & whiteQueenStartBB;
-        uint64_t queenOnStartAmount = popcnt(queenOnStart);
-
-        evalContext.whiteMidgameScore += (4 - minorPiecesOnStartAmount) * 30;
-        evalContext.whiteEndgameScore += 0;
-
-        if (minorPiecesOnStartAmount == 0) {
-            evalContext.whiteMidgameScore += (2 - rooksOnStartAmount) * 30;
-            evalContext.whiteEndgameScore += 0;
-            evalContext.whiteMidgameScore += (1 - queenOnStartAmount) * 30;
-            evalContext.whiteEndgameScore += 0;
-        }
-    }
-
-    uint64_t blackMinorPiecesStartBB = 0x6600000000000000ULL;
-    uint64_t blackRookStartBB = 0x8100000000000000ULL;
-    uint64_t blackQueenStartBB = 0x1000000000000000ULL;
-
-    void SearchManager::getBlackDevelopmentScore(EvalContext &evalContext, Bitboard &bitboard) {
-        if (bitboard.getPly() > 12) {
-            return;
-        }
-
-        uint64_t minorPiecesOnStart =
-                (bitboard.getPieceBoard(PieceType::BLACK_KNIGHT) | bitboard.getPieceBoard(PieceType::BLACK_BISHOP)) &
-                blackMinorPiecesStartBB;
-        uint64_t minorPiecesOnStartAmount = popcnt(minorPiecesOnStart);
-        uint64_t rooksOnStart = bitboard.getPieceBoard(PieceType::BLACK_ROOK) & blackRookStartBB;
-        uint64_t rooksOnStartAmount = popcnt(rooksOnStart);
-        uint64_t queenOnStart = bitboard.getPieceBoard(PieceType::BLACK_QUEEN) & blackQueenStartBB;
-        uint64_t queenOnStartAmount = popcnt(queenOnStart);
-
-        evalContext.blackMidgameScore += (4 - minorPiecesOnStartAmount) * 30;
-        evalContext.blackEndgameScore += 0;
-
-        if (minorPiecesOnStartAmount == 0) {
-            evalContext.blackMidgameScore += (2 - rooksOnStartAmount) * 30;
-            evalContext.blackEndgameScore += 0;
-            evalContext.blackMidgameScore += (1 - queenOnStartAmount) * 30;
-            evalContext.blackEndgameScore += 0;
         }
     }
 
