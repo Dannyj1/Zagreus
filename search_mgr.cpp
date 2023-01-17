@@ -743,7 +743,7 @@ namespace Zagreus {
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);
             PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
-            uint64_t attacks = evalContext.attacksFrom[index];
+            uint64_t attacks = evalContext.attacksFrom[index] & ~(evalContext.blackPawnAttacks);
 
             switch (pieceOnSquare) {
                 case WHITE_KNIGHT:
@@ -785,7 +785,7 @@ namespace Zagreus {
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);
             PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
-            uint64_t attacks = evalContext.attacksFrom[index];
+            uint64_t attacks = evalContext.attacksFrom[index] & ~(evalContext.whitePawnAttacks);
 
             switch (pieceOnSquare) {
                 case BLACK_KNIGHT:
