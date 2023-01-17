@@ -107,6 +107,8 @@ namespace Zagreus {
         void getWhiteKnightScore(EvalContext &context, Bitboard &bitboard);
 
         void getBlackKnightScore(EvalContext &context, Bitboard &bitboard);
+
+        std::string getMoveNotation(Bitboard &board, Move &move);
     };
 
     static SearchManager searchManager{};

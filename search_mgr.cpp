@@ -96,7 +96,7 @@ namespace Zagreus {
                 for (int i = 0; i < iterationPvLine.moveCount; i++) {
                     Move move = iterationPvLine.moves[i];
 
-                    searchStats.pv += board.getNotation(move.fromSquare) + board.getNotation(move.toSquare);
+                    searchStats.pv += getMoveNotation(board, move);
 
                     if (i != iterationPvLine.moveCount - 1) {
                         searchStats.pv += " ";
@@ -121,7 +121,7 @@ namespace Zagreus {
         for (int i = 0; i < iterationPvLine.moveCount; i++) {
             Move move = iterationPvLine.moves[i];
 
-            searchStats.pv += board.getNotation(move.fromSquare) + board.getNotation(move.toSquare);
+            searchStats.pv += getMoveNotation(board, move);
 
             if (i != iterationPvLine.moveCount - 1) {
                 searchStats.pv += " ";
@@ -134,6 +134,36 @@ namespace Zagreus {
         isSearching = false;
         senjo::Output(senjo::Output::NoPrefix) << searchStats;
         return bestResult;
+    }
+
+    std::string SearchManager::getMoveNotation(Bitboard &board, Move &move) {
+        std::string result = board.getNotation(move.fromSquare) + board.getNotation(move.toSquare);
+
+        if (result == "a1e1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
+            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
+            board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
+            return "e1c1";
+        }
+
+        if (result == "h1e1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE &&
+            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
+            board.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK) {
+            return "e1g1";
+        }
+
+        if (result == "a8e8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE &&
+            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
+            board.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK) {
+            return "e8c8";
+        }
+
+        if (result == "h8e8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE &&
+            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
+            board.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK) {
+            return "e8g8";
+        }
+
+        return result;
     }
 
     SearchResult SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
