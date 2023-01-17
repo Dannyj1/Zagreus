@@ -764,17 +764,6 @@ namespace Zagreus {
                     break;
             }
 
-            evalContext.whiteMidgameScore -= popcnt(attacks & evalContext.blackPawnAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_PAWN) / 100));
-            evalContext.whiteEndgameScore -= popcnt(attacks & evalContext.blackPawnAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_PAWN) / 100));
-            evalContext.whiteMidgameScore -= popcnt(attacks & evalContext.blackKnightAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_KNIGHT) / 100));
-            evalContext.whiteEndgameScore -= popcnt(attacks & evalContext.blackKnightAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_KNIGHT) / 100));
-            evalContext.whiteMidgameScore -= popcnt(attacks & evalContext.blackBishopAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_BISHOP) / 100));
-            evalContext.whiteEndgameScore -= popcnt(attacks & evalContext.blackBishopAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_BISHOP) / 100));
-            evalContext.whiteMidgameScore -= popcnt(attacks & evalContext.blackRookAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_ROOK) / 100));
-            evalContext.whiteEndgameScore -= popcnt(attacks & evalContext.blackRookAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_ROOK) / 100));
-            evalContext.whiteMidgameScore -= popcnt(attacks & evalContext.blackQueenAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_QUEEN) / 100));
-            evalContext.whiteEndgameScore -= popcnt(attacks & evalContext.blackQueenAttacks) * (11 - (bitboard.getPieceWeight(PieceType::BLACK_QUEEN) / 100));
-
             ownPiecesBBLoop &= ~(1ULL << index);
         }
     }
@@ -816,27 +805,6 @@ namespace Zagreus {
                     evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
                     break;
             }
-
-            evalContext.blackMidgameScore -= popcnt(attacks & evalContext.whitePawnAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_PAWN) / 100));
-            evalContext.blackEndgameScore -= popcnt(attacks & evalContext.whitePawnAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_PAWN) / 100));
-            evalContext.blackMidgameScore -= popcnt(attacks & evalContext.whiteKnightAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_KNIGHT) / 100));
-            evalContext.blackEndgameScore -= popcnt(attacks & evalContext.whiteKnightAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_KNIGHT) / 100));
-            evalContext.blackMidgameScore -= popcnt(attacks & evalContext.whiteBishopAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_BISHOP) / 100));
-            evalContext.blackEndgameScore -= popcnt(attacks & evalContext.whiteBishopAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_BISHOP) / 100));
-            evalContext.blackMidgameScore -= popcnt(attacks & evalContext.whiteRookAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_ROOK) / 100));
-            evalContext.blackEndgameScore -= popcnt(attacks & evalContext.whiteRookAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_ROOK) / 100));
-            evalContext.blackMidgameScore -= popcnt(attacks & evalContext.whiteQueenAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_QUEEN) / 100));
-            evalContext.blackEndgameScore -= popcnt(attacks & evalContext.whiteQueenAttacks) *
-                                             (11 - (bitboard.getPieceWeight(PieceType::WHITE_QUEEN) / 100));
 
             ownPiecesBBLoop &= ~(1ULL << index);
         }
