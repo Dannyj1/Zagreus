@@ -21,51 +21,9 @@
 
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
-#include "bitboard.h"
 #include "senjo/Output.h"
-#include "move_gen.h"
-#include "types.h"
-#include "search_mgr.h"
-#include "magics.h"
-#include "pst.h"
-#include "tt.h"
 
 void benchmark();
-
-uint64_t perft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
-    uint64_t nodes = 0ULL;
-
-    if (depth == 0) {
-        return 1ULL;
-    }
-
-    Zagreus::MovePicker moves = generateLegalMoves(perftBoard, color);
-
-    while (moves.hasNext()) {
-        Zagreus::Move move = moves.getNextMove();
-        assert(move.fromSquare != move.toSquare);
-
-        perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
-
-        if (perftBoard.isKingInCheck(color)) {
-            perftBoard.unmakeMove();
-            continue;
-        }
-
-        uint64_t nodeAmount = perft(perftBoard, Zagreus::Bitboard::getOppositeColor(color), depth - 1, startingDepth);
-        nodes += nodeAmount;
-
-        if (depth == startingDepth && nodeAmount > 0LL) {
-            std::string notation =
-                    Zagreus::Bitboard::getNotation(move.fromSquare) + Zagreus::Bitboard::getNotation(move.toSquare);
-            senjo::Output(senjo::Output::InfoPrefix) << notation << ": " << nodeAmount;
-        }
-
-        perftBoard.unmakeMove();
-    }
-
-    return nodes;
-}
 
 int main(int argc , char *argv[]) {
     // Custom test pos 1: r3kb1r/pppbqppp/4pn2/n2p4/3P1B2/2PBPN2/PP1N1PPP/R2QK2R w KQkq - 5 8
@@ -77,10 +35,6 @@ int main(int argc , char *argv[]) {
     // eval test: 8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
-
-    Zagreus::TranspositionTable::getTT()->setTableSize(1);
-    Zagreus::initializeMagicBitboards();
-    Zagreus::initializePst();
 
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
     senjo::Output(senjo::Output::InfoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY";
@@ -153,7 +107,7 @@ void benchmark() {
                                           "r1n1k1r1/1pb2p2/5P2/pPPp2p1/5p1R/P1N1N3/2P1P3/B1R1KB2 w - -",
                                           "8/8/1qB1k3/1p6/3p4/1p6/8/4K3 b - -",
                                           "6nr/1pq1b1k1/1N6/5Ppp/pp2B1P1/B1P4P/P2pK3/3R2NR b - -"};
-    uint64_t nodes = 0;
+    /*uint64_t nodes = 0;
     uint64_t totalMs = 0;
 
     for (std::string &position : positions) {
@@ -176,5 +130,5 @@ void benchmark() {
     }
 
     uint64_t nps = nodes / (totalMs / 1000);
-    senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nps << " nps";
+    senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nps << " nps";*/
 }

@@ -20,14 +20,13 @@
 
 #include <string>
 #include "senjo/ChessEngine.h"
-#include "bitboard.h"
 
 namespace Zagreus {
     class ZagreusEngine : public senjo::ChessEngine {
     private:
-        Bitboard board{};
+//        Bitboard board{};
         bool isEngineInitialized = false;
-        PieceColor engineColor = PieceColor::NONE;
+//        PieceColor engineColor = PieceColor::NONE;
         senjo::SearchStats searchStats{};
 
         std::list<senjo::EngineOption> options{
@@ -37,7 +36,7 @@ namespace Zagreus {
         };
 
     public:
-        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int startingDepth);
+//        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int startingDepth);
 
         std::string getEngineName() override;
 

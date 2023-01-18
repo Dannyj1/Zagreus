@@ -21,12 +21,9 @@
 #include "senjo/ChessEngine.h"
 #include "senjo/Output.h"
 #include "engine.h"
-#include "search_mgr.h"
-#include "move_gen.h"
-#include "tt.h"
 
 namespace Zagreus {
-    uint64_t ZagreusEngine::doPerft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
+   /* uint64_t ZagreusEngine::doPerft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
         uint64_t nodes = 0ULL;
 
         if (depth == 0) {
@@ -61,14 +58,14 @@ namespace Zagreus {
         }
 
         return nodes;
-    }
+    }*/
 
     std::string ZagreusEngine::getEngineName() {
         return "Zagreus";
     }
 
     std::string ZagreusEngine::getEngineVersion() {
-        return "v1.1.0";
+        return "v2.0.0-dev";
     }
 
     std::string ZagreusEngine::getAuthorName() {
@@ -102,9 +99,9 @@ namespace Zagreus {
             if (option.getName() == optionName) {
                 option.setValue(optionValue);
 
-                if (option.getName() == "Hash") {
+/*                if (option.getName() == "Hash") {
                     TranspositionTable::getTT()->setTableSize(option.getIntValue());
-                }
+                }*/
 
                 return true;
             }
@@ -114,9 +111,9 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::initialize() {
-        board = Bitboard{};
+/*        board = Bitboard{};
         engineColor = PieceColor::NONE;
-        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
+        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());*/
         isEngineInitialized = true;
     }
 
@@ -125,13 +122,14 @@ namespace Zagreus {
     }
 
     bool ZagreusEngine::setPosition(const std::string &fen, std::string* remain) {
-        board = {};
-        engineColor = PieceColor::NONE;
-        return board.setFromFEN(fen);
+//        board = {};
+//        engineColor = PieceColor::NONE;
+//        return board.setFromFEN(fen);
+return true;
     }
 
     bool ZagreusEngine::makeMove(const std::string &move) {
-        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
+/*        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
             board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
             board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
             board.makeStrMove("a1e1");
@@ -159,7 +157,7 @@ namespace Zagreus {
             return true;
         }
 
-        board.makeStrMove(move);
+        board.makeStrMove(move);*/
         return true;
     }
 
@@ -170,15 +168,16 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::printBoard() {
-        board.print();
+//        board.print();
     }
 
     bool ZagreusEngine::whiteToMove() {
-        return board.getMovingColor() == PieceColor::WHITE;
+//        return board.getMovingColor() == PieceColor::WHITE;
+        return true;
     }
 
     void ZagreusEngine::clearSearchData() {
-        searchManager.resetStats();
+//        searchManager.resetStats();
     }
 
     void ZagreusEngine::ponderHit() {
@@ -213,7 +212,8 @@ namespace Zagreus {
     }
 
     bool ZagreusEngine::isSearching() {
-        return searchManager.isCurrentlySearching();
+//        return searchManager.isCurrentlySearching();
+        return true;
     }
 
     void ZagreusEngine::stopSearching() {
@@ -226,24 +226,25 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::waitForSearchFinish() {
-        while (searchManager.isCurrentlySearching()) {
+/*        while (searchManager.isCurrentlySearching()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
+        }*/
     }
 
     uint64_t ZagreusEngine::perft(const int depth) {
-        auto start = std::chrono::high_resolution_clock::now();
+/*        auto start = std::chrono::high_resolution_clock::now();
         uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: "
                                                  << elapsed_seconds.count() << "s";
-        return nodes;
+        return nodes;*/
+return 1;
     }
 
     std::string ZagreusEngine::go(const senjo::GoParams &params, std::string* ponder) {
-        if (engineColor == PieceColor::NONE) {
+        /*if (engineColor == PieceColor::NONE) {
             engineColor = board.getMovingColor();
         }
 
@@ -295,7 +296,8 @@ namespace Zagreus {
 
         senjo::Output(senjo::Output::InfoPrefix) << "Score: " << bestResult.score;
         return Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) +
-               Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
+               Zagreus::Bitboard::getNotation(bestResult.move.toSquare);*/
+        return "";
     }
 
     senjo::SearchStats ZagreusEngine::getSearchStats() {
