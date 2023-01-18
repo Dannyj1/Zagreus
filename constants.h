@@ -22,5 +22,3 @@
 
 static constexpr uint8_t MAX_PLY = 255;
 static constexpr uint8_t MAX_MOVES = 255;
-
-static constexpr int8_t NO_SQUARE = -1;

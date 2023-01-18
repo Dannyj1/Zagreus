@@ -22,6 +22,7 @@
 #include "bitwise.h"
 #include "magics.h"
 #include "utils.h"
+#include "senjo/Output.h"
 
 namespace Zagreus {
     Bitboard::Bitboard() {
@@ -173,7 +174,107 @@ namespace Zagreus {
     }
 
     bool Bitboard::setFromFen(std::string &fen) {
-        return false;
+        int index = Square::A8;
+        int spaces = 0;
+
+        castlingRights = 0;
+        ply = 0;
+        halfMoveClock = 0;
+        fullmoveClock = 1;
+        enPassantSquare = Square::NO_SQUARE;
+
+        for (char character : fen) {
+            if (character == ' ') {
+                spaces++;
+                continue;
+            }
+
+            if (spaces == 0) {
+                if (character == '/') {
+                    index -= 15;
+                    continue;
+                }
+
+                if (character >= '1' && character <= '8') {
+                    index += character - '0';
+                    continue;
+                }
+
+                if (character >= 'A' && character <= 'z') {
+                    setPieceFromFENChar(character, index);
+                } else {
+                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid piece character!";
+                    return false;
+                }
+            }
+
+            if (spaces == 1) {
+                if (tolower(character) == 'w') {
+                    movingColor = PieceColor::WHITE;
+                } else if (tolower(character) == 'b') {
+                    movingColor = PieceColor::BLACK;
+                } else {
+                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid color to move!";
+                    return false;
+                }
+            }
+
+            if (spaces == 2) {
+                if (character == '-') {
+                    continue;
+                } else if (character == 'K') {
+                    castlingRights |= CastlingRights::WHITE_KINGSIDE;
+//                    zobristHash ^= zobristConstants[768 + 1];
+                    continue;
+                } else if (character == 'Q') {
+                    castlingRights |= CastlingRights::WHITE_QUEENSIDE;
+//                    zobristHash ^= zobristConstants[768 + 2];
+                    continue;
+                } else if (character == 'k') {
+                    castlingRights |= CastlingRights::BLACK_KINGSIDE;
+//                    zobristHash ^= zobristConstants[768 + 3];
+                    continue;
+                } else if (character == 'q') {
+                    castlingRights |= CastlingRights::BLACK_QUEENSIDE;
+//                    zobristHash ^= zobristConstants[768 + 4];
+                    continue;
+                }
+
+                senjo::Output(senjo::Output::InfoPrefix) << "Invalid castling rights!";
+                return false;
+            }
+
+            if (spaces == 3) {
+                if (character == '-') {
+                    continue;
+                }
+
+                if (tolower(character < 'a') || tolower(character) > 'h') {
+                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant square!";
+                    return false;
+                }
+
+                int8_t file = tolower(character) - 'a'; // NOLINT(cppcoreguidelines-narrowing-conversions)
+
+                if (file < 0 || file > 7) {
+                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant square!";
+                    return false;
+                }
+
+                enPassantSquare = file;
+                index += 2;
+            }
+
+            if (spaces == 4) {
+                halfMoveClock = character - '0';
+            }
+
+            if (spaces == 5) {
+                fullmoveClock = character - '0';
+            }
+        }
+
+        return true;
     }
 
     bool Bitboard::isDraw() {
@@ -205,5 +306,52 @@ namespace Zagreus {
                 betweenTable[from][to] = line & btwn;   /* return the bits on that line in-between */
             }
         }
+    }
+
+    void Bitboard::setPieceFromFENChar(char character, int index) {
+        // Uppercase = WHITE, lowercase = black
+        switch (character) {
+            case 'P':
+                setPiece(index, PieceType::WHITE_PAWN);
+                break;
+            case 'p':
+                setPiece(index, PieceType::BLACK_PAWN);
+                break;
+            case 'N':
+                setPiece(index, PieceType::WHITE_KNIGHT);
+                break;
+            case 'n':
+                setPiece(index, PieceType::BLACK_KNIGHT);
+                break;
+            case 'B':
+                setPiece(index, PieceType::WHITE_BISHOP);
+                break;
+            case 'b':
+                setPiece(index, PieceType::BLACK_BISHOP);
+                break;
+            case 'R':
+                setPiece(index, PieceType::WHITE_ROOK);
+                break;
+            case 'r':
+                setPiece(index, PieceType::BLACK_ROOK);
+                break;
+            case 'Q':
+                setPiece(index, PieceType::WHITE_QUEEN);
+                break;
+            case 'q':
+                setPiece(index, PieceType::BLACK_QUEEN);
+                break;
+            case 'K':
+                setPiece(index, PieceType::WHITE_KING);
+                break;
+            case 'k':
+                setPiece(index, PieceType::BLACK_KING);
+                break;
+        }
+    }
+
+    template<PieceColor color>
+    uint64_t Bitboard::getPawnAttacks(uint64_t pawns) {
+        return 0;
     }
 }

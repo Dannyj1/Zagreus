@@ -37,7 +37,7 @@ namespace Zagreus {
         uint8_t ply = 0;
         uint8_t halfMoveClock = 0;
         uint8_t fullmoveClock = 1;
-        int8_t enPassantSquare = NO_SQUARE;
+        int8_t enPassantSquare = Square::NO_SQUARE;
         uint8_t castlingRights = 0b00001111;
 
         uint64_t kingAttacks[64]{};
@@ -94,5 +94,7 @@ namespace Zagreus {
         bool isWinner(PieceColor color);
 
         void initializeBetweenLookup();
+
+        void setPieceFromFENChar(char character, int index);
     };
 }
