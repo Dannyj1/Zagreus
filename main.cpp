@@ -22,6 +22,9 @@
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
 #include "senjo/Output.h"
+#include "magics.h"
+
+using namespace Zagreus;
 
 void benchmark();
 
@@ -35,6 +38,8 @@ int main(int argc , char *argv[]) {
     // eval test: 8/6Q1/8/k1NN1R2/P3P3/1p6/P1P2KPP/R7 w - - 0 33
     // Default pos: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
+
+    initializeMagicBitboards();
 
     senjo::Output(senjo::Output::InfoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
     senjo::Output(senjo::Output::InfoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY";
@@ -61,10 +66,8 @@ int main(int argc , char *argv[]) {
         return 0;
     }
 
-    // TODO: calculate pieceweight on makemove? Same for updating material balance
-
     try {
-        Zagreus::ZagreusEngine engine;
+        ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
 
         std::string line;
@@ -89,7 +92,7 @@ int main(int argc , char *argv[]) {
 }
 
 void benchmark() {
-    Zagreus::ZagreusEngine engine;
+    ZagreusEngine engine;
     senjo::UCIAdapter adapter(engine);
     std::vector<std::string> positions = {"r3kb1r/pppbqppp/4pn2/n2p4/3P1B2/2PBPN2/PP1N1PPP/R2QK2R w KQkq - 5 8",
                                           "r2qr1k1/1p1bbppp/2pp1n2/2n5/p2NPB2/P1N2Q1P/BPP2PP1/R3R1K1 b - - 2 14",
@@ -112,8 +115,8 @@ void benchmark() {
 
     for (std::string &position : positions) {
         for (int i = 0; i < 2; i++) {
-            Zagreus::Bitboard bb;
-            Zagreus::PieceColor color = i == 0 ? Zagreus::PieceColor::WHITE : Zagreus::PieceColor::BLACK;
+            Bitboard bb;
+            PieceColor color = i == 0 ? PieceColor::WHITE : PieceColor::BLACK;
 
             bb.setFromFEN(position);
             bb.setBenchmarking(true);
@@ -121,10 +124,10 @@ void benchmark() {
             bb.setBlackTimeMsec(999999999);
 
             auto start = std::chrono::high_resolution_clock::now();
-            Zagreus::searchManager.getBestMove(engine, bb, color);
+            searchManager.getBestMove(engine, bb, color);
 
             auto end = std::chrono::high_resolution_clock::now();
-            nodes += Zagreus::searchManager.getSearchStats().nodes + Zagreus::searchManager.getSearchStats().qnodes;
+            nodes += searchManager.getSearchStats().nodes + searchManager.getSearchStats().qnodes;
             totalMs += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         }
     }
