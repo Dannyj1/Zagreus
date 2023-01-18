@@ -21,8 +21,7 @@
 #include "types.h"
 
 namespace Zagreus {
-    template<PieceColor color>
-    constexpr PieceColor getOppositeColor() {
+    inline static PieceColor getOppositeColor(PieceColor color) {
         return static_cast<PieceColor>(color ^ 1);
     }
 

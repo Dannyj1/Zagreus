@@ -21,6 +21,7 @@
 #include "bitboard.h"
 #include "bitwise.h"
 #include "magics.h"
+#include "utils.h"
 
 namespace Zagreus {
     Bitboard::Bitboard() {
@@ -109,11 +110,58 @@ namespace Zagreus {
     }
 
     void Bitboard::makeMove(Move &move) {
+        PieceType capturedPiece = getPieceOnSquare(move.to);
 
+        undoStack[ply].capturedPiece = capturedPiece;
+        undoStack[ply].halfMoveClock = halfMoveClock;
+        undoStack[ply].enPassantSquare = enPassantSquare;
+        undoStack[ply].castlingRights = castlingRights;
+
+        if (capturedPiece != PieceType::EMPTY) {
+            removePiece(move.to, capturedPiece);
+            halfMoveClock = 0;
+        }
+
+        removePiece(move.from, move.piece);
+
+        if (move.promotionPiece != PieceType::EMPTY) {
+            setPiece(move.to, move.promotionPiece);
+        } else {
+            setPiece(move.to, move.piece);
+        }
+
+        if (movingColor == PieceColor::BLACK) {
+            fullmoveClock += 1;
+        }
+
+        ply += 1;
+        halfMoveClock += 1;
+        movingColor = getOppositeColor(movingColor);
     }
 
     void Bitboard::unmakeMove(Move &move) {
+        UndoData undoData = undoStack[ply];
 
+        if (move.promotionPiece != PieceType::EMPTY) {
+            removePiece(move.to, move.promotionPiece);
+        } else {
+            removePiece(move.to, move.piece);
+        }
+
+        if (undoData.capturedPiece != PieceType::EMPTY) {
+            setPiece(move.to, undoData.capturedPiece);
+            halfMoveClock = undoData.halfMoveClock;
+        }
+
+        setPiece(move.from, move.piece);
+
+        ply -= 1;
+        halfMoveClock -= 1;
+        movingColor = getOppositeColor(movingColor);
+
+        if (movingColor == PieceColor::BLACK) {
+            fullmoveClock -= 1;
+        }
     }
 
     void Bitboard::print() {

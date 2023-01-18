@@ -53,13 +53,15 @@ namespace Zagreus {
     struct Move {
         int8_t from;
         int8_t to;
-        PieceType promotion;
+        PieceType piece;
+        PieceType promotionPiece;
     };
 
     struct UndoData {
         uint8_t halfMoveClock;
         int8_t enPassantSquare;
         uint8_t castlingRights;
+        PieceType capturedPiece;
     };
 
     struct MoveList {
