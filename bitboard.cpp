@@ -95,11 +95,17 @@ namespace Zagreus {
     }
 
     void Bitboard::setPiece(int8_t square, PieceType piece) {
-
+        pieceBB[piece] |= 1ULL << square;
+        occupiedBB |= 1ULL << square;
+        colorBB[piece % 2] |= 1ULL << square;
+        pieceSquareMapping[square] = piece;
     }
 
     void Bitboard::removePiece(int8_t square, PieceType piece) {
-
+        pieceBB[piece] &= ~(1ULL << square);
+        occupiedBB &= ~(1ULL << square);
+        colorBB[piece % 2] &= ~(1ULL << square);
+        pieceSquareMapping[square] = PieceType::EMPTY;
     }
 
     void Bitboard::makeMove(Move &move) {
