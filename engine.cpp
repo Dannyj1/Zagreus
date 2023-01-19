@@ -23,7 +23,7 @@
 #include "engine.h"
 
 namespace Zagreus {
-   /* uint64_t ZagreusEngine::doPerft(Zagreus::Bitboard &perftBoard, Zagreus::PieceColor color, int depth, int startingDepth) {
+    /*uint64_t ZagreusEngine::doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth) {
         uint64_t nodes = 0ULL;
 
         if (depth == 0) {
@@ -43,14 +43,14 @@ namespace Zagreus {
                 continue;
             }
 
-            uint64_t nodeAmount = doPerft(perftBoard, Zagreus::Bitboard::getOppositeColor(color), depth - 1,
+            uint64_t nodeAmount = doPerft(perftBoard, Bitboard::getOppositeColor(color), depth - 1,
                                           startingDepth);
             nodes += nodeAmount;
 
             if (depth == startingDepth && nodeAmount > 0LL) {
                 std::string notation =
-                        Zagreus::Bitboard::getNotation(move.fromSquare) +
-                        Zagreus::Bitboard::getNotation(move.toSquare);
+                        Bitboard::getNotation(move.fromSquare) +
+                        Bitboard::getNotation(move.toSquare);
                 senjo::Output(senjo::Output::InfoPrefix) << notation << ": " << nodeAmount;
             }
 
@@ -232,14 +232,14 @@ return true;
     }
 
     uint64_t ZagreusEngine::perft(const int depth) {
-/*        auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
         uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: "
                                                  << elapsed_seconds.count() << "s";
-        return nodes;*/
+        return nodes;
 return 1;
     }
 
@@ -257,9 +257,9 @@ return 1;
         SearchResult bestResult = searchManager.getBestMove(*this, board, engineColor);
 
         if (bestResult.move.promotionPiece != PieceType::EMPTY) {
-            std::string result = Zagreus::Bitboard::getNotation(bestResult.move.fromSquare)
-                                 + Zagreus::Bitboard::getNotation(bestResult.move.toSquare)
-                                 + Zagreus::Bitboard::getCharacterForPieceType(bestResult.move.promotionPiece);
+            std::string result = Bitboard::getNotation(bestResult.move.fromSquare)
+                                 + Bitboard::getNotation(bestResult.move.toSquare)
+                                 + Bitboard::getCharacterForPieceType(bestResult.move.promotionPiece);
 
             std::transform(result.begin(), result.end(), result.begin(),
                            [](unsigned char c) { return std::tolower(c); });
@@ -267,8 +267,8 @@ return 1;
             return result;
         }
 
-        std::string result = Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) +
-                             Zagreus::Bitboard::getNotation(bestResult.move.toSquare);
+        std::string result = Bitboard::getNotation(bestResult.move.fromSquare) +
+                             Bitboard::getNotation(bestResult.move.toSquare);
 
         if (result == "a1e1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
             board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
@@ -295,8 +295,8 @@ return 1;
         }
 
         senjo::Output(senjo::Output::InfoPrefix) << "Score: " << bestResult.score;
-        return Zagreus::Bitboard::getNotation(bestResult.move.fromSquare) +
-               Zagreus::Bitboard::getNotation(bestResult.move.toSquare);*/
+        return Bitboard::getNotation(bestResult.move.fromSquare) +
+               Bitboard::getNotation(bestResult.move.toSquare);*/
         return "";
     }
 

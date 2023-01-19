@@ -19,5 +19,19 @@
 #include "utils.h"
 
 namespace Zagreus {
+    uint64_t popcnt(uint64_t b) {
+        return 0;
+    }
 
+    int bitscanForward(uint64_t b) {
+        return 0;
+    }
+
+    int bitscanReverse(uint64_t b) {
+        return 0;
+    }
+
+    uint32_t encodeMove(const Move &move) {
+        return 0;
+    }
 }

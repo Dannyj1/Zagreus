@@ -23,18 +23,18 @@
 namespace Zagreus {
     enum PieceType {
         EMPTY = -1,
-        WHITE_PAWN,
-        BLACK_PAWN,
-        WHITE_KNIGHT,
-        BLACK_KNIGHT,
-        WHITE_BISHOP,
-        BLACK_BISHOP,
-        WHITE_ROOK,
-        BLACK_ROOK,
-        WHITE_QUEEN,
-        BLACK_QUEEN,
-        WHITE_KING,
-        BLACK_KING
+        WHITE_PAWN = 0,
+        BLACK_PAWN = 1,
+        WHITE_KNIGHT = 2,
+        BLACK_KNIGHT = 3,
+        WHITE_BISHOP = 4,
+        BLACK_BISHOP = 5,
+        WHITE_ROOK = 6,
+        BLACK_ROOK = 7,
+        WHITE_QUEEN = 8,
+        BLACK_QUEEN = 9,
+        WHITE_KING = 10,
+        BLACK_KING = 11
     };
 
     enum PieceColor {

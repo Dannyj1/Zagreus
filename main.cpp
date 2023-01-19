@@ -23,6 +23,7 @@
 #include "senjo/UCIAdapter.h"
 #include "senjo/Output.h"
 #include "magics.h"
+#include "bitboard.h"
 
 using namespace Zagreus;
 

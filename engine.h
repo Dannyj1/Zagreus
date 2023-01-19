@@ -24,9 +24,9 @@
 namespace Zagreus {
     class ZagreusEngine : public senjo::ChessEngine {
     private:
-//        Bitboard board{};
+        Bitboard board{};
         bool isEngineInitialized = false;
-//        PieceColor engineColor = PieceColor::NONE;
+        PieceColor engineColor = PieceColor::NONE;
         senjo::SearchStats searchStats{};
 
         std::list<senjo::EngineOption> options{

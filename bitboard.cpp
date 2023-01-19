@@ -35,6 +35,10 @@ namespace Zagreus {
             zobristConstant = dis(gen);
         }*/
 
+        for (PieceType &type : pieceSquareMapping) {
+            type = PieceType::EMPTY;
+        }
+
         uint64_t sqBB = 1ULL;
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             kingAttacks[sq] = calculateKingAttacks(sqBB) & ~sqBB;
@@ -113,6 +117,7 @@ namespace Zagreus {
     void Bitboard::makeMove(Move &move) {
         PieceType capturedPiece = getPieceOnSquare(move.to);
 
+        ply += 1;
         undoStack[ply].capturedPiece = capturedPiece;
         undoStack[ply].halfMoveClock = halfMoveClock;
         undoStack[ply].enPassantSquare = enPassantSquare;
@@ -135,7 +140,6 @@ namespace Zagreus {
             fullmoveClock += 1;
         }
 
-        ply += 1;
         halfMoveClock += 1;
         movingColor = getOppositeColor(movingColor);
     }
@@ -166,14 +170,56 @@ namespace Zagreus {
     }
 
     void Bitboard::print() {
+        std::cout << "  ---------------------------------";
 
+        for (int index = 0; index < 64; index++) {
+            if (index % 8 == 0) {
+                std::cout << std::endl << (index / 8) + 1 << " | ";
+            }
+
+            std::cout << getCharacterForPieceType(pieceSquareMapping[index]) << " | ";
+        }
+
+        std::cout << std::endl << "  ---------------------------------" << std::endl;
+        std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
+    }
+
+    char Bitboard::getCharacterForPieceType(PieceType pieceType) {
+        switch (pieceType) {
+            case WHITE_PAWN:
+                return 'P';
+            case BLACK_PAWN:
+                return 'p';
+            case WHITE_KNIGHT:
+                return 'N';
+            case BLACK_KNIGHT:
+                return 'n';
+            case WHITE_BISHOP:
+                return 'B';
+            case BLACK_BISHOP:
+                return 'b';
+            case WHITE_ROOK:
+                return 'R';
+            case BLACK_ROOK:
+                return 'r';
+            case WHITE_QUEEN:
+                return 'Q';
+            case BLACK_QUEEN:
+                return 'q';
+            case WHITE_KING:
+                return 'K';
+            case BLACK_KING:
+                return 'k';
+            case EMPTY:
+                return ' ';
+        }
     }
 
     void Bitboard::printAvailableMoves(MoveList &moves) {
 
     }
 
-    bool Bitboard::setFromFen(std::string &fen) {
+    bool Bitboard::setFromFen(std::string fen) {
         int index = Square::A8;
         int spaces = 0;
 
@@ -183,6 +229,26 @@ namespace Zagreus {
         fullmoveClock = 1;
         enPassantSquare = Square::NO_SQUARE;
 
+        for (PieceType &type : pieceSquareMapping) {
+            type = PieceType::EMPTY;
+        }
+
+        for (uint64_t &bb : pieceBB) {
+            bb = 0;
+        }
+
+        for (uint64_t &bb : colorBB) {
+            bb = 0;
+        }
+
+        occupiedBB = 0;
+        movingColor = PieceColor::NONE;
+        ply = 0;
+        halfMoveClock = 0;
+        fullmoveClock = 1;
+        enPassantSquare = Square::NO_SQUARE;
+        castlingRights = 0;
+
         for (char character : fen) {
             if (character == ' ') {
                 spaces++;
@@ -191,7 +257,7 @@ namespace Zagreus {
 
             if (spaces == 0) {
                 if (character == '/') {
-                    index -= 15;
+                    index -= 16;
                     continue;
                 }
 
@@ -202,6 +268,7 @@ namespace Zagreus {
 
                 if (character >= 'A' && character <= 'z') {
                     setPieceFromFENChar(character, index);
+                    index++;
                 } else {
                     senjo::Output(senjo::Output::InfoPrefix) << "Invalid piece character!";
                     return false;

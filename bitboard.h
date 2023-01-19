@@ -28,10 +28,10 @@
 namespace Zagreus {
     class Bitboard {
     private:
-        uint64_t pieceBB[12]{};
-        PieceType pieceSquareMapping[64]{};
-        uint64_t colorBB[2]{};
-        uint64_t occupiedBB{};
+        uint64_t pieceBB[12]{ 0ULL };
+        PieceType pieceSquareMapping[64]{ PieceType::EMPTY };
+        uint64_t colorBB[2]{ 0ULL };
+        uint64_t occupiedBB{ 0ULL };
 
         PieceColor movingColor = PieceColor::NONE;
         uint8_t ply = 0;
@@ -87,7 +87,7 @@ namespace Zagreus {
 
         void printAvailableMoves(MoveList &moves);
 
-        bool setFromFen(std::string &fen);
+        bool setFromFen(std::string fen);
 
         bool isDraw();
 
@@ -96,5 +96,16 @@ namespace Zagreus {
         void initializeBetweenLookup();
 
         void setPieceFromFENChar(char character, int index);
+
+        char getCharacterForPieceType(PieceType pieceType);
     };
+
+    template<PieceType pieceType>
+    uint64_t getPieceBoard();
+
+    template<PieceColor color>
+    uint64_t getColorBoard();
+
+    template<PieceColor color>
+    uint64_t getPawnAttacks(uint64_t pawns);
 }
