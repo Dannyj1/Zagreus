@@ -16,22 +16,26 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <bmiintrin.h>
+#include <lzcntintrin.h>
+
 #include "utils.h"
 
 namespace Zagreus {
     uint64_t popcnt(uint64_t b) {
-        return 0;
+        return __builtin_popcountll(b);
     }
 
-    int bitscanForward(uint64_t b) {
-        return 0;
+    int8_t bitscanForward(uint64_t b) {
+        return b ? _tzcnt_u64(b) : 0;
     }
 
-    int bitscanReverse(uint64_t b) {
-        return 0;
+    int8_t bitscanReverse(uint64_t b) {
+        return b ? _lzcnt_u64(b) ^ 63 : 0;
     }
 
     uint32_t encodeMove(const Move &move) {
-        return 0;
+        return (move.promotionPiece << 20) | (move.piece << 15) |
+               (move.to << 7) | move.from;
     }
 }

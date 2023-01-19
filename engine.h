@@ -20,6 +20,8 @@
 
 #include <string>
 #include "senjo/ChessEngine.h"
+#include "bitboard.h"
+#include "types.h"
 
 namespace Zagreus {
     class ZagreusEngine : public senjo::ChessEngine {

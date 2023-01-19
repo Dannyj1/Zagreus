@@ -66,11 +66,17 @@ namespace Zagreus {
 
         uint64_t getKnightAttacks(int8_t square);
 
-        uint64_t getQueenAttacks(int8_t square, uint64_t occupancy);
+        uint64_t getQueenAttacks(int8_t square);
 
-        uint64_t getBishopAttacks(int8_t square, uint64_t occupancy);
+        uint64_t getBishopAttacks(int8_t square);
 
-        uint64_t getRookAttacks(int8_t square, uint64_t occupancy);
+        uint64_t getRookAttacks(int8_t square);
+
+        template<PieceColor color>
+        uint64_t getPawnSinglePush(uint64_t pawns);
+
+        template<PieceColor color>
+        uint64_t getPawnDoublePush(uint64_t pawns);
 
         template<PieceColor color>
         uint64_t getPawnAttacks(uint64_t pawns);
@@ -98,6 +104,10 @@ namespace Zagreus {
         void setPieceFromFENChar(char character, int index);
 
         char getCharacterForPieceType(PieceType pieceType);
+
+        PieceColor getMovingColor() const;
+
+        void setMovingColor(PieceColor movingColor);
     };
 
     template<PieceType pieceType>
@@ -108,4 +118,10 @@ namespace Zagreus {
 
     template<PieceColor color>
     uint64_t getPawnAttacks(uint64_t pawns);
+
+    template<PieceColor color>
+    uint64_t getPawnSinglePush(uint64_t pawns);
+
+    template<PieceColor color>
+    uint64_t getPawnDoublePush(uint64_t pawns);
 }

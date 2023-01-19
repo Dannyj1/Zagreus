@@ -19,17 +19,28 @@
 #pragma once
 
 #include "types.h"
+#include "bitboard.h"
 
 namespace Zagreus {
-    inline static PieceColor getOppositeColor(PieceColor color) {
-        return static_cast<PieceColor>(color ^ 1);
-    }
+    template<PieceColor color>
+    MoveList generateMoves(Bitboard &bitboard);
 
-    uint64_t popcnt(uint64_t b);
+    template<PieceColor color>
+    void generatePawnMoves(Bitboard &bitboard, MoveList &moveList);
 
-    int8_t bitscanForward(uint64_t b);
+    template<PieceColor color>
+    void generateKnightMoves(Bitboard &bitboard, MoveList &moveList);
 
-    int8_t bitscanReverse(uint64_t b);
+    template<PieceColor color>
+    void generateBishopMoves(Bitboard &bitboard, MoveList &moveList);
 
-    uint32_t encodeMove(const Move &move);
+    template<PieceColor color>
+    void generateRookMoves(Bitboard &bitboard, MoveList &moveList);
+
+    template<PieceColor color>
+    void generateQueenMoves(Bitboard &bitboard, MoveList &moveList);
+
+    template<PieceColor color>
+    void generateKingMoves(Bitboard &bitboard, MoveList &moveList);
+
 }

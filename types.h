@@ -55,19 +55,12 @@ namespace Zagreus {
         NO_SQUARE = -1
     };
 
-    enum MoveType {
-        REGULAR,
-        CASTLING,
-        PROMOTION,
-        EN_PASSANT
-    };
-
     struct Move {
         int8_t from;
         int8_t to;
         PieceType piece;
-        PieceType promotionPiece;
-        int score;
+        PieceType promotionPiece = PieceType::EMPTY;
+        int score = 0;
     };
 
     struct UndoData {

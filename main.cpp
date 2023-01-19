@@ -19,11 +19,11 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "bitboard.h"
 #include "engine.h"
 #include "senjo/UCIAdapter.h"
 #include "senjo/Output.h"
 #include "magics.h"
-#include "bitboard.h"
 
 using namespace Zagreus;
 
@@ -42,26 +42,28 @@ int main(int argc , char *argv[]) {
 
     initializeMagicBitboards();
 
-    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
-    senjo::Output(senjo::Output::InfoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY";
-    senjo::Output(senjo::Output::InfoPrefix) << "This is free software, and you are welcome to redistribute it";
-    senjo::Output(senjo::Output::InfoPrefix) << "under certain conditions; See the LICENSE file for details";
-    senjo::Output(senjo::Output::InfoPrefix) << "";
+    senjo::Output(senjo::Output::NoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
+    senjo::Output(senjo::Output::NoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY";
+    senjo::Output(senjo::Output::NoPrefix) << "This is free software, and you are welcome to redistribute it";
+    senjo::Output(senjo::Output::NoPrefix) << "under the terms of the GNU General Public License as published by";
+    senjo::Output(senjo::Output::NoPrefix) << "the Free Software Foundation, either version 3 of the License, or";
+    senjo::Output(senjo::Output::NoPrefix) << "(at your option) any later version; See the LICENSE file for full details";
+    senjo::Output(senjo::Output::NoPrefix) << "";
 
-    senjo::Output(senjo::Output::InfoPrefix) << " ______ ";
-    senjo::Output(senjo::Output::InfoPrefix) << " |___  / ";
-    senjo::Output(senjo::Output::InfoPrefix) << "    / /  __ _   __ _  _ __  ___  _   _  ___ ";
-    senjo::Output(senjo::Output::InfoPrefix) << "   / /  / _` | / _` || '__|/ _ \\| | | |/ __|";
-    senjo::Output(senjo::Output::InfoPrefix) << "  / /__| (_| || (_| || |  |  __/| |_| |\\__ \\";
-    senjo::Output(senjo::Output::InfoPrefix) << R"( /_____|\__,_| \__, ||_|   \___| \__,_||___/)";
-    senjo::Output(senjo::Output::InfoPrefix) << "                __/ | ";
-    senjo::Output(senjo::Output::InfoPrefix) << "               |___/ ";
-    senjo::Output(senjo::Output::InfoPrefix) << "";
+    senjo::Output(senjo::Output::NoPrefix) << " ______ ";
+    senjo::Output(senjo::Output::NoPrefix) << " |___  / ";
+    senjo::Output(senjo::Output::NoPrefix) << "    / /  __ _   __ _  _ __  ___  _   _  ___ ";
+    senjo::Output(senjo::Output::NoPrefix) << "   / /  / _` | / _` || '__|/ _ \\| | | |/ __|";
+    senjo::Output(senjo::Output::NoPrefix) << "  / /__| (_| || (_| || |  |  __/| |_| |\\__ \\";
+    senjo::Output(senjo::Output::NoPrefix) << R"( /_____|\__,_| \__, ||_|   \___| \__,_||___/)";
+    senjo::Output(senjo::Output::NoPrefix) << "                __/ | ";
+    senjo::Output(senjo::Output::NoPrefix) << "               |___/ ";
+    senjo::Output(senjo::Output::NoPrefix) << "";
 
-    senjo::Output(senjo::Output::InfoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1)";
+    senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1)";
 
     if (argc == 2 && strcmp(argv[1], "bench") == 0) {
-        senjo::Output(senjo::Output::InfoPrefix) << "Starting benchmark...";
+        senjo::Output(senjo::Output::NoPrefix) << "Starting benchmark...";
 
         benchmark();
         return 0;
@@ -80,14 +82,14 @@ int main(int argc , char *argv[]) {
                     break;
                 }
             } catch (const std::exception &e) {
-                senjo::Output() << "ERROR: " << e.what();
+                senjo::Output(senjo::Output::NoPrefix) << "ERROR: " << e.what();
                 return -1;
             }
         }
 
         return 0;
     } catch (const std::exception &e) {
-        senjo::Output(senjo::Output::InfoPrefix) << "ERROR: " << e.what();
+        senjo::Output(senjo::Output::NoPrefix) << "ERROR: " << e.what();
         return 1;
     }
 }

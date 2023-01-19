@@ -19,16 +19,6 @@
 #include "bitwise.h"
 
 namespace Zagreus {
-    template<PieceColor color>
-    uint64_t getPawnSinglePush(uint64_t pawn) {
-        return 0;
-    }
-
-    template<PieceColor color>
-    uint64_t getPawnDoublePush(uint64_t pawn) {
-        return 0;
-    }
-
     uint64_t soutOne(uint64_t b) {
         return 0;
     }

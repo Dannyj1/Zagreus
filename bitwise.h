@@ -23,12 +23,6 @@
 #include "types.h"
 
 namespace Zagreus {
-    template<PieceColor color>
-    uint64_t getPawnSinglePush(uint64_t pawn);
-
-    template<PieceColor color>
-    uint64_t getPawnDoublePush(uint64_t pawn);
-
     uint64_t soutOne(uint64_t b);
 
     uint64_t nortOne(uint64_t b);

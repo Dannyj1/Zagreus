@@ -126,7 +126,7 @@ namespace Zagreus {
     bool ZagreusEngine::setPosition(const std::string &fen, std::string* remain) {
         board = {};
         engineColor = PieceColor::NONE;
-        return board.setFromFEN(fen);
+        return board.setFromFen(fen);
     }
 
     bool ZagreusEngine::makeMove(const std::string &move) {
@@ -204,14 +204,15 @@ namespace Zagreus {
     }
 
     uint64_t ZagreusEngine::perft(const int depth) {
-        auto start = std::chrono::high_resolution_clock::now();
+/*        auto start = std::chrono::high_resolution_clock::now();
         uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: "
                                                  << elapsed_seconds.count() << "s";
-        return nodes;
+        return nodes;*/
+return 1;
     }
 
     std::string ZagreusEngine::go(const senjo::GoParams &params, std::string* ponder) {
