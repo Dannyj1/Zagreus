@@ -87,15 +87,25 @@ namespace Zagreus {
     }
 
     uint64_t Bitboard::getQueenAttacks(int8_t square) {
-        return getBishopMagicAttacks(square, getOccupiedBoard()) | getRookMagicAttacks(square, getOccupiedBoard());
+        return getBishopAttacks(square) | getRookAttacks(square);
     }
 
     uint64_t Bitboard::getBishopAttacks(int8_t square) {
-        return getBishopMagicAttacks(square, getOccupiedBoard());
+        uint64_t occupancy = getOccupiedBoard();
+        occupancy &= getBishopMask(square);
+        occupancy *= getBishopMagic(square);
+        occupancy >>= 64 - BBits[square];
+
+        return getBishopMagicAttacks(square, occupancy);
     }
 
     uint64_t Bitboard::getRookAttacks(int8_t square) {
-        return getRookMagicAttacks(square, getOccupiedBoard());
+        uint64_t occupancy = getOccupiedBoard();
+        occupancy &= getRookMask(square);
+        occupancy *= getRookMagic(square);
+        occupancy >>= 64 - RBits[square];
+
+        return getRookMagicAttacks(square, occupancy);
     }
 
     void Bitboard::setPiece(int8_t square, PieceType piece) {

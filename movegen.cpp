@@ -17,6 +17,7 @@
  */
 
 #include <x86intrin.h>
+#include <iostream>
 
 #include "movegen.h"
 #include "utils.h"
@@ -26,12 +27,19 @@ namespace Zagreus {
     MoveList generateMoves(Bitboard &bitboard) {
         MoveList moveList;
 
+        std::cout << "0" << std::endl;
         generatePawnMoves<color>(bitboard, moveList);
+        std::cout << "1" << std::endl;
         generateKnightMoves<color>(bitboard, moveList);
+        std::cout << "2" << std::endl;
         generateBishopMoves<color>(bitboard, moveList);
+        std::cout << "3" << std::endl;
         generateRookMoves<color>(bitboard, moveList);
+        std::cout << "4" << std::endl;
         generateQueenMoves<color>(bitboard, moveList);
+        std::cout << "5" << std::endl;
         generateKingMoves<color>(bitboard, moveList);
+        std::cout << "6" << std::endl;
 
         return moveList;
     }

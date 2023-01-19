@@ -75,8 +75,8 @@ namespace Zagreus {
         }
 
         template<PieceColor color>
-        uint64_t getPawnAttacks(uint64_t pawns) {
-            return pawnAttacks[color][pawns];
+        uint64_t getPawnAttacks(int8_t square) {
+            return pawnAttacks[color][square];
         }
 
         template<PieceColor color>

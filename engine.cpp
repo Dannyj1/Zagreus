@@ -47,7 +47,6 @@ namespace Zagreus {
 
         while (moves.hasNext()) {
             Move move = moves.getNextMove();
-            assert(move.fromSquare != move.toSquare);
 
             perftBoard.makeMove(move);
 

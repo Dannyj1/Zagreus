@@ -35,5 +35,5 @@ namespace Zagreus {
 
     uint32_t encodeMove(const Move &move);
 
-    std::string getNotation(int square);
+    std::string getNotation(int8_t square);
 }

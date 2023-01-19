@@ -39,7 +39,7 @@ namespace Zagreus {
                (move.to << 7) | move.from;
     }
 
-    std::string getNotation(int square) {
+    std::string getNotation(int8_t square) {
         std::string notation = "";
 
         notation += static_cast<char>(square % 8 + 'a');
