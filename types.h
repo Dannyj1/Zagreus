@@ -63,11 +63,18 @@ namespace Zagreus {
         int score = 0;
     };
 
+    enum MoveType {
+        REGULAR,
+        EN_PASSANT,
+        CASTLE
+    };
+
     struct UndoData {
-        uint8_t halfMoveClock;
-        int8_t enPassantSquare;
-        uint8_t castlingRights;
-        PieceType capturedPiece;
+        uint8_t halfMoveClock = 0;
+        int8_t enPassantSquare = NO_SQUARE;
+        uint8_t castlingRights = 0;
+        PieceType capturedPiece = PieceType::EMPTY;
+        MoveType moveType = MoveType::REGULAR;
     };
 
     struct MoveList {

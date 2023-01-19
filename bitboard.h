@@ -142,27 +142,27 @@ namespace Zagreus {
         template <PieceColor color>
         uint64_t getSquareAttacksByColor(int square) {
             if (color == PieceColor::WHITE) {
-                uint64_t queenBB = getPieceBoard<PieceType::BLACK_QUEEN>();
-                uint64_t straightSlidingPieces = getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;
-                uint64_t diagonalSlidingPieces = getPieceBoard<PieceType::BLACK_BISHOP>() | queenBB;
-
-                uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
-                uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
-                uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
-                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::BLACK_KNIGHT>();
-                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::BLACK_KING>();
-
-                return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
-            } else {
                 uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>();
                 uint64_t straightSlidingPieces = getPieceBoard<PieceType::WHITE_ROOK>() | queenBB;
                 uint64_t diagonalSlidingPieces = getPieceBoard<PieceType::WHITE_BISHOP>() | queenBB;
 
-                uint64_t pawnAttacks = getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
+                uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
                 uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
                 uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
                 uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::WHITE_KNIGHT>();
                 uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::WHITE_KING>();
+
+                return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
+            } else {
+                uint64_t queenBB = getPieceBoard<PieceType::BLACK_QUEEN>();
+                uint64_t straightSlidingPieces = getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;
+                uint64_t diagonalSlidingPieces = getPieceBoard<PieceType::BLACK_BISHOP>() | queenBB;
+
+                uint64_t pawnAttacks = getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
+                uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
+                uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
+                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::BLACK_KNIGHT>();
+                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::BLACK_KING>();
 
                 return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
             }
@@ -183,11 +183,15 @@ namespace Zagreus {
             int kingLocation = bitscanForward(kingBB);
 
             if (color == PieceColor::WHITE) {
-                return isSquareAttackedByColor<PieceColor::WHITE>(kingLocation);
-            } else {
                 return isSquareAttackedByColor<PieceColor::BLACK>(kingLocation);
+            } else {
+                return isSquareAttackedByColor<PieceColor::WHITE>(kingLocation);
             }
         }
+
+        int8_t getEnPassantSquare() const;
+
+        void setEnPassantSquare(int8_t enPassantSquare);
     };
 }
 

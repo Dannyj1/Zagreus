@@ -24,7 +24,6 @@
 #include "senjo/UCIAdapter.h"
 #include "senjo/Output.h"
 #include "magics.h"
-#include "tests.h"
 
 using namespace Zagreus;
 
@@ -71,16 +70,6 @@ int main(int argc , char *argv[]) {
             benchmark();
             return 0;
         }
-
-        #ifndef NDEBUG
-            if (strcmp(argv[1], "test") == 0) {
-                senjo::Output(senjo::Output::NoPrefix) << "Starting tests...";
-
-                runTests();
-                senjo::Output(senjo::Output::NoPrefix) << "Tests completed without errors!";
-                return 0;
-            }
-        #endif
 
         senjo::Output(senjo::Output::NoPrefix) << "Unknown argument!";
         return 0;

@@ -136,11 +136,12 @@ namespace Zagreus {
 
         PieceType capturedPiece = getPieceOnSquare(move.to);
 
-        ply += 1;
+        halfMoveClock += 1;
         undoStack[ply].capturedPiece = capturedPiece;
         undoStack[ply].halfMoveClock = halfMoveClock;
         undoStack[ply].enPassantSquare = enPassantSquare;
         undoStack[ply].castlingRights = castlingRights;
+        undoStack[ply].moveType = MoveType::REGULAR;
 
         if (capturedPiece != PieceType::EMPTY) {
             removePiece(move.to, capturedPiece);
@@ -155,19 +156,38 @@ namespace Zagreus {
             setPiece(move.to, move.piece);
         }
 
+        if (move.piece == PieceType::WHITE_PAWN || move.piece == PieceType::BLACK_PAWN) {
+            if (move.to - move.from == 16) {
+                enPassantSquare = move.to - 8;
+                assert(enPassantSquare >= 0 && enPassantSquare < 64);
+            } else if (move.to - move.from == -16) {
+                enPassantSquare = move.to + 8;
+                assert(enPassantSquare >= 0 && enPassantSquare < 64);
+            } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) && move.to == enPassantSquare) {
+                int8_t enPassantCaptureSquare = move.to - (movingColor == PieceColor::WHITE ? 8 : -8);
+                removePiece(enPassantCaptureSquare, getPieceOnSquare(enPassantCaptureSquare));
+                undoStack[ply].moveType = MoveType::EN_PASSANT;
+                enPassantSquare = NO_SQUARE;
+            } else {
+                enPassantSquare = NO_SQUARE;
+            }
+        } else {
+            enPassantSquare = NO_SQUARE;
+        }
+
         if (movingColor == PieceColor::BLACK) {
             fullmoveClock += 1;
         }
 
-        halfMoveClock += 1;
         movingColor = getOppositeColor(movingColor);
+        ply += 1;
     }
 
     void Bitboard::unmakeMove(Move &move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
 
-        UndoData undoData = undoStack[ply];
+        UndoData undoData = undoStack[ply - 1];
 
         if (move.promotionPiece != PieceType::EMPTY) {
             removePiece(move.to, move.promotionPiece);
@@ -177,14 +197,19 @@ namespace Zagreus {
 
         if (undoData.capturedPiece != PieceType::EMPTY) {
             setPiece(move.to, undoData.capturedPiece);
-            halfMoveClock = undoData.halfMoveClock;
         }
 
         setPiece(move.from, move.piece);
 
+        if (undoData.moveType == MoveType::EN_PASSANT) {
+            int8_t enPassantCaptureSquare = move.to - (getOppositeColor(movingColor) == PieceColor::WHITE ? 8 : -8);
+            setPiece(enPassantCaptureSquare, getOppositeColor(movingColor) == PieceColor::WHITE ? PieceType::BLACK_PAWN : PieceType::WHITE_PAWN);
+        }
+
         ply -= 1;
         halfMoveClock = undoData.halfMoveClock;
         enPassantSquare = undoData.enPassantSquare;
+        assert(enPassantSquare >= NO_SQUARE && enPassantSquare < 64);
         castlingRights = undoData.castlingRights;
         movingColor = getOppositeColor(movingColor);
 
@@ -368,18 +393,20 @@ namespace Zagreus {
                 }
 
                 if (tolower(character < 'a') || tolower(character) > 'h') {
-                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant square!";
+                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant rank!";
                     return false;
                 }
 
                 int8_t file = tolower(character) - 'a'; // NOLINT(cppcoreguidelines-narrowing-conversions)
+                int8_t rank = (getOppositeColor(movingColor) == PieceColor::WHITE) ? 2 : 5;
 
                 if (file < 0 || file > 7) {
-                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant square!";
+                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant file!";
                     return false;
                 }
 
-                enPassantSquare = file;
+                enPassantSquare = (rank * 8) + file;
+                assert(enPassantSquare >= 0 && enPassantSquare < 64);
                 index += 2;
             }
 
@@ -485,5 +512,13 @@ namespace Zagreus {
                 getKingAttacks(square) & (getPieceBoard<PieceType::WHITE_KING>() | getPieceBoard<PieceType::BLACK_KING>());
 
         return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
+    }
+
+    int8_t Bitboard::getEnPassantSquare() const {
+        return enPassantSquare;
+    }
+
+    void Bitboard::setEnPassantSquare(int8_t enPassantSquare) {
+        Bitboard::enPassantSquare = enPassantSquare;
     }
 }
