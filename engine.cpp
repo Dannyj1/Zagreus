@@ -21,6 +21,8 @@
 #include "senjo/ChessEngine.h"
 #include "senjo/Output.h"
 #include "engine.h"
+#include "bitboard.h"
+#include "types.h"
 
 namespace Zagreus {
     /*uint64_t ZagreusEngine::doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth) {
@@ -111,9 +113,9 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::initialize() {
-/*        board = Bitboard{};
+        board = Bitboard{};
         engineColor = PieceColor::NONE;
-        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());*/
+//        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
         isEngineInitialized = true;
     }
 
@@ -122,42 +124,13 @@ namespace Zagreus {
     }
 
     bool ZagreusEngine::setPosition(const std::string &fen, std::string* remain) {
-//        board = {};
-//        engineColor = PieceColor::NONE;
-//        return board.setFromFEN(fen);
-return true;
+        board = {};
+        engineColor = PieceColor::NONE;
+        return board.setFromFEN(fen);
     }
 
     bool ZagreusEngine::makeMove(const std::string &move) {
-/*        if (move == "e1c1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
-            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
-            board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
-            board.makeStrMove("a1e1");
-            return true;
-        }
-
-        if (move == "e1g1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE &&
-            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
-            board.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK) {
-            board.makeStrMove("h1e1");
-            return true;
-        }
-
-        if (move == "e8c8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE &&
-            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
-            board.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK) {
-            board.makeStrMove("a8e8");
-            return true;
-        }
-
-        if (move == "e8g8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE &&
-            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
-            board.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK) {
-            board.makeStrMove("h8e8");
-            return true;
-        }
-
-        board.makeStrMove(move);*/
+        // board.makeStrMove(move);
         return true;
     }
 
@@ -168,12 +141,11 @@ return true;
     }
 
     void ZagreusEngine::printBoard() {
-//        board.print();
+        board.print();
     }
 
     bool ZagreusEngine::whiteToMove() {
-//        return board.getMovingColor() == PieceColor::WHITE;
-        return true;
+        return board.getMovingColor() == PieceColor::WHITE;
     }
 
     void ZagreusEngine::clearSearchData() {
@@ -240,7 +212,6 @@ return true;
         senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: "
                                                  << elapsed_seconds.count() << "s";
         return nodes;
-return 1;
     }
 
     std::string ZagreusEngine::go(const senjo::GoParams &params, std::string* ponder) {
@@ -248,10 +219,10 @@ return 1;
             engineColor = board.getMovingColor();
         }
 
-        board.setWhiteTimeMsec(params.wtime);
-        board.setBlackTimeMsec(params.btime);
-        board.setWhiteTimeIncrement(params.winc);
-        board.setBlackTimeIncrement(params.binc);
+        searchManager.setWhiteTimeMsec(params.wtime);
+        searchManager.setBlackTimeMsec(params.btime);
+        searchManager.setWhiteTimeIncrement(params.winc);
+        searchManager.setBlackTimeIncrement(params.binc);
 
 //        board.print();
         SearchResult bestResult = searchManager.getBestMove(*this, board, engineColor);
@@ -269,30 +240,6 @@ return 1;
 
         std::string result = Bitboard::getNotation(bestResult.move.fromSquare) +
                              Bitboard::getNotation(bestResult.move.toSquare);
-
-        if (result == "a1e1" && board.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE &&
-            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
-            board.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK) {
-            return "e1c1";
-        }
-
-        if (result == "h1e1" && board.getCastlingRights() & CastlingRights::WHITE_KINGSIDE &&
-            board.getPieceOnSquare(Square::E1) == PieceType::WHITE_KING &&
-            board.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK) {
-            return "e1g1";
-        }
-
-        if (result == "a8e8" && board.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE &&
-            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
-            board.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK) {
-            return "e8c8";
-        }
-
-        if (result == "h8e8" && board.getCastlingRights() & CastlingRights::BLACK_KINGSIDE &&
-            board.getPieceOnSquare(Square::E8) == PieceType::BLACK_KING &&
-            board.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK) {
-            return "e8g8";
-        }
 
         senjo::Output(senjo::Output::InfoPrefix) << "Score: " << bestResult.score;
         return Bitboard::getNotation(bestResult.move.fromSquare) +

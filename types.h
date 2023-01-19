@@ -67,6 +67,7 @@ namespace Zagreus {
         int8_t to;
         PieceType piece;
         PieceType promotionPiece;
+        int score;
     };
 
     struct UndoData {
