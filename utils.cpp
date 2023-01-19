@@ -16,7 +16,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <bmiintrin.h>
+#include <x86intrin.h>
 #include <lzcntintrin.h>
 
 #include "utils.h"
@@ -37,5 +37,14 @@ namespace Zagreus {
     uint32_t encodeMove(const Move &move) {
         return (move.promotionPiece << 20) | (move.piece << 15) |
                (move.to << 7) | move.from;
+    }
+
+    std::string getNotation(int square) {
+        std::string notation = "";
+
+        notation += static_cast<char>(square % 8 + 'a');
+        notation += static_cast<char>(square / 8 + '1');
+
+        return notation;
     }
 }

@@ -105,5 +105,7 @@ namespace Zagreus {
         void showEngineStats() override;
 
         senjo::EngineOption getOption(const std::string &optionName);
+
+        uint64_t doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth);
     };
 }

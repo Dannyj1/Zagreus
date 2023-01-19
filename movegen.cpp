@@ -16,7 +16,8 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <bmiintrin.h>
+#include <x86intrin.h>
+
 #include "movegen.h"
 #include "utils.h"
 
@@ -31,6 +32,8 @@ namespace Zagreus {
         generateRookMoves<color>(bitboard, moveList);
         generateQueenMoves<color>(bitboard, moveList);
         generateKingMoves<color>(bitboard, moveList);
+
+        return moveList;
     }
 
     template<PieceColor color>
@@ -46,9 +49,9 @@ namespace Zagreus {
         while (pawnBB) {
             int8_t index = bitscanForward(pawnBB);
             pawnBB = _blsr_u64(pawnBB);
-            uint64_t genBB = getPawnDoublePush<color>(1ULL << index);
+            uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
 
-            genBB |= getPawnAttacks<color>(1ULL << index);
+            genBB |= bitboard.getPawnAttacks<color>(1ULL << index);
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() | bitboard.getPieceBoard<BLACK_KING>());
 
             while (genBB) {
@@ -235,4 +238,7 @@ namespace Zagreus {
             }
         }
     }
+
+    template MoveList generateMoves<PieceColor::WHITE>(Bitboard &bitboard);
+    template MoveList generateMoves<PieceColor::BLACK>(Bitboard &bitboard);
 }

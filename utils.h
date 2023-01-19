@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "types.h"
 
 namespace Zagreus {
@@ -32,4 +34,6 @@ namespace Zagreus {
     int8_t bitscanReverse(uint64_t b);
 
     uint32_t encodeMove(const Move &move);
+
+    std::string getNotation(int square);
 }

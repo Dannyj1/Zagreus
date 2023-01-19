@@ -23,44 +23,53 @@
 #include "engine.h"
 #include "bitboard.h"
 #include "types.h"
+#include "movepicker.h"
+#include "movegen.h"
+#include "utils.h"
 
 namespace Zagreus {
-    /*uint64_t ZagreusEngine::doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth) {
+    uint64_t ZagreusEngine::doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth) {
         uint64_t nodes = 0ULL;
 
         if (depth == 0) {
             return 1ULL;
         }
 
-        MovePicker moves = generateLegalMoves(perftBoard, color);
+        MovePicker moves;
+
+        if (color == PieceColor::WHITE) {
+            moves = MovePicker(generateMoves<PieceColor::WHITE>(perftBoard));
+        } else if (color == PieceColor::BLACK) {
+            moves = MovePicker(generateMoves<PieceColor::BLACK>(perftBoard));
+        } else {
+            return 0;
+        }
 
         while (moves.hasNext()) {
             Move move = moves.getNextMove();
             assert(move.fromSquare != move.toSquare);
 
-            perftBoard.makeMove(move.fromSquare, move.toSquare, move.pieceType, move.promotionPiece);
+            perftBoard.makeMove(move);
 
-            if (perftBoard.isKingInCheck(color)) {
+            /*if (perftBoard.isKingInCheck(color)) {
                 perftBoard.unmakeMove();
                 continue;
-            }
+            }*/
 
-            uint64_t nodeAmount = doPerft(perftBoard, Bitboard::getOppositeColor(color), depth - 1,
+            uint64_t nodeAmount = doPerft(perftBoard, getOppositeColor(color), depth - 1,
                                           startingDepth);
             nodes += nodeAmount;
 
             if (depth == startingDepth && nodeAmount > 0LL) {
-                std::string notation =
-                        Bitboard::getNotation(move.fromSquare) +
-                        Bitboard::getNotation(move.toSquare);
+                std::string notation = getNotation(move.from) + getNotation(move.to);
                 senjo::Output(senjo::Output::InfoPrefix) << notation << ": " << nodeAmount;
             }
 
-            perftBoard.unmakeMove();
+            perftBoard.unmakeMove(move);
         }
 
         return nodes;
-    }*/
+    }
 
     std::string ZagreusEngine::getEngineName() {
         return "Zagreus";
@@ -204,15 +213,14 @@ namespace Zagreus {
     }
 
     uint64_t ZagreusEngine::perft(const int depth) {
-/*        auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
         uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: "
                                                  << elapsed_seconds.count() << "s";
-        return nodes;*/
-return 1;
+        return nodes;
     }
 
     std::string ZagreusEngine::go(const senjo::GoParams &params, std::string* ponder) {

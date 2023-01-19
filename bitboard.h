@@ -24,6 +24,7 @@
 
 #include "types.h"
 #include "constants.h"
+#include "bitwise.h"
 
 namespace Zagreus {
     class Bitboard {
@@ -51,10 +52,43 @@ namespace Zagreus {
         Bitboard();
 
         template<PieceType pieceType>
-        uint64_t getPieceBoard();
+        uint64_t getPieceBoard() {
+            return pieceBB[pieceType];
+        }
 
         template<PieceColor color>
-        uint64_t getColorBoard();
+        uint64_t getColorBoard() {
+            return colorBB[color];
+        }
+
+        template<PieceColor color>
+        uint64_t getPawnDoublePush(uint64_t pawns) {
+            uint64_t singlePush = Zagreus::Bitboard::getPawnSinglePush<color>(pawns);
+
+            if (color == PieceColor::WHITE) {
+                return singlePush | (nortOne(singlePush) & getEmptyBoard() & RANK_4);
+            } else if (color == PieceColor::BLACK) {
+                return singlePush | (soutOne(singlePush) & getEmptyBoard() & RANK_5);
+            } else {
+                return 0;
+            }
+        }
+
+        template<PieceColor color>
+        uint64_t getPawnAttacks(uint64_t pawns) {
+            return pawnAttacks[color][pawns];
+        }
+
+        template<PieceColor color>
+        uint64_t getPawnSinglePush(uint64_t pawns) {
+            if (color == PieceColor::WHITE) {
+                return nortOne(pawns) & getEmptyBoard();
+            } else if (color == PieceColor::BLACK) {
+                return soutOne(pawns) & getEmptyBoard();
+            } else {
+                return 0;
+            }
+        }
 
         uint64_t getOccupiedBoard();
 
@@ -71,15 +105,6 @@ namespace Zagreus {
         uint64_t getBishopAttacks(int8_t square);
 
         uint64_t getRookAttacks(int8_t square);
-
-        template<PieceColor color>
-        uint64_t getPawnSinglePush(uint64_t pawns);
-
-        template<PieceColor color>
-        uint64_t getPawnDoublePush(uint64_t pawns);
-
-        template<PieceColor color>
-        uint64_t getPawnAttacks(uint64_t pawns);
 
         void setPiece(int8_t square, PieceType piece);
 
@@ -109,19 +134,4 @@ namespace Zagreus {
 
         void setMovingColor(PieceColor movingColor);
     };
-
-    template<PieceType pieceType>
-    uint64_t getPieceBoard();
-
-    template<PieceColor color>
-    uint64_t getColorBoard();
-
-    template<PieceColor color>
-    uint64_t getPawnAttacks(uint64_t pawns);
-
-    template<PieceColor color>
-    uint64_t getPawnSinglePush(uint64_t pawns);
-
-    template<PieceColor color>
-    uint64_t getPawnDoublePush(uint64_t pawns);
 }

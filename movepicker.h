@@ -26,14 +26,16 @@
 namespace Zagreus {
     class MovePicker {
     private:
-        std::vector<Move> moves;
+        MoveList moveList;
         int searchStartIndex = 0;
     public:
-        MovePicker(std::vector<Move> moves);
+        MovePicker() = default;
+
+        MovePicker(MoveList moves);
 
         Move getNextMove();
 
-        bool hasNext();
+        bool hasNext() const;
 
         int size();
 

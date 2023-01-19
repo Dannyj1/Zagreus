@@ -58,16 +58,6 @@ namespace Zagreus {
         initializeBetweenLookup();
     }
 
-    template<PieceType pieceType>
-    uint64_t Bitboard::getPieceBoard() {
-        return pieceBB[pieceType];
-    }
-
-    template<PieceColor color>
-    uint64_t Bitboard::getColorBoard() {
-        return colorBB[color];
-    }
-
     uint64_t Bitboard::getOccupiedBoard() {
         return occupiedBB;
     }
@@ -106,30 +96,6 @@ namespace Zagreus {
 
     uint64_t Bitboard::getRookAttacks(int8_t square) {
         return getRookMagicAttacks(square, getOccupiedBoard());
-    }
-
-    template<PieceColor color>
-    uint64_t Bitboard::getPawnSinglePush(uint64_t pawns) {
-        if (color == PieceColor::WHITE) {
-            return nortOne(pawns) & getEmptyBoard();
-        } else if (color == PieceColor::BLACK) {
-            return soutOne(pawns) & getEmptyBoard();
-        } else {
-            return 0;
-        }
-    }
-
-    template<PieceColor color>
-    uint64_t Bitboard::getPawnDoublePush(uint64_t pawns) {
-        uint64_t singlePush = Zagreus::Bitboard::getPawnSinglePush<color>(pawns);
-
-        if (color == PieceColor::WHITE) {
-            return singlePush | (nortOne(singlePush) & getEmptyBoard() & RANK_4);
-        } else if (color == PieceColor::BLACK) {
-            return singlePush | (soutOne(singlePush) & getEmptyBoard() & RANK_5);
-        } else {
-            return 0;
-        }
     }
 
     void Bitboard::setPiece(int8_t square, PieceType piece) {
@@ -447,10 +413,5 @@ namespace Zagreus {
                 setPiece(index, PieceType::BLACK_KING);
                 break;
         }
-    }
-
-    template<PieceColor color>
-    uint64_t Bitboard::getPawnAttacks(uint64_t pawns) {
-        return pawnAttacks[color][pawns];
     }
 }

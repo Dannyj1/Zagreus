@@ -10,7 +10,7 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 - Bitboard board representation with Plain Magic Bitboards for sliding piece move generation
 - Principal Variation Search with Alpha-Beta pruning
 - Quiescence Search with delta pruning and SEE move ordering
-- Move ordering using MVV/LVA, killer moves, history heuristic, countermove heuristic
+- Move ordering using MVV/LVA, killer moveList, history heuristic, countermove heuristic
 - Transposition Table
 - Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square tables and more
 - Null Move Pruning

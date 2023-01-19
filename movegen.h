@@ -24,23 +24,4 @@
 namespace Zagreus {
     template<PieceColor color>
     MoveList generateMoves(Bitboard &bitboard);
-
-    template<PieceColor color>
-    void generatePawnMoves(Bitboard &bitboard, MoveList &moveList);
-
-    template<PieceColor color>
-    void generateKnightMoves(Bitboard &bitboard, MoveList &moveList);
-
-    template<PieceColor color>
-    void generateBishopMoves(Bitboard &bitboard, MoveList &moveList);
-
-    template<PieceColor color>
-    void generateRookMoves(Bitboard &bitboard, MoveList &moveList);
-
-    template<PieceColor color>
-    void generateQueenMoves(Bitboard &bitboard, MoveList &moveList);
-
-    template<PieceColor color>
-    void generateKingMoves(Bitboard &bitboard, MoveList &moveList);
-
 }
