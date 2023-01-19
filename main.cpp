@@ -24,6 +24,7 @@
 #include "senjo/UCIAdapter.h"
 #include "senjo/Output.h"
 #include "magics.h"
+#include "tests.h"
 
 using namespace Zagreus;
 
@@ -47,7 +48,8 @@ int main(int argc , char *argv[]) {
     senjo::Output(senjo::Output::NoPrefix) << "This is free software, and you are welcome to redistribute it";
     senjo::Output(senjo::Output::NoPrefix) << "under the terms of the GNU General Public License as published by";
     senjo::Output(senjo::Output::NoPrefix) << "the Free Software Foundation, either version 3 of the License, or";
-    senjo::Output(senjo::Output::NoPrefix) << "(at your option) any later version; See the LICENSE file for full details";
+    senjo::Output(senjo::Output::NoPrefix)
+            << "(at your option) any later version; See the LICENSE file for full details";
     senjo::Output(senjo::Output::NoPrefix) << "";
 
     senjo::Output(senjo::Output::NoPrefix) << " ______ ";
@@ -62,10 +64,25 @@ int main(int argc , char *argv[]) {
 
     senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1)";
 
-    if (argc == 2 && strcmp(argv[1], "bench") == 0) {
-        senjo::Output(senjo::Output::NoPrefix) << "Starting benchmark...";
+    if (argc >= 2) {
+        if (strcmp(argv[1], "bench") == 0) {
+            senjo::Output(senjo::Output::NoPrefix) << "Starting benchmark...";
 
-        benchmark();
+            benchmark();
+            return 0;
+        }
+
+        #ifndef NDEBUG
+            if (strcmp(argv[1], "test") == 0) {
+                senjo::Output(senjo::Output::NoPrefix) << "Starting tests...";
+
+                runTests();
+                senjo::Output(senjo::Output::NoPrefix) << "Tests completed without errors!";
+                return 0;
+            }
+        #endif
+
+        senjo::Output(senjo::Output::NoPrefix) << "Unknown argument!";
         return 0;
     }
 

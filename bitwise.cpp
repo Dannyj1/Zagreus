@@ -20,117 +20,174 @@
 
 namespace Zagreus {
     uint64_t soutOne(uint64_t b) {
-        return 0;
+        return b >> 8ULL;
     }
 
     uint64_t nortOne(uint64_t b) {
-        return 0;
+        return b << 8ULL;
     }
 
     uint64_t eastOne(uint64_t b) {
-        return 0;
+        return (b << 1ULL) & NOT_A_FILE;
     }
 
     uint64_t noEaOne(uint64_t b) {
-        return 0;
+        return (b << 9ULL) & NOT_A_FILE;
     }
 
     uint64_t soEaOne(uint64_t b) {
-        return 0;
+        return (b >> 7ULL) & NOT_A_FILE;
     }
 
     uint64_t westOne(uint64_t b) {
-        return 0;
+        return (b >> 1ULL) & NOT_H_FILE;
     }
 
     uint64_t soWeOne(uint64_t b) {
-        return 0;
+        return (b >> 9ULL) & NOT_H_FILE;
     }
 
     uint64_t noWeOne(uint64_t b) {
-        return 0;
+        return (b << 7ULL) & NOT_H_FILE;
     }
 
     uint64_t noNoEa(uint64_t b) {
-        return 0;
+        return (b << 17ULL) & NOT_A_FILE;
     }
 
     uint64_t noEaEa(uint64_t b) {
-        return 0;
+        return (b << 10ULL) & NOT_AB_FILE;
     }
 
     uint64_t soEaEa(uint64_t b) {
-        return 0;
+        return (b >> 6ULL) & NOT_AB_FILE;
     }
 
     uint64_t soSoEa(uint64_t b) {
-        return 0;
+        return (b >> 15ULL) & NOT_A_FILE;
     }
 
     uint64_t noNoWe(uint64_t b) {
-        return 0;
+        return (b << 15ULL) & NOT_H_FILE;
     }
 
     uint64_t noWeWe(uint64_t b) {
-        return 0;
-    }
+        return (b << 6ULL) & NOT_GH_FILE;
 
-    uint64_t soWeWe(uint64_t b) {
-        return 0;
-    }
-
-    uint64_t soSoWe(uint64_t b) {
-        return 0;
     }
 
     uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {
-        return 0;
+        pieceBB |= empty & (pieceBB >> 8ULL);
+        empty &= (empty >> 8ULL);
+        pieceBB |= empty & (pieceBB >> 16ULL);
+        empty &= (empty >> 16ULL);
+        pieceBB |= empty & (pieceBB >> 32ULL);
+        return soutOne(pieceBB);
     }
 
     uint64_t nortOccl(uint64_t pieceBB, uint64_t empty) {
-        return 0;
+        pieceBB |= empty & (pieceBB << 8ULL);
+        empty &= (empty << 8ULL);
+        pieceBB |= empty & (pieceBB << 16ULL);
+        empty &= (empty << 16ULL);
+        pieceBB |= empty & (pieceBB << 32ULL);
+        return nortOne(pieceBB);
     }
 
     uint64_t eastOccl(uint64_t pieceBB, uint64_t empty) {
-        return 0;
+        empty &= NOT_A_FILE;
+        pieceBB |= empty & (pieceBB << 1ULL);
+        empty &= (empty << 1ULL);
+        pieceBB |= empty & (pieceBB << 2ULL);
+        empty &= (empty << 2ULL);
+        pieceBB |= empty & (pieceBB << 4ULL);
+        return eastOne(pieceBB);
     }
 
     uint64_t noEaOccl(uint64_t pieceBB, uint64_t empty) {
-        return 0;
+        empty &= NOT_A_FILE;
+        pieceBB |= empty & (pieceBB << 9ULL);
+        empty &= (empty << 9ULL);
+        pieceBB |= empty & (pieceBB << 18ULL);
+        empty &= (empty << 18ULL);
+        pieceBB |= empty & (pieceBB << 36ULL);
+        return noEaOne(pieceBB);
     }
 
     uint64_t soEaOccl(uint64_t pieceBB, uint64_t empty) {
-        return 0;
+        empty &= NOT_A_FILE;
+        pieceBB |= empty & (pieceBB >> 7ULL);
+        empty &= (empty >> 7ULL);
+        pieceBB |= empty & (pieceBB >> 14ULL);
+        empty &= (empty >> 14ULL);
+        pieceBB |= empty & (pieceBB >> 28ULL);
+        return soEaOne(pieceBB);
     }
 
-    uint64_t westOccl(uint64_t rooks, uint64_t empty) {
-        return 0;
+    uint64_t westOccl(uint64_t pieceBB, uint64_t empty) {
+        empty &= NOT_H_FILE;
+        pieceBB |= empty & (pieceBB >> 1ULL);
+        empty &= (empty >> 1ULL);
+        pieceBB |= empty & (pieceBB >> 2ULL);
+        empty &= (empty >> 2ULL);
+        pieceBB |= empty & (pieceBB >> 4ULL);
+        return westOne(pieceBB);
     }
 
-    uint64_t soWeOccl(uint64_t bishops, uint64_t empty) {
-        return 0;
+    uint64_t soWeOccl(uint64_t pieceBB, uint64_t empty) {
+        empty &= NOT_H_FILE;
+        pieceBB |= empty & (pieceBB >> 9ULL);
+        empty &= (empty >> 9ULL);
+        pieceBB |= empty & (pieceBB >> 18ULL);
+        empty &= (empty >> 18ULL);
+        pieceBB |= empty & (pieceBB >> 36ULL);
+        return soWeOne(pieceBB);
     }
 
-    uint64_t noWeOccl(uint64_t bishops, uint64_t empty) {
-        return 0;
+    uint64_t noWeOccl(uint64_t pieceBB, uint64_t empty) {
+        empty &= NOT_H_FILE;
+        pieceBB |= empty & (pieceBB << 7ULL);
+        empty &= (empty << 7ULL);
+        pieceBB |= empty & (pieceBB << 14ULL);
+        empty &= (empty << 14ULL);
+        pieceBB |= empty & (pieceBB << 28ULL);
+        return noWeOne(pieceBB);
     }
 
     template<PieceColor color>
     uint64_t getPawnEastAttacks(uint64_t pawns) {
-        return 0;
+        if (color == WHITE) {
+            return noEaOne(pawns);
+        } else {
+            return soEaOne(pawns);
+        }
     }
 
     template<PieceColor color>
     uint64_t getPawnWestAttacks(uint64_t pawns) {
-        return 0;
+        if (color == WHITE) {
+            return noWeOne(pawns);
+        } else {
+            return soWeOne(pawns);
+        }
     }
 
     uint64_t calculateKnightAttacks(uint64_t knights) {
-        return 0;
+        uint64_t l1 = (knights >> 1ULL) & NOT_H_FILE;
+        uint64_t l2 = (knights >> 2ULL) & NOT_GH_FILE;
+        uint64_t r1 = (knights << 1ULL) & NOT_A_FILE;
+        uint64_t r2 = (knights << 2ULL) & NOT_AB_FILE;
+        uint64_t h1 = l1 | r1;
+        uint64_t h2 = l2 | r2;
+        return (h1 << 16ULL) | (h1 >> 16ULL) | (h2 << 8ULL) | (h2 >> 8ULL);
     }
 
     uint64_t calculateKingAttacks(uint64_t kingSet) {
-        return 0;
+        uint64_t attacks = eastOne(kingSet) | westOne(kingSet);
+        kingSet |= attacks;
+        attacks |= nortOne(kingSet) | soutOne(kingSet);
+
+        return attacks;
     }
 
     template<PieceColor color>

@@ -35,36 +35,42 @@ namespace Zagreus {
             return 1ULL;
         }
 
-        MovePicker moves;
+        MoveList moves;
 
         if (color == PieceColor::WHITE) {
-            moves = MovePicker(generateMoves<PieceColor::WHITE>(perftBoard));
+            moves = generateMoves<PieceColor::WHITE>(perftBoard);
         } else if (color == PieceColor::BLACK) {
-            moves = MovePicker(generateMoves<PieceColor::BLACK>(perftBoard));
+            moves = generateMoves<PieceColor::BLACK>(perftBoard);
         } else {
             return 0;
         }
 
-        while (moves.hasNext()) {
-            Move move = moves.getNextMove();
+        for (int i = 0; i < moves.count; i++) {
+            Move move = moves.moves[i];
 
             perftBoard.makeMove(move);
 
-            /*if (perftBoard.isKingInCheck(color)) {
-                perftBoard.unmakeMove();
-                continue;
-            }*/
+            if (color == PieceColor::WHITE) {
+                if (perftBoard.isKingInCheck<PieceColor::WHITE>()) {
+                    perftBoard.unmakeMove(move);
+                    continue;
+                }
+            } else {
+                if (perftBoard.isKingInCheck<PieceColor::BLACK>()) {
+                    perftBoard.unmakeMove(move);
+                    continue;
+                }
+            }
 
             uint64_t nodeAmount = doPerft(perftBoard, getOppositeColor(color), depth - 1,
                                           startingDepth);
             nodes += nodeAmount;
-
-            if (depth == startingDepth && nodeAmount > 0LL) {
-                std::string notation = getNotation(move.from) + getNotation(move.to);
-                senjo::Output(senjo::Output::InfoPrefix) << notation << ": " << nodeAmount;
-            }
-
             perftBoard.unmakeMove(move);
+
+            if (depth == startingDepth && nodeAmount > 0ULL) {
+                std::string notation = getNotation(move.from) + getNotation(move.to);
+                senjo::Output(senjo::Output::NoPrefix) << notation << ": " << nodeAmount;
+            }
         }
 
         return nodes;

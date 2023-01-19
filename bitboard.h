@@ -16,6 +16,8 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 #pragma once
 
 
@@ -25,6 +27,7 @@
 #include "types.h"
 #include "constants.h"
 #include "bitwise.h"
+#include "utils.h"
 
 namespace Zagreus {
     class Bitboard {
@@ -63,7 +66,7 @@ namespace Zagreus {
 
         template<PieceColor color>
         uint64_t getPawnDoublePush(uint64_t pawns) {
-            uint64_t singlePush = Zagreus::Bitboard::getPawnSinglePush<color>(pawns);
+            uint64_t singlePush = getPawnSinglePush<color>(pawns);
 
             if (color == PieceColor::WHITE) {
                 return singlePush | (nortOne(singlePush) & getEmptyBoard() & RANK_4);
@@ -133,5 +136,59 @@ namespace Zagreus {
         PieceColor getMovingColor() const;
 
         void setMovingColor(PieceColor movingColor);
+
+        uint64_t getSquareAttacks(int square);
+
+        template <PieceColor color>
+        uint64_t getSquareAttacksByColor(int square) {
+            if (color == PieceColor::WHITE) {
+                uint64_t queenBB = getPieceBoard<PieceType::BLACK_QUEEN>();
+                uint64_t straightSlidingPieces = getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;
+                uint64_t diagonalSlidingPieces = getPieceBoard<PieceType::BLACK_BISHOP>() | queenBB;
+
+                uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
+                uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
+                uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
+                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::BLACK_KNIGHT>();
+                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::BLACK_KING>();
+
+                return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
+            } else {
+                uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>();
+                uint64_t straightSlidingPieces = getPieceBoard<PieceType::WHITE_ROOK>() | queenBB;
+                uint64_t diagonalSlidingPieces = getPieceBoard<PieceType::WHITE_BISHOP>() | queenBB;
+
+                uint64_t pawnAttacks = getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
+                uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
+                uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
+                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::WHITE_KNIGHT>();
+                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::WHITE_KING>();
+
+                return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
+            }
+        }
+
+        template <PieceColor color>
+        bool isSquareAttackedByColor(int square) {
+            return getSquareAttacksByColor<color>(square) != 0;
+        }
+
+        template<PieceColor color>
+        bool isKingInCheck() {
+            if (color == PieceColor::NONE) {
+                return true;
+            }
+
+            uint64_t kingBB = getPieceBoard<color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING>();
+            int kingLocation = bitscanForward(kingBB);
+
+            if (color == PieceColor::WHITE) {
+                return isSquareAttackedByColor<PieceColor::WHITE>(kingLocation);
+            } else {
+                return isSquareAttackedByColor<PieceColor::BLACK>(kingLocation);
+            }
+        }
     };
 }
+
+#pragma clang diagnostic pop

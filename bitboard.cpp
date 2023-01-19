@@ -75,22 +75,27 @@ namespace Zagreus {
     }
 
     PieceType Bitboard::getPieceOnSquare(int8_t square) {
+        assert(square >= 0 && square < 64);
         return pieceSquareMapping[square];
     }
 
     uint64_t Bitboard::getKingAttacks(int8_t square) {
+        assert(square >= 0 && square < 64);
         return kingAttacks[square];
     }
 
     uint64_t Bitboard::getKnightAttacks(int8_t square) {
-        return kingAttacks[square];
+        assert(square >= 0 && square < 64);
+        return knightAttacks[square];
     }
 
     uint64_t Bitboard::getQueenAttacks(int8_t square) {
+        assert(square >= 0 && square < 64);
         return getBishopAttacks(square) | getRookAttacks(square);
     }
 
     uint64_t Bitboard::getBishopAttacks(int8_t square) {
+        assert(square >= 0 && square < 64);
         uint64_t occupancy = getOccupiedBoard();
         occupancy &= getBishopMask(square);
         occupancy *= getBishopMagic(square);
@@ -100,6 +105,7 @@ namespace Zagreus {
     }
 
     uint64_t Bitboard::getRookAttacks(int8_t square) {
+        assert(square >= 0 && square < 64);
         uint64_t occupancy = getOccupiedBoard();
         occupancy &= getRookMask(square);
         occupancy *= getRookMagic(square);
@@ -109,6 +115,7 @@ namespace Zagreus {
     }
 
     void Bitboard::setPiece(int8_t square, PieceType piece) {
+        assert(square >= 0 && square < 64);
         pieceBB[piece] |= 1ULL << square;
         occupiedBB |= 1ULL << square;
         colorBB[piece % 2] |= 1ULL << square;
@@ -116,6 +123,7 @@ namespace Zagreus {
     }
 
     void Bitboard::removePiece(int8_t square, PieceType piece) {
+        assert(square >= 0 && square < 64);
         pieceBB[piece] &= ~(1ULL << square);
         occupiedBB &= ~(1ULL << square);
         colorBB[piece % 2] &= ~(1ULL << square);
@@ -123,6 +131,9 @@ namespace Zagreus {
     }
 
     void Bitboard::makeMove(Move &move) {
+        assert(move.from >= 0 && move.from < 64);
+        assert(move.to >= 0 && move.to < 64);
+
         PieceType capturedPiece = getPieceOnSquare(move.to);
 
         ply += 1;
@@ -153,6 +164,9 @@ namespace Zagreus {
     }
 
     void Bitboard::unmakeMove(Move &move) {
+        assert(move.from >= 0 && move.from < 64);
+        assert(move.to >= 0 && move.to < 64);
+
         UndoData undoData = undoStack[ply];
 
         if (move.promotionPiece != PieceType::EMPTY) {
@@ -169,7 +183,9 @@ namespace Zagreus {
         setPiece(move.from, move.piece);
 
         ply -= 1;
-        halfMoveClock -= 1;
+        halfMoveClock = undoData.halfMoveClock;
+        enPassantSquare = undoData.enPassantSquare;
+        castlingRights = undoData.castlingRights;
         movingColor = getOppositeColor(movingColor);
 
         if (movingColor == PieceColor::BLACK) {
@@ -224,18 +240,37 @@ namespace Zagreus {
     }
 
     void Bitboard::printAvailableMoves(MoveList &moves) {
+        std::cout << "  ---------------------------------";
 
+        for (int index = 0; index < 64; index++) {
+            if (index % 8 == 0) {
+                std::cout << std::endl << (index / 8) + 1 << " | ";
+            }
+
+            bool didPrint = false;
+
+            for (int i = 0; i < moves.count; i++) {
+                Move move = moves.moves[i];
+
+                if (move.to == index) {
+                    std::cout << 'X' << " | ";
+                    didPrint = true;
+                    break;
+                }
+            }
+
+            if (!didPrint) {
+                std::cout << getCharacterForPieceType(pieceSquareMapping[index]) << " | ";
+            }
+        }
+
+        std::cout << std::endl << "  ---------------------------------" << std::endl;
+        std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
     }
 
     bool Bitboard::setFromFen(std::string fen) {
         int index = Square::A8;
         int spaces = 0;
-
-        castlingRights = 0;
-        ply = 0;
-        halfMoveClock = 0;
-        fullmoveClock = 1;
-        enPassantSquare = Square::NO_SQUARE;
 
         for (PieceType &type : pieceSquareMapping) {
             type = PieceType::EMPTY;
@@ -247,6 +282,14 @@ namespace Zagreus {
 
         for (uint64_t &bb : colorBB) {
             bb = 0;
+        }
+
+        for (uint64_t &hash : moveHistory) {
+            hash = 0;
+        }
+
+        for (UndoData &undo : undoStack) {
+            undo = {};
         }
 
         occupiedBB = 0;
@@ -423,5 +466,24 @@ namespace Zagreus {
                 setPiece(index, PieceType::BLACK_KING);
                 break;
         }
+    }
+
+    uint64_t Bitboard::getSquareAttacks(int square) {
+        uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::BLACK_QUEEN>();
+        uint64_t straightSlidingPieces =
+                getPieceBoard<PieceType::WHITE_ROOK>() | getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;
+        uint64_t diagonalSlidingPieces =
+                getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::BLACK_BISHOP>() | queenBB;
+
+        uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
+        pawnAttacks |= getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
+        uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
+        uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
+        uint64_t knightAttacks = getKnightAttacks(square) &
+                                 (getPieceBoard<PieceType::WHITE_KNIGHT>() | getPieceBoard<PieceType::BLACK_KNIGHT>());
+        uint64_t kingAttacks =
+                getKingAttacks(square) & (getPieceBoard<PieceType::WHITE_KING>() | getPieceBoard<PieceType::BLACK_KING>());
+
+        return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
     }
 }

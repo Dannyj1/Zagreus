@@ -17,30 +17,26 @@
  */
 
 #include <x86intrin.h>
+#include <cassert>
 #include <iostream>
 
+#include "bitboard.h"
 #include "movegen.h"
 #include "utils.h"
 
 namespace Zagreus {
     template<PieceColor color>
     MoveList generateMoves(Bitboard &bitboard) {
-        MoveList moveList;
+        MoveList moveList{};
 
-        std::cout << "0" << std::endl;
         generatePawnMoves<color>(bitboard, moveList);
-        std::cout << "1" << std::endl;
         generateKnightMoves<color>(bitboard, moveList);
-        std::cout << "2" << std::endl;
         generateBishopMoves<color>(bitboard, moveList);
-        std::cout << "3" << std::endl;
         generateRookMoves<color>(bitboard, moveList);
-        std::cout << "4" << std::endl;
         generateQueenMoves<color>(bitboard, moveList);
-        std::cout << "5" << std::endl;
         generateKingMoves<color>(bitboard, moveList);
-        std::cout << "6" << std::endl;
 
+        assert(moveList.count <= MAX_MOVES);
         return moveList;
     }
 
@@ -59,7 +55,7 @@ namespace Zagreus {
             pawnBB = _blsr_u64(pawnBB);
             uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
 
-            genBB |= bitboard.getPawnAttacks<color>(1ULL << index);
+            genBB |= (bitboard.getPawnAttacks<color>(index) & bitboard.getColorBoard<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>());
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() | bitboard.getPieceBoard<BLACK_KING>());
 
             while (genBB) {
