@@ -173,17 +173,17 @@ namespace Zagreus {
 
     template<PieceColor color>
     void generateQueenMoves(Bitboard &bitboard, MoveList &moveList) {
-        uint64_t rookBB;
+        uint64_t queenBB;
 
         if (color == PieceColor::WHITE) {
-            rookBB = bitboard.getPieceBoard<WHITE_QUEEN>();
+            queenBB = bitboard.getPieceBoard<WHITE_QUEEN>();
         } else {
-            rookBB = bitboard.getPieceBoard<BLACK_QUEEN>();
+            queenBB = bitboard.getPieceBoard<BLACK_QUEEN>();
         }
 
-        while (rookBB) {
-            int8_t index = bitscanForward(rookBB);
-            rookBB = _blsr_u64(rookBB);
+        while (queenBB) {
+            int8_t index = bitscanForward(queenBB);
+            queenBB = _blsr_u64(queenBB);
             uint64_t genBB = bitboard.getQueenAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -204,6 +204,35 @@ namespace Zagreus {
 
     template<PieceColor color>
     void generateKingMoves(Bitboard &bitboard, MoveList &moveList) {
+        uint64_t kingBB;
+        uint64_t opponentKingBB;
 
+        if (color == PieceColor::WHITE) {
+            kingBB = bitboard.getPieceBoard<WHITE_KING>();
+            opponentKingBB = bitboard.getPieceBoard<BLACK_KING>();
+        } else {
+            kingBB = bitboard.getPieceBoard<BLACK_KING>();
+            opponentKingBB = bitboard.getPieceBoard<WHITE_KING>();
+        }
+
+        while (kingBB) {
+            int8_t index = bitscanForward(kingBB);
+            kingBB = _blsr_u64(kingBB);
+            uint64_t genBB = bitboard.getKingAttacks(index);
+            int8_t opponentKingSquare = bitscanForward(opponentKingBB);
+
+            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
+
+            while (genBB) {
+                int8_t genIndex = bitscanForward(genBB);
+                genBB = _blsr_u64(genBB);
+
+                if (color == PieceColor::WHITE) {
+                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_KING };
+                } else {
+                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_KING };
+                }
+            }
+        }
     }
 }
