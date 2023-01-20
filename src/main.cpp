@@ -21,8 +21,8 @@
 
 #include "bitboard.h"
 #include "engine.h"
-#include "senjo/UCIAdapter.h"
-#include "senjo/Output.h"
+#include "../senjo/UCIAdapter.h"
+#include "../senjo/Output.h"
 #include "magics.h"
 #include "movegen.h"
 

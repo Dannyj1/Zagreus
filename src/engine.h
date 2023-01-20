@@ -19,7 +19,7 @@
 #pragma once
 
 #include <string>
-#include "senjo/ChessEngine.h"
+#include "../senjo/ChessEngine.h"
 #include "bitboard.h"
 #include "types.h"
 

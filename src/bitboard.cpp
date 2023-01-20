@@ -22,7 +22,7 @@
 #include "bitwise.h"
 #include "magics.h"
 #include "utils.h"
-#include "senjo/Output.h"
+#include "../senjo/Output.h"
 #include "movegen.h"
 
 namespace Zagreus {

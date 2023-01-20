@@ -18,8 +18,8 @@
 
 #include <algorithm>
 
-#include "senjo/ChessEngine.h"
-#include "senjo/Output.h"
+#include "../senjo/ChessEngine.h"
+#include "../senjo/Output.h"
 #include "engine.h"
 #include "bitboard.h"
 #include "types.h"

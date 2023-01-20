@@ -10,8 +10,8 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -std=c++20 -fuse-ld
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -march=x86-64 -mbmi -mlzcnt -Wall -Wextra -Wfatal-errors -Wuninitialized -fuse-ld=lld -std=c++20 -pthread -flto")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -march=native -Wall -Wextra -Wuninitialized -Wfatal-errors -fuse-ld=lld -std=c++20 -pthread -flto")
 
-file(GLOB inc_zagreus "*.h" "*.cpp")
+file(GLOB inc_zagreus "src/*.h" "src/*.cpp")
 file(GLOB inc_senjo "senjo/*.h" "senjo/*.cpp")
 
 find_package(Boost REQUIRED)
-add_executable(Zagreus main.cpp ${inc_senjo} ${inc_zagreus})
+add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_zagreus})
