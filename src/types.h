@@ -80,8 +80,8 @@ namespace Zagreus {
     };
 
     struct MoveList {
-        Move moves[MAX_MOVES];
-        uint8_t size;
+        Move moves[MAX_MOVES]{};
+        uint8_t size = 0;
     };
 
     enum CastlingRights {

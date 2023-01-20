@@ -216,7 +216,7 @@ namespace Zagreus {
         }
 
         if (!searchedFirstLegalMove) {
-            return beta;
+            return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
         while (moves.hasNext()) {
