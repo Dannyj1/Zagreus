@@ -22,7 +22,16 @@
 
 static constexpr uint8_t MAX_PLY = 255;
 static constexpr uint8_t MAX_MOVES = 255;
+static constexpr int ZOBRIST_CONSTANT_SIZE = 781;
 
+static constexpr int ZOBRIST_PIECE_END = 768;
+static constexpr int ZOBRIST_COLOR_INDEX = ZOBRIST_PIECE_END;
+static constexpr int ZOBRIST_WHITE_KINGSIDE_INDEX = ZOBRIST_COLOR_INDEX + 1;
+static constexpr int ZOBRIST_WHITE_QUEENSIDE_INDEX = ZOBRIST_WHITE_KINGSIDE_INDEX + 1;
+static constexpr int ZOBRIST_BLACK_KINGSIDE_INDEX = ZOBRIST_WHITE_QUEENSIDE_INDEX + 1;
+static constexpr int ZOBRIST_BLACK_QUEENSIDE_INDEX = ZOBRIST_BLACK_KINGSIDE_INDEX + 1;
+static constexpr int ZOBRIST_EN_PASSANT_INDEX = ZOBRIST_BLACK_QUEENSIDE_INDEX + 1;
+\
 static constexpr uint64_t A_FILE = 0x0101010101010101ULL;
 static constexpr uint64_t H_FILE = 0x8080808080808080ULL;
 static constexpr uint64_t NOT_A_FILE = 0XFEFEFEFEFEFEFEFEULL;

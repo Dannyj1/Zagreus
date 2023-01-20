@@ -75,11 +75,12 @@ namespace Zagreus {
         uint8_t castlingRights = 0;
         PieceType capturedPiece = PieceType::EMPTY;
         MoveType moveType = MoveType::REGULAR;
+        uint64_t zobristHash;
     };
 
     struct MoveList {
         Move moves[MAX_MOVES];
-        uint8_t count;
+        uint8_t size;
     };
 
     enum CastlingRights {

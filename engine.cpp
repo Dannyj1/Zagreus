@@ -44,7 +44,7 @@ namespace Zagreus {
             return 0;
         }
 
-        for (int i = 0; i < moves.count; i++) {
+        for (int i = 0; i < moves.size; i++) {
             Move move = moves.moves[i];
 
             perftBoard.makeMove(move);

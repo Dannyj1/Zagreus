@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <string>
+#include <cassert>
 
 #include "types.h"
 #include "constants.h"
@@ -43,6 +44,9 @@ namespace Zagreus {
         uint8_t fullmoveClock = 1;
         int8_t enPassantSquare = Square::NO_SQUARE;
         uint8_t castlingRights = 0b00001111;
+
+        uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
+        uint64_t zobristHash = 0ULL;
 
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
@@ -125,7 +129,31 @@ namespace Zagreus {
 
         bool isDraw();
 
-        bool isWinner(PieceColor color);
+        template<PieceColor color>
+        bool isWinner() {
+            if (!isKingInCheck<color>()) {
+                return false;
+            }
+
+            MoveList moves = generateMoves<color>(*this);
+
+            for (int i = 0; i < moves.size; i++) {
+                Move move = moves.moves[i];
+                assert(move.from != move.to);
+
+                makeMove(move);
+
+                if (isKingInCheck<color>()) {
+                    unmakeMove(move);
+                    continue;
+                }
+
+                unmakeMove(move);
+                return false;
+            }
+
+            return true;
+        };
 
         void initializeBetweenLookup();
 
@@ -196,6 +224,12 @@ namespace Zagreus {
         uint8_t getCastlingRights() const;
 
         void setCastlingRights(uint8_t castlingRights);
+
+        bool isInsufficientMaterial();
+
+        uint64_t getZobristHash() const;
+
+        void setZobristHash(uint64_t zobristHash);
     };
 }
 

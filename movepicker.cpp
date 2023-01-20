@@ -29,7 +29,7 @@ namespace Zagreus {
         int moveIndex = searchStartIndex;
         Move move = moveList.moves[searchStartIndex];
 
-        for (int i = searchStartIndex; i < moveList.count; i++) {
+        for (int i = searchStartIndex; i < moveList.size; i++) {
             if (moveList.moves[i].score > highestScore) {
                 highestScore = moveList.moves[i].score;
                 move = moveList.moves[i];
@@ -47,10 +47,10 @@ namespace Zagreus {
     }
 
     bool MovePicker::hasNext() const {
-        return searchStartIndex < moveList.count;
+        return searchStartIndex < moveList.size;
     }
 
     int MovePicker::size() {
-        return moveList.count;
+        return moveList.size;
     }
 }

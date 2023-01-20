@@ -138,7 +138,7 @@ void benchmark() {
 
             auto end = std::chrono::high_resolution_clock::now();
             nodes += searchManager.getSearchStats().nodes + searchManager.getSearchStats().qnodes;
-            totalMs += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            totalMs += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).size();
         }
     }
 

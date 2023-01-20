@@ -36,7 +36,7 @@ namespace Zagreus {
         generateQueenMoves<color>(bitboard, moveList);
         generateKingMoves<color>(bitboard, moveList);
 
-        assert(moveList.count <= MAX_MOVES);
+        assert(moveList.size <= MAX_MOVES);
         return moveList;
     }
 
@@ -70,21 +70,21 @@ namespace Zagreus {
 
                 if (color == PieceColor::WHITE) {
                     if (genIndex >= Square::A8) {
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_QUEEN };
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_ROOK };
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_BISHOP };
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_KNIGHT };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_QUEEN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_ROOK };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_BISHOP };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_KNIGHT };
                     } else {
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_PAWN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN };
                     }
                 } else {
                     if (genIndex <= Square::H1) {
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_QUEEN };
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_ROOK };
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_BISHOP };
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_KNIGHT };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_QUEEN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_ROOK };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_BISHOP };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_KNIGHT };
                     } else {
-                        moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_PAWN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN };
                     }
                 }
             }
@@ -114,9 +114,9 @@ namespace Zagreus {
                 genBB = _blsr_u64(genBB);
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_KNIGHT };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KNIGHT };
                 } else {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_KNIGHT };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KNIGHT };
                 }
             }
         }
@@ -145,9 +145,9 @@ namespace Zagreus {
                 genBB = _blsr_u64(genBB);
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_BISHOP };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_BISHOP };
                 } else {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_BISHOP };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_BISHOP };
                 }
             }
         }
@@ -176,9 +176,9 @@ namespace Zagreus {
                 genBB = _blsr_u64(genBB);
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_ROOK };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_ROOK };
                 } else {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_ROOK };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_ROOK };
                 }
             }
         }
@@ -207,9 +207,9 @@ namespace Zagreus {
                 genBB = _blsr_u64(genBB);
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_QUEEN };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_QUEEN };
                 } else {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_QUEEN };
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_QUEEN };
                 }
             }
         }
@@ -239,9 +239,9 @@ namespace Zagreus {
             genBB = _blsr_u64(genBB);
 
             if (color == PieceColor::WHITE) {
-                moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_KING };
+                moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KING };
             } else {
-                moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_KING };
+                moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KING };
             }
         }
 
@@ -264,7 +264,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.count++] = { index, Square::G1, PieceType::WHITE_KING };
+                    moveList.moves[moveList.size++] = {index, Square::G1, PieceType::WHITE_KING };
                 }
             }
 
@@ -284,7 +284,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.count++] = { index, Square::C1, PieceType::WHITE_KING };
+                    moveList.moves[moveList.size++] = {index, Square::C1, PieceType::WHITE_KING };
                 }
             }
         } else {
@@ -304,7 +304,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.count++] = { index, Square::G8, PieceType::BLACK_KING };
+                    moveList.moves[moveList.size++] = {index, Square::G8, PieceType::BLACK_KING };
                 }
             }
 
@@ -324,7 +324,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.count++] = { index, Square::C8, PieceType::BLACK_KING };
+                    moveList.moves[moveList.size++] = {index, Square::C8, PieceType::BLACK_KING };
                 }
             }
         }
