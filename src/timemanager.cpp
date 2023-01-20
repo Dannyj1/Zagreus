@@ -23,7 +23,7 @@
 #include "engine.h"
 
 namespace Zagreus {
-    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, ZagreusEngine &engine, PieceColor movingColor) {
+    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor) {
         if (params.infinite || params.depth > 0 || params.nodes > 0) {
             return std::chrono::time_point<std::chrono::high_resolution_clock>::max();
         }
@@ -32,7 +32,7 @@ namespace Zagreus {
             return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("Move Overhead").getIntValue());
         }
 
-        uint64_t movesToGo = std::min(params.movestogo, 80);
+        uint64_t movesToGo = params.movestogo ? params.movestogo : 40 - (bitboard.getPly() / 2);
         movesToGo = std::max(movesToGo, 7ULL);
         uint64_t timeLeft = 0;
 

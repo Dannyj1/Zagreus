@@ -25,5 +25,5 @@
 #include "../senjo/GoParams.h"
 
 namespace Zagreus {
-    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, ZagreusEngine &engine, PieceColor movingColor);
+    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor);
 }
