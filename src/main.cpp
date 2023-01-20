@@ -130,12 +130,13 @@ void benchmark() {
             PieceColor color = i == 0 ? PieceColor::WHITE : PieceColor::BLACK;
 
             bb.setFromFen(position);
+            bb.setMovingColor(color);
 
             auto start = std::chrono::high_resolution_clock::now();
             senjo::GoParams params{};
 
             params.depth = 3;
-            searchManager.getBestMove(params, engine, bb, color);
+            searchManager.getBestMove(params, engine, bb);
 
             auto end = std::chrono::high_resolution_clock::now();
             nodes += searchManager.getSearchStats().nodes + searchManager.getSearchStats().qnodes;

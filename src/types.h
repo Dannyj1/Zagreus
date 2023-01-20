@@ -56,10 +56,10 @@ namespace Zagreus {
     };
 
     struct Move {
-        int8_t from;
-        int8_t to;
-        PieceType piece;
-        int captureScore;
+        int8_t from = 0;
+        int8_t to = 0;
+        PieceType piece = PieceType::EMPTY;
+        int captureScore = -1;
         PieceType promotionPiece = PieceType::EMPTY;
         int score = 0;
     };
@@ -76,7 +76,7 @@ namespace Zagreus {
         uint8_t castlingRights = 0;
         PieceType capturedPiece = PieceType::EMPTY;
         MoveType moveType = MoveType::REGULAR;
-        uint64_t zobristHash;
+        uint64_t zobristHash = 0ULL;
     };
 
     struct MoveList {

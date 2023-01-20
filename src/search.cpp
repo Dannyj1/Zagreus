@@ -30,7 +30,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
-    Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board, PieceColor color) {
+    Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
         searchStats = {};
         isSearching = true;
         int bestScore = -1000000;
@@ -38,7 +38,7 @@ namespace Zagreus {
         int iterationScore = -1000000;
         Move iterationMove = {};
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
-        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, engine, color);
+        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, engine, board.getMovingColor());
         int depth = 0;
 
         Line iterationPvLine = {};
@@ -56,7 +56,7 @@ namespace Zagreus {
             board.setPreviousPvLine(iterationPvLine);
             MoveList moveList;
 
-            if (color == PieceColor::WHITE) {
+            if (board.getMovingColor() == PieceColor::WHITE) {
                 moveList = generateMoves<PieceColor::WHITE>(board);
             } else {
                 moveList = generateMoves<PieceColor::BLACK>(board);
@@ -70,9 +70,9 @@ namespace Zagreus {
 
             while (moves.hasNext()) {
                 Move move = moves.getNextMove();
-                assert(move.fromSquare != move.toSquare);
-                assert(move.fromSquare >= 0 && move.fromSquare < 64);
-                assert(move.toSquare >= 0 && move.toSquare < 64);
+                assert(move.from != move.to);
+                assert(move.from >= 0 && move.from < 64);
+                assert(move.to >= 0 && move.to < 64);
 
                 if (depth > 1 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
                     return bestMove;
@@ -80,13 +80,13 @@ namespace Zagreus {
 
                 board.makeMove(move);
 
-                if (color == PieceColor::WHITE) {
-                    if (board.isKingInCheck<PieceColor::WHITE>()) {
+                if (board.getMovingColor() == PieceColor::WHITE) {
+                    if (board.isKingInCheck<PieceColor::BLACK>()) {
                         board.unmakeMove(move);
                         continue;
                     }
                 } else {
-                    if (board.isKingInCheck<PieceColor::BLACK>()) {
+                    if (board.isKingInCheck<PieceColor::WHITE>()) {
                         board.unmakeMove(move);
                         continue;
                     }
@@ -94,12 +94,12 @@ namespace Zagreus {
 
                 Line pvLine = {};
                 Move previousMove = {};
-                int score = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine, engine);
+                int score = search(board, depth - 1, -9999999, 9999999, move, previousMove, endTime, pvLine, engine);
                 score *= -1;
                 board.unmakeMove(move);
 
                 if (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime) {
-                    assert(result.move.pieceType != PieceType::EMPTY);
+                    assert(move.piece != PieceType::EMPTY);
                     iterationScore = score;
                     iterationMove = move;
 
@@ -127,7 +127,7 @@ namespace Zagreus {
             }
 
             if (depth == 1 || std::chrono::high_resolution_clock::now() < endTime) {
-                assert(iterationResult.move.pieceType != PieceType::EMPTY);
+                assert(iterationMove.piece != PieceType::EMPTY);
                 bestScore = iterationScore;
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
@@ -173,7 +173,7 @@ namespace Zagreus {
         Line line{};
         MoveList moveList;
 
-        if (board.getMovingColor()) {
+        if (board.getMovingColor() == PieceColor::WHITE) {
             moveList = generateMoves<PieceColor::WHITE>(board);
         } else {
             moveList = generateMoves<PieceColor::BLACK>(board);
@@ -302,7 +302,7 @@ namespace Zagreus {
 
         MoveList moveList;
 
-        if (board.getMovingColor()) {
+        if (board.getMovingColor() == PieceColor::WHITE) {
             moveList = generateQuiescenceMoves<PieceColor::WHITE>(board);
         } else {
             moveList = generateQuiescenceMoves<PieceColor::BLACK>(board);
@@ -311,7 +311,7 @@ namespace Zagreus {
         MovePicker moves = MovePicker(moveList);
         while (moves.hasNext()) {
             Move move = moves.getNextMove();
-            assert(move.fromSquare != move.toSquare);
+            assert(move.from != move.to);
 
             if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
                 return beta;

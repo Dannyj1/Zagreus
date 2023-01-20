@@ -129,7 +129,6 @@ namespace Zagreus {
     void ZagreusEngine::initialize() {
         stoppingSearch = false;
         board = Bitboard{};
-        engineColor = PieceColor::NONE;
 //        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
         isEngineInitialized = true;
     }
@@ -141,7 +140,6 @@ namespace Zagreus {
     bool ZagreusEngine::setPosition(const std::string &fen, std::string* remain) {
         stoppingSearch = false;
         board = {};
-        engineColor = PieceColor::NONE;
         return board.setFromFen(fen);
     }
 
@@ -229,12 +227,7 @@ namespace Zagreus {
 
     std::string ZagreusEngine::go(senjo::GoParams &params, std::string* ponder) {
         stoppingSearch = false;
-        if (engineColor == PieceColor::NONE) {
-            engineColor = board.getMovingColor();
-        }
-
-
-        Move bestMove = searchManager.getBestMove(params, *this, board, engineColor);
+        Move bestMove = searchManager.getBestMove(params, *this, board);
 
         if (bestMove.promotionPiece != PieceType::EMPTY) {
             std::string result = getNotation(bestMove.from)

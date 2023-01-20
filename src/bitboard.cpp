@@ -77,6 +77,7 @@ namespace Zagreus {
 
     PieceType Bitboard::getPieceOnSquare(int8_t square) {
         assert(square >= 0 && square < 64);
+        assert(pieceSquareMapping[square] >= -1 && pieceSquareMapping[square] <= 11);
         return pieceSquareMapping[square];
     }
 

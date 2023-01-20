@@ -63,7 +63,7 @@ namespace Zagreus {
             return move.captureScore - 5000;
         }
 
-//        return tt->historyMoves[move.pieceType][move.toSquare];
+//        return tt->historyMoves[move.pieceType][move.to];
         return 0;
     }
 
@@ -413,13 +413,13 @@ namespace Zagreus {
                     captureScore = mvvlva(PieceType::WHITE_KING, capturedPiece);
                 }
 
-                moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KING };
+                moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KING, captureScore };
             } else {
                 if (capturedPiece != PieceType::EMPTY) {
                     captureScore = mvvlva(PieceType::BLACK_KING, capturedPiece);
                 }
 
-                moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KING };
+                moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KING, captureScore };
             }
         }
 
@@ -442,7 +442,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.size++] = {index, Square::G1, PieceType::WHITE_KING };
+                    moveList.moves[moveList.size++] = {index, Square::G1, PieceType::WHITE_KING, -1 };
                 }
             }
 
@@ -462,7 +462,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.size++] = {index, Square::C1, PieceType::WHITE_KING };
+                    moveList.moves[moveList.size++] = {index, Square::C1, PieceType::WHITE_KING, -1 };
                 }
             }
         } else {
@@ -482,7 +482,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.size++] = {index, Square::G8, PieceType::BLACK_KING };
+                    moveList.moves[moveList.size++] = {index, Square::G8, PieceType::BLACK_KING, -1 };
                 }
             }
 
@@ -502,7 +502,7 @@ namespace Zagreus {
                 }
 
                 if (canCastle) {
-                    moveList.moves[moveList.size++] = {index, Square::C8, PieceType::BLACK_KING };
+                    moveList.moves[moveList.size++] = {index, Square::C8, PieceType::BLACK_KING, -1 };
                 }
             }
         }

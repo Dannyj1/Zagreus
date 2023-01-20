@@ -29,7 +29,7 @@ namespace Zagreus {
         bool isSearching = false;
         senjo::SearchStats searchStats{};
     public:
-        Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board, PieceColor color);
+        Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
 
         int
         search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,

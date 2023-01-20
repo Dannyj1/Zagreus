@@ -28,7 +28,6 @@ namespace Zagreus {
     private:
         Bitboard board{};
         bool isEngineInitialized = false;
-        PieceColor engineColor = PieceColor::NONE;
         senjo::SearchStats searchStats{};
         bool stoppingSearch = false;
 
