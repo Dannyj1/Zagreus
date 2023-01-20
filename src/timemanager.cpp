@@ -53,9 +53,7 @@ namespace Zagreus {
             timePerMove = maxTime;
         }
 
-        if (timePerMove < 100) {
-            timePerMove = 100;
-        }
+        timePerMove = std::max(timePerMove, 1ULL);
 
         return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(timePerMove);
     }
