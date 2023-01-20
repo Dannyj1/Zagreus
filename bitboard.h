@@ -230,6 +230,8 @@ namespace Zagreus {
         uint64_t getZobristHash() const;
 
         void setZobristHash(uint64_t zobristHash);
+
+        bool makeStrMove(const std::string &strMove);
     };
 }
 

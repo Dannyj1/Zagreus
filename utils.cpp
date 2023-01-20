@@ -47,4 +47,11 @@ namespace Zagreus {
 
         return notation;
     }
+
+    int8_t getSquareFromString(std::string move) {
+        int file = move[0] - 'a';
+        int rank = move[1] - '1';
+
+        return file + rank * 8;
+    }
 }

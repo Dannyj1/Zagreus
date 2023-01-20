@@ -734,4 +734,29 @@ namespace Zagreus {
     void Bitboard::setEnPassantSquare(int8_t enPassantSquare) {
         Bitboard::enPassantSquare = enPassantSquare;
     }
+
+    bool Bitboard::makeStrMove(const std::string &strMove) {
+        int8_t fromSquare = getSquareFromString(strMove.substr(0, 2));
+        int8_t toSquare = getSquareFromString(strMove.substr(2, 2));
+        PieceType promotionPiece = PieceType::EMPTY;
+
+        if (strMove.length() == 5) {
+            if (strMove.ends_with("q")) {
+                promotionPiece =
+                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN;
+            } else if (strMove.ends_with("r")) {
+                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK;
+            } else if (strMove.ends_with("b")) {
+                promotionPiece =
+                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP;
+            } else if (strMove.ends_with("n")) {
+                promotionPiece =
+                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT;
+            }
+        }
+
+        Move move = { fromSquare, toSquare, getPieceOnSquare(fromSquare), promotionPiece };
+        makeMove(move);
+        return true;
+    }
 }

@@ -18,24 +18,12 @@
 
 #pragma once
 
-#include <string>
+#include <chrono>
 
 #include "types.h"
+#include "engine.h"
+#include "senjo/GoParams.h"
 
 namespace Zagreus {
-    inline static PieceColor getOppositeColor(PieceColor color) {
-        return static_cast<PieceColor>(color ^ 1);
-    }
-
-    uint64_t popcnt(uint64_t b);
-
-    int8_t bitscanForward(uint64_t b);
-
-    int8_t bitscanReverse(uint64_t b);
-
-    uint32_t encodeMove(const Move &move);
-
-    std::string getNotation(int8_t square);
-
-    int8_t getSquareFromString(std::string move);
+    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, ZagreusEngine &engine, PieceColor movingColor);
 }

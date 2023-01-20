@@ -80,7 +80,7 @@ namespace Zagreus {
     }
 
     std::string ZagreusEngine::getEngineVersion() {
-        return "v2.0.0-dev";
+        return "v2.0.0-alpha-1";
     }
 
     std::string ZagreusEngine::getAuthorName() {
@@ -143,13 +143,11 @@ namespace Zagreus {
     }
 
     bool ZagreusEngine::makeMove(const std::string &move) {
-        // board.makeStrMove(move);
-        return true;
+        return board.makeStrMove(move);
     }
 
     std::string ZagreusEngine::getFEN() {
         // TODO: implement
-        //return board.getFEN();
         return "";
     }
 
