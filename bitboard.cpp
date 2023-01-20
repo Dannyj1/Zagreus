@@ -140,6 +140,7 @@ namespace Zagreus {
         PieceType capturedPiece = getPieceOnSquare(move.to);
 
         halfMoveClock += 1;
+        moveHistory[ply] = getZobristHash();
         undoStack[ply].capturedPiece = capturedPiece;
         undoStack[ply].halfMoveClock = halfMoveClock;
         undoStack[ply].enPassantSquare = enPassantSquare;
@@ -159,6 +160,8 @@ namespace Zagreus {
         }
 
         if (move.piece == PieceType::WHITE_PAWN || move.piece == PieceType::BLACK_PAWN) {
+            halfMoveClock = 0;
+
             if (move.to - move.from == 16) {
                 enPassantSquare = move.to - 8;
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
