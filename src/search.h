@@ -56,5 +56,9 @@ namespace Zagreus {
 
     void getBlackPositionalScore(EvalContext &evalContext, Bitboard &bitboard);
 
+    void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
+
+    void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
+
     EvalContext createEvalContext(Bitboard &bitboard);
 }

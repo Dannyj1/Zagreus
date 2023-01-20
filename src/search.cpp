@@ -386,6 +386,9 @@ namespace Zagreus {
         getWhitePositionalScore(evalContext, board);
         getBlackPositionalScore(evalContext, board);
 
+        getWhiteMobilityScore(evalContext, board);
+        getBlackMobilityScore(evalContext, board);
+
         int whiteScore = ((evalContext.whiteMidgameScore * (256 - evalContext.phase)) + (evalContext.whiteEndgameScore * evalContext.phase)) / 256;
         int blackScore = ((evalContext.blackMidgameScore * (256 - evalContext.phase)) + (evalContext.blackEndgameScore * evalContext.phase)) / 256;
 
@@ -451,6 +454,92 @@ namespace Zagreus {
             evalContext.blackEndgameScore += getEndgamePstValue(pieceOnSquare, index);
 
             colorBB = _blsr_u64(colorBB);
+        }
+    }
+
+    uint64_t centerPattern = 0x0000001818000000;
+    uint64_t extendedCenterPattern = 0x00003C3C3C3C0000 & ~centerPattern;
+    void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::WHITE>();
+        uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::WHITE>();
+
+        // Slight bonus for squares defended by own pawn
+        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks);
+        evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks);
+
+        // Bonus for center control
+        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & centerPattern) * 10;
+        evalContext.whiteEndgameScore += 0;
+        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & extendedCenterPattern) * 4;
+        evalContext.whiteEndgameScore += 0;
+
+        while (ownPiecesBBLoop) {
+            int index = bitscanForward(ownPiecesBBLoop);
+            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
+            uint64_t attacks = evalContext.attacksFrom[index];
+
+            switch (pieceOnSquare) {
+                case WHITE_KNIGHT:
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 7;
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
+                    break;
+                case WHITE_BISHOP:
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 3;
+                    break;
+                case WHITE_ROOK:
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 6;
+                    break;
+                case WHITE_QUEEN:
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 4;
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
+                    break;
+            }
+
+            ownPiecesBBLoop &= ~(1ULL << index);
+        }
+    }
+
+    void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::BLACK>();
+        uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::BLACK>();
+
+        // Slight bonus for squares defended by own pawn
+        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks);
+        evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks);
+
+        // Bonus for center control
+        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & centerPattern) * 10;
+        evalContext.blackEndgameScore += 0;
+        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & extendedCenterPattern) * 4;
+        evalContext.blackEndgameScore += 0;
+
+        while (ownPiecesBBLoop) {
+            int index = bitscanForward(ownPiecesBBLoop);
+            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
+            uint64_t attacks = evalContext.attacksFrom[index];
+
+            switch (pieceOnSquare) {
+                case BLACK_KNIGHT:
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 7;
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
+                    break;
+                case BLACK_BISHOP:
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 3;
+                    break;
+                case BLACK_ROOK:
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 6;
+                    break;
+                case BLACK_QUEEN:
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 4;
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
+                    break;
+            }
+
+            ownPiecesBBLoop &= ~(1ULL << index);
         }
     }
 
