@@ -24,7 +24,7 @@
 
 namespace Zagreus {
     std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, ZagreusEngine &engine, PieceColor movingColor) {
-        if (params.infinite || params.depth || params.nodes) {
+        if (params.infinite || params.depth > 0 || params.nodes > 0) {
             return std::chrono::time_point<std::chrono::high_resolution_clock>::max();
         }
 
@@ -46,7 +46,11 @@ namespace Zagreus {
 
         timeLeft = std::max(timeLeft, 1ULL);
         uint64_t maxTime = timeLeft / 100 * 80;
-        uint64_t timePerMove = std::min(timeLeft / movesToGo, maxTime);
+        uint64_t timePerMove = timeLeft / movesToGo;
+
+        if (timePerMove > maxTime) {
+            timePerMove = maxTime;
+        }
 
         return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(timePerMove);
     }
