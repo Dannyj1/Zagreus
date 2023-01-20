@@ -192,6 +192,10 @@ namespace Zagreus {
         int8_t getEnPassantSquare() const;
 
         void setEnPassantSquare(int8_t enPassantSquare);
+
+        uint8_t getCastlingRights() const;
+
+        void setCastlingRights(uint8_t castlingRights);
     };
 }
 

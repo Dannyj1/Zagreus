@@ -228,22 +228,103 @@ namespace Zagreus {
             opponentKingBB = bitboard.getPieceBoard<WHITE_KING>();
         }
 
-        while (kingBB) {
-            int8_t index = bitscanForward(kingBB);
-            kingBB = _blsr_u64(kingBB);
-            uint64_t genBB = bitboard.getKingAttacks(index);
-            int8_t opponentKingSquare = bitscanForward(opponentKingBB);
+        int8_t index = bitscanForward(kingBB);
+        uint64_t genBB = bitboard.getKingAttacks(index);
+        int8_t opponentKingSquare = bitscanForward(opponentKingBB);
 
-            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
+        genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
 
-            while (genBB) {
-                int8_t genIndex = bitscanForward(genBB);
-                genBB = _blsr_u64(genBB);
+        while (genBB) {
+            int8_t genIndex = bitscanForward(genBB);
+            genBB = _blsr_u64(genBB);
 
-                if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_KING };
-                } else {
-                    moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_KING };
+            if (color == PieceColor::WHITE) {
+                moveList.moves[moveList.count++] = { index, genIndex, PieceType::WHITE_KING };
+            } else {
+                moveList.moves[moveList.count++] = { index, genIndex, PieceType::BLACK_KING };
+            }
+        }
+
+        uint64_t occupiedBB = bitboard.getOccupiedBoard();
+
+        if (color == PieceColor::WHITE) {
+            if (bitboard.getCastlingRights() & CastlingRights::WHITE_KINGSIDE && (occupiedBB & WHITE_KING_SIDE_BETWEEN) == 0
+            && bitboard.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK && !bitboard.isKingInCheck<PieceColor::WHITE>()) {
+                uint64_t tilesToCheck = WHITE_KING_SIDE_BETWEEN;
+                bool canCastle = true;
+
+                while (tilesToCheck) {
+                    int8_t tileIndex = bitscanForward(tilesToCheck);
+                    tilesToCheck = _blsr_u64(tilesToCheck);
+
+                    if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
+                        canCastle = false;
+                        break;
+                    }
+                }
+
+                if (canCastle) {
+                    moveList.moves[moveList.count++] = { index, Square::G1, PieceType::WHITE_KING };
+                }
+            }
+
+            if (bitboard.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE && (occupiedBB & WHITE_QUEEN_SIDE_BETWEEN) == 0
+                && bitboard.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK && !bitboard.isKingInCheck<PieceColor::WHITE>()) {
+                uint64_t tilesToCheck = WHITE_QUEEN_SIDE_BETWEEN & ~(1ULL << Square::B1);
+                bool canCastle = true;
+
+                while (tilesToCheck) {
+                    int8_t tileIndex = bitscanForward(tilesToCheck);
+                    tilesToCheck = _blsr_u64(tilesToCheck);
+
+                    if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
+                        canCastle = false;
+                        break;
+                    }
+                }
+
+                if (canCastle) {
+                    moveList.moves[moveList.count++] = { index, Square::C1, PieceType::WHITE_KING };
+                }
+            }
+        } else {
+            if (bitboard.getCastlingRights() & CastlingRights::BLACK_KINGSIDE && (occupiedBB & BLACK_KING_SIDE_BETWEEN) == 0
+            && bitboard.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK && !bitboard.isKingInCheck<PieceColor::BLACK>()) {
+                uint64_t tilesToCheck = BLACK_KING_SIDE_BETWEEN;
+                bool canCastle = true;
+
+                while (tilesToCheck) {
+                    int8_t tileIndex = bitscanForward(tilesToCheck);
+                    tilesToCheck = _blsr_u64(tilesToCheck);
+
+                    if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
+                        canCastle = false;
+                        break;
+                    }
+                }
+
+                if (canCastle) {
+                    moveList.moves[moveList.count++] = { index, Square::G8, PieceType::BLACK_KING };
+                }
+            }
+
+            if (bitboard.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE && (occupiedBB & BLACK_QUEEN_SIDE_BETWEEN) == 0
+            && bitboard.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK && !bitboard.isKingInCheck<PieceColor::BLACK>()) {
+                uint64_t tilesToCheck = BLACK_QUEEN_SIDE_BETWEEN & ~(1ULL << Square::B8);
+                bool canCastle = true;
+
+                while (tilesToCheck) {
+                    int8_t tileIndex = bitscanForward(tilesToCheck);
+                    tilesToCheck = _blsr_u64(tilesToCheck);
+
+                    if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
+                        canCastle = false;
+                        break;
+                    }
+                }
+
+                if (canCastle) {
+                    moveList.moves[moveList.count++] = { index, Square::C8, PieceType::BLACK_KING };
                 }
             }
         }

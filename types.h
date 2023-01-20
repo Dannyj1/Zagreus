@@ -66,7 +66,7 @@ namespace Zagreus {
     enum MoveType {
         REGULAR,
         EN_PASSANT,
-        CASTLE
+        CASTLING
     };
 
     struct UndoData {

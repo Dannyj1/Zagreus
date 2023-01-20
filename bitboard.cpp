@@ -150,12 +150,6 @@ namespace Zagreus {
 
         removePiece(move.from, move.piece);
 
-        if (move.promotionPiece != PieceType::EMPTY) {
-            setPiece(move.to, move.promotionPiece);
-        } else {
-            setPiece(move.to, move.piece);
-        }
-
         if (move.piece == PieceType::WHITE_PAWN || move.piece == PieceType::BLACK_PAWN) {
             if (move.to - move.from == 16) {
                 enPassantSquare = move.to - 8;
@@ -173,6 +167,52 @@ namespace Zagreus {
             }
         } else {
             enPassantSquare = NO_SQUARE;
+        }
+
+        if (move.piece == WHITE_KING || move.piece == BLACK_KING) {
+            if (std::abs(move.to - move.from) == 2) {
+                if (move.to == Square::G1) {
+                    removePiece(Square::H1, PieceType::WHITE_ROOK);
+                    setPiece(Square::F1, PieceType::WHITE_ROOK);
+                } else if (move.to == Square::C1) {
+                    removePiece(Square::A1, PieceType::WHITE_ROOK);
+                    setPiece(Square::D1, PieceType::WHITE_ROOK);
+                } else if (move.to == Square::G8) {
+                    removePiece(Square::H8, PieceType::BLACK_ROOK);
+                    setPiece(Square::F8, PieceType::BLACK_ROOK);
+                } else if (move.to == Square::C8) {
+                    removePiece(Square::A8, PieceType::BLACK_ROOK);
+                    setPiece(Square::D8, PieceType::BLACK_ROOK);
+                }
+
+                undoStack[ply].moveType = MoveType::CASTLING;
+            }
+
+            if (move.piece == WHITE_KING) {
+                castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
+            } else {
+                castlingRights &= ~(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
+            }
+        }
+
+        if (move.piece == PieceType::WHITE_ROOK) {
+            if (move.from == Square::A1 && (castlingRights & CastlingRights::WHITE_QUEENSIDE)) {
+                castlingRights &= ~CastlingRights::WHITE_QUEENSIDE;
+            } else if (move.from == Square::H1 && (castlingRights & CastlingRights::WHITE_KINGSIDE)) {
+                castlingRights &= ~CastlingRights::WHITE_KINGSIDE;
+            }
+        } else if (move.piece == PieceType::BLACK_ROOK) {
+            if (move.from == Square::A8 && (castlingRights & CastlingRights::BLACK_QUEENSIDE)) {
+                castlingRights &= ~CastlingRights::BLACK_QUEENSIDE;
+            } else if (move.from == Square::H8 && (castlingRights & CastlingRights::BLACK_KINGSIDE)) {
+                castlingRights &= ~CastlingRights::BLACK_KINGSIDE;
+            }
+        }
+
+        if (move.promotionPiece != PieceType::EMPTY) {
+            setPiece(move.to, move.promotionPiece);
+        } else {
+            setPiece(move.to, move.piece);
         }
 
         if (movingColor == PieceColor::BLACK) {
@@ -204,6 +244,22 @@ namespace Zagreus {
         if (undoData.moveType == MoveType::EN_PASSANT) {
             int8_t enPassantCaptureSquare = move.to - (getOppositeColor(movingColor) == PieceColor::WHITE ? 8 : -8);
             setPiece(enPassantCaptureSquare, getOppositeColor(movingColor) == PieceColor::WHITE ? PieceType::BLACK_PAWN : PieceType::WHITE_PAWN);
+        }
+
+        if (undoData.moveType == MoveType::CASTLING) {
+            if (move.to == Square::G1) {
+                removePiece(Square::F1, PieceType::WHITE_ROOK);
+                setPiece(Square::H1, PieceType::WHITE_ROOK);
+            } else if (move.to == Square::C1) {
+                removePiece(Square::D1, PieceType::WHITE_ROOK);
+                setPiece(Square::A1, PieceType::WHITE_ROOK);
+            } else if (move.to == Square::G8) {
+                removePiece(Square::F8, PieceType::BLACK_ROOK);
+                setPiece(Square::H8, PieceType::BLACK_ROOK);
+            } else if (move.to == Square::C8) {
+                removePiece(Square::D8, PieceType::BLACK_ROOK);
+                setPiece(Square::A8, PieceType::BLACK_ROOK);
+            }
         }
 
         ply -= 1;
@@ -512,6 +568,14 @@ namespace Zagreus {
                 getKingAttacks(square) & (getPieceBoard<PieceType::WHITE_KING>() | getPieceBoard<PieceType::BLACK_KING>());
 
         return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
+    }
+
+    uint8_t Bitboard::getCastlingRights() const {
+        return castlingRights;
+    }
+
+    void Bitboard::setCastlingRights(uint8_t castlingRights) {
+        Bitboard::castlingRights = castlingRights;
     }
 
     int8_t Bitboard::getEnPassantSquare() const {

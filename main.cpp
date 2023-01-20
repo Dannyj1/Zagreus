@@ -24,6 +24,7 @@
 #include "senjo/UCIAdapter.h"
 #include "senjo/Output.h"
 #include "magics.h"
+#include "movegen.h"
 
 using namespace Zagreus;
 
