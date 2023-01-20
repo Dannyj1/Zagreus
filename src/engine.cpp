@@ -25,6 +25,7 @@
 #include "types.h"
 #include "movegen.h"
 #include "utils.h"
+#include "search.h"
 
 namespace Zagreus {
     uint64_t ZagreusEngine::doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth) {
@@ -126,6 +127,7 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::initialize() {
+        stoppingSearch = false;
         board = Bitboard{};
         engineColor = PieceColor::NONE;
 //        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
@@ -137,12 +139,14 @@ namespace Zagreus {
     }
 
     bool ZagreusEngine::setPosition(const std::string &fen, std::string* remain) {
+        stoppingSearch = false;
         board = {};
         engineColor = PieceColor::NONE;
         return board.setFromFen(fen);
     }
 
     bool ZagreusEngine::makeMove(const std::string &move) {
+        stoppingSearch = false;
         return board.makeStrMove(move);
     }
 
@@ -160,7 +164,6 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::clearSearchData() {
-//        searchManager.resetStats();
     }
 
     void ZagreusEngine::ponderHit() {
@@ -195,26 +198,25 @@ namespace Zagreus {
     }
 
     bool ZagreusEngine::isSearching() {
-//        return searchManager.isCurrentlySearching();
-        return true;
+        return searchManager.isCurrentlySearching();
     }
 
     void ZagreusEngine::stopSearching() {
-        // TODO: implement
+        stoppingSearch = true;
     }
 
     bool ZagreusEngine::stopRequested() {
-        // TODO: implement
-        return false;
+        return stoppingSearch;
     }
 
     void ZagreusEngine::waitForSearchFinish() {
-/*        while (searchManager.isCurrentlySearching()) {
+        while (searchManager.isCurrentlySearching()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }*/
+        }
     }
 
     uint64_t ZagreusEngine::perft(const int depth) {
+        stoppingSearch = false;
         auto start = std::chrono::high_resolution_clock::now();
         uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
         auto end = std::chrono::high_resolution_clock::now();
@@ -225,23 +227,19 @@ namespace Zagreus {
         return nodes;
     }
 
-    std::string ZagreusEngine::go(const senjo::GoParams &params, std::string* ponder) {
-        /*if (engineColor == PieceColor::NONE) {
+    std::string ZagreusEngine::go(senjo::GoParams &params, std::string* ponder) {
+        stoppingSearch = false;
+        if (engineColor == PieceColor::NONE) {
             engineColor = board.getMovingColor();
         }
 
-        searchManager.setWhiteTimeMsec(params.wtime);
-        searchManager.setBlackTimeMsec(params.btime);
-        searchManager.setWhiteTimeIncrement(params.winc);
-        searchManager.setBlackTimeIncrement(params.binc);
 
-//        board.print();
-        SearchResult bestResult = searchManager.getBestMove(*this, board, engineColor);
+        Move bestMove = searchManager.getBestMove(params, *this, board, engineColor);
 
-        if (bestResult.move.promotionPiece != PieceType::EMPTY) {
-            std::string result = Bitboard::getNotation(bestResult.move.fromSquare)
-                                 + Bitboard::getNotation(bestResult.move.toSquare)
-                                 + Bitboard::getCharacterForPieceType(bestResult.move.promotionPiece);
+        if (bestMove.promotionPiece != PieceType::EMPTY) {
+            std::string result = getNotation(bestMove.from)
+                                 + getNotation(bestMove.to)
+                                 + getCharacterForPieceType(bestMove.promotionPiece);
 
             std::transform(result.begin(), result.end(), result.begin(),
                            [](unsigned char c) { return std::tolower(c); });
@@ -249,13 +247,11 @@ namespace Zagreus {
             return result;
         }
 
-        std::string result = Bitboard::getNotation(bestResult.move.fromSquare) +
-                             Bitboard::getNotation(bestResult.move.toSquare);
+        std::string result = getNotation(bestMove.from) +
+                             getNotation(bestMove.to);
 
-        senjo::Output(senjo::Output::InfoPrefix) << "Score: " << bestResult.score;
-        return Bitboard::getNotation(bestResult.move.fromSquare) +
-               Bitboard::getNotation(bestResult.move.toSquare);*/
-        return "";
+        return getNotation(bestMove.from) +
+               getNotation(bestMove.to);
     }
 
     senjo::SearchStats ZagreusEngine::getSearchStats() {
@@ -263,10 +259,8 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::resetEngineStats() {
-
     }
 
     void ZagreusEngine::showEngineStats() {
-        // TODO: implement
     }
 }

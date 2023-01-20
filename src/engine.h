@@ -30,6 +30,7 @@ namespace Zagreus {
         bool isEngineInitialized = false;
         PieceColor engineColor = PieceColor::NONE;
         senjo::SearchStats searchStats{};
+        bool stoppingSearch = false;
 
         std::list<senjo::EngineOption> options{
             senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, 5000),
@@ -96,7 +97,7 @@ namespace Zagreus {
 
         uint64_t perft(const int depth) override;
 
-        std::string go(const senjo::GoParams &params, std::string* ponder) override;
+        std::string go(senjo::GoParams &params, std::string* ponder) override;
 
         senjo::SearchStats getSearchStats() override;
 

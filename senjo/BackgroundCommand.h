@@ -168,45 +168,6 @@ namespace senjo {
         uint64_t maxLeafs;
         std::string fileName;
     };
-
-//-----------------------------------------------------------------------------
-//! \brief Wrapper for the "test" command (not a UCI command)
-//-----------------------------------------------------------------------------
-    class TestCommandHandle : public BackgroundCommand {
-    public:
-        TestCommandHandle(ChessEngine &eng) : BackgroundCommand(eng) {}
-
-        std::string usage() const {
-            return "test [print] [skip <x>] [count <x>] [depth <x>] [time <msecs>] "
-                   "[fail <x>] [file <x> (default=" + _TEST_FILE + ")]";
-        }
-
-        std::string description() const {
-            return "Find the best move for a suite of test positions.";
-        }
-
-        void stop() {
-            engine.stopSearching();
-        }
-
-    protected:
-        bool parse(Parameters &params);
-
-        void doWork();
-
-    private:
-        static const std::string _TEST_FILE;
-
-        bool noClear;
-        bool printBoard;
-        int maxCount;
-        int maxDepth;
-        int maxFails;
-        int skipCount;
-        uint64_t maxTime;
-        std::string fileName;
-    };
-
 } // namespace senjo
 
 #endif // SENJO_BACKGROUND_COMMAND_H

@@ -61,6 +61,7 @@ namespace Zagreus {
         PieceType piece;
         PieceType promotionPiece = PieceType::EMPTY;
         int score = 0;
+        int captureScore = 0;
     };
 
     enum MoveType {
@@ -99,5 +100,31 @@ namespace Zagreus {
         NORTH_WEST = 7,
         SOUTH_EAST = -7,
         SOUTH_WEST = -9
+    };
+
+    struct Line {
+        int moveCount = 0;
+        Move moves[64];
+    };
+
+    struct EvalContext {
+        int phase = 0;
+        int whiteMidgameScore = 0;
+        int blackMidgameScore = 0;
+        int whiteEndgameScore = 0;
+        int blackEndgameScore = 0;
+        uint64_t whitePawnAttacks = 0;
+        uint64_t whiteKnightAttacks = 0;
+        uint64_t whiteBishopAttacks = 0;
+        uint64_t whiteRookAttacks = 0;
+        uint64_t whiteQueenAttacks = 0;
+        uint64_t whiteCombinedAttacks = 0;
+        uint64_t blackPawnAttacks = 0;
+        uint64_t blackKnightAttacks = 0;
+        uint64_t blackBishopAttacks = 0;
+        uint64_t blackRookAttacks = 0;
+        uint64_t blackQueenAttacks = 0;
+        uint64_t blackCombinedAttacks = 0;
+        uint64_t attacksFrom[64] = { 0ULL };
     };
 }

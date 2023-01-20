@@ -338,37 +338,6 @@ namespace Zagreus {
         std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
     }
 
-    char Bitboard::getCharacterForPieceType(PieceType pieceType) {
-        switch (pieceType) {
-            case WHITE_PAWN:
-                return 'P';
-            case BLACK_PAWN:
-                return 'p';
-            case WHITE_KNIGHT:
-                return 'N';
-            case BLACK_KNIGHT:
-                return 'n';
-            case WHITE_BISHOP:
-                return 'B';
-            case BLACK_BISHOP:
-                return 'b';
-            case WHITE_ROOK:
-                return 'R';
-            case BLACK_ROOK:
-                return 'r';
-            case WHITE_QUEEN:
-                return 'Q';
-            case BLACK_QUEEN:
-                return 'q';
-            case WHITE_KING:
-                return 'K';
-            case BLACK_KING:
-                return 'k';
-            case EMPTY:
-                return ' ';
-        }
-    }
-
     void Bitboard::printAvailableMoves(MoveList &moves) {
         std::cout << "  ---------------------------------";
 
@@ -758,5 +727,21 @@ namespace Zagreus {
         Move move = { fromSquare, toSquare, getPieceOnSquare(fromSquare), promotionPiece };
         makeMove(move);
         return true;
+    }
+
+    const Line &Bitboard::getPreviousPvLine() const {
+        return previousPvLine;
+    }
+
+    void Bitboard::setPreviousPvLine(const Line &previousPvLine) {
+        Bitboard::previousPvLine = previousPvLine;
+    }
+
+    uint8_t Bitboard::getPly() const {
+        return ply;
+    }
+
+    void Bitboard::setPly(uint8_t ply) {
+        Bitboard::ply = ply;
     }
 }

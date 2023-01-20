@@ -18,12 +18,13 @@
 
 #pragma once
 
-#include "bitboard.h"
+#include "types.h"
 
 namespace Zagreus {
-    template<PieceColor color>
-    MoveList generateMoves(Bitboard &bitboard);
+// PST tables from https://www.chessprogramming.org/Simplified_Evaluation_Function
+    void initializePst();
 
-    template<PieceColor color>
-    MoveList generateQuiescenceMoves(Bitboard &bitboard);
+    int getMidgamePstValue(PieceType piece, int square);
+
+    int getEndgamePstValue(PieceType piece, int square);
 }

@@ -25,6 +25,7 @@
 #include "../senjo/Output.h"
 #include "magics.h"
 #include "movegen.h"
+#include "search.h"
 
 using namespace Zagreus;
 
@@ -120,7 +121,7 @@ void benchmark() {
                                           "r1n1k1r1/1pb2p2/5P2/pPPp2p1/5p1R/P1N1N3/2P1P3/B1R1KB2 w - -",
                                           "8/8/1qB1k3/1p6/3p4/1p6/8/4K3 b - -",
                                           "6nr/1pq1b1k1/1N6/5Ppp/pp2B1P1/B1P4P/P2pK3/3R2NR b - -"};
-    /*uint64_t nodes = 0;
+    uint64_t nodes = 0;
     uint64_t totalMs = 0;
 
     for (std::string &position : positions) {
@@ -128,20 +129,20 @@ void benchmark() {
             Bitboard bb;
             PieceColor color = i == 0 ? PieceColor::WHITE : PieceColor::BLACK;
 
-            bb.setFromFEN(position);
-            bb.setBenchmarking(true);
-            bb.setWhiteTimeMsec(999999999);
-            bb.setBlackTimeMsec(999999999);
+            bb.setFromFen(position);
 
             auto start = std::chrono::high_resolution_clock::now();
-            searchManager.getBestMove(engine, bb, color);
+            senjo::GoParams params{};
+
+            params.depth = 3;
+            searchManager.getBestMove(params, engine, bb, color);
 
             auto end = std::chrono::high_resolution_clock::now();
             nodes += searchManager.getSearchStats().nodes + searchManager.getSearchStats().qnodes;
-            totalMs += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).size();
+            totalMs += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         }
     }
 
     uint64_t nps = nodes / (totalMs / 1000);
-    senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nps << " nps";*/
+    senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nps << " nps";
 }

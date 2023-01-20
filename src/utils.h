@@ -38,4 +38,8 @@ namespace Zagreus {
     std::string getNotation(int8_t square);
 
     int8_t getSquareFromString(std::string move);
+
+    uint16_t getPieceWeight(PieceType type);
+
+    char getCharacterForPieceType(PieceType pieceType);
 }

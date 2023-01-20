@@ -18,7 +18,6 @@
 
 #include <x86intrin.h>
 #include <cassert>
-#include <iostream>
 
 #include "bitboard.h"
 #include "movegen.h"
@@ -41,7 +40,22 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    void generatePawnMoves(Bitboard &bitboard, MoveList &moveList) {
+    MoveList generateQuiescenceMoves(Bitboard &bitboard) {
+        MoveList moveList{};
+
+        generatePawnMoves<color>(bitboard, moveList, true);
+        generateKnightMoves<color>(bitboard, moveList, true);
+        generateBishopMoves<color>(bitboard, moveList, true);
+        generateRookMoves<color>(bitboard, moveList, true);
+        generateQueenMoves<color>(bitboard, moveList, true);
+        generateKingMoves<color>(bitboard, moveList, true);
+
+        assert(moveList.size <= MAX_MOVES);
+        return moveList;
+    }
+
+    template<PieceColor color>
+    void generatePawnMoves(Bitboard &bitboard, MoveList &moveList, bool quiesce = false) {
         uint64_t pawnBB;
 
         if (color == PieceColor::WHITE) {
@@ -63,6 +77,14 @@ namespace Zagreus {
 
             genBB |= (bitboard.getPawnAttacks<color>(index) & attackableSquares);
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() | bitboard.getPieceBoard<BLACK_KING>());
+
+            if (quiesce) {
+                if (color == PieceColor::WHITE) {
+                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                } else {
+                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                }
+            }
 
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
@@ -92,7 +114,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    void generateKnightMoves(Bitboard &bitboard, MoveList &moveList) {
+    void generateKnightMoves(Bitboard &bitboard, MoveList &moveList, bool quiesce = false) {
         uint64_t knightBB;
 
         if (color == PieceColor::WHITE) {
@@ -109,6 +131,14 @@ namespace Zagreus {
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
                        bitboard.getPieceBoard<BLACK_KING>());
 
+            if (quiesce) {
+                if (color == PieceColor::WHITE) {
+                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                } else {
+                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                }
+            }
+
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
@@ -123,7 +153,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    void generateBishopMoves(Bitboard &bitboard, MoveList &moveList) {
+    void generateBishopMoves(Bitboard &bitboard, MoveList &moveList, bool quiesce = false) {
         uint64_t bishopBB;
 
         if (color == PieceColor::WHITE) {
@@ -140,6 +170,14 @@ namespace Zagreus {
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
                        bitboard.getPieceBoard<BLACK_KING>());
 
+            if (quiesce) {
+                if (color == PieceColor::WHITE) {
+                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                } else {
+                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                }
+            }
+
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
@@ -154,7 +192,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    void generateRookMoves(Bitboard &bitboard, MoveList &moveList) {
+    void generateRookMoves(Bitboard &bitboard, MoveList &moveList, bool quiesce = false) {
         uint64_t rookBB;
 
         if (color == PieceColor::WHITE) {
@@ -171,6 +209,14 @@ namespace Zagreus {
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
                        bitboard.getPieceBoard<BLACK_KING>());
 
+            if (quiesce) {
+                if (color == PieceColor::WHITE) {
+                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                } else {
+                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                }
+            }
+
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
@@ -185,7 +231,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    void generateQueenMoves(Bitboard &bitboard, MoveList &moveList) {
+    void generateQueenMoves(Bitboard &bitboard, MoveList &moveList, bool quiesce = false) {
         uint64_t queenBB;
 
         if (color == PieceColor::WHITE) {
@@ -202,6 +248,14 @@ namespace Zagreus {
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
                        bitboard.getPieceBoard<BLACK_KING>());
 
+            if (quiesce) {
+                if (color == PieceColor::WHITE) {
+                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                } else {
+                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                }
+            }
+
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
@@ -216,7 +270,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    void generateKingMoves(Bitboard &bitboard, MoveList &moveList) {
+    void generateKingMoves(Bitboard &bitboard, MoveList &moveList, bool quiesce = false) {
         uint64_t kingBB;
         uint64_t opponentKingBB;
 
@@ -233,6 +287,14 @@ namespace Zagreus {
         int8_t opponentKingSquare = bitscanForward(opponentKingBB);
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
+
+        if (quiesce) {
+            if (color == PieceColor::WHITE) {
+                genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+            } else {
+                genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+            }
+        }
 
         while (genBB) {
             int8_t genIndex = bitscanForward(genBB);
@@ -332,4 +394,7 @@ namespace Zagreus {
 
     template MoveList generateMoves<PieceColor::WHITE>(Bitboard &bitboard);
     template MoveList generateMoves<PieceColor::BLACK>(Bitboard &bitboard);
+
+    template MoveList generateQuiescenceMoves<PieceColor::WHITE>(Bitboard &bitboard);
+    template MoveList generateQuiescenceMoves<PieceColor::BLACK>(Bitboard &bitboard);
 }

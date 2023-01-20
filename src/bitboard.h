@@ -24,9 +24,7 @@
 #include <cstdint>
 #include <string>
 #include <cassert>
-
 #include "types.h"
-#include "constants.h"
 #include "bitwise.h"
 #include "utils.h"
 
@@ -55,6 +53,7 @@ namespace Zagreus {
 
         UndoData undoStack[MAX_PLY]{};
         uint64_t moveHistory[MAX_PLY]{};
+        Line previousPvLine{};
     public:
         Bitboard();
 
@@ -232,6 +231,14 @@ namespace Zagreus {
         void setZobristHash(uint64_t zobristHash);
 
         bool makeStrMove(const std::string &strMove);
+
+        const Line &getPreviousPvLine() const;
+
+        void setPreviousPvLine(const Line &previousPvLine);
+
+        uint8_t getPly() const;
+
+        void setPly(uint8_t ply);
     };
 }
 
