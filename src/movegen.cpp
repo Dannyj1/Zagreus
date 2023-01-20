@@ -24,6 +24,50 @@
 #include "utils.h"
 
 namespace Zagreus {
+    int scoreMove(Bitboard &bitboard, Move &move) {
+        Line previousPv = bitboard.getPreviousPvLine();
+
+        for (int i = 0; i < previousPv.moveCount; i++) {
+            Move &pvMove = previousPv.moves[i];
+
+            if (move.from == pvMove.from && move.to == pvMove.to && move.piece == pvMove.piece) {
+                return 50000 - i;
+            }
+        }
+
+        /*TTEntry* entry = tt->getEntry(move.zobristHash);
+
+        if (entry->zobristHash == move.zobristHash && !bitboard.isBenchmarking()) {
+            return 25000 + entry->score;
+        }*/
+
+        if (move.captureScore >= 0) {
+            return 10000 + move.captureScore;
+        }
+
+        /*uint32_t aMoveCode = encodeMove(move);
+        if (tt->killerMoves[0][move.ply] == aMoveCode) {
+            return 5000;
+        }
+
+        if (tt->killerMoves[1][move.ply] == aMoveCode) {
+            return 4000;
+        }
+
+        if (tt->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] ==
+            aMoveCode) {
+            return 3000;
+        }*/
+
+        if (move.captureScore < -1) {
+            return move.captureScore - 5000;
+        }
+
+//        return tt->historyMoves[move.pieceType][move.toSquare];
+        return 0;
+    }
+
+
     template<PieceColor color>
     MoveList generateMoves(Bitboard &bitboard) {
         MoveList moveList{};
@@ -36,6 +80,12 @@ namespace Zagreus {
         generateKingMoves<color>(bitboard, moveList);
 
         assert(moveList.size <= MAX_MOVES);
+
+        for (int i = 0; i < moveList.size; i++) {
+            Move &move = moveList.moves[i];
+            move.score = scoreMove(bitboard, move);
+        }
+
         return moveList;
     }
 
@@ -51,6 +101,12 @@ namespace Zagreus {
         generateKingMoves<color>(bitboard, moveList, true);
 
         assert(moveList.size <= MAX_MOVES);
+
+        for (int i = 0; i < moveList.size; i++) {
+            Move &move = moveList.moves[i];
+            move.score = scoreMove(bitboard, move);
+        }
+
         return moveList;
     }
 
@@ -89,24 +145,34 @@ namespace Zagreus {
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
+                PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+                int captureScore = -1;
 
                 if (color == PieceColor::WHITE) {
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::WHITE_PAWN, capturedPiece);
+                    }
+
                     if (genIndex >= Square::A8) {
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_QUEEN };
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_ROOK };
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_BISHOP };
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, PieceType::WHITE_KNIGHT };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_QUEEN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_ROOK };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_BISHOP };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_KNIGHT };
                     } else {
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_PAWN, captureScore};
                     }
                 } else {
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::BLACK_PAWN, capturedPiece);
+                    }
+
                     if (genIndex <= Square::H1) {
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_QUEEN };
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_ROOK };
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_BISHOP };
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, PieceType::BLACK_KNIGHT };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_QUEEN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_ROOK };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_BISHOP };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_KNIGHT };
                     } else {
-                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN };
+                        moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_PAWN, captureScore };
                     }
                 }
             }
@@ -142,11 +208,21 @@ namespace Zagreus {
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
+                PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+                int captureScore = -1;
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KNIGHT };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::WHITE_KNIGHT, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KNIGHT, captureScore };
                 } else {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KNIGHT };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::BLACK_KNIGHT, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KNIGHT, captureScore };
                 }
             }
         }
@@ -181,11 +257,21 @@ namespace Zagreus {
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
+                PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+                int captureScore = -1;
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_BISHOP };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::WHITE_BISHOP, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_BISHOP, captureScore };
                 } else {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_BISHOP };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::BLACK_BISHOP, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_BISHOP, captureScore };
                 }
             }
         }
@@ -220,11 +306,21 @@ namespace Zagreus {
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
+                PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+                int captureScore = -1;
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_ROOK };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::WHITE_ROOK, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_ROOK, captureScore };
                 } else {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_ROOK };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::BLACK_ROOK, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_ROOK, captureScore };
                 }
             }
         }
@@ -259,11 +355,21 @@ namespace Zagreus {
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
+                PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+                int captureScore = -1;
 
                 if (color == PieceColor::WHITE) {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_QUEEN };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::WHITE_QUEEN, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_QUEEN, captureScore };
                 } else {
-                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_QUEEN };
+                    if (capturedPiece != PieceType::EMPTY) {
+                        captureScore = mvvlva(PieceType::BLACK_QUEEN, capturedPiece);
+                    }
+
+                    moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_QUEEN, captureScore };
                 }
             }
         }
@@ -299,10 +405,20 @@ namespace Zagreus {
         while (genBB) {
             int8_t genIndex = bitscanForward(genBB);
             genBB = _blsr_u64(genBB);
+            PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+            int captureScore = -1;
 
             if (color == PieceColor::WHITE) {
+                if (capturedPiece != PieceType::EMPTY) {
+                    captureScore = mvvlva(PieceType::WHITE_KING, capturedPiece);
+                }
+
                 moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KING };
             } else {
+                if (capturedPiece != PieceType::EMPTY) {
+                    captureScore = mvvlva(PieceType::BLACK_KING, capturedPiece);
+                }
+
                 moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KING };
             }
         }

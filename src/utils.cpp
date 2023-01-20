@@ -93,4 +93,8 @@ namespace Zagreus {
                 return ' ';
         }
     }
+
+    int mvvlva(PieceType attacker, PieceType victim) {
+        return MVVLVA_TABLE[attacker][victim];
+    }
 }

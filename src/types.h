@@ -59,9 +59,9 @@ namespace Zagreus {
         int8_t from;
         int8_t to;
         PieceType piece;
+        int captureScore;
         PieceType promotionPiece = PieceType::EMPTY;
         int score = 0;
-        int captureScore = 0;
     };
 
     enum MoveType {

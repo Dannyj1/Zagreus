@@ -42,4 +42,6 @@ namespace Zagreus {
     uint16_t getPieceWeight(PieceType type);
 
     char getCharacterForPieceType(PieceType pieceType);
+
+    int mvvlva(PieceType attacker, PieceType victim);
 }

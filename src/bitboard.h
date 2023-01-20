@@ -158,8 +158,6 @@ namespace Zagreus {
 
         void setPieceFromFENChar(char character, int index);
 
-        char getCharacterForPieceType(PieceType pieceType);
-
         PieceColor getMovingColor() const;
 
         void setMovingColor(PieceColor movingColor);

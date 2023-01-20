@@ -249,7 +249,7 @@ namespace senjo {
         //! \param[out] ponder If not null set to the move engine should ponder next
         //! \return Best move in coordinate notation (e.g. "e2e4", "g8f6", "e7f8q")
         //---------------------------------------------------------------------------
-        virtual std::string go(const GoParams &params,
+        virtual std::string go(GoParams &params,
                                std::string* ponder = nullptr) = 0;
 
         //--------------------------------------------------------------------------
