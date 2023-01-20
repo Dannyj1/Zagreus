@@ -49,20 +49,19 @@ namespace Zagreus {
     static SearchManager searchManager{};
 
     void getBlackMaterialScore(EvalContext &evalContext, Bitboard &board);
-
     void getWhiteMaterialScore(EvalContext &evalContext, Bitboard &board);
 
     void getWhitePositionalScore(EvalContext &evalContext, Bitboard &bitboard);
-
     void getBlackPositionalScore(EvalContext &evalContext, Bitboard &bitboard);
 
     void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
-
     void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
 
     void getWhiteKingScore(EvalContext &evalContext, Bitboard &bitboard);
-
     void getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard);
+
+    void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
+    void getBlackConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
 
     EvalContext createEvalContext(Bitboard &bitboard);
 }

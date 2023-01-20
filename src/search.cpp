@@ -388,6 +388,9 @@ namespace Zagreus {
         getWhiteKingScore(evalContext, board);
         getBlackKingScore(evalContext, board);
 
+        getWhiteConnectivityScore(evalContext, board);
+        getBlackConnectivityScore(evalContext, board);
+
         int whiteScore = ((evalContext.whiteMidgameScore * (256 - evalContext.phase)) + (evalContext.whiteEndgameScore * evalContext.phase)) / 256;
         int blackScore = ((evalContext.blackMidgameScore * (256 - evalContext.phase)) + (evalContext.blackEndgameScore * evalContext.phase)) / 256;
 
@@ -637,6 +640,38 @@ namespace Zagreus {
         evalContext.blackEndgameScore -= popcnt(evalContext.whiteRookAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_ROOK) / 100);
         evalContext.blackMidgameScore -= popcnt(evalContext.whiteQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_QUEEN) / 100);
         evalContext.blackEndgameScore -= popcnt(evalContext.whiteQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_QUEEN) / 100);*/
+    }
+
+    void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
+        uint64_t whitePieces = bitboard.getColorBoard<PieceColor::WHITE>() & ~kingBB;
+        uint64_t protectedPieces = whitePieces & evalContext.whiteCombinedAttacks;
+
+        while (protectedPieces) {
+            uint64_t index = bitscanForward(protectedPieces);
+            PieceType pieceType = bitboard.getPieceOnSquare(index);
+            int weight = getPieceWeight(pieceType);
+
+            evalContext.whiteMidgameScore += 11 - (weight / 100);
+            evalContext.whiteEndgameScore += 11 - (weight / 100);
+            protectedPieces &= ~(1ULL << index);
+        }
+    }
+
+    void getBlackConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t kingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
+        uint64_t blackPieces = bitboard.getColorBoard<PieceColor::BLACK>() & ~kingBB;
+        uint64_t protectedPieces = blackPieces & evalContext.blackCombinedAttacks;
+
+        while (protectedPieces) {
+            uint64_t index = bitscanForward(protectedPieces);
+            PieceType pieceType = bitboard.getPieceOnSquare(index);
+            int weight = getPieceWeight(pieceType);
+
+            evalContext.blackMidgameScore += 11 - (weight / 100);
+            evalContext.blackEndgameScore += 11 - (weight / 100);
+            protectedPieces &= ~(1ULL << index);
+        }
     }
 
     int knightPhase = 1;
