@@ -29,12 +29,12 @@ namespace Zagreus {
         }
 
         if (params.movetime > 0) {
-            return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime);
+            return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("Move Overhead").getIntValue());
         }
 
         uint64_t movesToGo = std::min(params.movestogo, 80);
         movesToGo = std::max(movesToGo, 7ULL);
-        uint64_t timeLeft = engine.getOption("Move Overhead").getIntValue();
+        uint64_t timeLeft = 0;
 
         if (movingColor == PieceColor::WHITE) {
             timeLeft += params.wtime;
@@ -44,6 +44,7 @@ namespace Zagreus {
             timeLeft += params.binc;
         }
 
+        timeLeft -= engine.getOption("Move Overhead").getIntValue();
         timeLeft = std::max(timeLeft, 1ULL);
         uint64_t maxTime = timeLeft / 100 * 80;
         uint64_t timePerMove = timeLeft / movesToGo;
