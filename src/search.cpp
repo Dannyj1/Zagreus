@@ -54,7 +54,7 @@ namespace Zagreus {
 
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
             board.setPreviousPvLine(iterationPvLine);
-            MoveList moveList;
+            MoveList moveList{};
 
             if (board.getMovingColor() == PieceColor::WHITE) {
                 moveList = generateMoves<PieceColor::WHITE>(board);
@@ -73,10 +73,6 @@ namespace Zagreus {
                 assert(move.from != move.to);
                 assert(move.from >= 0 && move.from < 64);
                 assert(move.to >= 0 && move.to < 64);
-
-                if (depth > 1 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
-                    return bestMove;
-                }
 
                 board.makeMove(move);
 
@@ -98,7 +94,7 @@ namespace Zagreus {
                 score *= -1;
                 board.unmakeMove(move);
 
-                if (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime) {
+                if (iterationScore == -1000000 || (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime)) {
                     assert(move.piece != PieceType::EMPTY);
                     iterationScore = score;
                     iterationMove = move;
@@ -126,7 +122,7 @@ namespace Zagreus {
                 senjo::Output(senjo::Output::NoPrefix) << searchStats;
             }
 
-            if (depth == 1 || std::chrono::high_resolution_clock::now() < endTime) {
+            if (depth == 1 || bestScore == -1000000 || std::chrono::high_resolution_clock::now() < endTime) {
                 assert(iterationMove.piece != PieceType::EMPTY);
                 bestScore = iterationScore;
                 bestMove = iterationMove;
@@ -171,7 +167,7 @@ namespace Zagreus {
         }
 
         Line line{};
-        MoveList moveList;
+        MoveList moveList{};
 
         if (board.getMovingColor() == PieceColor::WHITE) {
             moveList = generateMoves<PieceColor::WHITE>(board);
@@ -300,7 +296,7 @@ namespace Zagreus {
             alpha = standPat;
         }
 
-        MoveList moveList;
+        MoveList moveList{};
 
         if (board.getMovingColor() == PieceColor::WHITE) {
             moveList = generateQuiescenceMoves<PieceColor::WHITE>(board);

@@ -205,7 +205,7 @@ namespace Zagreus {
             }
 
             uint64_t kingBB = getPieceBoard<color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING>();
-            int kingLocation = bitscanForward(kingBB);
+            int8_t kingLocation = bitscanForward(kingBB);
 
             if (color == PieceColor::WHITE) {
                 return isSquareAttackedByColor<PieceColor::BLACK>(kingLocation);

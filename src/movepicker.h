@@ -26,7 +26,7 @@
 namespace Zagreus {
     class MovePicker {
     private:
-        MoveList moveList;
+        MoveList moveList{};
         int searchStartIndex = 0;
     public:
         MovePicker() = default;
