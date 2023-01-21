@@ -17,6 +17,7 @@
  */
 
 #include <chrono>
+#include <algorithm>
 
 #include "../senjo/GoParams.h"
 #include "types.h"
@@ -32,7 +33,7 @@ namespace Zagreus {
             return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("Move Overhead").getIntValue());
         }
 
-        uint64_t movesToGo = params.movestogo ? params.movestogo : 40 - (bitboard.getPly() / 2);
+        uint64_t movesToGo = params.movestogo ? params.movestogo : 40ULL - (bitboard.getPly() / 2);
         movesToGo = std::max(movesToGo, 7ULL);
         uint64_t timeLeft = 0;
 

@@ -26,6 +26,7 @@
 #include "movegen.h"
 #include "utils.h"
 #include "search.h"
+#include "tt.h"
 
 namespace Zagreus {
     uint64_t ZagreusEngine::doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth) {
@@ -115,9 +116,9 @@ namespace Zagreus {
             if (option.getName() == optionName) {
                 option.setValue(optionValue);
 
-/*                if (option.getName() == "Hash") {
+                if (option.getName() == "Hash") {
                     TranspositionTable::getTT()->setTableSize(option.getIntValue());
-                }*/
+                }
 
                 return true;
             }
@@ -129,7 +130,7 @@ namespace Zagreus {
     void ZagreusEngine::initialize() {
         stoppingSearch = false;
         board = Bitboard{};
-//        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
+        TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
         isEngineInitialized = true;
     }
 

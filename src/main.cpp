@@ -26,6 +26,8 @@
 #include "magics.h"
 #include "movegen.h"
 #include "search.h"
+#include "tt.h"
+#include "pst.h"
 
 using namespace Zagreus;
 
@@ -43,6 +45,7 @@ int main(int argc , char *argv[]) {
     // More test positions: https://github.com/elcabesa/vajolet/blob/master/tests/perft.txt
 
     initializeMagicBitboards();
+//    initializePst();
 
     senjo::Output(senjo::Output::NoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
     senjo::Output(senjo::Output::NoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY";
