@@ -92,7 +92,7 @@ namespace Zagreus {
                 Line pvLine = {};
                 Move previousMove = {};
 
-                int score = search(board, depth - 1, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true);
+                int score = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true);
                 score *= -1;
 
                 board.unmakeMove(move);
