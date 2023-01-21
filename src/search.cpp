@@ -26,6 +26,7 @@
 #include "../senjo/Output.h"
 #include "movepicker.h"
 #include "pst.h"
+#include "tt.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
@@ -88,10 +89,18 @@ namespace Zagreus {
                     }
                 }
 
+                int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, -9999999, 9999999);
+                int score = 0;
                 Line pvLine = {};
                 Move previousMove = {};
-                int score = search(board, depth - 1, -9999999, 9999999, move, previousMove, endTime, pvLine, engine);
-                score *= -1;
+
+                if (ttScore != INT32_MIN) {
+                    score = ttScore;
+                } else {
+                    score = search(board, depth - 1, -9999999, 9999999, move, previousMove, endTime, pvLine, engine);
+                    score *= -1;
+                }
+
                 board.unmakeMove(move);
 
                 if (iterationScore == -1000000 || (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime)) {
@@ -164,6 +173,12 @@ namespace Zagreus {
         if (depth == 0 || board.isWinner<PieceColor::WHITE>() || board.isWinner<PieceColor::BLACK>() || board.isDraw()) {
             pvLine.moveCount = 0;
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
+        }
+
+        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
+
+        if (ttScore != INT32_MIN) {
+            return ttScore;
         }
 
         Line line{};
@@ -364,9 +379,9 @@ namespace Zagreus {
         int modifier = board.getMovingColor() == PieceColor::WHITE ? 1 : -1;
 
         if (board.isWinner<PieceColor::WHITE>()) {
-            return 10000 * modifier;
+            return (15000 - board.getPly()) * modifier;
         } else if (board.isWinner<PieceColor::BLACK>()) {
-            return -10000 * modifier;
+            return (-15000 - board.getPly()) * modifier;
         }
 
         if (board.isDraw()) {
