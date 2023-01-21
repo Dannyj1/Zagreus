@@ -183,28 +183,30 @@ namespace Zagreus {
         uint64_t getSquareAttacksByColor(int square) {
             if (color == PieceColor::WHITE) {
                 uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>();
-                uint64_t straightSlidingPieces = getPieceBoard<PieceType::WHITE_ROOK>() | queenBB;
-                uint64_t diagonalSlidingPieces = getPieceBoard<PieceType::WHITE_BISHOP>() | queenBB;
+                uint64_t rookBB = getPieceBoard<PieceType::WHITE_ROOK>();
+                uint64_t bishopBB = getPieceBoard<PieceType::WHITE_BISHOP>();
 
                 uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
-                uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
-                uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
+                uint64_t bishopAttacks = getBishopAttacks(square) & bishopBB;
                 uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::WHITE_KNIGHT>();
                 uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::WHITE_KING>();
+                uint64_t rookAttacks = getRookAttacks(square) & rookBB;
+                uint64_t queenAttacks = getQueenAttacks(square) & queenBB;
 
-                return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
+                return pawnAttacks | bishopAttacks | knightAttacks | rookAttacks | queenAttacks | kingAttacks;
             } else {
                 uint64_t queenBB = getPieceBoard<PieceType::BLACK_QUEEN>();
-                uint64_t straightSlidingPieces = getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;
-                uint64_t diagonalSlidingPieces = getPieceBoard<PieceType::BLACK_BISHOP>() | queenBB;
+                uint64_t rookBB = getPieceBoard<PieceType::BLACK_ROOK>();
+                uint64_t bishopBB = getPieceBoard<PieceType::BLACK_BISHOP>();
 
                 uint64_t pawnAttacks = getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
-                uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
-                uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
+                uint64_t bishopAttacks = getBishopAttacks(square) & bishopBB;
                 uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::BLACK_KNIGHT>();
+                uint64_t rookAttacks = getRookAttacks(square) & rookBB;
+                uint64_t queenAttacks = getQueenAttacks(square) & queenBB;
                 uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::BLACK_KING>();
 
-                return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
+                return pawnAttacks | bishopAttacks | knightAttacks | rookAttacks | queenAttacks | kingAttacks;
             }
         }
 
