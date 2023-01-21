@@ -130,11 +130,19 @@ namespace Zagreus {
 
         template<PieceColor color>
         bool isWinner() {
-            if (!isKingInCheck<color>()) {
-                return false;
+            MoveList moves;
+
+            if (color == PieceColor::WHITE) {
+                if (!isKingInCheck<PieceColor::BLACK>()) {
+                    return false;
+                }
+            } else {
+                if (!isKingInCheck<PieceColor::WHITE>()) {
+                    return false;
+                }
             }
 
-            MoveList moves = generateMoves<color>(*this);
+            moves = generateMoves<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>(*this);
 
             for (int i = 0; i < moves.size; i++) {
                 Move move = moves.moves[i];
@@ -142,9 +150,16 @@ namespace Zagreus {
 
                 makeMove(move);
 
-                if (isKingInCheck<color>()) {
-                    unmakeMove(move);
-                    continue;
+                if (color == PieceColor::WHITE) {
+                    if (isKingInCheck<PieceColor::BLACK>()) {
+                        unmakeMove(move);
+                        continue;
+                    }
+                } else {
+                    if (isKingInCheck<PieceColor::WHITE>()) {
+                        unmakeMove(move);
+                        continue;
+                    }
                 }
 
                 unmakeMove(move);
