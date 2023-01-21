@@ -254,6 +254,8 @@ namespace Zagreus {
         uint8_t getPly() const;
 
         void setPly(uint8_t ply);
+
+        uint64_t getZobristForMove(Move &move);
     };
 }
 

@@ -22,9 +22,10 @@
 #include "bitboard.h"
 #include "movegen.h"
 #include "utils.h"
+#include "tt.h"
 
 namespace Zagreus {
-    int scoreMove(Bitboard &bitboard, Move &move) {
+    int scoreMove(Bitboard &bitboard, Move &move, TranspositionTable* tt) {
         Line previousPv = bitboard.getPreviousPvLine();
 
         for (int i = 0; i < previousPv.moveCount; i++) {
@@ -35,11 +36,12 @@ namespace Zagreus {
             }
         }
 
-        /*TTEntry* entry = tt->getEntry(move.zobristHash);
+        uint64_t zobristHash = bitboard.getZobristHash();
+        TTEntry entry = tt->getEntry(zobristHash);
 
-        if (entry->zobristHash == move.zobristHash && !bitboard.isBenchmarking()) {
-            return 25000 + entry->score;
-        }*/
+        if (entry.zobristHash == zobristHash) {
+            return 25000 + entry.score;
+        }
 
         if (move.captureScore >= 0) {
             return 10000 + move.captureScore;
@@ -80,10 +82,11 @@ namespace Zagreus {
         generateKingMoves<color>(bitboard, moveList);
 
         assert(moveList.size <= MAX_MOVES);
+        TranspositionTable* tt = TranspositionTable::getTT();
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, move);
+            move.score = scoreMove(bitboard, move, tt);
         }
 
         return moveList;
@@ -102,9 +105,11 @@ namespace Zagreus {
 
         assert(moveList.size <= MAX_MOVES);
 
+        TranspositionTable* tt = TranspositionTable::getTT();
+
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, move);
+            move.score = scoreMove(bitboard, move, tt);
         }
 
         return moveList;
