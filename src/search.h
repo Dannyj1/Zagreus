@@ -33,7 +33,7 @@ namespace Zagreus {
 
         int
         search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
-               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine);
+               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv);
 
         int quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                              Move &previousMove,

@@ -89,17 +89,11 @@ namespace Zagreus {
                     }
                 }
 
-                int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, -9999999, 9999999);
-                int score = 0;
                 Line pvLine = {};
                 Move previousMove = {};
 
-                if (ttScore != INT32_MIN) {
-                    score = ttScore;
-                } else {
-                    score = search(board, depth - 1, -9999999, 9999999, move, previousMove, endTime, pvLine, engine);
-                    score *= -1;
-                }
+                int score = search(board, depth - 1, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true);
+                score *= -1;
 
                 board.unmakeMove(move);
 
@@ -163,7 +157,7 @@ namespace Zagreus {
 
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                                        Move &previousMove,
-                                       std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine) {
+                                       std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv) {
         searchStats.nodes += 1;
 
         if (searchStats.nodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
@@ -173,12 +167,6 @@ namespace Zagreus {
         if (depth == 0 || board.isWinner<PieceColor::WHITE>() || board.isWinner<PieceColor::BLACK>() || board.isDraw()) {
             pvLine.moveCount = 0;
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
-        }
-
-        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
-
-        if (ttScore != INT32_MIN) {
-            return ttScore;
         }
 
         Line line{};
@@ -193,7 +181,7 @@ namespace Zagreus {
         MovePicker moves = MovePicker(moveList);
         bool searchedFirstLegalMove = false;
 
-        while (!searchedFirstLegalMove && moves.hasNext()) {
+        while (isPv && !searchedFirstLegalMove && moves.hasNext()) {
             Move move = moves.getNextMove();
 
             board.makeMove(move);
@@ -210,7 +198,7 @@ namespace Zagreus {
                 }
             }
 
-            int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line, engine);
+            int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line, engine, true);
             score *= -1;
 
             board.unmakeMove(move);
@@ -230,8 +218,14 @@ namespace Zagreus {
             searchedFirstLegalMove = true;
         }
 
-        if (!searchedFirstLegalMove) {
+        if (isPv && !searchedFirstLegalMove) {
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
+        }
+
+        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
+
+        if (!isPv && ttScore != INT32_MIN) {
+            return ttScore;
         }
 
         while (moves.hasNext()) {
@@ -256,11 +250,11 @@ namespace Zagreus {
             }
 
             int score;
-            score = search(board, depth - 1, -alpha - 1, -alpha, rootMove, previousMove, endTime, line, engine);
+            score = search(board, depth - 1, -alpha - 1, -alpha, rootMove, previousMove, endTime, line, engine, false);
             score *= -1;
 
             if (score > alpha && score < beta) {
-                score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line, engine);
+                score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line, engine, false);
                 score *= -1;
             }
 
