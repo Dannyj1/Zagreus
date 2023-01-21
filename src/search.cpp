@@ -171,6 +171,7 @@ namespace Zagreus {
 
         Line line{};
         MoveList moveList;
+        NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
         if (board.getMovingColor() == PieceColor::WHITE) {
             moveList = generateMoves<PieceColor::WHITE>(board);
@@ -205,6 +206,7 @@ namespace Zagreus {
 
             if (score > alpha) {
                 if (score >= beta) {
+                    TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
                     return score;
                 }
 
@@ -213,6 +215,7 @@ namespace Zagreus {
                 memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
                 pvLine.moveCount = line.moveCount + 1;
                 alpha = score;
+                nodeType = NodeType::PV_NODE;
             }
 
             searchedFirstLegalMove = true;
@@ -262,6 +265,7 @@ namespace Zagreus {
 
             if (score > alpha) {
                 if (score >= beta) {
+                    TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
                     return beta;
                 }
 
@@ -270,9 +274,11 @@ namespace Zagreus {
                 memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
                 pvLine.moveCount = line.moveCount + 1;
                 alpha = score;
+                nodeType = NodeType::PV_NODE;
             }
         }
 
+        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType);
         return alpha;
     }
 
