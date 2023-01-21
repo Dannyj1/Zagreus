@@ -137,6 +137,7 @@ namespace Zagreus {
     void Bitboard::makeMove(Move &move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
+        assert(move.piece % 2 == movingColor);
 
         PieceType capturedPiece = getPieceOnSquare(move.to);
 

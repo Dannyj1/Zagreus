@@ -54,7 +54,7 @@ namespace Zagreus {
 
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
             board.setPreviousPvLine(iterationPvLine);
-            MoveList moveList{};
+            MoveList moveList;
 
             if (board.getMovingColor() == PieceColor::WHITE) {
                 moveList = generateMoves<PieceColor::WHITE>(board);
@@ -167,7 +167,7 @@ namespace Zagreus {
         }
 
         Line line{};
-        MoveList moveList{};
+        MoveList moveList;
 
         if (board.getMovingColor() == PieceColor::WHITE) {
             moveList = generateMoves<PieceColor::WHITE>(board);
@@ -296,7 +296,7 @@ namespace Zagreus {
             alpha = standPat;
         }
 
-        MoveList moveList{};
+        MoveList moveList;
 
         if (board.getMovingColor() == PieceColor::WHITE) {
             moveList = generateQuiescenceMoves<PieceColor::WHITE>(board);
