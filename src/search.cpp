@@ -370,7 +370,7 @@ namespace Zagreus {
         }
 
         if (board.isDraw()) {
-            // Thanks Stockfish for the "3-fold blindness avoidance"
+            // Thanks to Stockfish for the "3-fold blindness avoidance" idea
             return 0 - 1 + ((int) searchStats.nodes & 0x2);
         }
 

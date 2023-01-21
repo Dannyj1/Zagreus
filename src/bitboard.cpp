@@ -140,14 +140,13 @@ namespace Zagreus {
 
         PieceType capturedPiece = getPieceOnSquare(move.to);
 
-        halfMoveClock += 1;
-        moveHistory[ply] = getZobristHash();
         undoStack[ply].capturedPiece = capturedPiece;
         undoStack[ply].halfMoveClock = halfMoveClock;
         undoStack[ply].enPassantSquare = enPassantSquare;
         undoStack[ply].castlingRights = castlingRights;
         undoStack[ply].moveType = MoveType::REGULAR;
         undoStack[ply].zobristHash = zobristHash;
+        halfMoveClock += 1;
 
         if (capturedPiece != PieceType::EMPTY) {
             removePiece(move.to, capturedPiece);
@@ -270,12 +269,14 @@ namespace Zagreus {
         movingColor = getOppositeColor(movingColor);
         zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
         ply += 1;
+        moveHistory[ply] = getZobristHash();
     }
 
     void Bitboard::unmakeMove(Move &move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
 
+        moveHistory[ply] = 0;
         UndoData undoData = undoStack[ply - 1];
 
         if (move.promotionPiece != PieceType::EMPTY) {
@@ -498,6 +499,7 @@ namespace Zagreus {
             }
         }
 
+        moveHistory[ply] = getZobristHash();
         return true;
     }
 
@@ -517,13 +519,13 @@ namespace Zagreus {
             makeMove(move);
 
             if (movingColor == PieceColor::WHITE) {
-                if (!isKingInCheck<PieceColor::WHITE>()) {
+                if (!isKingInCheck<PieceColor::BLACK>()) {
                     unmakeMove(move);
                     hasLegalMove = true;
                     break;
                 }
             } else {
-                if (!isKingInCheck<PieceColor::BLACK>()) {
+                if (!isKingInCheck<PieceColor::WHITE>()) {
                     unmakeMove(move);
                     hasLegalMove = true;
                     break;
@@ -542,7 +544,7 @@ namespace Zagreus {
         }
 
         // Check if the same position has occurred 3 times using the movehistory array
-        int samePositionCount = 1;
+        int samePositionCount = 0;
         uint64_t boardHash = getZobristHash();
 
         for (int i = ply; i >= 0; i--) {
