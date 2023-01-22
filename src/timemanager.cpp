@@ -33,7 +33,7 @@ namespace Zagreus {
             return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("Move Overhead").getIntValue());
         }
 
-        uint64_t movesToGo = params.movestogo ? params.movestogo : 40ULL - (bitboard.getPly() / 2);
+        uint64_t movesToGo = params.movestogo ? params.movestogo : 50ULL - (bitboard.getPly() / 2);
         movesToGo = std::max((uint64_t) movesToGo, (uint64_t) 7ULL);
         uint64_t timeLeft = 0;
 
@@ -49,6 +49,14 @@ namespace Zagreus {
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
         uint64_t maxTime = timeLeft / 100 * 80;
         uint64_t timePerMove = timeLeft / movesToGo;
+
+        if ((bitboard.getPly() / 2) < 15) {
+            timePerMove *= 2;
+        }
+
+        if ((bitboard.getPly() / 2) > 30) {
+            timePerMove /= 2;
+        }
 
         if (timePerMove > maxTime) {
             timePerMove = maxTime;
