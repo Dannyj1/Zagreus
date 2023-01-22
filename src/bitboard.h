@@ -24,6 +24,8 @@
 #include <cstdint>
 #include <string>
 #include <cassert>
+#include <x86intrin.h>
+
 #include "types.h"
 #include "bitwise.h"
 #include "utils.h"
@@ -256,6 +258,81 @@ namespace Zagreus {
         void setPly(uint8_t ply);
 
         uint64_t getZobristForMove(Move &move);
+
+        template <PieceColor attackingColor>
+        int seeCapture(int8_t fromSquare, int8_t toSquare) {
+            assert(fromSquare >= 0);
+            assert(fromSquare <= 63);
+            assert(toSquare >= 0);
+            assert(toSquare <= 63);
+            int score = 0;
+            PieceType movingPiece = pieceSquareMapping[fromSquare];
+            PieceType capturedPieceType = pieceSquareMapping[toSquare];
+
+            assert(movingPiece != PieceType::EMPTY);
+            assert(capturedPieceType != PieceType::EMPTY);
+            Move move{fromSquare, toSquare, movingPiece, PieceType::EMPTY};
+            makeMove(move);
+
+            if (attackingColor == PieceColor::WHITE) {
+                score = getPieceWeight(capturedPieceType) - see<PieceColor::BLACK>(toSquare);
+            } else {
+                score = getPieceWeight(capturedPieceType) - see<PieceColor::WHITE>(toSquare);
+            }
+
+            unmakeMove(move);
+
+            return score;
+        }
+
+        template <PieceColor attackingColor>
+        int8_t getSmallestAttackerSquare(int8_t square) {
+            uint64_t attacks = getSquareAttacksByColor<attackingColor>(square);
+            int smallestAttackerSquare = -1;
+            int smallestAttackerWeight = 999999999;
+
+            while (attacks) {
+                int attackerSquare = bitscanForward(attacks);
+                attacks = _blsr_u64(attacks);
+                PieceType pieceType = pieceSquareMapping[attackerSquare];
+                int weight = getPieceWeight(pieceType);
+
+                if (weight < smallestAttackerWeight) {
+                    smallestAttackerWeight = weight;
+                    smallestAttackerSquare = attackerSquare;
+                }
+            }
+
+            return smallestAttackerSquare;
+        }
+
+        template <PieceColor attackingColor>
+        int see(int8_t square) {
+            assert(square >= 0);
+            assert(square <= 63);
+            int score = 0;
+            int8_t smallestAttackerSquare = getSmallestAttackerSquare<attackingColor>(square);
+
+            if (smallestAttackerSquare >= 0) {
+                PieceType movingPiece = pieceSquareMapping[smallestAttackerSquare];
+                PieceType capturedPieceType = pieceSquareMapping[square];
+
+                assert(movingPiece != PieceType::EMPTY);
+                assert(capturedPieceType != PieceType::EMPTY);
+                Move move{smallestAttackerSquare, square, movingPiece, PieceType::EMPTY};
+                makeMove(move);
+
+                if (attackingColor == PieceColor::WHITE) {
+                    score = std::max(0, getPieceWeight(capturedPieceType) - see<PieceColor::BLACK>(square));
+                } else {
+                    score = std::max(0, getPieceWeight(capturedPieceType) - see<PieceColor::WHITE>(square));
+                }
+
+                unmakeMove(move);
+            }
+
+            return score;
+        }
     };
 }
 
