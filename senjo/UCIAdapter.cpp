@@ -109,9 +109,6 @@ namespace senjo {
         } else if (iEqual(token::Perft, command)) {
             doStopCommand();
             execute(std::shared_ptr<BackgroundCommand>(new PerftCommandHandle(engine)), params);
-        } else if (iEqual(token::Test, command)) {
-            doStopCommand();
-            execute(std::shared_ptr<BackgroundCommand>(new TestCommandHandle(engine)), params);
         } else if (iEqual(token::Opts, command)) {
             doOptsCommand(params);
         } else if (iEqual(token::Help, command)) {
@@ -155,7 +152,6 @@ namespace senjo {
         Output() << "  " << token::New;
         Output() << "  " << token::Perft;
         Output() << "  " << token::Print;
-        Output() << "  " << token::Test;
         Output() << "Also try '<command> help' for help on a specific command";
         Output() << "Or enter move(s) in coordinate notation, e.g. d2d4 g8f6";
     }

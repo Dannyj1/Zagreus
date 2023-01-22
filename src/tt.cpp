@@ -30,29 +30,29 @@ namespace Zagreus {
         }
 
         uint64_t index = (zobristHash & hashSize);
-        TTEntry* entry = transpositionTable[index];
+        TTEntry entry = transpositionTable[index];
 
-        if (entry->depth <= depth) {
-            entry->zobristHash = zobristHash;
-            entry->depth = depth;
-            entry->score = score;
-            entry->nodeType = nodeType;
+        if (entry.depth <= depth) {
+            entry.zobristHash = zobristHash;
+            entry.depth = depth;
+            entry.score = score;
+            entry.nodeType = nodeType;
         }
     }
 
     int TranspositionTable::getScore(uint64_t zobristHash, int depth, int alpha, int beta) {
         uint64_t index = (zobristHash & hashSize);
-        TTEntry* entry = transpositionTable[index];
+        TTEntry entry = transpositionTable[index];
 
-        if (entry->zobristHash == zobristHash && entry->depth >= depth) {
-            if (entry->nodeType == PV_NODE) {
-                return entry->score;
-            } else if (entry->nodeType == FAIL_LOW_NODE) {
-                if (entry->score <= alpha) {
+        if (entry.zobristHash == zobristHash && entry.depth >= depth) {
+            if (entry.nodeType == PV_NODE) {
+                return entry.score;
+            } else if (entry.nodeType == FAIL_LOW_NODE) {
+                if (entry.score <= alpha) {
                     return alpha;
                 }
-            } else if (entry->nodeType == FAIL_HIGH_NODE) {
-                if (entry->score >= beta) {
+            } else if (entry.nodeType == FAIL_HIGH_NODE) {
+                if (entry.score >= beta) {
                     return beta;
                 }
             }
@@ -61,7 +61,7 @@ namespace Zagreus {
         return INT32_MIN;
     }
 
-    TTEntry* TranspositionTable::getEntry(uint64_t zobristHash) {
+    TTEntry TranspositionTable::getEntry(uint64_t zobristHash) {
         uint64_t index = (zobristHash & hashSize);
 
         return transpositionTable[index];
@@ -75,16 +75,12 @@ namespace Zagreus {
         uint64_t byteSize = megaBytes * 1024 * 1024;
         uint64_t entryCount = byteSize / sizeof(TTEntry);
 
-        for (int i = 0; i < hashSize + 1; i++) {
-            delete transpositionTable[i];
-        }
-
         delete[] transpositionTable;
-        transpositionTable = new TTEntry*[entryCount]{};
+        transpositionTable = new TTEntry[entryCount]{};
         hashSize = entryCount - 1;
         
         for (int i = 0; i < entryCount; i++) {
-            transpositionTable[i] = new TTEntry();
+            transpositionTable[i] = {};
         }
     }
 

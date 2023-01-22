@@ -10,7 +10,7 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 - Bitboard board representation with Plain Magic Bitboards for sliding piece move generation
 - Principal Variation Search with Alpha-Beta pruning
 - Quiescence Search with delta pruning and SEE move ordering
-- Move ordering using MVV/LVA, killer moves, history heuristic, countermove heuristic
+- Move ordering using MVV/LVA, killer moveList, history heuristic, countermove heuristic
 - Transposition Table
 - Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square tables and more
 - Null Move Pruning
@@ -50,6 +50,7 @@ Thanks to:
 - [AndyGrant](https://github.com/AndyGrant) for the easy to use and open source [OpenBench Testing Framework](https://github.com/AndyGrant/OpenBench), making testing my engine SO much easier and allowing you to distribute test over multiple devices (I use a private instance of OpenBench)
 - [maksimKorzh](https://github.com/maksimKorzh) for the great [tutorials](https://www.youtube.com/channel/UCB9-prLkPwgvlKKqDgXhsMQ) and [engine](https://github.com/maksimKorzh/chess_programming)
 - The [Chessprogramming wiki](https://www.chessprogramming.org/Main_Page) contributors for all the information about chess programming
+- Some ideas in this engine are inspired by [Stockfish](https://github.com/official-stockfish/Stockfish)
 
 # License
 Copyright (C) 2023  Danny Jelsma

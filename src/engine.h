@@ -19,16 +19,17 @@
 #pragma once
 
 #include <string>
-#include "senjo/ChessEngine.h"
+#include "../senjo/ChessEngine.h"
 #include "bitboard.h"
+#include "types.h"
 
 namespace Zagreus {
     class ZagreusEngine : public senjo::ChessEngine {
     private:
         Bitboard board{};
         bool isEngineInitialized = false;
-        PieceColor engineColor = PieceColor::NONE;
         senjo::SearchStats searchStats{};
+        bool stoppingSearch = false;
 
         std::list<senjo::EngineOption> options{
             senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, 5000),
@@ -37,7 +38,7 @@ namespace Zagreus {
         };
 
     public:
-        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int startingDepth);
+//        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int startingDepth);
 
         std::string getEngineName() override;
 
@@ -95,7 +96,7 @@ namespace Zagreus {
 
         uint64_t perft(const int depth) override;
 
-        std::string go(const senjo::GoParams &params, std::string* ponder) override;
+        std::string go(senjo::GoParams &params, std::string* ponder) override;
 
         senjo::SearchStats getSearchStats() override;
 
@@ -104,5 +105,7 @@ namespace Zagreus {
         void showEngineStats() override;
 
         senjo::EngineOption getOption(const std::string &optionName);
+
+        uint64_t doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth);
     };
 }

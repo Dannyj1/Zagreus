@@ -18,24 +18,12 @@
 
 #pragma once
 
-#include <vector>
+#include <chrono>
 
 #include "types.h"
-
+#include "engine.h"
+#include "../senjo/GoParams.h"
 
 namespace Zagreus {
-    class MovePicker {
-    private:
-        std::vector<Move> moves;
-        int searchStartIndex = 0;
-    public:
-        MovePicker(std::vector<Move> moves);
-
-        Move getNextMove();
-
-        bool hasNext();
-
-        int size();
-
-    };
+    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor);
 }

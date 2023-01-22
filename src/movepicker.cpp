@@ -16,41 +16,41 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "move_picker.h"
+#include "movepicker.h"
 
 namespace Zagreus {
 
-    MovePicker::MovePicker(std::vector<Move> moves) {
-        this->moves = moves;
+    MovePicker::MovePicker(MoveList moves) {
+        this->moveList = moves;
     }
 
     Move MovePicker::getNextMove() {
-        int highestScore = moves[searchStartIndex].score;
+        int highestScore = moveList.moves[searchStartIndex].score;
         int moveIndex = searchStartIndex;
-        Move move = moves[searchStartIndex];
+        Move move = moveList.moves[searchStartIndex];
 
-        for (int i = searchStartIndex; i < moves.size(); i++) {
-            if (moves[i].score > highestScore) {
-                highestScore = moves[i].score;
-                move = moves[i];
+        for (int i = searchStartIndex; i < moveList.size; i++) {
+            if (moveList.moves[i].score > highestScore) {
+                highestScore = moveList.moves[i].score;
+                move = moveList.moves[i];
                 moveIndex = i;
             }
         }
 
-        Move temp = moves[searchStartIndex];
-        moves[searchStartIndex] = move;
-        moves[moveIndex] = temp;
+        Move temp = moveList.moves[searchStartIndex];
+        moveList.moves[searchStartIndex] = move;
+        moveList.moves[moveIndex] = temp;
 
         searchStartIndex++;
 
         return move;
     }
 
-    bool MovePicker::hasNext() {
-        return searchStartIndex < moves.size();
+    bool MovePicker::hasNext() const {
+        return searchStartIndex < moveList.size;
     }
 
     int MovePicker::size() {
-        return moves.size();
+        return moveList.size;
     }
 }

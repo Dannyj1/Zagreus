@@ -19,13 +19,11 @@
 #pragma once
 
 #include "bitboard.h"
-#include "engine.h"
 
 namespace Zagreus {
-    class TimeManager {
-    public:
-        std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(ZagreusEngine &engine, Bitboard &board, PieceColor movingColor);
-    };
+    template<PieceColor color>
+    MoveList generateMoves(Bitboard &bitboard);
 
-    static TimeManager timeManager{};
+    template<PieceColor color>
+    MoveList generateQuiescenceMoves(Bitboard &bitboard);
 }

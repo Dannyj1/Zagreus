@@ -198,19 +198,19 @@ namespace Zagreus {
     }
 
     int count_bits(uint64_t bitboard) {
-        // bit count
+        // bit size
         int count = 0;
 
         // pop bits untill bitboard is empty
         while (bitboard) {
-            // increment count
+            // increment size
             count++;
 
             // consecutively reset least significant 1st bit
             bitboard &= bitboard - 1;
         }
 
-        // return bit count
+        // return bit size
         return count;
     }
 
@@ -218,7 +218,7 @@ namespace Zagreus {
     int get_ls1b_index(uint64_t bitboard) {
         // make sure bitboard is not empty
         if (bitboard != 0)
-            // convert trailing zeros before LS1B to ones and count them
+            // convert trailing zeros before LS1B to ones and size them
             return count_bits((bitboard & -bitboard) - 1);
 
             // otherwise
@@ -375,10 +375,10 @@ namespace Zagreus {
             // init current mask
             uint64_t mask = is_bishop ? mask_bishop_attacks(square) : mask_rook_attacks(square);
 
-            // count attack mask bits
+            // size attack mask bits
             int bit_count = count_bits(mask);
 
-            // occupancy variations count
+            // occupancy variations size
             int occupancy_variations = 1 << bit_count;
 
             // loop over occupancy variations
