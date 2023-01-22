@@ -43,7 +43,7 @@ namespace Zagreus {
         int depth = 0;
 
         Line iterationPvLine = {};
-        while (std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
+        while (!engine.stopRequested() && std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
             depth += 1;
 
             if (params.depth > 0 && depth > params.depth) {
