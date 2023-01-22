@@ -565,7 +565,7 @@ namespace Zagreus {
     void getWhiteKingScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
-//        uint64_t kingAttacks = bitboard.getKingAttacks(kingLocation);
+        uint64_t kingAttacks = bitboard.getKingAttacks(kingLocation);
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
         uint64_t safetyMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
         safetyMask |= nortOne(safetyMask);
@@ -597,7 +597,7 @@ namespace Zagreus {
             }
         }*/
 
-/*        evalContext.whiteMidgameScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_PAWN) / 100);
+        evalContext.whiteMidgameScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_PAWN) / 100);
         evalContext.whiteEndgameScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_PAWN) / 100);
         evalContext.whiteMidgameScore -= popcnt(evalContext.blackKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_KNIGHT) / 100);
         evalContext.whiteEndgameScore -= popcnt(evalContext.blackKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_KNIGHT) / 100);
@@ -606,7 +606,7 @@ namespace Zagreus {
         evalContext.whiteMidgameScore -= popcnt(evalContext.blackRookAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_ROOK) / 100);
         evalContext.whiteEndgameScore -= popcnt(evalContext.blackRookAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_ROOK) / 100);
         evalContext.whiteMidgameScore -= popcnt(evalContext.blackQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_QUEEN) / 100);
-        evalContext.whiteEndgameScore -= popcnt(evalContext.blackQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_QUEEN) / 100);*/
+        evalContext.whiteEndgameScore -= popcnt(evalContext.blackQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_QUEEN) / 100);
     }
 
     uint64_t blackQueenCastlingAttackPattern = 0x7000000000000000;
@@ -614,7 +614,7 @@ namespace Zagreus {
     void getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
-//        uint64_t kingAttacks = bitboard.getKingAttacks(kingLocation);
+        uint64_t kingAttacks = bitboard.getKingAttacks(kingLocation);
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
         uint64_t safetyMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
         safetyMask |= soutOne(safetyMask);
@@ -645,7 +645,7 @@ namespace Zagreus {
             }
         }*/
 
-/*        evalContext.blackMidgameScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_PAWN) / 100);
+        evalContext.blackMidgameScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_PAWN) / 100);
         evalContext.blackEndgameScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_PAWN) / 100);
         evalContext.blackMidgameScore -= popcnt(evalContext.whiteKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_KNIGHT) / 100);
         evalContext.blackEndgameScore -= popcnt(evalContext.whiteKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_KNIGHT) / 100);
@@ -654,7 +654,7 @@ namespace Zagreus {
         evalContext.blackMidgameScore -= popcnt(evalContext.whiteRookAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_ROOK) / 100);
         evalContext.blackEndgameScore -= popcnt(evalContext.whiteRookAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_ROOK) / 100);
         evalContext.blackMidgameScore -= popcnt(evalContext.whiteQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_QUEEN) / 100);
-        evalContext.blackEndgameScore -= popcnt(evalContext.whiteQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_QUEEN) / 100);*/
+        evalContext.blackEndgameScore -= popcnt(evalContext.whiteQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_QUEEN) / 100);
     }
 
     void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
