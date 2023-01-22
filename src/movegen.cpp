@@ -155,7 +155,7 @@ namespace Zagreus {
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::WHITE_PAWN, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_PAWN, capturedPiece);
                     }
 
                     if (genIndex >= Square::A8) {
@@ -168,7 +168,7 @@ namespace Zagreus {
                     }
                 } else {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::BLACK_PAWN, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_PAWN, capturedPiece);
                     }
 
                     if (genIndex <= Square::H1) {
@@ -218,13 +218,13 @@ namespace Zagreus {
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::WHITE_KNIGHT, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_KNIGHT, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KNIGHT, captureScore };
                 } else {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::BLACK_KNIGHT, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_KNIGHT, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KNIGHT, captureScore };
@@ -267,13 +267,13 @@ namespace Zagreus {
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::WHITE_BISHOP, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_BISHOP, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_BISHOP, captureScore };
                 } else {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::BLACK_BISHOP, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_BISHOP, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_BISHOP, captureScore };
@@ -316,13 +316,13 @@ namespace Zagreus {
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::WHITE_ROOK, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_ROOK, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_ROOK, captureScore };
                 } else {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::BLACK_ROOK, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_ROOK, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_ROOK, captureScore };
@@ -365,13 +365,13 @@ namespace Zagreus {
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::WHITE_QUEEN, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_QUEEN, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_QUEEN, captureScore };
                 } else {
                     if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = mvvlva(PieceType::BLACK_QUEEN, capturedPiece);
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_QUEEN, capturedPiece);
                     }
 
                     moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_QUEEN, captureScore };
@@ -415,13 +415,13 @@ namespace Zagreus {
 
             if (color == PieceColor::WHITE) {
                 if (capturedPiece != PieceType::EMPTY) {
-                    captureScore = mvvlva(PieceType::WHITE_KING, capturedPiece);
+                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_KING, capturedPiece);
                 }
 
                 moveList.moves[moveList.size++] = {index, genIndex, PieceType::WHITE_KING, captureScore };
             } else {
                 if (capturedPiece != PieceType::EMPTY) {
-                    captureScore = mvvlva(PieceType::BLACK_KING, capturedPiece);
+                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_KING, capturedPiece);
                 }
 
                 moveList.moves[moveList.size++] = {index, genIndex, PieceType::BLACK_KING, captureScore };
