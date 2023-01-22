@@ -63,5 +63,8 @@ namespace Zagreus {
     void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
     void getBlackConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
 
+    void getWhiteRookScore(EvalContext &evalContext, Bitboard &bitboard);
+    void getBlackRookScore(EvalContext &evalContext, Bitboard &bitboard);
+
     EvalContext createEvalContext(Bitboard &bitboard);
 }

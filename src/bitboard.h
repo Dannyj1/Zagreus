@@ -51,6 +51,7 @@ namespace Zagreus {
         uint64_t kingAttacks[64]{};
         uint64_t knightAttacks[64]{};
         uint64_t pawnAttacks[2][64]{};
+        uint64_t rayAttacks[8][64]{};
         uint64_t betweenTable[64][64]{};
 
         UndoData undoStack[MAX_PLY]{};
@@ -279,6 +280,42 @@ namespace Zagreus {
         void setPly(uint8_t ply);
 
         uint64_t getZobristForMove(Move &move);
+
+        bool isOpenFile(int8_t square);
+
+        template<PieceColor color>
+        bool isSemiOpenFile(int8_t square) {
+            uint64_t fileMask =
+                    rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
+            if (color == PieceColor::WHITE) {
+                uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
+                uint64_t opponentOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
+
+                return fileMask == (fileMask & ownOccupied) && fileMask != (fileMask & opponentOccupied);
+            } else {
+                uint64_t ownOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
+                uint64_t opponentOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
+
+                return fileMask == (fileMask & ownOccupied) && fileMask != (fileMask & opponentOccupied);
+            }
+        }
+
+        // Also returns true when it is an open file
+        template<PieceColor color>
+        bool isSemiOpenFileLenient(int8_t square) {
+            uint64_t fileMask =
+                    rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
+
+            if (color == PieceColor::WHITE) {
+                uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
+                return fileMask == (fileMask & ownOccupied);
+            } else {
+                uint64_t ownOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
+                return fileMask == (fileMask & ownOccupied);
+            }
+        }
+
+        void initializeRayAttacks();
 
         template <PieceColor attackingColor>
         int seeCapture(int8_t fromSquare, int8_t toSquare) {
