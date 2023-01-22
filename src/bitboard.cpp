@@ -29,7 +29,7 @@ namespace Zagreus {
     Bitboard::Bitboard() {
         std::random_device rd;
         std::mt19937_64 gen(rd());
-        gen.seed(24420221607);
+        gen.seed(0xC95B1C76EE7369FFULL);
         std::uniform_int_distribution<uint64_t> dis;
 
         for (uint64_t &zobristConstant : zobristConstants) {
@@ -169,7 +169,8 @@ namespace Zagreus {
             } else if (move.to - move.from == -16) {
                 enPassantSquare = move.to + 8;
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
-            } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) && move.to == enPassantSquare) {
+            } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
+                       move.to == enPassantSquare) {
                 int8_t enPassantCaptureSquare = move.to - (movingColor == PieceColor::WHITE ? 8 : -8);
                 removePiece(enPassantCaptureSquare, getPieceOnSquare(enPassantCaptureSquare));
                 undoStack[ply].moveType = MoveType::EN_PASSANT;
@@ -294,7 +295,8 @@ namespace Zagreus {
 
         if (undoData.moveType == MoveType::EN_PASSANT) {
             int8_t enPassantCaptureSquare = move.to - (getOppositeColor(movingColor) == PieceColor::WHITE ? 8 : -8);
-            setPiece(enPassantCaptureSquare, getOppositeColor(movingColor) == PieceColor::WHITE ? PieceType::BLACK_PAWN : PieceType::WHITE_PAWN);
+            setPiece(enPassantCaptureSquare, getOppositeColor(movingColor) == PieceColor::WHITE ? PieceType::BLACK_PAWN
+                                                                                                : PieceType::WHITE_PAWN);
         }
 
         if (undoData.moveType == MoveType::CASTLING) {
@@ -353,7 +355,8 @@ namespace Zagreus {
             } else if (move.to - move.from == -16) {
                 zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to + 8) % 8];
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
-            } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) && move.to == enPassantSquare) {
+            } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
+                       move.to == enPassantSquare) {
                 int8_t enPassantCaptureSquare = move.to - (movingColor == PieceColor::WHITE ? 8 : -8);
                 result ^= zobristConstants[enPassantCaptureSquare + 64 * getPieceOnSquare(enPassantCaptureSquare)];
             }
@@ -510,6 +513,10 @@ namespace Zagreus {
             if (character == ' ') {
                 spaces++;
                 continue;
+            }
+
+            if (character == ',') {
+                break;
             }
 
             if (spaces == 0) {
@@ -790,7 +797,8 @@ namespace Zagreus {
         uint64_t knightAttacks = getKnightAttacks(square) &
                                  (getPieceBoard<PieceType::WHITE_KNIGHT>() | getPieceBoard<PieceType::BLACK_KNIGHT>());
         uint64_t kingAttacks =
-                getKingAttacks(square) & (getPieceBoard<PieceType::WHITE_KING>() | getPieceBoard<PieceType::BLACK_KING>());
+                getKingAttacks(square) &
+                (getPieceBoard<PieceType::WHITE_KING>() | getPieceBoard<PieceType::BLACK_KING>());
 
         return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
     }
@@ -831,7 +839,7 @@ namespace Zagreus {
             }
         }
 
-        Move move = { fromSquare, toSquare, getPieceOnSquare(fromSquare), promotionPiece };
+        Move move = {fromSquare, toSquare, getPieceOnSquare(fromSquare), promotionPiece};
         makeMove(move);
         return true;
     }
