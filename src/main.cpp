@@ -232,8 +232,8 @@ void findZobristSeed() {
 
     senjo::Output(senjo::Output::NoPrefix) << "Finding the best Zobrist seed with the least collisions...";
 
-    uint64_t bestSeed = 0x9B64788F710894C1ULL;
-    uint64_t leastCollisions = 444344817;
+    uint64_t bestSeed = 0x6C7CCC580A348E7B;
+    uint64_t leastCollisions = 444143880;
     std::random_device seedRd;
     std::mt19937_64 seedGen(seedRd());
     std::uniform_int_distribution<uint64_t> seedDis;
