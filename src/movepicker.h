@@ -39,5 +39,8 @@ namespace Zagreus {
 
         int size();
 
+        int remaining();
+
+        int movesSearched();
     };
 }
