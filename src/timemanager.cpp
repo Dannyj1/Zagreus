@@ -51,7 +51,7 @@ namespace Zagreus {
         uint64_t timePerMove = timeLeft / movesToGo;
 
         if ((bitboard.getPly() / 2) < 15) {
-            timePerMove *= 2;
+            timePerMove *= 1.5;
         }
 
         if (timePerMove > maxTime) {
