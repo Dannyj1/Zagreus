@@ -478,7 +478,7 @@ namespace Zagreus {
     uint64_t extendedCenterPattern = 0x00003C3C3C3C0000 & ~centerPattern;
     void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::WHITE>();
-        uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::WHITE>();
+        uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::WHITE>()  & ~(evalContext.blackPawnAttacks);
 
         // Slight bonus for squares defended by own pawn
         evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks);
@@ -520,7 +520,7 @@ namespace Zagreus {
 
     void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::BLACK>();
-        uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::BLACK>();
+        uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::BLACK>()  & ~(evalContext.whitePawnAttacks);
 
         // Slight bonus for squares defended by own pawn
         evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks);
