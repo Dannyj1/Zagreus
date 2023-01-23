@@ -29,7 +29,7 @@ namespace Zagreus {
     Bitboard::Bitboard() {
         std::random_device rd;
         std::mt19937_64 gen(rd());
-        gen.seed(0xC95B1C76EE7369FFULL);
+        gen.seed(0x9B64788F710894C1ULL);
         std::uniform_int_distribution<uint64_t> dis;
 
         for (uint64_t &zobristConstant : zobristConstants) {
