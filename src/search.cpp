@@ -157,6 +157,7 @@ namespace Zagreus {
         return bestMove;
     }
 
+    // TODO: use template
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                                        Move &previousMove,
                                        std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv) {
@@ -241,6 +242,16 @@ namespace Zagreus {
             return ttScore;
         }
 
+        bool isOwnKingInCheck = false;
+
+        if (depth >= 3) {
+            if (board.getMovingColor() == PieceColor::WHITE) {
+                isOwnKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
+            } else {
+                isOwnKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
+            }
+        }
+
         while (moves.hasNext()) {
             if (searchStats.nodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
                 return beta;
@@ -262,8 +273,23 @@ namespace Zagreus {
                 }
             }
 
+            int depthReduction = 0;
+            bool isOpponentKingInCheck = false;
+
+            if (depth >= 3) {
+                if (board.getMovingColor() == PieceColor::WHITE) {
+                    isOpponentKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
+                } else {
+                    isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
+                }
+            }
+
+            if (depth >= 3 && move.captureScore != -1 && move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
+                depthReduction = depth / 2;
+            }
+
             int score;
-            score = search(board, depth - 1, -alpha - 1, -alpha, rootMove, previousMove, endTime, line, engine, false);
+            score = search(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove, previousMove, endTime, line, engine, false);
             score *= -1;
 
             if (score > alpha && score < beta) {
