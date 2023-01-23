@@ -746,7 +746,7 @@ namespace Zagreus {
             if (bitboard.isOpenFile(index)) {
                 score += 20;
             } else if (bitboard.isSemiOpenFile<PieceColor::WHITE>(index)) {
-                score += 5;
+                score += 10;
             }
 
             rookBB &= ~(1ULL << index);
@@ -769,7 +769,7 @@ namespace Zagreus {
             if (bitboard.isOpenFile(index)) {
                 score += 20;
             } else if (bitboard.isSemiOpenFile<PieceColor::BLACK>(index)) {
-                score += 5;
+                score += 10;
             }
 
             rookBB &= ~(1ULL << index);
