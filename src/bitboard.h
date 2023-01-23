@@ -334,6 +334,8 @@ namespace Zagreus {
 
             return score;
         }
+
+        uint64_t getTilesBetween(int8_t from, int8_t to);
     };
 }
 

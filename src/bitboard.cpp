@@ -67,6 +67,10 @@ namespace Zagreus {
         return ~occupiedBB;
     }
 
+    uint64_t Bitboard::getTilesBetween(int8_t from, int8_t to) {
+        return betweenTable[from][to];
+    }
+
     PieceColor Bitboard::getMovingColor() const {
         return movingColor;
     }
