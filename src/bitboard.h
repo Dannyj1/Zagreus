@@ -180,10 +180,10 @@ namespace Zagreus {
 
         void setMovingColor(PieceColor movingColor);
 
-        uint64_t getSquareAttacks(int square);
+        uint64_t getSquareAttacks(int8_t square);
 
         template <PieceColor color>
-        uint64_t getSquareAttacksByColor(int square) {
+        uint64_t getSquareAttacksByColor(int8_t square) {
             if (color == PieceColor::WHITE) {
                 uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>();
                 uint64_t rookBB = getPieceBoard<PieceType::WHITE_ROOK>();
@@ -214,7 +214,7 @@ namespace Zagreus {
         }
 
         template <PieceColor color>
-        bool isSquareAttackedByColor(int square) {
+        bool isSquareAttackedByColor(int8_t square) {
             return getSquareAttacksByColor<color>(square) != 0;
         }
 

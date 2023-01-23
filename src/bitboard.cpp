@@ -41,17 +41,17 @@ namespace Zagreus {
         }
 
         uint64_t sqBB = 1ULL;
-        for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+        for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             kingAttacks[sq] = calculateKingAttacks(sqBB) & ~sqBB;
         }
 
         sqBB = 1ULL;
-        for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+        for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             knightAttacks[sq] = calculateKnightAttacks(sqBB) & ~sqBB;
         }
 
         sqBB = 1ULL;
-        for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+        for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             pawnAttacks[PieceColor::WHITE][sq] = calculatePawnAttacks<PieceColor::WHITE>(sqBB) & ~sqBB;
             pawnAttacks[PieceColor::BLACK][sq] = calculatePawnAttacks<PieceColor::BLACK>(sqBB) & ~sqBB;
         }
@@ -783,7 +783,7 @@ namespace Zagreus {
         }
     }
 
-    uint64_t Bitboard::getSquareAttacks(int square) {
+    uint64_t Bitboard::getSquareAttacks(int8_t square) {
         uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::BLACK_QUEEN>();
         uint64_t straightSlidingPieces =
                 getPieceBoard<PieceType::WHITE_ROOK>() | getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;

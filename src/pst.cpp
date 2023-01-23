@@ -156,11 +156,11 @@ namespace Zagreus {
     static int midgamePst[12][64]{};
     static int endgamePst[12][64]{};
 
-    int getMidgamePstValue(PieceType piece, int square) {
+    int getMidgamePstValue(PieceType piece, int8_t square) {
         return midgamePst[piece][square];
     }
 
-    int getEndgamePstValue(PieceType piece, int square) {
+    int getEndgamePstValue(PieceType piece, int8_t square) {
         return endgamePst[piece][square];
     }
 
@@ -169,7 +169,7 @@ namespace Zagreus {
         for (int piece = 0; piece < 12; piece++) {
             PieceType pieceType = static_cast<PieceType>(piece);
 
-            for (int square = 0; square < 64; square++) {
+            for (int8_t square = 0; square < 64; square++) {
                 switch (pieceType) {
                     case PieceType::WHITE_PAWN:
                         midgamePst[pieceType][square] = midgamePawnTable[63 - square];
