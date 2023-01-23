@@ -54,10 +54,6 @@ namespace Zagreus {
             timePerMove *= 2;
         }
 
-        if ((bitboard.getPly() / 2) > 30) {
-            timePerMove /= 2;
-        }
-
         if (timePerMove > maxTime) {
             timePerMove = maxTime;
         }

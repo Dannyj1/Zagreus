@@ -231,12 +231,12 @@ void findZobristSeed() {
     }
 
     senjo::Output(senjo::Output::NoPrefix) << "Finding the best Zobrist seed with the least collisions...";
+
+    uint64_t bestSeed = 0x9B64788F710894C1;
+    uint64_t leastCollisions = 444344817;
     std::random_device seedRd;
     std::mt19937_64 seedGen(seedRd());
     std::uniform_int_distribution<uint64_t> seedDis;
-
-    uint64_t bestSeed = 0ULL;
-    uint64_t leastCollisions = 0xFFFFFFFFFFFFFFFFULL;
 
     while (true) {
         std::map<uint64_t, uint64_t> collisionMap{};
@@ -254,7 +254,7 @@ void findZobristSeed() {
             }
 
             board.setFromFen(position);
-            addHashes(board, 1, collisionMap);
+            addHashes(board, 2, collisionMap);
         }
 
         uint64_t collisions = 0;
