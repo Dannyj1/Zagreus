@@ -70,8 +70,7 @@ namespace Zagreus {
             return move.captureScore - 5000;
         }
 
-//        return tt->historyMoves[move.pieceType][move.to];
-        return 0;
+        return tt->historyMoves[move.piece][move.to];
     }
 
 

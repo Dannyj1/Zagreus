@@ -42,7 +42,6 @@ namespace Zagreus {
 
         TTEntry* transpositionTable = new TTEntry[1]{};
         uint32_t** killerMoves = new uint32_t*[3]{};
-        // TODO: make 1d
         uint32_t** historyMoves = new uint32_t*[12]{};
         uint32_t** counterMoves = new uint32_t*[64]{};
 
@@ -95,5 +94,7 @@ namespace Zagreus {
         int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
 
         TTEntry getEntry(uint64_t zobristHash);
+
+        void ageHistoryTable();
     };
 }
