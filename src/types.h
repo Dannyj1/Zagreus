@@ -78,6 +78,7 @@ namespace Zagreus {
         MoveType moveType = MoveType::REGULAR;
         uint64_t zobristHash = 0ULL;
         uint8_t kingInCheck = 0b00001100;
+        Move previousMove{};
     };
 
     struct MoveList {
