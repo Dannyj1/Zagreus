@@ -77,6 +77,7 @@ namespace Zagreus {
         PieceType capturedPiece = PieceType::EMPTY;
         MoveType moveType = MoveType::REGULAR;
         uint64_t zobristHash = 0ULL;
+        uint8_t kingInCheck = 0b00001100;
     };
 
     struct MoveList {

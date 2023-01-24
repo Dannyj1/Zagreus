@@ -2,7 +2,7 @@
 Zagreus is a work in progress UCI Chess Engine. You can play against Zagreus on Lichess: https://lichess.org/@/Zagreus_Engine. You will also be able to find it's elo rating on there. At the time of writing this is around ~1750 rapid. 
 Zagreus is a constantly changing engine with hopefully an increase in elo every update.
 
-You can download binaries here: https://github.com/Dannyj1/ZagreusEngine/releases
+You can download binaries here: https://github.com/Dannyj1/Zagreus/releases
 
 This engine requires a GUI that supports the UCI (Universal Chess Interface) protocol to use it. I personally use [CuteChess](https://cutechess.com/).
 

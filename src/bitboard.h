@@ -44,6 +44,7 @@ namespace Zagreus {
         uint8_t fullmoveClock = 1;
         int8_t enPassantSquare = Square::NO_SQUARE;
         uint8_t castlingRights = 0b00001111;
+        uint8_t kingInCheck = 0b00001100;
 
         uint64_t zobristHash = 0ULL;
 
@@ -224,14 +225,31 @@ namespace Zagreus {
                 return true;
             }
 
+            if (color == PieceColor::WHITE) {
+                if (!(kingInCheck & WHITE_KING_CHECK_RESET_BIT)) {
+                    return kingInCheck & WHITE_KING_CHECK_BIT;
+                }
+            } else {
+                if (!(kingInCheck & BLACK_KING_CHECK_RESET_BIT)) {
+                    return kingInCheck & BLACK_KING_CHECK_BIT;
+                }
+            }
+
             uint64_t kingBB = getPieceBoard<color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING>();
             int8_t kingLocation = bitscanForward(kingBB);
+            bool result;
 
             if (color == PieceColor::WHITE) {
-                return isSquareAttackedByColor<PieceColor::BLACK>(kingLocation);
+                result = isSquareAttackedByColor<PieceColor::BLACK>(kingLocation);
+                kingInCheck &= ~WHITE_KING_CHECK_RESET_BIT;
+                kingInCheck |= result ? WHITE_KING_CHECK_BIT : 0;
             } else {
-                return isSquareAttackedByColor<PieceColor::WHITE>(kingLocation);
+                result = isSquareAttackedByColor<PieceColor::WHITE>(kingLocation);
+                kingInCheck &= ~BLACK_KING_CHECK_RESET_BIT;
+                kingInCheck |= result ? BLACK_KING_CHECK_BIT : 0;
             }
+
+            return result;
         }
 
         int8_t getEnPassantSquare() const;

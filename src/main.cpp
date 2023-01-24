@@ -92,8 +92,7 @@ int main(int argc , char *argv[]) {
     senjo::Output(senjo::Output::NoPrefix) << "This is free software, and you are welcome to redistribute it";
     senjo::Output(senjo::Output::NoPrefix) << "under the terms of the GNU General Public License as published by";
     senjo::Output(senjo::Output::NoPrefix) << "the Free Software Foundation, either version 3 of the License, or";
-    senjo::Output(senjo::Output::NoPrefix)
-            << "(at your option) any later version; See the LICENSE file for full details";
+    senjo::Output(senjo::Output::NoPrefix) << "(at your option) any later version; See the LICENSE file for full details";
     senjo::Output(senjo::Output::NoPrefix) << "";
 
     senjo::Output(senjo::Output::NoPrefix) << " ______ ";

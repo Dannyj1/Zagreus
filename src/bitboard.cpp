@@ -151,6 +151,7 @@ namespace Zagreus {
         undoStack[ply].castlingRights = castlingRights;
         undoStack[ply].moveType = MoveType::REGULAR;
         undoStack[ply].zobristHash = zobristHash;
+        undoStack[ply].kingInCheck = kingInCheck;
         halfMoveClock += 1;
 
         if (capturedPiece != PieceType::EMPTY) {
@@ -272,6 +273,7 @@ namespace Zagreus {
             fullmoveClock += 1;
         }
 
+        kingInCheck = 0b00001100;
         movingColor = getOppositeColor(movingColor);
         zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
         ply += 1;
@@ -326,6 +328,7 @@ namespace Zagreus {
         castlingRights = undoData.castlingRights;
         movingColor = getOppositeColor(movingColor);
         zobristHash = undoData.zobristHash;
+        kingInCheck = undoData.kingInCheck;
 
         if (movingColor == PieceColor::BLACK) {
             fullmoveClock -= 1;
