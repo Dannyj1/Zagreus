@@ -152,6 +152,7 @@ namespace Zagreus {
         undoStack[ply].moveType = MoveType::REGULAR;
         undoStack[ply].zobristHash = zobristHash;
         undoStack[ply].kingInCheck = kingInCheck;
+        undoStack[ply].previousMove = previousMove;
         halfMoveClock += 1;
 
         if (capturedPiece != PieceType::EMPTY) {
@@ -278,6 +279,7 @@ namespace Zagreus {
         zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
         ply += 1;
         moveHistory[ply] = getZobristHash();
+        previousMove = move;
     }
 
     void Bitboard::unmakeMove(Move &move) {
@@ -329,10 +331,15 @@ namespace Zagreus {
         movingColor = getOppositeColor(movingColor);
         zobristHash = undoData.zobristHash;
         kingInCheck = undoData.kingInCheck;
+        previousMove = undoData.previousMove;
 
         if (movingColor == PieceColor::BLACK) {
             fullmoveClock -= 1;
         }
+    }
+
+    const Move &Bitboard::getPreviousMove() const {
+        return previousMove;
     }
 
     uint64_t Bitboard::getZobristForMove(Move &move) {

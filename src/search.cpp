@@ -212,6 +212,7 @@ namespace Zagreus {
                         TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
+                        TranspositionTable::getTT()->counterMoves[previousMove.from][previousMove.to] = encodeMove(move);
                         TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
                     }
 
@@ -278,6 +279,7 @@ namespace Zagreus {
                         TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
+                        TranspositionTable::getTT()->counterMoves[previousMove.from][previousMove.to] = encodeMove(move);
                         TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
                     }
 

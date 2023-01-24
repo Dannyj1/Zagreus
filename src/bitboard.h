@@ -56,6 +56,8 @@ namespace Zagreus {
         UndoData undoStack[MAX_PLY]{};
         uint64_t moveHistory[MAX_PLY]{};
         Line previousPvLine{};
+
+        Move previousMove{};
     public:
         uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
 
@@ -354,6 +356,8 @@ namespace Zagreus {
         }
 
         uint64_t getTilesBetween(int8_t from, int8_t to);
+
+        const Move &getPreviousMove() const;
     };
 }
 

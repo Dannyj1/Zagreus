@@ -47,24 +47,23 @@ namespace Zagreus {
             return 10000 + move.captureScore;
         }
 
-        uint32_t aMoveCode = encodeMove(move);
-        if (tt->killerMoves[0][bitboard.getPly()] == aMoveCode) {
+        uint32_t moveCode = encodeMove(move);
+        if (tt->killerMoves[0][bitboard.getPly()] == moveCode) {
             return 5000;
         }
 
-        if (tt->killerMoves[1][bitboard.getPly()] == aMoveCode) {
+        if (tt->killerMoves[1][bitboard.getPly()] == moveCode) {
             return 4000;
         }
 
-        if (tt->killerMoves[1][bitboard.getPly()] == aMoveCode) {
+        if (tt->killerMoves[1][bitboard.getPly()] == moveCode) {
             return 3000;
         }
 
-        /*
-        if (tt->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] ==
-            aMoveCode) {
+        Move previousMove = bitboard.getPreviousMove();
+        if (tt->counterMoves[previousMove.from][previousMove.to] == moveCode) {
             return 2000;
-        }*/
+        }
 
         if (move.captureScore < -1) {
             return move.captureScore - 5000;
