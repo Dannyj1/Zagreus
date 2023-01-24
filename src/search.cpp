@@ -42,6 +42,8 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
         int depth = 0;
 
+        TranspositionTable::getTT()->ageHistoryTable();
+
         Line iterationPvLine = {};
         while (!engine.stopRequested() && std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
             depth += 1;
@@ -210,6 +212,7 @@ namespace Zagreus {
                         TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
+                        TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
                     }
 
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
@@ -275,6 +278,7 @@ namespace Zagreus {
                         TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
+                        TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
                     }
 
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
