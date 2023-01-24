@@ -846,7 +846,7 @@ namespace Zagreus {
             }
         }
 
-        Move move = {fromSquare, toSquare, getPieceOnSquare(fromSquare), promotionPiece};
+        Move move = {fromSquare, toSquare, getPieceOnSquare(fromSquare), -1, promotionPiece};
         makeMove(move);
         return true;
     }

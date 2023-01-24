@@ -290,7 +290,7 @@ namespace Zagreus {
 
             assert(movingPiece != PieceType::EMPTY);
             assert(capturedPieceType != PieceType::EMPTY);
-            Move move{fromSquare, toSquare, movingPiece, PieceType::EMPTY};
+            Move move{fromSquare, toSquare, movingPiece};
             makeMove(move);
 
             if (attackingColor == PieceColor::WHITE) {
@@ -338,7 +338,7 @@ namespace Zagreus {
 
                 assert(movingPiece != PieceType::EMPTY);
                 assert(capturedPieceType != PieceType::EMPTY);
-                Move move{smallestAttackerSquare, square, movingPiece, PieceType::EMPTY};
+                Move move{smallestAttackerSquare, square, movingPiece};
                 makeMove(move);
 
                 if (attackingColor == PieceColor::WHITE) {
