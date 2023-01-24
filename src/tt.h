@@ -50,7 +50,7 @@ namespace Zagreus {
 
         TranspositionTable() {
             for (int i = 0; i < 3; i++) {
-                killerMoves[i] = new uint32_t[128]{};
+                killerMoves[i] = new uint32_t[MAX_PLY]{};
             }
 
             for (int i = 0; i < 12; i++) {

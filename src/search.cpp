@@ -206,6 +206,12 @@ namespace Zagreus {
 
             if (score > alpha) {
                 if (score >= beta) {
+                    if (move.captureScore == NO_CAPTURE_SCORE) {
+                        TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
+                        TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
+                        TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
+                    }
+
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
                     return score;
                 }
@@ -265,6 +271,12 @@ namespace Zagreus {
 
             if (score > alpha) {
                 if (score >= beta) {
+                    if (move.captureScore == NO_CAPTURE_SCORE) {
+                        TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
+                        TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
+                        TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
+                    }
+
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
                     return beta;
                 }
@@ -328,8 +340,7 @@ namespace Zagreus {
                 return beta;
             }
 
-            // -1 means it's not a capture
-            if (move.captureScore <= -1) {
+            if (move.captureScore <= NO_CAPTURE_SCORE) {
                 continue;
             }
 

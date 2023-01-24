@@ -47,18 +47,23 @@ namespace Zagreus {
             return 10000 + move.captureScore;
         }
 
-        /*uint32_t aMoveCode = encodeMove(move);
-        if (tt->killerMoves[0][move.ply] == aMoveCode) {
+        uint32_t aMoveCode = encodeMove(move);
+        if (tt->killerMoves[0][bitboard.getPly()] == aMoveCode) {
             return 5000;
         }
 
-        if (tt->killerMoves[1][move.ply] == aMoveCode) {
+        if (tt->killerMoves[1][bitboard.getPly()] == aMoveCode) {
             return 4000;
         }
 
+        if (tt->killerMoves[1][bitboard.getPly()] == aMoveCode) {
+            return 3000;
+        }
+
+        /*
         if (tt->counterMoves[bitboard.getPreviousMoveFrom()][bitboard.getPreviousMoveTo()] ==
             aMoveCode) {
-            return 3000;
+            return 2000;
         }*/
 
         if (move.captureScore < -1) {
@@ -151,7 +156,7 @@ namespace Zagreus {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
-                int captureScore = -1;
+                int captureScore = NO_CAPTURE_SCORE;
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
@@ -214,7 +219,7 @@ namespace Zagreus {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
-                int captureScore = -1;
+                int captureScore = NO_CAPTURE_SCORE;
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
@@ -263,7 +268,7 @@ namespace Zagreus {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
-                int captureScore = -1;
+                int captureScore = NO_CAPTURE_SCORE;
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
@@ -312,7 +317,7 @@ namespace Zagreus {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
-                int captureScore = -1;
+                int captureScore = NO_CAPTURE_SCORE;
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
@@ -361,7 +366,7 @@ namespace Zagreus {
                 int8_t genIndex = bitscanForward(genBB);
                 genBB = _blsr_u64(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
-                int captureScore = -1;
+                int captureScore = NO_CAPTURE_SCORE;
 
                 if (color == PieceColor::WHITE) {
                     if (capturedPiece != PieceType::EMPTY) {
@@ -411,7 +416,7 @@ namespace Zagreus {
             int8_t genIndex = bitscanForward(genBB);
             genBB = _blsr_u64(genBB);
             PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
-            int captureScore = -1;
+            int captureScore = NO_CAPTURE_SCORE;
 
             if (color == PieceColor::WHITE) {
                 if (capturedPiece != PieceType::EMPTY) {

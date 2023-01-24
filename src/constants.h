@@ -57,6 +57,8 @@ static constexpr uint64_t WHITE_QUEEN_SIDE_BETWEEN = 0xEULL;
 static constexpr uint64_t BLACK_KING_SIDE_BETWEEN = 0x6000000000000000ULL;
 static constexpr uint64_t BLACK_QUEEN_SIDE_BETWEEN = 0xE00000000000000ULL;
 
+static constexpr int NO_CAPTURE_SCORE = -1;
+
 static constexpr int MVVLVA_TABLE[12][12] = {
         {105, 205, 305, 405, 505, 605,  105, 205, 305, 405, 505, 605},
         {104, 204, 304, 404, 504, 604,  104, 204, 304, 404, 504, 604},
