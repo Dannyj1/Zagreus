@@ -59,7 +59,7 @@ namespace Zagreus {
         int8_t from = 0;
         int8_t to = 0;
         PieceType piece = PieceType::EMPTY;
-        int captureScore = -1;
+        int captureScore = NO_CAPTURE_SCORE;
         PieceType promotionPiece = PieceType::EMPTY;
         int score = 0;
     };
@@ -78,6 +78,7 @@ namespace Zagreus {
         MoveType moveType = MoveType::REGULAR;
         uint64_t zobristHash = 0ULL;
         uint8_t kingInCheck = 0b00001100;
+        Move previousMove{};
     };
 
     struct MoveList {
@@ -93,14 +94,14 @@ namespace Zagreus {
     };
 
     enum Direction {
-        NORTH = 8,
-        SOUTH = -8,
-        EAST = 1,
-        WEST = -1,
-        NORTH_EAST = 9,
-        NORTH_WEST = 7,
-        SOUTH_EAST = -7,
-        SOUTH_WEST = -9
+        NORTH,
+        SOUTH,
+        EAST,
+        WEST,
+        NORTH_EAST,
+        NORTH_WEST,
+        SOUTH_EAST,
+        SOUTH_WEST
     };
 
     struct Line {

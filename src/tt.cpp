@@ -87,4 +87,12 @@ namespace Zagreus {
     TranspositionTable* TranspositionTable::TranspositionTable::getTT() {
         return instance;
     }
+
+    void TranspositionTable::ageHistoryTable() {
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 64; j++) {
+                historyMoves[i][j] /= 8;
+            }
+        }
+    }
 }
