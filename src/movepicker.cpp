@@ -53,4 +53,12 @@ namespace Zagreus {
     int MovePicker::size() {
         return moveList.size;
     }
+
+    int MovePicker::remaining() {
+        return moveList.size - searchStartIndex;
+    }
+
+    int MovePicker::movesSearched() {
+        return searchStartIndex;
+    }
 }
