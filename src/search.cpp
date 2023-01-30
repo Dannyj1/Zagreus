@@ -749,8 +749,6 @@ namespace Zagreus {
                 score += 15;
             }
 
-            rookBB &= ~(1ULL << index);
-
             if (index >= Square::A7)  {
                 score += 10;
             }
@@ -760,9 +758,11 @@ namespace Zagreus {
             if (enemyQueenOnFile) {
                 score += 5;
             }
+
+            rookBB &= ~(1ULL << index);
         }
 
-        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * 4) * rookAmount;
+        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * 5) * rookAmount;
 
         evalContext.whiteMidgameScore += score;
         evalContext.whiteEndgameScore += score;
@@ -779,7 +779,7 @@ namespace Zagreus {
             if (bitboard.isOpenFile(index)) {
                 score += 20;
             } else if (bitboard.isSemiOpenFile<PieceColor::BLACK>(index)) {
-                score += 10;
+                score += 15;
             }
 
             if (index <= Square::H2)  {
@@ -795,7 +795,7 @@ namespace Zagreus {
             rookBB &= ~(1ULL << index);
         }
 
-        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * 4) * rookAmount;
+        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * 5) * rookAmount;
 
         evalContext.blackMidgameScore += score;
         evalContext.blackEndgameScore += score;

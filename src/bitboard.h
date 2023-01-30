@@ -285,8 +285,7 @@ namespace Zagreus {
 
         template<PieceColor color>
         bool isSemiOpenFile(int8_t square) {
-            uint64_t fileMask =
-                    rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
+            uint64_t fileMask = getFile(square);
             if (color == PieceColor::WHITE) {
                 uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
                 uint64_t opponentOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
@@ -303,8 +302,7 @@ namespace Zagreus {
         // Also returns true when it is an open file
         template<PieceColor color>
         bool isSemiOpenFileLenient(int8_t square) {
-            uint64_t fileMask =
-                    rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
+            uint64_t fileMask = getFile(square);
 
             if (color == PieceColor::WHITE) {
                 uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();

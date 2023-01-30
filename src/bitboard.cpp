@@ -869,7 +869,7 @@ namespace Zagreus {
     }
 
     uint64_t Bitboard::getFile(int8_t square) {
-        return rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square];
+        return rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
     }
 
     bool Bitboard::makeStrMove(const std::string &strMove) {
@@ -914,8 +914,7 @@ namespace Zagreus {
     }
 
     bool Bitboard::isOpenFile(int8_t square) {
-        uint64_t fileMask =
-                rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
+        uint64_t fileMask = getFile(square);
         uint64_t occupied = getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::BLACK_PAWN>();
 
         return fileMask == (fileMask & occupied);
