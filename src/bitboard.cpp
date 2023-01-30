@@ -868,6 +868,10 @@ namespace Zagreus {
         Bitboard::enPassantSquare = enPassantSquare;
     }
 
+    uint64_t Bitboard::getFile(int8_t square) {
+        return rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square];
+    }
+
     bool Bitboard::makeStrMove(const std::string &strMove) {
         int8_t fromSquare = getSquareFromString(strMove.substr(0, 2));
         int8_t toSquare = getSquareFromString(strMove.substr(2, 2));

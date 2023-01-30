@@ -395,6 +395,8 @@ namespace Zagreus {
         uint64_t getTilesBetween(int8_t from, int8_t to);
 
         const Move &getPreviousMove() const;
+
+        uint64_t getFile(int8_t square);
     };
 }
 
