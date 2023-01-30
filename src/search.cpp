@@ -752,7 +752,7 @@ namespace Zagreus {
             rookBB &= ~(1ULL << index);
         }
 
-        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * 4) * rookAmount;
+//        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * 4) * rookAmount;
 
         evalContext.whiteMidgameScore += score;
         evalContext.whiteEndgameScore += score;
@@ -775,7 +775,7 @@ namespace Zagreus {
             rookBB &= ~(1ULL << index);
         }
 
-        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * 4) * rookAmount;
+//        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * 4) * rookAmount;
 
         evalContext.blackMidgameScore += score;
         evalContext.blackEndgameScore += score;
