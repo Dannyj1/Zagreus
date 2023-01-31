@@ -449,6 +449,9 @@ namespace Zagreus {
         getWhiteConnectivityScore(evalContext, board);
         getBlackConnectivityScore(evalContext, board);
 
+        getWhiteRookScore(evalContext, board);
+        getBlackRookScore(evalContext, board);
+
         int whiteScore = ((evalContext.whiteMidgameScore * (256 - evalContext.phase)) + (evalContext.whiteEndgameScore * evalContext.phase)) / 256;
         int blackScore = ((evalContext.blackMidgameScore * (256 - evalContext.phase)) + (evalContext.blackEndgameScore * evalContext.phase)) / 256;
 
@@ -730,6 +733,72 @@ namespace Zagreus {
             evalContext.blackEndgameScore += 11 - (weight / 100);
             protectedPieces &= ~(1ULL << index);
         }
+    }
+
+    void getWhiteRookScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t rookBB = bitboard.getPieceBoard<PieceType::WHITE_ROOK>();
+        int rookAmount = popcnt(rookBB);
+        int score = 0;
+
+        while (rookBB) {
+            int8_t index = bitscanForward(rookBB);
+
+            if (bitboard.isOpenFile(index)) {
+                score += 20;
+            } else if (bitboard.isSemiOpenFile<PieceColor::WHITE>(index)) {
+                score += 15;
+            }
+
+            if (index >= Square::A7)  {
+                score += 10;
+            }
+
+            uint64_t enemyQueenOnFile = bitboard.getPieceBoard<PieceType::BLACK_QUEEN>() & bitboard.getFile(index);
+
+            if (enemyQueenOnFile) {
+                score += 5;
+            }
+
+            rookBB &= ~(1ULL << index);
+        }
+
+        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * 5) * rookAmount;
+
+        evalContext.whiteMidgameScore += score;
+        evalContext.whiteEndgameScore += score;
+    }
+
+    void getBlackRookScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t rookBB = bitboard.getPieceBoard<PieceType::BLACK_ROOK>();
+        int rookAmount = popcnt(rookBB);
+        int score = 0;
+
+        while (rookBB) {
+            uint64_t index = bitscanForward(rookBB);
+
+            if (bitboard.isOpenFile(index)) {
+                score += 20;
+            } else if (bitboard.isSemiOpenFile<PieceColor::BLACK>(index)) {
+                score += 15;
+            }
+
+            if (index <= Square::H2)  {
+                score += 10;
+            }
+
+            uint64_t enemyQueenOnFile = bitboard.getPieceBoard<PieceType::WHITE_QUEEN>() & bitboard.getFile(index);
+
+            if (enemyQueenOnFile) {
+                score += 5;
+            }
+
+            rookBB &= ~(1ULL << index);
+        }
+
+        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * 5) * rookAmount;
+
+        evalContext.blackMidgameScore += score;
+        evalContext.blackEndgameScore += score;
     }
 
     int knightPhase = 1;
