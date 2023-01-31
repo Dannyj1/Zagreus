@@ -619,29 +619,43 @@ namespace Zagreus {
         evalContext.whiteMidgameScore += std::min(60, (int) (popcnt(pawnShield) * 20));
         evalContext.whiteEndgameScore += 0;
 
-       /* if (bitboard.isSemiOpenFileLenient(kingLocation, PieceColor::WHITE)) {
+        if (bitboard.isSemiOpenFileLenient<PieceColor::WHITE>(kingLocation)) {
             evalContext.whiteMidgameScore -= 50;
             evalContext.whiteEndgameScore -= 0;
+        }
+
+        if (kingLocation % 8 != 0) {
+            if (bitboard.isSemiOpenFileLenient<PieceColor::WHITE>(kingLocation - 1)) {
+                evalContext.whiteMidgameScore -= 20;
+                evalContext.whiteEndgameScore -= 0;
+            }
+        }
+
+        if (kingLocation % 8 != 7) {
+            if (bitboard.isSemiOpenFileLenient<PieceColor::WHITE>(kingLocation + 1)) {
+                evalContext.whiteMidgameScore -= 20;
+                evalContext.whiteEndgameScore -= 0;
+            }
         }
 
         uint8_t castlingRights = bitboard.getCastlingRights();
 
         if (!(castlingRights & CastlingRights::WHITE_QUEENSIDE) && !(castlingRights & CastlingRights::WHITE_KINGSIDE)) {
-            if (!bitboard.isHasWhiteCastled()) {
-                evalContext.whiteMidgameScore -= 40;
+            if (!(bitboard.getCastlingRights() & CastlingRights::HAS_WHITE_CASTLED)) {
+                evalContext.whiteMidgameScore -= 20;
                 evalContext.whiteEndgameScore -= 0;
             }
         } else {
             if ((castlingRights & CastlingRights::WHITE_QUEENSIDE) && (evalContext.blackCombinedAttacks & whiteQueenCastlingAttackPattern)) {
-                evalContext.whiteMidgameScore -= 15;
+                evalContext.whiteMidgameScore -= 5;
                 evalContext.whiteEndgameScore -= 0;
             }
 
             if ((castlingRights & CastlingRights::WHITE_KINGSIDE) && (evalContext.blackCombinedAttacks & whiteKingCastlingAttackPattern)) {
-                evalContext.whiteMidgameScore -= 20;
+                evalContext.whiteMidgameScore -= 10;
                 evalContext.whiteEndgameScore -= 0;
             }
-        }*/
+        }
 
         evalContext.whiteMidgameScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_PAWN) / 100);
         evalContext.whiteEndgameScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_PAWN) / 100);
@@ -668,28 +682,43 @@ namespace Zagreus {
         evalContext.blackMidgameScore += std::min(60, (int) (popcnt(pawnShield) * 20));
         evalContext.blackEndgameScore += 0;
 
-       /* if (bitboard.isSemiOpenFileLenient(kingLocation, PieceColor::BLACK)) {
+        if (bitboard.isSemiOpenFileLenient<PieceColor::BLACK>(kingLocation)) {
             evalContext.blackMidgameScore -= 50;
             evalContext.blackEndgameScore -= 0;
         }
 
+        if (kingLocation % 8 != 0) {
+            if (bitboard.isSemiOpenFileLenient<PieceColor::BLACK>(kingLocation - 1)) {
+                evalContext.blackMidgameScore -= 20;
+                evalContext.blackEndgameScore -= 0;
+            }
+        }
+
+        if (kingLocation % 8 != 7) {
+            if (bitboard.isSemiOpenFileLenient<PieceColor::BLACK>(kingLocation + 1)) {
+                evalContext.blackMidgameScore -= 20;
+                evalContext.blackEndgameScore -= 0;
+            }
+        }
+
+
         uint8_t castlingRights = bitboard.getCastlingRights();
         if (!(castlingRights & CastlingRights::BLACK_QUEENSIDE) && !(castlingRights & CastlingRights::BLACK_KINGSIDE)) {
-            if (!bitboard.isHasBlackCastled()) {
-                evalContext.blackMidgameScore -= 40;
+            if (!(bitboard.getCastlingRights() & CastlingRights::HAS_BLACK_CASTLED)) {
+                evalContext.blackMidgameScore -= 20;
                 evalContext.blackEndgameScore -= 0;
             }
         } else {
             if ((castlingRights & CastlingRights::BLACK_QUEENSIDE) && (evalContext.whiteCombinedAttacks & blackQueenCastlingAttackPattern)) {
-                evalContext.blackMidgameScore -= 15;
+                evalContext.blackMidgameScore -= 5;
                 evalContext.blackEndgameScore -= 0;
             }
 
             if ((castlingRights & CastlingRights::BLACK_KINGSIDE) && (evalContext.whiteCombinedAttacks & blackKingCastlingAttackPattern)) {
-                evalContext.blackMidgameScore -= 20;
+                evalContext.blackMidgameScore -= 10;
                 evalContext.blackEndgameScore -= 0;
             }
-        }*/
+        }
 
         evalContext.blackMidgameScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_PAWN) / 100);
         evalContext.blackEndgameScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_PAWN) / 100);

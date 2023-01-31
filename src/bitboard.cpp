@@ -232,15 +232,19 @@ namespace Zagreus {
                 if (move.to == Square::G1) {
                     removePiece(Square::H1, PieceType::WHITE_ROOK);
                     setPiece(Square::F1, PieceType::WHITE_ROOK);
+                    castlingRights |= HAS_WHITE_CASTLED;
                 } else if (move.to == Square::C1) {
                     removePiece(Square::A1, PieceType::WHITE_ROOK);
                     setPiece(Square::D1, PieceType::WHITE_ROOK);
+                    castlingRights |= HAS_WHITE_CASTLED;
                 } else if (move.to == Square::G8) {
                     removePiece(Square::H8, PieceType::BLACK_ROOK);
                     setPiece(Square::F8, PieceType::BLACK_ROOK);
+                    castlingRights |= HAS_BLACK_CASTLED;
                 } else if (move.to == Square::C8) {
                     removePiece(Square::A8, PieceType::BLACK_ROOK);
                     setPiece(Square::D8, PieceType::BLACK_ROOK);
+                    castlingRights |= HAS_BLACK_CASTLED;
                 }
 
                 undoStack[ply].moveType = MoveType::CASTLING;
