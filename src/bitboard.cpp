@@ -57,6 +57,41 @@ namespace Zagreus {
         }
 
         initializeBetweenLookup();
+        initializeRayAttacks();
+    }
+
+    void Bitboard::initializeRayAttacks() {
+        uint64_t sqBB = 1ULL;
+        for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+            for (int direction = 0; direction < 8; direction++) {
+                switch (static_cast<Direction>(direction)) {
+                    case NORTH:
+                        rayAttacks[direction][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case SOUTH:
+                        rayAttacks[direction][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case EAST:
+                        rayAttacks[direction][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case WEST:
+                        rayAttacks[direction][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case NORTH_EAST:
+                        rayAttacks[direction][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case NORTH_WEST:
+                        rayAttacks[direction][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case SOUTH_EAST:
+                        rayAttacks[direction][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                    case SOUTH_WEST:
+                        rayAttacks[direction][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
+                        break;
+                }
+            }
+        }
     }
 
     uint64_t Bitboard::getOccupiedBoard() {
@@ -833,6 +868,10 @@ namespace Zagreus {
         Bitboard::enPassantSquare = enPassantSquare;
     }
 
+    uint64_t Bitboard::getFile(int8_t square) {
+        return rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
+    }
+
     bool Bitboard::makeStrMove(const std::string &strMove) {
         int8_t fromSquare = getSquareFromString(strMove.substr(0, 2));
         int8_t toSquare = getSquareFromString(strMove.substr(2, 2));
@@ -872,5 +911,12 @@ namespace Zagreus {
 
     void Bitboard::setPly(uint8_t ply) {
         Bitboard::ply = ply;
+    }
+
+    bool Bitboard::isOpenFile(int8_t square) {
+        uint64_t fileMask = getFile(square);
+        uint64_t occupied = getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::BLACK_PAWN>();
+
+        return fileMask == (fileMask & occupied);
     }
 }
