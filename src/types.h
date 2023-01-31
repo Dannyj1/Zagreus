@@ -90,7 +90,9 @@ namespace Zagreus {
         WHITE_KINGSIDE = 1 << 0,
         WHITE_QUEENSIDE = 1 << 1,
         BLACK_KINGSIDE = 1 << 2,
-        BLACK_QUEENSIDE = 1 << 3
+        BLACK_QUEENSIDE = 1 << 3,
+        HAS_WHITE_CASTLED = 1 << 4,
+        HAS_BLACK_CASTLED = 1 << 5
     };
 
     enum Direction {
