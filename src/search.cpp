@@ -452,6 +452,9 @@ namespace Zagreus {
         getWhiteRookScore(evalContext, board);
         getBlackRookScore(evalContext, board);
 
+        getWhiteBishopScore(evalContext, board);
+        getBlackBishopScore(evalContext, board);
+
         int whiteScore = ((evalContext.whiteMidgameScore * (256 - evalContext.phase)) + (evalContext.whiteEndgameScore * evalContext.phase)) / 256;
         int blackScore = ((evalContext.blackMidgameScore * (256 - evalContext.phase)) + (evalContext.blackEndgameScore * evalContext.phase)) / 256;
 
@@ -828,6 +831,82 @@ namespace Zagreus {
 
         evalContext.blackMidgameScore += score;
         evalContext.blackEndgameScore += score;
+    }
+
+    void getWhiteBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t bishopBB = bitboard.getPieceBoard<PieceType::WHITE_BISHOP>();
+        uint64_t blackBishopBB = bitboard.getPieceBoard<PieceType::BLACK_BISHOP>();
+        bool isOwnBishopLightSquare = (bishopBB & LIGHT_SQUARES) != 0;
+        bool isBlackBishopLightSquare = (blackBishopBB & LIGHT_SQUARES) != 0;
+        int bishopAmount = popcnt(bishopBB);
+        uint64_t pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
+
+        if (bishopAmount == 1) {
+            evalContext.whiteMidgameScore -= 25;
+            evalContext.whiteEndgameScore -= 25;
+        }
+
+        if (isOwnBishopLightSquare && !isBlackBishopLightSquare) {
+            evalContext.whiteMidgameScore += 10;
+            evalContext.whiteEndgameScore += 10;
+        } else if (!isOwnBishopLightSquare && isBlackBishopLightSquare) {
+            evalContext.whiteMidgameScore += 10;
+            evalContext.whiteEndgameScore += 10;
+        }
+
+        while (bishopBB) {
+            uint64_t index = bitscanForward(bishopBB);
+
+            if (index == Square::G2 || index == Square::B2) {
+                uint64_t fianchettoPattern = nortOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
+                uint64_t antiPattern = noWeOne(1ULL << index) | noEaOne(1ULL << index);
+
+                if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
+                    evalContext.whiteMidgameScore += 10;
+                    evalContext.whiteEndgameScore += 0;
+                }
+            }
+
+            bishopBB &= ~(1ULL << index);
+        }
+    }
+
+    void getBlackBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
+        uint64_t bishopBB = bitboard.getPieceBoard<PieceType::BLACK_BISHOP>();
+        uint64_t whiteBishopBB = bitboard.getPieceBoard<PieceType::WHITE_BISHOP>();
+        bool isOwnBishopLightSquare = (bishopBB & LIGHT_SQUARES) != 0;
+        bool isWhiteBishopLightSquare = (whiteBishopBB & LIGHT_SQUARES) != 0;
+        int bishopAmount = popcnt(bishopBB);
+        uint64_t pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
+
+        if (bishopAmount == 1) {
+            evalContext.blackMidgameScore -= 25;
+            evalContext.blackEndgameScore -= 25;
+        }
+
+        if (isOwnBishopLightSquare && !isWhiteBishopLightSquare) {
+            evalContext.blackMidgameScore += 10;
+            evalContext.blackEndgameScore += 10;
+        } else if (!isOwnBishopLightSquare && isWhiteBishopLightSquare) {
+            evalContext.blackMidgameScore += 10;
+            evalContext.blackEndgameScore += 10;
+        }
+
+        while (bishopBB) {
+            uint64_t index = bitscanForward(bishopBB);
+
+            if (index == Square::G7 || index == Square::B7) {
+                uint64_t fianchettoPattern = soutOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
+                uint64_t antiPattern = soWeOne(1ULL << index) | soEaOne(1ULL << index);
+
+                if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
+                    evalContext.blackMidgameScore += 10;
+                    evalContext.blackEndgameScore += 0;
+                }
+            }
+
+            bishopBB &= ~(1ULL << index);
+        }
     }
 
     int knightPhase = 1;
