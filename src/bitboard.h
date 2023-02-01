@@ -395,6 +395,49 @@ namespace Zagreus {
         const Move &getPreviousMove() const;
 
         uint64_t getFile(int8_t square);
+
+        template<PieceColor color>
+        uint64_t getPawnsOnSameFile(int8_t square) {
+            return pieceBB[PieceType::WHITE_PAWN + color] & getFile(square);
+        }
+
+        template<PieceColor color>
+        bool isIsolatedPawn(int8_t square) {
+            uint64_t neighborMask = 0;
+
+            if (square % 8 != 0) {
+                neighborMask |= getFile(square - 1);
+            }
+
+            if (square % 8 != 7) {
+                neighborMask |= getFile(square + 1);
+            }
+
+            if (color == PieceColor::WHITE) {
+                return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());
+            } else {
+                return !(neighborMask & getPieceBoard<PieceType::BLACK_PAWN>());
+            }
+        }
+
+        template<PieceColor color>
+        bool isPassedPawn(int8_t square) {
+            uint64_t neighborMask = getFile(square);
+
+            if (square % 8 != 0) {
+                neighborMask |= getFile(square - 1);
+            }
+
+            if (square % 8 != 7) {
+                neighborMask |= getFile(square + 1);
+            }
+
+            if (color == PieceColor::WHITE) {
+                return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());
+            } else {
+                return !(neighborMask & getPieceBoard<PieceType::BLACK_PAWN>());
+            }
+        }
     };
 }
 
