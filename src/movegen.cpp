@@ -34,7 +34,7 @@ namespace Zagreus {
             }
         }
 
-        uint64_t zobristHash = bitboard.getZobristHash();
+        uint64_t zobristHash = bitboard.getZobristForMove(move);
         TTEntry entry = tt->getEntry(zobristHash);
 
         if (entry.zobristHash == zobristHash) {
