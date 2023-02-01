@@ -25,11 +25,11 @@
 #include "tt.h"
 
 namespace Zagreus {
-    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, TranspositionTable* tt) {
+    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
             Move &pvMove = previousPv.moves[i];
 
-            if (move.from == pvMove.from && move.to == pvMove.to && move.piece == pvMove.piece) {
+            if (moveCode == encodeMove(pvMove)) {
                 return 50000 - i;
             }
         }
@@ -45,7 +45,6 @@ namespace Zagreus {
             return 10000 + move.captureScore;
         }
 
-        uint32_t moveCode = encodeMove(move);
         if (tt->killerMoves[0][bitboard.getPly()] == moveCode) {
             return 5000;
         }
@@ -88,7 +87,7 @@ namespace Zagreus {
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, tt);
+            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), tt);
         }
 
         return moveList;
@@ -112,7 +111,7 @@ namespace Zagreus {
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, tt);
+            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), tt);
         }
 
         return moveList;
