@@ -909,6 +909,64 @@ namespace Zagreus {
         }
     }
 
+    template<PieceColor color>
+    void getPawnScore(EvalContext &evalContext, Bitboard &bitboard) {
+        int score = 0;
+
+        for (int i = 0; i < 8; i++) {
+            uint64_t pawnsOnFile = bitboard.getPawnsOnSameFile<color>(i);
+            bool isPassed = bitboard.isPassedPawn<color>(i);
+            bool isIsolated = bitboard.isIsolatedPawn<color>(i);
+            bool isSemiOpen = bitboard.isSemiOpenFile<color>(i);
+            int amountOfPawns = popcnt(pawnsOnFile);
+
+            score -= 10 * (amountOfPawns - 1);
+
+            if (isPassed) {
+                score += 10;
+            } else if (isIsolated) {
+                if (isSemiOpen) {
+                    score -= 20;
+                } else {
+                    score -= 10;
+                }
+            } else if (isSemiOpen) {
+                score += 3;
+            }
+        }
+
+        uint64_t pawnBB;
+
+        if (color == PieceColor::WHITE) {
+            pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
+        } else {
+            pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
+        }
+
+        while (pawnBB) {
+            int index = bitscanForward(pawnBB);
+            int fileNumber = index % 8;
+            int promotionSquare = (color == PieceColor::WHITE) ? 56 + fileNumber : fileNumber;
+            uint64_t tilesBetween = bitboard.getTilesBetween(index, promotionSquare);
+
+            if (color == PieceColor::WHITE) {
+                evalContext.whiteEndgameScore -= popcnt(tilesBetween) * 10;
+            } else {
+                evalContext.blackEndgameScore -= popcnt(tilesBetween) * 10;
+            }
+
+            pawnBB &= ~(1ULL << index);
+        }
+
+        if (color == PieceColor::WHITE) {
+            evalContext.whiteMidgameScore += score;
+            evalContext.whiteEndgameScore += score;
+        } else {
+            evalContext.blackMidgameScore += score;
+            evalContext.blackEndgameScore += score;
+        }
+    }
+
     int knightPhase = 1;
     int bishopPhase = 1;
     int rookPhase = 2;
