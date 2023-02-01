@@ -25,9 +25,9 @@
 #include "tt.h"
 
 namespace Zagreus {
-    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, TranspositionTable* tt) {
-        for (int i = 0; i < previousPv.moveCount; i++) {
-            Move &pvMove = previousPv.moves[i];
+    int scoreMove(Bitboard &bitboard, Move &move, uint64_t moveCode, TranspositionTable* tt, Line &pvLine) {
+        for (int i = 0; i < pvLine.moveCount; i++) {
+            Move &pvMove = pvLine.moves[i];
 
             if (moveCode == encodeMove(pvMove)) {
                 return 50000 - i;
@@ -37,8 +37,8 @@ namespace Zagreus {
         uint64_t zobristHash = bitboard.getZobristForMove(move);
         TTEntry entry = tt->getEntry(zobristHash);
 
-        if (entry.zobristHash == zobristHash) {
-            return 25000 + entry.score;
+        if (entry.zobristHash == zobristHash && entry.nodeType == NodeType::PV_NODE) {
+            return 25000 + std::abs(entry.score);
         }
 
         if (move.captureScore >= 0) {
@@ -83,11 +83,11 @@ namespace Zagreus {
 
         assert(moveList.size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
-        Line previousPv = bitboard.getPreviousPvLine();
+        Line pvLine = bitboard.getPreviousPvLine();
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), tt);
+            move.score = scoreMove(bitboard, move, encodeMove(move), tt, pvLine);
         }
 
         return moveList;
@@ -105,13 +105,12 @@ namespace Zagreus {
         generateKingMoves<color>(bitboard, moveList, true);
 
         assert(moveList.size <= MAX_MOVES);
-
         TranspositionTable* tt = TranspositionTable::getTT();
-        Line previousPv = bitboard.getPreviousPvLine();
+        Line pvLine = bitboard.getPreviousPvLine();
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), tt);
+            move.score = scoreMove(bitboard, move, encodeMove(move), tt, pvLine);
         }
 
         return moveList;
