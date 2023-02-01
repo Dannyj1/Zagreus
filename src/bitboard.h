@@ -271,7 +271,7 @@ namespace Zagreus {
 
         bool makeStrMove(const std::string &strMove);
 
-        const Line &getPreviousPvLine() const;
+        Line getPreviousPvLine();
 
         void setPreviousPvLine(const Line &previousPvLine);
 
