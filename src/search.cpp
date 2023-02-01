@@ -455,6 +455,9 @@ namespace Zagreus {
         getWhiteBishopScore(evalContext, board);
         getBlackBishopScore(evalContext, board);
 
+        getPawnScore<PieceColor::WHITE>(evalContext, board);
+        getPawnScore<PieceColor::BLACK>(evalContext, board);
+
         int whiteScore = ((evalContext.whiteMidgameScore * (256 - evalContext.phase)) + (evalContext.whiteEndgameScore * evalContext.phase)) / 256;
         int blackScore = ((evalContext.blackMidgameScore * (256 - evalContext.phase)) + (evalContext.blackEndgameScore * evalContext.phase)) / 256;
 

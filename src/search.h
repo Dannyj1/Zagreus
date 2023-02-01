@@ -69,7 +69,8 @@ namespace Zagreus {
     void getWhiteBishopScore(EvalContext &evalContext, Bitboard &bitboard);
     void getBlackBishopScore(EvalContext &evalContext, Bitboard &bitboard);
 
-    void getPawnScore(EvalContext &evalContext, Bitboard &bitboard, PieceColor color);
+    template<PieceColor color>
+    void getPawnScore(EvalContext &evalContext, Bitboard &bitboard);
 
     EvalContext createEvalContext(Bitboard &bitboard);
 }
