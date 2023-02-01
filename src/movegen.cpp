@@ -25,9 +25,7 @@
 #include "tt.h"
 
 namespace Zagreus {
-    int scoreMove(Bitboard &bitboard, Move &move, TranspositionTable* tt) {
-        Line previousPv = bitboard.getPreviousPvLine();
-
+    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
             Move &pvMove = previousPv.moves[i];
 
@@ -86,10 +84,11 @@ namespace Zagreus {
 
         assert(moveList.size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
+        Line previousPv = bitboard.getPreviousPvLine();
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, move, tt);
+            move.score = scoreMove(bitboard, previousPv, move, tt);
         }
 
         return moveList;
@@ -109,10 +108,11 @@ namespace Zagreus {
         assert(moveList.size <= MAX_MOVES);
 
         TranspositionTable* tt = TranspositionTable::getTT();
+        Line previousPv = bitboard.getPreviousPvLine();
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, move, tt);
+            move.score = scoreMove(bitboard, previousPv, move, tt);
         }
 
         return moveList;

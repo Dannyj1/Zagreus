@@ -901,7 +901,7 @@ namespace Zagreus {
         return true;
     }
 
-    const Line &Bitboard::getPreviousPvLine() const {
+    Line Bitboard::getPreviousPvLine() {
         return previousPvLine;
     }
 
