@@ -34,7 +34,7 @@ namespace Zagreus {
         }
 
         uint64_t minMovesToGo = 50ULL - 7ULL;
-        uint64_t movesToGo = params.movestogo ? params.movestogo : 50ULL - std::min(minMovesToGo, (uint64_t) bitboard.getPly() / 2ULL);
+        uint64_t movesToGo = params.movestogo ? params.movestogo : 50ULL - std::min(minMovesToGo, (uint64_t) (bitboard.getPly() / 2ULL));
         uint64_t timeLeft = 0;
 
         if (movingColor == PieceColor::WHITE) {
