@@ -25,7 +25,7 @@
 #include "tt.h"
 
 namespace Zagreus {
-    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, TranspositionTable* tt) {
+    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
             Move &pvMove = previousPv.moves[i];
 
@@ -34,11 +34,8 @@ namespace Zagreus {
             }
         }
 
-        uint64_t zobristHash = bitboard.getZobristHash();
-        TTEntry entry = tt->getEntry(zobristHash);
-
-        if (entry.zobristHash == zobristHash) {
-            return 25000 + entry.score;
+        if (moveCode == bestMoveCode) {
+            return 25000;
         }
 
         if (move.captureScore >= 0) {
@@ -84,10 +81,16 @@ namespace Zagreus {
         assert(moveList.size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
+        TTEntry entry = tt->getEntry(bitboard.getZobristHash());
+        uint32_t bestMoveCode = 0;
+
+        if (entry.zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = entry.bestMoveCode;
+        }
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), tt);
+            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), bestMoveCode, tt);
         }
 
         return moveList;
@@ -105,13 +108,18 @@ namespace Zagreus {
         generateKingMoves<color>(bitboard, moveList, true);
 
         assert(moveList.size <= MAX_MOVES);
-
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
+        TTEntry entry = tt->getEntry(bitboard.getZobristHash());
+        uint32_t bestMoveCode = 0;
+
+        if (entry.zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = entry.bestMoveCode;
+        }
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), tt);
+            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), bestMoveCode, tt);
         }
 
         return moveList;
