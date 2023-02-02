@@ -34,6 +34,7 @@ namespace Zagreus {
         uint8_t depth = 0;
         uint64_t zobristHash = 0;
         NodeType nodeType = NodeType::PV_NODE;
+        uint32_t bestMoveCode = 0;
     };
 
     class TranspositionTable {
@@ -89,7 +90,7 @@ namespace Zagreus {
 
         void setTableSize(int megaBytes);
 
-        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType);
+        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, uint32_t bestMoveCode);
 
         int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
 

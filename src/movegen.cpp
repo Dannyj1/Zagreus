@@ -25,20 +25,17 @@
 #include "tt.h"
 
 namespace Zagreus {
-    int scoreMove(Bitboard &bitboard, Move &move, uint64_t moveCode, TranspositionTable* tt, Line &pvLine) {
-        for (int i = 0; i < pvLine.moveCount; i++) {
-            Move &pvMove = pvLine.moves[i];
+    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
+        for (int i = 0; i < previousPv.moveCount; i++) {
+            Move &pvMove = previousPv.moves[i];
 
             if (moveCode == encodeMove(pvMove)) {
                 return 50000 - i;
             }
         }
 
-        uint64_t zobristHash = bitboard.getZobristForMove(move);
-        TTEntry entry = tt->getEntry(zobristHash);
-
-        if (entry.zobristHash == zobristHash && entry.nodeType == NodeType::PV_NODE) {
-            return 25000 + std::abs(entry.score);
+        if (moveCode == bestMoveCode) {
+            return 25000;
         }
 
         if (move.captureScore >= 0) {
@@ -83,11 +80,17 @@ namespace Zagreus {
 
         assert(moveList.size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
-        Line pvLine = bitboard.getPreviousPvLine();
+        Line previousPv = bitboard.getPreviousPvLine();
+        TTEntry entry = tt->getEntry(bitboard.getZobristHash());
+        uint32_t bestMoveCode = 0;
+
+        if (entry.zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = entry.bestMoveCode;
+        }
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, move, encodeMove(move), tt, pvLine);
+            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), bestMoveCode, tt);
         }
 
         return moveList;
@@ -106,11 +109,17 @@ namespace Zagreus {
 
         assert(moveList.size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
-        Line pvLine = bitboard.getPreviousPvLine();
+        Line previousPv = bitboard.getPreviousPvLine();
+        TTEntry entry = tt->getEntry(bitboard.getZobristHash());
+        uint32_t bestMoveCode = 0;
+
+        if (entry.zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = entry.bestMoveCode;
+        }
 
         for (int i = 0; i < moveList.size; i++) {
             Move &move = moveList.moves[i];
-            move.score = scoreMove(bitboard, move, encodeMove(move), tt, pvLine);
+            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), bestMoveCode, tt);
         }
 
         return moveList;
