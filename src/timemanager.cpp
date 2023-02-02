@@ -33,8 +33,8 @@ namespace Zagreus {
             return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("Move Overhead").getIntValue());
         }
 
-        uint64_t movesToGo = params.movestogo ? params.movestogo : 50ULL - (bitboard.getPly() / 2);
-        movesToGo = std::max((uint64_t) movesToGo, (uint64_t) 7ULL);
+        uint64_t minMovesToGo = 50ULL - 7ULL;
+        uint64_t movesToGo = params.movestogo ? params.movestogo : 50ULL - std::min(minMovesToGo, (uint64_t) bitboard.getPly() / 2ULL);
         uint64_t timeLeft = 0;
 
         if (movingColor == PieceColor::WHITE) {
@@ -45,7 +45,11 @@ namespace Zagreus {
             timeLeft += params.binc;
         }
 
-        timeLeft -= engine.getOption("Move Overhead").getIntValue();
+        uint64_t moveOverhead = engine.getOption("Move Overhead").getIntValue();
+        if (timeLeft >= moveOverhead + 1) {
+            timeLeft -= moveOverhead;
+        }
+
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
         uint64_t maxTime = timeLeft / 100 * 80;
         uint64_t timePerMove = timeLeft / movesToGo;
@@ -58,8 +62,7 @@ namespace Zagreus {
             timePerMove = maxTime;
         }
 
-        timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 1ULL);
-
+        timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 10ULL);
         return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(timePerMove);
     }
 }
