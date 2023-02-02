@@ -381,6 +381,7 @@ namespace Zagreus {
         return previousMove;
     }
 
+
     uint64_t Bitboard::getZobristForMove(Move &move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
@@ -391,22 +392,20 @@ namespace Zagreus {
 
         if (capturedPiece != PieceType::EMPTY) {
             result ^= zobristConstants[move.to + 64 * capturedPiece];
-            halfMoveClock = 0;
         }
 
-        removePiece(move.from, move.piece);
         result ^= zobristConstants[move.from + 64 * move.piece];
 
         if (enPassantSquare != NO_SQUARE) {
-            zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
+            result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
         }
 
         if (move.piece == PieceType::WHITE_PAWN || move.piece == PieceType::BLACK_PAWN) {
             if (move.to - move.from == 16) {
-                zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to - 8) % 8];
+                result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to - 8) % 8];
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
             } else if (move.to - move.from == -16) {
-                zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to + 8) % 8];
+                result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to + 8) % 8];
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
             } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
                        move.to == enPassantSquare) {
@@ -418,35 +417,35 @@ namespace Zagreus {
         if (move.piece == WHITE_KING || move.piece == BLACK_KING) {
             if (std::abs(move.to - move.from) == 2) {
                 if (move.to == Square::G1) {
-                    zobristHash ^= zobristConstants[Square::H1 + 64 * PieceType::WHITE_ROOK];
-                    zobristHash ^= zobristConstants[Square::F1 + 64 * PieceType::WHITE_ROOK];
+                    result ^= zobristConstants[Square::H1 + 64 * PieceType::WHITE_ROOK];
+                    result ^= zobristConstants[Square::F1 + 64 * PieceType::WHITE_ROOK];
                 } else if (move.to == Square::C1) {
-                    zobristHash ^= zobristConstants[Square::A1 + 64 * PieceType::WHITE_ROOK];
-                    zobristHash ^= zobristConstants[Square::D1 + 64 * PieceType::WHITE_ROOK];
+                    result ^= zobristConstants[Square::A1 + 64 * PieceType::WHITE_ROOK];
+                    result ^= zobristConstants[Square::D1 + 64 * PieceType::WHITE_ROOK];
                 } else if (move.to == Square::G8) {
-                    zobristHash ^= zobristConstants[Square::H8 + 64 * PieceType::BLACK_ROOK];
-                    zobristHash ^= zobristConstants[Square::F8 + 64 * PieceType::BLACK_ROOK];
+                    result ^= zobristConstants[Square::H8 + 64 * PieceType::BLACK_ROOK];
+                    result ^= zobristConstants[Square::F8 + 64 * PieceType::BLACK_ROOK];
                 } else if (move.to == Square::C8) {
-                    zobristHash ^= zobristConstants[Square::A8 + 64 * PieceType::BLACK_ROOK];
-                    zobristHash ^= zobristConstants[Square::D8 + 64 * PieceType::BLACK_ROOK];
+                    result ^= zobristConstants[Square::A8 + 64 * PieceType::BLACK_ROOK];
+                    result ^= zobristConstants[Square::D8 + 64 * PieceType::BLACK_ROOK];
                 }
             }
 
             if (move.piece == WHITE_KING) {
                 if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
                 }
 
                 if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
                 }
             } else {
                 if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
                 }
 
                 if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
                 }
             }
         }
@@ -454,34 +453,32 @@ namespace Zagreus {
         if (move.piece == PieceType::WHITE_ROOK) {
             if (move.from == Square::A1 && (castlingRights & CastlingRights::WHITE_QUEENSIDE)) {
                 if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
                 }
             } else if (move.from == Square::H1 && (castlingRights & CastlingRights::WHITE_KINGSIDE)) {
                 if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
                 }
             }
         } else if (move.piece == PieceType::BLACK_ROOK) {
             if (move.from == Square::A8 && (castlingRights & CastlingRights::BLACK_QUEENSIDE)) {
                 if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
                 }
-
-                castlingRights &= ~CastlingRights::BLACK_QUEENSIDE;
             } else if (move.from == Square::H8 && (castlingRights & CastlingRights::BLACK_KINGSIDE)) {
                 if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
-                    zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
+                    result ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
                 }
             }
         }
 
         if (move.promotionPiece != PieceType::EMPTY) {
-            zobristHash ^= zobristConstants[move.to + 64 * move.promotionPiece];
+            result ^= zobristConstants[move.to + 64 * move.promotionPiece];
         } else {
-            zobristHash ^= zobristConstants[move.to + 64 * move.piece];
+            result ^= zobristConstants[move.to + 64 * move.piece];
         }
 
-        zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
+        result ^= zobristConstants[ZOBRIST_COLOR_INDEX];
         return result;
     }
 
