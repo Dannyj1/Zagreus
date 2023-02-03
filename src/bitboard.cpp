@@ -482,6 +482,13 @@ namespace Zagreus {
         return result;
     }
 
+    bool Bitboard::hasMinorOrMajorPieces() {
+        return getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
+               getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>() |
+               getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
+               getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>();
+    }
+
     void Bitboard::print() {
         std::cout << "  ---------------------------------";
 
@@ -631,9 +638,8 @@ namespace Zagreus {
                     continue;
                 }
 
-                if (tolower(character < 'a') || tolower(character) > 'h') {
-                    senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant rank!";
-                    return false;
+                if (tolower(character) < 'a' || tolower(character) > 'h') {
+                    continue;
                 }
 
                 int8_t file = tolower(character) - 'a'; // NOLINT(cppcoreguidelines-narrowing-conversions)

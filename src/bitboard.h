@@ -438,6 +438,8 @@ namespace Zagreus {
                 return !(neighborMask & getPieceBoard<PieceType::BLACK_PAWN>());
             }
         }
+
+        bool hasMinorOrMajorPieces();
     };
 }
 

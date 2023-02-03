@@ -31,6 +31,7 @@
 #include "search.h"
 #include "tt.h"
 #include "pst.h"
+#include "tuner.h"
 
 using namespace Zagreus;
 
@@ -115,6 +116,9 @@ int main(int argc , char *argv[]) {
             return 0;
         } else if (strcmp(argv[1], "findzobristseed") == 0) {
             findZobristSeed();
+            return 0;
+        } else if (strcmp(argv[1], "tune") == 0) {
+            startTuning(argv[2]);
             return 0;
         }
 
