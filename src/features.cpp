@@ -17,6 +17,8 @@
  */
 
 #include "features.h"
+#include "pst.h"
+#include <iostream>
 
 namespace Zagreus {
     int evalValues[80] = {
@@ -201,6 +203,14 @@ namespace Zagreus {
             values.emplace_back(baseEvalValues[i]);
         }
 
+        for (int i : getMidgameValues()) {
+            values.emplace_back(i);
+        }
+
+        for (int i : getEndgameValues()) {
+            values.emplace_back(i);
+        }
+
         return values;
     }
 
@@ -211,12 +221,34 @@ namespace Zagreus {
             values.emplace_back(evalValues[i]);
         }
 
+        for (int i : getMidgameValues()) {
+            values.emplace_back(i);
+        }
+
+        for (int i : getEndgameValues()) {
+            values.emplace_back(i);
+        }
+
         return values;
     }
 
     void updateEvalValues(std::vector<int> &newValues) {
-        for (int i = 0; i < getEvalFeatureSize(); i++) {
+        int evalFeatureSize = getEvalFeatureSize();
+        int pstSize = getMidgameValues().size();
+
+        for (int i = 0; i < evalFeatureSize; i++) {
             evalValues[i] = newValues[i];
+        }
+
+        for (int i = 0; i < 6; i++) {
+            for (int8_t j = 0; j < 64; j++) {
+                int pieceIndex = i * 2;
+
+                setMidgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + i * 64 + j]);
+                setMidgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + i * 64 + j]);
+                setEndgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + pstSize + i * 64 + j]);
+                setEndgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + pstSize + i * 64 + j]);
+            }
         }
     }
 }

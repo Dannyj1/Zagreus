@@ -27,4 +27,12 @@ namespace Zagreus {
     int getMidgamePstValue(PieceType piece, int8_t square);
 
     int getEndgamePstValue(PieceType piece, int8_t square);
+
+    void setMidgamePstValue(PieceType piece, int8_t square, int value);
+
+    void setEndgamePstValue(PieceType piece, int8_t square, int value);
+
+    std::vector<int> getMidgameValues();
+
+    std::vector<int> getEndgameValues();
 }

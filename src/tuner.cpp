@@ -21,6 +21,7 @@
 #include "bitboard.h"
 #include "search.h"
 #include "../senjo/UCIAdapter.h"
+#include "pst.h"
 
 #include <cmath>
 #include <fstream>
@@ -89,17 +90,46 @@ namespace Zagreus {
     void exportNewEvalValues(std::vector<int> &bestParams) {
         std::ofstream fout("tuned_params.txt");
 
+        // Declare pieceNames
+        std::string pieceNames[6] = {"Pawn", "Knight", "Bishop", "Rook", "Queen", "King"};
+
         fout << "int evalValues[" << bestParams.size() << "] = { ";
-        for (int i = 0; i < bestParams.size(); i++) {
+        for (int i = 0; i < getEvalFeatureSize(); i++) {
             fout << bestParams[i];
 
             if (i != bestParams.size() - 1) {
                 fout << ", ";
             }
         }
-        fout << " };" << std::endl;
+        fout << " };" << std::endl << std::endl;
+
+        // Write the 6 piece square tables to a file (2 tables per piece, a midgame and endgame table declared like this:  int midgamePawnTable[64] and int endgamePawnTable[64]
+        // The 6 midgame tables are declared first, then the 6 endgame tables
+        int pstSize = getMidgameValues().size();
+        for (int i = 0; i < 6; i++) {
+            fout << "int midgame" << pieceNames[i] << "Table[64] = { ";
+            for (int j = 0; j < 64; j++) {
+                fout << bestParams[getEvalFeatureSize() + i * 64 + j];
+
+                if (j != 63) {
+                    fout << ", ";
+                }
+            }
+            fout << " };" << std::endl;
+
+            fout << "int endgame" << pieceNames[i] << "Table[64] = { ";
+            for (int j = 0; j < 64; j++) {
+                fout << bestParams[getEvalFeatureSize() + pstSize + i * 64 + j];
+
+                if (j != 63) {
+                    fout << ", ";
+                }
+            }
+            fout << " };" << std::endl << std::endl;
+        }
     }
 
+    // Initial error: 0.295172
     void startTuning(char* filePath) {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
@@ -116,6 +146,8 @@ namespace Zagreus {
         std::cout << "Initial error: " << bestError << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
 
+        updateEvalValues(bestParameters);
+        bestParameters = getEvalValues();
         exportNewEvalValues(bestParameters);
 
         while (hasImproved) {

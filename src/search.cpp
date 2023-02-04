@@ -470,8 +470,8 @@ namespace Zagreus {
         getWhiteMaterialScore(evalContext, board);
         getBlackMaterialScore(evalContext, board);
 
-        /*getWhitePositionalScore(evalContext, board);
-        getBlackPositionalScore(evalContext, board);*/
+        getWhitePositionalScore(evalContext, board);
+        getBlackPositionalScore(evalContext, board);
 
         getWhiteMobilityScore(evalContext, board);
         getBlackMobilityScore(evalContext, board);
