@@ -22,6 +22,7 @@
 #include "search.h"
 #include "../senjo/UCIAdapter.h"
 #include "pst.h"
+#include "movegen.h"
 
 #include <cmath>
 #include <fstream>
@@ -77,7 +78,9 @@ namespace Zagreus {
                 result = 0.5f;
             }
 
-            if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces()) {
+            if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces() || tunerBoard.isDraw()
+            || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
+            || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()) {
                 continue;
             }
 
