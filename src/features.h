@@ -108,8 +108,6 @@ namespace Zagreus {
 
     int getEvalFeatureSize();
 
-    std::vector<int> getEvalValuesForPhase(int phase);
-
     std::vector<int> getEvalValues();
 
     std::vector<int> getBaseEvalValues();

@@ -42,7 +42,7 @@ namespace Zagreus {
             tunerBoard.setFromFen(pos.fen);
             int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
             float error = pos.result - sigmoid((float) evalScore);
-            totalError += pow(error, 2.0f);
+            totalError += error * error;
         }
 
         return (1.0f / (float) amountOfPositions) * totalError;
@@ -116,6 +116,8 @@ namespace Zagreus {
         std::cout << "Initial error: " << bestError << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
 
+        exportNewEvalValues(bestParameters);
+
         while (hasImproved) {
             hasImproved = false;
 
@@ -141,6 +143,10 @@ namespace Zagreus {
                         bestParameters[paramIndex] += 1;
                     }
                 }
+            }
+
+            if (hasImproved) {
+                exportNewEvalValues(bestParameters);
             }
         }
 

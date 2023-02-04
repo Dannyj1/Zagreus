@@ -193,26 +193,11 @@ namespace Zagreus {
         return sizeof(evalValues) / sizeof(evalValues[0]);
     }
 
-
-    std::vector<int> getEvalValuesForPhase(int phase) {
-        std::vector<int> values;
-
-        for (int i = 0; i < getEvalFeatureSize(); i += 2) {
-            int midgameValue = evalValues[i];
-            int endgameValue = evalValues[i + 1];
-
-            int taperedValue = ((midgameValue * (256 - phase)) + (endgameValue * phase)) / 256;
-            values.emplace_back(taperedValue);
-        }
-
-        return values;
-    }
-
     // Some sane default values for tuning
     std::vector<int> getBaseEvalValues() {
         std::vector<int> values;
 
-        for (int i = 0; i < getEvalFeatureSize(); i += 2) {
+        for (int i = 0; i < getEvalFeatureSize(); i++) {
             values.emplace_back(baseEvalValues[i]);
         }
 
@@ -222,7 +207,7 @@ namespace Zagreus {
     std::vector<int> getEvalValues() {
         std::vector<int> values;
 
-        for (int i = 0; i < getEvalFeatureSize(); i += 2) {
+        for (int i = 0; i < getEvalFeatureSize(); i++) {
             values.emplace_back(evalValues[i]);
         }
 
@@ -230,7 +215,7 @@ namespace Zagreus {
     }
 
     void updateEvalValues(std::vector<int> &newValues) {
-        for (int i = 0; i < getEvalFeatureSize(); i += 2) {
+        for (int i = 0; i < getEvalFeatureSize(); i++) {
             evalValues[i] = newValues[i];
         }
     }
