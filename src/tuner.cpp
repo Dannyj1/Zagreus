@@ -167,7 +167,7 @@ namespace Zagreus {
                 } else {
                     // Reset
                     bestParameters[paramIndex] -= std::max(1.0f, bestParameters[paramIndex] * adjustmentRate);
-                    bestParameters[paramIndex] -= std::max(1.0f, (bestParameters[paramIndex] * adjustmentRate) / 2);
+                    bestParameters[paramIndex] -= std::max(1.0f, (bestParameters[paramIndex] * adjustmentRate) * 0.5f);
                     updateEvalValues(bestParameters);
                     newError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
 
