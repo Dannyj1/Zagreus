@@ -45,7 +45,7 @@ namespace Zagreus {
             totalError += pow(error, 2.0f);
         }
 
-        return (1.0f / amountOfPositions) * totalError;
+        return (1.0f / (float) amountOfPositions) * totalError;
     }
 
     std::vector<TunePosition> loadPositions(char* filePath) {
