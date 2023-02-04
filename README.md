@@ -29,7 +29,7 @@ Zagreus uses CMake to build. On Windows you can use the [CMake-GUI](https://cmak
 
 Clone the repository:
 ```bash
-git clone https://github.com/Dannyj1/ZagreusEngine.git
+git clone https://github.com/Dannyj1/Zagreus.git
 ```
 
 Set the compiler to clang++:
