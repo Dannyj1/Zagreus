@@ -104,7 +104,7 @@ namespace Zagreus {
 
         fout << "int evalValues[" << getEvalFeatureSize() << "] = { ";
         for (int i = 0; i < getEvalFeatureSize(); i++) {
-            fout << bestParams[i];
+            fout <<(int) (bestParams[i] / 10000);
 
             if (i != bestParams.size() - 1) {
                 fout << ", ";
@@ -118,7 +118,7 @@ namespace Zagreus {
         for (int i = 0; i < 6; i++) {
             fout << "int midgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << bestParams[getEvalFeatureSize() + i * 64 + j];
+                fout << (int) (bestParams[getEvalFeatureSize() + i * 64 + j] / 10000);
 
                 if (j != 63) {
                     fout << ", ";
@@ -128,7 +128,7 @@ namespace Zagreus {
 
             fout << "int endgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << bestParams[getEvalFeatureSize() + pstSize + i * 64 + j];
+                fout << (int) (bestParams[getEvalFeatureSize() + pstSize + i * 64 + j] / 10000);
 
                 if (j != 63) {
                     fout << ", ";
@@ -138,7 +138,7 @@ namespace Zagreus {
         }
     }
 
-    // Initial error: 0.298829
+    // Initial error: 0.31197
     void startTuning(char* filePath) {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
@@ -149,6 +149,12 @@ namespace Zagreus {
         std::cout << "Starting tuning..." << std::endl;
         std::vector<TunePosition> positions = loadPositions(filePath);
         std::vector<int> bestParameters = getBaseEvalValues();
+
+        // Everything is * 10000 to deal with the facts that the eval values are integers and the gradients are floats
+        for (int i = 0; i < bestParameters.size(); i++) {
+            bestParameters[i] *= 10000;
+        }
+
         std::cout << "Calculating the initial error..." << std::endl;
         int amountOfPositions = positions.size();
         float bestError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
@@ -158,23 +164,23 @@ namespace Zagreus {
 
         exportNewEvalValues(bestParameters);
 
-        std::vector<float> gradients(bestParameters.size(), 0.0f);
         int stopCounter = 0;
         int iterator = 0;
-        float learningRate = 0.1f;
+        float learningRate = 1.0f;
 
         while (stopCounter < 5) {
+            std::vector<float> gradients(bestParameters.size(), 0.0f);
             iterator++;
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                 std::cout << paramIndex << " / " << bestParameters.size() << std::endl;
                 int oldParam = bestParameters[paramIndex];
 
-                bestParameters[paramIndex] += 1;
+                bestParameters[paramIndex] += 1 * 10000;
                 updateEvalValues(bestParameters);
                 float errorPlus = evaluationError(positions, amountOfPositions, maxEndTime, engine);
 
-                bestParameters[paramIndex] -= 2;
+                bestParameters[paramIndex] -= 2 * 10000;
                 updateEvalValues(bestParameters);
                 float errorMinus = evaluationError(positions, amountOfPositions, maxEndTime, engine);
 
@@ -183,11 +189,14 @@ namespace Zagreus {
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                bestParameters[paramIndex] -= gradients[paramIndex] * learningRate;
+                bestParameters[paramIndex] -= (int) ((gradients[paramIndex] * learningRate) * 10000.0f);
             }
 
             updateEvalValues(bestParameters);
             float newError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
+
+            // Decay learning rate
+            learningRate *= 0.999f;
 
             std::cout << "Iteration: " << iterator << ", Error: " << newError << std::endl;
 

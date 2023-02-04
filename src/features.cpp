@@ -236,19 +236,22 @@ namespace Zagreus {
         int evalFeatureSize = getEvalFeatureSize();
         int pstSize = getMidgameValues().size();
 
+        // New features are given as 10000 times the actual value to deal with the fact that gradients are floats
         for (int i = 0; i < evalFeatureSize; i++) {
-            evalValues[i] = newValues[i];
+            evalValues[i] = newValues[i] / 10000;
         }
 
         for (int i = 0; i < 6; i++) {
             for (int8_t j = 0; j < 64; j++) {
                 int pieceIndex = i * 2;
 
-                setMidgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + i * 64 + j]);
-                setMidgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + i * 64 + j]);
-                setEndgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + pstSize + i * 64 + j]);
-                setEndgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + pstSize + i * 64 + j]);
+                setMidgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + i * 64 + j]  / 10000);
+                setMidgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + i * 64 + j]  / 10000);
+                setEndgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + pstSize + i * 64 + j] / 10000);
+                setEndgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + pstSize + i * 64 + j] / 10000);
             }
         }
+
+
     }
 }
