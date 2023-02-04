@@ -19,6 +19,7 @@
 #include "bitwise.h"
 
 namespace Zagreus {
+
     uint64_t soutOne(uint64_t b) {
         return b >> 8ULL;
     }

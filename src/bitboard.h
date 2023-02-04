@@ -131,7 +131,7 @@ namespace Zagreus {
 
         void printAvailableMoves(MoveList &moves);
 
-        bool setFromFen(std::string fen);
+        bool setFromFen(const std::string &fen);
 
         bool isDraw();
 

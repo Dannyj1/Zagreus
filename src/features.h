@@ -114,5 +114,5 @@ namespace Zagreus {
 
     std::vector<int> getBaseEvalValues();
 
-    void updateEvalValues(std::vector<int> newValues);
+    void updateEvalValues(std::vector<int> &newValues);
 }

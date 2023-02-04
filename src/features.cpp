@@ -229,7 +229,7 @@ namespace Zagreus {
         return values;
     }
 
-    void updateEvalValues(std::vector<int> newValues) {
+    void updateEvalValues(std::vector<int> &newValues) {
         for (int i = 0; i < getEvalFeatureSize(); i += 2) {
             evalValues[i] = newValues[i];
         }

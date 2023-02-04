@@ -19,13 +19,14 @@
 #pragma once
 
 #include <string>
+#include "bitboard.h"
 
 namespace Zagreus {
     static constexpr float K = 1.2;
 
     struct TunePosition {
         std::string fen;
-        float result;
+        float result = 0.0f;
     };
 
     void startTuning(char* filePath);

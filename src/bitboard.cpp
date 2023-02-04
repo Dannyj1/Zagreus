@@ -533,7 +533,7 @@ namespace Zagreus {
         std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
     }
 
-    bool Bitboard::setFromFen(std::string fen) {
+    bool Bitboard::setFromFen(const std::string &fen) {
         int index = Square::A8;
         int spaces = 0;
 

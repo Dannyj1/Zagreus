@@ -245,7 +245,7 @@ void findZobristSeed() {
         std::map<uint64_t, uint64_t> collisionMap{};
         uint64_t seed = seedDis(seedGen);
 
-        for (const std::string& position : seedFindPositions) {
+        for (std::string& position : seedFindPositions) {
             Bitboard board;
             std::random_device rd;
             std::mt19937_64 gen(rd());
