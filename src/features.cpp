@@ -196,8 +196,8 @@ namespace Zagreus {
     }
 
     // Some sane default values for tuning
-    std::vector<int> getBaseEvalValues() {
-        std::vector<int> values;
+    std::vector<float> getBaseEvalValues() {
+        std::vector<float> values;
 
         for (int i = 0; i < getEvalFeatureSize(); i++) {
             values.emplace_back(baseEvalValues[i]);
@@ -214,8 +214,8 @@ namespace Zagreus {
         return values;
     }
 
-    std::vector<int> getEvalValues() {
-        std::vector<int> values;
+    std::vector<float> getEvalValues() {
+        std::vector<float> values;
 
         for (int i = 0; i < getEvalFeatureSize(); i++) {
             values.emplace_back(evalValues[i]);
@@ -232,26 +232,24 @@ namespace Zagreus {
         return values;
     }
 
-    void updateEvalValues(std::vector<int> &newValues) {
+    void updateEvalValues(std::vector<float> &newValues) {
         int evalFeatureSize = getEvalFeatureSize();
         int pstSize = getMidgameValues().size();
 
         // New features are given as 10000 times the actual value to deal with the fact that gradients are floats
         for (int i = 0; i < evalFeatureSize; i++) {
-            evalValues[i] = newValues[i] / 10000;
+            evalValues[i] = (int) newValues[i];
         }
 
         for (int i = 0; i < 6; i++) {
             for (int8_t j = 0; j < 64; j++) {
                 int pieceIndex = i * 2;
 
-                setMidgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + i * 64 + j]  / 10000);
-                setMidgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + i * 64 + j]  / 10000);
-                setEndgamePstValue((PieceType) pieceIndex, 63 - j, newValues[evalFeatureSize + pstSize + i * 64 + j] / 10000);
-                setEndgamePstValue((PieceType) (pieceIndex + 1), j, newValues[evalFeatureSize + pstSize + i * 64 + j] / 10000);
+                setMidgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + i * 64 + j]);
+                setMidgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + i * 64 + j]);
+                setEndgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
+                setEndgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
             }
         }
-
-
     }
 }

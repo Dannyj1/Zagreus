@@ -108,9 +108,9 @@ namespace Zagreus {
 
     int getEvalFeatureSize();
 
-    std::vector<int> getEvalValues();
+    std::vector<float> getEvalValues();
 
-    std::vector<int> getBaseEvalValues();
+    std::vector<float> getBaseEvalValues();
 
-    void updateEvalValues(std::vector<int> &newValues);
+    void updateEvalValues(std::vector<float> &newValues);
 }

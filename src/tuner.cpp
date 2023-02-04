@@ -16,6 +16,11 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <random>
+
 #include "tuner.h"
 #include "features.h"
 #include "bitboard.h"
@@ -23,10 +28,6 @@
 #include "../senjo/UCIAdapter.h"
 #include "pst.h"
 #include "movegen.h"
-
-#include <cmath>
-#include <fstream>
-#include <iostream>
 
 
 namespace Zagreus {
@@ -96,7 +97,7 @@ namespace Zagreus {
         return positions;
     }
 
-    void exportNewEvalValues(std::vector<int> &bestParams) {
+    void exportNewEvalValues(std::vector<float> &bestParams) {
         std::ofstream fout("tuned_params.txt");
 
         // Declare pieceNames
@@ -104,7 +105,7 @@ namespace Zagreus {
 
         fout << "int evalValues[" << getEvalFeatureSize() << "] = { ";
         for (int i = 0; i < getEvalFeatureSize(); i++) {
-            fout <<(int) (bestParams[i] / 10000);
+            fout << (int) bestParams[i];
 
             if (i != bestParams.size() - 1) {
                 fout << ", ";
@@ -118,7 +119,7 @@ namespace Zagreus {
         for (int i = 0; i < 6; i++) {
             fout << "int midgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << (int) (bestParams[getEvalFeatureSize() + i * 64 + j] / 10000);
+                fout << (int) (bestParams[getEvalFeatureSize() + i * 64 + j]);
 
                 if (j != 63) {
                     fout << ", ";
@@ -128,7 +129,7 @@ namespace Zagreus {
 
             fout << "int endgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << (int) (bestParams[getEvalFeatureSize() + pstSize + i * 64 + j] / 10000);
+                fout << (int) (bestParams[getEvalFeatureSize() + pstSize + i * 64 + j]);
 
                 if (j != 63) {
                     fout << ", ";
@@ -144,16 +145,16 @@ namespace Zagreus {
         senjo::UCIAdapter adapter(engine);
         std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
 
+        std::random_device rd;
+        std::mt19937_64 gen(rd());
+        std::uniform_int_distribution<uint64_t> dis;
+
         engine.setTuning(true);
 
         std::cout << "Starting tuning..." << std::endl;
         std::vector<TunePosition> positions = loadPositions(filePath);
-        std::vector<int> bestParameters = getBaseEvalValues();
-
-        // Everything is * 10000 to deal with the facts that the eval values are integers and the gradients are floats
-        for (int i = 0; i < bestParameters.size(); i++) {
-            bestParameters[i] *= 10000;
-        }
+        std::vector<float> bestParameters = getBaseEvalValues();
+        updateEvalValues(bestParameters);
 
         std::cout << "Calculating the initial error..." << std::endl;
         int amountOfPositions = positions.size();
@@ -166,30 +167,36 @@ namespace Zagreus {
 
         int stopCounter = 0;
         int iterator = 0;
+        int batchSize = 64;
         float learningRate = 1.0f;
 
-        while (stopCounter < 5) {
-            std::vector<float> gradients(bestParameters.size(), 0.0f);
+        while (stopCounter < 20) {
             iterator++;
+            std::vector<TunePosition> batch(batchSize);
+            std::vector<float> gradients(bestParameters.size(), 0.0f);
 
-            for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                std::cout << paramIndex << " / " << bestParameters.size() << std::endl;
-                int oldParam = bestParameters[paramIndex];
-
-                bestParameters[paramIndex] += 1 * 10000;
-                updateEvalValues(bestParameters);
-                float errorPlus = evaluationError(positions, amountOfPositions, maxEndTime, engine);
-
-                bestParameters[paramIndex] -= 2 * 10000;
-                updateEvalValues(bestParameters);
-                float errorMinus = evaluationError(positions, amountOfPositions, maxEndTime, engine);
-
-                bestParameters[paramIndex] = oldParam;
-                gradients[paramIndex] = (errorPlus - errorMinus) / 2.0f;
+            for (int i = 0; i < batchSize; i++) {
+                batch.emplace_back(positions[dis(gen) % amountOfPositions]);
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                bestParameters[paramIndex] -= (int) ((gradients[paramIndex] * learningRate) * 10000.0f);
+                int oldParam = bestParameters[paramIndex];
+
+                bestParameters[paramIndex] += 1;
+                updateEvalValues(bestParameters);
+                float errorPlus = evaluationError(batch, batchSize, maxEndTime, engine);
+
+                bestParameters[paramIndex] -= 2;
+                updateEvalValues(bestParameters);
+                float errorMinus = evaluationError(batch, batchSize, maxEndTime, engine);
+
+                bestParameters[paramIndex] = oldParam;
+                float gradient = (errorPlus - errorMinus) / 2.0f;
+                gradients[paramIndex] = gradient;
+            }
+
+            for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
+                bestParameters[paramIndex] += gradients[paramIndex] * learningRate;
             }
 
             updateEvalValues(bestParameters);
