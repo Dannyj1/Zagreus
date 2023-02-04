@@ -40,7 +40,7 @@ namespace Zagreus {
         float totalError = 0.0f;
 
         for (TunePosition &pos : positions) {
-            tunerBoard.setFromFen(pos.fen);
+            tunerBoard.setFromFenTuner(pos.fen);
             int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
             float error = pos.result - sigmoid((float) evalScore);
             totalError += error * error;
@@ -129,7 +129,7 @@ namespace Zagreus {
         }
     }
 
-    // Initial error: 0.295172
+    // Initial error: 0.298817
     void startTuning(char* filePath) {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
@@ -142,6 +142,8 @@ namespace Zagreus {
         int amountOfPositions = positions.size();
         float bestError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
         bool hasImproved = true;
+        // Make bigger adjustments in the beginnen to hopefully speed up the tuning process a bit
+        float adjustmentRate = 0.08f;
 
         std::cout << "Initial error: " << bestError << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
@@ -154,28 +156,33 @@ namespace Zagreus {
             hasImproved = false;
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                bestParameters[paramIndex] += 1;
+                bestParameters[paramIndex] += std::max(1.0f, bestParameters[paramIndex] * adjustmentRate);
                 updateEvalValues(bestParameters);
                 float newError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
 
                 if (newError < bestError) {
                     bestError = newError;
                     hasImproved = true;
-                    std::cout << "Improved error: " << bestError << std::endl;
+                    std::cout << "Improved error (" << paramIndex << "/" << bestParameters.size() << "): " << bestError << std::endl;
                 } else {
-                    bestParameters[paramIndex] -= 2;
+                    // Reset
+                    bestParameters[paramIndex] -= std::max(1.0f, bestParameters[paramIndex] * adjustmentRate);
+                    bestParameters[paramIndex] -= std::max(1.0f, (bestParameters[paramIndex] * adjustmentRate) / 2);
                     updateEvalValues(bestParameters);
                     newError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
 
                     if (newError < bestError) {
                         bestError = newError;
                         hasImproved = true;
-                        std::cout << "Improved error: " << bestError << std::endl;
+                        std::cout << "Improved error (" << paramIndex << "/" << bestParameters.size() << "): " << bestError << std::endl;
                     } else {
-                        bestParameters[paramIndex] += 1;
+                        bestParameters[paramIndex] += std::max(1.0f, bestParameters[paramIndex] * adjustmentRate) * 2;
                     }
                 }
             }
+
+            adjustmentRate *= 0.7f;
+            adjustmentRate = std::max(adjustmentRate, 0.00001f);
 
             if (hasImproved) {
                 exportNewEvalValues(bestParameters);

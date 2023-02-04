@@ -670,6 +670,110 @@ namespace Zagreus {
         return true;
     }
 
+    // Faster setFromFen version without validity checks and some features the tuner doesn't need
+    bool Bitboard::setFromFenTuner(std::string &fen) {
+        int index = Square::A8;
+        int spaces = 0;
+
+        for (PieceType &type : pieceSquareMapping) {
+            type = PieceType::EMPTY;
+        }
+
+        for (uint64_t &bb : pieceBB) {
+            bb = 0;
+        }
+
+        for (uint64_t &bb : colorBB) {
+            bb = 0;
+        }
+
+        occupiedBB = 0;
+        enPassantSquare = Square::NO_SQUARE;
+        castlingRights = 0;
+
+        for (char &character : fen) {
+            if (character == ' ') {
+                spaces++;
+                continue;
+            }
+
+            if (character == ',') {
+                break;
+            }
+
+            if (spaces == 0) {
+                if (character == '/') {
+                    index -= 16;
+                    continue;
+                }
+
+                if (character >= '1' && character <= '8') {
+                    index += character - '0';
+                    continue;
+                }
+
+                setPieceFromFENChar(character, index);
+                index++;
+            }
+
+            if (spaces == 1) {
+                if (tolower(character) == 'w') {
+                    movingColor = PieceColor::WHITE;
+                } else {
+                    movingColor = PieceColor::BLACK;
+                }
+            }
+
+            if (spaces == 2) {
+                if (character == '-') {
+                    continue;
+                } else if (character == 'K') {
+                    castlingRights |= CastlingRights::WHITE_KINGSIDE;
+                    continue;
+                } else if (character == 'Q') {
+                    castlingRights |= CastlingRights::WHITE_QUEENSIDE;
+                    continue;
+                } else if (character == 'k') {
+                    castlingRights |= CastlingRights::BLACK_KINGSIDE;
+                    continue;
+                } else if (character == 'q') {
+                    castlingRights |= CastlingRights::BLACK_QUEENSIDE;
+                    continue;
+                } else {
+                    continue;
+                }
+            }
+
+            if (spaces == 3) {
+                if (character == '-') {
+                    continue;
+                }
+
+                if (tolower(character) < 'a' || tolower(character) > 'h') {
+                    continue;
+                }
+
+                int8_t file = tolower(character) - 'a'; // NOLINT(cppcoreguidelines-narrowing-conversions)
+                int8_t rank = (getOppositeColor(movingColor) == PieceColor::WHITE) ? 2 : 5;
+
+                enPassantSquare = (rank * 8) + file;
+
+                assert(enPassantSquare >= 0 && enPassantSquare < 64);
+                index += 2;
+            }
+
+            if (spaces == 4) {
+                halfMoveClock = character - '0';
+            }
+
+            if (spaces == 5) {
+                fullmoveClock = character - '0';
+            }
+        }
+
+        return true;
+    }
+
     bool Bitboard::isDraw() {
         MoveList moves;
 

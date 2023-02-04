@@ -133,6 +133,8 @@ namespace Zagreus {
 
         bool setFromFen(const std::string &fen);
 
+        bool setFromFenTuner(std::string &fen);
+
         bool isDraw();
 
         template<PieceColor color>
