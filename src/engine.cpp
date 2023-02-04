@@ -257,4 +257,12 @@ namespace Zagreus {
 
     void ZagreusEngine::showEngineStats() {
     }
+
+    bool ZagreusEngine::isTuning() const {
+        return tuning;
+    }
+
+    void ZagreusEngine::setTuning(bool tuning) {
+        ZagreusEngine::tuning = tuning;
+    }
 }
