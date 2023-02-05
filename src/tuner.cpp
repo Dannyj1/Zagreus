@@ -36,11 +36,12 @@ namespace Zagreus {
 
     int stopCounter = 0;
     int iteration = 0;
-    int batchSize = 64;
-    float learningRate = 1.0f;
-    float epsilon = 5.0f;
+    int batchSize = 1024;
+    float learningRate = 0.1f;
+    float epsilon = 1.0f;
     float optimizerEpsilon = 1e-6f;
-    float epsilonDecay = 0.99f;
+//    float epsilonDecay = 0.99f;
+    float epsilonDecay = 1.0f;
     float beta1 = 0.9f;
     float beta2 = 0.999f;
     float maxGradient = 1.0f;
@@ -55,10 +56,10 @@ namespace Zagreus {
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
-            Move rootMove{};
-            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-//            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
-            float loss = pos.result - sigmoid((float) qScore);
+//            Move rootMove{};
+//            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
+            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+            float loss = pos.result - sigmoid((float) evalScore);
             totalLoss += loss * loss;
         }
 
@@ -151,7 +152,6 @@ namespace Zagreus {
         }
     }
 
-    // Initial loss: 0.288649
     void startTuning(char* filePath) {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
@@ -173,8 +173,8 @@ namespace Zagreus {
         std::vector<float> v(bestParameters.size(), 0);
 
         std::cout << "Splitting the trainingSet into a training set and a validation set..." << std::endl;
-        // 15% validation set, 85% training set
-        int validationSetSize = trainingSet.size() / 7;
+        // 10% validation set, 85% training set
+        int validationSetSize = trainingSet.size() / 10;
 
         std::vector<TunePosition> validationSet(validationSetSize);
 
@@ -227,7 +227,7 @@ namespace Zagreus {
             if (iteration > epsilonWarmupIterations) {
                 // Decay epsilon
                 epsilon *= epsilonDecay;
-                epsilon = std::max(epsilon, 1.0f);
+//                epsilon = std::max(epsilon, 1.0f);
             }
 
             if (newLoss < bestLoss) {

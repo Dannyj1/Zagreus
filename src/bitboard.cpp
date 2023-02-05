@@ -689,6 +689,7 @@ namespace Zagreus {
 
         occupiedBB = 0;
         enPassantSquare = Square::NO_SQUARE;
+        movingColor = PieceColor::WHITE;
         castlingRights = 0;
 
         for (char &character : fen) {
@@ -717,11 +718,7 @@ namespace Zagreus {
             }
 
             if (spaces == 1) {
-                if (tolower(character) == 'w') {
-                    movingColor = PieceColor::WHITE;
-                } else {
-                    movingColor = PieceColor::BLACK;
-                }
+                continue;
             }
 
             if (spaces == 2) {
