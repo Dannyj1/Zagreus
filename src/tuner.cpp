@@ -36,12 +36,11 @@ namespace Zagreus {
 
     int stopCounter = 0;
     int iteration = 0;
-    int batchSize = 1024;
-    float learningRate = 0.1f;
-    float epsilon = 1.0f;
+    int batchSize = 512;
+    float learningRate = 0.5f;
+    float epsilon = 5.0f;
     float optimizerEpsilon = 1e-6f;
-//    float epsilonDecay = 0.99f;
-    float epsilonDecay = 1.0f;
+    float epsilonDecay = 0.98f;
     float beta1 = 0.9f;
     float beta2 = 0.999f;
     float maxGradient = 1.0f;
@@ -227,7 +226,7 @@ namespace Zagreus {
             if (iteration > epsilonWarmupIterations) {
                 // Decay epsilon
                 epsilon *= epsilonDecay;
-//                epsilon = std::max(epsilon, 1.0f);
+                epsilon = std::max(epsilon, 1.0f);
             }
 
             if (newLoss < bestLoss) {

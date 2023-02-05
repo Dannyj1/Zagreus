@@ -21,90 +21,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[80] = {
-            100, // MIDGAME_PAWN_MATERIAL
-            100, // ENDGAME_PAWN_MATERIAL
-            350, // MIDGAME_KNIGHT_MATERIAL
-            350, // ENDGAME_KNIGHT_MATERIAL
-            350, // MIDGAME_BISHOP_MATERIAL
-            350, // ENDGAME_BISHOP_MATERIAL
-            525, // MIDGAME_ROOK_MATERIAL
-            525, // ENDGAME_ROOK_MATERIAL
-            1000, // MIDGAME_QUEEN_MATERIAL
-            1000, // ENDGAME_QUEEN_MATERIAL
-            2, // MIDGAME_SQUARE_DEFENDED_BY_PAWN
-            2, // ENDGAME_SQUARE_DEFENDED_BY_PAWN
-            10, // MIDGAME_CENTER_CONTROL
-            10, // ENDGAME_CENTER_CONTROL
-            5, // MIDGAME_EXTENDED_CENTER_CONTROL
-            5, // ENDGAME_EXTENDED_CENTER_CONTROL
-            7, // MIDGAME_KNIGHT_MOBILITY
-            2, // ENDGAME_KNIGHT_MOBILITY
-            8, // MIDGAME_BISHOP_MOBILITY
-            3, // ENDGAME_BISHOP_MOBILITY
-            2, // MIDGAME_ROOK_MOBILITY
-            6, // ENDGAME_ROOK_MOBILITY
-            4, // MIDGAME_QUEEN_MOBILITY
-            8, // ENDGAME_QUEEN_MOBILITY
-            -50, // MIDGAME_KING_ON_OPEN_FILE
-            0, // ENDGAME_KING_ON_OPEN_FILE
-            -25, // MIDGAME_KING_NEXT_TO_OPEN_FILE
-            0, // ENDGAME_KING_NEXT_TO_OPEN_FILE
-            -25, // MIDGAME_NO_CASTLING_RIGHTS
-            0, // ENDGAME_NO_CASTLING_RIGHTS
-            -5, // MIDGAME_QUEENSIDE_CASTLING_PREVENTED
-            0, // ENDGAME_QUEENSIDE_CASTLING_PREVENTED
-            -10, // MIDGAME_KINGSIDE_CASTLING_PREVENTED
-            0, // ENDGAME_KINGSIDE_CASTLING_PREVENTED
-            -1, // MIDGAME_PAWN_ATTACK_NEAR_KING
-            -1, // ENDGAME_PAWN_ATTACK_NEAR_KING
-            -3, // MIDGAME_KNIGHT_ATTACK_NEAR_KING
-            -3, // ENDGAME_KNIGHT_ATTACK_NEAR_KING
-            -3, // MIDGAME_BISHOP_ATTACK_NEAR_KING
-            -3, // ENDGAME_BISHOP_ATTACK_NEAR_KING
-            -5, // MIDGAME_ROOK_ATTACK_NEAR_KING
-            -5, // ENDGAME_ROOK_ATTACK_NEAR_KING
-            -10, // MIDGAME_QUEEN_ATTACK_NEAR_KING
-            -10, // ENDGAME_QUEEN_ATTACK_NEAR_KING
-            10, // MIDGAME_PAWN_CONNECTIVITY
-            10, // ENDGAME_PAWN_CONNECTIVITY
-            7, // MIDGAME_KNIGHT_CONNECTIVITY
-            7, // ENDGAME_KNIGHT_CONNECTIVITY
-            7, // MIDGAME_BISHOP_CONNECTIVITY
-            7, // ENDGAME_BISHOP_CONNECTIVITY
-            3, // MIDGAME_ROOK_CONNECTIVITY
-            3, // ENDGAME_ROOK_CONNECTIVITY
-            1, // MIDGAME_QUEEN_CONNECTIVITY
-            1, // ENDGAME_QUEEN_CONNECTIVITY
-            20, // MIDGAME_ROOK_ON_OPEN_FILE
-            20, // ENDGAME_ROOK_ON_OPEN_FILE
-            15, // MIDGAME_ROOK_ON_SEMI_OPEN_FILE
-            15, // ENDGAME_ROOK_ON_SEMI_OPEN_FILE
-            10, // MIDGAME_ROOK_ON_7TH_RANK
-            10, // ENDGAME_ROOK_ON_7TH_RANK
-            5, // MIDGAME_ROOK_ON_QUEEN_FILE
-            5, // ENDGAME_ROOK_ON_QUEEN_FILE
-            5, // MIDGAME_ROOK_LESS_PAWNS_BONUS
-            5, // ENDGAME_ROOK_LESS_PAWNS_BONUS
-            -25, // MIDGAME_NO_BISHOP_PAIR
-            -25, // ENDGAME_NO_BISHOP_PAIR
-            10, // MIDGAME_BISHOP_FIANCHETTO
-            0, // ENDGAME_BISHOP_FIANCHETTO
-            -10, // MIDGAME_PAWN_ON_SAME_FILE
-            -10, // ENDGAME_PAWN_ON_SAME_FILE
-            10, // MIDGAME_PASSED_PAWN
-            10, // ENDGAME_PASSED_PAWN
-            -20, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -20, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -10, // MIDGAME_ISOLATED_PAWN
-            -10, // ENDGAME_ISOLATED_PAWN
-            3, // MIDGAME_PAWN_SEMI_OPEN_FILE
-            3, // ENDGAME_PAWN_SEMI_OPEN_FILE
-            20, // MIDGAME_PAWN_SHIELD
-            0, // ENDGAME_PAWN_SHIELD
-    };
+    int evalValues[74] = { 96, 104, 351, 345, 360, 354, 526, 530, 1006, 1007, 4, 6, 2, 0, 4, -1, 6, 4, 3, 5, 0, 12, -50, 0, -25, 0, -31, -1, -10, -3, -4, 1, -1, 2, -6, 2, -2, -2, 6, 7, 11, 6, 11, 6, 1, 10, 4, 5, 20, 20, 15, 15, 7, 4, 8, 2, 7, 2, -29, -27, 16, 5, -6, 0, 0, 0, -20, -20, 0, -7, 3, 3, 25, 0,  };
 
-    int baseEvalValues[80] = {
+    int baseEvalValues[74] = {
             100, // MIDGAME_PAWN_MATERIAL
             100, // ENDGAME_PAWN_MATERIAL
             350, // MIDGAME_KNIGHT_MATERIAL
@@ -119,8 +38,6 @@ namespace Zagreus {
             2, // ENDGAME_SQUARE_DEFENDED_BY_PAWN
             10, // MIDGAME_CENTER_CONTROL
             10, // ENDGAME_CENTER_CONTROL
-            5, // MIDGAME_EXTENDED_CENTER_CONTROL
-            5, // ENDGAME_EXTENDED_CENTER_CONTROL
             7, // MIDGAME_KNIGHT_MOBILITY
             2, // ENDGAME_KNIGHT_MOBILITY
             8, // MIDGAME_BISHOP_MOBILITY
@@ -139,10 +56,6 @@ namespace Zagreus {
             0, // ENDGAME_QUEENSIDE_CASTLING_PREVENTED
             -10, // MIDGAME_KINGSIDE_CASTLING_PREVENTED
             0, // ENDGAME_KINGSIDE_CASTLING_PREVENTED
-            1, // MIDGAME_PAWN_ATTACK_NEAR_KING
-            1, // ENDGAME_PAWN_ATTACK_NEAR_KING
-            3, // MIDGAME_KNIGHT_ATTACK_NEAR_KING
-            3, // ENDGAME_KNIGHT_ATTACK_NEAR_KING
             3, // MIDGAME_BISHOP_ATTACK_NEAR_KING
             3, // ENDGAME_BISHOP_ATTACK_NEAR_KING
             5, // MIDGAME_ROOK_ATTACK_NEAR_KING
@@ -186,6 +99,12 @@ namespace Zagreus {
             20, // MIDGAME_PAWN_SHIELD
             0, // ENDGAME_PAWN_SHIELD
     };
+
+    void printEvalValues() {
+        for (int i = 0; i < getEvalFeatureSize(); i++) {
+            std::cout << evalFeatureNames[i] << ": " << evalValues[i] << std::endl;
+        }
+    }
 
     int getEvalValue(EvalFeature feature) {
         return evalValues[feature];

@@ -32,6 +32,7 @@
 #include "tt.h"
 #include "pst.h"
 #include "tuner.h"
+#include "features.h"
 
 using namespace Zagreus;
 
@@ -119,6 +120,9 @@ int main(int argc , char *argv[]) {
             return 0;
         } else if (strcmp(argv[1], "tune") == 0) {
             startTuning(argv[2]);
+            return 0;
+        } else if (strcmp(argv[1], "printeval") == 0) {
+            printEvalValues();
             return 0;
         }
 

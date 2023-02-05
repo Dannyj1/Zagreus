@@ -562,7 +562,6 @@ namespace Zagreus {
     }
 
     uint64_t centerPattern = 0x0000001818000000;
-    uint64_t extendedCenterPattern = 0x00003C3C3C3C0000 & ~centerPattern;
     void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::WHITE>();
         uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::WHITE>()  & ~(evalContext.blackPawnAttacks);
@@ -574,8 +573,6 @@ namespace Zagreus {
         // Bonus for center control
         evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & centerPattern) * getEvalValue(MIDGAME_CENTER_CONTROL);
         evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & centerPattern) * getEvalValue(ENDGAME_CENTER_CONTROL);
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & extendedCenterPattern) * getEvalValue(MIDGAME_EXTENDED_CENTER_CONTROL);
-        evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & extendedCenterPattern) * getEvalValue(ENDGAME_EXTENDED_CENTER_CONTROL);
 
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);
@@ -616,8 +613,6 @@ namespace Zagreus {
         // Bonus for center control
         evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & centerPattern) * getEvalValue(MIDGAME_CENTER_CONTROL);
         evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & centerPattern) * getEvalValue(ENDGAME_CENTER_CONTROL);
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & extendedCenterPattern) * getEvalValue(MIDGAME_EXTENDED_CENTER_CONTROL);
-        evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & extendedCenterPattern) * getEvalValue(ENDGAME_EXTENDED_CENTER_CONTROL);
 
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);
@@ -698,10 +693,6 @@ namespace Zagreus {
             }
         }
 
-        evalContext.whiteMidgameScore += popcnt(evalContext.blackPawnAttacks & kingAttacks) * getEvalValue(MIDGAME_PAWN_ATTACK_NEAR_KING);
-        evalContext.whiteEndgameScore += popcnt(evalContext.blackPawnAttacks & kingAttacks) * getEvalValue(ENDGAME_PAWN_ATTACK_NEAR_KING);
-        evalContext.whiteMidgameScore += popcnt(evalContext.blackKnightAttacks & kingAttacks) * getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
-        evalContext.whiteEndgameScore += popcnt(evalContext.blackKnightAttacks & kingAttacks) * getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
         evalContext.whiteMidgameScore += popcnt(evalContext.blackBishopAttacks & kingAttacks) * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
         evalContext.whiteEndgameScore += popcnt(evalContext.blackBishopAttacks & kingAttacks) * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
         evalContext.whiteMidgameScore += popcnt(evalContext.blackRookAttacks & kingAttacks) * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
@@ -760,10 +751,6 @@ namespace Zagreus {
             }
         }
 
-        evalContext.blackMidgameScore += popcnt(evalContext.whitePawnAttacks & kingAttacks) * getEvalValue(MIDGAME_PAWN_ATTACK_NEAR_KING);
-        evalContext.blackEndgameScore += popcnt(evalContext.whitePawnAttacks & kingAttacks) * getEvalValue(ENDGAME_PAWN_ATTACK_NEAR_KING);
-        evalContext.blackMidgameScore += popcnt(evalContext.whiteKnightAttacks & kingAttacks) * getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
-        evalContext.blackEndgameScore += popcnt(evalContext.whiteKnightAttacks & kingAttacks) * getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
         evalContext.blackMidgameScore += popcnt(evalContext.whiteBishopAttacks & kingAttacks) * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
         evalContext.blackEndgameScore += popcnt(evalContext.whiteBishopAttacks & kingAttacks) * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
         evalContext.blackMidgameScore += popcnt(evalContext.whiteRookAttacks & kingAttacks) * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
