@@ -161,9 +161,9 @@ namespace Zagreus {
         int iteration = 0;
         int batchSize = 1024;
         float learningRate = 0.1f;
-        float epsilon = 4.0f;
+        float epsilon = 10.0f;
         float adagradEpsilon = 1e-8f;
-        float learningRateDecay = 0.9995f;
+        float learningRateDecay = 0.9999f;
         float epsilonDecay = 0.99f;
 
         std::cout << "Splitting the trainingSet into a training set and a validation set..." << std::endl;
@@ -217,16 +217,18 @@ namespace Zagreus {
             updateEvalValues(bestParameters);
             float newLoss = evaluationLoss(validationSet, validationSetSize, maxEndTime, engine);
 
-            if (iteration > 25) {
+//            if (iteration > 25) {
                 // Decay epsilon
                 epsilon *= epsilonDecay;
                 epsilon = std::max(epsilon, 1.0f);
-            }
+//            }
 
+/*
             if (iteration > 100) {
                 // Decay learning rate
                 learningRate *= learningRateDecay;
             }
+*/
 
             if (newLoss < bestLoss) {
                 bestLoss = newLoss;
