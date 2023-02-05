@@ -34,6 +34,18 @@ namespace Zagreus {
 
     Bitboard tunerBoard{};
 
+    int stopCounter = 0;
+    int iteration = 0;
+    int batchSize = 64;
+    float learningRate = 1.0f;
+    float epsilon = 5.0f;
+    float optimizerEpsilon = 1e-6f;
+    float epsilonDecay = 0.99f;
+    float beta1 = 0.9f;
+    float beta2 = 0.999f;
+    float maxGradient = 1.0f;
+    int epsilonWarmupIterations = 10;
+
     float sigmoid(float x) {
         return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
     }
@@ -43,10 +55,10 @@ namespace Zagreus {
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
-            //Move rootMove{};
-            //int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
-            float loss = pos.result - sigmoid((float) evalScore);
+            Move rootMove{};
+            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
+//            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+            float loss = pos.result - sigmoid((float) qScore);
             totalLoss += loss * loss;
         }
 
@@ -149,24 +161,13 @@ namespace Zagreus {
         std::mt19937_64 gen(rd());
         std::uniform_int_distribution<uint64_t> dis;
 
-        engine.setTuning(true);
+        engine.setTuning(false);
 
         std::cout << "Starting tuning..." << std::endl;
         std::vector<TunePosition> trainingSet = loadPositions(filePath);
         std::vector<float> bestParameters = getBaseEvalValues();
         updateEvalValues(bestParameters);
         exportNewEvalValues(bestParameters);
-
-        int stopCounter = 0;
-        int iteration = 0;
-        int batchSize = 1024;
-        float learningRate = 0.1f;
-        float epsilon = 10.0f;
-        float optimizerEpsilon = 1e-6f;
-        float learningRateDecay = 0.9999f;
-        float epsilonDecay = 0.99f;
-        float beta1 = 0.9f;
-        float beta2 = 0.999f;
 
         std::vector<float> m(bestParameters.size(), 0);
         std::vector<float> v(bestParameters.size(), 0);
@@ -178,7 +179,6 @@ namespace Zagreus {
         std::vector<TunePosition> validationSet(validationSetSize);
 
         std::shuffle(trainingSet.begin(), trainingSet.end(), gen);
-
         std::copy(trainingSet.begin(), trainingSet.begin() + validationSetSize, validationSet.begin());
         trainingSet.erase(trainingSet.begin(), trainingSet.begin() + validationSetSize);
 
@@ -207,34 +207,28 @@ namespace Zagreus {
                 updateEvalValues(bestParameters);
                 float lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
-                gradients[paramIndex] = (lossPlus - lossMinus) / (2 * epsilon);
+                float gradient = (lossPlus - lossMinus) / (2 * epsilon);
+                gradients[paramIndex] = std::min(maxGradient, std::max(-maxGradient, gradient));
                 // reset
                 bestParameters[paramIndex] = oldParam;
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                m[paramIndex] = beta1 * m[paramIndex] + (1 - beta1) * gradients[paramIndex];
-                v[paramIndex] = beta2 * v[paramIndex] + (1 - beta2) * gradients[paramIndex] * gradients[paramIndex];
-                float m_hat = m[paramIndex] / (1 - pow(beta1, iteration));
-                float v_hat = v[paramIndex] / (1 - pow(beta2, iteration));
+                m[paramIndex] = beta1 * m[paramIndex] + (1.0f - beta1) * gradients[paramIndex];
+                v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * gradients[paramIndex] * gradients[paramIndex];
+                float m_hat = m[paramIndex] / (1.0f - pow(beta1, iteration));
+                float v_hat = v[paramIndex] / (1.0f - pow(beta2, iteration));
                 bestParameters[paramIndex] -= learningRate * m_hat / (sqrt(v_hat) + optimizerEpsilon);
             }
 
             updateEvalValues(bestParameters);
             float newLoss = evaluationLoss(validationSet, validationSetSize, maxEndTime, engine);
 
-//            if (iteration > 25) {
+            if (iteration > epsilonWarmupIterations) {
                 // Decay epsilon
                 epsilon *= epsilonDecay;
                 epsilon = std::max(epsilon, 1.0f);
-//            }
-
-/*
-            if (iteration > 100) {
-                // Decay learning rate
-                learningRate *= learningRateDecay;
             }
-*/
 
             if (newLoss < bestLoss) {
                 bestLoss = newLoss;
