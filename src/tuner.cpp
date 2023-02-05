@@ -162,9 +162,14 @@ namespace Zagreus {
         int batchSize = 1024;
         float learningRate = 0.1f;
         float epsilon = 10.0f;
-        float adagradEpsilon = 1e-8f;
+        float optimizerEpsilon = 1e-6f;
         float learningRateDecay = 0.9999f;
         float epsilonDecay = 0.99f;
+        float beta1 = 0.9f;
+        float beta2 = 0.999f;
+
+        std::vector<float> m(bestParameters.size(), 0);
+        std::vector<float> v(bestParameters.size(), 0);
 
         std::cout << "Splitting the trainingSet into a training set and a validation set..." << std::endl;
         // 15% validation set, 85% training set
@@ -182,8 +187,6 @@ namespace Zagreus {
 
         std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
-
-        std::vector<float> squaredGradients(bestParameters.size(), 0.0f);
 
         while (stopCounter < 20) {
             iteration++;
@@ -205,13 +208,16 @@ namespace Zagreus {
                 float lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
                 gradients[paramIndex] = (lossPlus - lossMinus) / (2 * epsilon);
-                squaredGradients[paramIndex] += gradients[paramIndex] * gradients[paramIndex];
                 // reset
                 bestParameters[paramIndex] = oldParam;
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                bestParameters[paramIndex] -= learningRate * gradients[paramIndex] / std::sqrt(squaredGradients[paramIndex] + adagradEpsilon);
+                m[paramIndex] = beta1 * m[paramIndex] + (1 - beta1) * gradients[paramIndex];
+                v[paramIndex] = beta2 * v[paramIndex] + (1 - beta2) * gradients[paramIndex] * gradients[paramIndex];
+                float m_hat = m[paramIndex] / (1 - pow(beta1, iteration));
+                float v_hat = v[paramIndex] / (1 - pow(beta2, iteration));
+                bestParameters[paramIndex] -= learningRate * m_hat / (sqrt(v_hat) + optimizerEpsilon);
             }
 
             updateEvalValues(bestParameters);
