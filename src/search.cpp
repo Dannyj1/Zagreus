@@ -561,7 +561,6 @@ namespace Zagreus {
         }
     }
 
-    uint64_t centerPattern = 0x0000001818000000;
     void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::WHITE>();
         uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::WHITE>()  & ~(evalContext.blackPawnAttacks);
@@ -569,10 +568,6 @@ namespace Zagreus {
         // Slight bonus for squares defended by own pawn
         evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks) * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
         evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
-
-        // Bonus for center control
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & centerPattern) * getEvalValue(MIDGAME_CENTER_CONTROL);
-        evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & centerPattern) * getEvalValue(ENDGAME_CENTER_CONTROL);
 
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);
@@ -609,10 +604,6 @@ namespace Zagreus {
         // Slight bonus for squares defended by own pawn
         evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks) * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
         evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
-
-        // Bonus for center control
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & centerPattern) * getEvalValue(MIDGAME_CENTER_CONTROL);
-        evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & centerPattern) * getEvalValue(ENDGAME_CENTER_CONTROL);
 
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);

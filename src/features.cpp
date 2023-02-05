@@ -21,9 +21,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[74] = { 95, 105, 353, 348, 370, 358, 521, 538, 1003, 1025, 5, 5, 0, 0, 4, -2, 6, 2, 3, 5, 0, 13, -50, 0, -25, 0, -42, 7, -11, -7, 0, -7, -7, 2, -8, 0, -10, -7, 10, 10, 13, 15, 7, 12, -1, 16, 4, 22, 20, 20, 15, 15, 3, 1, 5, 2, 8, 1, -34, -23, 21, 6, -3, 0, 0, 0, -20, -20, 2, -3, 3, 3, 26, -4,  };
+    int evalValues[72] = { 97, 104, 354, 347, 364, 354, 536, 530, 1012, 1008, 6, 6, 4, 0, 5, 6, 4, 5, 2, 14, -50, 0, -25, 0, -31, -3, -10, -4, -2, -1, -3, 9, -5, 2, -9, -4, 4, 8, 16, 11, 14, 4, -1, 15, 7, 11, 20, 20, 15, 15, 3, 0, 4, 0, 6, 2, -25, -28, 21, 10, -5, 0, 0, 0, -20, -20, 1, -5, 3, 3, 30, -2,  };
 
-    int baseEvalValues[74] = {
+    int baseEvalValues[72] = {
             100, // MIDGAME_PAWN_MATERIAL
             100, // ENDGAME_PAWN_MATERIAL
             350, // MIDGAME_KNIGHT_MATERIAL
@@ -36,8 +36,6 @@ namespace Zagreus {
             1000, // ENDGAME_QUEEN_MATERIAL
             2, // MIDGAME_SQUARE_DEFENDED_BY_PAWN
             2, // ENDGAME_SQUARE_DEFENDED_BY_PAWN
-            10, // MIDGAME_CENTER_CONTROL
-            10, // ENDGAME_CENTER_CONTROL
             7, // MIDGAME_KNIGHT_MOBILITY
             2, // ENDGAME_KNIGHT_MOBILITY
             8, // MIDGAME_BISHOP_MOBILITY

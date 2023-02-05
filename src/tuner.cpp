@@ -38,13 +38,12 @@ namespace Zagreus {
     int iteration = 0;
     int batchSize = 512;
     float learningRate = 0.5f;
-    float epsilon = 5.0f;
+    float epsilon = 7.0f;
     float optimizerEpsilon = 1e-6f;
-    float epsilonDecay = 0.98f;
+    float epsilonDecay = 0.975f;
     float beta1 = 0.9f;
     float beta2 = 0.999f;
-    float maxGradient = 1.0f;
-    int epsilonWarmupIterations = 10;
+    int epsilonWarmupIterations = 0;
 
     float sigmoid(float x) {
         return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
@@ -206,19 +205,17 @@ namespace Zagreus {
                 updateEvalValues(bestParameters);
                 float lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
-                float gradient = (lossPlus - lossMinus) / (2 * epsilon);
-//                gradients[paramIndex] = std::min(maxGradient, std::max(-maxGradient, gradient));
-                gradients[paramIndex] = gradient;
+                gradients[paramIndex] = (lossPlus - lossMinus) / (2 * epsilon);
                 // reset
                 bestParameters[paramIndex] = oldParam;
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                 m[paramIndex] = beta1 * m[paramIndex] + (1.0f - beta1) * gradients[paramIndex];
-                v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * gradients[paramIndex] * gradients[paramIndex];
+                v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * std::pow(gradients[paramIndex], 2.0f);
                 float m_hat = m[paramIndex] / (1.0f - pow(beta1, iteration));
                 float v_hat = v[paramIndex] / (1.0f - pow(beta2, iteration));
-                bestParameters[paramIndex] -= learningRate * m_hat / (sqrt(v_hat) + optimizerEpsilon);
+                bestParameters[paramIndex] -= learningRate * (m_hat / (sqrt(v_hat) + optimizerEpsilon));
             }
 
             updateEvalValues(bestParameters);
