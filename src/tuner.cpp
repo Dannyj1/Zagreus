@@ -152,26 +152,38 @@ namespace Zagreus {
         engine.setTuning(true);
 
         std::cout << "Starting tuning..." << std::endl;
-        std::vector<TunePosition> positions = loadPositions(filePath);
+        std::vector<TunePosition> trainingSet = loadPositions(filePath);
         std::vector<float> bestParameters = getBaseEvalValues();
         updateEvalValues(bestParameters);
-
-        std::cout << "Calculating the initial loss..." << std::endl;
-        int amountOfPositions = positions.size();
-        float bestLoss = evaluationLoss(positions, amountOfPositions, maxEndTime, engine);
-
-        std::cout << "Initial loss: " << bestLoss << std::endl;
-        std::cout << "Finding the best parameters. This may take a while..." << std::endl;
-
         exportNewEvalValues(bestParameters);
 
         int stopCounter = 0;
         int iteration = 0;
-        int batchSize = 128;
-        float learningRate = 1.0f;
-        float epsilon = 10.0f;
+        int batchSize = 1024;
+        float learningRate = 0.1f;
+        float epsilon = 4.0f;
+        float adagradEpsilon = 1e-8f;
         float learningRateDecay = 0.9995f;
         float epsilonDecay = 0.99f;
+
+        std::cout << "Splitting the trainingSet into a training set and a validation set..." << std::endl;
+        // 15% validation set, 85% training set
+        int validationSetSize = trainingSet.size() / 7;
+
+        std::vector<TunePosition> validationSet(validationSetSize);
+
+        std::shuffle(trainingSet.begin(), trainingSet.end(), gen);
+
+        std::copy(trainingSet.begin(), trainingSet.begin() + validationSetSize, validationSet.begin());
+        trainingSet.erase(trainingSet.begin(), trainingSet.begin() + validationSetSize);
+
+        std::cout << "Calculating the initial loss..." << std::endl;
+        float bestLoss = evaluationLoss(validationSet, validationSetSize, maxEndTime, engine);
+
+        std::cout << "Initial loss: " << bestLoss << std::endl;
+        std::cout << "Finding the best parameters. This may take a while..." << std::endl;
+
+        std::vector<float> squaredGradients(bestParameters.size(), 0.0f);
 
         while (stopCounter < 20) {
             iteration++;
@@ -179,10 +191,11 @@ namespace Zagreus {
             std::vector<float> gradients(bestParameters.size(), 0.0f);
 
             for (int i = 0; i < batchSize; i++) {
-                batch.emplace_back(positions[dis(gen) % amountOfPositions]);
+                batch.emplace_back(trainingSet[dis(gen) % trainingSet.size()]);
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
+                float oldParam = bestParameters[paramIndex];
                 bestParameters[paramIndex] += epsilon;
                 updateEvalValues(bestParameters);
                 float lossPlus = evaluationLoss(batch, batchSize, maxEndTime, engine);
@@ -192,21 +205,25 @@ namespace Zagreus {
                 float lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
                 gradients[paramIndex] = (lossPlus - lossMinus) / (2 * epsilon);
+                squaredGradients[paramIndex] += gradients[paramIndex] * gradients[paramIndex];
+                // reset
+                bestParameters[paramIndex] = oldParam;
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                bestParameters[paramIndex] -= learningRate * gradients[paramIndex];
+                bestParameters[paramIndex] -= learningRate * gradients[paramIndex] / std::sqrt(squaredGradients[paramIndex] + adagradEpsilon);
             }
 
             updateEvalValues(bestParameters);
-            float newLoss = evaluationLoss(positions, amountOfPositions, maxEndTime, engine);
+            float newLoss = evaluationLoss(validationSet, validationSetSize, maxEndTime, engine);
 
-            if (iteration > 50) {
+            if (iteration > 25) {
                 // Decay epsilon
                 epsilon *= epsilonDecay;
+                epsilon = std::max(epsilon, 1.0f);
             }
 
-            if (iteration > 150) {
+            if (iteration > 100) {
                 // Decay learning rate
                 learningRate *= learningRateDecay;
             }
@@ -219,7 +236,8 @@ namespace Zagreus {
                 stopCounter++;
             }
 
-            std::cout << "Iteration: " << iteration << ", Loss: " << newLoss << ", Best Loss: " << bestLoss << " Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
+            float trainingLoss = evaluationLoss(trainingSet, trainingSet.size(), maxEndTime, engine);
+            std::cout << "Iteration: " << iteration << ", Training Loss: " << trainingLoss << ", Val Loss: " << newLoss << ", Best Val Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
         }
 
         std::cout << "Best loss: " << bestLoss << std::endl;
