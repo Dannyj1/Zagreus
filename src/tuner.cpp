@@ -38,19 +38,19 @@ namespace Zagreus {
         return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
     }
 
-    float evaluationError(std::vector<TunePosition> &positions, int amountOfPositions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
-        float totalError = 0.0f;
+    float evaluationLoss(std::vector<TunePosition> &positions, int amountOfPositions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
+        float totalLoss = 0.0f;
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
-            Move rootMove{};
-            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-//            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
-            float error = pos.result - sigmoid((float) qScore);
-            totalError += error * error;
+            //Move rootMove{};
+            //int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
+            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+            float loss = pos.result - sigmoid((float) evalScore);
+            totalLoss += loss * loss;
         }
 
-        return (1.0f / (float) amountOfPositions) * totalError;
+        return totalLoss / (float) amountOfPositions;
     }
 
     std::vector<TunePosition> loadPositions(char* filePath) {
@@ -139,7 +139,7 @@ namespace Zagreus {
         }
     }
 
-    // Initial error: 0.31197
+    // Initial loss: 0.288649
     void startTuning(char* filePath) {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
@@ -156,22 +156,25 @@ namespace Zagreus {
         std::vector<float> bestParameters = getBaseEvalValues();
         updateEvalValues(bestParameters);
 
-        std::cout << "Calculating the initial error..." << std::endl;
+        std::cout << "Calculating the initial loss..." << std::endl;
         int amountOfPositions = positions.size();
-        float bestError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
+        float bestLoss = evaluationLoss(positions, amountOfPositions, maxEndTime, engine);
 
-        std::cout << "Initial error: " << bestError << std::endl;
+        std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
 
         exportNewEvalValues(bestParameters);
 
         int stopCounter = 0;
-        int iterator = 0;
-        int batchSize = 64;
+        int iteration = 0;
+        int batchSize = 128;
         float learningRate = 1.0f;
+        float epsilon = 10.0f;
+        float learningRateDecay = 0.9995f;
+        float epsilonDecay = 0.99f;
 
         while (stopCounter < 20) {
-            iterator++;
+            iteration++;
             std::vector<TunePosition> batch(batchSize);
             std::vector<float> gradients(bestParameters.size(), 0.0f);
 
@@ -180,42 +183,45 @@ namespace Zagreus {
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                int oldParam = bestParameters[paramIndex];
-
-                bestParameters[paramIndex] += 1;
+                bestParameters[paramIndex] += epsilon;
                 updateEvalValues(bestParameters);
-                float errorPlus = evaluationError(batch, batchSize, maxEndTime, engine);
+                float lossPlus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
-                bestParameters[paramIndex] -= 2;
+                bestParameters[paramIndex] -= 2 * epsilon;
                 updateEvalValues(bestParameters);
-                float errorMinus = evaluationError(batch, batchSize, maxEndTime, engine);
+                float lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
-                bestParameters[paramIndex] = oldParam;
-                float gradient = (errorPlus - errorMinus) / 2.0f;
-                gradients[paramIndex] = gradient;
+                gradients[paramIndex] = (lossPlus - lossMinus) / (2 * epsilon);
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                bestParameters[paramIndex] += gradients[paramIndex] * learningRate;
+                bestParameters[paramIndex] -= learningRate * gradients[paramIndex];
             }
 
             updateEvalValues(bestParameters);
-            float newError = evaluationError(positions, amountOfPositions, maxEndTime, engine);
+            float newLoss = evaluationLoss(positions, amountOfPositions, maxEndTime, engine);
 
-            // Decay learning rate
-            learningRate *= 0.999f;
+            if (iteration > 50) {
+                // Decay epsilon
+                epsilon *= epsilonDecay;
+            }
 
-            std::cout << "Iteration: " << iterator << ", Error: " << newError << std::endl;
+            if (iteration > 150) {
+                // Decay learning rate
+                learningRate *= learningRateDecay;
+            }
 
-            if (newError < bestError) {
-                bestError = newError;
+            if (newLoss < bestLoss) {
+                bestLoss = newLoss;
                 stopCounter = 0;
                 exportNewEvalValues(bestParameters);
             } else {
                 stopCounter++;
             }
+
+            std::cout << "Iteration: " << iteration << ", Loss: " << newLoss << ", Best Loss: " << bestLoss << " Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
         }
 
-        std::cout << "Best error: " << bestError << std::endl;
+        std::cout << "Best loss: " << bestLoss << std::endl;
     }
 }
