@@ -187,7 +187,7 @@ namespace Zagreus {
         std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
 
-        while (stopCounter < 20) {
+        while (stopCounter <= 10) {
             iteration++;
             std::vector<TunePosition> batch(batchSize);
             std::vector<float> gradients(bestParameters.size(), 0.0f);
@@ -207,7 +207,8 @@ namespace Zagreus {
                 float lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
                 float gradient = (lossPlus - lossMinus) / (2 * epsilon);
-                gradients[paramIndex] = std::min(maxGradient, std::max(-maxGradient, gradient));
+//                gradients[paramIndex] = std::min(maxGradient, std::max(-maxGradient, gradient));
+                gradients[paramIndex] = gradient;
                 // reset
                 bestParameters[paramIndex] = oldParam;
             }
