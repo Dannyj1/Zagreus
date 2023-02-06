@@ -389,14 +389,14 @@ namespace Zagreus {
 
         if (enPassantSquare != NO_SQUARE) {
             zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
+            enPassantSquare = NO_SQUARE;
         }
-
-        enPassantSquare = NO_SQUARE;
 
         if (movingColor == PieceColor::BLACK) {
             fullmoveClock += 1;
         }
 
+        halfMoveClock = 0;
         kingInCheck = 0b00001100;
         movingColor = getOppositeColor(movingColor);
         zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];

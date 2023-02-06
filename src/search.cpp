@@ -311,7 +311,15 @@ namespace Zagreus {
             }
 
             if (!depthExtension) {
-                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && !isOwnKingInCheck) {
+                int amountOfPieces = 0;
+
+                if (board.getMovingColor() == PieceColor::WHITE) {
+                    amountOfPieces = popcnt(board.getColorBoard<PieceColor::WHITE>());
+                } else {
+                    amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
+                }
+
+                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && !isOwnKingInCheck && amountOfPieces >= 4) {
                     board.makeNullMove();
                     int R = depth > 6 ? 3 : 2;
                     int score = search(board, depth - 1 - R, -beta, -beta + 1, rootMove, previousMove, endTime, line,
