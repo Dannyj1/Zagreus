@@ -401,6 +401,7 @@ namespace Zagreus {
         movingColor = getOppositeColor(movingColor);
         zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
         ply += 1;
+        moveHistory[ply] = getZobristHash();
     }
 
     void Bitboard::unmakeNullMove() {
