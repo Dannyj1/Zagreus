@@ -402,7 +402,7 @@ namespace Zagreus {
 
                     if (score >= beta) {
                         board.unmakeMove(move);
-                        return score;
+                        return beta;
                     }
                 }
 
