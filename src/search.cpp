@@ -311,11 +311,6 @@ namespace Zagreus {
             }
 
             if (!depthExtension) {
-                if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
-                    move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
-                    depthReduction = depth / 2;
-                }
-
                 bool hasMinorOrMajorPieces;
                 int amountOfPieces = 0;
 
@@ -327,10 +322,11 @@ namespace Zagreus {
                     amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
                 }
 
-                if (canNull && (depth - depthReduction) >= 3 && hasMinorOrMajorPieces && amountOfPieces >= 4 && !isOwnKingInCheck) {
+                if (canNull && depth >= 3 && hasMinorOrMajorPieces && amountOfPieces >= 4 && !isOwnKingInCheck) {
                     board.makeNullMove();
                     int R = depth > 6 ? 3 : 2;
-                    int score = search(board, depth - 1 - R, -beta, -beta + 1, rootMove, previousMove, endTime, line,
+                    Move emptyMove = {};
+                    int score = search(board, depth - 1 - R, -beta, -beta + 1, rootMove, emptyMove, endTime, line,
                                        engine, false, false);
                     score *= -1;
                     board.unmakeNullMove();
