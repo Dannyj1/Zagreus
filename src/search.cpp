@@ -540,7 +540,7 @@ namespace Zagreus {
             evalContext.whiteMidgameScore += getMidgamePstValue(pieceOnSquare, index);
             evalContext.whiteEndgameScore += getEndgamePstValue(pieceOnSquare, index);
 
-            colorBB = _blsr_u64(colorBB);
+            colorBB &= ~(1ULL << index);
         }
     }
 
@@ -554,7 +554,7 @@ namespace Zagreus {
             evalContext.blackMidgameScore += getMidgamePstValue(pieceOnSquare, index);
             evalContext.blackEndgameScore += getEndgamePstValue(pieceOnSquare, index);
 
-            colorBB = _blsr_u64(colorBB);
+            colorBB &= ~(1ULL << index);
         }
     }
 

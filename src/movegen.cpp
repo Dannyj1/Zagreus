@@ -137,7 +137,7 @@ namespace Zagreus {
 
         while (pawnBB) {
             int8_t index = bitscanForward(pawnBB);
-            pawnBB = _blsr_u64(pawnBB);
+            pawnBB &= ~(1ULL << index);
             uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
 
             uint64_t attackableSquares = bitboard.getColorBoard<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>();
@@ -159,7 +159,7 @@ namespace Zagreus {
 
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
-                genBB = _blsr_u64(genBB);
+                genBB &= ~(1ULL << genIndex);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -206,7 +206,7 @@ namespace Zagreus {
 
         while (knightBB) {
             int8_t index = bitscanForward(knightBB);
-            knightBB = _blsr_u64(knightBB);
+            knightBB &= ~(1ULL << index);
             uint64_t genBB = bitboard.getKnightAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -222,7 +222,7 @@ namespace Zagreus {
 
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
-                genBB = _blsr_u64(genBB);
+                genBB &= ~(1ULL << genIndex);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -255,7 +255,7 @@ namespace Zagreus {
 
         while (bishopBB) {
             int8_t index = bitscanForward(bishopBB);
-            bishopBB = _blsr_u64(bishopBB);
+            bishopBB &= ~(1ULL << index);
             uint64_t genBB = bitboard.getBishopAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -271,7 +271,7 @@ namespace Zagreus {
 
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
-                genBB = _blsr_u64(genBB);
+                genBB &= ~(1ULL << genIndex);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -304,7 +304,7 @@ namespace Zagreus {
 
         while (rookBB) {
             int8_t index = bitscanForward(rookBB);
-            rookBB = _blsr_u64(rookBB);
+            rookBB &= ~(1ULL << index);
             uint64_t genBB = bitboard.getRookAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -320,7 +320,7 @@ namespace Zagreus {
 
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
-                genBB = _blsr_u64(genBB);
+                genBB &= ~(1ULL << genIndex);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -353,7 +353,7 @@ namespace Zagreus {
 
         while (queenBB) {
             int8_t index = bitscanForward(queenBB);
-            queenBB = _blsr_u64(queenBB);
+            queenBB &= ~(1ULL << index);
             uint64_t genBB = bitboard.getQueenAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -369,7 +369,7 @@ namespace Zagreus {
 
             while (genBB) {
                 int8_t genIndex = bitscanForward(genBB);
-                genBB = _blsr_u64(genBB);
+                genBB &= ~(1ULL << genIndex);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -419,7 +419,7 @@ namespace Zagreus {
 
         while (genBB) {
             int8_t genIndex = bitscanForward(genBB);
-            genBB = _blsr_u64(genBB);
+            genBB &= ~(1ULL << genIndex);
             PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
             int captureScore = NO_CAPTURE_SCORE;
 
@@ -448,7 +448,7 @@ namespace Zagreus {
 
                 while (tilesToCheck) {
                     int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck = _blsr_u64(tilesToCheck);
+                    tilesToCheck &= ~(1ULL << tileIndex);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
                         canCastle = false;
@@ -468,7 +468,7 @@ namespace Zagreus {
 
                 while (tilesToCheck) {
                     int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck = _blsr_u64(tilesToCheck);
+                    tilesToCheck &= ~(1ULL << tileIndex);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
                         canCastle = false;
@@ -488,7 +488,7 @@ namespace Zagreus {
 
                 while (tilesToCheck) {
                     int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck = _blsr_u64(tilesToCheck);
+                    tilesToCheck &= ~(1ULL << tileIndex);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
                         canCastle = false;
@@ -508,7 +508,7 @@ namespace Zagreus {
 
                 while (tilesToCheck) {
                     int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck = _blsr_u64(tilesToCheck);
+                    tilesToCheck &= ~(1ULL << tileIndex);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
                         canCastle = false;

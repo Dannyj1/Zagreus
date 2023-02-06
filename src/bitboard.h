@@ -349,7 +349,7 @@ namespace Zagreus {
 
             while (attacks) {
                 int attackerSquare = bitscanForward(attacks);
-                attacks = _blsr_u64(attacks);
+                attacks &= ~(1ULL << attackerSquare);
                 PieceType pieceType = pieceSquareMapping[attackerSquare];
                 int weight = getPieceWeight(pieceType);
 
