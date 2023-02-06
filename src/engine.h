@@ -30,6 +30,7 @@ namespace Zagreus {
         bool isEngineInitialized = false;
         senjo::SearchStats searchStats{};
         bool stoppingSearch = false;
+        bool tuning = false;
 
         std::list<senjo::EngineOption> options{
             senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, 5000),
@@ -107,5 +108,10 @@ namespace Zagreus {
         senjo::EngineOption getOption(const std::string &optionName);
 
         uint64_t doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth);
+
+        bool isTuning() const;
+
+        void setTuning(bool tuning);
+
     };
 }

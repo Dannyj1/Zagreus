@@ -27,6 +27,7 @@
 #include "movepicker.h"
 #include "pst.h"
 #include "tt.h"
+#include "features.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
@@ -447,21 +448,23 @@ namespace Zagreus {
     }
 
     int SearchManager::evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine) {
-        if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+        if (!engine.isTuning() && (searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
             return 0;
         }
 
         int modifier = board.getMovingColor() == PieceColor::WHITE ? 1 : -1;
 
-        if (board.isWinner<PieceColor::WHITE>()) {
-            return (15000 - board.getPly()) * modifier;
-        } else if (board.isWinner<PieceColor::BLACK>()) {
-            return (-15000 + board.getPly()) * modifier;
-        }
+        if (!engine.isTuning()) {
+            if (board.isWinner<PieceColor::WHITE>()) {
+                return (15000 - board.getPly()) * modifier;
+            } else if (board.isWinner<PieceColor::BLACK>()) {
+                return (-15000 + board.getPly()) * modifier;
+            }
 
-        if (board.isDraw()) {
-            // Thanks to Stockfish for the "3-fold blindness avoidance" idea
-            return 0 - 1 + ((int) searchStats.nodes & 0x2);
+            if (board.isDraw()) {
+                // Thanks to Stockfish for the "3-fold blindness avoidance" idea
+                return 0 - 1 + ((int) searchStats.nodes & 0x2);
+            }
         }
 
         EvalContext evalContext = createEvalContext(board);
@@ -497,37 +500,37 @@ namespace Zagreus {
     }
 
     void getBlackMaterialScore(EvalContext &evalContext, Bitboard &board) {
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_PAWN>()) * getPieceWeight(BLACK_PAWN);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_PAWN>()) * getPieceWeight(BLACK_PAWN);
+        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_PAWN>()) * getEvalValue(MIDGAME_PAWN_MATERIAL);
+        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_PAWN>()) * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_KNIGHT>()) * getPieceWeight(BLACK_KNIGHT);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_KNIGHT>()) * getPieceWeight(BLACK_KNIGHT);
+        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_KNIGHT>()) * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
+        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_KNIGHT>()) * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_BISHOP>()) * getPieceWeight(BLACK_BISHOP);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_BISHOP>()) * getPieceWeight(BLACK_BISHOP);
+        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_BISHOP>()) * getEvalValue(MIDGAME_BISHOP_MATERIAL);
+        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_BISHOP>()) * getEvalValue(ENDGAME_BISHOP_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_ROOK>()) * getPieceWeight(BLACK_ROOK);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_ROOK>()) * getPieceWeight(BLACK_ROOK);
+        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_ROOK>()) * getEvalValue(MIDGAME_ROOK_MATERIAL);
+        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_ROOK>()) * getEvalValue(ENDGAME_ROOK_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_QUEEN>()) * getPieceWeight(BLACK_QUEEN);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_QUEEN>()) * getPieceWeight(BLACK_QUEEN);
+        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_QUEEN>()) * getEvalValue(MIDGAME_QUEEN_MATERIAL);
+        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_QUEEN>()) * getEvalValue(ENDGAME_QUEEN_MATERIAL);
     }
 
     void getWhiteMaterialScore(EvalContext &evalContext, Bitboard &board) {
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_PAWN>()) * getPieceWeight(WHITE_PAWN);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_PAWN>()) * getPieceWeight(WHITE_PAWN);
+        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_PAWN>()) * getEvalValue(MIDGAME_PAWN_MATERIAL);
+        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_PAWN>()) * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_KNIGHT>()) * getPieceWeight(WHITE_KNIGHT);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_KNIGHT>()) * getPieceWeight(WHITE_KNIGHT);
+        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_KNIGHT>()) * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
+        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_KNIGHT>()) * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_BISHOP>()) * getPieceWeight(WHITE_BISHOP);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_BISHOP>()) * getPieceWeight(WHITE_BISHOP);
+        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_BISHOP>()) * getEvalValue(MIDGAME_BISHOP_MATERIAL);
+        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_BISHOP>()) * getEvalValue(ENDGAME_BISHOP_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_ROOK>()) * getPieceWeight(WHITE_ROOK);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_ROOK>()) * getPieceWeight(WHITE_ROOK);
+        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_ROOK>()) * getEvalValue(MIDGAME_ROOK_MATERIAL);
+        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_ROOK>()) * getEvalValue(ENDGAME_ROOK_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_QUEEN>()) * getPieceWeight(WHITE_QUEEN);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_QUEEN>()) * getPieceWeight(WHITE_QUEEN);
+        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_QUEEN>()) * getEvalValue(MIDGAME_QUEEN_MATERIAL);
+        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_QUEEN>()) * getEvalValue(ENDGAME_QUEEN_MATERIAL);
     }
 
     void getWhitePositionalScore(EvalContext &evalContext, Bitboard &bitboard) {
@@ -558,21 +561,13 @@ namespace Zagreus {
         }
     }
 
-    uint64_t centerPattern = 0x0000001818000000;
-    uint64_t extendedCenterPattern = 0x00003C3C3C3C0000 & ~centerPattern;
     void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::WHITE>();
         uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::WHITE>()  & ~(evalContext.blackPawnAttacks);
 
         // Slight bonus for squares defended by own pawn
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks);
-        evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks);
-
-        // Bonus for center control
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & centerPattern) * 10;
-        evalContext.whiteEndgameScore += 0;
-        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & extendedCenterPattern) * 4;
-        evalContext.whiteEndgameScore += 0;
+        evalContext.whiteMidgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks) * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
+        evalContext.whiteEndgameScore += popcnt((evalContext.whiteCombinedAttacks) & evalContext.whitePawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
 
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);
@@ -581,20 +576,20 @@ namespace Zagreus {
 
             switch (pieceOnSquare) {
                 case WHITE_KNIGHT:
-                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 7;
-                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_KNIGHT_MOBILITY);
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_KNIGHT_MOBILITY);
                     break;
                 case WHITE_BISHOP:
-                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
-                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 3;
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_BISHOP_MOBILITY);
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_BISHOP_MOBILITY);
                     break;
                 case WHITE_ROOK:
-                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
-                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 6;
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_ROOK_MOBILITY);
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_ROOK_MOBILITY);
                     break;
                 case WHITE_QUEEN:
-                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * 4;
-                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
+                    evalContext.whiteMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_QUEEN_MOBILITY);
+                    evalContext.whiteEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_QUEEN_MOBILITY);
                     break;
             }
 
@@ -607,14 +602,8 @@ namespace Zagreus {
         uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::BLACK>()  & ~(evalContext.whitePawnAttacks);
 
         // Slight bonus for squares defended by own pawn
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks);
-        evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks);
-
-        // Bonus for center control
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & centerPattern) * 10;
-        evalContext.blackEndgameScore += 0;
-        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & extendedCenterPattern) * 4;
-        evalContext.blackEndgameScore += 0;
+        evalContext.blackMidgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks) * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
+        evalContext.blackEndgameScore += popcnt((evalContext.blackCombinedAttacks) & evalContext.blackPawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
 
         while (ownPiecesBBLoop) {
             int index = bitscanForward(ownPiecesBBLoop);
@@ -623,20 +612,20 @@ namespace Zagreus {
 
             switch (pieceOnSquare) {
                 case BLACK_KNIGHT:
-                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 7;
-                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_KNIGHT_MOBILITY);
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_KNIGHT_MOBILITY);
                     break;
                 case BLACK_BISHOP:
-                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
-                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 3;
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_BISHOP_MOBILITY);
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_BISHOP_MOBILITY);
                     break;
                 case BLACK_ROOK:
-                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 2;
-                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 6;
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_ROOK_MOBILITY);
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_ROOK_MOBILITY);
                     break;
                 case BLACK_QUEEN:
-                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * 4;
-                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * 8;
+                    evalContext.blackMidgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(MIDGAME_QUEEN_MOBILITY);
+                    evalContext.blackEndgameScore += popcnt(attacks & ~ownPiecesBB) * getEvalValue(ENDGAME_QUEEN_MOBILITY);
                     break;
             }
 
@@ -654,25 +643,25 @@ namespace Zagreus {
         uint64_t safetyMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
         safetyMask |= nortOne(safetyMask);
         uint64_t pawnShield = pawnBB & safetyMask;
-        evalContext.whiteMidgameScore += std::min(60, (int) (popcnt(pawnShield) * 20));
-        evalContext.whiteEndgameScore += 0;
+        evalContext.whiteMidgameScore += std::min(getEvalValue(MIDGAME_PAWN_SHIELD) * 3, (int) (popcnt(pawnShield) * getEvalValue(MIDGAME_PAWN_SHIELD)));
+        evalContext.whiteEndgameScore += std::min(getEvalValue(ENDGAME_PAWN_SHIELD) * 3, (int) (popcnt(pawnShield) * getEvalValue(ENDGAME_PAWN_SHIELD)));
 
         if (bitboard.isSemiOpenFileLenient<PieceColor::WHITE>(kingLocation)) {
-            evalContext.whiteMidgameScore -= 50;
-            evalContext.whiteEndgameScore -= 0;
+            evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KING_ON_OPEN_FILE);
+            evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KING_ON_OPEN_FILE);
         }
 
         if (kingLocation % 8 != 0) {
             if (bitboard.isSemiOpenFileLenient<PieceColor::WHITE>(kingLocation - 1)) {
-                evalContext.whiteMidgameScore -= 20;
-                evalContext.whiteEndgameScore -= 0;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE);
             }
         }
 
         if (kingLocation % 8 != 7) {
             if (bitboard.isSemiOpenFileLenient<PieceColor::WHITE>(kingLocation + 1)) {
-                evalContext.whiteMidgameScore -= 20;
-                evalContext.whiteEndgameScore -= 0;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE);
             }
         }
 
@@ -680,31 +669,27 @@ namespace Zagreus {
 
         if (!(castlingRights & CastlingRights::WHITE_QUEENSIDE) && !(castlingRights & CastlingRights::WHITE_KINGSIDE)) {
             if (!(bitboard.getCastlingRights() & CastlingRights::HAS_WHITE_CASTLED)) {
-                evalContext.whiteMidgameScore -= 20;
-                evalContext.whiteEndgameScore -= 0;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_NO_CASTLING_RIGHTS);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_NO_CASTLING_RIGHTS);
             }
         } else {
             if ((castlingRights & CastlingRights::WHITE_QUEENSIDE) && (evalContext.blackCombinedAttacks & whiteQueenCastlingAttackPattern)) {
-                evalContext.whiteMidgameScore -= 5;
-                evalContext.whiteEndgameScore -= 0;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_QUEENSIDE_CASTLING_PREVENTED);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEENSIDE_CASTLING_PREVENTED);
             }
 
             if ((castlingRights & CastlingRights::WHITE_KINGSIDE) && (evalContext.blackCombinedAttacks & whiteKingCastlingAttackPattern)) {
-                evalContext.whiteMidgameScore -= 10;
-                evalContext.whiteEndgameScore -= 0;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KINGSIDE_CASTLING_PREVENTED);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KINGSIDE_CASTLING_PREVENTED);
             }
         }
 
-        evalContext.whiteMidgameScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_PAWN) / 100);
-        evalContext.whiteEndgameScore -= popcnt(evalContext.blackPawnAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_PAWN) / 100);
-        evalContext.whiteMidgameScore -= popcnt(evalContext.blackKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_KNIGHT) / 100);
-        evalContext.whiteEndgameScore -= popcnt(evalContext.blackKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_KNIGHT) / 100);
-        evalContext.whiteMidgameScore -= popcnt(evalContext.blackBishopAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_BISHOP) / 100);
-        evalContext.whiteEndgameScore -= popcnt(evalContext.blackBishopAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_BISHOP) / 100);
-        evalContext.whiteMidgameScore -= popcnt(evalContext.blackRookAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_ROOK) / 100);
-        evalContext.whiteEndgameScore -= popcnt(evalContext.blackRookAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_ROOK) / 100);
-        evalContext.whiteMidgameScore -= popcnt(evalContext.blackQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_QUEEN) / 100);
-        evalContext.whiteEndgameScore -= popcnt(evalContext.blackQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::BLACK_QUEEN) / 100);
+        evalContext.whiteMidgameScore += popcnt(evalContext.blackBishopAttacks & kingAttacks) * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.whiteEndgameScore += popcnt(evalContext.blackBishopAttacks & kingAttacks) * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.whiteMidgameScore += popcnt(evalContext.blackRookAttacks & kingAttacks) * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.whiteEndgameScore += popcnt(evalContext.blackRookAttacks & kingAttacks) * getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.whiteMidgameScore += popcnt(evalContext.blackQueenAttacks & kingAttacks) * getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+        evalContext.whiteEndgameScore += popcnt(evalContext.blackQueenAttacks & kingAttacks) * getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
     }
 
     uint64_t blackQueenCastlingAttackPattern = 0x7000000000000000;
@@ -717,57 +702,52 @@ namespace Zagreus {
         uint64_t safetyMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
         safetyMask |= soutOne(safetyMask);
         uint64_t pawnShield = pawnBB & safetyMask;
-        evalContext.blackMidgameScore += std::min(60, (int) (popcnt(pawnShield) * 20));
-        evalContext.blackEndgameScore += 0;
+        evalContext.blackMidgameScore += std::min(getEvalValue(MIDGAME_PAWN_SHIELD) * 3, (int) (popcnt(pawnShield) * getEvalValue(MIDGAME_PAWN_SHIELD)));
+        evalContext.blackEndgameScore += std::min(getEvalValue(ENDGAME_PAWN_SHIELD) * 3, (int) (popcnt(pawnShield) * getEvalValue(ENDGAME_PAWN_SHIELD)));
 
         if (bitboard.isSemiOpenFileLenient<PieceColor::BLACK>(kingLocation)) {
-            evalContext.blackMidgameScore -= 50;
-            evalContext.blackEndgameScore -= 0;
+            evalContext.blackMidgameScore += getEvalValue(MIDGAME_KING_ON_OPEN_FILE);
+            evalContext.blackEndgameScore += getEvalValue(ENDGAME_KING_ON_OPEN_FILE);
         }
 
         if (kingLocation % 8 != 0) {
             if (bitboard.isSemiOpenFileLenient<PieceColor::BLACK>(kingLocation - 1)) {
-                evalContext.blackMidgameScore -= 20;
-                evalContext.blackEndgameScore -= 0;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE);
             }
         }
 
         if (kingLocation % 8 != 7) {
             if (bitboard.isSemiOpenFileLenient<PieceColor::BLACK>(kingLocation + 1)) {
-                evalContext.blackMidgameScore -= 20;
-                evalContext.blackEndgameScore -= 0;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE);
             }
         }
-
-
+        
         uint8_t castlingRights = bitboard.getCastlingRights();
         if (!(castlingRights & CastlingRights::BLACK_QUEENSIDE) && !(castlingRights & CastlingRights::BLACK_KINGSIDE)) {
             if (!(bitboard.getCastlingRights() & CastlingRights::HAS_BLACK_CASTLED)) {
-                evalContext.blackMidgameScore -= 20;
-                evalContext.blackEndgameScore -= 0;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_NO_CASTLING_RIGHTS);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_NO_CASTLING_RIGHTS);
             }
         } else {
             if ((castlingRights & CastlingRights::BLACK_QUEENSIDE) && (evalContext.whiteCombinedAttacks & blackQueenCastlingAttackPattern)) {
-                evalContext.blackMidgameScore -= 5;
-                evalContext.blackEndgameScore -= 0;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_QUEENSIDE_CASTLING_PREVENTED);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_QUEENSIDE_CASTLING_PREVENTED);
             }
 
             if ((castlingRights & CastlingRights::BLACK_KINGSIDE) && (evalContext.whiteCombinedAttacks & blackKingCastlingAttackPattern)) {
-                evalContext.blackMidgameScore -= 10;
-                evalContext.blackEndgameScore -= 0;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_KINGSIDE_CASTLING_PREVENTED);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_KINGSIDE_CASTLING_PREVENTED);
             }
         }
 
-        evalContext.blackMidgameScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_PAWN) / 100);
-        evalContext.blackEndgameScore -= popcnt(evalContext.whitePawnAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_PAWN) / 100);
-        evalContext.blackMidgameScore -= popcnt(evalContext.whiteKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_KNIGHT) / 100);
-        evalContext.blackEndgameScore -= popcnt(evalContext.whiteKnightAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_KNIGHT) / 100);
-        evalContext.blackMidgameScore -= popcnt(evalContext.whiteBishopAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_BISHOP) / 100);
-        evalContext.blackEndgameScore -= popcnt(evalContext.whiteBishopAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_BISHOP) / 100);
-        evalContext.blackMidgameScore -= popcnt(evalContext.whiteRookAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_ROOK) / 100);
-        evalContext.blackEndgameScore -= popcnt(evalContext.whiteRookAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_ROOK) / 100);
-        evalContext.blackMidgameScore -= popcnt(evalContext.whiteQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_QUEEN) / 100);
-        evalContext.blackEndgameScore -= popcnt(evalContext.whiteQueenAttacks & kingAttacks) * (getPieceWeight(PieceType::WHITE_QUEEN) / 100);
+        evalContext.blackMidgameScore += popcnt(evalContext.whiteBishopAttacks & kingAttacks) * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.blackEndgameScore += popcnt(evalContext.whiteBishopAttacks & kingAttacks) * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.blackMidgameScore += popcnt(evalContext.whiteRookAttacks & kingAttacks) * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.blackEndgameScore += popcnt(evalContext.whiteRookAttacks & kingAttacks) * getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.blackMidgameScore += popcnt(evalContext.whiteQueenAttacks & kingAttacks) * getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+        evalContext.blackEndgameScore += popcnt(evalContext.whiteQueenAttacks & kingAttacks) * getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
     }
 
     void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
@@ -778,10 +758,35 @@ namespace Zagreus {
         while (protectedPieces) {
             uint64_t index = bitscanForward(protectedPieces);
             PieceType pieceType = bitboard.getPieceOnSquare(index);
-            int weight = getPieceWeight(pieceType);
 
-            evalContext.whiteMidgameScore += 11 - (weight / 100);
-            evalContext.whiteEndgameScore += 11 - (weight / 100);
+            switch (pieceType) {
+                case WHITE_PAWN:
+                case BLACK_PAWN:
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_CONNECTIVITY);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_CONNECTIVITY);
+                    break;
+                case WHITE_KNIGHT:
+                case BLACK_KNIGHT:
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_CONNECTIVITY);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_CONNECTIVITY);
+                    break;
+                case WHITE_BISHOP:
+                case BLACK_BISHOP:
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_CONNECTIVITY);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_CONNECTIVITY);
+                    break;
+                case WHITE_ROOK:
+                case BLACK_ROOK:
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_CONNECTIVITY);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_CONNECTIVITY);
+                    break;
+                case WHITE_QUEEN:
+                case BLACK_QUEEN:
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_QUEEN_CONNECTIVITY);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
+                    break;
+            }
+            
             protectedPieces &= ~(1ULL << index);
         }
     }
@@ -794,10 +799,35 @@ namespace Zagreus {
         while (protectedPieces) {
             uint64_t index = bitscanForward(protectedPieces);
             PieceType pieceType = bitboard.getPieceOnSquare(index);
-            int weight = getPieceWeight(pieceType);
-
-            evalContext.blackMidgameScore += 11 - (weight / 100);
-            evalContext.blackEndgameScore += 11 - (weight / 100);
+            
+            switch (pieceType) {
+                case WHITE_PAWN:
+                case BLACK_PAWN:
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_PAWN_CONNECTIVITY);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_PAWN_CONNECTIVITY);
+                    break;
+                case WHITE_KNIGHT:
+                case BLACK_KNIGHT:
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_CONNECTIVITY);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_CONNECTIVITY);
+                    break;
+                case WHITE_BISHOP:
+                case BLACK_BISHOP:
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_CONNECTIVITY);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_CONNECTIVITY);
+                    break;
+                case WHITE_ROOK:
+                case BLACK_ROOK:
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_CONNECTIVITY);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_CONNECTIVITY);
+                    break;
+                case WHITE_QUEEN:
+                case BLACK_QUEEN:
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_QUEEN_CONNECTIVITY);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
+                    break;
+            }
+            
             protectedPieces &= ~(1ULL << index);
         }
     }
@@ -805,88 +835,79 @@ namespace Zagreus {
     void getWhiteRookScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t rookBB = bitboard.getPieceBoard<PieceType::WHITE_ROOK>();
         int rookAmount = popcnt(rookBB);
-        int score = 0;
 
         while (rookBB) {
             int8_t index = bitscanForward(rookBB);
 
             if (bitboard.isOpenFile(index)) {
-                score += 20;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_OPEN_FILE);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_OPEN_FILE);
             } else if (bitboard.isSemiOpenFile<PieceColor::WHITE>(index)) {
-                score += 15;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_SEMI_OPEN_FILE);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_SEMI_OPEN_FILE);
             }
 
             if (index >= Square::A7)  {
-                score += 10;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
             }
 
             uint64_t enemyQueenOnFile = bitboard.getPieceBoard<PieceType::BLACK_QUEEN>() & bitboard.getFile(index);
 
             if (enemyQueenOnFile) {
-                score += 5;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
             }
 
             rookBB &= ~(1ULL << index);
         }
 
-        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * 5) * rookAmount;
-
-        evalContext.whiteMidgameScore += score;
-        evalContext.whiteEndgameScore += score;
+        evalContext.whiteMidgameScore += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * getEvalValue(MIDGAME_ROOK_LESS_PAWNS_BONUS)) * rookAmount;
+        evalContext.whiteEndgameScore += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * getEvalValue(ENDGAME_ROOK_LESS_PAWNS_BONUS)) * rookAmount;
     }
 
     void getBlackRookScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t rookBB = bitboard.getPieceBoard<PieceType::BLACK_ROOK>();
         int rookAmount = popcnt(rookBB);
-        int score = 0;
 
         while (rookBB) {
             uint64_t index = bitscanForward(rookBB);
 
             if (bitboard.isOpenFile(index)) {
-                score += 20;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_OPEN_FILE);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_OPEN_FILE);
             } else if (bitboard.isSemiOpenFile<PieceColor::BLACK>(index)) {
-                score += 15;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_SEMI_OPEN_FILE);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_SEMI_OPEN_FILE);
             }
 
             if (index <= Square::H2)  {
-                score += 10;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
             }
 
             uint64_t enemyQueenOnFile = bitboard.getPieceBoard<PieceType::WHITE_QUEEN>() & bitboard.getFile(index);
 
             if (enemyQueenOnFile) {
-                score += 5;
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
             }
 
             rookBB &= ~(1ULL << index);
         }
 
-        score += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * 5) * rookAmount;
-
-        evalContext.blackMidgameScore += score;
-        evalContext.blackEndgameScore += score;
+        evalContext.blackMidgameScore += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * getEvalValue(MIDGAME_ROOK_LESS_PAWNS_BONUS)) * rookAmount;
+        evalContext.blackEndgameScore += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * getEvalValue(ENDGAME_ROOK_LESS_PAWNS_BONUS)) * rookAmount;
     }
 
     void getWhiteBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t bishopBB = bitboard.getPieceBoard<PieceType::WHITE_BISHOP>();
-        uint64_t blackBishopBB = bitboard.getPieceBoard<PieceType::BLACK_BISHOP>();
-        bool isOwnBishopLightSquare = (bishopBB & LIGHT_SQUARES) != 0;
-        bool isBlackBishopLightSquare = (blackBishopBB & LIGHT_SQUARES) != 0;
         int bishopAmount = popcnt(bishopBB);
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
 
         if (bishopAmount == 1) {
-            evalContext.whiteMidgameScore -= 25;
-            evalContext.whiteEndgameScore -= 25;
-        }
-
-        if (isOwnBishopLightSquare && !isBlackBishopLightSquare) {
-            evalContext.whiteMidgameScore += 10;
-            evalContext.whiteEndgameScore += 10;
-        } else if (!isOwnBishopLightSquare && isBlackBishopLightSquare) {
-            evalContext.whiteMidgameScore += 10;
-            evalContext.whiteEndgameScore += 10;
+            evalContext.whiteMidgameScore += getEvalValue(MIDGAME_NO_BISHOP_PAIR);
+            evalContext.whiteEndgameScore += getEvalValue(ENDGAME_NO_BISHOP_PAIR);
         }
 
         while (bishopBB) {
@@ -897,8 +918,8 @@ namespace Zagreus {
                 uint64_t antiPattern = noWeOne(1ULL << index) | noEaOne(1ULL << index);
 
                 if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
-                    evalContext.whiteMidgameScore += 10;
-                    evalContext.whiteEndgameScore += 0;
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_FIANCHETTO);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_FIANCHETTO);
                 }
             }
 
@@ -908,23 +929,12 @@ namespace Zagreus {
 
     void getBlackBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t bishopBB = bitboard.getPieceBoard<PieceType::BLACK_BISHOP>();
-        uint64_t whiteBishopBB = bitboard.getPieceBoard<PieceType::WHITE_BISHOP>();
-        bool isOwnBishopLightSquare = (bishopBB & LIGHT_SQUARES) != 0;
-        bool isWhiteBishopLightSquare = (whiteBishopBB & LIGHT_SQUARES) != 0;
         int bishopAmount = popcnt(bishopBB);
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
 
         if (bishopAmount == 1) {
-            evalContext.blackMidgameScore -= 25;
-            evalContext.blackEndgameScore -= 25;
-        }
-
-        if (isOwnBishopLightSquare && !isWhiteBishopLightSquare) {
-            evalContext.blackMidgameScore += 10;
-            evalContext.blackEndgameScore += 10;
-        } else if (!isOwnBishopLightSquare && isWhiteBishopLightSquare) {
-            evalContext.blackMidgameScore += 10;
-            evalContext.blackEndgameScore += 10;
+            evalContext.blackMidgameScore += getEvalValue(MIDGAME_NO_BISHOP_PAIR);
+            evalContext.blackEndgameScore += getEvalValue(ENDGAME_NO_BISHOP_PAIR);
         }
 
         while (bishopBB) {
@@ -935,8 +945,8 @@ namespace Zagreus {
                 uint64_t antiPattern = soWeOne(1ULL << index) | soEaOne(1ULL << index);
 
                 if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
-                    evalContext.blackMidgameScore += 10;
-                    evalContext.blackEndgameScore += 0;
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_FIANCHETTO);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_FIANCHETTO);
                 }
             }
 
@@ -946,8 +956,6 @@ namespace Zagreus {
 
     template<PieceColor color>
     void getPawnScore(EvalContext &evalContext, Bitboard &bitboard) {
-        int score = 0;
-
         for (int i = 0; i < 8; i++) {
             uint64_t pawnsOnFile = bitboard.getPawnsOnSameFile<color>(i);
             bool isPassed = bitboard.isPassedPawn<color>(i);
@@ -955,50 +963,24 @@ namespace Zagreus {
             bool isSemiOpen = bitboard.isSemiOpenFile<color>(i);
             int amountOfPawns = popcnt(pawnsOnFile);
 
-            score -= 10 * (amountOfPawns - 1);
+            evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
+            evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
 
             if (isPassed) {
-                score += 10;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
             } else if (isIsolated) {
                 if (isSemiOpen) {
-                    score -= 20;
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN);
                 } else {
-                    score -= 10;
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
                 }
             } else if (isSemiOpen) {
-                score += 3;
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
             }
-        }
-
-        uint64_t pawnBB;
-
-        if (color == PieceColor::WHITE) {
-            pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
-        } else {
-            pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
-        }
-
-        while (pawnBB) {
-            int index = bitscanForward(pawnBB);
-            int fileNumber = index % 8;
-            int promotionSquare = (color == PieceColor::WHITE) ? 56 + fileNumber : fileNumber;
-            uint64_t tilesBetween = bitboard.getTilesBetween(index, promotionSquare);
-
-            if (color == PieceColor::WHITE) {
-                evalContext.whiteEndgameScore -= popcnt(tilesBetween) * 10;
-            } else {
-                evalContext.blackEndgameScore -= popcnt(tilesBetween) * 10;
-            }
-
-            pawnBB &= ~(1ULL << index);
-        }
-
-        if (color == PieceColor::WHITE) {
-            evalContext.whiteMidgameScore += score;
-            evalContext.whiteEndgameScore += score;
-        } else {
-            evalContext.blackMidgameScore += score;
-            evalContext.blackEndgameScore += score;
         }
     }
 

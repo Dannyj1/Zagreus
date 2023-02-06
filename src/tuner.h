@@ -18,21 +18,16 @@
 
 #pragma once
 
-#include "types.h"
+#include <string>
+#include "bitboard.h"
 
 namespace Zagreus {
-// PST tables from https://www.chessprogramming.org/Simplified_Evaluation_Function
-    void initializePst();
+    struct TunePosition {
+        std::string fen;
+        float result = 0.0f;
+        int score = 0;
+    };
 
-    int getMidgamePstValue(PieceType piece, int8_t square);
+    void startTuning(char* filePath);
 
-    int getEndgamePstValue(PieceType piece, int8_t square);
-
-    void setMidgamePstValue(PieceType piece, int8_t square, int value);
-
-    void setEndgamePstValue(PieceType piece, int8_t square, int value);
-
-    std::vector<int> getMidgameValues();
-
-    std::vector<int> getEndgameValues();
 }

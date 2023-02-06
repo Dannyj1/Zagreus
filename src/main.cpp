@@ -31,6 +31,8 @@
 #include "search.h"
 #include "tt.h"
 #include "pst.h"
+#include "tuner.h"
+#include "features.h"
 
 using namespace Zagreus;
 
@@ -115,6 +117,12 @@ int main(int argc , char *argv[]) {
             return 0;
         } else if (strcmp(argv[1], "findzobristseed") == 0) {
             findZobristSeed();
+            return 0;
+        } else if (strcmp(argv[1], "tune") == 0) {
+            startTuning(argv[2]);
+            return 0;
+        } else if (strcmp(argv[1], "printeval") == 0) {
+            printEvalValues();
             return 0;
         }
 
@@ -241,7 +249,7 @@ void findZobristSeed() {
         std::map<uint64_t, uint64_t> collisionMap{};
         uint64_t seed = seedDis(seedGen);
 
-        for (const std::string& position : seedFindPositions) {
+        for (std::string& position : seedFindPositions) {
             Bitboard board;
             std::random_device rd;
             std::mt19937_64 gen(rd());

@@ -131,7 +131,9 @@ namespace Zagreus {
 
         void printAvailableMoves(MoveList &moves);
 
-        bool setFromFen(std::string fen);
+        bool setFromFen(const std::string &fen);
+
+        bool setFromFenTuner(std::string &fen);
 
         bool isDraw();
 
@@ -438,6 +440,8 @@ namespace Zagreus {
                 return !(neighborMask & getPieceBoard<PieceType::BLACK_PAWN>());
             }
         }
+
+        bool hasMinorOrMajorPieces();
     };
 }
 

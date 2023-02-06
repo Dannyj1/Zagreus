@@ -73,4 +73,6 @@ namespace Zagreus {
     void getPawnScore(EvalContext &evalContext, Bitboard &bitboard);
 
     EvalContext createEvalContext(Bitboard &bitboard);
+
+    int getGamePhase(Bitboard &bitboard);
 }

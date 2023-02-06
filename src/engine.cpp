@@ -82,7 +82,7 @@ namespace Zagreus {
     }
 
     std::string ZagreusEngine::getEngineVersion() {
-        return "v2.0.0-alpha-3";
+        return "v2.0.0-alpha-4";
     }
 
     std::string ZagreusEngine::getAuthorName() {
@@ -256,5 +256,13 @@ namespace Zagreus {
     }
 
     void ZagreusEngine::showEngineStats() {
+    }
+
+    bool ZagreusEngine::isTuning() const {
+        return tuning;
+    }
+
+    void ZagreusEngine::setTuning(bool tuning) {
+        ZagreusEngine::tuning = tuning;
     }
 }
