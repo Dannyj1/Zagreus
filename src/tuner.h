@@ -22,11 +22,10 @@
 #include "bitboard.h"
 
 namespace Zagreus {
-    static constexpr float K = 1.2;
-
     struct TunePosition {
         std::string fen;
         float result = 0.0f;
+        int score = 0;
     };
 
     void startTuning(char* filePath);

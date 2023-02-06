@@ -36,11 +36,13 @@ namespace Zagreus {
 
     int stopCounter = 0;
     int iteration = 0;
+    float K = 0.0;
+
     int batchSize = 512;
-    float learningRate = 0.5f;
-    float epsilon = 7.0f;
+    float learningRate = 0.4f;
+    float epsilon = 6.0f;
     float optimizerEpsilon = 1e-6f;
-    float epsilonDecay = 0.975f;
+    float epsilonDecay = 0.97f;
     float beta1 = 0.9f;
     float beta2 = 0.999f;
     int epsilonWarmupIterations = 0;
@@ -62,6 +64,43 @@ namespace Zagreus {
         }
 
         return totalLoss / (float) amountOfPositions;
+    }
+
+    float findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
+        std::vector<int> evalScores(positions.size());
+
+        for (TunePosition &pos : positions) {
+            tunerBoard.setFromFenTuner(pos.fen);
+//            Move rootMove{};
+//            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
+            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+            pos.score = evalScore;
+        }
+
+        // Find optimal K
+        float bestK = 0.0f;
+        float bestLoss = 9999999.0f;
+        float oldK = K;
+
+        for (float k = 0.0f; k <= 2.0f; k += 0.001f) {
+            K = k;
+
+            float totalLoss = 0.0f;
+            for (TunePosition &pos : positions) {
+                float loss = pos.result - sigmoid((float) pos.score);
+                totalLoss += loss * loss;
+            }
+
+            float loss = totalLoss / (float) positions.size();
+
+            if (loss < bestLoss) {
+                bestLoss = loss;
+                bestK = k;
+            }
+        }
+
+        K = oldK;
+        return bestK;
     }
 
     std::vector<TunePosition> loadPositions(char* filePath) {
@@ -154,6 +193,7 @@ namespace Zagreus {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
         std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
+        std::vector<TunePosition> trainingSet = loadPositions(filePath);
 
         std::random_device rd;
         std::mt19937_64 gen(rd());
@@ -161,17 +201,20 @@ namespace Zagreus {
 
         engine.setTuning(false);
 
-        std::cout << "Starting tuning..." << std::endl;
-        std::vector<TunePosition> trainingSet = loadPositions(filePath);
         std::vector<float> bestParameters = getBaseEvalValues();
         updateEvalValues(bestParameters);
         exportNewEvalValues(bestParameters);
 
-        std::vector<float> m(bestParameters.size(), 0);
-        std::vector<float> v(bestParameters.size(), 0);
+        std::cout << "Finding the optimal K value..." << std::endl;
+        K = findOptimalK(trainingSet, maxEndTime, engine);
+        std::cout << "Optimal K value: " << K << std::endl;
+
+        std::cout << "Starting tuning..." << std::endl;
+        std::vector<float> m(bestParameters.size(), 0.0f);
+        std::vector<float> v(bestParameters.size(), 0.0f);
 
         std::cout << "Splitting the trainingSet into a training set and a validation set..." << std::endl;
-        // 10% validation set, 85% training set
+        // 10% validation set, 90% training set
         int validationSetSize = trainingSet.size() / 10;
 
         std::vector<TunePosition> validationSet(validationSetSize);
@@ -186,7 +229,7 @@ namespace Zagreus {
         std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
 
-        while (stopCounter <= 10) {
+        while (stopCounter < 20) {
             iteration++;
             std::vector<TunePosition> batch(batchSize);
             std::vector<float> gradients(bestParameters.size(), 0.0f);
@@ -213,8 +256,8 @@ namespace Zagreus {
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                 m[paramIndex] = beta1 * m[paramIndex] + (1.0f - beta1) * gradients[paramIndex];
                 v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * std::pow(gradients[paramIndex], 2.0f);
-                float m_hat = m[paramIndex] / (1.0f - pow(beta1, iteration));
-                float v_hat = v[paramIndex] / (1.0f - pow(beta2, iteration));
+                float m_hat = m[paramIndex] / (1.0f - pow(beta1, (float) iteration));
+                float v_hat = v[paramIndex] / (1.0f - pow(beta2, (float) iteration));
                 bestParameters[paramIndex] -= learningRate * (m_hat / (sqrt(v_hat) + optimizerEpsilon));
             }
 
