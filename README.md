@@ -8,11 +8,12 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 
 # Features
 - Bitboard board representation with Plain Magic Bitboards for sliding piece move generation
+- Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square tables and more
+- Evaluation values automatically tuned with a gradient descent tuner with the Adam optimizer.
 - Principal Variation Search with Alpha-Beta pruning
 - Quiescence Search with delta pruning and SEE move ordering
 - Move ordering using MVV/LVA, killer moves, history heuristic, countermove heuristic
 - Transposition Table
-- Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square tables and more
 - Null Move Pruning
 - Late Move Reduction
 - And more! This list is constantly growing and changing, but it is difficult to keep track of all features and changes.
