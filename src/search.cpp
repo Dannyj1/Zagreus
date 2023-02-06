@@ -322,7 +322,7 @@ namespace Zagreus {
                     amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
                 }
 
-                if (canNull && depth >= 3 && hasMinorOrMajorPieces && amountOfPieces >= 4 && !isOpponentKingInCheck) {
+                if (canNull && depth >= 3 && hasMinorOrMajorPieces && amountOfPieces >= 4 && !isOwnKingInCheck) {
                     board.makeNullMove();
                     int R = depth > 6 ? 3 : 2;
                     int score = search(board, depth - 1 - R, -beta, -beta + 1, rootMove, previousMove, endTime, line,
