@@ -442,6 +442,10 @@ namespace Zagreus {
         }
 
         bool hasMinorOrMajorPieces();
+
+        void makeNullMove();
+
+        void unmakeNullMove();
     };
 }
 

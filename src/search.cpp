@@ -147,7 +147,7 @@ namespace Zagreus {
                 Line pvLine = {};
                 Move previousMove = {};
 
-                int score = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true);
+                int score = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true, true);
                 score *= -1;
 
                 board.unmakeMove(move);
@@ -239,8 +239,8 @@ namespace Zagreus {
 
     // TODO: use template
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
-                                       Move &previousMove,
-                                       std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv) {
+                              Move &previousMove,
+                              std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
         searchStats.nodes += 1;
 
         if (searchStats.nodes % 2048 == 0 &&
@@ -300,8 +300,20 @@ namespace Zagreus {
                 }
             }
 
-            int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, true);
+            int depthExtension = 0;
+
+            if (board.getMovingColor() == PieceColor::WHITE) {
+                if (board.isKingInCheck<PieceColor::WHITE>()) {
+                    depthExtension += 1;
+                }
+            } else {
+                if (board.isKingInCheck<PieceColor::BLACK>()) {
+                    depthExtension += 1;
+                }
+            }
+
+            int score = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, previousMove, endTime, line,
+                               engine, true, false);
             score *= -1;
 
             if (score > bestScore) {
@@ -380,6 +392,20 @@ namespace Zagreus {
             }
 
             if (!depthExtended) {
+                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && !isOwnKingInCheck) {
+                    board.makeNullMove();
+                    int R = depth > 6 ? 3 : 2;
+                    int score = search(board, depth - R - 1, -alpha - 1, -alpha, rootMove, previousMove, endTime, line,
+                                       engine, false, false);
+                    score *= -1;
+                    board.unmakeNullMove();
+
+                    if (score >= beta) {
+                        board.unmakeMove(move);
+                        return score;
+                    }
+                }
+
                 if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
                     depthReduction = depth / 2;
@@ -388,12 +414,12 @@ namespace Zagreus {
 
             int score;
             score = search(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                           previousMove, endTime, line, engine, false);
+                           previousMove, endTime, line, engine, false, canNull);
             score *= -1;
 
             if (score > alpha && score < beta) {
                 score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, false);
+                               engine, false, canNull);
                 score *= -1;
             }
 
