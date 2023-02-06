@@ -443,6 +443,17 @@ namespace Zagreus {
 
         bool hasMinorOrMajorPieces();
 
+        template<PieceColor color>
+        bool hasMinorOrMajorPieces() {
+            if (color == PieceColor::WHITE) {
+                return getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
+                       getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>();
+            } else {
+                return getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
+                       getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>();
+            }
+        }
+
         void makeNullMove();
 
         void unmakeNullMove();
