@@ -38,7 +38,7 @@ namespace Zagreus {
         certainty += (float) depth * 0.1f;
 
         if (bestMoveChanges > 0) {
-            certainty -= (float) bestMoveChanges * (0.15f - (((float) bestMoveChanges - 1.0f) * 0.01f));
+            certainty -= (float) bestMoveChanges * (0.25f - (((float) bestMoveChanges - 1.0f) * 0.03f));
         }
 
         // Less certainty in the opening
