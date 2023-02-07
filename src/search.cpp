@@ -32,7 +32,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
-    float SearchManager::calculateCertainty(Bitboard &board, int depth, int bestMoveChanges, int staticEval, int scoreChange) {
+    float SearchManager::calculateCertainty(Bitboard &board, int depth, int bestMoveChanges, int scoreChange) {
         float certainty = 0.0f;
 
         certainty += (float) depth * 0.1f;
@@ -44,18 +44,6 @@ namespace Zagreus {
         // Less certainty in the opening
         if (board.getPly() / 2 < 20) {
             certainty -= 0.15f;
-        }
-
-        if (staticEval < -200) {
-            certainty -= 0.3f;
-        } else if (staticEval < -100) {
-            certainty -= 0.15f;
-        } else if (staticEval < 0) {
-            certainty -= 0.05f;
-        } else if (staticEval > 100) {
-            certainty += 0.05f;
-        } else if (staticEval > 200) {
-            certainty += 0.15f;
         }
 
         certainty += ((float) scoreChange / 1000.0f);
@@ -87,7 +75,6 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = initialEndTime;
         int depth = 0;
         int bestMoveChanges = 0;
-        int staticEval = evaluate(board, initialEndTime, engine);
         int scoreChange = 0;
         float certainty = 0.0f;
 
@@ -104,7 +91,7 @@ namespace Zagreus {
 
             // Update certainty and endtime
             if (params.depth == 0) {
-                certainty = calculateCertainty(board, depth, bestMoveChanges, staticEval, scoreChange);
+                certainty = calculateCertainty(board, depth, bestMoveChanges, scoreChange);
 
                 // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
                 float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
@@ -200,7 +187,7 @@ namespace Zagreus {
 
                 // Update certainty and endtime
                 if (params.depth == 0) {
-                    certainty = calculateCertainty(board, depth, bestMoveChanges, staticEval, scoreChange);
+                    certainty = calculateCertainty(board, depth, bestMoveChanges, scoreChange);
 
                     // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
                     float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
