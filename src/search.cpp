@@ -32,6 +32,37 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
+    float SearchManager::calculateCertainty(Bitboard &board, int depth, int bestMoveChanges, int scoreChange) {
+        float certainty = 0.0f;
+
+        certainty += (float) depth * 0.1f;
+
+        if (bestMoveChanges > 0) {
+            certainty -= (float) bestMoveChanges * (0.25f - (((float) bestMoveChanges - 1.0f) * 0.03f));
+        }
+
+        // Less certainty in the opening
+        if (board.getPly() / 2 < 20) {
+            certainty -= 0.15f;
+        }
+
+        certainty += ((float) scoreChange / 1000.0f);
+
+        // If moving color in check add uncertainty
+        if (board.getMovingColor() == PieceColor::WHITE) {
+            if (board.isKingInCheck<PieceColor::WHITE>()) {
+                certainty -= 0.2f;
+            }
+        } else {
+            if (board.isKingInCheck<PieceColor::BLACK>()) {
+                certainty -= 0.2f;
+            }
+        }
+
+        // Max certainty [-1.5, 1.5]
+        return std::min(std::max(certainty, -1.5f), 1.5f);
+    }
+
     Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
         searchStats = {};
         isSearching = true;
@@ -40,17 +71,38 @@ namespace Zagreus {
         int iterationScore = -1000000;
         Move iterationMove = {};
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
-        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
+        std::chrono::time_point<std::chrono::high_resolution_clock> initialEndTime = getEndTime(params, board, engine, board.getMovingColor());
+        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = initialEndTime;
         int depth = 0;
+        int bestMoveChanges = 0;
+        int scoreChange = 0;
+        float certainty = 0.0f;
 
         TranspositionTable::getTT()->ageHistoryTable();
 
         Line iterationPvLine = {};
-        while (!engine.stopRequested() && std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
+        while (!engine.stopRequested()) {
+            endTime = initialEndTime;
             depth += 1;
 
             if (params.depth > 0 && depth > params.depth) {
                 return bestMove;
+            }
+
+            // Update certainty and endtime
+            if (params.depth == 0) {
+                certainty = calculateCertainty(board, depth, bestMoveChanges, scoreChange);
+
+                // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
+                float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
+                endTime = initialEndTime + std::chrono::milliseconds((int) std::round(timeChange));
+
+                // Lower with 0.075 every iteration, start at 1.0 and end at 0.5;
+                float earlyCutoff = std::max(0.5f, 1.1f - (depth * 0.075f));
+
+                if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * earlyCutoff) {
+                    break;
+                }
             }
 
             searchStats.depth = depth;
@@ -102,6 +154,12 @@ namespace Zagreus {
 
                 if (iterationScore == -1000000 || (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime)) {
                     assert(move.piece != PieceType::EMPTY);
+
+                    if (iterationScore > -900000) {
+                        bestMoveChanges++;
+                        scoreChange = score - iterationScore;
+                    }
+
                     iterationScore = score;
                     iterationMove = move;
 
@@ -126,10 +184,31 @@ namespace Zagreus {
                 searchStats.msecs = duration_cast<std::chrono::milliseconds>(
                         std::chrono::high_resolution_clock::now() - startTime).count();
                 senjo::Output(senjo::Output::NoPrefix) << searchStats;
+
+                // Update certainty and endtime
+                if (params.depth == 0) {
+                    certainty = calculateCertainty(board, depth, bestMoveChanges, scoreChange);
+
+                    // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
+                    float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
+                    endTime = initialEndTime + std::chrono::milliseconds((int) std::round(timeChange));
+
+                    // Lower with 0.075 every iteration, start at 1.0 and end at 0.5;
+                    float earlyCutoff = std::max(0.5f, 1.0f - (depth * 0.075f));
+
+                    if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * earlyCutoff) {
+                        break;
+                    }
+                }
             }
 
             if (depth == 1 || bestScore == -1000000 || std::chrono::high_resolution_clock::now() < endTime) {
                 assert(iterationMove.piece != PieceType::EMPTY);
+
+                if (bestScore > -900000) {
+                    scoreChange = iterationScore - bestScore;
+                }
+
                 bestScore = iterationScore;
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
