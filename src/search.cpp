@@ -58,27 +58,7 @@ namespace Zagreus {
             certainty += 0.15f;
         }
 
-        if (scoreChange == 0) {
-            certainty += 0.1f;
-        } else if (scoreChange > 25) {
-            certainty += 0.15f;
-        } else if (scoreChange > 50) {
-            certainty += 0.25f;
-        } else if (scoreChange > 100) {
-            certainty += 0.4f;
-        } else if (scoreChange < 0) {
-            certainty -= 0.025f;
-        } else if (scoreChange < -10) {
-            certainty -= 0.05f;
-        } else if (scoreChange < -25) {
-            certainty -= 0.1f;
-        } else if (scoreChange < -50) {
-            certainty -= 0.25f;
-        } else if (scoreChange < -100) {
-            certainty -= 0.40f;
-        } else if (scoreChange < -200) {
-            certainty -= 0.60f;
-        }
+        certainty += ((float) scoreChange / 1000.0f);
 
         // If moving color in check add uncertainty
         if (board.getMovingColor() == PieceColor::WHITE) {
