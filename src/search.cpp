@@ -95,7 +95,7 @@ namespace Zagreus {
 
                 // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
                 float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
-                endTime = initialEndTime + std::chrono::milliseconds((int) std::round(timeChange));
+                endTime = initialEndTime + std::chrono::milliseconds((int) timeChange);
 
                 // Lower with 0.075 every iteration, start at 1.0 and end at 0.5;
                 float earlyCutoff = std::max(0.5f, 1.1f - (depth * 0.075f));
@@ -191,7 +191,7 @@ namespace Zagreus {
 
                     // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
                     float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
-                    endTime = initialEndTime + std::chrono::milliseconds((int) std::round(timeChange));
+                    endTime = initialEndTime + std::chrono::milliseconds((int) timeChange);
 
                     // Lower with 0.075 every iteration, start at 1.0 and end at 0.5;
                     float earlyCutoff = std::max(0.5f, 1.0f - (depth * 0.075f));
