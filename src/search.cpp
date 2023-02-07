@@ -60,17 +60,23 @@ namespace Zagreus {
 
         if (scoreChange == 0) {
             certainty += 0.1f;
-        } else if (scoreChange < 5) {
-            certainty -= 0.025f;
-        } else if (scoreChange < 10) {
-            certainty -= 0.05f;
-        } else if (scoreChange < 20) {
-            certainty -= 0.1f;
-        } else if (scoreChange > 60) {
-            certainty -= 0.25f;
+        } else if (scoreChange > 25) {
+            certainty += 0.15f;
+        } else if (scoreChange > 50) {
+            certainty += 0.25f;
         } else if (scoreChange > 100) {
+            certainty += 0.4f;
+        } else if (scoreChange < 0) {
+            certainty -= 0.025f;
+        } else if (scoreChange < -10) {
+            certainty -= 0.05f;
+        } else if (scoreChange < -25) {
+            certainty -= 0.1f;
+        } else if (scoreChange < -50) {
+            certainty -= 0.25f;
+        } else if (scoreChange < -100) {
             certainty -= 0.40f;
-        } else if (scoreChange > 200) {
+        } else if (scoreChange < -200) {
             certainty -= 0.60f;
         }
 
@@ -193,6 +199,7 @@ namespace Zagreus {
 
                     if (iterationScore != -1000000) {
                         bestMoveChanges++;
+                        scoreChange = iterationScore - bestScore;
                     }
                 }
 
@@ -232,7 +239,7 @@ namespace Zagreus {
                 assert(iterationMove.piece != PieceType::EMPTY);
 
                 if (bestScore != -1000000) {
-                    scoreChange = std::abs(iterationScore - bestScore);
+                    scoreChange = iterationScore - bestScore;
                 }
 
                 bestScore = iterationScore;
