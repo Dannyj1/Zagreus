@@ -41,6 +41,11 @@ namespace Zagreus {
             certainty -= (float) bestMoveChanges * (0.15f - (((float) bestMoveChanges - 1.0f) * 0.01f));
         }
 
+        // Less certainty in the opening
+        if (board.getPly() / 2 < 20) {
+            certainty -= 0.15f;
+        }
+
         if (staticEval < -200) {
             certainty -= 0.3f;
         } else if (staticEval < -100) {
@@ -82,7 +87,8 @@ namespace Zagreus {
             }
         }
 
-        return certainty;
+        // Max certainty [-1.5, 1.5]
+        return std::min(std::max(certainty, -1.5f), 1.5f);
     }
 
     Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
@@ -105,6 +111,7 @@ namespace Zagreus {
 
         Line iterationPvLine = {};
         while (!engine.stopRequested()) {
+            endTime = initialEndTime;
             depth += 1;
 
             if (params.depth > 0) {
@@ -115,10 +122,14 @@ namespace Zagreus {
                 certainty = calculateCertainty(board, depth, bestMoveChanges, staticEval, scoreChange);
 
                 // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
-                auto endTime = initialEndTime + std::chrono::duration_cast<std::chrono::milliseconds>(
-                        (startTime - initialEndTime) * certainty);
+                float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
+                endTime += std::chrono::milliseconds((int) std::round(timeChange));
+                senjo::Output(senjo::Output::InfoPrefix) << "Initial end time: " << std::chrono::duration_cast<std::chrono::milliseconds>(initialEndTime - startTime).count() << "ms, certainty: " << certainty << ", time change: " << timeChange << "ms, new end time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms";
 
-                if (std::chrono::high_resolution_clock::now() - startTime < (initialEndTime - startTime) * 0.7) {
+                // Lower with 0.075 every iteration, start at 1.0 and end at 0.5;
+                float earlyCutoff = std::max(0.5f, 1.0f - (depth * 0.075f));
+
+                if (std::chrono::high_resolution_clock::now() - startTime > (initialEndTime - startTime) * earlyCutoff) {
                     break;
                 }
             }
