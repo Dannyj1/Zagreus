@@ -168,6 +168,11 @@ namespace Zagreus {
                 if (iterationScore == -1000000 || (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime)) {
                     assert(move.piece != PieceType::EMPTY);
 
+                    if (iterationScore > -900000) {
+                        bestMoveChanges++;
+                        scoreChange = score - iterationScore;
+                    }
+
                     iterationScore = score;
                     iterationMove = move;
 
@@ -176,11 +181,6 @@ namespace Zagreus {
                     iterationPvLine.moveCount = pvLine.moveCount + 1;
 
                     searchStats.score = iterationScore;
-
-                    if (iterationScore != -1000000) {
-                        bestMoveChanges++;
-                        scoreChange = iterationScore - bestScore;
-                    }
                 }
 
                 searchStats.pv = "";
@@ -218,7 +218,7 @@ namespace Zagreus {
             if (depth == 1 || bestScore == -1000000 || std::chrono::high_resolution_clock::now() < endTime) {
                 assert(iterationMove.piece != PieceType::EMPTY);
 
-                if (bestScore != -1000000) {
+                if (bestScore > -900000) {
                     scoreChange = iterationScore - bestScore;
                 }
 
