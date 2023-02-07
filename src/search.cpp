@@ -58,22 +58,20 @@ namespace Zagreus {
             certainty += 0.15f;
         }
 
-        // If the score change is small, we are more certain
-        if (scoreChange < 10) {
+        if (scoreChange == 0) {
             certainty += 0.1f;
-        } else if (scoreChange < 20) {
-            certainty += 0.05f;
-        } else if (scoreChange < 30) {
-            certainty += 0.025f;
-        }
-
-        // If the score change is large, add certainty penalty
-        if (scoreChange > 60) {
+        } else if (scoreChange < 5) {
+            certainty -= 0.025f;
+        } else if (scoreChange < 10) {
             certainty -= 0.05f;
+        } else if (scoreChange < 20) {
+            certainty -= 0.1f;
+        } else if (scoreChange > 60) {
+            certainty -= 0.25f;
         } else if (scoreChange > 100) {
-            certainty -= 0.2f;
+            certainty -= 0.40f;
         } else if (scoreChange > 200) {
-            certainty -= 0.4f;
+            certainty -= 0.60f;
         }
 
         // If moving color in check add uncertainty
@@ -232,7 +230,11 @@ namespace Zagreus {
 
             if (depth == 1 || bestScore == -1000000 || std::chrono::high_resolution_clock::now() < endTime) {
                 assert(iterationMove.piece != PieceType::EMPTY);
-                scoreChange = std::abs(iterationScore - bestScore);
+
+                if (bestScore != -1000000) {
+                    scoreChange = std::abs(iterationScore - bestScore);
+                }
+
                 bestScore = iterationScore;
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
