@@ -32,6 +32,59 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
+    float SearchManager::calculateCertainty(Bitboard &board, int depth, int bestMoveChanges, int staticEval, int scoreChange) {
+        float certainty = 0.0f;
+
+        certainty += (float) depth * 0.1f;
+
+        if (bestMoveChanges > 0) {
+            certainty -= (float) bestMoveChanges * (0.15f - (((float) bestMoveChanges - 1.0f) * 0.01f));
+        }
+
+        if (staticEval < -200) {
+            certainty -= 0.3f;
+        } else if (staticEval < -100) {
+            certainty -= 0.15f;
+        } else if (staticEval < 0) {
+            certainty -= 0.05f;
+        } else if (staticEval > 100) {
+            certainty += 0.05f;
+        } else if (staticEval > 200) {
+            certainty += 0.15f;
+        }
+
+        // If the score change is small, we are more certain
+        if (scoreChange < 10) {
+            certainty += 0.1f;
+        } else if (scoreChange < 20) {
+            certainty += 0.05f;
+        } else if (scoreChange < 30) {
+            certainty += 0.025f;
+        }
+
+        // If the score change is large, add certainty penalty
+        if (scoreChange > 60) {
+            certainty -= 0.05f;
+        } else if (scoreChange > 100) {
+            certainty -= 0.2f;
+        } else if (scoreChange > 200) {
+            certainty -= 0.4f;
+        }
+
+        // If moving color in check add uncertainty
+        if (board.getMovingColor() == PieceColor::WHITE) {
+            if (board.isKingInCheck<PieceColor::WHITE>()) {
+                certainty -= 0.2f;
+            }
+        } else {
+            if (board.isKingInCheck<PieceColor::BLACK>()) {
+                certainty -= 0.2f;
+            }
+        }
+
+        return certainty;
+    }
+
     Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
         searchStats = {};
         isSearching = true;
@@ -40,17 +93,34 @@ namespace Zagreus {
         int iterationScore = -1000000;
         Move iterationMove = {};
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
-        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
+        std::chrono::time_point<std::chrono::high_resolution_clock> initialEndTime = getEndTime(params, board, engine, board.getMovingColor());
+        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = initialEndTime;
         int depth = 0;
+        int bestMoveChanges = 0;
+        int staticEval = evaluate(board, initialEndTime, engine);
+        int scoreChange = 0;
+        float certainty;
 
         TranspositionTable::getTT()->ageHistoryTable();
 
         Line iterationPvLine = {};
-        while (!engine.stopRequested() && std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
+        while (!engine.stopRequested()) {
             depth += 1;
 
-            if (params.depth > 0 && depth > params.depth) {
-                return bestMove;
+            if (params.depth > 0) {
+                if (depth > params.depth) {
+                    return bestMove;
+                }
+            } else {
+                certainty = calculateCertainty(board, depth, bestMoveChanges, staticEval, scoreChange);
+
+                // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
+                auto endTime = initialEndTime + std::chrono::duration_cast<std::chrono::milliseconds>(
+                        (startTime - initialEndTime) * certainty);
+
+                if (std::chrono::high_resolution_clock::now() - startTime < (initialEndTime - startTime) * 0.7) {
+                    break;
+                }
             }
 
             searchStats.depth = depth;
@@ -102,6 +172,7 @@ namespace Zagreus {
 
                 if (iterationScore == -1000000 || (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime)) {
                     assert(move.piece != PieceType::EMPTY);
+
                     iterationScore = score;
                     iterationMove = move;
 
@@ -110,6 +181,10 @@ namespace Zagreus {
                     iterationPvLine.moveCount = pvLine.moveCount + 1;
 
                     searchStats.score = iterationScore;
+
+                    if (iterationScore != -1000000) {
+                        bestMoveChanges++;
+                    }
                 }
 
                 searchStats.pv = "";
@@ -130,6 +205,7 @@ namespace Zagreus {
 
             if (depth == 1 || bestScore == -1000000 || std::chrono::high_resolution_clock::now() < endTime) {
                 assert(iterationMove.piece != PieceType::EMPTY);
+                scoreChange = std::abs(iterationScore - bestScore);
                 bestScore = iterationScore;
                 bestMove = iterationMove;
                 searchStats.score = bestScore;

@@ -44,6 +44,8 @@ namespace Zagreus {
         bool isCurrentlySearching();
 
         senjo::SearchStats getSearchStats();
+
+        float calculateCertainty(Bitboard &board, int depth, int bestMoveChanges, int staticEval, int scoreChange);
     };
 
     static SearchManager searchManager{};
