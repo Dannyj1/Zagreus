@@ -105,7 +105,7 @@ namespace Zagreus {
         int bestMoveChanges = 0;
         int staticEval = evaluate(board, initialEndTime, engine);
         int scoreChange = 0;
-        float certainty;
+        float certainty = 0.0f;
 
         TranspositionTable::getTT()->ageHistoryTable();
 
@@ -114,22 +114,22 @@ namespace Zagreus {
             endTime = initialEndTime;
             depth += 1;
 
-            if (params.depth > 0) {
-                if (depth > params.depth) {
-                    return bestMove;
-                }
-            } else {
+            if (params.depth > 0 && depth > params.depth) {
+                return bestMove;
+            }
+
+            // Update certainty and endtime
+            if (params.depth == 0) {
                 certainty = calculateCertainty(board, depth, bestMoveChanges, staticEval, scoreChange);
 
                 // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
                 float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
-                endTime += std::chrono::milliseconds((int) std::round(timeChange));
-                senjo::Output(senjo::Output::InfoPrefix) << "Initial end time: " << std::chrono::duration_cast<std::chrono::milliseconds>(initialEndTime - startTime).count() << "ms, certainty: " << certainty << ", time change: " << timeChange << "ms, new end time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms";
+                endTime = initialEndTime + std::chrono::milliseconds((int) std::round(timeChange));
 
                 // Lower with 0.075 every iteration, start at 1.0 and end at 0.5;
-                float earlyCutoff = std::max(0.5f, 1.0f - (depth * 0.075f));
+                float earlyCutoff = std::max(0.5f, 1.1f - (depth * 0.075f));
 
-                if (std::chrono::high_resolution_clock::now() - startTime > (initialEndTime - startTime) * earlyCutoff) {
+                if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * earlyCutoff) {
                     break;
                 }
             }
@@ -212,6 +212,22 @@ namespace Zagreus {
                 searchStats.msecs = duration_cast<std::chrono::milliseconds>(
                         std::chrono::high_resolution_clock::now() - startTime).count();
                 senjo::Output(senjo::Output::NoPrefix) << searchStats;
+
+                // Update certainty and endtime
+                if (params.depth == 0) {
+                    certainty = calculateCertainty(board, depth, bestMoveChanges, staticEval, scoreChange);
+
+                    // Based on certainty, adjust the initial end time. Negative certainty means we are less certain, so we should search longer
+                    float timeChange = std::chrono::duration_cast<std::chrono::milliseconds>(startTime - initialEndTime).count() * certainty;
+                    endTime = initialEndTime + std::chrono::milliseconds((int) std::round(timeChange));
+
+                    // Lower with 0.075 every iteration, start at 1.0 and end at 0.5;
+                    float earlyCutoff = std::max(0.5f, 1.0f - (depth * 0.075f));
+
+                    if (std::chrono::high_resolution_clock::now() - startTime > (endTime - startTime) * earlyCutoff) {
+                        break;
+                    }
+                }
             }
 
             if (depth == 1 || bestScore == -1000000 || std::chrono::high_resolution_clock::now() < endTime) {
