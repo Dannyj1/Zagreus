@@ -380,7 +380,12 @@ namespace Zagreus {
             }
 
             if (!depthExtended && !isPv) {
-                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && !isOpponentKingInCheck && !isOwnKingInCheck) {
+                if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
+                    move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
+                    depthReduction = depth / 2;
+                }
+
+                if (canNull && (depth - depthReduction) >= 3 && board.hasMinorOrMajorPieces() && !isOpponentKingInCheck && !isOwnKingInCheck) {
                     board.makeNullMove();
                     int R = depth > 6 ? 3 : 2;
                     Move nullMove = {};
@@ -394,11 +399,6 @@ namespace Zagreus {
                         return beta;
                     }
                 }
-
-/*                if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
-                    move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
-                    depthReduction = depth / 2;
-                }*/
             }
 
             int score;
