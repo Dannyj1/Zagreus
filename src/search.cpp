@@ -414,7 +414,7 @@ namespace Zagreus {
 
             int score;
             score = search(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                           previousMove, endTime, line, engine, false, canNull);
+                           previousMove, endTime, line, engine, false, true);
             score *= -1;
 
             if (score > alpha && score < beta) {
