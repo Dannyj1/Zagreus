@@ -248,6 +248,20 @@ namespace Zagreus {
             return beta;
         }
 
+        bool isOwnKingInCheck = false;
+        bool depthExtended = false;
+
+        if (board.getMovingColor() == PieceColor::WHITE) {
+            isOwnKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
+        } else {
+            isOwnKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
+        }
+
+        if (isOwnKingInCheck) {
+            depth += 1;
+            depthExtended = true;
+        }
+
         if (depth == 0 || board.isWinner<PieceColor::WHITE>() || board.isWinner<PieceColor::BLACK>() ||
             board.isDraw()) {
             pvLine.moveCount = 0;
@@ -268,13 +282,6 @@ namespace Zagreus {
 
         MovePicker moves = MovePicker(moveList);
         bool searchedFirstLegalMove = false;
-        bool isOwnKingInCheck = false;
-
-        if (board.getMovingColor() == PieceColor::WHITE) {
-            isOwnKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
-        } else {
-            isOwnKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
-        }
 
         while (isPv && !searchedFirstLegalMove && moves.hasNext()) {
             Move move = moves.getNextMove();
@@ -293,19 +300,7 @@ namespace Zagreus {
                 }
             }
 
-            int depthExtension = 0;
-
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                if (board.isKingInCheck<PieceColor::WHITE>()) {
-                    depthExtension += 1;
-                }
-            } else {
-                if (board.isKingInCheck<PieceColor::BLACK>()) {
-                    depthExtension += 1;
-                }
-            }
-
-            int score = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, previousMove, endTime, line,
+            int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
                                engine, true);
             score *= -1;
 
@@ -376,7 +371,6 @@ namespace Zagreus {
             }
 
             int depthReduction = 0;
-            int depthExtension = 0;
             bool isOpponentKingInCheck;
 
             if (board.getMovingColor() == PieceColor::WHITE) {
@@ -385,11 +379,7 @@ namespace Zagreus {
                 isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
             }
 
-            if (isOpponentKingInCheck) {
-                depthExtension += 1;
-            }
-
-            if (!depthExtension) {
+            if (!depthExtended) {
                 if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
                     depthReduction = depth / 2;
@@ -397,12 +387,12 @@ namespace Zagreus {
             }
 
             int score;
-            score = search(board, depth - 1 - depthReduction + depthExtension, -alpha - 1, -alpha, rootMove,
+            score = search(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
                            previousMove, endTime, line, engine, false);
             score *= -1;
 
             if (score > alpha && score < beta) {
-                score = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, previousMove, endTime, line,
+                score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
                                engine, false);
                 score *= -1;
             }
