@@ -377,6 +377,51 @@ namespace Zagreus {
         }
     }
 
+    void Bitboard::makeNullMove() {
+        undoStack[ply].capturedPiece = PieceType::EMPTY;
+        undoStack[ply].halfMoveClock = halfMoveClock;
+        undoStack[ply].enPassantSquare = enPassantSquare;
+        undoStack[ply].castlingRights = castlingRights;
+        undoStack[ply].moveType = MoveType::REGULAR;
+        undoStack[ply].zobristHash = zobristHash;
+        undoStack[ply].kingInCheck = kingInCheck;
+        undoStack[ply].previousMove = previousMove;
+
+        if (enPassantSquare != NO_SQUARE) {
+            zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
+            enPassantSquare = NO_SQUARE;
+        }
+
+        if (movingColor == PieceColor::BLACK) {
+            fullmoveClock += 1;
+        }
+
+        halfMoveClock = 0;
+        kingInCheck = 0b00001100;
+        movingColor = getOppositeColor(movingColor);
+        zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
+        ply += 1;
+        moveHistory[ply] = getZobristHash();
+    }
+
+    void Bitboard::unmakeNullMove() {
+        moveHistory[ply] = 0;
+        UndoData undoData = undoStack[ply - 1];
+
+        ply -= 1;
+        halfMoveClock = undoData.halfMoveClock;
+        enPassantSquare = undoData.enPassantSquare;
+        castlingRights = undoData.castlingRights;
+        movingColor = getOppositeColor(movingColor);
+        zobristHash = undoData.zobristHash;
+        kingInCheck = undoData.kingInCheck;
+        previousMove = undoData.previousMove;
+
+        if (movingColor == PieceColor::BLACK) {
+            fullmoveClock -= 1;
+        }
+    }
+
     const Move &Bitboard::getPreviousMove() const {
         return previousMove;
     }

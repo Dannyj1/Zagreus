@@ -94,7 +94,7 @@ namespace Zagreus {
                 Line pvLine = {};
                 Move previousMove = {};
 
-                int score = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true);
+                int score = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true, true);
                 score *= -1;
 
                 board.unmakeMove(move);
@@ -159,8 +159,8 @@ namespace Zagreus {
 
     // TODO: use template
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
-                                       Move &previousMove,
-                                       std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv) {
+                              Move &previousMove,
+                              std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
         searchStats.nodes += 1;
 
         if (searchStats.nodes % 2048 == 0 &&
@@ -188,7 +188,36 @@ namespace Zagreus {
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
+        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
+
+        if (!isPv && ttScore != INT32_MIN) {
+            return ttScore;
+        }
+
+/*        int amountOfPieces = 0;
+
+        if (board.getMovingColor() == PieceColor::WHITE) {
+            amountOfPieces = popcnt(board.getColorBoard<PieceColor::WHITE>());
+        } else {
+            amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
+        }*/
+
         Line line{};
+
+        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces() && evaluate(board, endTime, engine) >= beta) {
+            board.makeNullMove();
+            int R = depth > 6 ? 3 : 2;
+            Move nullMove = {};
+            int score = search(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
+                               engine, false, false);
+            score *= -1;
+            board.unmakeNullMove();
+
+            if (score >= beta) {
+                return beta;
+            }
+        }
+
         Move bestMove = {};
         int bestScore = -1000000;
         MoveList moveList;
@@ -221,7 +250,7 @@ namespace Zagreus {
             }
 
             int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, true);
+                               engine, true, false);
             score *= -1;
 
             if (score > bestScore) {
@@ -262,12 +291,6 @@ namespace Zagreus {
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
-        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
-
-        if (!isPv && ttScore != INT32_MIN) {
-            return ttScore;
-        }
-
         while (moves.hasNext()) {
             if (searchStats.nodes % 2048 == 0 &&
                 (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
@@ -293,13 +316,7 @@ namespace Zagreus {
             int depthReduction = 0;
             bool isOpponentKingInCheck;
 
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                isOpponentKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
-            } else {
-                isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
-            }
-
-            if (!depthExtended) {
+            if (!depthExtended && !isPv) {
                 if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
                     depthReduction = depth / 2;
@@ -308,12 +325,12 @@ namespace Zagreus {
 
             int score;
             score = search(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                           previousMove, endTime, line, engine, false);
+                           previousMove, endTime, line, engine, false, canNull);
             score *= -1;
 
             if (score > alpha && score < beta) {
                 score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, false);
+                               engine, true, false);
                 score *= -1;
             }
 
