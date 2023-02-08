@@ -274,18 +274,17 @@ namespace Zagreus {
             return ttScore;
         }
 
-        int amountOfPieces = 0;
+/*        int amountOfPieces = 0;
 
         if (board.getMovingColor() == PieceColor::WHITE) {
             amountOfPieces = popcnt(board.getColorBoard<PieceColor::WHITE>());
         } else {
             amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
-        }
+        }*/
 
         Line line{};
 
-        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces()
-        && amountOfPieces >= 4 && evaluate(board, endTime, engine) >= beta) {
+        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces() && evaluate(board, endTime, engine) >= beta) {
             board.makeNullMove();
             int R = depth > 6 ? 3 : 2;
             Move nullMove = {};
