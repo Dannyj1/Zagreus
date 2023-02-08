@@ -284,7 +284,8 @@ namespace Zagreus {
 
         Line line{};
 
-        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces() && amountOfPieces >= 4) {
+        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces()
+        && amountOfPieces >= 4 && evaluate(board, endTime, engine) >= beta) {
             board.makeNullMove();
             int R = depth > 6 ? 3 : 2;
             Move nullMove = {};
