@@ -268,7 +268,36 @@ namespace Zagreus {
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
+        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
+
+        if (!isPv && ttScore != INT32_MIN) {
+            return ttScore;
+        }
+
+        int amountOfPieces = 0;
+
+        if (board.getMovingColor() == PieceColor::WHITE) {
+            amountOfPieces = popcnt(board.getColorBoard<PieceColor::WHITE>());
+        } else {
+            amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
+        }
+
         Line line{};
+
+        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces() && amountOfPieces >= 4) {
+            board.makeNullMove();
+            int R = depth > 6 ? 3 : 2;
+            Move nullMove = {};
+            int score = search(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
+                               engine, false, false);
+            score *= -1;
+            board.unmakeNullMove();
+
+            if (score >= beta) {
+                return beta;
+            }
+        }
+
         Move bestMove = {};
         int bestScore = -1000000;
         MoveList moveList;
@@ -342,12 +371,6 @@ namespace Zagreus {
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
-        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
-
-        if (!isPv && ttScore != INT32_MIN) {
-            return ttScore;
-        }
-
         while (moves.hasNext()) {
             if (searchStats.nodes % 2048 == 0 &&
                 (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
@@ -372,32 +395,8 @@ namespace Zagreus {
 
             int depthReduction = 0;
             bool isOpponentKingInCheck;
-            int amountOfPieces = 0;
-
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                isOpponentKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
-                amountOfPieces = popcnt(board.getColorBoard<PieceColor::WHITE>());
-            } else {
-                isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
-                amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
-            }
 
             if (!depthExtended && !isPv) {
-                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && amountOfPieces >= 4 && !isOpponentKingInCheck && !isOwnKingInCheck) {
-                    board.makeNullMove();
-                    int R = depth > 6 ? 3 : 2;
-                    Move nullMove = {};
-                    int score = search(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
-                                       engine, false, false);
-                    score *= -1;
-                    board.unmakeNullMove();
-
-                    if (score >= beta) {
-                        board.unmakeMove(move);
-                        return beta;
-                    }
-                }
-
                 if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
                     depthReduction = depth / 2;
