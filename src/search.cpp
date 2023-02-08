@@ -391,8 +391,8 @@ namespace Zagreus {
                 isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
             }
 
-            if (!depthExtended) {
-                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && !isOwnKingInCheck) {
+            if (!depthExtended && !isPv) {
+                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && !isOpponentKingInCheck && !isOwnKingInCheck) {
                     board.makeNullMove();
                     int R = depth > 6 ? 3 : 2;
                     int score = search(board, depth - R - 1, -beta, -beta + 1, rootMove, previousMove, endTime, line,
@@ -419,7 +419,7 @@ namespace Zagreus {
 
             if (score > alpha && score < beta) {
                 score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, false, false);
+                               engine, true, false);
                 score *= -1;
             }
 
