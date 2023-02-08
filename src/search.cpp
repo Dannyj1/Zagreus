@@ -39,15 +39,13 @@ namespace Zagreus {
         int iterationScore = -1000000;
         Move iterationMove = {};
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
-        std::chrono::time_point<std::chrono::high_resolution_clock> initialEndTime = getEndTime(params, board, engine, board.getMovingColor());
-        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = initialEndTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
         int depth = 0;
 
         TranspositionTable::getTT()->ageHistoryTable();
 
         Line iterationPvLine = {};
-        while (!engine.stopRequested()) {
-            endTime = initialEndTime;
+        while (!engine.stopRequested() && std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
             depth += 1;
 
             if (params.depth > 0 && depth > params.depth) {
