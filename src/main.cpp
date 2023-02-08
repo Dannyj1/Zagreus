@@ -1,18 +1,18 @@
 /*
- Zagreus is a UCI Chess Engine
+ Zagreus is a chess engine that supports the UCI protocol
  Copyright (C) 2023  Danny Jelsma
 
  This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
+ it under the terms of the GNU Affero General Public License as published
+ by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+ GNU Affero General Public License for more details.
 
- You should have received a copy of the GNU General Public License
+ You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
@@ -89,12 +89,21 @@ int main(int argc , char *argv[]) {
     initializeMagicBitboards();
     initializePst();
 
-    senjo::Output(senjo::Output::NoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
-    senjo::Output(senjo::Output::NoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY";
-    senjo::Output(senjo::Output::NoPrefix) << "This is free software, and you are welcome to redistribute it";
-    senjo::Output(senjo::Output::NoPrefix) << "under the terms of the GNU General Public License as published by";
-    senjo::Output(senjo::Output::NoPrefix) << "the Free Software Foundation, either version 3 of the License, or";
-    senjo::Output(senjo::Output::NoPrefix) << "(at your option) any later version; See the LICENSE file for full details";
+    senjo::Output(senjo::Output::NoPrefix) << "Zagreus is a chess engine that supports the UCI protocol";
+    senjo::Output(senjo::Output::NoPrefix) << "Copyright (C) 2023  Danny Jelsma";
+    senjo::Output(senjo::Output::NoPrefix) << "";
+    senjo::Output(senjo::Output::NoPrefix) << "This program is free software: you can redistribute it and/or modify";
+    senjo::Output(senjo::Output::NoPrefix) << "it under the terms of the GNU Affero General Public License as published";
+    senjo::Output(senjo::Output::NoPrefix) << "by the Free Software Foundation, either version 3 of the License, or";
+    senjo::Output(senjo::Output::NoPrefix) << "(at your option) any later version.";
+    senjo::Output(senjo::Output::NoPrefix) << "";
+    senjo::Output(senjo::Output::NoPrefix) << "This program is distributed in the hope that it will be useful,";
+    senjo::Output(senjo::Output::NoPrefix) << "but WITHOUT ANY WARRANTY; without even the implied warranty of";
+    senjo::Output(senjo::Output::NoPrefix) << "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the";
+    senjo::Output(senjo::Output::NoPrefix) << "GNU Affero General Public License for more details.";
+    senjo::Output(senjo::Output::NoPrefix) << "";
+    senjo::Output(senjo::Output::NoPrefix) << "You should have received a copy of the GNU Affero General Public License";
+    senjo::Output(senjo::Output::NoPrefix) << "along with this program.  If not, see <https://www.gnu.org/licenses/>.";
     senjo::Output(senjo::Output::NoPrefix) << "";
 
     senjo::Output(senjo::Output::NoPrefix) << " ______ ";
@@ -107,7 +116,7 @@ int main(int argc , char *argv[]) {
     senjo::Output(senjo::Output::NoPrefix) << "               |___/ ";
     senjo::Output(senjo::Output::NoPrefix) << "";
 
-    senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1)";
+    senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1/Zagreus)";
 
     if (argc >= 2) {
         if (strcmp(argv[1], "bench") == 0) {
