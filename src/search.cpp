@@ -316,6 +316,12 @@ namespace Zagreus {
             int depthReduction = 0;
             bool isOpponentKingInCheck;
 
+            if (board.getMovingColor() == PieceColor::WHITE) {
+                isOpponentKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
+            } else {
+                isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
+            }
+
             if (!depthExtended && !isPv) {
                 if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
