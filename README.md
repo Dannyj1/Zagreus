@@ -54,7 +54,8 @@ Thanks to:
 - Some ideas in this engine are inspired by [Stockfish](https://github.com/official-stockfish/Stockfish)
 
 # License
-Zagreus is a chess engine that supports the UCI protocol
+Zagreus is a chess engine that supports the UCI protocol 
+
 Copyright (C) 2023  Danny Jelsma
 
 This program is free software: you can redistribute it and/or modify
