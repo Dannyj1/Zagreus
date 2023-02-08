@@ -395,10 +395,10 @@ namespace Zagreus {
                     }
                 }
 
-                if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
+/*                if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
                     depthReduction = depth / 2;
-                }
+                }*/
             }
 
             int score;
