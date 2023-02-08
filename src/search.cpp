@@ -395,7 +395,7 @@ namespace Zagreus {
                 if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && !isOwnKingInCheck) {
                     board.makeNullMove();
                     int R = depth > 6 ? 3 : 2;
-                    int score = search(board, depth - R - 1, -alpha - 1, -alpha, rootMove, previousMove, endTime, line,
+                    int score = search(board, depth - R - 1, -beta, -beta + 1, rootMove, previousMove, endTime, line,
                                        engine, false, false);
                     score *= -1;
                     board.unmakeNullMove();
