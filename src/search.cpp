@@ -372,20 +372,18 @@ namespace Zagreus {
 
             int depthReduction = 0;
             bool isOpponentKingInCheck;
+            int amountOfPieces = 0;
 
             if (board.getMovingColor() == PieceColor::WHITE) {
                 isOpponentKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
+                amountOfPieces = popcnt(board.getColorBoard<PieceColor::WHITE>());
             } else {
                 isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
+                amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
             }
 
             if (!depthExtended && !isPv) {
-                if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
-                    move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
-                    depthReduction = depth / 2;
-                }
-
-                if (canNull && (depth - depthReduction) >= 3 && board.hasMinorOrMajorPieces() && !isOpponentKingInCheck && !isOwnKingInCheck) {
+                if (canNull && depth >= 3 && board.hasMinorOrMajorPieces() && amountOfPieces >= 4 && !isOpponentKingInCheck && !isOwnKingInCheck) {
                     board.makeNullMove();
                     int R = depth > 6 ? 3 : 2;
                     Move nullMove = {};
@@ -398,6 +396,11 @@ namespace Zagreus {
                         board.unmakeMove(move);
                         return beta;
                     }
+                }
+
+                if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
+                    move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
+                    depthReduction = depth / 2;
                 }
             }
 
