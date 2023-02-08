@@ -300,19 +300,7 @@ namespace Zagreus {
                 }
             }
 
-            int depthExtension = 0;
-
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                if (board.isKingInCheck<PieceColor::WHITE>()) {
-                    depthExtension += 1;
-                }
-            } else {
-                if (board.isKingInCheck<PieceColor::BLACK>()) {
-                    depthExtension += 1;
-                }
-            }
-
-            int score = search(board, depth - 1 + depthExtension, -beta, -alpha, rootMove, previousMove, endTime, line,
+            int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
                                engine, true, false);
             score *= -1;
 
