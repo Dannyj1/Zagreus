@@ -516,37 +516,37 @@ namespace Zagreus {
     }
 
     void getBlackMaterialScore(EvalContext &evalContext, Bitboard &board) {
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_PAWN>()) * getEvalValue(MIDGAME_PAWN_MATERIAL);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_PAWN>()) * getEvalValue(ENDGAME_PAWN_MATERIAL);
+        evalContext.blackMidgameScore += board.getMaterialCount<BLACK_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
+        evalContext.blackEndgameScore += board.getMaterialCount<BLACK_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_KNIGHT>()) * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_KNIGHT>()) * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
+        evalContext.blackMidgameScore += board.getMaterialCount<BLACK_KNIGHT>() * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
+        evalContext.blackEndgameScore += board.getMaterialCount<BLACK_KNIGHT>() * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_BISHOP>()) * getEvalValue(MIDGAME_BISHOP_MATERIAL);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_BISHOP>()) * getEvalValue(ENDGAME_BISHOP_MATERIAL);
+        evalContext.blackMidgameScore += board.getMaterialCount<BLACK_BISHOP>() * getEvalValue(MIDGAME_BISHOP_MATERIAL);
+        evalContext.blackEndgameScore += board.getMaterialCount<BLACK_BISHOP>() * getEvalValue(ENDGAME_BISHOP_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_ROOK>()) * getEvalValue(MIDGAME_ROOK_MATERIAL);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_ROOK>()) * getEvalValue(ENDGAME_ROOK_MATERIAL);
+        evalContext.blackMidgameScore += board.getMaterialCount<BLACK_ROOK>() * getEvalValue(MIDGAME_ROOK_MATERIAL);
+        evalContext.blackEndgameScore += board.getMaterialCount<BLACK_ROOK>() * getEvalValue(ENDGAME_ROOK_MATERIAL);
 
-        evalContext.blackMidgameScore += popcnt(board.getPieceBoard<BLACK_QUEEN>()) * getEvalValue(MIDGAME_QUEEN_MATERIAL);
-        evalContext.blackEndgameScore += popcnt(board.getPieceBoard<BLACK_QUEEN>()) * getEvalValue(ENDGAME_QUEEN_MATERIAL);
+        evalContext.blackMidgameScore += board.getMaterialCount<BLACK_QUEEN>() * getEvalValue(MIDGAME_QUEEN_MATERIAL);
+        evalContext.blackEndgameScore += board.getMaterialCount<BLACK_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
     }
 
     void getWhiteMaterialScore(EvalContext &evalContext, Bitboard &board) {
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_PAWN>()) * getEvalValue(MIDGAME_PAWN_MATERIAL);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_PAWN>()) * getEvalValue(ENDGAME_PAWN_MATERIAL);
+        evalContext.whiteMidgameScore += board.getMaterialCount<WHITE_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
+        evalContext.whiteEndgameScore += board.getMaterialCount<WHITE_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_KNIGHT>()) * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_KNIGHT>()) * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
+        evalContext.whiteMidgameScore += board.getMaterialCount<WHITE_KNIGHT>() * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
+        evalContext.whiteEndgameScore += board.getMaterialCount<WHITE_KNIGHT>() * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_BISHOP>()) * getEvalValue(MIDGAME_BISHOP_MATERIAL);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_BISHOP>()) * getEvalValue(ENDGAME_BISHOP_MATERIAL);
+        evalContext.whiteMidgameScore += board.getMaterialCount<WHITE_BISHOP>() * getEvalValue(MIDGAME_BISHOP_MATERIAL);
+        evalContext.whiteEndgameScore += board.getMaterialCount<WHITE_BISHOP>() * getEvalValue(ENDGAME_BISHOP_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_ROOK>()) * getEvalValue(MIDGAME_ROOK_MATERIAL);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_ROOK>()) * getEvalValue(ENDGAME_ROOK_MATERIAL);
+        evalContext.whiteMidgameScore += board.getMaterialCount<WHITE_ROOK>() * getEvalValue(MIDGAME_ROOK_MATERIAL);
+        evalContext.whiteEndgameScore += board.getMaterialCount<WHITE_ROOK>() * getEvalValue(ENDGAME_ROOK_MATERIAL);
 
-        evalContext.whiteMidgameScore += popcnt(board.getPieceBoard<WHITE_QUEEN>()) * getEvalValue(MIDGAME_QUEEN_MATERIAL);
-        evalContext.whiteEndgameScore += popcnt(board.getPieceBoard<WHITE_QUEEN>()) * getEvalValue(ENDGAME_QUEEN_MATERIAL);
+        evalContext.whiteMidgameScore += board.getMaterialCount<WHITE_QUEEN>() * getEvalValue(MIDGAME_QUEEN_MATERIAL);
+        evalContext.whiteEndgameScore += board.getMaterialCount<WHITE_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
     }
 
     void getWhitePositionalScore(EvalContext &evalContext, Bitboard &bitboard) {

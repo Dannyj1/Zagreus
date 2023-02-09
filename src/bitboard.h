@@ -59,6 +59,7 @@ namespace Zagreus {
         Line previousPvLine{};
 
         Move previousMove{};
+        int materialCount[12]{};
     public:
         uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
 
@@ -122,6 +123,11 @@ namespace Zagreus {
         void setPiece(int8_t square, PieceType piece);
 
         void removePiece(int8_t square, PieceType piece);
+
+        template<PieceType piece>
+        int getMaterialCount() {
+            return materialCount[piece];
+        }
 
         void makeMove(Move &move);
 

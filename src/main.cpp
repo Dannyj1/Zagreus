@@ -20,7 +20,6 @@
 #include <vector>
 #include <random>
 #include <fstream>
-#include <sstream>
 
 #include "bitboard.h"
 #include "engine.h"
@@ -40,7 +39,7 @@ void benchmark();
 
 void findZobristSeed();
 
-std::vector<std::string> benchmarkPositions = {"8/8/1n3k2/8/3P3P/5K2/8/1N4Q1 w - -",
+const std::vector<std::string> benchmarkPositions = {"8/8/1n3k2/8/3P3P/5K2/8/1N4Q1 w - -",
                                                "1rb1kbnr/p1q1pppp/np4B1/2pp4/P1PP4/2N1P3/1P3PPP/R1BQK1NR w Kk",
                                                "1rbk1bnr/pp1p1ppp/n1pq4/4pP1Q/P1B1P3/2P4P/1P1P2P1/RNB2KNR b - -",
                                                "r1bn1r2/2k3p1/6p1/pP3p2/4P2P/1P1P3R/2P1NB2/Q3K1n1 b - -",
@@ -170,7 +169,7 @@ void benchmark() {
     uint64_t nodes = 0;
     uint64_t totalMs = 0;
 
-    for (std::string &position : benchmarkPositions) {
+    for (const std::string &position : benchmarkPositions) {
         for (int i = 0; i < 2; i++) {
             Bitboard bb;
             PieceColor color = i == 0 ? PieceColor::WHITE : PieceColor::BLACK;
@@ -190,11 +189,14 @@ void benchmark() {
         }
     }
 
+    if (nodes == 0 || totalMs == 0) {
+        senjo::Output(senjo::Output::NoPrefix) << "0 nodes 0 nps";
+        return;
+    }
+
     uint64_t nps = nodes / (totalMs / 1000);
     senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nps << " nps";
 }
-
-std::vector<std::string> seedFindPositions{};
 
 void addHashes(Bitboard &board, int depth, std::map<uint64_t, uint64_t> &collisionMap) {
     uint64_t zobristHash = board.getZobristHash() & 1398100ULL;
@@ -231,6 +233,7 @@ void addHashes(Bitboard &board, int depth, std::map<uint64_t, uint64_t> &collisi
 void findZobristSeed() {
     senjo::Output(senjo::Output::NoPrefix) << "Loading positions...";
     std::ifstream fin("perft.txt");
+    std::vector<std::string> seedFindPositions{};
 
     std::string line;
     while (std::getline(fin, line)) {
@@ -238,11 +241,11 @@ void findZobristSeed() {
     }
 
     senjo::Output(senjo::Output::NoPrefix) << "Removing invalid positions...";
-    for (std::string &position : seedFindPositions) {
+    for (const std::string &position : seedFindPositions) {
         Bitboard bb;
 
         if (!bb.setFromFen(position) || position.empty()) {
-            seedFindPositions.erase(std::remove(seedFindPositions.begin(), seedFindPositions.end(), position), seedFindPositions.end());
+            std::erase(seedFindPositions, position);
         }
     }
 

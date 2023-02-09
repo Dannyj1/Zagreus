@@ -162,6 +162,7 @@ namespace Zagreus {
         colorBB[piece % 2] |= 1ULL << square;
         pieceSquareMapping[square] = piece;
         zobristHash ^= zobristConstants[square + 64 * piece];
+        materialCount[piece] += 1;
     }
 
     void Bitboard::removePiece(int8_t square, PieceType piece) {
@@ -171,6 +172,7 @@ namespace Zagreus {
         colorBB[piece % 2] &= ~(1ULL << square);
         pieceSquareMapping[square] = PieceType::EMPTY;
         zobristHash ^= zobristConstants[square + 64 * piece];
+        materialCount[piece] -= 1;
     }
 
     void Bitboard::makeMove(Move &move) {
