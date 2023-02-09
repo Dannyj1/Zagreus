@@ -322,10 +322,20 @@ namespace Zagreus {
                 isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
             }
 
-            if (!depthExtended && !isPv) {
+            // Late move reduction
+            if (!depthExtended) {
                 if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
-                    depthReduction = depth / 2;
+                    // Scale the reduction value between 1 and (depth - 1), depending on how many moves have been searched.
+                    // It should reach (depth - 1) when 50% (or 80% in pv nodes) of the moves have been searched.
+                    float reductionFactor = 0.5f;
+
+                    if (isPv) {
+                        reductionFactor = 0.8f;
+                    }
+
+                    int R = 1 + (int) ((depth - 1) * (1 - moves.movesSearched() / (reductionFactor * moves.size())));
+                    depthReduction += R;
                 }
             }
 
