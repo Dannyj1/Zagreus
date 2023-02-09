@@ -39,7 +39,7 @@ namespace Zagreus {
     float K = 0.0;
 
     int batchSize = 256;
-    float learningRate = 0.1f;
+    float learningRate = 0.4f;
     float epsilon = 6.0f;
     float optimizerEpsilon = 1e-6f;
     float epsilonDecay = 0.97f;
@@ -97,10 +97,10 @@ namespace Zagreus {
             tunerBoard.setFromFenTuner(pos.fen);
             int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
             float loss = pos.result - sigmoid((float) evalScore);
-            totalLoss += fabs(loss);
+            totalLoss += loss * loss;
         }
 
-        return totalLoss / (float) amountOfPositions;
+        return 1.0f / (2.0f * (float) amountOfPositions) * totalLoss;
     }
 
     float findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
