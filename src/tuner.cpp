@@ -197,6 +197,7 @@ namespace Zagreus {
 
         std::random_device rd;
         std::mt19937_64 gen(rd());
+        gen.seed(42);
         std::uniform_int_distribution<uint64_t> dis;
 
         engine.setTuning(false);
