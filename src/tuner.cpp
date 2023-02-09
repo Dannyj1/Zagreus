@@ -95,14 +95,12 @@ namespace Zagreus {
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
-//            Move rootMove{};
-//            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
             int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
             float loss = pos.result - sigmoid((float) evalScore);
             totalLoss += loss * loss;
         }
 
-        return totalLoss / (float) amountOfPositions;
+        return 1.0f / (2.0f * (float) amountOfPositions) * totalLoss;
     }
 
     float findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
