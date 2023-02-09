@@ -20,6 +20,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <map>
 
 #include "tuner.h"
 #include "features.h"
@@ -29,7 +30,6 @@
 #include "pst.h"
 #include "movegen.h"
 
-
 namespace Zagreus {
 
     Bitboard tunerBoard{};
@@ -38,7 +38,7 @@ namespace Zagreus {
     int iteration = 0;
     float K = 0.0;
 
-    int batchSize = 512;
+    int batchSize = 256;
     float learningRate = 0.4f;
     float epsilon = 6.0f;
     float optimizerEpsilon = 1e-6f;
@@ -46,6 +46,45 @@ namespace Zagreus {
     float beta1 = 0.9f;
     float beta2 = 0.999f;
     int epsilonWarmupIterations = 0;
+
+    std::vector<std::vector<TunePosition>> divideByScore(const std::vector<TunePosition> &v) {
+        std::unordered_map<int, std::vector<TunePosition>> scoreMap;
+        for (const auto &p : v) {
+            int roundedScore = std::round(p.score / 50.0) * 50.0;
+            scoreMap[roundedScore].push_back(p);
+        }
+
+        std::vector<std::vector<TunePosition>> subVectors;
+        for (const auto &kv : scoreMap) {
+            subVectors.push_back(kv.second);
+        }
+
+        return subVectors;
+    }
+
+    // Create batches with a uniform distribution by score rounded to 50
+    std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> v, std::mt19937_64 gen) {
+        std::sort(v.begin(), v.end(), [](const TunePosition &a, const TunePosition &b) {
+            return a.score < b.score;
+        });
+
+        auto subVectors = divideByScore(v);
+        for (auto &subVector : subVectors) {
+            std::shuffle(subVector.begin(), subVector.end(), gen);
+        }
+
+        v.clear();
+        for (const auto &subVector : subVectors) {
+            v.insert(v.end(), subVector.begin(), subVector.end());
+        }
+
+        std::vector<std::vector<TunePosition>> result;
+        for (int i = 0; i < v.size(); i += batchSize) {
+            result.push_back({v.begin() + i, v.begin() + std::min(i + batchSize, (int) v.size())});
+        }
+
+        return result;
+    }
 
     float sigmoid(float x) {
         return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
@@ -103,7 +142,7 @@ namespace Zagreus {
         return bestK;
     }
 
-    std::vector<TunePosition> loadPositions(char* filePath) {
+    std::vector<TunePosition> loadPositions(char* filePath, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
         std::cout << "Loading positions..." << std::endl;
         std::vector<TunePosition> positions;
         std::vector<std::string> lines;
@@ -141,7 +180,7 @@ namespace Zagreus {
                 continue;
             }
 
-            positions.emplace_back(TunePosition{fen, result});
+            positions.emplace_back(TunePosition{fen, result, searchManager.evaluate(tunerBoard, maxEndTime, engine)});
         }
 
         return positions;
@@ -193,7 +232,7 @@ namespace Zagreus {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
         std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
-        std::vector<TunePosition> trainingSet = loadPositions(filePath);
+        std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine);
 
         std::random_device rd;
         std::mt19937_64 gen(rd());
@@ -207,7 +246,8 @@ namespace Zagreus {
         exportNewEvalValues(bestParameters);
 
         std::cout << "Finding the optimal K value..." << std::endl;
-        K = findOptimalK(trainingSet, maxEndTime, engine);
+//        K = findOptimalK(positions, maxEndTime, engine);
+        K = 1.00999;
         std::cout << "Optimal K value: " << K << std::endl;
 
         std::cout << "Starting tuning..." << std::endl;
@@ -216,28 +256,31 @@ namespace Zagreus {
 
         std::cout << "Splitting the trainingSet into a training set and a validation set..." << std::endl;
         // 10% validation set, 90% training set
-        int validationSetSize = trainingSet.size() / 10;
+        int validationSetSize = positions.size() / 10;
 
         std::vector<TunePosition> validationSet(validationSetSize);
 
-        std::shuffle(trainingSet.begin(), trainingSet.end(), gen);
-        std::copy(trainingSet.begin(), trainingSet.begin() + validationSetSize, validationSet.begin());
-        trainingSet.erase(trainingSet.begin(), trainingSet.begin() + validationSetSize);
+        std::shuffle(positions.begin(), positions.end(), gen);
+        std::copy(positions.begin(), positions.begin() + validationSetSize, validationSet.begin());
+        positions.erase(positions.begin(), positions.begin() + validationSetSize);
 
         std::cout << "Calculating the initial loss..." << std::endl;
         float bestLoss = evaluationLoss(validationSet, validationSetSize, maxEndTime, engine);
 
         std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
+        std::vector<std::vector<TunePosition>> batches = createBatches(positions, gen);
 
         while (stopCounter <= 20) {
             iteration++;
-            std::vector<TunePosition> batch(batchSize);
-            std::vector<float> gradients(bestParameters.size(), 0.0f);
 
-            for (int i = 0; i < batchSize; i++) {
-                batch.emplace_back(trainingSet[dis(gen) % trainingSet.size()]);
+            if (batches.empty()) {
+                batches = createBatches(positions, gen);
             }
+
+            std::vector<TunePosition> batch = batches.back();
+            batches.pop_back();
+            std::vector<float> gradients(bestParameters.size(), 0.0f);
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                 float oldParam = bestParameters[paramIndex];
@@ -279,7 +322,7 @@ namespace Zagreus {
                 stopCounter++;
             }
 
-            float trainingLoss = evaluationLoss(trainingSet, trainingSet.size(), maxEndTime, engine);
+            float trainingLoss = evaluationLoss(positions, positions.size(), maxEndTime, engine);
             std::cout << "Iteration: " << iteration << ", Training Loss: " << trainingLoss << ", Val Loss: " << newLoss << ", Best Val Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
         }
 
