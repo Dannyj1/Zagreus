@@ -359,7 +359,7 @@ namespace Zagreus {
 
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
                                                              NodeType::FAIL_HIGH_NODE, encodeMove(bestMove));
-                    return beta;
+                    return score;
                 }
 
                 pvLine.moves[0] = move;
@@ -472,9 +472,9 @@ namespace Zagreus {
 
         if (!engine.isTuning()) {
             if (board.isWinner<PieceColor::WHITE>()) {
-                return (15000 - board.getPly()) * modifier;
+                return (MATE_SCORE - board.getPly()) * modifier;
             } else if (board.isWinner<PieceColor::BLACK>()) {
-                return (-15000 + board.getPly()) * modifier;
+                return (-MATE_SCORE + board.getPly()) * modifier;
             }
 
             if (board.isDraw()) {
