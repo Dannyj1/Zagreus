@@ -327,8 +327,8 @@ namespace Zagreus {
                 if (depth >= 3 && moves.movesSearched() > 4 && move.captureScore != -1 &&
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
                     // Scale the reduction value between 1 and (depth - 1), depending on how many moves have been searched.
-                    // It should reach (depth - 1) when 50% (or 80% in pv nodes) of the moves have been searched.
-                    int R = 1 + (int) ((depth - 1) * (1 - moves.movesSearched() / (0.5 * moves.size())));
+                    // It should reach (depth - 1) when 60% of the moves have been searched.
+                    int R = 1 + (int) ((depth - 1) * (1 - moves.movesSearched() / (0.6 * moves.size())));
                     depthReduction += R;
                 }
             }
