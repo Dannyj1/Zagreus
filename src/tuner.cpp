@@ -242,8 +242,7 @@ namespace Zagreus {
         exportNewEvalValues(bestParameters);
 
         std::cout << "Finding the optimal K value..." << std::endl;
-//        K = findOptimalK(positions, maxEndTime, engine);
-        K = 1.00999;
+        K = findOptimalK(positions, maxEndTime, engine);
         std::cout << "Optimal K value: " << K << std::endl;
 
         std::cout << "Starting tuning..." << std::endl;
