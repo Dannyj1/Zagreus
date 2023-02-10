@@ -21,9 +21,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[72] = { 97, 105, 354, 344, 361, 352, 530, 531, 1010, 1005, 6, 6, 3, -1, 5, 5, 2, 6, 0, 12, -50, 0, -25, 0, -29, -6, -16, -5, -4, -1, -2, 3, -3, 2, -8, -5, 6, 8, 16, 1, 12, 3, 0, 3, 7, 7, 20, 20, 15, 15, 6, 3, 5, 5, 7, -1, -27, -26, 23, 6, -4, 0, -1, 0, -20, -20, 2, -6, 3, 3, 25, -2,  };
+    int evalValues[74] = { 97, 105, 354, 344, 361, 352, 530, 531, 1010, 1005, 6, 6, 3, -1, 5, 5, 2, 6, 0, 12, -50, 0, -25, 0, -29, -6, -16, -5, -4, -1, -2, 3, -3, 2, -8, -5, 6, 8, 16, 1, 12, 3, 0, 3, 7, 7, 20, 20, 15, 15, 6, 3, 5, 5, 7, -1, -27, -26, 23, 6, -4, 0, -1, 0, -20, -20, 2, -6, 3, 3, 25, -2, -1, -1  };
 
-    int baseEvalValues[72] = {
+    int baseEvalValues[74] = {
             100, // MIDGAME_PAWN_MATERIAL
             100, // ENDGAME_PAWN_MATERIAL
             350, // MIDGAME_KNIGHT_MATERIAL
@@ -54,12 +54,12 @@ namespace Zagreus {
             0, // ENDGAME_QUEENSIDE_CASTLING_PREVENTED
             -10, // MIDGAME_KINGSIDE_CASTLING_PREVENTED
             0, // ENDGAME_KINGSIDE_CASTLING_PREVENTED
-            3, // MIDGAME_BISHOP_ATTACK_NEAR_KING
-            3, // ENDGAME_BISHOP_ATTACK_NEAR_KING
-            5, // MIDGAME_ROOK_ATTACK_NEAR_KING
-            5, // ENDGAME_ROOK_ATTACK_NEAR_KING
-            10, // MIDGAME_QUEEN_ATTACK_NEAR_KING
-            10, // ENDGAME_QUEEN_ATTACK_NEAR_KING
+            -3, // MIDGAME_BISHOP_ATTACK_NEAR_KING
+            -3, // ENDGAME_BISHOP_ATTACK_NEAR_KING
+            -5, // MIDGAME_ROOK_ATTACK_NEAR_KING
+            -5, // ENDGAME_ROOK_ATTACK_NEAR_KING
+            -10, // MIDGAME_QUEEN_ATTACK_NEAR_KING
+            -10, // ENDGAME_QUEEN_ATTACK_NEAR_KING
             10, // MIDGAME_PAWN_CONNECTIVITY
             10, // ENDGAME_PAWN_CONNECTIVITY
             7, // MIDGAME_KNIGHT_CONNECTIVITY
@@ -96,6 +96,8 @@ namespace Zagreus {
             3, // ENDGAME_PAWN_SEMI_OPEN_FILE
             20, // MIDGAME_PAWN_SHIELD
             0, // ENDGAME_PAWN_SHIELD
+            -1, // MIDGAME_KNIGHT_ATTACK_NEAR_KING
+            -1, // ENDGAME_KNIGHT_ATTACK_NEAR_KING
     };
 
     void printEvalValues() {
