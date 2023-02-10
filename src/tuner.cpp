@@ -39,50 +39,28 @@ namespace Zagreus {
     double K = 0.0;
 
     int batchSize = 512;
-    double learningRate = 0.5;
-    double epsilon = 1.0;
+    double learningRate = 0.4;
+    double epsilon = 5.0;
     double optimizerEpsilon = 1e-6;
-    double epsilonDecay = 1.0;
+    double epsilonDecay = 0.95;
     double beta1 = 0.9;
     double beta2 = 0.999;
     int epsilonWarmupIterations = 0;
 
-    std::vector<std::vector<TunePosition>> divideByScore(const std::vector<TunePosition> &v) {
-        std::map<int, std::vector<TunePosition>> scoreMap;
-        for (const auto &p : v) {
-            scoreMap[p.score].push_back(p);
-        }
-
-        std::vector<std::vector<TunePosition>> subVectors;
-        for (const auto &kv : scoreMap) {
-            subVectors.push_back(kv.second);
-        }
-
-        return subVectors;
-    }
-
-    // Create batches with a uniform distribution by score rounded to 50
     std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> v, std::mt19937_64 gen) {
-        std::sort(v.begin(), v.end(), [](const TunePosition &a, const TunePosition &b) {
-            return a.score < b.score;
-        });
+        // Create random batches of batchSize positions
+        std::vector<std::vector<TunePosition>> batches;
 
-        auto subVectors = divideByScore(v);
-        for (auto &subVector : subVectors) {
-            std::shuffle(subVector.begin(), subVector.end(), gen);
-        }
-
-        v.clear();
-        for (const auto &subVector : subVectors) {
-            v.insert(v.end(), subVector.begin(), subVector.end());
-        }
-
-        std::vector<std::vector<TunePosition>> result;
+        std::shuffle(v.begin(), v.end(), gen);
         for (int i = 0; i < v.size(); i += batchSize) {
-            result.push_back({v.begin() + i, v.begin() + std::min(i + batchSize, (int) v.size())});
+            std::vector<TunePosition> batch;
+            for (int j = i; j < i + batchSize && j < v.size(); j++) {
+                batch.push_back(v[j]);
+            }
+            batches.push_back(batch);
         }
 
-        return result;
+        return batches;
     }
 
     double sigmoid(double x) {
