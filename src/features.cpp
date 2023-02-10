@@ -21,7 +21,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[72] = { 101, 105, 356, 344, 364, 354, 535, 533, 1002, 1008, 1, 6, 6, -1, 7, 5, 5, 5, 2, 10, -50, 0, -25, 0, -29, 1, -20, -6, 0, -3, -2, 8, -4, 4, -2, 0, 8, 9, 9, 3, 7, 8, 0, 0, 0, -2, 20, 20, 15, 15, 5, 2, 4, 2, 3, 2, -24, -24, 15, 2, -5, 0, 0, 0, -20, -20, 0, -3, 3, 3, 24, 0,  };
+    int evalValues[72] = { 97, 105, 354, 344, 361, 352, 530, 531, 1010, 1005, 6, 6, 3, -1, 5, 5, 2, 6, 0, 12, -50, 0, -25, 0, -29, -6, -16, -5, -4, -1, -2, 3, -3, 2, -8, -5, 6, 8, 16, 1, 12, 3, 0, 3, 7, 7, 20, 20, 15, 15, 6, 3, 5, 5, 7, -1, -27, -26, 23, 6, -4, 0, -1, 0, -20, -20, 2, -6, 3, 3, 25, -2,  };
 
     int baseEvalValues[72] = {
             100, // MIDGAME_PAWN_MATERIAL
@@ -113,8 +113,8 @@ namespace Zagreus {
     }
 
     // Some sane default values for tuning
-    std::vector<float> getBaseEvalValues() {
-        std::vector<float> values;
+    std::vector<double> getBaseEvalValues() {
+        std::vector<double> values;
 
         for (int i = 0; i < getEvalFeatureSize(); i++) {
             values.emplace_back(baseEvalValues[i]);
@@ -131,8 +131,8 @@ namespace Zagreus {
         return values;
     }
 
-    std::vector<float> getEvalValues() {
-        std::vector<float> values;
+    std::vector<double> getEvalValues() {
+        std::vector<double> values;
 
         for (int i = 0; i < getEvalFeatureSize(); i++) {
             values.emplace_back(evalValues[i]);
@@ -149,7 +149,7 @@ namespace Zagreus {
         return values;
     }
 
-    void updateEvalValues(std::vector<float> &newValues) {
+    void updateEvalValues(std::vector<double> &newValues) {
         int evalFeatureSize = getEvalFeatureSize();
         int pstSize = getMidgameValues().size();
 
