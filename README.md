@@ -55,8 +55,6 @@ Thanks to:
 - Some ideas in this engine are inspired by [Stockfish](https://github.com/official-stockfish/Stockfish)
 
 # License
-Zagreus is a chess engine that supports the UCI protocol 
-
 Copyright (C) 2023  Danny Jelsma
 
 This program is free software: you can redistribute it and/or modify
@@ -71,3 +69,5 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+This project uses the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter) by zd3nik which is licensed under the MIT license. All files from the Senjo UCI Adapter retain their original copyright and license notices.
