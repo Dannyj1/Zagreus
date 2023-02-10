@@ -11,6 +11,7 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 - Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square tables and more
 - Evaluation values automatically tuned with a gradient descent tuner with the Adam optimizer.
 - Principal Variation Search with Alpha-Beta pruning
+- Aspiration Windows
 - Quiescence Search with delta pruning and SEE move ordering
 - Move ordering using MVV/LVA, killer moves, history heuristic, countermove heuristic
 - Transposition Table
