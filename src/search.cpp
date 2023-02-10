@@ -679,7 +679,7 @@ namespace Zagreus {
     void getWhiteKingScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t kingAttacks = bitboard.getKingAttacks(kingLocation);
+        uint64_t kingAttacks = evalContext.attacksFrom[kingLocation];
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
         uint64_t safetyMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
         safetyMask |= nortOne(safetyMask);
@@ -727,7 +727,7 @@ namespace Zagreus {
 
         while (kingAttacks) {
             int8_t attackIndex = bitscanForward(kingAttacks);
-            uint64_t attacksTo = evalContext.attacksTo[attackIndex] & bitboard.getColorBoard<PieceColor::WHITE>();
+            uint64_t attacksTo = evalContext.attacksTo[attackIndex] & bitboard.getColorBoard<PieceColor::BLACK>();
 
             while (attacksTo) {
                 int8_t index = bitscanForward(attacksTo);
@@ -761,7 +761,7 @@ namespace Zagreus {
     void getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t kingAttacks = bitboard.getKingAttacks(kingLocation);
+        uint64_t kingAttacks = evalContext.attacksFrom[kingLocation];
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
         uint64_t safetyMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
         safetyMask |= soutOne(safetyMask);
