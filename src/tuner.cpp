@@ -39,10 +39,10 @@ namespace Zagreus {
     double K = 0.0;
 
     int batchSize = 512;
-    double learningRate = 0.4;
-    double epsilon = 6.0;
+    double learningRate = 0.5;
+    double epsilon = 1.0;
     double optimizerEpsilon = 1e-6;
-    double epsilonDecay = 0.97;
+    double epsilonDecay = 1.0;
     double beta1 = 0.9;
     double beta2 = 0.999;
     int epsilonWarmupIterations = 0;
@@ -118,7 +118,7 @@ namespace Zagreus {
         double bestLoss = 9999999.0;
         double oldK = K;
 
-        for (double k = 0.0; k <= 2.0; k += 0.001) {
+        for (double k = 1.0; k <= 2.0; k += 0.001) {
             K = k;
 
             double totalLoss = 0.0;

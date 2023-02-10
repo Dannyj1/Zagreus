@@ -726,29 +726,37 @@ namespace Zagreus {
         }
 
         while (kingAttacks) {
-            int8_t index = bitscanForward(kingAttacks);
-            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
+            int8_t attackIndex = bitscanForward(kingAttacks);
+            uint64_t attacksTo = evalContext.attacksTo[attackIndex] & bitboard.getColorBoard<PieceColor::WHITE>();
 
-            switch (pieceOnSquare) {
-                case PieceType::WHITE_KNIGHT:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
-                    break;
-                case PieceType::WHITE_BISHOP:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
-                    break;
-                case PieceType::WHITE_ROOK:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
-                    break;
-                case PieceType::WHITE_QUEEN:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
-                    break;
+            while (attacksTo) {
+                int8_t index = bitscanForward(attacksTo);
+
+                PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
+
+                switch (pieceOnSquare) {
+                    case PieceType::WHITE_KNIGHT:
+                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
+                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
+                        break;
+                    case PieceType::WHITE_BISHOP:
+                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+                        break;
+                    case PieceType::WHITE_ROOK:
+                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+                        break;
+                    case PieceType::WHITE_QUEEN:
+                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
+                        break;
+                }
+
+                attacksTo &= ~(1ULL << index);
             }
 
-            kingAttacks &= ~(1ULL << index);
+            kingAttacks &= ~(1ULL << attackIndex);
         }
     }
 
@@ -803,29 +811,37 @@ namespace Zagreus {
         }
 
         while (kingAttacks) {
-            int8_t index = bitscanForward(kingAttacks);
-            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
+            int8_t attackIndex = bitscanForward(kingAttacks);
+            uint64_t attacksTo = evalContext.attacksTo[attackIndex] & bitboard.getColorBoard<PieceColor::WHITE>();
 
-            switch (pieceOnSquare) {
-                case PieceType::BLACK_KNIGHT:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
-                    break;
-                case PieceType::BLACK_BISHOP:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
-                    break;
-                case PieceType::BLACK_ROOK:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
-                    break;
-                case PieceType::BLACK_QUEEN:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
-                    break;
+            while (attacksTo) {
+                int8_t index = bitscanForward(attacksTo);
+
+                PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
+
+                switch (pieceOnSquare) {
+                    case BLACK_KNIGHT:
+                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
+                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
+                        break;
+                    case PieceType::BLACK_BISHOP:
+                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+                        break;
+                    case PieceType::BLACK_ROOK:
+                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+                        break;
+                    case PieceType::BLACK_QUEEN:
+                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
+                        break;
+                }
+
+                attacksTo &= ~(1ULL << index);
             }
 
-            kingAttacks &= ~(1ULL << index);
+            kingAttacks &= ~(1ULL << attackIndex);
         }
     }
 
@@ -1244,22 +1260,19 @@ namespace Zagreus {
                 0,
                 0,
                 whitePawnAttacks,
-                whiteKnightAttacks,
-                whiteBishopAttacks,
-                whiteRookAttacks,
-                whiteQueenAttacks,
                 whiteCombinedAttacks,
                 blackPawnAttacks,
-                blackKnightAttacks,
-                blackBishopAttacks,
-                blackRookAttacks,
-                blackQueenAttacks,
                 blackCombinedAttacks,
+                {},
                 {}
         };
 
         for (int i = 0; i < 64; i++) {
             context.attacksFrom[i] = attacksFrom[i];
+        }
+
+        for (int i = 0; i < 64; i++) {
+            context.attacksTo[i] = attacksTo[i];
         }
 
         return context;
