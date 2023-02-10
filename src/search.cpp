@@ -39,8 +39,8 @@ namespace Zagreus {
         int iterationScore = -1000000;
         int alpha = -1000000;
         int beta = 1000000;
-        int alphaWindow = 50;
-        int betaWindow = 50;
+        int alphaWindow = 100;
+        int betaWindow = 100;
         Move iterationMove = {};
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
