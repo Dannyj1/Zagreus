@@ -21,9 +21,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[74] = { 99, 117, 367, 350, 383, 363, 540, 553, 1018, 1016, 10, 10, 5, 2, 7, 6, 4, 6, 0, 20, -50, 0, -25, 0, -38, -4, -18, -4, 0, 4, 8, 0, -1, -1, 0, 2, 5, 13, 20, 13, 14, 15, 2, 23, 9, 12, 20, 20, 15, 15, 3, 0, 13, 7, 8, 8, -32, -26, 24, 7, -3, 0, -1, 0, -20, -20, 0, 0, 3, 3, 34, -4, 12, 0,  };
+    int evalValues[72] = { 96, 112, 362, 352, 378, 364, 534, 547, 1017, 1012, 10, 11, 7, 0, 7, 6, 4, 7, 0, 17, -50, 0, -25, 0, -31, -3, -16, -6, 4, -1, 8, 1, 0, -3, 0, -5, 5, 10, 22, 7, 11, 4, 10, 19, 11, 11, 20, 20, 15, 15, 4, 0, 6, 0, 8, 7, -36, -20, 24, 12, -3, 0, -2, 0, -20, -20, 2, 0, 3, 3, 35, -1,  };
 
-    int baseEvalValues[74] = {
+    int baseEvalValues[72] = {
             100, // MIDGAME_PAWN_MATERIAL
             100, // ENDGAME_PAWN_MATERIAL
             350, // MIDGAME_KNIGHT_MATERIAL
@@ -96,8 +96,6 @@ namespace Zagreus {
             3, // ENDGAME_PAWN_SEMI_OPEN_FILE
             20, // MIDGAME_PAWN_SHIELD
             0, // ENDGAME_PAWN_SHIELD
-            -1, // MIDGAME_KNIGHT_ATTACK_NEAR_KING
-            -1, // ENDGAME_KNIGHT_ATTACK_NEAR_KING
     };
 
     void printEvalValues() {

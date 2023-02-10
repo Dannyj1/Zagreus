@@ -94,8 +94,6 @@ namespace Zagreus {
         ENDGAME_PAWN_SEMI_OPEN_FILE,
         MIDGAME_PAWN_SHIELD,
         ENDGAME_PAWN_SHIELD,
-        MIDGAME_KNIGHT_ATTACK_NEAR_KING,
-        ENDGAME_KNIGHT_ATTACK_NEAR_KING
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -171,8 +169,6 @@ namespace Zagreus {
             "ENDGAME_PAWN_SEMI_OPEN_FILE",
             "MIDGAME_PAWN_SHIELD",
             "ENDGAME_PAWN_SHIELD",
-            "MIDGAME_KNIGHT_ATTACK_NEAR_KING",
-            "ENDGAME_KNIGHT_ATTACK_NEAR_KING",
     };
 
     void printEvalValues();

@@ -735,10 +735,6 @@ namespace Zagreus {
                 PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
 
                 switch (pieceOnSquare) {
-                    case PieceType::WHITE_KNIGHT:
-                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
-                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
-                        break;
                     case PieceType::WHITE_BISHOP:
                         evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
                         evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
@@ -820,10 +816,6 @@ namespace Zagreus {
                 PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
 
                 switch (pieceOnSquare) {
-                    case BLACK_KNIGHT:
-                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_ATTACK_NEAR_KING);
-                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_ATTACK_NEAR_KING);
-                        break;
                     case PieceType::BLACK_BISHOP:
                         evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
                         evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
