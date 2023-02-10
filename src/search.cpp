@@ -37,6 +37,10 @@ namespace Zagreus {
         int bestScore = -1000000;
         Move bestMove = {};
         int iterationScore = -1000000;
+        int alpha = -1000000;
+        int beta = 1000000;
+        int alphaWindow = 50;
+        int betaWindow = 50;
         Move iterationMove = {};
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
@@ -94,7 +98,7 @@ namespace Zagreus {
                 Line pvLine = {};
                 Move previousMove = {};
 
-                int score = search(board, depth, -9999999, 9999999, move, previousMove, endTime, pvLine, engine, true, true);
+                int score = search(board, depth, alpha, beta, move, previousMove, endTime, pvLine, engine, true, true);
                 score *= -1;
 
                 board.unmakeMove(move);
@@ -132,6 +136,25 @@ namespace Zagreus {
                 bestScore = iterationScore;
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
+
+                if (bestScore <= alpha) {
+                    alpha += alphaWindow;
+                    alphaWindow *= 4;
+                    alpha -= alphaWindow;
+                    depth -= 1;
+                    continue;
+                }
+
+                if (bestScore >= beta) {
+                    beta -= betaWindow;
+                    betaWindow *= 4;
+                    beta += betaWindow;
+                    depth -= 1;
+                    continue;
+                }
+
+                alpha = bestScore - alphaWindow;
+                beta = bestScore + betaWindow;
             }
 
             iterationScore = -1000000;
