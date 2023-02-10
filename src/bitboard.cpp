@@ -604,6 +604,10 @@ namespace Zagreus {
             undo = {};
         }
 
+        for (int &count : materialCount) {
+            count = 0;
+        }
+
         occupiedBB = 0;
         movingColor = PieceColor::NONE;
         ply = 0;
@@ -732,6 +736,10 @@ namespace Zagreus {
 
         for (uint64_t &bb : colorBB) {
             bb = 0;
+        }
+
+        for (int &count : materialCount) {
+            count = 0;
         }
 
         occupiedBB = 0;

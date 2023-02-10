@@ -20,6 +20,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <map>
 
 #include "tuner.h"
 #include "features.h"
@@ -29,44 +30,79 @@
 #include "pst.h"
 #include "movegen.h"
 
-
 namespace Zagreus {
 
     Bitboard tunerBoard{};
 
     int stopCounter = 0;
     int iteration = 0;
-    float K = 0.0;
+    double K = 0.0;
 
     int batchSize = 512;
-    float learningRate = 0.4f;
-    float epsilon = 6.0f;
-    float optimizerEpsilon = 1e-6f;
-    float epsilonDecay = 0.97f;
-    float beta1 = 0.9f;
-    float beta2 = 0.999f;
+    double learningRate = 0.4;
+    double epsilon = 6.0;
+    double optimizerEpsilon = 1e-6;
+    double epsilonDecay = 0.97;
+    double beta1 = 0.9;
+    double beta2 = 0.999;
     int epsilonWarmupIterations = 0;
 
-    float sigmoid(float x) {
-        return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
+    std::vector<std::vector<TunePosition>> divideByScore(const std::vector<TunePosition> &v) {
+        std::map<int, std::vector<TunePosition>> scoreMap;
+        for (const auto &p : v) {
+            scoreMap[p.score].push_back(p);
+        }
+
+        std::vector<std::vector<TunePosition>> subVectors;
+        for (const auto &kv : scoreMap) {
+            subVectors.push_back(kv.second);
+        }
+
+        return subVectors;
     }
 
-    float evaluationLoss(std::vector<TunePosition> &positions, int amountOfPositions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
-        float totalLoss = 0.0f;
+    // Create batches with a uniform distribution by score rounded to 50
+    std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> v, std::mt19937_64 gen) {
+        std::sort(v.begin(), v.end(), [](const TunePosition &a, const TunePosition &b) {
+            return a.score < b.score;
+        });
+
+        auto subVectors = divideByScore(v);
+        for (auto &subVector : subVectors) {
+            std::shuffle(subVector.begin(), subVector.end(), gen);
+        }
+
+        v.clear();
+        for (const auto &subVector : subVectors) {
+            v.insert(v.end(), subVector.begin(), subVector.end());
+        }
+
+        std::vector<std::vector<TunePosition>> result;
+        for (int i = 0; i < v.size(); i += batchSize) {
+            result.push_back({v.begin() + i, v.begin() + std::min(i + batchSize, (int) v.size())});
+        }
+
+        return result;
+    }
+
+    double sigmoid(double x) {
+        return 1.0 / (1.0 + pow(10.0, -K * x / 400.0));
+    }
+
+    double evaluationLoss(std::vector<TunePosition> &positions, int amountOfPositions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
+        double totalLoss = 0.0;
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
-//            Move rootMove{};
-//            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
             int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
-            float loss = pos.result - sigmoid((float) evalScore);
+            double loss = pos.result - sigmoid((double) evalScore);
             totalLoss += loss * loss;
         }
 
-        return totalLoss / (float) amountOfPositions;
+        return 1.0 / (2.0 * (double) amountOfPositions) * totalLoss;
     }
 
-    float findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
+    double findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
         std::vector<int> evalScores(positions.size());
 
         for (TunePosition &pos : positions) {
@@ -78,20 +114,20 @@ namespace Zagreus {
         }
 
         // Find optimal K
-        float bestK = 0.0f;
-        float bestLoss = 9999999.0f;
-        float oldK = K;
+        double bestK = 0.0;
+        double bestLoss = 9999999.0;
+        double oldK = K;
 
-        for (float k = 0.0f; k <= 2.0f; k += 0.001f) {
+        for (double k = 0.0; k <= 2.0; k += 0.001) {
             K = k;
 
-            float totalLoss = 0.0f;
+            double totalLoss = 0.0;
             for (TunePosition &pos : positions) {
-                float loss = pos.result - sigmoid((float) pos.score);
+                double loss = pos.result - sigmoid((double) pos.score);
                 totalLoss += loss * loss;
             }
 
-            float loss = totalLoss / (float) positions.size();
+            double loss = totalLoss / (double) positions.size();
 
             if (loss < bestLoss) {
                 bestLoss = loss;
@@ -103,7 +139,7 @@ namespace Zagreus {
         return bestK;
     }
 
-    std::vector<TunePosition> loadPositions(char* filePath) {
+    std::vector<TunePosition> loadPositions(char* filePath, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
         std::cout << "Loading positions..." << std::endl;
         std::vector<TunePosition> positions;
         std::vector<std::string> lines;
@@ -119,7 +155,7 @@ namespace Zagreus {
                 continue;
             }
 
-            float result;
+            double result;
             std::string resultStr = posLine.substr(posLine.find(" c9 ") + 4, posLine.find(" c9 ") + 4);
             std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
@@ -128,11 +164,11 @@ namespace Zagreus {
             resultStr.erase(std::remove(resultStr.begin(), resultStr.end(), ';'), resultStr.end());
 
             if (resultStr == "1" || resultStr == "1-0") {
-                result = 1.0f;
+                result = 1.0;
             } else if (resultStr == "0" || resultStr == "0-1") {
-                result = 0.0f;
+                result = 0.0;
             } else {
-                result = 0.5f;
+                result = 0.5;
             }
 
             if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces() || tunerBoard.isDraw()
@@ -141,13 +177,13 @@ namespace Zagreus {
                 continue;
             }
 
-            positions.emplace_back(TunePosition{fen, result});
+            positions.emplace_back(TunePosition{fen, result, searchManager.evaluate(tunerBoard, maxEndTime, engine)});
         }
 
         return positions;
     }
 
-    void exportNewEvalValues(std::vector<float> &bestParams) {
+    void exportNewEvalValues(std::vector<double> &bestParams) {
         std::ofstream fout("tuned_params.txt");
 
         // Declare pieceNames
@@ -193,7 +229,7 @@ namespace Zagreus {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
         std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
-        std::vector<TunePosition> trainingSet = loadPositions(filePath);
+        std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine);
 
         std::random_device rd;
         std::mt19937_64 gen(rd());
@@ -201,52 +237,48 @@ namespace Zagreus {
 
         engine.setTuning(false);
 
-        std::vector<float> bestParameters = getBaseEvalValues();
+        std::vector<double> bestParameters = getBaseEvalValues();
         updateEvalValues(bestParameters);
         exportNewEvalValues(bestParameters);
 
         std::cout << "Finding the optimal K value..." << std::endl;
-        K = findOptimalK(trainingSet, maxEndTime, engine);
+//        K = findOptimalK(positions, maxEndTime, engine);
+        K = 1.00999;
         std::cout << "Optimal K value: " << K << std::endl;
 
         std::cout << "Starting tuning..." << std::endl;
-        std::vector<float> m(bestParameters.size(), 0.0f);
-        std::vector<float> v(bestParameters.size(), 0.0f);
+        std::vector<double> m(bestParameters.size(), 0.0);
+        std::vector<double> v(bestParameters.size(), 0.0);
 
-        std::cout << "Splitting the trainingSet into a training set and a validation set..." << std::endl;
-        // 10% validation set, 90% training set
-        int validationSetSize = trainingSet.size() / 10;
-
-        std::vector<TunePosition> validationSet(validationSetSize);
-
-        std::shuffle(trainingSet.begin(), trainingSet.end(), gen);
-        std::copy(trainingSet.begin(), trainingSet.begin() + validationSetSize, validationSet.begin());
-        trainingSet.erase(trainingSet.begin(), trainingSet.begin() + validationSetSize);
+        std::shuffle(positions.begin(), positions.end(), gen);
 
         std::cout << "Calculating the initial loss..." << std::endl;
-        float bestLoss = evaluationLoss(validationSet, validationSetSize, maxEndTime, engine);
+        double bestLoss = evaluationLoss(positions, positions.size(), maxEndTime, engine);
 
         std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
+        std::vector<std::vector<TunePosition>> batches = createBatches(positions, gen);
 
         while (stopCounter <= 20) {
             iteration++;
-            std::vector<TunePosition> batch(batchSize);
-            std::vector<float> gradients(bestParameters.size(), 0.0f);
 
-            for (int i = 0; i < batchSize; i++) {
-                batch.emplace_back(trainingSet[dis(gen) % trainingSet.size()]);
+            if (batches.empty()) {
+                batches = createBatches(positions, gen);
             }
 
+            std::vector<TunePosition> batch = batches.back();
+            batches.pop_back();
+            std::vector<double> gradients(bestParameters.size(), 0.0);
+
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                float oldParam = bestParameters[paramIndex];
+                double oldParam = bestParameters[paramIndex];
                 bestParameters[paramIndex] += epsilon;
                 updateEvalValues(bestParameters);
-                float lossPlus = evaluationLoss(batch, batchSize, maxEndTime, engine);
+                double lossPlus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
                 bestParameters[paramIndex] -= 2 * epsilon;
                 updateEvalValues(bestParameters);
-                float lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
+                double lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
                 gradients[paramIndex] = (lossPlus - lossMinus) / (2 * epsilon);
                 // reset
@@ -254,20 +286,20 @@ namespace Zagreus {
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                m[paramIndex] = beta1 * m[paramIndex] + (1.0f - beta1) * gradients[paramIndex];
-                v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * std::pow(gradients[paramIndex], 2.0f);
-                float m_hat = m[paramIndex] / (1.0f - pow(beta1, (float) iteration));
-                float v_hat = v[paramIndex] / (1.0f - pow(beta2, (float) iteration));
+                m[paramIndex] = beta1 * m[paramIndex] + (1.0 - beta1) * gradients[paramIndex];
+                v[paramIndex] = beta2 * v[paramIndex] + (1.0 - beta2) * std::pow(gradients[paramIndex], 2.0);
+                double m_hat = m[paramIndex] / (1.0 - pow(beta1, (double) iteration));
+                double v_hat = v[paramIndex] / (1.0 - pow(beta2, (double) iteration));
                 bestParameters[paramIndex] -= learningRate * (m_hat / (sqrt(v_hat) + optimizerEpsilon));
             }
 
             updateEvalValues(bestParameters);
-            float newLoss = evaluationLoss(validationSet, validationSetSize, maxEndTime, engine);
+            double newLoss = evaluationLoss(positions, positions.size(), maxEndTime, engine);
 
             if (iteration > epsilonWarmupIterations) {
                 // Decay epsilon
                 epsilon *= epsilonDecay;
-                epsilon = std::max(epsilon, 1.0f);
+                epsilon = std::max(epsilon, 1.0);
             }
 
             if (newLoss < bestLoss) {
@@ -278,8 +310,8 @@ namespace Zagreus {
                 stopCounter++;
             }
 
-            float trainingLoss = evaluationLoss(trainingSet, trainingSet.size(), maxEndTime, engine);
-            std::cout << "Iteration: " << iteration << ", Training Loss: " << trainingLoss << ", Val Loss: " << newLoss << ", Best Val Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
+            double trainingLoss = evaluationLoss(positions, positions.size(), maxEndTime, engine);
+            std::cout << "Iteration: " << iteration << ", Loss: " << trainingLoss << ", Best Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
         }
 
         std::cout << "Best loss: " << bestLoss << std::endl;
