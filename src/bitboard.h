@@ -58,10 +58,7 @@ namespace Zagreus {
         uint64_t moveHistory[MAX_PLY]{};
         Line previousPvLine{};
 
-        int whiteMidgamePst = 0;
-        int whiteEndgamePst = 0;
-        int blackMidgamePst = 0;
-        int blackEndgamePst = 0;
+        int pstValues[4];
 
         Move previousMove{};
         int materialCount[12]{};

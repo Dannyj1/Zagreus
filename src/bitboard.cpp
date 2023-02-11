@@ -164,8 +164,8 @@ namespace Zagreus {
         pieceSquareMapping[square] = piece;
         zobristHash ^= zobristConstants[square + 64 * piece];
         materialCount[piece] += 1;
-        whiteMidgamePst += getMidgamePstValue(piece, square);
-        whiteEndgamePst += getEndgamePstValue(piece, square);
+        pstValues[piece % 2] += getMidgamePstValue(piece, square);
+        pstValues[piece % 2 + 2] += getEndgamePstValue(piece, square);
     }
 
     void Bitboard::removePiece(int8_t square, PieceType piece) {
@@ -176,8 +176,8 @@ namespace Zagreus {
         pieceSquareMapping[square] = PieceType::EMPTY;
         zobristHash ^= zobristConstants[square + 64 * piece];
         materialCount[piece] -= 1;
-        whiteMidgamePst -= getMidgamePstValue(piece, square);
-        whiteEndgamePst -= getEndgamePstValue(piece, square);
+        pstValues[piece % 2] -= getMidgamePstValue(piece, square);
+        pstValues[piece % 2 + 2] -= getEndgamePstValue(piece, square);
     }
 
     void Bitboard::makeMove(Move &move) {
@@ -648,10 +648,10 @@ namespace Zagreus {
         enPassantSquare = Square::NO_SQUARE;
         castlingRights = 0;
         zobristHash = 0;
-        whiteMidgamePst = 0;
-        whiteEndgamePst = 0;
-        blackMidgamePst = 0;
-        blackEndgamePst = 0;
+        pstValues[0] = 0;
+        pstValues[1] = 0;
+        pstValues[2] = 0;
+        pstValues[3] = 0;
 
         for (char character : fen) {
             if (character == ' ') {
@@ -782,10 +782,10 @@ namespace Zagreus {
         enPassantSquare = Square::NO_SQUARE;
         movingColor = PieceColor::WHITE;
         castlingRights = 0;
-        whiteMidgamePst = 0;
-        whiteEndgamePst = 0;
-        blackMidgamePst = 0;
-        blackEndgamePst = 0;
+        pstValues[0] = 0;
+        pstValues[1] = 0;
+        pstValues[2] = 0;
+        pstValues[3] = 0;
 
         for (char &character : fen) {
             if (character == ' ') {
@@ -1132,18 +1132,18 @@ namespace Zagreus {
     }
 
     int Bitboard::getWhiteMidgamePst() const {
-        return whiteMidgamePst;
+        return pstValues[0];
     }
 
     int Bitboard::getWhiteEndgamePst() const {
-        return whiteEndgamePst;
+        return pstValues[2];
     }
 
     int Bitboard::getBlackMidgamePst() const {
-        return blackMidgamePst;
+        return pstValues[1];
     }
 
     int Bitboard::getBlackEndgamePst() const {
-        return blackEndgamePst;
+        return pstValues[3];
     }
 }
