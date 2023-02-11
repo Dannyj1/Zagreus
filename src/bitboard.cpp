@@ -24,6 +24,7 @@
 #include "utils.h"
 #include "../senjo/Output.h"
 #include "movegen.h"
+#include "pst.h"
 
 namespace Zagreus {
     Bitboard::Bitboard() {
@@ -163,6 +164,8 @@ namespace Zagreus {
         pieceSquareMapping[square] = piece;
         zobristHash ^= zobristConstants[square + 64 * piece];
         materialCount[piece] += 1;
+        whiteMidgamePst += getMidgamePstValue(piece, square);
+        whiteEndgamePst += getEndgamePstValue(piece, square);
     }
 
     void Bitboard::removePiece(int8_t square, PieceType piece) {
@@ -173,6 +176,8 @@ namespace Zagreus {
         pieceSquareMapping[square] = PieceType::EMPTY;
         zobristHash ^= zobristConstants[square + 64 * piece];
         materialCount[piece] -= 1;
+        whiteMidgamePst -= getMidgamePstValue(piece, square);
+        whiteEndgamePst -= getEndgamePstValue(piece, square);
     }
 
     void Bitboard::makeMove(Move &move) {
@@ -189,7 +194,13 @@ namespace Zagreus {
         undoStack[ply].moveType = MoveType::REGULAR;
         undoStack[ply].zobristHash = zobristHash;
         undoStack[ply].kingInCheck = kingInCheck;
-        undoStack[ply].previousMove = previousMove;
+        undoStack[ply].previousMove.to = previousMove.to;
+        undoStack[ply].previousMove.from = previousMove.from;
+        undoStack[ply].previousMove.piece = previousMove.piece;
+        undoStack[ply].previousMove.promotionPiece = previousMove.promotionPiece;
+        undoStack[ply].previousMove.score = previousMove.score;
+        undoStack[ply].previousMove.captureScore = previousMove.captureScore;
+
         halfMoveClock += 1;
 
         if (capturedPiece != PieceType::EMPTY) {
@@ -320,7 +331,13 @@ namespace Zagreus {
         zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
         ply += 1;
         moveHistory[ply] = getZobristHash();
-        previousMove = move;
+
+        previousMove.to = move.to;
+        previousMove.from = move.from;
+        previousMove.piece = move.piece;
+        previousMove.promotionPiece = move.promotionPiece;
+        previousMove.score = move.score;
+        previousMove.captureScore = move.captureScore;
     }
 
     void Bitboard::unmakeMove(Move &move) {
@@ -372,7 +389,12 @@ namespace Zagreus {
         movingColor = getOppositeColor(movingColor);
         zobristHash = undoData.zobristHash;
         kingInCheck = undoData.kingInCheck;
-        previousMove = undoData.previousMove;
+        undoStack[ply].previousMove.to = previousMove.to;
+        undoStack[ply].previousMove.from = previousMove.from;
+        undoStack[ply].previousMove.piece = previousMove.piece;
+        undoStack[ply].previousMove.promotionPiece = previousMove.promotionPiece;
+        undoStack[ply].previousMove.score = previousMove.score;
+        undoStack[ply].previousMove.captureScore = previousMove.captureScore;
 
         if (movingColor == PieceColor::BLACK) {
             fullmoveClock -= 1;
@@ -387,7 +409,12 @@ namespace Zagreus {
         undoStack[ply].moveType = MoveType::REGULAR;
         undoStack[ply].zobristHash = zobristHash;
         undoStack[ply].kingInCheck = kingInCheck;
-        undoStack[ply].previousMove = previousMove;
+        undoStack[ply].previousMove.to = previousMove.to;
+        undoStack[ply].previousMove.from = previousMove.from;
+        undoStack[ply].previousMove.piece = previousMove.piece;
+        undoStack[ply].previousMove.promotionPiece = previousMove.promotionPiece;
+        undoStack[ply].previousMove.score = previousMove.score;
+        undoStack[ply].previousMove.captureScore = previousMove.captureScore;
 
         if (enPassantSquare != NO_SQUARE) {
             zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
@@ -417,7 +444,12 @@ namespace Zagreus {
         movingColor = getOppositeColor(movingColor);
         zobristHash = undoData.zobristHash;
         kingInCheck = undoData.kingInCheck;
-        previousMove = undoData.previousMove;
+        previousMove.to = undoData.previousMove.to;
+        previousMove.from = undoData.previousMove.from;
+        previousMove.piece = undoData.previousMove.piece;
+        previousMove.promotionPiece = undoData.previousMove.promotionPiece;
+        previousMove.score = undoData.previousMove.score;
+        previousMove.captureScore = undoData.previousMove.captureScore;
 
         if (movingColor == PieceColor::BLACK) {
             fullmoveClock -= 1;
@@ -616,6 +648,10 @@ namespace Zagreus {
         enPassantSquare = Square::NO_SQUARE;
         castlingRights = 0;
         zobristHash = 0;
+        whiteMidgamePst = 0;
+        whiteEndgamePst = 0;
+        blackMidgamePst = 0;
+        blackEndgamePst = 0;
 
         for (char character : fen) {
             if (character == ' ') {
@@ -746,6 +782,10 @@ namespace Zagreus {
         enPassantSquare = Square::NO_SQUARE;
         movingColor = PieceColor::WHITE;
         castlingRights = 0;
+        whiteMidgamePst = 0;
+        whiteEndgamePst = 0;
+        blackMidgamePst = 0;
+        blackEndgamePst = 0;
 
         for (char &character : fen) {
             if (character == ' ') {
@@ -827,6 +867,30 @@ namespace Zagreus {
     }
 
     bool Bitboard::isDraw() {
+        if (halfMoveClock >= 100) {
+            return true;
+        }
+
+        if (isInsufficientMaterial()) {
+            return true;
+        }
+
+        // Check if the same position has occurred 3 times using the movehistory array
+        int samePositionCount = 0;
+        uint64_t boardHash = getZobristHash();
+
+        for (int i = ply; i >= 0; i--) {
+            assert(moveHistory[i] != 0);
+
+            if (moveHistory[i] == boardHash) {
+                samePositionCount++;
+            }
+
+            if (samePositionCount >= 3) {
+                return true;
+            }
+        }
+
         MoveList moves;
 
         if (movingColor == PieceColor::WHITE) {
@@ -862,27 +926,7 @@ namespace Zagreus {
             return true;
         }
 
-        if (halfMoveClock >= 100) {
-            return true;
-        }
-
-        // Check if the same position has occurred 3 times using the movehistory array
-        int samePositionCount = 0;
-        uint64_t boardHash = getZobristHash();
-
-        for (int i = ply; i >= 0; i--) {
-            assert(moveHistory[i] != 0);
-
-            if (moveHistory[i] == boardHash) {
-                samePositionCount++;
-            }
-
-            if (samePositionCount >= 3) {
-                return true;
-            }
-        }
-
-        return isInsufficientMaterial();
+        return false;
     }
 
     uint64_t Bitboard::getZobristHash() const {
@@ -1064,8 +1108,12 @@ namespace Zagreus {
         return previousPvLine;
     }
 
-    void Bitboard::setPreviousPvLine(const Line &previousPvLine) {
+    void Bitboard::setPreviousPvLine(Line &previousPvLine) {
         Bitboard::previousPvLine = previousPvLine;
+
+        for (int i = 0; i < previousPvLine.moveCount; i++) {
+            previousPvLine.moveCodes[i] = encodeMove(previousPvLine.moves[i]);
+        }
     }
 
     uint8_t Bitboard::getPly() const {
@@ -1081,5 +1129,21 @@ namespace Zagreus {
         uint64_t occupied = getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::BLACK_PAWN>();
 
         return fileMask == (fileMask & occupied);
+    }
+
+    int Bitboard::getWhiteMidgamePst() const {
+        return whiteMidgamePst;
+    }
+
+    int Bitboard::getWhiteEndgamePst() const {
+        return whiteEndgamePst;
+    }
+
+    int Bitboard::getBlackMidgamePst() const {
+        return blackMidgamePst;
+    }
+
+    int Bitboard::getBlackEndgamePst() const {
+        return blackEndgamePst;
     }
 }
