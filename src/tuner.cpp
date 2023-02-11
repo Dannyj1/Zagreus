@@ -38,11 +38,11 @@ namespace Zagreus {
     int iteration = 0;
     double K = 0.0;
 
-    int batchSize = 128;
+    int batchSize = 256;
     double learningRate = 0.4;
-    double epsilon = 5.0;
+    double epsilon = 6.0;
     double optimizerEpsilon = 1e-6;
-    double epsilonDecay = 0.95;
+    double epsilonDecay = 0.98;
     double beta1 = 0.9;
     double beta2 = 0.999;
     int epsilonWarmupIterations = 0;
@@ -149,9 +149,11 @@ namespace Zagreus {
                 result = 0.5;
             }
 
-            if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces() || tunerBoard.isDraw()
-            || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
-            || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()) {
+            if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces<PieceColor::WHITE>()
+                    || !tunerBoard.hasMinorOrMajorPieces<PieceColor::BLACK>() || tunerBoard.isDraw()
+                    || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
+                    || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()
+                    || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4) {
                 continue;
             }
 
@@ -236,7 +238,7 @@ namespace Zagreus {
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
         std::vector<std::vector<TunePosition>> batches = createBatches(positions, gen);
 
-        while (stopCounter <= 20) {
+        while (stopCounter <= 30) {
             iteration++;
 
             if (batches.empty()) {
