@@ -38,7 +38,7 @@ namespace Zagreus {
     int iteration = 0;
     double K = 0.0;
 
-    int batchSize = 256;
+    int batchSize = 512;
     double learningRate = 0.4;
     double epsilon = 6.0;
     double optimizerEpsilon = 1e-6;
@@ -72,7 +72,9 @@ namespace Zagreus {
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
+//            Move rootMove{};
             int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+//            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
             double loss = pos.result - sigmoid((double) evalScore);
             totalLoss += loss * loss;
         }
@@ -85,10 +87,10 @@ namespace Zagreus {
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
-            Move rootMove{};
-            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-//            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
-            pos.score = qScore;
+//            Move rootMove{};
+//            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
+            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+            pos.score = evalScore;
         }
 
         // Find optimal K
@@ -98,8 +100,8 @@ namespace Zagreus {
 
         for (double k = 1.0; k <= 2.0; k += 0.001) {
             K = k;
-
             double totalLoss = 0.0;
+
             for (TunePosition &pos : positions) {
                 double loss = pos.result - sigmoid((double) pos.score);
                 totalLoss += loss * loss;
