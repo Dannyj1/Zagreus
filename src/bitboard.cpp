@@ -389,12 +389,12 @@ namespace Zagreus {
         movingColor = getOppositeColor(movingColor);
         zobristHash = undoData.zobristHash;
         kingInCheck = undoData.kingInCheck;
-        undoStack[ply].previousMove.to = previousMove.to;
-        undoStack[ply].previousMove.from = previousMove.from;
-        undoStack[ply].previousMove.piece = previousMove.piece;
-        undoStack[ply].previousMove.promotionPiece = previousMove.promotionPiece;
-        undoStack[ply].previousMove.score = previousMove.score;
-        undoStack[ply].previousMove.captureScore = previousMove.captureScore;
+        previousMove.to = undoStack[ply].previousMove.to;
+        previousMove.from = undoStack[ply].previousMove.from;
+        previousMove.piece = undoStack[ply].previousMove.piece;
+        previousMove.promotionPiece = undoStack[ply].previousMove.promotionPiece;
+        previousMove.score = undoStack[ply].previousMove.score;
+        previousMove.captureScore = undoStack[ply].previousMove.captureScore;
 
         if (movingColor == PieceColor::BLACK) {
             fullmoveClock -= 1;
