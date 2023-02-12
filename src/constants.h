@@ -43,6 +43,7 @@ static constexpr uint64_t NOT_H_FILE = 0X7F7F7F7F7F7F7F7FULL;
 static constexpr uint64_t RANK_1 = 0x00000000000000FFULL;
 static constexpr uint64_t RANK_4 = 0x00000000FF000000ULL;
 static constexpr uint64_t RANK_5 = 0x000000FF00000000ULL;
+static constexpr uint64_t RANK_6 = 0xFF0000000000ULL;
 static constexpr uint64_t RANK_8 = 0xFF00000000000000ULL;
 static constexpr uint64_t A1_H8_DIAG = 0x8040201008040201ULL;
 static constexpr uint64_t H1_A8_DIAG = 0x0102040810204080ULL;

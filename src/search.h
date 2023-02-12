@@ -71,6 +71,9 @@ namespace Zagreus {
         void getPawnScore(Bitboard &bitboard);
 
         void initEvalContext(Bitboard &bitboard);
+
+        template<PieceColor color>
+        void getOutpostScore(Bitboard &bitboard);
     };
 
     static SearchManager searchManager{};
