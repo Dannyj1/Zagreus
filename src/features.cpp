@@ -21,7 +21,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[76] = { 54, 142, 336, 340, 331, 334, 501, 512, 971, 978, -5, 62, 21, 39, 37, 50, 26, 70, 10, 24, -50, 0, -25, 0, -6, -11, 10, 0, 0, 5, -3, -3, -5, -5, -10, -10, -3, -8, 8, 13, 23, -16, 22, 31, 38, 27, 20, 20, 15, 15, 40, 66, 37, 7, 35, -6, -23, -33, 7, -11, 14, 23, 6, 0, -20, -20, -41, -41, 3, 3, -3, -2, 8, 12, -15, -3,  };
+    int evalValues[76] = { 40, 194, 315, 352, 305, 298, 470, 528, 971, 955, -12, 129, 23, 91, 48, 107, 48, 107, 5, 87, -50, 0, -25, 0, -34, -18, 4, 0, 24, 5, -3, -3, -5, -5, -10, -10, -34, 7, 0, 18, 38, -24, 38, 91, 88, 49, 20, 20, 15, 15, 50, 65, 33, -4, 54, -28, -9, -56, -10, 15, 27, 34, -10, 9, -20, -20, -36, -33, 3, 3, -8, -11, 29, 57, 15, 27,  };
 
     int baseEvalValues[76] = {
             100, // MIDGAME_PAWN_MATERIAL
@@ -96,10 +96,10 @@ namespace Zagreus {
             3, // ENDGAME_PAWN_SEMI_OPEN_FILE
             20, // MIDGAME_PAWN_SHIELD
             0, // ENDGAME_PAWN_SHIELD
-            15, // MIDGAME_BISHOP_OUTPOST
-            10, // ENDGAME_BISHOP_OUTPOST
-            10, // MIDGAME_KNIGHT_OUTPOST
-            5, // ENDGAME_KNIGHT_OUTPOST
+            15, // MIDGAME_KNIGHT_OUTPOST
+            10, // ENDGAME_KNIGHT_OUTPOST
+            10, // MIDGAME_BISHOP_OUTPOST
+            5, // ENDGAME_BISHOP_OUTPOST
     };
 
     void printEvalValues() {

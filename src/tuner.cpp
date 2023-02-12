@@ -39,8 +39,8 @@ namespace Zagreus {
     double K = 0.0;
 
     int batchSize = 128;
-    double learningRate = 0.6;
-    double epsilon = 6.0;
+    double learningRate = 1.0;
+    double epsilon = 10.0;
     double optimizerEpsilon = 1e-6;
     double epsilonDecay = 0.98;
     double beta1 = 0.9;
@@ -226,8 +226,6 @@ namespace Zagreus {
         senjo::UCIAdapter adapter(engine);
         std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
         std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine);
-        std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.9, positions.end());
-        positions.erase(positions.begin() + positions.size() * 0.9, positions.end());
 
         std::random_device rd;
         std::mt19937_64 gen(rd());
@@ -242,6 +240,9 @@ namespace Zagreus {
         std::cout << "Finding the optimal K value..." << std::endl;
         K = findOptimalK(positions, maxEndTime, engine);
         std::cout << "Optimal K value: " << K << std::endl;
+
+        std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.85, positions.end());
+        positions.erase(positions.begin() + positions.size() * 0.85, positions.end());
 
         std::cout << "Starting tuning..." << std::endl;
         std::vector<double> m(bestParameters.size(), 0.0);

@@ -1059,20 +1059,22 @@ namespace Zagreus {
         uint64_t rankMask = RANK_4 | RANK_5 | RANK_6;
         uint64_t ownPawnAttacks;
         uint64_t opponentPawnAttacks;
-        uint64_t opponentFills;
+        uint64_t opponentAttackSpans;
 
         if (color == PieceColor::WHITE) {
             ownPawnAttacks = evalContext.whitePawnAttacks;
             opponentPawnAttacks = evalContext.blackPawnAttacks;
-            opponentFills = blackFrontSpans(bitboard.getPieceBoard<PieceType::BLACK_PAWN>());
+            uint64_t opponentPawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
+            opponentAttackSpans = westOne(blackFrontSpans(opponentPawnBB)) | eastOne(blackFrontSpans(opponentPawnBB));
         } else {
             ownPawnAttacks = evalContext.blackPawnAttacks;
             opponentPawnAttacks = evalContext.whitePawnAttacks;
-            opponentFills = whiteFrontSpans(bitboard.getPieceBoard<PieceType::WHITE_PAWN>());
+            uint64_t opponentPawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
+            opponentAttackSpans = westOne(whiteFrontSpans(opponentPawnBB)) | eastOne(whiteFrontSpans(opponentPawnBB));
         }
 
 
-        uint64_t outpostSquares = (ownPawnAttacks & rankMask) & ~opponentPawnAttacks & ~opponentFills;
+        uint64_t outpostSquares = (ownPawnAttacks & rankMask) & ~opponentPawnAttacks & ~opponentAttackSpans;
         uint64_t knightBB;
         uint64_t bishopBB;
 
