@@ -145,14 +145,13 @@ namespace Zagreus {
             Move rootMove{};
             int qScore = searchManager.quiesce(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime, engine);
 
-            if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces<PieceColor::WHITE>()
-                || !tunerBoard.hasMinorOrMajorPieces<PieceColor::BLACK>() || tunerBoard.isDraw()
-                || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
-                || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()
-                || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4
-                || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() <= 2
-                || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2)
-                || qScore >= (MATE_SCORE / 2)) {
+            if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<PieceColor::WHITE>()
+                    || tunerBoard.isWinner<PieceColor::BLACK>() || tunerBoard.isKingInCheck<PieceColor::WHITE>()
+                    || tunerBoard.isKingInCheck<PieceColor::BLACK>() || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4
+                    || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4
+                    || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() < 2
+                    || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::BLACK>() < 2 || qScore <= -(MATE_SCORE / 2)
+                    || qScore >= (MATE_SCORE / 2)) {
                 continue;
             }
 
