@@ -39,7 +39,7 @@ namespace Zagreus {
     double K = 0.0;
 
     int batchSize = 128;
-    double learningRate = 0.4;
+    double learningRate = 0.6;
     double epsilon = 6.0;
     double optimizerEpsilon = 1e-6;
     double epsilonDecay = 0.98;
@@ -124,6 +124,9 @@ namespace Zagreus {
         std::vector<TunePosition> positions;
         std::vector<std::string> lines;
         std::ifstream fin(filePath);
+        int win = 0;
+        int loss = 0;
+        int draw = 0;
 
         std::string line;
         while (std::getline(fin, line)) {
@@ -139,29 +142,40 @@ namespace Zagreus {
             std::string resultStr = posLine.substr(posLine.find(" c9 ") + 4, posLine.find(" c9 ") + 4);
             std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
+            Move rootMove{};
+            int qScore = searchManager.quiesce(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime, engine);
+
+            if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces<PieceColor::WHITE>()
+                || !tunerBoard.hasMinorOrMajorPieces<PieceColor::BLACK>() || tunerBoard.isDraw()
+                || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
+                || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()
+                || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4
+                || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() <= 2
+                || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2)
+                || qScore >= (MATE_SCORE / 2)) {
+                continue;
+            }
+
             // Remove " and ; from result
             resultStr.erase(std::remove(resultStr.begin(), resultStr.end(), '"'), resultStr.end());
             resultStr.erase(std::remove(resultStr.begin(), resultStr.end(), ';'), resultStr.end());
 
             if (resultStr == "1" || resultStr == "1-0") {
                 result = 1.0;
+                win++;
             } else if (resultStr == "0" || resultStr == "0-1") {
                 result = 0.0;
+                loss++;
             } else {
                 result = 0.5;
-            }
-
-            if (!tunerBoard.setFromFen(fen) || !tunerBoard.hasMinorOrMajorPieces<PieceColor::WHITE>()
-                    || !tunerBoard.hasMinorOrMajorPieces<PieceColor::BLACK>() || tunerBoard.isDraw()
-                    || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
-                    || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()
-                    || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4) {
-                continue;
+                draw++;
             }
 
             positions.emplace_back(TunePosition{fen, result, searchManager.evaluate(tunerBoard, maxEndTime, engine)});
         }
 
+        std::cout << "Loaded " << positions.size() << " positions." << std::endl;
+        std::cout << "Win: " << win << ", Loss: " << loss << ", Draw: " << draw << std::endl;
         return positions;
     }
 
@@ -242,7 +256,7 @@ namespace Zagreus {
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
         std::vector<std::vector<TunePosition>> batches = createBatches(positions, gen);
 
-        while (stopCounter <= 30) {
+        while (stopCounter <= 20) {
             iteration++;
 
             if (batches.empty()) {

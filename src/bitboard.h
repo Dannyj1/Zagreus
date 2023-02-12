@@ -460,6 +460,17 @@ namespace Zagreus {
             }
         }
 
+        template<PieceColor color>
+        int getAmountOfMinorOrMajorPieces() {
+            if (color == PieceColor::WHITE) {
+                return popcnt(getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
+                                getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>());
+            } else {
+                return popcnt(getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
+                                getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>());
+            }
+        }
+
         void makeNullMove();
 
         void unmakeNullMove();
@@ -471,6 +482,8 @@ namespace Zagreus {
         int getBlackMidgamePst() const;
 
         int getBlackEndgamePst() const;
+
+        int getAmountOfMinorOrMajorPieces();
     };
 }
 

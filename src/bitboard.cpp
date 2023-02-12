@@ -542,6 +542,13 @@ namespace Zagreus {
                getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>();
     }
 
+    int Bitboard::getAmountOfMinorOrMajorPieces() {
+        return popcnt(getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
+                      getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>() |
+                      getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
+                      getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>());
+    }
+
     void Bitboard::print() {
         std::cout << "  ---------------------------------";
 
