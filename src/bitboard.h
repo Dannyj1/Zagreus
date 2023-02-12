@@ -58,6 +58,8 @@ namespace Zagreus {
         uint64_t moveHistory[MAX_PLY]{};
         Line previousPvLine{};
 
+        int pstValues[4];
+
         Move previousMove{};
         int materialCount[12]{};
     public:
@@ -145,8 +147,6 @@ namespace Zagreus {
 
         template<PieceColor color>
         bool isWinner() {
-            MoveList moves;
-
             if (color == PieceColor::WHITE) {
                 if (!isKingInCheck<PieceColor::BLACK>()) {
                     return false;
@@ -157,7 +157,7 @@ namespace Zagreus {
                 }
             }
 
-            moves = generateMoves<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>(*this);
+            MoveList moves = generateMoves<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>(*this);
 
             for (int i = 0; i < moves.size; i++) {
                 Move move = moves.moves[i];
@@ -281,7 +281,7 @@ namespace Zagreus {
 
         Line getPreviousPvLine();
 
-        void setPreviousPvLine(const Line &previousPvLine);
+        void setPreviousPvLine(Line &previousPvLine);
 
         uint8_t getPly() const;
 
@@ -463,6 +463,14 @@ namespace Zagreus {
         void makeNullMove();
 
         void unmakeNullMove();
+
+        int getWhiteMidgamePst() const;
+
+        int getWhiteEndgamePst() const;
+
+        int getBlackMidgamePst() const;
+
+        int getBlackEndgamePst() const;
     };
 }
 

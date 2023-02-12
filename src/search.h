@@ -28,6 +28,7 @@ namespace Zagreus {
     private:
         bool isSearching = false;
         senjo::SearchStats searchStats{};
+        EvalContext evalContext;
     public:
         Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
 
@@ -44,35 +45,35 @@ namespace Zagreus {
         bool isCurrentlySearching();
 
         senjo::SearchStats getSearchStats();
+
+        void getBlackMaterialScore(Bitboard &board);
+        void getWhiteMaterialScore(Bitboard &board);
+
+        void getWhitePositionalScore(Bitboard &bitboard);
+        void getBlackPositionalScore(Bitboard &bitboard);
+
+        void getWhiteMobilityScore(Bitboard &bitboard);
+        void getBlackMobilityScore(Bitboard &bitboard);
+
+        void getWhiteKingScore(Bitboard &bitboard);
+        void getBlackKingScore(Bitboard &bitboard);
+
+        void getWhiteConnectivityScore(Bitboard &bitboard);
+        void getBlackConnectivityScore(Bitboard &bitboard);
+
+        void getWhiteRookScore(Bitboard &bitboard);
+        void getBlackRookScore(Bitboard &bitboard);
+
+        void getWhiteBishopScore(Bitboard &bitboard);
+        void getBlackBishopScore(Bitboard &bitboard);
+
+        template<PieceColor color>
+        void getPawnScore(Bitboard &bitboard);
+
+        void initEvalContext(Bitboard &bitboard);
     };
 
     static SearchManager searchManager{};
-
-    void getBlackMaterialScore(EvalContext &evalContext, Bitboard &board);
-    void getWhiteMaterialScore(EvalContext &evalContext, Bitboard &board);
-
-    void getWhitePositionalScore(EvalContext &evalContext, Bitboard &bitboard);
-    void getBlackPositionalScore(EvalContext &evalContext, Bitboard &bitboard);
-
-    void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
-    void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard);
-
-    void getWhiteKingScore(EvalContext &evalContext, Bitboard &bitboard);
-    void getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard);
-
-    void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
-    void getBlackConnectivityScore(EvalContext &evalContext, Bitboard &bitboard);
-
-    void getWhiteRookScore(EvalContext &evalContext, Bitboard &bitboard);
-    void getBlackRookScore(EvalContext &evalContext, Bitboard &bitboard);
-
-    void getWhiteBishopScore(EvalContext &evalContext, Bitboard &bitboard);
-    void getBlackBishopScore(EvalContext &evalContext, Bitboard &bitboard);
-
-    template<PieceColor color>
-    void getPawnScore(EvalContext &evalContext, Bitboard &bitboard);
-
-    EvalContext createEvalContext(Bitboard &bitboard);
 
     int getGamePhase(Bitboard &bitboard);
 }

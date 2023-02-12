@@ -108,7 +108,7 @@ namespace Zagreus {
 
     struct Line {
         int moveCount = 0;
-        Move moves[64];
+        Move moves[MAX_MOVES];
     };
 
     struct EvalContext {

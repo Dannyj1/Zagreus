@@ -27,9 +27,7 @@
 namespace Zagreus {
     int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
-            Move &pvMove = previousPv.moves[i];
-
-            if (moveCode == encodeMove(pvMove)) {
+            if (moveCode == encodeMove(previousPv.moves[i])) {
                 return 50000 - i;
             }
         }
@@ -65,7 +63,6 @@ namespace Zagreus {
 
         return tt->historyMoves[move.piece][move.to];
     }
-
 
     template<PieceColor color>
     MoveList generateMoves(Bitboard &bitboard) {

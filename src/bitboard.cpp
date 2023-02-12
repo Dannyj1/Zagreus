@@ -24,6 +24,7 @@
 #include "utils.h"
 #include "../senjo/Output.h"
 #include "movegen.h"
+#include "pst.h"
 
 namespace Zagreus {
     Bitboard::Bitboard() {
@@ -163,6 +164,8 @@ namespace Zagreus {
         pieceSquareMapping[square] = piece;
         zobristHash ^= zobristConstants[square + 64 * piece];
         materialCount[piece] += 1;
+        pstValues[piece % 2] += getMidgamePstValue(piece, square);
+        pstValues[piece % 2 + 2] += getEndgamePstValue(piece, square);
     }
 
     void Bitboard::removePiece(int8_t square, PieceType piece) {
@@ -173,6 +176,8 @@ namespace Zagreus {
         pieceSquareMapping[square] = PieceType::EMPTY;
         zobristHash ^= zobristConstants[square + 64 * piece];
         materialCount[piece] -= 1;
+        pstValues[piece % 2] -= getMidgamePstValue(piece, square);
+        pstValues[piece % 2 + 2] -= getEndgamePstValue(piece, square);
     }
 
     void Bitboard::makeMove(Move &move) {
@@ -190,6 +195,7 @@ namespace Zagreus {
         undoStack[ply].zobristHash = zobristHash;
         undoStack[ply].kingInCheck = kingInCheck;
         undoStack[ply].previousMove = previousMove;
+
         halfMoveClock += 1;
 
         if (capturedPiece != PieceType::EMPTY) {
@@ -616,6 +622,10 @@ namespace Zagreus {
         enPassantSquare = Square::NO_SQUARE;
         castlingRights = 0;
         zobristHash = 0;
+        pstValues[0] = 0;
+        pstValues[1] = 0;
+        pstValues[2] = 0;
+        pstValues[3] = 0;
 
         for (char character : fen) {
             if (character == ' ') {
@@ -746,6 +756,10 @@ namespace Zagreus {
         enPassantSquare = Square::NO_SQUARE;
         movingColor = PieceColor::WHITE;
         castlingRights = 0;
+        pstValues[0] = 0;
+        pstValues[1] = 0;
+        pstValues[2] = 0;
+        pstValues[3] = 0;
 
         for (char &character : fen) {
             if (character == ' ') {
@@ -827,6 +841,30 @@ namespace Zagreus {
     }
 
     bool Bitboard::isDraw() {
+        if (halfMoveClock >= 100) {
+            return true;
+        }
+
+        if (isInsufficientMaterial()) {
+            return true;
+        }
+
+        // Check if the same position has occurred 3 times using the movehistory array
+        int samePositionCount = 0;
+        uint64_t boardHash = getZobristHash();
+
+        for (int i = ply; i >= 0; i--) {
+            assert(moveHistory[i] != 0);
+
+            if (moveHistory[i] == boardHash) {
+                samePositionCount++;
+            }
+
+            if (samePositionCount >= 3) {
+                return true;
+            }
+        }
+
         MoveList moves;
 
         if (movingColor == PieceColor::WHITE) {
@@ -862,27 +900,7 @@ namespace Zagreus {
             return true;
         }
 
-        if (halfMoveClock >= 100) {
-            return true;
-        }
-
-        // Check if the same position has occurred 3 times using the movehistory array
-        int samePositionCount = 0;
-        uint64_t boardHash = getZobristHash();
-
-        for (int i = ply; i >= 0; i--) {
-            assert(moveHistory[i] != 0);
-
-            if (moveHistory[i] == boardHash) {
-                samePositionCount++;
-            }
-
-            if (samePositionCount >= 3) {
-                return true;
-            }
-        }
-
-        return isInsufficientMaterial();
+        return false;
     }
 
     uint64_t Bitboard::getZobristHash() const {
@@ -1064,7 +1082,7 @@ namespace Zagreus {
         return previousPvLine;
     }
 
-    void Bitboard::setPreviousPvLine(const Line &previousPvLine) {
+    void Bitboard::setPreviousPvLine(Line &previousPvLine) {
         Bitboard::previousPvLine = previousPvLine;
     }
 
@@ -1081,5 +1099,21 @@ namespace Zagreus {
         uint64_t occupied = getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::BLACK_PAWN>();
 
         return fileMask == (fileMask & occupied);
+    }
+
+    int Bitboard::getWhiteMidgamePst() const {
+        return pstValues[0];
+    }
+
+    int Bitboard::getWhiteEndgamePst() const {
+        return pstValues[2];
+    }
+
+    int Bitboard::getBlackMidgamePst() const {
+        return pstValues[1];
+    }
+
+    int Bitboard::getBlackEndgamePst() const {
+        return pstValues[3];
     }
 }

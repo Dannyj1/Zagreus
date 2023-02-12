@@ -508,31 +508,31 @@ namespace Zagreus {
             }
         }
 
-        EvalContext evalContext = createEvalContext(board);
+        initEvalContext(board);
 
-        getWhiteMaterialScore(evalContext, board);
-        getBlackMaterialScore(evalContext, board);
+        getWhiteMaterialScore(board);
+        getBlackMaterialScore(board);
 
-        getWhitePositionalScore(evalContext, board);
-        getBlackPositionalScore(evalContext, board);
+        getWhitePositionalScore(board);
+        getBlackPositionalScore(board);
 
-        getWhiteMobilityScore(evalContext, board);
-        getBlackMobilityScore(evalContext, board);
+        getWhiteMobilityScore(board);
+        getBlackMobilityScore(board);
 
-        getWhiteKingScore(evalContext, board);
-        getBlackKingScore(evalContext, board);
+        getWhiteKingScore(board);
+        getBlackKingScore(board);
 
-        getWhiteConnectivityScore(evalContext, board);
-        getBlackConnectivityScore(evalContext, board);
+        getWhiteConnectivityScore(board);
+        getBlackConnectivityScore(board);
 
-        getWhiteRookScore(evalContext, board);
-        getBlackRookScore(evalContext, board);
+        getWhiteRookScore(board);
+        getBlackRookScore(board);
 
-        getWhiteBishopScore(evalContext, board);
-        getBlackBishopScore(evalContext, board);
+        getWhiteBishopScore(board);
+        getBlackBishopScore(board);
 
-        getPawnScore<PieceColor::WHITE>(evalContext, board);
-        getPawnScore<PieceColor::BLACK>(evalContext, board);
+        getPawnScore<PieceColor::WHITE>(board);
+        getPawnScore<PieceColor::BLACK>(board);
 
         int whiteScore = ((evalContext.whiteMidgameScore * (256 - evalContext.phase)) + (evalContext.whiteEndgameScore * evalContext.phase)) / 256;
         int blackScore = ((evalContext.blackMidgameScore * (256 - evalContext.phase)) + (evalContext.blackEndgameScore * evalContext.phase)) / 256;
@@ -540,7 +540,7 @@ namespace Zagreus {
         return (whiteScore - blackScore) * modifier;
     }
 
-    void getBlackMaterialScore(EvalContext &evalContext, Bitboard &board) {
+    void SearchManager::getBlackMaterialScore(Bitboard &board) {
         evalContext.blackMidgameScore += board.getMaterialCount<BLACK_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
         evalContext.blackEndgameScore += board.getMaterialCount<BLACK_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
@@ -557,7 +557,7 @@ namespace Zagreus {
         evalContext.blackEndgameScore += board.getMaterialCount<BLACK_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
     }
 
-    void getWhiteMaterialScore(EvalContext &evalContext, Bitboard &board) {
+    void SearchManager::getWhiteMaterialScore(Bitboard &board) {
         evalContext.whiteMidgameScore += board.getMaterialCount<WHITE_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
         evalContext.whiteEndgameScore += board.getMaterialCount<WHITE_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
@@ -574,35 +574,17 @@ namespace Zagreus {
         evalContext.whiteEndgameScore += board.getMaterialCount<WHITE_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
     }
 
-    void getWhitePositionalScore(EvalContext &evalContext, Bitboard &bitboard) {
-        uint64_t colorBB = bitboard.getColorBoard<PieceColor::WHITE>();
-
-        while (colorBB) {
-            uint64_t index = bitscanForward(colorBB);
-            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
-
-            evalContext.whiteMidgameScore += getMidgamePstValue(pieceOnSquare, index);
-            evalContext.whiteEndgameScore += getEndgamePstValue(pieceOnSquare, index);
-
-            colorBB &= ~(1ULL << index);
-        }
+    void SearchManager::getWhitePositionalScore(Bitboard &bitboard) {
+        evalContext.whiteMidgameScore += bitboard.getWhiteMidgamePst();
+        evalContext.whiteEndgameScore += bitboard.getWhiteEndgamePst();
     }
 
-    void getBlackPositionalScore(EvalContext &evalContext, Bitboard &bitboard) {
-        uint64_t colorBB = bitboard.getColorBoard<PieceColor::BLACK>();
-
-        while (colorBB) {
-            uint64_t index = bitscanForward(colorBB);
-            PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
-
-            evalContext.blackMidgameScore += getMidgamePstValue(pieceOnSquare, index);
-            evalContext.blackEndgameScore += getEndgamePstValue(pieceOnSquare, index);
-
-            colorBB &= ~(1ULL << index);
-        }
+    void SearchManager::getBlackPositionalScore(Bitboard &bitboard) {
+        evalContext.blackMidgameScore += bitboard.getBlackMidgamePst();
+        evalContext.blackEndgameScore += bitboard.getBlackEndgamePst();
     }
 
-    void getWhiteMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getWhiteMobilityScore(Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::WHITE>();
         uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::WHITE>()  & ~(evalContext.blackPawnAttacks);
 
@@ -638,7 +620,7 @@ namespace Zagreus {
         }
     }
 
-    void getBlackMobilityScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getBlackMobilityScore(Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::BLACK>();
         uint64_t ownPiecesBBLoop = bitboard.getColorBoard<PieceColor::BLACK>()  & ~(evalContext.whitePawnAttacks);
 
@@ -676,7 +658,7 @@ namespace Zagreus {
 
     uint64_t whiteQueenCastlingAttackPattern = 0x70;
     uint64_t whiteKingCastlingAttackPattern = 0x6;
-    void getWhiteKingScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getWhiteKingScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
         uint64_t kingAttacks = evalContext.attacksFrom[kingLocation];
@@ -758,7 +740,7 @@ namespace Zagreus {
 
     uint64_t blackQueenCastlingAttackPattern = 0x7000000000000000;
     uint64_t blackKingCastlingAttackPattern = 0x600000000000000;
-    void getBlackKingScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getBlackKingScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
         uint64_t kingAttacks = evalContext.attacksFrom[kingLocation];
@@ -837,7 +819,7 @@ namespace Zagreus {
         }
     }
 
-    void getWhiteConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getWhiteConnectivityScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t whitePieces = bitboard.getColorBoard<PieceColor::WHITE>() & ~kingBB;
         uint64_t protectedPieces = whitePieces & evalContext.whiteCombinedAttacks;
@@ -878,7 +860,7 @@ namespace Zagreus {
         }
     }
 
-    void getBlackConnectivityScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getBlackConnectivityScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
         uint64_t blackPieces = bitboard.getColorBoard<PieceColor::BLACK>() & ~kingBB;
         uint64_t protectedPieces = blackPieces & evalContext.blackCombinedAttacks;
@@ -919,7 +901,7 @@ namespace Zagreus {
         }
     }
 
-    void getWhiteRookScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getWhiteRookScore(Bitboard &bitboard) {
         uint64_t rookBB = bitboard.getPieceBoard<PieceType::WHITE_ROOK>();
         int rookAmount = popcnt(rookBB);
 
@@ -953,7 +935,7 @@ namespace Zagreus {
         evalContext.whiteEndgameScore += ((8 - popcnt(bitboard.getPieceBoard<PieceType::WHITE_PAWN>())) * getEvalValue(ENDGAME_ROOK_LESS_PAWNS_BONUS)) * rookAmount;
     }
 
-    void getBlackRookScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getBlackRookScore(Bitboard &bitboard) {
         uint64_t rookBB = bitboard.getPieceBoard<PieceType::BLACK_ROOK>();
         int rookAmount = popcnt(rookBB);
 
@@ -987,7 +969,7 @@ namespace Zagreus {
         evalContext.blackEndgameScore += ((8 - popcnt(bitboard.getPieceBoard<PieceType::BLACK_PAWN>())) * getEvalValue(ENDGAME_ROOK_LESS_PAWNS_BONUS)) * rookAmount;
     }
 
-    void getWhiteBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getWhiteBishopScore(Bitboard &bitboard) {
         uint64_t bishopBB = bitboard.getPieceBoard<PieceType::WHITE_BISHOP>();
         int bishopAmount = popcnt(bishopBB);
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
@@ -1014,7 +996,7 @@ namespace Zagreus {
         }
     }
 
-    void getBlackBishopScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getBlackBishopScore(Bitboard &bitboard) {
         uint64_t bishopBB = bitboard.getPieceBoard<PieceType::BLACK_BISHOP>();
         int bishopAmount = popcnt(bishopBB);
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
@@ -1042,7 +1024,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    void getPawnScore(EvalContext &evalContext, Bitboard &bitboard) {
+    void SearchManager::getPawnScore(Bitboard &bitboard) {
         for (int i = 0; i < 8; i++) {
             uint64_t pawnsOnFile = bitboard.getPawnsOnSameFile<color>(i);
             bool isPassed = bitboard.isPassedPawn<color>(i);
@@ -1087,7 +1069,7 @@ namespace Zagreus {
         return (phase * 256 + (totalPhase / 2)) / totalPhase;
     }
 
-    EvalContext createEvalContext(Bitboard &bitboard) {
+    void SearchManager::initEvalContext(Bitboard &bitboard) {
         uint64_t whitePawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
         uint64_t whiteKnightBB = bitboard.getPieceBoard<PieceType::WHITE_KNIGHT>();
         uint64_t whiteBishopBB = bitboard.getPieceBoard<PieceType::WHITE_BISHOP>();
@@ -1111,19 +1093,22 @@ namespace Zagreus {
         uint64_t blackBishopAttacks = 0;
         uint64_t blackRookAttacks = 0;
         uint64_t blackQueenAttacks = 0;
-        uint64_t attacksFrom[64] = { 0ULL };
-        uint64_t attacksTo[64] = { 0ULL };
+
+        for (int i = 0; i < 64; i++) {
+            evalContext.attacksFrom[i] = 0;
+            evalContext.attacksTo[i] = 0;
+        }
 
         while (whiteKnightBB) {
             uint64_t index = bitscanForward(whiteKnightBB);
 
             uint64_t attacks = bitboard.getKnightAttacks(index);
             whiteKnightAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1135,11 +1120,11 @@ namespace Zagreus {
 
             uint64_t attacks = bitboard.getKnightAttacks(index);
             blackKnightAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1151,11 +1136,11 @@ namespace Zagreus {
 
             uint64_t attacks = bitboard.getBishopAttacks(index);
             whiteBishopAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1167,11 +1152,11 @@ namespace Zagreus {
 
             uint64_t attacks = bitboard.getRookAttacks(index);
             whiteRookAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1183,11 +1168,11 @@ namespace Zagreus {
 
             uint64_t attacks = bitboard.getQueenAttacks(index);
             whiteQueenAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1199,11 +1184,11 @@ namespace Zagreus {
 
             uint64_t attacks = bitboard.getBishopAttacks(index);
             blackBishopAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1215,11 +1200,11 @@ namespace Zagreus {
 
             uint64_t attacks = bitboard.getRookAttacks(index);
             blackRookAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1231,11 +1216,11 @@ namespace Zagreus {
 
             uint64_t attacks = bitboard.getQueenAttacks(index);
             blackQueenAttacks |= attacks;
-            attacksFrom[index] = attacks;
+            evalContext.attacksFrom[index] = attacks;
 
             while (attacks) {
                 uint64_t attackIndex = bitscanForward(attacks);
-                attacksTo[attackIndex] |= (1ULL << index);
+                evalContext.attacksTo[attackIndex] |= (1ULL << index);
                 attacks &= ~(1ULL << attackIndex);
             }
 
@@ -1245,29 +1230,15 @@ namespace Zagreus {
         uint64_t whiteCombinedAttacks = whiteKnightAttacks | whiteBishopAttacks | whiteRookAttacks | whiteQueenAttacks | whitePawnAttacks;
         uint64_t blackCombinedAttacks = blackKnightAttacks | blackBishopAttacks | blackRookAttacks | blackQueenAttacks | blackPawnAttacks;
 
-        auto context =  EvalContext {
-                getGamePhase(bitboard),
-                0,
-                0,
-                0,
-                0,
-                whitePawnAttacks,
-                whiteCombinedAttacks,
-                blackPawnAttacks,
-                blackCombinedAttacks,
-                {},
-                {}
-        };
-
-        for (int i = 0; i < 64; i++) {
-            context.attacksFrom[i] = attacksFrom[i];
-        }
-
-        for (int i = 0; i < 64; i++) {
-            context.attacksTo[i] = attacksTo[i];
-        }
-
-        return context;
+        evalContext.phase = getGamePhase(bitboard);
+        evalContext.whiteMidgameScore = 0;
+        evalContext.whiteEndgameScore = 0;
+        evalContext.blackMidgameScore = 0;
+        evalContext.blackEndgameScore = 0;
+        evalContext.whitePawnAttacks = whitePawnAttacks;
+        evalContext.whiteCombinedAttacks = whiteCombinedAttacks;
+        evalContext.blackPawnAttacks = blackPawnAttacks;
+        evalContext.blackCombinedAttacks = blackCombinedAttacks;
     }
 }
 
