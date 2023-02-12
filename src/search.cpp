@@ -534,6 +534,9 @@ namespace Zagreus {
         getPawnScore<PieceColor::WHITE>(board);
         getPawnScore<PieceColor::BLACK>(board);
 
+        getOutpostScore<PieceColor::WHITE>(board);
+        getOutpostScore<PieceColor::BLACK>(board);
+
         int whiteScore = ((evalContext.whiteMidgameScore * (256 - evalContext.phase)) + (evalContext.whiteEndgameScore * evalContext.phase)) / 256;
         int blackScore = ((evalContext.blackMidgameScore * (256 - evalContext.phase)) + (evalContext.blackEndgameScore * evalContext.phase)) / 256;
 
@@ -1050,6 +1053,52 @@ namespace Zagreus {
                 evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
                 evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
             }
+        }
+    }
+
+    template<PieceColor color>
+    void SearchManager::getOutpostScore(Bitboard &bitboard) {
+        uint64_t rankMask = RANK_4 | RANK_5 | RANK_6;
+        uint64_t ownPawnAttacks;
+        uint64_t opponentPawnAttacks;
+        uint64_t opponentFills;
+
+        if (color == PieceColor::WHITE) {
+            ownPawnAttacks = evalContext.whitePawnAttacks;
+            opponentPawnAttacks = evalContext.blackPawnAttacks;
+            opponentFills = blackFrontSpans(bitboard.getPieceBoard<PieceType::BLACK_PAWN>());
+        } else {
+            ownPawnAttacks = evalContext.blackPawnAttacks;
+            opponentPawnAttacks = evalContext.whitePawnAttacks;
+            opponentFills = whiteFrontSpans(bitboard.getPieceBoard<PieceType::WHITE_PAWN>());
+        }
+
+
+        uint64_t outpostSquares = (ownPawnAttacks & rankMask) & ~(opponentPawnAttacks & rankMask) & ~(opponentFills & rankMask);
+        uint64_t knightBB;
+        uint64_t bishopBB;
+
+        if (color == PieceColor::WHITE) {
+            knightBB = bitboard.getPieceBoard<PieceType::WHITE_KNIGHT>();
+            bishopBB = bitboard.getPieceBoard<PieceType::WHITE_BISHOP>();
+        } else {
+            knightBB = bitboard.getPieceBoard<PieceType::BLACK_KNIGHT>();
+            bishopBB = bitboard.getPieceBoard<PieceType::BLACK_BISHOP>();
+        }
+
+        int knightsOnOutpost = popcnt(knightBB & outpostSquares);
+        int bishopsOnOutpost = popcnt(bishopBB & outpostSquares);
+
+        if (color == PieceColor::WHITE) {
+            evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_OUTPOST) * knightsOnOutpost;
+            evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_OUTPOST) * knightsOnOutpost;
+            evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_OUTPOST) * bishopsOnOutpost;
+            evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_OUTPOST) * bishopsOnOutpost;
+        } else {
+            evalContext.blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_OUTPOST) * knightsOnOutpost;
+            evalContext.blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_OUTPOST) * knightsOnOutpost;
+            evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_OUTPOST) * bishopsOnOutpost;
+            evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_OUTPOST) * bishopsOnOutpost;
         }
     }
 

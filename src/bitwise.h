@@ -71,6 +71,18 @@ namespace Zagreus {
 
     uint64_t noWeOccl(uint64_t bishops, uint64_t empty);
 
+    uint64_t nortFill(uint64_t gen);
+
+    uint64_t soutFill(uint64_t gen);
+
+    uint64_t whiteFrontSpans(uint64_t pawns);
+
+    uint64_t whiteRearSpans(uint64_t pawns);
+
+    uint64_t blackRearSpans(uint64_t pawns);
+
+    uint64_t blackFrontSpans(uint64_t pawns);
+
     template<PieceColor color>
     uint64_t getPawnEastAttacks(uint64_t pawns);
 

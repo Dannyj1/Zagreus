@@ -74,7 +74,38 @@ namespace Zagreus {
 
     uint64_t noWeWe(uint64_t b) {
         return (b << 6ULL) & NOT_GH_FILE;
+    }
 
+    uint64_t nortFill(uint64_t gen) {
+        gen |= (gen <<  8);
+        gen |= (gen << 16);
+        gen |= (gen << 32);
+
+        return gen;
+    }
+
+    uint64_t soutFill(uint64_t gen) {
+        gen |= (gen >>  8);
+        gen |= (gen >> 16);
+        gen |= (gen >> 32);
+
+        return gen;
+    }
+
+    uint64_t whiteFrontSpans(uint64_t pawns) {
+        return nortOne(nortFill(pawns));
+    }
+
+    uint64_t whiteRearSpans(uint64_t pawns) {
+        return soutOne(soutFill(pawns));
+    }
+
+    uint64_t blackRearSpans(uint64_t pawns) {
+        return nortOne(nortFill(pawns));
+    }
+
+    uint64_t blackFrontSpans(uint64_t pawns) {
+        return soutOne(soutFill(pawns));
     }
 
     uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {
