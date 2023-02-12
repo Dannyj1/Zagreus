@@ -38,11 +38,11 @@ namespace Zagreus {
     int iteration = 0;
     double K = 0.0;
 
-    int batchSize = 128;
+    int batchSize = 64;
     double learningRate = 1.0;
-    double epsilon = 10.0;
+    double epsilon = 5.0;
     double optimizerEpsilon = 1e-6;
-    double epsilonDecay = 0.98;
+    double epsilonDecay = 0.99;
     double beta1 = 0.9;
     double beta2 = 0.999;
     int epsilonWarmupIterations = 0;
@@ -73,8 +73,8 @@ namespace Zagreus {
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
             Move rootMove{};
-//            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
             int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
+//            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
             double loss = pos.result - sigmoid((double) qScore);
             totalLoss += loss * loss;
         }
@@ -145,13 +145,13 @@ namespace Zagreus {
             Move rootMove{};
             int qScore = searchManager.quiesce(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime, engine);
 
-            if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<PieceColor::WHITE>()
-                    || tunerBoard.isWinner<PieceColor::BLACK>() || tunerBoard.isKingInCheck<PieceColor::WHITE>()
-                    || tunerBoard.isKingInCheck<PieceColor::BLACK>() || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4
-                    || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4
-                    || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() < 2
-                    || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::BLACK>() < 2 || qScore <= -(MATE_SCORE / 2)
-                    || qScore >= (MATE_SCORE / 2)) {
+            if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw()
+                || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
+                || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()
+                || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4
+                || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() <= 2
+                || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2)
+                || qScore >= (MATE_SCORE / 2)) {
                 continue;
             }
 
