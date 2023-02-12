@@ -173,6 +173,10 @@ namespace Zagreus {
             "ENDGAME_PAWN_SEMI_OPEN_FILE",
             "MIDGAME_PAWN_SHIELD",
             "ENDGAME_PAWN_SHIELD",
+            "MIDGAME_BISHOP_OUTPOST",
+            "ENDGAME_BISHOP_OUTPOST",
+            "MIDGAME_KNIGHT_OUTPOST",
+            "ENDGAME_KNIGHT_OUTPOST",
     };
 
     void printEvalValues();

@@ -489,23 +489,21 @@ namespace Zagreus {
     }
 
     int SearchManager::evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine) {
-        if (!engine.isTuning() && (searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+        if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
             return 0;
         }
 
         int modifier = board.getMovingColor() == PieceColor::WHITE ? 1 : -1;
 
-        if (!engine.isTuning()) {
-            if (board.isWinner<PieceColor::WHITE>()) {
-                return (MATE_SCORE - board.getPly()) * modifier;
-            } else if (board.isWinner<PieceColor::BLACK>()) {
-                return (-MATE_SCORE + board.getPly()) * modifier;
-            }
+        if (board.isWinner<PieceColor::WHITE>()) {
+            return (MATE_SCORE - board.getPly()) * modifier;
+        } else if (board.isWinner<PieceColor::BLACK>()) {
+            return (-MATE_SCORE + board.getPly()) * modifier;
+        }
 
-            if (board.isDraw()) {
-                // Thanks to Stockfish for the "3-fold blindness avoidance" idea
-                return 0 - 1 + ((int) searchStats.nodes & 0x2);
-            }
+        if (board.isDraw()) {
+            // Thanks to Stockfish for the "3-fold blindness avoidance" idea
+            return 0 - 1 + ((int) searchStats.nodes & 0x2);
         }
 
         initEvalContext(board);
