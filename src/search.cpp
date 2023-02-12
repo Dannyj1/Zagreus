@@ -1072,7 +1072,7 @@ namespace Zagreus {
         }
 
 
-        uint64_t outpostSquares = (ownPawnAttacks & rankMask) & ~(opponentPawnAttacks & rankMask) & ~(opponentFills & rankMask);
+        uint64_t outpostSquares = (ownPawnAttacks & rankMask) & ~opponentPawnAttacks & ~opponentFills;
         uint64_t knightBB;
         uint64_t bishopBB;
 
