@@ -98,7 +98,7 @@ namespace Zagreus {
         double bestLoss = 9999999.0;
         double oldK = K;
 
-        for (double k = 1.0; k <= 2.0; k += 0.001) {
+        for (double k = 0.0; k <= 2.0; k += 0.001) {
             K = k;
             double totalLoss = 0.0;
 
@@ -212,6 +212,8 @@ namespace Zagreus {
         senjo::UCIAdapter adapter(engine);
         std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
         std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine);
+        std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.9, positions.end());
+        positions.erase(positions.begin() + positions.size() * 0.9, positions.end());
 
         std::random_device rd;
         std::mt19937_64 gen(rd());
@@ -234,7 +236,7 @@ namespace Zagreus {
         std::shuffle(positions.begin(), positions.end(), gen);
 
         std::cout << "Calculating the initial loss..." << std::endl;
-        double bestLoss = evaluationLoss(positions, positions.size(), maxEndTime, engine);
+        double bestLoss = evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
 
         std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
@@ -275,7 +277,7 @@ namespace Zagreus {
             }
 
             updateEvalValues(bestParameters);
-            double newLoss = evaluationLoss(positions, positions.size(), maxEndTime, engine);
+            double newLoss = evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
 
             if (iteration > epsilonWarmupIterations) {
                 // Decay epsilon
@@ -291,8 +293,7 @@ namespace Zagreus {
                 stopCounter++;
             }
 
-            double trainingLoss = evaluationLoss(positions, positions.size(), maxEndTime, engine);
-            std::cout << "Iteration: " << iteration << ", Loss: " << trainingLoss << ", Best Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
+            std::cout << "Iteration: " << iteration << ", Val Loss: " << newLoss << ", Best Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
         }
 
         std::cout << "Best loss: " << bestLoss << std::endl;
