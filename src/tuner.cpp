@@ -38,30 +38,31 @@ namespace Zagreus {
     int iteration = 0;
     double K = 0.0;
 
-    int batchSize = 64;
+    int batchSize = 128;
     double learningRate = 1.0;
-    double epsilon = 5.0;
+    double epsilon = 1.0;
     double optimizerEpsilon = 1e-6;
-    double epsilonDecay = 0.99;
+    double epsilonDecay = 1.0;
     double beta1 = 0.9;
     double beta2 = 0.999;
     int epsilonWarmupIterations = 0;
 
-    std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> v, std::mt19937_64 gen) {
+    std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> positions, std::mt19937_64 gen) {
         // Create random batches of batchSize positions
         std::vector<std::vector<TunePosition>> batches;
 
-        std::shuffle(v.begin(), v.end(), gen);
-        for (int i = 0; i < v.size(); i += batchSize) {
+        std::shuffle(positions.begin(), positions.end(), gen);
+        for (int i = 0; i < positions.size(); i += batchSize) {
             std::vector<TunePosition> batch;
-            for (int j = i; j < i + batchSize && j < v.size(); j++) {
-                batch.push_back(v[j]);
+            for (int j = i; j < i + batchSize && j < positions.size(); j++) {
+                batch.push_back(positions[j]);
             }
             batches.push_back(batch);
         }
 
         return batches;
     }
+
 
     double sigmoid(double x) {
         return 1.0 / (1.0 + pow(10.0, -K * x / 400.0));
@@ -119,7 +120,7 @@ namespace Zagreus {
         return bestK;
     }
 
-    std::vector<TunePosition> loadPositions(char* filePath, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
+    std::vector<TunePosition> loadPositions(char* filePath, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine, std::mt19937_64 gen) {
         std::cout << "Loading positions..." << std::endl;
         std::vector<TunePosition> positions;
         std::vector<std::string> lines;
@@ -173,8 +174,53 @@ namespace Zagreus {
             positions.emplace_back(TunePosition{fen, result, searchManager.evaluate(tunerBoard, maxEndTime, engine)});
         }
 
-        std::cout << "Loaded " << positions.size() << " positions." << std::endl;
-        std::cout << "Win: " << win << ", Loss: " << loss << ", Draw: " << draw << std::endl;
+        // Reduce the biggest two classes to the size of the smallest class
+        int smallestClassSize = std::min(win, std::min(loss, draw));
+        std::vector<TunePosition> newPositions;
+        int newWin = 0;
+        int newLoss = 0;
+        int newDraw = 0;
+
+        // Shuffle positions
+        std::shuffle(positions.begin(), positions.end(), gen);
+
+        for (TunePosition &pos : positions) {
+            if (pos.result == 1.0 && newWin < smallestClassSize) {
+                newPositions.emplace_back(pos);
+                newWin++;
+            } else if (pos.result == 0.0 && newLoss < smallestClassSize) {
+                newPositions.emplace_back(pos);
+                newLoss++;
+            } else if (pos.result == 0.5 && newDraw < smallestClassSize) {
+                newPositions.emplace_back(pos);
+                newDraw++;
+            }
+
+            if (newWin >= smallestClassSize && newLoss >= smallestClassSize && newDraw >= smallestClassSize) {
+                break;
+            }
+        }
+
+        // Write all newPositions to a file by their fen strings
+        std::ofstream fout("cleaned_positions.epd");
+        for (TunePosition &pos : newPositions) {
+            std::string result;
+
+            if (pos.result == 1.0) {
+                result = "1-0";
+            } else if (pos.result == 0.0) {
+                result = "0-1";
+            } else {
+                result = "1/2-1/2";
+            }
+
+            fout << pos.fen << " c9 \"" << result << "\";" << std::endl;
+        }
+
+        fout.close();
+
+        std::cout << "Loaded " << newPositions.size() << " positions." << std::endl;
+        std::cout << "Win: " << newWin << ", Loss: " << newLoss << ", Draw: " << newDraw << std::endl;
         return positions;
     }
 
@@ -221,14 +267,14 @@ namespace Zagreus {
     }
 
     void startTuning(char* filePath) {
-        ZagreusEngine engine;
-        senjo::UCIAdapter adapter(engine);
-        std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
-        std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine);
-
         std::random_device rd;
         std::mt19937_64 gen(rd());
         std::uniform_int_distribution<uint64_t> dis;
+
+        ZagreusEngine engine;
+        senjo::UCIAdapter adapter(engine);
+        std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
+        std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine, gen);
 
         engine.setTuning(false);
 
@@ -240,8 +286,8 @@ namespace Zagreus {
         K = findOptimalK(positions, maxEndTime, engine);
         std::cout << "Optimal K value: " << K << std::endl;
 
-        std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.85, positions.end());
-        positions.erase(positions.begin() + positions.size() * 0.85, positions.end());
+        std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.9, positions.end());
+        positions.erase(positions.begin() + positions.size() * 0.9, positions.end());
 
         std::cout << "Starting tuning..." << std::endl;
         std::vector<double> m(bestParameters.size(), 0.0);
