@@ -1,8 +1,8 @@
 ## Zagreus Tuner Dataset
-This directory contains the Zagreus Tuner Dataset. The dataset is a file in the [Extended Position Description (EDP)](https://www.chessprogramming.org/Extended_Position_Description) format that contains all positions that were used to tune the evaluation parameters of Zagreus. The dataset mainly consist of FEN strings from games played by top engines (mainly SF, Dragon, Lc0 and Fat Fritz) on [CCRL](https://ccrl.chessdom.com).
+This directory contains the Zagreus Tuner Dataset. The dataset is a file in the [Extended Position Description (EDP)](https://www.chessprogramming.org/Extended_Position_Description) format that contains all positions that were used to tune the evaluation parameters of Zagreus. The dataset mainly consists of FEN strings from games played by top engines (mainly SF, Dragon, Lc0 and Fat Fritz) on [CCRL](https://ccrl.chessdom.com).
 The actual end result of a game from white's perspective is represented with a "c9" comment. Example:
 ```  
-r1bq1rk1/pp1p1pbp/4p1p1/nPP5/3nP3/2N3P1/3PNPBP/1RBQK2R b K - c9 1-0
+rq3rk1/ppnb2bp/3p1np1/2pPp1B1/2P1P3/2N3P1/PP1Q2BP/R3NRK1 w - - c9 "1-0";
 ```
 
 ## License
