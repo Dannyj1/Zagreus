@@ -50,7 +50,7 @@ namespace Zagreus {
             return 4000;
         }
 
-        if (tt->killerMoves[1][bitboard.getPly()] == moveCode) {
+        if (tt->killerMoves[2][bitboard.getPly()] == moveCode) {
             return 3000;
         }
 
