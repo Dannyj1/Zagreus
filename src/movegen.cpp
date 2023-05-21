@@ -40,7 +40,7 @@ namespace Zagreus {
     
     int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
-            if (moveCode == encodeMove(previousPv.moves[i])) {
+            if (moveCode == previousPv.moveCodes[i]) {
                 return 50000 - i;
             }
         }
