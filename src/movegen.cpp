@@ -38,9 +38,9 @@ namespace Zagreus {
         moveList->size++;
     }
     
-    int scoreMove(Bitboard &bitboard, Line &previousPv, Move &move, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
+    int scoreMove(Bitboard &bitboard, Line &previousPv, const uint32_t* previousPvMoveCodes, Move &move, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
-            if (moveCode == previousPv.moveCodes[i]) {
+            if (moveCode == previousPvMoveCodes[i]) {
                 return 50000 - i;
             }
         }
@@ -89,8 +89,13 @@ namespace Zagreus {
         assert(moveList->size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
+        uint32_t moveCodes[previousPv.moveCount];
         TTEntry entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
+
+        for (int i = 0; i < previousPv.moveCount; i++) {
+            moveCodes[i] = encodeMove(previousPv.moves[i]);
+        }
 
         if (entry.zobristHash == bitboard.getZobristHash()) {
             bestMoveCode = entry.bestMoveCode;
@@ -98,7 +103,7 @@ namespace Zagreus {
 
         for (int i = 0; i < moveList->size; i++) {
             Move &move = moveList->moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), bestMoveCode, tt);
+            move.score = scoreMove(bitboard, previousPv, moveCodes, move, encodeMove(move), bestMoveCode, tt);
         }
     }
 
@@ -114,8 +119,13 @@ namespace Zagreus {
         assert(moveList->size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
+        uint32_t moveCodes[previousPv.moveCount];
         TTEntry entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
+
+        for (int i = 0; i < previousPv.moveCount; i++) {
+            moveCodes[i] = encodeMove(previousPv.moves[i]);
+        }
 
         if (entry.zobristHash == bitboard.getZobristHash()) {
             bestMoveCode = entry.bestMoveCode;
@@ -123,7 +133,7 @@ namespace Zagreus {
 
         for (int i = 0; i < moveList->size; i++) {
             Move &move = moveList->moves[i];
-            move.score = scoreMove(bitboard, previousPv, move, encodeMove(move), bestMoveCode, tt);
+            move.score = scoreMove(bitboard, previousPv, moveCodes, move, encodeMove(move), bestMoveCode, tt);
         }
     }
 

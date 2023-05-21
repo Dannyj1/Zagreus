@@ -1094,10 +1094,6 @@ namespace Zagreus {
 
     void Bitboard::setPreviousPvLine(Line &previousPvLine) {
         Bitboard::previousPvLine = previousPvLine;
-
-        for (int i = 0; i < previousPvLine.moveCount; i++) {
-            previousPvLine.moveCodes[i] = encodeMove(previousPvLine.moves[i]);
-        }
     }
 
     uint8_t Bitboard::getPly() const {
