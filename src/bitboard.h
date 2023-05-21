@@ -60,6 +60,8 @@ namespace Zagreus {
         uint64_t moveHistory[MAX_PLY]{};
         Line previousPvLine{};
 
+        MoveList preAllocatedMoveList{};
+
         int pstValues[4];
 
         Move previousMove{};
@@ -159,10 +161,11 @@ namespace Zagreus {
                 }
             }
 
-            MoveList moves = generateMoves<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>(*this);
+            preAllocatedMoveList.size = 0;
+            generateMoves<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>(*this, preAllocatedMoveList);
 
-            for (int i = 0; i < moves.size; i++) {
-                Move move = moves.moves[i];
+            for (int i = 0; i < preAllocatedMoveList.size; i++) {
+                Move move = preAllocatedMoveList.moves[i];
                 assert(move.from != move.to);
 
                 makeMove(move);

@@ -67,9 +67,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    MoveList generateMoves(Bitboard &bitboard) {
-        MoveList moveList{};
-
+    MoveList generateMoves(Bitboard &bitboard, MoveList &moveList) {
         generatePawnMoves<color>(bitboard, moveList);
         generateKnightMoves<color>(bitboard, moveList);
         generateBishopMoves<color>(bitboard, moveList);
@@ -96,9 +94,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    MoveList generateQuiescenceMoves(Bitboard &bitboard) {
-        MoveList moveList{};
-
+    MoveList generateQuiescenceMoves(Bitboard &bitboard, MoveList &moveList) {
         generatePawnMoves<color>(bitboard, moveList, true);
         generateKnightMoves<color>(bitboard, moveList, true);
         generateBishopMoves<color>(bitboard, moveList, true);
@@ -522,9 +518,9 @@ namespace Zagreus {
         }
     }
 
-    template MoveList generateMoves<PieceColor::WHITE>(Bitboard &bitboard);
-    template MoveList generateMoves<PieceColor::BLACK>(Bitboard &bitboard);
+    template MoveList generateMoves<PieceColor::WHITE>(Bitboard &bitboard, MoveList &moveList);
+    template MoveList generateMoves<PieceColor::BLACK>(Bitboard &bitboard, MoveList &moveList);
 
-    template MoveList generateQuiescenceMoves<PieceColor::WHITE>(Bitboard &bitboard);
-    template MoveList generateQuiescenceMoves<PieceColor::BLACK>(Bitboard &bitboard);
+    template MoveList generateQuiescenceMoves<PieceColor::WHITE>(Bitboard &bitboard, MoveList &moveList);
+    template MoveList generateQuiescenceMoves<PieceColor::BLACK>(Bitboard &bitboard, MoveList &moveList);
 }

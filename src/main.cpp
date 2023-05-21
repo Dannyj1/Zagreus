@@ -209,12 +209,12 @@ void addHashes(Bitboard &board, int depth, std::map<uint64_t, uint64_t> &collisi
         return;
     }
 
-    MoveList moves;
+    MoveList moves{};
 
     if (board.getMovingColor() == PieceColor::WHITE) {
-        moves = generateMoves<PieceColor::WHITE>(board);
+        generateMoves<PieceColor::WHITE>(board, moves);
     } else {
-        moves = generateMoves<PieceColor::BLACK>(board);
+        generateMoves<PieceColor::BLACK>(board, moves);
     }
 
     for (Move &move : moves.moves) {

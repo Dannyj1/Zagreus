@@ -22,10 +22,6 @@
 
 namespace Zagreus {
 
-    MovePicker::MovePicker(MoveList moves) {
-        this->moveList = moves;
-    }
-
     Move MovePicker::getNextMove() {
         int highestScore = moveList.moves[searchStartIndex].score;
         int moveIndex = searchStartIndex;
@@ -39,16 +35,14 @@ namespace Zagreus {
             }
         }
 
-        Move temp = moveList.moves[searchStartIndex];
-        moveList.moves[searchStartIndex] = move;
-        moveList.moves[moveIndex] = temp;
+        std::swap(moveList.moves[searchStartIndex], moveList.moves[moveIndex]);
 
         searchStartIndex++;
 
         return move;
     }
 
-    bool MovePicker::hasNext() const {
+    bool MovePicker::hasNext() {
         return searchStartIndex < moveList.size;
     }
 

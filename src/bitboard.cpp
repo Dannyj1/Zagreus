@@ -874,18 +874,17 @@ namespace Zagreus {
             }
         }
 
-        MoveList moves;
-
+        preAllocatedMoveList.size = 0;
         if (movingColor == PieceColor::WHITE) {
-            moves = generateMoves<PieceColor::WHITE>(*this);
+            generateMoves<PieceColor::WHITE>(*this, preAllocatedMoveList);
         } else {
-            moves = generateMoves<PieceColor::BLACK>(*this);
+            generateMoves<PieceColor::BLACK>(*this, preAllocatedMoveList);
         }
 
         bool hasLegalMove = false;
 
-        for (int i = 0; i < moves.size; i++) {
-            Move move = moves.moves[i];
+        for (int i = 0; i < preAllocatedMoveList.size; i++) {
+            Move move = preAllocatedMoveList.moves[i];
             makeMove(move);
 
             if (movingColor == PieceColor::WHITE) {

@@ -24,8 +24,8 @@
 
 namespace Zagreus {
     template<PieceColor color>
-    MoveList generateMoves(Bitboard &bitboard);
+    MoveList generateMoves(Bitboard &bitboard, MoveList &moveList);
 
     template<PieceColor color>
-    MoveList generateQuiescenceMoves(Bitboard &bitboard);
+    MoveList generateQuiescenceMoves(Bitboard &bitboard, MoveList &moveList);
 }

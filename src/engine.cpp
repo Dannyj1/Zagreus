@@ -38,12 +38,12 @@ namespace Zagreus {
             return 1ULL;
         }
 
-        MoveList moves;
+        MoveList moves{};
 
         if (color == PieceColor::WHITE) {
-            moves = generateMoves<PieceColor::WHITE>(perftBoard);
+            generateMoves<PieceColor::WHITE>(perftBoard, moves);
         } else if (color == PieceColor::BLACK) {
-            moves = generateMoves<PieceColor::BLACK>(perftBoard);
+            generateMoves<PieceColor::BLACK>(perftBoard, moves);
         } else {
             return 0;
         }

@@ -47,6 +47,7 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
         int depth = 0;
+        MoveList moveList{};
 
         TranspositionTable::getTT()->ageHistoryTable();
 
@@ -63,12 +64,12 @@ namespace Zagreus {
 
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
             board.setPreviousPvLine(iterationPvLine);
-            MoveList moveList;
 
+            moveList.size = 0;
             if (board.getMovingColor() == PieceColor::WHITE) {
-                moveList = generateMoves<PieceColor::WHITE>(board);
+                moveList = generateMoves<PieceColor::WHITE>(board, moveList);
             } else {
-                moveList = generateMoves<PieceColor::BLACK>(board);
+                moveList = generateMoves<PieceColor::BLACK>(board, moveList);
             }
 
             MovePicker moves = MovePicker(moveList);
@@ -247,13 +248,13 @@ namespace Zagreus {
 
         Move bestMove = {};
         int bestScore = -1000000;
-        MoveList moveList;
+        MoveList moveList{};
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
         if (board.getMovingColor() == PieceColor::WHITE) {
-            moveList = generateMoves<PieceColor::WHITE>(board);
+            generateMoves<PieceColor::WHITE>(board, moveList);
         } else {
-            moveList = generateMoves<PieceColor::BLACK>(board);
+            generateMoves<PieceColor::BLACK>(board, moveList);
         }
 
         MovePicker moves = MovePicker(moveList);
@@ -431,12 +432,12 @@ namespace Zagreus {
             alpha = standPat;
         }
 
-        MoveList moveList;
+        MoveList moveList{};
 
         if (board.getMovingColor() == PieceColor::WHITE) {
-            moveList = generateQuiescenceMoves<PieceColor::WHITE>(board);
+            generateQuiescenceMoves<PieceColor::WHITE>(board, moveList);
         } else {
-            moveList = generateQuiescenceMoves<PieceColor::BLACK>(board);
+            generateQuiescenceMoves<PieceColor::BLACK>(board, moveList);
         }
 
         MovePicker moves = MovePicker(moveList);
