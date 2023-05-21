@@ -41,6 +41,8 @@ void benchmark();
 
 void findZobristSeed();
 
+MoveListPool* moveListPool = MoveListPool::getInstance();
+
 const std::vector<std::string> benchmarkPositions = {"8/8/1n3k2/8/3P3P/5K2/8/1N4Q1 w - -",
                                                "1rb1kbnr/p1q1pppp/np4B1/2pp4/P1PP4/2N1P3/1P3PPP/R1BQK1NR w Kk",
                                                "1rbk1bnr/pp1p1ppp/n1pq4/4pP1Q/P1B1P3/2P4P/1P1P2P1/RNB2KNR b - -",
@@ -209,7 +211,7 @@ void addHashes(Bitboard &board, int depth, std::map<uint64_t, uint64_t> &collisi
         return;
     }
 
-    MoveList moves{};
+    MoveList* moves = moveListPool->getMoveList();
 
     if (board.getMovingColor() == PieceColor::WHITE) {
         generateMoves<PieceColor::WHITE>(board, moves);
@@ -217,11 +219,13 @@ void addHashes(Bitboard &board, int depth, std::map<uint64_t, uint64_t> &collisi
         generateMoves<PieceColor::BLACK>(board, moves);
     }
 
-    for (Move &move : moves.moves) {
+    for (Move &move : moves->moves) {
         board.makeMove(move);
         addHashes(board, depth - 1, collisionMap);
         board.unmakeMove(move);
     }
+
+    moveListPool->releaseMoveList(moves);
 }
 
 void findZobristSeed() {

@@ -566,7 +566,7 @@ namespace Zagreus {
         std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
     }
 
-    void Bitboard::printAvailableMoves(MoveList &moves) {
+    void Bitboard::printAvailableMoves(MoveList* moves) {
         std::cout << "  ---------------------------------";
 
         for (int index = 0; index < 64; index++) {
@@ -576,8 +576,8 @@ namespace Zagreus {
 
             bool didPrint = false;
 
-            for (int i = 0; i < moves.size; i++) {
-                Move move = moves.moves[i];
+            for (int i = 0; i < moves->size; i++) {
+                Move move = moves->moves[i];
 
                 if (move.to == index) {
                     std::cout << 'X' << " | ";
@@ -874,17 +874,17 @@ namespace Zagreus {
             }
         }
 
-        preAllocatedMoveList.size = 0;
+        MoveList* moveList = moveListPool->getMoveList();
         if (movingColor == PieceColor::WHITE) {
-            generateMoves<PieceColor::WHITE>(*this, preAllocatedMoveList);
+            generateMoves<PieceColor::WHITE>(*this, moveList);
         } else {
-            generateMoves<PieceColor::BLACK>(*this, preAllocatedMoveList);
+            generateMoves<PieceColor::BLACK>(*this, moveList);
         }
 
         bool hasLegalMove = false;
 
-        for (int i = 0; i < preAllocatedMoveList.size; i++) {
-            Move move = preAllocatedMoveList.moves[i];
+        for (int i = 0; i < moveList->size; i++) {
+            Move move = moveList->moves[i];
             makeMove(move);
 
             if (movingColor == PieceColor::WHITE) {
@@ -903,6 +903,8 @@ namespace Zagreus {
 
             unmakeMove(move);
         }
+
+        moveListPool->releaseMoveList(moveList);
 
         if (!hasLegalMove) {
             return true;

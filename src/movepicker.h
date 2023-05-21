@@ -28,12 +28,12 @@
 namespace Zagreus {
     class MovePicker {
     private:
-        MoveList &moveList;
+        MoveList* moveList;
         int searchStartIndex = 0;
     public:
         MovePicker() = delete;
 
-        MovePicker(MoveList &moveList) : moveList(moveList) {};
+        MovePicker(MoveList* moveList) : moveList(moveList) {};
 
         Move getNextMove();
 

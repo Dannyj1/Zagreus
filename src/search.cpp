@@ -47,7 +47,6 @@ namespace Zagreus {
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
         int depth = 0;
-        MoveList moveList{};
 
         TranspositionTable::getTT()->ageHistoryTable();
 
@@ -65,16 +64,17 @@ namespace Zagreus {
             senjo::Output(senjo::Output::InfoPrefix) << "Searching depth " << depth << "...";
             board.setPreviousPvLine(iterationPvLine);
 
-            moveList.size = 0;
+            MoveList* moveList = moveListPool->getMoveList();
             if (board.getMovingColor() == PieceColor::WHITE) {
-                moveList = generateMoves<PieceColor::WHITE>(board, moveList);
+                generateMoves<PieceColor::WHITE>(board, moveList);
             } else {
-                moveList = generateMoves<PieceColor::BLACK>(board, moveList);
+                generateMoves<PieceColor::BLACK>(board, moveList);
             }
 
             MovePicker moves = MovePicker(moveList);
 
             if (moves.size() == 1) {
+                moveListPool->releaseMoveList(moveList);
                 return bestMove;
             }
 
@@ -164,6 +164,7 @@ namespace Zagreus {
 
             iterationScore = -1000000;
             iterationMove = {};
+            moveListPool->releaseMoveList(moveList);
         }
 
         searchStats.pv = "";
@@ -248,7 +249,7 @@ namespace Zagreus {
 
         Move bestMove = {};
         int bestScore = -1000000;
-        MoveList moveList{};
+        MoveList* moveList = moveListPool->getMoveList();
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
         if (board.getMovingColor() == PieceColor::WHITE) {
@@ -301,6 +302,7 @@ namespace Zagreus {
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
                                                              NodeType::FAIL_HIGH_NODE,
                                                              encodeMove(bestMove));
+                    moveListPool->releaseMoveList(moveList);
                     return score;
                 }
 
@@ -316,12 +318,14 @@ namespace Zagreus {
         }
 
         if (isPv && !searchedFirstLegalMove) {
+            moveListPool->releaseMoveList(moveList);
             return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
         while (moves.hasNext()) {
             if (searchStats.nodes % 2048 == 0 &&
                 (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+                moveListPool->releaseMoveList(moveList);
                 return beta;
             }
 
@@ -387,6 +391,7 @@ namespace Zagreus {
 
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
                                                              NodeType::FAIL_HIGH_NODE, encodeMove(bestMove));
+                    moveListPool->releaseMoveList(moveList);
                     return score;
                 }
 
@@ -400,6 +405,7 @@ namespace Zagreus {
         }
 
         TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType, encodeMove(bestMove));
+        moveListPool->releaseMoveList(moveList);
         return alpha;
     }
 
@@ -432,7 +438,7 @@ namespace Zagreus {
             alpha = standPat;
         }
 
-        MoveList moveList{};
+        MoveList* moveList = moveListPool->getMoveList();
 
         if (board.getMovingColor() == PieceColor::WHITE) {
             generateQuiescenceMoves<PieceColor::WHITE>(board, moveList);
@@ -446,6 +452,7 @@ namespace Zagreus {
             assert(move.from != move.to);
 
             if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+                moveListPool->releaseMoveList(moveList);
                 return beta;
             }
 
@@ -472,6 +479,7 @@ namespace Zagreus {
             board.unmakeMove(move);
 
             if (score >= beta) {
+                moveListPool->releaseMoveList(moveList);
                 return beta;
             }
 
@@ -480,6 +488,7 @@ namespace Zagreus {
             }
         }
 
+        moveListPool->releaseMoveList(moveList);
         return alpha;
     }
 
