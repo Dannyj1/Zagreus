@@ -60,7 +60,13 @@ namespace Zagreus {
     }
 
     MoveList* MoveListPool::createMoveList() {
-        return new MoveList;
+        auto* moveList = new MoveList();
+
+        for (auto & move : moveList->moves) {
+            move = Move();
+        }
+
+        return moveList;
     }
 
     void MoveListPool::destroyMoveList(MoveList* moveList) {

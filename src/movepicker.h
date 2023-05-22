@@ -28,7 +28,7 @@
 namespace Zagreus {
     class MovePicker {
     private:
-        MoveList* moveList;
+        MoveList* moveList = nullptr;
         int searchStartIndex = 0;
     public:
         MovePicker() = delete;
