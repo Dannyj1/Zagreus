@@ -39,12 +39,12 @@ namespace Zagreus {
 
         ~MoveListPool();
     private:
+        std::vector<MoveList*> pool{};
+
         MoveListPool();
 
-        MoveList* createMoveList();
+        static MoveList* createMoveList();
 
-        void destroyMoveList(MoveList* moveList);
-
-        std::vector<MoveList*> pool{};
+        static void destroyMoveList(MoveList* moveList);
     };
 }

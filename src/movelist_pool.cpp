@@ -24,8 +24,6 @@ namespace Zagreus {
     MoveListPool* MoveListPool::instance = new MoveListPool();
 
     MoveListPool::MoveListPool() {
-        pool.reserve(INITIAL_POOL_SIZE * 2);
-
         for (int i = 0; i < INITIAL_POOL_SIZE; ++i) {
             MoveList* moveList = createMoveList();
             pool.push_back(moveList);
