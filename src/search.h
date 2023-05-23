@@ -31,6 +31,7 @@ namespace Zagreus {
         bool isSearching = false;
         senjo::SearchStats searchStats{};
         EvalContext evalContext;
+        MoveListPool* moveListPool = MoveListPool::getInstance();
     public:
         Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
 

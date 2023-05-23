@@ -31,6 +31,7 @@
 #include "types.h"
 #include "bitwise.h"
 #include "utils.h"
+#include "movelist_pool.h"
 
 namespace Zagreus {
     class Bitboard {
@@ -64,6 +65,8 @@ namespace Zagreus {
 
         Move previousMove{};
         int materialCount[12]{};
+
+        MoveListPool* moveListPool = MoveListPool::getInstance();
     public:
         uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
 
@@ -139,7 +142,7 @@ namespace Zagreus {
 
         void print();
 
-        void printAvailableMoves(MoveList &moves);
+        void printAvailableMoves(MoveList* moves);
 
         bool setFromFen(const std::string &fen);
 
@@ -159,10 +162,11 @@ namespace Zagreus {
                 }
             }
 
-            MoveList moves = generateMoves<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>(*this);
+            MoveList* moveList = moveListPool->getMoveList();
+            generateMoves<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>(*this, moveList);
 
-            for (int i = 0; i < moves.size; i++) {
-                Move move = moves.moves[i];
+            for (int i = 0; i < moveList->size; i++) {
+                Move move = moveList->moves[i];
                 assert(move.from != move.to);
 
                 makeMove(move);
@@ -180,9 +184,11 @@ namespace Zagreus {
                 }
 
                 unmakeMove(move);
+                moveListPool->releaseMoveList(moveList);
                 return false;
             }
 
+            moveListPool->releaseMoveList(moveList);
             return true;
         };
 

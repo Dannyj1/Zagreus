@@ -33,6 +33,7 @@ namespace Zagreus {
         senjo::SearchStats searchStats{};
         bool stoppingSearch = false;
         bool tuning = false;
+        MoveListPool* moveListPool = MoveListPool::getInstance();
 
         std::list<senjo::EngineOption> options{
             senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, 5000),

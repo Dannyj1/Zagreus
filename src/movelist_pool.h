@@ -20,12 +20,31 @@
 
 #pragma once
 
-#include "bitboard.h"
+#import <vector>
+
+#import "types.h"
 
 namespace Zagreus {
-    template<PieceColor color>
-    void generateMoves(Bitboard &bitboard, MoveList* moveList);
+    static constexpr int INITIAL_POOL_SIZE = 100;
 
-    template<PieceColor color>
-    void generateQuiescenceMoves(Bitboard &bitboard, MoveList* moveList);
+    class MoveListPool {
+    public:
+        static MoveListPool* instance;
+
+        static MoveListPool* getInstance();
+
+        MoveList* getMoveList();
+
+        void releaseMoveList(MoveList* moveList);
+
+        ~MoveListPool();
+    private:
+        std::vector<MoveList*> pool{};
+
+        MoveListPool();
+
+        static MoveList* createMoveList();
+
+        static void destroyMoveList(MoveList* moveList);
+    };
 }

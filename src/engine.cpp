@@ -38,18 +38,18 @@ namespace Zagreus {
             return 1ULL;
         }
 
-        MoveList moves;
+        MoveList* moves = moveListPool->getMoveList();
 
         if (color == PieceColor::WHITE) {
-            moves = generateMoves<PieceColor::WHITE>(perftBoard);
+            generateMoves<PieceColor::WHITE>(perftBoard, moves);
         } else if (color == PieceColor::BLACK) {
-            moves = generateMoves<PieceColor::BLACK>(perftBoard);
+            generateMoves<PieceColor::BLACK>(perftBoard, moves);
         } else {
             return 0;
         }
 
-        for (int i = 0; i < moves.size; i++) {
-            Move move = moves.moves[i];
+        for (int i = 0; i < moves->size; i++) {
+            Move move = moves->moves[i];
 
             perftBoard.makeMove(move);
 
@@ -76,6 +76,7 @@ namespace Zagreus {
             }
         }
 
+        moveListPool->releaseMoveList(moves);
         return nodes;
     }
 
