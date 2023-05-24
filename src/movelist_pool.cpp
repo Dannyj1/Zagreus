@@ -21,8 +21,6 @@
 #include "movelist_pool.h"
 
 namespace Zagreus {
-    MoveListPool* MoveListPool::instance = new MoveListPool();
-
     MoveListPool::MoveListPool() {
         for (int i = 0; i < INITIAL_POOL_SIZE; ++i) {
             MoveList* moveList = createMoveList();
@@ -37,7 +35,8 @@ namespace Zagreus {
     }
 
     MoveListPool* MoveListPool::getInstance() {
-        return instance;
+        static MoveListPool instance{};
+        return &instance;
     }
 
     MoveList* MoveListPool::getMoveList() {

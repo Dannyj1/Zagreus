@@ -29,8 +29,6 @@ namespace Zagreus {
 
     class MoveListPool {
     public:
-        static MoveListPool* instance;
-
         static MoveListPool* getInstance();
 
         MoveList* getMoveList();
