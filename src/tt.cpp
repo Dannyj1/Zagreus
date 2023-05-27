@@ -24,8 +24,6 @@
 #include "tt.h"
 
 namespace Zagreus {
-    TranspositionTable* TranspositionTable::instance = new TranspositionTable();
-
     void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, uint32_t bestMoveCode) {
         if (score >= 90000000 || score <= -90000000) {
             return;
@@ -82,13 +80,14 @@ namespace Zagreus {
         transpositionTable = new TTEntry[entryCount]{};
         hashSize = entryCount - 1;
         
-        for (int i = 0; i < entryCount; i++) {
+        for (uint64_t i = 0; i < entryCount; i++) {
             transpositionTable[i] = {};
         }
     }
 
     TranspositionTable* TranspositionTable::TranspositionTable::getTT() {
-        return instance;
+        static TranspositionTable instance{};
+        return &instance;
     }
 
     void TranspositionTable::ageHistoryTable() {

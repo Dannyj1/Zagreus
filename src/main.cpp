@@ -176,7 +176,7 @@ void benchmark() {
             auto start = std::chrono::high_resolution_clock::now();
             senjo::GoParams params{};
 
-            params.depth = 3;
+            params.depth = 4;
             searchManager.getBestMove(params, engine, bb);
 
             auto end = std::chrono::high_resolution_clock::now();
