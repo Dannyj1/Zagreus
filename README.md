@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/Dannyj1/Zagreus/blob/master/Logo.png?raw=true" alt="Zagreus Logo">
+</p>
+
 # Zagreus Chess Engine
 Zagreus is a work in progress UCI Chess Engine. You can play against Zagreus on Lichess: https://lichess.org/@/Zagreus_Engine. You will also be able to find it's elo rating on there. At the time of writing this is around ~1950 rapid. 
 Zagreus is a constantly changing engine with hopefully an increase in elo every update.
