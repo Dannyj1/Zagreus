@@ -2,6 +2,10 @@
   <img src="https://github.com/Dannyj1/Zagreus/blob/master/Logo.png?raw=true" alt="Zagreus Logo">
 </p>
 
+
+![License](https://img.shields.io/github/license/Dannyj1/Zagreus?style=for-the-badge) ![Downloads](https://img.shields.io/github/downloads/Dannyj1/Zagreus/total?style=for-the-badge) ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/Dannyj1/Zagreus?style=for-the-badge) ![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/Dannyj1/Zagreus/latest?include_prereleases&style=for-the-badge)
+
+
 # Zagreus Chess Engine
 Zagreus is a work in progress UCI Chess Engine. You can play against Zagreus on Lichess: https://lichess.org/@/Zagreus_Engine. You will also be able to find it's elo rating on there. At the time of writing this is around ~1950 rapid. 
 Zagreus is a constantly changing engine with hopefully an increase in elo every update.
