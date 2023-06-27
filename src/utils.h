@@ -29,21 +29,44 @@ namespace Zagreus {
         return static_cast<PieceColor>(color ^ 1);
     }
 
-    uint64_t popcnt(uint64_t b);
+    static constexpr uint16_t pieceWeights[12] = {
+            100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 65535, 65535
+    };
 
-    int8_t bitscanForward(uint64_t b);
+    inline uint64_t popcnt(uint64_t b) {
+        return __builtin_popcountll(b);
+    }
 
-    int8_t bitscanReverse(uint64_t b);
+    inline int8_t bitscanForward(uint64_t b) {
+        return __builtin_ctzll(b);
+    }
 
-    uint32_t encodeMove(const Move &move);
+    inline int8_t bitscanReverse(uint64_t b) {
+        return 63 ^ __builtin_clzll(b);
+    }
+
+    inline int8_t popLsb(uint64_t &b) {
+        int8_t lsb = bitscanForward(b);
+        b &= b - 1;
+        return lsb;
+    }
+
+    inline uint32_t encodeMove(Move* move) {
+        return (move->promotionPiece << 20) | (move->piece << 15) |
+               (move->to << 7) | move->from;
+    }
+
+    inline uint16_t getPieceWeight(PieceType type) {
+        return pieceWeights[type];
+    }
+
+    inline int mvvlva(PieceType attacker, PieceType victim) {
+        return MVVLVA_TABLE[attacker][victim];
+    }
 
     std::string getNotation(int8_t square);
 
     int8_t getSquareFromString(std::string move);
 
-    uint16_t getPieceWeight(PieceType type);
-
     char getCharacterForPieceType(PieceType pieceType);
-
-    int mvvlva(PieceType attacker, PieceType victim);
 }

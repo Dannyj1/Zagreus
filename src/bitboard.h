@@ -408,7 +408,7 @@ namespace Zagreus {
 
         uint64_t getTilesBetween(int8_t from, int8_t to);
 
-        const Move &getPreviousMove() const;
+        [[nodiscard]] const Move &getPreviousMove() const;
 
         uint64_t getFile(int8_t square);
 
@@ -420,14 +420,11 @@ namespace Zagreus {
         template<PieceColor color>
         bool isIsolatedPawn(int8_t square) {
             uint64_t neighborMask = 0;
+            uint64_t leftMask = ((square & 7) + 7) >> 3;
+            uint64_t rightMask = ((square | 7) - 7) >> 3;
 
-            if (square % 8 != 0) {
-                neighborMask |= getFile(square - 1);
-            }
-
-            if (square % 8 != 7) {
-                neighborMask |= getFile(square + 1);
-            }
+            neighborMask |= (leftMask & getFile(square - 1));
+            neighborMask |= (rightMask & getFile(square + 1));
 
             if (color == PieceColor::WHITE) {
                 return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());
@@ -439,14 +436,11 @@ namespace Zagreus {
         template<PieceColor color>
         bool isPassedPawn(int8_t square) {
             uint64_t neighborMask = getFile(square);
+            uint64_t leftMask = ((square & 7) + 7) >> 3;   // mask is 0 for 'a' file (square & 7 == 0), -1 otherwise
+            uint64_t rightMask = ((square | 7) - 7) >> 3;  // mask is 0 for 'h' file (square | 7 == 7), -1 otherwise
 
-            if (square % 8 != 0) {
-                neighborMask |= getFile(square - 1);
-            }
-
-            if (square % 8 != 7) {
-                neighborMask |= getFile(square + 1);
-            }
+            neighborMask |= (leftMask & getFile(square - 1));
+            neighborMask |= (rightMask & getFile(square + 1));
 
             if (color == PieceColor::WHITE) {
                 return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());
@@ -460,22 +454,18 @@ namespace Zagreus {
         template<PieceColor color>
         bool hasMinorOrMajorPieces() {
             if (color == PieceColor::WHITE) {
-                return getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
-                       getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>();
+                return getColorBoard<color>() & ~(getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::WHITE_KING>());
             } else {
-                return getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
-                       getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>();
+                return getColorBoard<color>() & ~(getPieceBoard<PieceType::BLACK_PAWN>() | getPieceBoard<PieceType::BLACK_KING>());
             }
         }
 
         template<PieceColor color>
         int getAmountOfMinorOrMajorPieces() {
             if (color == PieceColor::WHITE) {
-                return popcnt(getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
-                                getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>());
+                return popcnt(getColorBoard<color>() & ~(getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::WHITE_KING>()));
             } else {
-                return popcnt(getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
-                                getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>());
+                return popcnt(getColorBoard<color>() & ~(getPieceBoard<PieceType::BLACK_PAWN>() | getPieceBoard<PieceType::BLACK_KING>()));
             }
         }
 
@@ -483,13 +473,13 @@ namespace Zagreus {
 
         void unmakeNullMove();
 
-        int getWhiteMidgamePst() const;
+        [[nodiscard]] int getWhiteMidgamePst() const;
 
-        int getWhiteEndgamePst() const;
+        [[nodiscard]] int getWhiteEndgamePst() const;
 
-        int getBlackMidgamePst() const;
+        [[nodiscard]] int getBlackMidgamePst() const;
 
-        int getBlackEndgamePst() const;
+        [[nodiscard]] int getBlackEndgamePst() const;
 
         int getAmountOfMinorOrMajorPieces();
     };

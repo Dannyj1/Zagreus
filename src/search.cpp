@@ -98,6 +98,8 @@ namespace Zagreus {
                     }
                 }
 
+                __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
+
                 Line pvLine = {};
                 Move previousMove = {};
 
@@ -278,6 +280,8 @@ namespace Zagreus {
                 }
             }
 
+            __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
+
             int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
                                engine, true, false);
             score *= -1;
@@ -293,15 +297,14 @@ namespace Zagreus {
                     if (move.captureScore == NO_CAPTURE_SCORE) {
                         TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
-                        TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
-                        TranspositionTable::getTT()->counterMoves[previousMove.from][previousMove.to] = encodeMove(
-                                move);
+                        TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(&move);
+                        TranspositionTable::getTT()->counterMoves[previousMove.from][previousMove.to] = encodeMove(&move);
                         TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
                     }
 
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
                                                              NodeType::FAIL_HIGH_NODE,
-                                                             encodeMove(bestMove));
+                                                             encodeMove(&bestMove));
                     moveListPool->releaseMoveList(moveList);
                     return score;
                 }
@@ -345,6 +348,8 @@ namespace Zagreus {
                 }
             }
 
+            __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
+
             int depthReduction = 0;
             bool isOpponentKingInCheck;
 
@@ -383,14 +388,13 @@ namespace Zagreus {
                     if (move.captureScore == NO_CAPTURE_SCORE) {
                         TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
                         TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
-                        TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(move);
-                        TranspositionTable::getTT()->counterMoves[previousMove.from][previousMove.to] = encodeMove(
-                                move);
+                        TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(&move);
+                        TranspositionTable::getTT()->counterMoves[previousMove.from][previousMove.to] = encodeMove(&move);
                         TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
                     }
 
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
-                                                             NodeType::FAIL_HIGH_NODE, encodeMove(bestMove));
+                                                             NodeType::FAIL_HIGH_NODE, encodeMove(&bestMove));
                     moveListPool->releaseMoveList(moveList);
                     return score;
                 }
@@ -404,14 +408,14 @@ namespace Zagreus {
             }
         }
 
-        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType, encodeMove(bestMove));
+        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType, encodeMove(&bestMove));
         moveListPool->releaseMoveList(moveList);
         return alpha;
     }
 
     int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
-                                        Move &previousMove,
-                                        std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine) {
+                               Move &previousMove,
+                               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine) {
         searchStats.qnodes += 1;
 
         if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
@@ -473,6 +477,8 @@ namespace Zagreus {
                     continue;
                 }
             }
+
+            __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
 
             int score = quiesce(board, -beta, -alpha, rootMove, move, endTime, engine);
             score *= -1;
@@ -800,7 +806,7 @@ namespace Zagreus {
                 evalContext.blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE);
             }
         }
-        
+
         uint8_t castlingRights = bitboard.getCastlingRights();
         if (!(castlingRights & CastlingRights::BLACK_QUEENSIDE) && !(castlingRights & CastlingRights::BLACK_KINGSIDE)) {
             if (!(bitboard.getCastlingRights() & CastlingRights::HAS_BLACK_CASTLED)) {
@@ -886,7 +892,7 @@ namespace Zagreus {
                     evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
                     break;
             }
-            
+
             protectedPieces &= ~(1ULL << index);
         }
     }
@@ -899,7 +905,7 @@ namespace Zagreus {
         while (protectedPieces) {
             uint64_t index = bitscanForward(protectedPieces);
             PieceType pieceType = bitboard.getPieceOnSquare(index);
-            
+
             switch (pieceType) {
                 case WHITE_PAWN:
                 case BLACK_PAWN:
@@ -927,7 +933,7 @@ namespace Zagreus {
                     evalContext.blackEndgameScore += getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
                     break;
             }
-            
+
             protectedPieces &= ~(1ULL << index);
         }
     }
@@ -1060,26 +1066,23 @@ namespace Zagreus {
     void SearchManager::getPawnScore(Bitboard &bitboard) {
         for (int i = 0; i < 8; i++) {
             uint64_t pawnsOnFile = bitboard.getPawnsOnSameFile<color>(i);
-            bool isPassed = bitboard.isPassedPawn<color>(i);
-            bool isIsolated = bitboard.isIsolatedPawn<color>(i);
-            bool isSemiOpen = bitboard.isSemiOpenFile<color>(i);
             int amountOfPawns = popcnt(pawnsOnFile);
 
             evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
             evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
 
-            if (isPassed) {
+            if (bitboard.isPassedPawn<color>(i)) {
                 evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
                 evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
-            } else if (isIsolated) {
-                if (isSemiOpen) {
+            } else if (bitboard.isIsolatedPawn<color>(i)) {
+                if (bitboard.isSemiOpenFile<color>(i)) {
                     evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN);
                     evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN);
                 } else {
                     evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN);
                     evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
                 }
-            } else if (isSemiOpen) {
+            } else if (bitboard.isSemiOpenFile<color>(i)) {
                 evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
                 evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
             }

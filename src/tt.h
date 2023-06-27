@@ -94,7 +94,7 @@ namespace Zagreus {
 
         int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
 
-        TTEntry getEntry(uint64_t zobristHash);
+        TTEntry* getEntry(uint64_t zobristHash);
 
         void ageHistoryTable();
     };
