@@ -38,7 +38,7 @@ namespace Zagreus {
         moveList->size++;
     }
     
-    int scoreMove(int ply, Line &previousPv, const uint32_t* previousPvMoveCodes, Move* move, Move &previousMove, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt, uint64_t zobristHash) {
+    int scoreMove(int ply, Line &previousPv, const uint32_t* previousPvMoveCodes, Move* move, Move &previousMove, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
             if (moveCode == previousPvMoveCodes[i]) {
                 return 50000 - i;
@@ -47,12 +47,6 @@ namespace Zagreus {
 
         if (moveCode == bestMoveCode) {
             return 25000;
-        }
-
-        TTEntry* entry = tt->getEntry(zobristHash);
-
-        if (entry->zobristHash == zobristHash) {
-            return 15000;
         }
 
         if (move->captureScore >= 0) {
@@ -108,11 +102,10 @@ namespace Zagreus {
 
         int ply = bitboard.getPly();
         Move previousMove = bitboard.getPreviousMove();
-        uint64_t zobristHash = bitboard.getZobristHash();
 
         for (int i = 0; i < moveList->size; i++) {
             Move* move = &moveList->moves[i];
-            move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt, zobristHash);
+            move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
         }
     }
 
@@ -142,11 +135,10 @@ namespace Zagreus {
 
         int ply = bitboard.getPly();
         Move previousMove = bitboard.getPreviousMove();
-        uint64_t zobristHash = bitboard.getZobristHash();
 
         for (int i = 0; i < moveList->size; i++) {
             Move* move = &moveList->moves[i];
-            move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt, zobristHash);
+            move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
         }
     }
 
