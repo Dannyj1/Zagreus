@@ -49,12 +49,6 @@ namespace Zagreus {
             return 25000;
         }
 
-        TTEntry* entry = tt->getEntry(zobristHash);
-
-        if (entry->zobristHash == zobristHash) {
-            return 15000;
-        }
-
         if (move->captureScore >= 0) {
             return 10000 + move->captureScore;
         }

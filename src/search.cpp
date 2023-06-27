@@ -33,6 +33,10 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
+
+    // Half the average value of a pawn
+    static int startWindowSize = ((getEvalValue(EvalFeature::MIDGAME_PAWN_MATERIAL) + getEvalValue(EvalFeature::MIDGAME_PAWN_MATERIAL)) / 2) * 0.75;
+
     Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
         searchStats = {};
         isSearching = true;
@@ -41,8 +45,8 @@ namespace Zagreus {
         int iterationScore = -1000000;
         int alpha = -1000000;
         int beta = 1000000;
-        /*int alphaWindow = 75;
-        int betaWindow = 75;*/
+        int alphaWindow = startWindowSize;
+        int betaWindow = startWindowSize;
         Move iterationMove = {};
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
@@ -142,7 +146,7 @@ namespace Zagreus {
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
 
-               /* if (depth >= 2) {
+                if (depth >= 3) {
                     if (bestScore <= alpha) {
                         alpha += alphaWindow;
                         alphaWindow *= 4;
@@ -161,7 +165,7 @@ namespace Zagreus {
 
                     alpha = bestScore - alphaWindow;
                     beta = bestScore + betaWindow;
-                }*/
+                }
             }
 
             iterationScore = -1000000;
