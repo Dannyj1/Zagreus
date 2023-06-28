@@ -688,7 +688,7 @@ namespace Zagreus {
     void SearchManager::getWhiteKingScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t kingAttacks = evalContext.attacksFrom[kingLocation];
+        uint64_t kingAttacks = evalContext.whiteKingAttacks;
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
         uint64_t safetyMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
         safetyMask |= nortOne(safetyMask);
@@ -825,7 +825,6 @@ namespace Zagreus {
 
             while (attacksTo) {
                 int8_t index = bitscanForward(attacksTo);
-
                 PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
 
                 switch (pieceOnSquare) {
@@ -1309,7 +1308,30 @@ namespace Zagreus {
 
         uint64_t whiteCombinedAttacks = whiteKnightAttacks | whiteBishopAttacks | whiteRookAttacks | whiteQueenAttacks | whitePawnAttacks;
         uint64_t blackCombinedAttacks = blackKnightAttacks | blackBishopAttacks | blackRookAttacks | blackQueenAttacks | blackPawnAttacks;
+        uint64_t whiteKingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
+        uint64_t blackKingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
+        int8_t whiteKingSquare = bitscanForward(whiteKingBB);
+        int8_t blackKingSquare = bitscanForward(blackKingBB);
+        uint64_t whiteKingAttacks = bitboard.getKingAttacks(whiteKingSquare);
+        uint64_t blackKingAttacks = bitboard.getKingAttacks(blackKingSquare);
 
+        whiteCombinedAttacks |= whiteKingAttacks;
+        blackCombinedAttacks |= blackKingAttacks;
+        evalContext.whiteKingAttacks = whiteKingAttacks;
+        evalContext.blackKingAttacks = blackKingAttacks;
+
+        while (whiteKingAttacks) {
+            uint64_t attackIndex = bitscanForward(whiteKingAttacks);
+            evalContext.attacksTo[attackIndex] |= (1ULL << whiteKingAttacks);
+        }
+        
+        while (blackKingAttacks) {
+            uint64_t attackIndex = bitscanForward(blackKingAttacks);
+            evalContext.attacksTo[attackIndex] |= (1ULL << blackKingAttacks);
+        }
+
+        evalContext.attacksFrom[whiteKingSquare] = whiteKingAttacks;
+        evalContext.attacksFrom[blackKingSquare] = blackKingAttacks;
         evalContext.phase = getGamePhase(bitboard);
         evalContext.whiteMidgameScore = 0;
         evalContext.whiteEndgameScore = 0;
