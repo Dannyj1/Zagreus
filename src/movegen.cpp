@@ -88,7 +88,7 @@ namespace Zagreus {
         assert(moveList->size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
-        uint32_t moveCodes[previousPv.moveCount];
+        auto* moveCodes = new uint32_t[previousPv.moveCount];
         TTEntry* entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
 
@@ -107,6 +107,8 @@ namespace Zagreus {
             Move* move = &moveList->moves[i];
             move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
         }
+
+        delete[] moveCodes;
     }
 
     template<PieceColor color>
@@ -121,7 +123,7 @@ namespace Zagreus {
         assert(moveList->size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
-        uint32_t moveCodes[previousPv.moveCount];
+        auto* moveCodes = new uint32_t[previousPv.moveCount];
         TTEntry* entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
 
@@ -140,6 +142,8 @@ namespace Zagreus {
             Move* move = &moveList->moves[i];
             move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
         }
+
+        delete[] moveCodes;
     }
 
     template<PieceColor color>
