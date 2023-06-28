@@ -159,7 +159,6 @@ namespace Zagreus {
         while (pawnBB) {
             int8_t index = popLsb(pawnBB);
             uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
-
             uint64_t attackableSquares = bitboard.getColorBoard<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>();
 
             if (bitboard.getEnPassantSquare() > NO_SQUARE) {

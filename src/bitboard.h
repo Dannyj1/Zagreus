@@ -420,11 +420,14 @@ namespace Zagreus {
         template<PieceColor color>
         bool isIsolatedPawn(int8_t square) {
             uint64_t neighborMask = 0;
-            uint64_t leftMask = ((square & 7) + 7) >> 3;
-            uint64_t rightMask = ((square | 7) - 7) >> 3;
 
-            neighborMask |= (leftMask & getFile(square - 1));
-            neighborMask |= (rightMask & getFile(square + 1));
+            if (square % 8 != 0) {
+                neighborMask |= getFile(square - 1);
+            }
+
+            if (square % 8 != 7) {
+                neighborMask |= getFile(square + 1);
+            }
 
             if (color == PieceColor::WHITE) {
                 return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());
@@ -436,11 +439,14 @@ namespace Zagreus {
         template<PieceColor color>
         bool isPassedPawn(int8_t square) {
             uint64_t neighborMask = getFile(square);
-            uint64_t leftMask = ((square & 7) + 7) >> 3;   // mask is 0 for 'a' file (square & 7 == 0), -1 otherwise
-            uint64_t rightMask = ((square | 7) - 7) >> 3;  // mask is 0 for 'h' file (square | 7 == 7), -1 otherwise
 
-            neighborMask |= (leftMask & getFile(square - 1));
-            neighborMask |= (rightMask & getFile(square + 1));
+            if (square % 8 != 0) {
+                neighborMask |= getFile(square - 1);
+            }
+
+            if (square % 8 != 7) {
+                neighborMask |= getFile(square + 1);
+            }
 
             if (color == PieceColor::WHITE) {
                 return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());

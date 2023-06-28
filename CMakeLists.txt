@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.12)
 project(Zagreus)
 
 set(CMAKE_CXX_STANDARD 20)
-#set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -std=c++20 -Wall -Wextra -Wuninitialized -g -gcodeview -Wl,--pdb=Zagreus.pdb")
+#set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -fno-omit-frame-pointer -fsanitize=undefined -fsanitize-trap=all -gdwarf-4 -std=c++20 -Wall -Wextra -Wuninitialized -g -Wl,--pdb=Zagreus.pdb")
 #set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -std=c++20 -fuse-ld=lld -pthread -flto=full -fprofile-generate -fprofile-instr-use=tuner.profdata")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -std=c++20 -pthread -flto=full")
 
-#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O1 -march=native -Wall -Wextra -Wfatal-errors -ftrivial-auto-var-init=uninitialized -Wno-error=unused-command-line-argument -Wuninitialized -std=c++20 -g -gcodeview -Wl,--pdb=Zagreus.pdb")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=undefined -fsanitize-trap=all -gdwarf-4 -O1 -march=native -Wall -Wextra -Wfatal-errors -ftrivial-auto-var-init=uninitialized -Wno-error=unused-command-line-argument -Wuninitialized -std=c++20 -g -gcodeview")
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -march=native -Wall -Wextra -Wuninitialized -Wfatal-errors -std=c++20 -pthread -flto -fprofile-generate -fprofile-instr-use=tuner.profdata")
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -march=native -Wall -Wextra -Wuninitialized -Wfatal-errors -std=c++20 -pthread -flto -g -gcodeview -Wl,--pdb=Zagreus.pdb")
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -march=x86-64 -mtune=native -Wall -Wextra -Wuninitialized -Wfatal-errors -std=c++20 -pthread -flto")
