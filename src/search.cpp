@@ -761,7 +761,7 @@ namespace Zagreus {
     void SearchManager::getBlackKingScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t kingAttacks = evalContext.attacksFrom[kingLocation];
+        uint64_t kingAttacks = evalContext.blackKingAttacks;
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::BLACK_PAWN>();
         uint64_t safetyMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
         safetyMask |= soutOne(safetyMask);
@@ -827,82 +827,44 @@ namespace Zagreus {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t whitePieces = bitboard.getColorBoard<PieceColor::WHITE>() & ~kingBB;
         uint64_t protectedPieces = whitePieces & evalContext.whiteCombinedAttacks;
+        int8_t pawnCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::WHITE_PAWN>());
+        int8_t knightCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::WHITE_KNIGHT>());
+        int8_t bishopCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::WHITE_BISHOP>());
+        int8_t rookCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::WHITE_ROOK>());
+        int8_t queenCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::WHITE_QUEEN>());
 
-        while (protectedPieces) {
-            uint64_t index = bitscanForward(protectedPieces);
-            PieceType pieceType = bitboard.getPieceOnSquare(index);
-
-            switch (pieceType) {
-                case WHITE_PAWN:
-                case BLACK_PAWN:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_CONNECTIVITY);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_CONNECTIVITY);
-                    break;
-                case WHITE_KNIGHT:
-                case BLACK_KNIGHT:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_CONNECTIVITY);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_CONNECTIVITY);
-                    break;
-                case WHITE_BISHOP:
-                case BLACK_BISHOP:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_CONNECTIVITY);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_CONNECTIVITY);
-                    break;
-                case WHITE_ROOK:
-                case BLACK_ROOK:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_CONNECTIVITY);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_CONNECTIVITY);
-                    break;
-                case WHITE_QUEEN:
-                case BLACK_QUEEN:
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_QUEEN_CONNECTIVITY);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
-                    break;
-            }
-
-            protectedPieces &= ~(1ULL << index);
-        }
+        evalContext.whiteMidgameScore += pawnCount * getEvalValue(MIDGAME_PAWN_CONNECTIVITY);
+        evalContext.whiteEndgameScore += pawnCount * getEvalValue(ENDGAME_PAWN_CONNECTIVITY);
+        evalContext.whiteMidgameScore += knightCount * getEvalValue(MIDGAME_KNIGHT_CONNECTIVITY);
+        evalContext.whiteEndgameScore += knightCount * getEvalValue(ENDGAME_KNIGHT_CONNECTIVITY);
+        evalContext.whiteMidgameScore += bishopCount * getEvalValue(MIDGAME_BISHOP_CONNECTIVITY);
+        evalContext.whiteEndgameScore += bishopCount * getEvalValue(ENDGAME_BISHOP_CONNECTIVITY);
+        evalContext.whiteMidgameScore += rookCount * getEvalValue(MIDGAME_ROOK_CONNECTIVITY);
+        evalContext.whiteEndgameScore += rookCount * getEvalValue(ENDGAME_ROOK_CONNECTIVITY);
+        evalContext.whiteMidgameScore += queenCount * getEvalValue(MIDGAME_QUEEN_CONNECTIVITY);
+        evalContext.whiteEndgameScore += queenCount * getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
     }
 
     void SearchManager::getBlackConnectivityScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
         uint64_t blackPieces = bitboard.getColorBoard<PieceColor::BLACK>() & ~kingBB;
         uint64_t protectedPieces = blackPieces & evalContext.blackCombinedAttacks;
+        int8_t pawnCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::BLACK_PAWN>());
+        int8_t knightCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::BLACK_KNIGHT>());
+        int8_t bishopCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::BLACK_BISHOP>());
+        int8_t rookCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::BLACK_ROOK>());
+        int8_t queenCount = popcnt(protectedPieces & bitboard.getPieceBoard<PieceType::BLACK_QUEEN>());
 
-        while (protectedPieces) {
-            uint64_t index = bitscanForward(protectedPieces);
-            PieceType pieceType = bitboard.getPieceOnSquare(index);
-
-            switch (pieceType) {
-                case WHITE_PAWN:
-                case BLACK_PAWN:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_PAWN_CONNECTIVITY);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_PAWN_CONNECTIVITY);
-                    break;
-                case WHITE_KNIGHT:
-                case BLACK_KNIGHT:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_CONNECTIVITY);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_CONNECTIVITY);
-                    break;
-                case WHITE_BISHOP:
-                case BLACK_BISHOP:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_CONNECTIVITY);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_CONNECTIVITY);
-                    break;
-                case WHITE_ROOK:
-                case BLACK_ROOK:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_CONNECTIVITY);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_CONNECTIVITY);
-                    break;
-                case WHITE_QUEEN:
-                case BLACK_QUEEN:
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_QUEEN_CONNECTIVITY);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
-                    break;
-            }
-
-            protectedPieces &= ~(1ULL << index);
-        }
+        evalContext.blackMidgameScore += pawnCount * getEvalValue(MIDGAME_PAWN_CONNECTIVITY);
+        evalContext.blackEndgameScore += pawnCount * getEvalValue(ENDGAME_PAWN_CONNECTIVITY);
+        evalContext.blackMidgameScore += knightCount * getEvalValue(MIDGAME_KNIGHT_CONNECTIVITY);
+        evalContext.blackEndgameScore += knightCount * getEvalValue(ENDGAME_KNIGHT_CONNECTIVITY);
+        evalContext.blackMidgameScore += bishopCount * getEvalValue(MIDGAME_BISHOP_CONNECTIVITY);
+        evalContext.blackEndgameScore += bishopCount * getEvalValue(ENDGAME_BISHOP_CONNECTIVITY);
+        evalContext.blackMidgameScore += rookCount * getEvalValue(MIDGAME_ROOK_CONNECTIVITY);
+        evalContext.blackEndgameScore += rookCount * getEvalValue(ENDGAME_ROOK_CONNECTIVITY);
+        evalContext.blackMidgameScore += queenCount * getEvalValue(MIDGAME_QUEEN_CONNECTIVITY);
+        evalContext.blackEndgameScore += queenCount * getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
     }
 
     void SearchManager::getWhiteRookScore(Bitboard &bitboard) {
@@ -1277,32 +1239,30 @@ namespace Zagreus {
             blackQueenBB &= ~(1ULL << index);
         }
 
-        uint64_t whiteCombinedAttacks = whiteKnightAttacks | whiteBishopAttacks | whiteRookAttacks | whiteQueenAttacks | whitePawnAttacks;
-        uint64_t blackCombinedAttacks = blackKnightAttacks | blackBishopAttacks | blackRookAttacks | blackQueenAttacks | blackPawnAttacks;
         uint64_t whiteKingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t blackKingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
         int8_t whiteKingSquare = bitscanForward(whiteKingBB);
         int8_t blackKingSquare = bitscanForward(blackKingBB);
         uint64_t whiteKingAttacks = bitboard.getKingAttacks(whiteKingSquare);
         uint64_t blackKingAttacks = bitboard.getKingAttacks(blackKingSquare);
+        uint64_t whiteCombinedAttacks = whiteKnightAttacks | whiteBishopAttacks | whiteRookAttacks | whiteQueenAttacks | whitePawnAttacks | whiteKingAttacks;
+        uint64_t blackCombinedAttacks = blackKnightAttacks | blackBishopAttacks | blackRookAttacks | blackQueenAttacks | blackPawnAttacks | blackKingAttacks;
 
-        whiteCombinedAttacks |= whiteKingAttacks;
-        blackCombinedAttacks |= blackKingAttacks;
         evalContext.whiteKingAttacks = whiteKingAttacks;
         evalContext.blackKingAttacks = blackKingAttacks;
+        evalContext.attacksFrom[whiteKingSquare] = whiteKingAttacks;
+        evalContext.attacksFrom[blackKingSquare] = blackKingAttacks;
 
         while (whiteKingAttacks) {
-            uint64_t attackIndex = bitscanForward(whiteKingAttacks);
-            evalContext.attacksTo[attackIndex] |= (1ULL << whiteKingAttacks);
+            uint64_t attackIndex = popLsb(whiteKingAttacks);
+            evalContext.attacksTo[attackIndex] |= (1ULL << whiteKingSquare);
         }
         
         while (blackKingAttacks) {
-            uint64_t attackIndex = bitscanForward(blackKingAttacks);
-            evalContext.attacksTo[attackIndex] |= (1ULL << blackKingAttacks);
+            uint64_t attackIndex = popLsb(blackKingAttacks);
+            evalContext.attacksTo[attackIndex] |= (1ULL << blackKingSquare);
         }
 
-        evalContext.attacksFrom[whiteKingSquare] = whiteKingAttacks;
-        evalContext.attacksFrom[blackKingSquare] = blackKingAttacks;
         evalContext.phase = getGamePhase(bitboard);
         evalContext.whiteMidgameScore = 0;
         evalContext.whiteEndgameScore = 0;
