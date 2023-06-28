@@ -123,6 +123,8 @@ namespace Zagreus {
         uint64_t whiteCombinedAttacks = 0;
         uint64_t blackPawnAttacks = 0;
         uint64_t blackCombinedAttacks = 0;
+        uint64_t whiteKingAttacks = 0;
+        uint64_t blackKingAttacks = 0;
         uint64_t attacksFrom[64] = { 0ULL };
         uint64_t attacksTo[64] = { 0ULL };
     };
