@@ -624,7 +624,7 @@ namespace Zagreus {
         evalContext.whiteEndgameScore += popcnt(evalContext.whiteCombinedAttacks & evalContext.whitePawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
 
         while (ownPiecesBBLoop) {
-            int index = bitscanForward(ownPiecesBBLoop);
+            int index = popLsb(ownPiecesBBLoop);
             PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
             uint64_t attacks = evalContext.attacksFrom[index];
             int mobility = popcnt(attacks & ~ownPiecesBB);
@@ -647,8 +647,6 @@ namespace Zagreus {
                     evalContext.whiteEndgameScore += mobility * getEvalValue(ENDGAME_QUEEN_MOBILITY);
                     break;
             }
-
-            ownPiecesBBLoop &= ~(1ULL << index);
         }
     }
 
@@ -661,7 +659,7 @@ namespace Zagreus {
         evalContext.blackEndgameScore += popcnt(evalContext.blackCombinedAttacks & evalContext.blackPawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
 
         while (ownPiecesBBLoop) {
-            int index = bitscanForward(ownPiecesBBLoop);
+            int index = popLsb(ownPiecesBBLoop);
             PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
             uint64_t attacks = evalContext.attacksFrom[index];
             uint64_t mobility = popcnt(attacks & ~ownPiecesBB);
@@ -684,8 +682,6 @@ namespace Zagreus {
                     evalContext.blackEndgameScore += mobility * getEvalValue(ENDGAME_QUEEN_MOBILITY);
                     break;
             }
-
-            ownPiecesBBLoop &= ~(1ULL << index);
         }
     }
 
