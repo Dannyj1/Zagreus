@@ -690,7 +690,7 @@ namespace Zagreus {
     void SearchManager::getWhiteKingScore(Bitboard &bitboard) {
         uint64_t kingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
         uint64_t kingLocation = bitscanForward(kingBB);
-        uint64_t kingAttacks = evalContext.attacksFrom[kingLocation];
+        uint64_t kingAttacks = evalContext.whiteKingAttacks;
         uint64_t pawnBB = bitboard.getPieceBoard<PieceType::WHITE_PAWN>();
         uint64_t safetyMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
         safetyMask |= nortOne(safetyMask);
@@ -749,17 +749,17 @@ namespace Zagreus {
                 PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
 
                 switch (pieceOnSquare) {
-                    case PieceType::WHITE_BISHOP:
-                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
-                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+                    case PieceType::BLACK_BISHOP:
+                        evalContext.whiteMidgameScore -= getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+                        evalContext.whiteEndgameScore -= getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
                         break;
-                    case PieceType::WHITE_ROOK:
-                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
-                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+                    case PieceType::BLACK_ROOK:
+                        evalContext.whiteMidgameScore -= getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+                        evalContext.whiteEndgameScore -= getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
                         break;
-                    case PieceType::WHITE_QUEEN:
-                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
-                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
+                    case PieceType::BLACK_QUEEN:
+                        evalContext.whiteMidgameScore -= getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+                        evalContext.whiteEndgameScore -= getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
                         break;
                 }
 
@@ -827,21 +827,20 @@ namespace Zagreus {
 
             while (attacksTo) {
                 int8_t index = bitscanForward(attacksTo);
-
                 PieceType pieceOnSquare = bitboard.getPieceOnSquare(index);
 
                 switch (pieceOnSquare) {
-                    case PieceType::BLACK_BISHOP:
-                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
-                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+                    case PieceType::WHITE_BISHOP:
+                        evalContext.blackMidgameScore -= getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+                        evalContext.blackEndgameScore -= getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
                         break;
-                    case PieceType::BLACK_ROOK:
-                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
-                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+                    case PieceType::WHITE_ROOK:
+                        evalContext.blackMidgameScore -= getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+                        evalContext.blackEndgameScore -= getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
                         break;
-                    case PieceType::BLACK_QUEEN:
-                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
-                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
+                    case PieceType::WHITE_QUEEN:
+                        evalContext.blackMidgameScore -= getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+                        evalContext.blackEndgameScore -= getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
                         break;
                 }
 
@@ -1308,7 +1307,30 @@ namespace Zagreus {
 
         uint64_t whiteCombinedAttacks = whiteKnightAttacks | whiteBishopAttacks | whiteRookAttacks | whiteQueenAttacks | whitePawnAttacks;
         uint64_t blackCombinedAttacks = blackKnightAttacks | blackBishopAttacks | blackRookAttacks | blackQueenAttacks | blackPawnAttacks;
+        uint64_t whiteKingBB = bitboard.getPieceBoard<PieceType::WHITE_KING>();
+        uint64_t blackKingBB = bitboard.getPieceBoard<PieceType::BLACK_KING>();
+        int8_t whiteKingSquare = bitscanForward(whiteKingBB);
+        int8_t blackKingSquare = bitscanForward(blackKingBB);
+        uint64_t whiteKingAttacks = bitboard.getKingAttacks(whiteKingSquare);
+        uint64_t blackKingAttacks = bitboard.getKingAttacks(blackKingSquare);
 
+        whiteCombinedAttacks |= whiteKingAttacks;
+        blackCombinedAttacks |= blackKingAttacks;
+        evalContext.whiteKingAttacks = whiteKingAttacks;
+        evalContext.blackKingAttacks = blackKingAttacks;
+
+        while (whiteKingAttacks) {
+            uint64_t attackIndex = bitscanForward(whiteKingAttacks);
+            evalContext.attacksTo[attackIndex] |= (1ULL << whiteKingAttacks);
+        }
+        
+        while (blackKingAttacks) {
+            uint64_t attackIndex = bitscanForward(blackKingAttacks);
+            evalContext.attacksTo[attackIndex] |= (1ULL << blackKingAttacks);
+        }
+
+        evalContext.attacksFrom[whiteKingSquare] = whiteKingAttacks;
+        evalContext.attacksFrom[blackKingSquare] = blackKingAttacks;
         evalContext.phase = getGamePhase(bitboard);
         evalContext.whiteMidgameScore = 0;
         evalContext.whiteEndgameScore = 0;
