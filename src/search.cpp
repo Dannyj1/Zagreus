@@ -1094,13 +1094,13 @@ namespace Zagreus {
         uint64_t blackRookBB = bitboard.getPieceBoard<PieceType::BLACK_ROOK>();
         uint64_t blackQueenBB = bitboard.getPieceBoard<PieceType::BLACK_QUEEN>();
 
-        uint64_t whitePawnAttacks = calculatePawnAttacks<PieceColor::WHITE>(whitePawnBB);
+        uint64_t whitePawnAttacks = bitboard.getPawnAttacks<PieceColor::WHITE>(whitePawnBB);
         uint64_t whiteKnightAttacks = 0;
         uint64_t whiteBishopAttacks = 0;
         uint64_t whiteRookAttacks = 0;
         uint64_t whiteQueenAttacks = 0;
 
-        uint64_t blackPawnAttacks = calculatePawnAttacks<PieceColor::BLACK>(blackPawnBB);
+        uint64_t blackPawnAttacks = bitboard.getPawnAttacks<PieceColor::BLACK>(blackPawnBB);
         uint64_t blackKnightAttacks = 0;
         uint64_t blackBishopAttacks = 0;
         uint64_t blackRookAttacks = 0;

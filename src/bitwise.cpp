@@ -189,7 +189,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    uint64_t getPawnEastAttacks(uint64_t pawns) {
+    uint64_t calculatePawnEastAttacks(uint64_t pawns) {
         if (color == WHITE) {
             return noEaOne(pawns);
         } else {
@@ -198,7 +198,7 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    uint64_t getPawnWestAttacks(uint64_t pawns) {
+    uint64_t calculatePawnWestAttacks(uint64_t pawns) {
         if (color == WHITE) {
             return noWeOne(pawns);
         } else {
@@ -226,7 +226,7 @@ namespace Zagreus {
 
     template<PieceColor color>
     uint64_t calculatePawnAttacks(uint64_t bb) {
-        return getPawnEastAttacks<color>(bb) | getPawnWestAttacks<color>(bb);
+        return calculatePawnEastAttacks<color>(bb) | calculatePawnWestAttacks<color>(bb);
     }
 
     template uint64_t calculatePawnAttacks<PieceColor::WHITE>(uint64_t);
