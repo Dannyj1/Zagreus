@@ -41,10 +41,10 @@ namespace Zagreus {
     double K = 0.0;
 
     int batchSize = 64;
-    double learningRate = 1.0;
+    double learningRate = 0.1;
     double epsilon = 10.0;
     double optimizerEpsilon = 1e-6;
-    double epsilonDecay = 0.98;
+    double epsilonDecay = 0.97;
     double beta1 = 0.9;
     double beta2 = 0.999;
     int epsilonWarmupIterations = 0;
