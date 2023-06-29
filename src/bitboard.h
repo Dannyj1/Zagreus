@@ -408,7 +408,7 @@ namespace Zagreus {
 
         uint64_t getTilesBetween(int8_t from, int8_t to);
 
-        const Move &getPreviousMove() const;
+        [[nodiscard]] const Move &getPreviousMove() const;
 
         uint64_t getFile(int8_t square);
 
@@ -460,22 +460,18 @@ namespace Zagreus {
         template<PieceColor color>
         bool hasMinorOrMajorPieces() {
             if (color == PieceColor::WHITE) {
-                return getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
-                       getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>();
+                return getColorBoard<color>() & ~(getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::WHITE_KING>());
             } else {
-                return getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
-                       getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>();
+                return getColorBoard<color>() & ~(getPieceBoard<PieceType::BLACK_PAWN>() | getPieceBoard<PieceType::BLACK_KING>());
             }
         }
 
         template<PieceColor color>
         int getAmountOfMinorOrMajorPieces() {
             if (color == PieceColor::WHITE) {
-                return popcnt(getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
-                                getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>());
+                return popcnt(getColorBoard<color>() & ~(getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::WHITE_KING>()));
             } else {
-                return popcnt(getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
-                                getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>());
+                return popcnt(getColorBoard<color>() & ~(getPieceBoard<PieceType::BLACK_PAWN>() | getPieceBoard<PieceType::BLACK_KING>()));
             }
         }
 
@@ -483,13 +479,13 @@ namespace Zagreus {
 
         void unmakeNullMove();
 
-        int getWhiteMidgamePst() const;
+        [[nodiscard]] int getWhiteMidgamePst() const;
 
-        int getWhiteEndgamePst() const;
+        [[nodiscard]] int getWhiteEndgamePst() const;
 
-        int getBlackMidgamePst() const;
+        [[nodiscard]] int getBlackMidgamePst() const;
 
-        int getBlackEndgamePst() const;
+        [[nodiscard]] int getBlackEndgamePst() const;
 
         int getAmountOfMinorOrMajorPieces();
     };

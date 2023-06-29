@@ -19,28 +19,10 @@
  */
 
 #include <x86intrin.h>
-#include <lzcntintrin.h>
 
 #include "utils.h"
 
 namespace Zagreus {
-    uint64_t popcnt(uint64_t b) {
-        return __builtin_popcountll(b);
-    }
-
-    int8_t bitscanForward(uint64_t b) {
-        return b ? _tzcnt_u64(b) : 0;
-    }
-
-    int8_t bitscanReverse(uint64_t b) {
-        return b ? _lzcnt_u64(b) ^ 63 : 0;
-    }
-
-    uint32_t encodeMove(const Move &move) {
-        return (move.promotionPiece << 20) | (move.piece << 15) |
-               (move.to << 7) | move.from;
-    }
-
     std::string getNotation(int8_t square) {
         std::string notation = "";
 
@@ -55,14 +37,6 @@ namespace Zagreus {
         int rank = move[1] - '1';
 
         return file + rank * 8;
-    }
-
-    static constexpr uint16_t pieceWeights[12] = {
-            100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 65535, 65535
-    };
-
-    uint16_t getPieceWeight(PieceType type) {
-        return pieceWeights[type];
     }
 
     char getCharacterForPieceType(PieceType pieceType) {
@@ -94,9 +68,5 @@ namespace Zagreus {
             case EMPTY:
                 return ' ';
         }
-    }
-
-    int mvvlva(PieceType attacker, PieceType victim) {
-        return MVVLVA_TABLE[attacker][victim];
     }
 }

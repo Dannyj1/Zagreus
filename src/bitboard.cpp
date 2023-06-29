@@ -538,17 +538,11 @@ namespace Zagreus {
     }
 
     bool Bitboard::hasMinorOrMajorPieces() {
-        return getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
-               getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>() |
-               getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
-               getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>();
+        return hasMinorOrMajorPieces<PieceColor::WHITE>() || hasMinorOrMajorPieces<PieceColor::BLACK>();
     }
 
     int Bitboard::getAmountOfMinorOrMajorPieces() {
-        return popcnt(getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::WHITE_KNIGHT>() |
-                      getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::WHITE_ROOK>() |
-                      getPieceBoard<PieceType::BLACK_BISHOP>() | getPieceBoard<PieceType::BLACK_KNIGHT>() |
-                      getPieceBoard<PieceType::BLACK_QUEEN>() | getPieceBoard<PieceType::BLACK_ROOK>());
+        return getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() + getAmountOfMinorOrMajorPieces<PieceColor::BLACK>();
     }
 
     void Bitboard::print() {

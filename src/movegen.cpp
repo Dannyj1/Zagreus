@@ -38,7 +38,7 @@ namespace Zagreus {
         moveList->size++;
     }
     
-    int scoreMove(int ply, Line &previousPv, const uint32_t* previousPvMoveCodes, Move &move, Move &previousMove, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
+    int scoreMove(int ply, Line &previousPv, const uint32_t* previousPvMoveCodes, Move* move, Move &previousMove, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
             if (moveCode == previousPvMoveCodes[i]) {
                 return 50000 - i;
@@ -49,8 +49,8 @@ namespace Zagreus {
             return 25000;
         }
 
-        if (move.captureScore >= 0) {
-            return 10000 + move.captureScore;
+        if (move->captureScore >= 0) {
+            return 10000 + move->captureScore;
         }
 
         if (tt->killerMoves[0][ply] == moveCode) {
@@ -69,11 +69,11 @@ namespace Zagreus {
             return 2000;
         }
 
-        if (move.captureScore < -1) {
-            return move.captureScore - 5000;
+        if (move->captureScore < -1) {
+            return move->captureScore - 5000;
         }
 
-        return tt->historyMoves[move.piece][move.to];
+        return tt->historyMoves[move->piece][move->to];
     }
 
     template<PieceColor color>
@@ -88,25 +88,27 @@ namespace Zagreus {
         assert(moveList->size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
-        uint32_t moveCodes[previousPv.moveCount];
-        TTEntry entry = tt->getEntry(bitboard.getZobristHash());
+        auto* moveCodes = new uint32_t[previousPv.moveCount];
+        TTEntry* entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
 
         for (int i = 0; i < previousPv.moveCount; i++) {
-            moveCodes[i] = encodeMove(previousPv.moves[i]);
+            moveCodes[i] = encodeMove(&previousPv.moves[i]);
         }
 
-        if (entry.zobristHash == bitboard.getZobristHash()) {
-            bestMoveCode = entry.bestMoveCode;
+        if (entry->zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = entry->bestMoveCode;
         }
 
         int ply = bitboard.getPly();
         Move previousMove = bitboard.getPreviousMove();
 
         for (int i = 0; i < moveList->size; i++) {
-            Move &move = moveList->moves[i];
-            move.score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
+            Move* move = &moveList->moves[i];
+            move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
         }
+
+        delete[] moveCodes;
     }
 
     template<PieceColor color>
@@ -121,25 +123,27 @@ namespace Zagreus {
         assert(moveList->size <= MAX_MOVES);
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
-        uint32_t moveCodes[previousPv.moveCount];
-        TTEntry entry = tt->getEntry(bitboard.getZobristHash());
+        auto* moveCodes = new uint32_t[previousPv.moveCount];
+        TTEntry* entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
 
         for (int i = 0; i < previousPv.moveCount; i++) {
-            moveCodes[i] = encodeMove(previousPv.moves[i]);
+            moveCodes[i] = encodeMove(&previousPv.moves[i]);
         }
 
-        if (entry.zobristHash == bitboard.getZobristHash()) {
-            bestMoveCode = entry.bestMoveCode;
+        if (entry->zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = entry->bestMoveCode;
         }
 
         int ply = bitboard.getPly();
         Move previousMove = bitboard.getPreviousMove();
 
         for (int i = 0; i < moveList->size; i++) {
-            Move &move = moveList->moves[i];
-            move.score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
+            Move* move = &moveList->moves[i];
+            move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move), bestMoveCode, tt);
         }
+
+        delete[] moveCodes;
     }
 
     template<PieceColor color>
@@ -153,10 +157,8 @@ namespace Zagreus {
         }
 
         while (pawnBB) {
-            int8_t index = bitscanForward(pawnBB);
-            pawnBB &= ~(1ULL << index);
+            int8_t index = popLsb(pawnBB);
             uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
-
             uint64_t attackableSquares = bitboard.getColorBoard<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>();
 
             if (bitboard.getEnPassantSquare() > NO_SQUARE) {
@@ -175,8 +177,7 @@ namespace Zagreus {
             }
 
             while (genBB) {
-                int8_t genIndex = bitscanForward(genBB);
-                genBB &= ~(1ULL << genIndex);
+                int8_t genIndex = popLsb(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -222,8 +223,7 @@ namespace Zagreus {
         }
 
         while (knightBB) {
-            int8_t index = bitscanForward(knightBB);
-            knightBB &= ~(1ULL << index);
+            int8_t index = popLsb(knightBB);
             uint64_t genBB = bitboard.getKnightAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -238,8 +238,7 @@ namespace Zagreus {
             }
 
             while (genBB) {
-                int8_t genIndex = bitscanForward(genBB);
-                genBB &= ~(1ULL << genIndex);
+                int8_t genIndex = popLsb(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -271,8 +270,7 @@ namespace Zagreus {
         }
 
         while (bishopBB) {
-            int8_t index = bitscanForward(bishopBB);
-            bishopBB &= ~(1ULL << index);
+            int8_t index = popLsb(bishopBB);
             uint64_t genBB = bitboard.getBishopAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -287,8 +285,7 @@ namespace Zagreus {
             }
 
             while (genBB) {
-                int8_t genIndex = bitscanForward(genBB);
-                genBB &= ~(1ULL << genIndex);
+                int8_t genIndex = popLsb(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -320,8 +317,7 @@ namespace Zagreus {
         }
 
         while (rookBB) {
-            int8_t index = bitscanForward(rookBB);
-            rookBB &= ~(1ULL << index);
+            int8_t index = popLsb(rookBB);
             uint64_t genBB = bitboard.getRookAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -336,8 +332,7 @@ namespace Zagreus {
             }
 
             while (genBB) {
-                int8_t genIndex = bitscanForward(genBB);
-                genBB &= ~(1ULL << genIndex);
+                int8_t genIndex = popLsb(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -369,8 +364,7 @@ namespace Zagreus {
         }
 
         while (queenBB) {
-            int8_t index = bitscanForward(queenBB);
-            queenBB &= ~(1ULL << index);
+            int8_t index = popLsb(queenBB);
             uint64_t genBB = bitboard.getQueenAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
@@ -385,8 +379,7 @@ namespace Zagreus {
             }
 
             while (genBB) {
-                int8_t genIndex = bitscanForward(genBB);
-                genBB &= ~(1ULL << genIndex);
+                int8_t genIndex = popLsb(genBB);
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
@@ -435,8 +428,7 @@ namespace Zagreus {
         }
 
         while (genBB) {
-            int8_t genIndex = bitscanForward(genBB);
-            genBB &= ~(1ULL << genIndex);
+            int8_t genIndex = popLsb(genBB);
             PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
             int captureScore = NO_CAPTURE_SCORE;
 
@@ -464,8 +456,7 @@ namespace Zagreus {
                 bool canCastle = true;
 
                 while (tilesToCheck) {
-                    int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck &= ~(1ULL << tileIndex);
+                    int8_t tileIndex = popLsb(tilesToCheck);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
                         canCastle = false;
@@ -484,8 +475,7 @@ namespace Zagreus {
                 bool canCastle = true;
 
                 while (tilesToCheck) {
-                    int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck &= ~(1ULL << tileIndex);
+                    int8_t tileIndex = popLsb(tilesToCheck);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
                         canCastle = false;
@@ -504,8 +494,7 @@ namespace Zagreus {
                 bool canCastle = true;
 
                 while (tilesToCheck) {
-                    int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck &= ~(1ULL << tileIndex);
+                    int8_t tileIndex = popLsb(tilesToCheck);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
                         canCastle = false;
@@ -524,8 +513,7 @@ namespace Zagreus {
                 bool canCastle = true;
 
                 while (tilesToCheck) {
-                    int8_t tileIndex = bitscanForward(tilesToCheck);
-                    tilesToCheck &= ~(1ULL << tileIndex);
+                    int8_t tileIndex = popLsb(tilesToCheck);
 
                     if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
                         canCastle = false;

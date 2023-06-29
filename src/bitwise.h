@@ -86,10 +86,10 @@ namespace Zagreus {
     uint64_t blackFrontSpans(uint64_t pawns);
 
     template<PieceColor color>
-    uint64_t getPawnEastAttacks(uint64_t pawns);
+    uint64_t calculatePawnEastAttacks(uint64_t pawns);
 
     template<PieceColor color>
-    uint64_t getPawnWestAttacks(uint64_t pawns);
+    uint64_t calculatePawnWestAttacks(uint64_t pawns);
 
     uint64_t calculateKnightAttacks(uint64_t knights);
 
