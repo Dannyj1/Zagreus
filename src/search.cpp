@@ -1045,13 +1045,17 @@ namespace Zagreus {
                         evalContext.blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
                     }
                 }
-            } else if (bitboard.isSemiOpenFile<color>(i)) {
+            } else {
                 if (color == PieceColor::WHITE) {
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
+                    if (bitboard.isSemiOpenFile<PieceColor::BLACK>(i)) {
+                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
+                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
+                    }
                 } else {
-                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
-                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
+                    if (bitboard.isSemiOpenFile<PieceColor::WHITE>(i)) {
+                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
+                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
+                    }
                 }
             }
         }
