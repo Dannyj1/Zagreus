@@ -740,12 +740,12 @@ namespace Zagreus {
         uint8_t rookAttackCount = popcnt(evalContext.blackRookAttacks & kingAttacks);
         uint8_t queenAttackCount = popcnt(evalContext.blackQueenAttacks & kingAttacks);
 
-        evalContext.whiteMidgameScore -= bishopAttackCount * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
-        evalContext.whiteEndgameScore -= bishopAttackCount * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
-        evalContext.whiteMidgameScore -= rookAttackCount * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
-        evalContext.whiteEndgameScore -= rookAttackCount * getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
-        evalContext.whiteMidgameScore -= queenAttackCount * getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
-        evalContext.whiteEndgameScore -= queenAttackCount * getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
+        evalContext.whiteMidgameScore += bishopAttackCount * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.whiteEndgameScore += bishopAttackCount * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.whiteMidgameScore += rookAttackCount * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.whiteEndgameScore += rookAttackCount * getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.whiteMidgameScore += queenAttackCount * getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+        evalContext.whiteEndgameScore += queenAttackCount * getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
     }
 
     uint64_t blackQueenCastlingAttackPattern = 0x7000000000000000;
@@ -803,12 +803,12 @@ namespace Zagreus {
         uint8_t rookAttackCount = popcnt(evalContext.whiteRookAttacks & kingAttacks);
         uint8_t queenAttackCount = popcnt(evalContext.whiteQueenAttacks & kingAttacks);
 
-        evalContext.blackMidgameScore -= bishopAttackCount * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
-        evalContext.blackEndgameScore -= bishopAttackCount * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
-        evalContext.blackMidgameScore -= rookAttackCount * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
-        evalContext.blackEndgameScore -= rookAttackCount * getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
-        evalContext.blackMidgameScore -= queenAttackCount * getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
-        evalContext.blackEndgameScore -= queenAttackCount * getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
+        evalContext.blackMidgameScore += bishopAttackCount * getEvalValue(MIDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.blackEndgameScore += bishopAttackCount * getEvalValue(ENDGAME_BISHOP_ATTACK_NEAR_KING);
+        evalContext.blackMidgameScore += rookAttackCount * getEvalValue(MIDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.blackEndgameScore += rookAttackCount * getEvalValue(ENDGAME_ROOK_ATTACK_NEAR_KING);
+        evalContext.blackMidgameScore += queenAttackCount * getEvalValue(MIDGAME_QUEEN_ATTACK_NEAR_KING);
+        evalContext.blackEndgameScore += queenAttackCount * getEvalValue(ENDGAME_QUEEN_ATTACK_NEAR_KING);
     }
 
     void SearchManager::getWhiteConnectivityScore(Bitboard &bitboard) {
