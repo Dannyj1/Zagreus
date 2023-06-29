@@ -620,10 +620,11 @@ namespace Zagreus {
     void SearchManager::getWhiteMobilityScore(Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::WHITE>();
         uint64_t ownPiecesBBLoop = ownPiecesBB & ~evalContext.blackPawnAttacks;
+        uint64_t defendedSquares = popcnt(evalContext.whitePawnAttacks & evalContext.whiteCombinedAttacks);
 
         // Slight bonus for squares defended by own pawn
-        evalContext.whiteMidgameScore += popcnt(evalContext.whiteCombinedAttacks & evalContext.whitePawnAttacks) * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
-        evalContext.whiteEndgameScore += popcnt(evalContext.whiteCombinedAttacks & evalContext.whitePawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
+        evalContext.whiteMidgameScore += defendedSquares * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
+        evalContext.whiteEndgameScore += defendedSquares * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
 
         while (ownPiecesBBLoop) {
             int index = popLsb(ownPiecesBBLoop);
@@ -655,10 +656,11 @@ namespace Zagreus {
     void SearchManager::getBlackMobilityScore(Bitboard &bitboard) {
         uint64_t ownPiecesBB = bitboard.getColorBoard<PieceColor::BLACK>();
         uint64_t ownPiecesBBLoop = ownPiecesBB & ~evalContext.whitePawnAttacks;
+        uint64_t defendedSquares = popcnt(evalContext.blackPawnAttacks & evalContext.blackCombinedAttacks);
 
         // Slight bonus for squares defended by own pawn
-        evalContext.blackMidgameScore += popcnt(evalContext.blackCombinedAttacks & evalContext.blackPawnAttacks) * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
-        evalContext.blackEndgameScore += popcnt(evalContext.blackCombinedAttacks & evalContext.blackPawnAttacks) * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
+        evalContext.blackMidgameScore += defendedSquares * getEvalValue(MIDGAME_SQUARE_DEFENDED_BY_PAWN);
+        evalContext.blackEndgameScore += defendedSquares * getEvalValue(ENDGAME_SQUARE_DEFENDED_BY_PAWN);
 
         while (ownPiecesBBLoop) {
             int index = popLsb(ownPiecesBBLoop);
@@ -821,7 +823,7 @@ namespace Zagreus {
         uint64_t protectedPieces = whitePieces & evalContext.whiteCombinedAttacks;
 
         while (protectedPieces) {
-            uint64_t index = bitscanForward(protectedPieces);
+            uint64_t index = popLsb(protectedPieces);
             PieceType pieceType = bitboard.getPieceOnSquare(index);
 
             switch (pieceType) {
@@ -846,8 +848,6 @@ namespace Zagreus {
                     evalContext.whiteEndgameScore += getEvalValue(ENDGAME_QUEEN_CONNECTIVITY);
                     break;
             }
-
-            protectedPieces &= ~(1ULL << index);
         }
     }
 
@@ -966,7 +966,7 @@ namespace Zagreus {
         }
 
         while (bishopBB) {
-            uint64_t index = bitscanForward(bishopBB);
+            uint64_t index = popLsb(bishopBB);
 
             if (index == Square::G2 || index == Square::B2) {
                 uint64_t fianchettoPattern = nortOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
@@ -977,8 +977,6 @@ namespace Zagreus {
                     evalContext.whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_FIANCHETTO);
                 }
             }
-
-            bishopBB &= ~(1ULL << index);
         }
     }
 
@@ -993,7 +991,7 @@ namespace Zagreus {
         }
 
         while (bishopBB) {
-            uint64_t index = bitscanForward(bishopBB);
+            uint64_t index = popLsb(bishopBB);
 
             if (index == Square::G7 || index == Square::B7) {
                 uint64_t fianchettoPattern = soutOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
@@ -1004,8 +1002,6 @@ namespace Zagreus {
                     evalContext.blackEndgameScore += getEvalValue(ENDGAME_BISHOP_FIANCHETTO);
                 }
             }
-
-            bishopBB &= ~(1ULL << index);
         }
     }
 
