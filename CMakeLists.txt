@@ -68,9 +68,9 @@ option(ENABLE_LTO "Enable Link Time Optimization (LTO)" ON)
 option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
 option(ENABLE_MARCH "Enable -march flag" ON)
 option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags" OFF)
-set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
+option(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
 option(ENABLE_MTUNE "Enable -mtune flag" ON)
-set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
+option(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
 
 # Profile defaults
 # If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF
@@ -129,7 +129,7 @@ if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDe
 endif()
 
 # If release build type and MARCH_VALUE is not defined, set march value to "x86-64"
-if (CMAKE_BUILD_TYPE STREQUAL "Release" AND NOT DEFINED MARCH_VALUE)
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MARCH_VALUE)
     set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag" FORCE)
 endif()
 
