@@ -1011,23 +1011,48 @@ namespace Zagreus {
             uint64_t pawnsOnFile = bitboard.getPawnsOnSameFile<color>(i);
             int amountOfPawns = popcnt(pawnsOnFile);
 
-            evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
-            evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
+            if (color == PieceColor::WHITE) {
+                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
+                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
+            } else {
+                evalContext.blackMidgameScore += getEvalValue(MIDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
+                evalContext.blackEndgameScore += getEvalValue(ENDGAME_PAWN_ON_SAME_FILE) * (amountOfPawns - 1);
+            }
 
             if (bitboard.isPassedPawn<color>(i)) {
-                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
-                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
+                if (color == PieceColor::WHITE) {
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
+                } else {
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
+                }
             } else if (bitboard.isIsolatedPawn<color>(i)) {
                 if (bitboard.isSemiOpenFile<color>(i)) {
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                    if (color == PieceColor::WHITE) {
+                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                    } else {
+                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                    }
                 } else {
-                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN);
-                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
+                    if (color == PieceColor::WHITE) {
+                        evalContext.whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN);
+                        evalContext.whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
+                    } else {
+                        evalContext.blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN);
+                        evalContext.blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
+                    }
                 }
             } else if (bitboard.isSemiOpenFile<color>(i)) {
-                evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
-                evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
+                if (color == PieceColor::WHITE) {
+                    evalContext.whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
+                    evalContext.whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
+                } else {
+                    evalContext.blackMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
+                    evalContext.blackEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
+                }
             }
         }
     }
