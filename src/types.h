@@ -120,12 +120,19 @@ namespace Zagreus {
         int whiteEndgameScore = 0;
         int blackEndgameScore = 0;
         uint64_t whitePawnAttacks = 0;
+        uint64_t whiteKnightAttacks = 0;
+        uint64_t whiteBishopAttacks = 0;
+        uint64_t whiteRookAttacks = 0;
+        uint64_t whiteQueenAttacks = 0;
+        uint64_t whiteKingAttacks = 0;
         uint64_t whiteCombinedAttacks = 0;
         uint64_t blackPawnAttacks = 0;
-        uint64_t blackCombinedAttacks = 0;
-        uint64_t whiteKingAttacks = 0;
+        uint64_t blackKnightAttacks = 0;
+        uint64_t blackBishopAttacks = 0;
+        uint64_t blackRookAttacks = 0;
+        uint64_t blackQueenAttacks = 0;
         uint64_t blackKingAttacks = 0;
+        uint64_t blackCombinedAttacks = 0;
         uint64_t attacksFrom[64] = { 0ULL };
-        uint64_t attacksTo[64] = { 0ULL };
     };
 }

@@ -190,7 +190,7 @@ void benchmark() {
             bb.setMovingColor(color);
 
             senjo::GoParams params{};
-            params.depth = 3;
+            params.depth = 4;
 
             auto start = std::chrono::high_resolution_clock::now();
             searchManager.getBestMove(params, engine, bb);
