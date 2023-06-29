@@ -43,7 +43,7 @@
 # Description: Enables undefined behavior sanitizer flags (-fsanitize=undefined -fsanitize-trap=all).
 # Default: OFF
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 project(Zagreus)
 
@@ -51,9 +51,15 @@ project(Zagreus)
 set(BUILD_FLAGS "")
 
 # Define the different profiles and their corresponding flags
-set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g -gcodeview -Wl,--pdb=Zagreus.pdb")
-set(PROFILING_FLAGS "-pthread -g -gcodeview -Wl,--pdb=Zagreus.pdb")
+set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g")
+set(PROFILING_FLAGS "-pthread -g")
 set(RELEASE_FLAGS "-pthread")
+
+if(WIN32)
+    # Add the --pdb flag for Windows
+    set(DEBUG_FLAGS "${DEBUG_FLAGS} -gcodeview -Wl,--pdb=Zagreus.pdb")
+    set(PROFILING_FLAGS "${PROFILING_FLAGS} -gcodeview -Wl,--pdb=Zagreus.pdb")
+endif()
 
 # Define toggleable flags
 option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)
@@ -123,7 +129,7 @@ if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDe
 endif()
 
 # If release build type and MARCH_VALUE is not defined, set march value to "x86-64"
-if (CMAKE_BUILD_TYPE STREQUAL "Release" AND NOT DEFINED MARCH_VALUE)
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MARCH_VALUE)
     set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag" FORCE)
 endif()
 
@@ -136,6 +142,16 @@ endif()
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MTUNE_VALUE)
     set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag" FORCE)
 endif()
+
+message("ENABLE_OPTIMIZATION: ${ENABLE_OPTIMIZATION}")
+message("ENABLE_OPTIMIZATION_FAST_MATH: ${ENABLE_OPTIMIZATION_FAST_MATH}")
+message("ENABLE_LTO: ${ENABLE_LTO}")
+message("ENABLE_WARNINGS: ${ENABLE_WARNINGS}")
+message("ENABLE_MARCH: ${ENABLE_MARCH}")
+message("ENABLE_SANITIZER: ${ENABLE_SANITIZER}")
+message("MARCH_VALUE: ${MARCH_VALUE}")
+message("ENABLE_MTUNE: ${ENABLE_MTUNE}")
+message("MTUNE_VALUE: ${MTUNE_VALUE}")
 
 # Apply toggleable flags to profiles
 if (ENABLE_OPTIMIZATION)

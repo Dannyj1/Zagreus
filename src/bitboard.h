@@ -306,12 +306,12 @@ namespace Zagreus {
                 uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
                 uint64_t opponentOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
 
-                return fileMask == (fileMask & ownOccupied) && fileMask != (fileMask & opponentOccupied);
+                return fileMask == (fileMask & ~ownOccupied) && fileMask != (fileMask & ~opponentOccupied);
             } else {
                 uint64_t ownOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
                 uint64_t opponentOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
 
-                return fileMask == (fileMask & ownOccupied) && fileMask != (fileMask & opponentOccupied);
+                return fileMask == (fileMask & ~ownOccupied) && fileMask != (fileMask & ~opponentOccupied);
             }
         }
 
@@ -322,10 +322,10 @@ namespace Zagreus {
 
             if (color == PieceColor::WHITE) {
                 uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
-                return fileMask == (fileMask & ownOccupied);
+                return fileMask == (fileMask & ~ownOccupied);
             } else {
                 uint64_t ownOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
-                return fileMask == (fileMask & ownOccupied);
+                return fileMask == (fileMask & ~ownOccupied);
             }
         }
 

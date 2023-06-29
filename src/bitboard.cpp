@@ -1102,7 +1102,7 @@ namespace Zagreus {
         uint64_t fileMask = getFile(square);
         uint64_t occupied = getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::BLACK_PAWN>();
 
-        return fileMask == (fileMask & occupied);
+        return fileMask == (fileMask & ~occupied);
     }
 
     int Bitboard::getWhiteMidgamePst() const {
