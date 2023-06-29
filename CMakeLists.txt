@@ -68,9 +68,9 @@ option(ENABLE_LTO "Enable Link Time Optimization (LTO)" ON)
 option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
 option(ENABLE_MARCH "Enable -march flag" ON)
 option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags" OFF)
-option(MARCH_VALUE "Value for -march flag" "x86-64")
+set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
 option(ENABLE_MTUNE "Enable -mtune flag" ON)
-option(MTUNE_VALUE "Value for -mtune flag" "native")
+set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
 
 # Profile defaults
 # If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF
