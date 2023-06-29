@@ -51,8 +51,8 @@ project(Zagreus)
 set(BUILD_FLAGS "")
 
 # Define the different profiles and their corresponding flags
-set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g")
-set(PROFILING_FLAGS "-pthread -g -fno-inline")
+set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g -gcodeview -Wl,--pdb=Zagreus.pdb")
+set(PROFILING_FLAGS "-pthread -g -gcodeview -Wl,--pdb=Zagreus.pdb")
 set(RELEASE_FLAGS "-pthread")
 
 # Define toggleable flags
@@ -66,25 +66,74 @@ set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
 option(ENABLE_MTUNE "Enable -mtune flag" ON)
 set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
 
-# If debug build type, disable optimization, lto, enable warnings, set march to native
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+# Profile defaults
+# If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION)
     set(ENABLE_OPTIMIZATION OFF CACHE BOOL "Enable optimization flags (-O3)" FORCE)
+endif()
+
+# If debug build type and ENABLE_LTO is not defined, set LTO to OFF
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_LTO)
     set(ENABLE_LTO OFF CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
+endif()
+
+# If debug build type and ENABLE_WARNINGS is not defined, set warnings to ON
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_WARNINGS)
     set(ENABLE_WARNINGS ON CACHE BOOL "Enable all compiler warnings" FORCE)
+endif()
+
+# If debug build type and ENABLE_MARCH is not defined, set march to OFF
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MARCH)
     set(ENABLE_MARCH OFF CACHE BOOL "Enable -march flag" FORCE)
+endif()
+
+# If debug build type and MARCH_VALUE is not defined, set march value to an empty string
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MARCH_VALUE)
     set(MARCH_VALUE "" CACHE STRING "Value for -march flag" FORCE)
+endif()
+
+# If debug build type and ENABLE_MTUNE is not defined, set mtune to OFF
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MTUNE)
     set(ENABLE_MTUNE OFF CACHE BOOL "Enable -mtune flag" FORCE)
+endif()
+
+# If debug build type and MTUNE_VALUE is not defined, set mtune value to an empty string
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MTUNE_VALUE)
     set(MTUNE_VALUE "" CACHE STRING "Value for -mtune flag" FORCE)
 endif()
 
-# If release build type, enable optimization, lto, disable warnings
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
+# If release build type and ENABLE_OPTIMIZATION is not defined, set optimization to ON
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION)
     set(ENABLE_OPTIMIZATION ON CACHE BOOL "Enable optimization flags (-O3)" FORCE)
+endif()
+
+# If release build type and ENABLE_LTO is not defined, set LTO to ON
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_LTO)
     set(ENABLE_LTO ON CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
+endif()
+
+# If release build type and ENABLE_WARNINGS is not defined, set warnings to OFF
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_WARNINGS)
     set(ENABLE_WARNINGS OFF CACHE BOOL "Enable all compiler warnings" FORCE)
+endif()
+
+# If release build type and ENABLE_MARCH is not defined, set march to ON
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MARCH)
     set(ENABLE_MARCH ON CACHE BOOL "Enable -march flag" FORCE)
+endif()
+
+# If release build type and MARCH_VALUE is not defined, set march value to "x86-64"
+if (CMAKE_BUILD_TYPE STREQUAL "Release" AND NOT DEFINED MARCH_VALUE)
     set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag" FORCE)
+endif()
+
+# If release build type and ENABLE_MTUNE is not defined, set mtune to ON
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MTUNE)
     set(ENABLE_MTUNE ON CACHE BOOL "Enable -mtune flag" FORCE)
+endif()
+
+# If release build type and MTUNE_VALUE is not defined, set mtune value to "native"
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MTUNE_VALUE)
     set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag" FORCE)
 endif()
 
