@@ -337,7 +337,7 @@ namespace Zagreus {
             assert(fromSquare <= 63);
             assert(toSquare >= 0);
             assert(toSquare <= 63);
-            int score = 0;
+            int score;
             PieceType movingPiece = pieceSquareMapping[fromSquare];
             PieceType capturedPieceType = pieceSquareMapping[toSquare];
 
