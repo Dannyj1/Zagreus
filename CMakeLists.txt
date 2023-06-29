@@ -51,14 +51,14 @@ project(Zagreus)
 set(BUILD_FLAGS "")
 
 # Define the different profiles and their corresponding flags
-set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g -gcodeview")
-set(PROFILING_FLAGS "-pthread -g -gcodeview")
+set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g")
+set(PROFILING_FLAGS "-pthread -g")
 set(RELEASE_FLAGS "-pthread")
 
 if(WIN32)
     # Add the --pdb flag for Windows
-    set(DEBUG_FLAGS "${DEBUG_FLAGS} -Wl,--pdb=Zagreus.pdb")
-    set(PROFILING_FLAGS "${PROFILING_FLAGS} -Wl,--pdb=Zagreus.pdb")
+    set(DEBUG_FLAGS "${DEBUG_FLAGS} -gcodeview -Wl,--pdb=Zagreus.pdb")
+    set(PROFILING_FLAGS "${PROFILING_FLAGS} -gcodeview -Wl,--pdb=Zagreus.pdb")
 endif()
 
 # Define toggleable flags
@@ -142,6 +142,16 @@ endif()
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MTUNE_VALUE)
     set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag" FORCE)
 endif()
+
+message("ENABLE_OPTIMIZATION: ${ENABLE_OPTIMIZATION}")
+message("ENABLE_OPTIMIZATION_FAST_MATH: ${ENABLE_OPTIMIZATION_FAST_MATH}")
+message("ENABLE_LTO: ${ENABLE_LTO}")
+message("ENABLE_WARNINGS: ${ENABLE_WARNINGS}")
+message("ENABLE_MARCH: ${ENABLE_MARCH}")
+message("ENABLE_SANITIZER: ${ENABLE_SANITIZER}")
+message("MARCH_VALUE: ${MARCH_VALUE}")
+message("ENABLE_MTUNE: ${ENABLE_MTUNE}")
+message("MTUNE_VALUE: ${MTUNE_VALUE}")
 
 # Apply toggleable flags to profiles
 if (ENABLE_OPTIMIZATION)

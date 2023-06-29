@@ -71,12 +71,13 @@ namespace Zagreus {
                 generateMoves<PieceColor::BLACK>(board, moveList);
             }
 
-            MovePicker moves = MovePicker(moveList);
-
-            if (moves.size() == 1) {
+            if (moveList->size == 1) {
+                bestMove = moveList->moves[0];
                 moveListPool->releaseMoveList(moveList);
                 return bestMove;
             }
+
+            auto moves = MovePicker(moveList);
 
             while (moves.hasNext()) {
                 Move move = moves.getNextMove();

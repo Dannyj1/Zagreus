@@ -45,7 +45,7 @@ namespace senjo {
            << " score cp " << stats.score
            << " nodes " << stats.nodes + stats.qnodes
            << " time " << stats.msecs
-           << " nps " << static_cast<uint64_t>((stats.nodes + stats.qnodes) / (stats.msecs / 1000.0))
+           << " nps " << static_cast<uint64_t>((stats.nodes + stats.qnodes) / std::max(stats.msecs / 1000.0, 1.0))
            << " pv " << stats.pv;
 
         return os;
