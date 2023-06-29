@@ -35,14 +35,16 @@ namespace Zagreus {
     public:
         Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
 
-        int
-        search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
+        template<PieceColor color>
+        int search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
                std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull);
 
+        template<PieceColor color>
         int quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                              Move &previousMove,
                              std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine);
 
+        template<PieceColor color>
         int evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine);
 
         bool isCurrentlySearching();

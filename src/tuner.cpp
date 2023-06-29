@@ -77,7 +77,13 @@ namespace Zagreus {
             tunerBoard.setFromFenTuner(pos.fen);
 //            Move rootMove{};
 //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+            int evalScore;
+
+            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
+                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
+            } else {
+                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
+            }
             double loss = pos.result - sigmoid((double) evalScore);
             totalLoss += loss * loss;
         }
@@ -92,7 +98,13 @@ namespace Zagreus {
             tunerBoard.setFromFenTuner(pos.fen);
 //            Move rootMove{};
 //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-            int evalScore = searchManager.evaluate(tunerBoard, maxEndTime, engine);
+            int evalScore;
+
+            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
+                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
+            } else {
+                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
+            }
             pos.score = evalScore;
         }
 
@@ -146,7 +158,15 @@ namespace Zagreus {
             std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
             Move rootMove{};
-            int qScore = searchManager.quiesce(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime, engine);
+            int qScore;
+
+            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
+                qScore = searchManager.quiesce<PieceColor::WHITE>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
+                                               engine);
+            } else {
+                qScore = searchManager.quiesce<PieceColor::BLACK>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
+                                               engine);
+            }
 
             if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw()
                 || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
@@ -173,7 +193,15 @@ namespace Zagreus {
                 draw++;
             }
 
-            positions.emplace_back(TunePosition{fen, result, searchManager.evaluate(tunerBoard, maxEndTime, engine)});
+            int evalScore;
+
+            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
+                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
+            } else {
+                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
+            }
+
+            positions.emplace_back(TunePosition{fen, result, evalScore});
         }
 
         // Reduce the biggest two classes to the size of the smallest class

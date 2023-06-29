@@ -102,10 +102,15 @@ namespace Zagreus {
 
                 Line pvLine = {};
                 Move previousMove = {};
+                int score;
 
-                int score = search(board, depth, alpha, beta, move, previousMove, endTime, pvLine, engine, true, true);
+                if (board.getMovingColor() == PieceColor::WHITE) {
+                    score = search<PieceColor::WHITE>(board, depth, alpha, beta, move, previousMove, endTime, pvLine, engine, true, true);
+                } else {
+                    score = search<PieceColor::BLACK>(board, depth, alpha, beta, move, previousMove, endTime, pvLine, engine, true, true);
+                }
+
                 score *= -1;
-
                 board.unmakeMove(move);
 
                 if (iterationScore == -1000000 || (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime)) {
@@ -188,7 +193,7 @@ namespace Zagreus {
         return bestMove;
     }
 
-    // TODO: use template
+    template<PieceColor color>
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                               Move &previousMove,
                               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
@@ -199,14 +204,8 @@ namespace Zagreus {
             return beta;
         }
 
-        bool isOwnKingInCheck = false;
         bool depthExtended = false;
-
-        if (board.getMovingColor() == PieceColor::WHITE) {
-            isOwnKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
-        } else {
-            isOwnKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
-        }
+        bool isOwnKingInCheck = board.isKingInCheck<color>();
 
         if (isOwnKingInCheck) {
             depth += 1;
@@ -216,7 +215,7 @@ namespace Zagreus {
         if (depth == 0 || board.isWinner<PieceColor::WHITE>() || board.isWinner<PieceColor::BLACK>() ||
             board.isDraw()) {
             pvLine.moveCount = 0;
-            return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
+            return quiesce<color>(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
         int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
@@ -225,22 +224,22 @@ namespace Zagreus {
             return ttScore;
         }
 
-/*        int amountOfPieces = 0;
-
-        if (board.getMovingColor() == PieceColor::WHITE) {
-            amountOfPieces = popcnt(board.getColorBoard<PieceColor::WHITE>());
-        } else {
-            amountOfPieces = popcnt(board.getColorBoard<PieceColor::BLACK>());
-        }*/
-
         Line line{};
 
-        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces() && evaluate(board, endTime, engine) >= beta) {
+        if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces() && evaluate<color>(board, endTime, engine) >= beta) {
             board.makeNullMove();
             int R = depth > 6 ? 3 : 2;
             Move nullMove = {};
-            int score = search(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
-                               engine, false, false);
+            int score;
+
+            if (color == PieceColor::WHITE) {
+                score = search<PieceColor::BLACK>(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
+                                              engine, false, false);
+            } else {
+                score = search<PieceColor::WHITE>(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
+                                              engine, false, false);
+            }
+
             score *= -1;
             board.unmakeNullMove();
 
@@ -254,13 +253,8 @@ namespace Zagreus {
         MoveList* moveList = moveListPool->getMoveList();
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
-        if (board.getMovingColor() == PieceColor::WHITE) {
-            generateMoves<PieceColor::WHITE>(board, moveList);
-        } else {
-            generateMoves<PieceColor::BLACK>(board, moveList);
-        }
-
-        MovePicker moves = MovePicker(moveList);
+        generateMoves<color>(board, moveList);
+        auto moves = MovePicker(moveList);
         bool searchedFirstLegalMove = false;
 
         while (isPv && !searchedFirstLegalMove && moves.hasNext()) {
@@ -268,22 +262,23 @@ namespace Zagreus {
 
             board.makeMove(move);
 
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                if (board.isKingInCheck<PieceColor::BLACK>()) {
-                    board.unmakeMove(move);
-                    continue;
-                }
-            } else {
-                if (board.isKingInCheck<PieceColor::WHITE>()) {
-                    board.unmakeMove(move);
-                    continue;
-                }
+            if (board.isKingInCheck<color>()) {
+                board.unmakeMove(move);
+                continue;
             }
 
             __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
 
-            int score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+            int score;
+
+            if (color == PieceColor::WHITE) {
+                score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
                                engine, true, false);
+            } else {
+                score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+                               engine, true, false);
+            }
+
             score *= -1;
 
             if (score > bestScore) {
@@ -322,7 +317,7 @@ namespace Zagreus {
 
         if (isPv && !searchedFirstLegalMove) {
             moveListPool->releaseMoveList(moveList);
-            return quiesce(board, alpha, beta, rootMove, previousMove, endTime, engine);
+            return quiesce<color>(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
         while (moves.hasNext()) {
@@ -336,16 +331,9 @@ namespace Zagreus {
 
             board.makeMove(move);
 
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                if (board.isKingInCheck<PieceColor::BLACK>()) {
-                    board.unmakeMove(move);
-                    continue;
-                }
-            } else {
-                if (board.isKingInCheck<PieceColor::WHITE>()) {
-                    board.unmakeMove(move);
-                    continue;
-                }
+            if (board.isKingInCheck<color>()) {
+                board.unmakeMove(move);
+                continue;
             }
 
             __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
@@ -353,10 +341,10 @@ namespace Zagreus {
             int depthReduction = 0;
             bool isOpponentKingInCheck;
 
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                isOpponentKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
-            } else {
+            if (color == PieceColor::WHITE) {
                 isOpponentKingInCheck = board.isKingInCheck<PieceColor::BLACK>();
+            } else {
+                isOpponentKingInCheck = board.isKingInCheck<PieceColor::WHITE>();
             }
 
             // Late move reduction
@@ -371,13 +359,26 @@ namespace Zagreus {
             }
 
             int score;
-            score = search(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                           previousMove, endTime, line, engine, false, canNull);
+
+            if (color == PieceColor::WHITE) {
+                score = search<PieceColor::BLACK>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
+                               previousMove, endTime, line, engine, false, canNull);
+            } else {
+                score = search<PieceColor::WHITE>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
+                               previousMove, endTime, line, engine, false, canNull);
+            }
+
             score *= -1;
 
             if (score > alpha && score < beta) {
-                score = search(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, true, false);
+                if (color == PieceColor::WHITE) {
+                    score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+                                   engine, true, false);
+                } else {
+                    score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+                                   engine, true, false);
+                }
+
                 score *= -1;
             }
 
@@ -413,6 +414,7 @@ namespace Zagreus {
         return alpha;
     }
 
+    template<PieceColor color>
     int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                                Move &previousMove,
                                std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine) {
@@ -422,7 +424,7 @@ namespace Zagreus {
             return beta;
         }
 
-        int standPat = evaluate(board, endTime, engine);
+        int standPat = evaluate<color>(board, endTime, engine);
 
         if (standPat >= beta) {
             return beta;
@@ -443,12 +445,7 @@ namespace Zagreus {
         }
 
         MoveList* moveList = moveListPool->getMoveList();
-
-        if (board.getMovingColor() == PieceColor::WHITE) {
-            generateQuiescenceMoves<PieceColor::WHITE>(board, moveList);
-        } else {
-            generateQuiescenceMoves<PieceColor::BLACK>(board, moveList);
-        }
+        generateQuiescenceMoves<color>(board, moveList);
 
         MovePicker moves = MovePicker(moveList);
         while (moves.hasNext()) {
@@ -466,21 +463,21 @@ namespace Zagreus {
 
             board.makeMove(move);
 
-            if (board.getMovingColor() == PieceColor::WHITE) {
-                if (board.isKingInCheck<PieceColor::BLACK>()) {
-                    board.unmakeMove(move);
-                    continue;
-                }
-            } else {
-                if (board.isKingInCheck<PieceColor::WHITE>()) {
-                    board.unmakeMove(move);
-                    continue;
-                }
+            if (board.isKingInCheck<color>()) {
+                board.unmakeMove(move);
+                continue;
             }
 
             __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
 
-            int score = quiesce(board, -beta, -alpha, rootMove, move, endTime, engine);
+            int score;
+
+            if (color == PieceColor::WHITE) {
+                score = quiesce<PieceColor::BLACK>(board, -beta, -alpha, rootMove, move, endTime, engine);
+            } else {
+                score = quiesce<PieceColor::WHITE>(board, -beta, -alpha, rootMove, move, endTime, engine);
+            }
+
             score *= -1;
             board.unmakeMove(move);
 
@@ -506,12 +503,13 @@ namespace Zagreus {
         return searchStats;
     }
 
+    template<PieceColor color>
     int SearchManager::evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine) {
         if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
             return 0;
         }
 
-        int modifier = board.getMovingColor() == PieceColor::WHITE ? 1 : -1;
+        int modifier = color == PieceColor::WHITE ? 1 : -1;
 
         if (board.isWinner<PieceColor::WHITE>()) {
             return (MATE_SCORE - board.getPly()) * modifier;
