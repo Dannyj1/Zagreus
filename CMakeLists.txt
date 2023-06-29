@@ -43,7 +43,7 @@
 # Description: Enables undefined behavior sanitizer flags (-fsanitize=undefined -fsanitize-trap=all).
 # Default: OFF
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 project(Zagreus)
 
@@ -51,9 +51,15 @@ project(Zagreus)
 set(BUILD_FLAGS "")
 
 # Define the different profiles and their corresponding flags
-set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g -gcodeview -Wl,--pdb=Zagreus.pdb")
-set(PROFILING_FLAGS "-pthread -g -gcodeview -Wl,--pdb=Zagreus.pdb")
+set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g -gcodeview")
+set(PROFILING_FLAGS "-pthread -g -gcodeview")
 set(RELEASE_FLAGS "-pthread")
+
+if(WIN32)
+    # Add the --pdb flag for Windows
+    set(DEBUG_FLAGS "${DEBUG_FLAGS} -Wl,--pdb=Zagreus.pdb")
+    set(PROFILING_FLAGS "${PROFILING_FLAGS} -Wl,--pdb=Zagreus.pdb")
+endif()
 
 # Define toggleable flags
 option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)

@@ -1145,8 +1145,8 @@ namespace Zagreus {
         uint64_t blackRookAttacks = 0;
         uint64_t blackQueenAttacks = 0;
 
-        for (unsigned long long & i : evalContext.attacksFrom) {
-            i = 0;
+        for (int i = 0; i < 64; i++) {
+            evalContext.attacksFrom[i] = 0;
         }
 
         while (whiteKnightBB) {
