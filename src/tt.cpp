@@ -24,7 +24,7 @@
 #include "tt.h"
 
 namespace Zagreus {
-    void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, uint32_t bestMoveCode) {
+    void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType) {
         if (score >= 90000000 || score <= -90000000) {
             return;
         }
@@ -37,7 +37,6 @@ namespace Zagreus {
             entry->depth = depth;
             entry->score = score;
             entry->nodeType = nodeType;
-            entry->bestMoveCode = bestMoveCode;
         }
     }
 

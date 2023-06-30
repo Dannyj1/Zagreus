@@ -96,10 +96,6 @@ namespace Zagreus {
             moveCodes[i] = encodeMove(&previousPv.moves[i]);
         }
 
-        if (entry->zobristHash == bitboard.getZobristHash()) {
-            bestMoveCode = entry->bestMoveCode;
-        }
-
         int ply = bitboard.getPly();
         Move previousMove = bitboard.getPreviousMove();
 
@@ -129,10 +125,6 @@ namespace Zagreus {
 
         for (int i = 0; i < previousPv.moveCount; i++) {
             moveCodes[i] = encodeMove(&previousPv.moves[i]);
-        }
-
-        if (entry->zobristHash == bitboard.getZobristHash()) {
-            bestMoveCode = entry->bestMoveCode;
         }
 
         int ply = bitboard.getPly();

@@ -42,7 +42,7 @@ namespace Zagreus {
         template<PieceColor color>
         int quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                              Move &previousMove,
-                             std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine);
+                             std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth = 0);
 
         template<PieceColor color>
         int evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine);

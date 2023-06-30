@@ -162,10 +162,10 @@ namespace Zagreus {
 
             if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
                 qScore = searchManager.quiesce<PieceColor::WHITE>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
-                                               engine);
+                                               engine, true);
             } else {
                 qScore = searchManager.quiesce<PieceColor::BLACK>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
-                                               engine);
+                                               engine, true);
             }
 
             if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw()
