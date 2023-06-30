@@ -36,9 +36,9 @@ namespace Zagreus {
         MoveListPool* moveListPool = MoveListPool::getInstance();
 
         std::list<senjo::EngineOption> options{
-            senjo::EngineOption("Move Overhead", "0", senjo::EngineOption::OptionType::Spin, 0, 5000),
+            senjo::EngineOption("Move Overhead", "10", senjo::EngineOption::OptionType::Spin, 0, 5000),
             senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, 33554432),
-            senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 64),
+            senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 1),
         };
 
     public:
