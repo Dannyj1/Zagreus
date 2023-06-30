@@ -151,7 +151,7 @@ namespace Zagreus {
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
 
-                if (depth >= 3) {
+                if (depth >= 4) {
                     if (bestScore <= alpha) {
                         alpha += alphaWindow;
                         alphaWindow *= 4;
