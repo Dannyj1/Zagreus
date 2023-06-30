@@ -102,8 +102,6 @@ namespace Zagreus {
                     }
                 }
 
-                __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
-
                 Line pvLine = {};
                 Move previousMove = {};
                 int score;
@@ -222,10 +220,12 @@ namespace Zagreus {
             return quiesce<color>(board, alpha, beta, rootMove, previousMove, endTime, engine);
         }
 
-        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
+        if (!isPv) {
+            int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
 
-        if (!isPv && ttScore != INT32_MIN) {
-            return ttScore;
+            if (ttScore != INT32_MIN) {
+                return ttScore;
+            }
         }
 
         Line line{};
@@ -270,8 +270,6 @@ namespace Zagreus {
                 board.unmakeMove(move);
                 continue;
             }
-
-            __builtin_prefetch(TranspositionTable::getTT()->getEntry(board.getZobristHash()), 0, 3);
 
             int score;
 
