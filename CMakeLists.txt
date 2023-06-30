@@ -51,9 +51,9 @@ project(Zagreus)
 set(BUILD_FLAGS "")
 
 # Define the different profiles and their corresponding flags
-set(DEBUG_FLAGS "-fno-omit-frame-pointer -pthread -gdwarf-4 -g")
-set(PROFILING_FLAGS "-pthread -g")
-set(RELEASE_FLAGS "-pthread")
+set(DEBUG_FLAGS "-static-libgcc -static-libstdc++ -fno-omit-frame-pointer -pthread -gdwarf-4 -g")
+set(PROFILING_FLAGS "-static-libgcc -static-libstdc++ -pthread -g")
+set(RELEASE_FLAGS "-static-libgcc -static-libstdc++ -pthread")
 
 if(WIN32)
     # Add the --pdb flag for Windows
