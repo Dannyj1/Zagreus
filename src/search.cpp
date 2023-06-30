@@ -427,18 +427,9 @@ namespace Zagreus {
             return beta;
         }
 
-        /*if (!isPv) {
-            int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
-
-            if (ttScore != INT32_MIN) {
-                return ttScore;
-            }
-        }*/
-
         int standPat = evaluate<color>(board, endTime, engine);
 
         if (standPat >= beta) {
-//            TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
             return beta;
         }
 
@@ -1070,7 +1061,14 @@ namespace Zagreus {
 
     template<PieceColor color>
     void SearchManager::getOutpostScore(Bitboard &bitboard) {
-        uint64_t rankMask = RANK_4 | RANK_5 | RANK_6;
+        uint64_t rankMask;
+
+        if (color == PieceColor::WHITE) {
+            rankMask = RANK_4 | RANK_5 | RANK_6;
+        } else {
+            rankMask = RANK_3 | RANK_4 | RANK_5;
+        }
+
         uint64_t ownPawnAttacks;
         uint64_t opponentPawnAttacks;
         uint64_t opponentAttackSpans;
@@ -1088,6 +1086,7 @@ namespace Zagreus {
         }
 
         uint64_t outpostSquares = (ownPawnAttacks & rankMask) & ~opponentPawnAttacks & ~opponentAttackSpans;
+        outpostSquares &= ~CENTER_SQUARES;
         uint64_t knightBB;
         uint64_t bishopBB;
 
@@ -1144,13 +1143,13 @@ namespace Zagreus {
         uint64_t blackRookBB = bitboard.getPieceBoard<PieceType::BLACK_ROOK>();
         uint64_t blackQueenBB = bitboard.getPieceBoard<PieceType::BLACK_QUEEN>();
 
-        uint64_t whitePawnAttacks = bitboard.getPawnAttacks<PieceColor::WHITE>(whitePawnBB);
+        uint64_t whitePawnAttacks = 0;
         uint64_t whiteKnightAttacks = 0;
         uint64_t whiteBishopAttacks = 0;
         uint64_t whiteRookAttacks = 0;
         uint64_t whiteQueenAttacks = 0;
 
-        uint64_t blackPawnAttacks = bitboard.getPawnAttacks<PieceColor::BLACK>(blackPawnBB);
+        uint64_t blackPawnAttacks = 0;
         uint64_t blackKnightAttacks = 0;
         uint64_t blackBishopAttacks = 0;
         uint64_t blackRookAttacks = 0;
@@ -1158,6 +1157,24 @@ namespace Zagreus {
 
         for (int i = 0; i < 64; i++) {
             evalContext.attacksFrom[i] = 0;
+        }
+
+        while (whitePawnBB) {
+            uint64_t index = popLsb(whitePawnBB);
+            uint64_t attacks = bitboard.getPawnAttacks<PieceColor::WHITE>(index);
+
+            whitePawnAttacks |= attacks;
+            evalContext.attacksFrom[index] = attacks;
+        }
+
+        evalContext.whitePawnAttacks = whitePawnAttacks;
+
+        while (blackPawnBB) {
+            uint64_t index = popLsb(blackPawnBB);
+            uint64_t attacks = bitboard.getPawnAttacks<PieceColor::BLACK>(index);
+
+            blackPawnAttacks |= attacks;
+            evalContext.attacksFrom[index] = attacks;
         }
 
         while (whiteKnightBB) {
