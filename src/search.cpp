@@ -427,18 +427,18 @@ namespace Zagreus {
             return beta;
         }
 
-        if (!isPv) {
+        /*if (!isPv) {
             int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
 
             if (ttScore != INT32_MIN) {
                 return ttScore;
             }
-        }
+        }*/
 
         int standPat = evaluate<color>(board, endTime, engine);
 
         if (standPat >= beta) {
-            TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
+//            TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE);
             return beta;
         }
 
@@ -502,7 +502,7 @@ namespace Zagreus {
         }
 
         moveListPool->releaseMoveList(moveList);
-        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, NodeType::PV_NODE);
+//        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, NodeType::PV_NODE);
         return alpha;
     }
 
