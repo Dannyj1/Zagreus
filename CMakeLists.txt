@@ -43,9 +43,14 @@
 # Description: Enables undefined behavior sanitizer flags (-fsanitize=undefined -fsanitize-trap=all).
 # Default: OFF
 
+# Option: APPEND_VERSION
+# Description: Appends the version number to the executable filename.
+# Default: ON
+
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 project(Zagreus)
+set(ZAGREUS_VERSION "v2.4.0")
 
 # Default values
 set(BUILD_FLAGS "")
@@ -71,6 +76,7 @@ option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags" OFF)
 set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
 option(ENABLE_MTUNE "Enable -mtune flag" ON)
 set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
+option(APPEND_VERSION "Append version to filename" ON)
 
 # Profile defaults
 # If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF
@@ -153,6 +159,15 @@ message("MARCH_VALUE: ${MARCH_VALUE}")
 message("ENABLE_MTUNE: ${ENABLE_MTUNE}")
 message("MTUNE_VALUE: ${MTUNE_VALUE}")
 
+if (APPEND_VERSION)
+    if (ENABLE_MARCH)
+        set(CMAKE_EXECUTABLE_SUFFIX "-${MARCH_VALUE}${CMAKE_EXECUTABLE_SUFFIX}")
+    endif()
+
+    set(CMAKE_EXECUTABLE_SUFFIX "-${CMAKE_SYSTEM_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
+    set(CMAKE_EXECUTABLE_SUFFIX "-${ZAGREUS_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
+endif()
+
 # Apply toggleable flags to profiles
 if (ENABLE_OPTIMIZATION)
     if (ENABLE_OPTIMIZATION_FAST_MATH)
@@ -219,3 +234,5 @@ file(GLOB inc_zagreus "src/*.h" "src/*.cpp")
 file(GLOB inc_senjo "senjo/*.h" "senjo/*.cpp")
 
 add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_zagreus})
+
+target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION="${ZAGREUS_VERSION}")
