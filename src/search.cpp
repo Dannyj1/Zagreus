@@ -1053,7 +1053,7 @@ namespace Zagreus {
                     if (bitboard.isSemiOpenFile<PieceColor::WHITE>(i)) {
                         evalContext.blackMidgameScore += getEvalValue(MIDGAME_PAWN_SEMI_OPEN_FILE);
                         evalContext.blackEndgameScore += getEvalValue(ENDGAME_PAWN_SEMI_OPEN_FILE);
-                    }
+                   }
                 }
             }
         }

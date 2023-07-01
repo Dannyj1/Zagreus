@@ -106,7 +106,17 @@ namespace Zagreus {
 
     void printEvalValues() {
         for (int i = 0; i < getEvalFeatureSize(); i++) {
-            std::cout << evalFeatureNames[i] << ": " << evalValues[i] << std::endl;
+            std::cout << evalFeatureNames[i] << ": " << evalValues[i];
+
+            if (evalValues[i] == baseEvalValues[i]) {
+                std::cout << " (unchanged)";
+            } else if (evalValues[i] > 0 && baseEvalValues[i] < 0) {
+                std::cout << " (Positive to negative)";
+            } else if (evalValues[i] < 0 && baseEvalValues[i] > 0) {
+                std::cout << " (Negative to positive)";
+            }
+
+            std::cout << std::endl;
         }
     }
 
