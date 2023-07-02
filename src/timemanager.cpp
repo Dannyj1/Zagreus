@@ -58,7 +58,7 @@ namespace Zagreus {
             timeLeft += params.binc;
         }
 
-        uint64_t moveOverhead = engine.getOption("Move Overhead").getIntValue();
+        uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
         if (timeLeft >= moveOverhead + 1) {
             timeLeft -= moveOverhead;
         }
