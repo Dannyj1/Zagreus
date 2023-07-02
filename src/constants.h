@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-static constexpr uint8_t MAX_PLY = 255;
+static constexpr uint16_t MAX_PLY = 512;
 static constexpr uint8_t MAX_MOVES = 255;
 static constexpr int ZOBRIST_CONSTANT_SIZE = 781;
 
