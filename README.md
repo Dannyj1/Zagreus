@@ -30,7 +30,7 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 # UCI Options
 Zagreus Engine has the following UCI options that can be changed:
 
-- `Move Overhead` - The amount of time that will be substracted from the internal timer for each move. This helps when using the engine over the internet, to prevent it from losing on time due to lag. The default is 0.
+- `MoveOverhead` - The amount of time that will be substracted from the internal timer for each move. This helps when using the engine over the internet, to prevent it from losing on time due to lag. The default is 0.
 - `Hash` - The size of the transposition table in megabytes, rounded to the nearest power of 2. The default is 512MB.
 
 # Build Instructions
