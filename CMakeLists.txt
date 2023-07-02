@@ -13,7 +13,7 @@
 # Option: ENABLE_OPTIMIZATION_FAST_MATH
 # Description: Enables fast math optimization flags (-Ofast).
 # This option overrides ENABLE_OPTIMIZATION if enabled.
-# Default: OFF
+# Default: OFF (Debug), ON (Release)
 
 # Option: ENABLE_LTO
 # Description: Enables Link Time Optimization (LTO).
@@ -45,7 +45,7 @@
 
 # Option: APPEND_VERSION
 # Description: Appends the version number to the executable filename.
-# Default: ON
+# Default: OFF
 
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
@@ -68,7 +68,7 @@ endif()
 
 # Define toggleable flags
 option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)
-option(ENABLE_OPTIMIZATION_FAST_MATH "Enable fast math optimization flags (-Ofast)" OFF)
+option(ENABLE_OPTIMIZATION_FAST_MATH "Enable fast math optimization flags (-Ofast)" ON)
 option(ENABLE_LTO "Enable Link Time Optimization (LTO)" ON)
 option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
 option(ENABLE_MARCH "Enable -march flag" ON)
@@ -76,12 +76,17 @@ option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags" OFF)
 set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
 option(ENABLE_MTUNE "Enable -mtune flag" ON)
 set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
-option(APPEND_VERSION "Append version to filename" ON)
+option(APPEND_VERSION "Append version to filename" OFF)
 
 # Profile defaults
 # If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION)
     set(ENABLE_OPTIMIZATION OFF CACHE BOOL "Enable optimization flags (-O3)" FORCE)
+    set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
+endif()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
+    set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
 endif()
 
 # If debug build type and ENABLE_LTO is not defined, set LTO to OFF
@@ -117,6 +122,11 @@ endif()
 # If release build type and ENABLE_OPTIMIZATION is not defined, set optimization to ON
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION)
     set(ENABLE_OPTIMIZATION ON CACHE BOOL "Enable optimization flags (-O3)" FORCE)
+endif()
+
+# If release build type and ENABLE_OPTIMIZATION_FAST_MATH is not defined, set optimization to ON
+if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
+    set(ENABLE_OPTIMIZATION_FAST_MATH ON CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
 endif()
 
 # If release build type and ENABLE_LTO is not defined, set LTO to ON
