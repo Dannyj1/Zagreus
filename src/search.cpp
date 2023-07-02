@@ -201,8 +201,8 @@ namespace Zagreus {
                               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
         searchStats.nodes += 1;
 
-        if (searchStats.nodes % 2048 == 0 &&
-            (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+        if (board.getPly() >= MAX_PLY || (searchStats.nodes % 2048 == 0 &&
+            (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime))) {
             return beta;
         }
 
@@ -422,6 +422,10 @@ namespace Zagreus {
                                Move &previousMove,
                                std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth) {
         searchStats.qnodes += 1;
+
+        if (board.getPly() >= MAX_PLY) {
+            return evaluate<color>(board, endTime, engine);
+        }
 
         if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
             return beta;
