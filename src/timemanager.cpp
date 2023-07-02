@@ -32,7 +32,7 @@ namespace Zagreus {
         }
 
         if (params.movetime > 0) {
-            return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("Move Overhead").getIntValue());
+            return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
         }
 
         // We assume a match lasts 50 moves
