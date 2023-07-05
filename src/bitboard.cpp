@@ -1090,11 +1090,11 @@ namespace Zagreus {
         Bitboard::previousPvLine = previousPvLine;
     }
 
-    uint8_t Bitboard::getPly() const {
+    uint16_t Bitboard::getPly() const {
         return ply;
     }
 
-    void Bitboard::setPly(uint8_t ply) {
+    void Bitboard::setPly(uint16_t ply) {
         Bitboard::ply = ply;
     }
 

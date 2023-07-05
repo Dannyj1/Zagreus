@@ -42,7 +42,7 @@ namespace Zagreus {
         uint64_t occupiedBB{ 0ULL };
 
         PieceColor movingColor = PieceColor::NONE;
-        uint8_t ply = 0;
+        uint16_t ply = 0;
         uint8_t halfMoveClock = 0;
         uint8_t fullmoveClock = 1;
         int8_t enPassantSquare = Square::NO_SQUARE;
@@ -291,9 +291,9 @@ namespace Zagreus {
 
         void setPreviousPvLine(Line &previousPvLine);
 
-        uint8_t getPly() const;
+        uint16_t getPly() const;
 
-        void setPly(uint8_t ply);
+        void setPly(uint16_t ply);
 
         uint64_t getZobristForMove(Move &move);
 

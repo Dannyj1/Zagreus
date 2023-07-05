@@ -201,7 +201,7 @@ namespace Zagreus {
                               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
         searchStats.nodes += 1;
 
-        if (board.getPly() >= MAX_PLY || (searchStats.nodes % 2048 == 0 &&
+        if (board.getPly() >= MAX_PLY || ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 &&
             (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime))) {
             return beta;
         }
@@ -262,6 +262,11 @@ namespace Zagreus {
         bool searchedFirstLegalMove = false;
 
         while (isPv && !searchedFirstLegalMove && moves.hasNext()) {
+            if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+                moveListPool->releaseMoveList(moveList);
+                return beta;
+            }
+
             Move move = moves.getNextMove();
 
             board.makeMove(move);
@@ -322,7 +327,7 @@ namespace Zagreus {
         }
 
         while (moves.hasNext()) {
-            if (searchStats.nodes % 2048 == 0 &&
+            if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 &&
                 (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
                 moveListPool->releaseMoveList(moveList);
                 return beta;
@@ -427,7 +432,7 @@ namespace Zagreus {
             return evaluate<color>(board, endTime, engine);
         }
 
-        if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+        if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
             return beta;
         }
 
@@ -457,7 +462,7 @@ namespace Zagreus {
             Move move = moves.getNextMove();
             assert(move.from != move.to);
 
-            if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+            if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
                 moveListPool->releaseMoveList(moveList);
                 return beta;
             }
