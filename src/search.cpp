@@ -54,7 +54,7 @@ namespace Zagreus {
         TranspositionTable::getTT()->ageHistoryTable();
 
         Line iterationPvLine = {};
-        while (!engine.stopRequested() && std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.5) {
+        while (!engine.stopRequested() && (std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.5 || depth == 0)) {
             depth += 1;
 
             if (params.depth > 0 && depth > params.depth) {
