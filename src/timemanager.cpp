@@ -26,13 +26,13 @@
 #include "engine.h"
 
 namespace Zagreus {
-    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor) {
+    std::chrono::time_point<std::chrono::steady_clock> getEndTime(std::chrono::time_point<std::chrono::steady_clock> startTime, senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor) {
         if (params.infinite || params.depth > 0 || params.nodes > 0) {
-            return std::chrono::time_point<std::chrono::high_resolution_clock>::max();
+            return std::chrono::time_point<std::chrono::steady_clock>::max();
         }
 
         if (params.movetime > 0) {
-            return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
+            return startTime + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
         }
 
         // We assume a match lasts 50 moves
@@ -83,6 +83,6 @@ namespace Zagreus {
         }
 
         timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 1ULL);
-        return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(timePerMove);
+        return startTime + std::chrono::milliseconds(timePerMove);
     }
 }

@@ -192,9 +192,9 @@ void benchmark() {
             senjo::GoParams params{};
             params.depth = 3;
 
-            auto start = std::chrono::high_resolution_clock::now();
+            auto start = std::chrono::steady_clock::now();
             searchManager.getBestMove(params, engine, bb);
-            auto end = std::chrono::high_resolution_clock::now();
+            auto end = std::chrono::steady_clock::now();
             std::chrono::duration<double, std::milli> elapsed = end - start;
 
             nodes += searchManager.getSearchStats().nodes + searchManager.getSearchStats().qnodes;
