@@ -42,20 +42,26 @@ namespace Zagreus {
             moves = params.movestogo;
         }
 
-        uint64_t movesToGo = moves - bitboard.getPly() / 2ULL;
+        uint64_t movesToGo = moves - (bitboard.getPly() / 2ULL);
 
-        if (movesToGo <= 0) {
-            movesToGo = 1;
+        if (movesToGo < 2) {
+            movesToGo = 2;
         }
 
         uint64_t timeLeft = 0;
 
         if (movingColor == PieceColor::WHITE) {
             timeLeft += params.wtime;
-            timeLeft += params.winc;
+
+            if (timeLeft > params.winc * 10) {
+                timeLeft += params.winc;
+            }
         } else {
             timeLeft += params.btime;
-            timeLeft += params.binc;
+
+            if (timeLeft > params.binc * 10) {
+                timeLeft += params.binc;
+            }
         }
 
         uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
@@ -67,15 +73,16 @@ namespace Zagreus {
         uint64_t maxTime = timeLeft / 100 * 80;
         uint64_t timePerMove = timeLeft / movesToGo;
 
-        if ((bitboard.getPly() / 2) < 10) {
-            timePerMove += (timePerMove / 100 * 50);
+        // If we are in the opening, give us 25% more time
+        if ((bitboard.getPly() / 2) < 15) {
+            timePerMove += (timePerMove / 100 * 25);
         }
 
         if (timePerMove > maxTime) {
             timePerMove = maxTime;
         }
 
-        timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 10ULL);
+        timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 1ULL);
         return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(timePerMove);
     }
 }
