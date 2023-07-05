@@ -75,9 +75,10 @@ namespace Zagreus {
             }
 
             if (moveList->size == 1) {
-                bestMove = moveList->moves[0];
-                moveListPool->releaseMoveList(moveList);
-                return bestMove;
+                // Cut endtime in half when there is only one move
+                auto reduction = startTime.time_since_epoch();
+                reduction /= 2;
+                endTime = startTime + reduction;
             }
 
             auto moves = MovePicker(moveList);
