@@ -199,12 +199,12 @@ namespace Zagreus {
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                               Move &previousMove,
                               std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
-        searchStats.nodes += 1;
-
         if (board.getPly() >= MAX_PLY || ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 &&
             (engine.stopRequested() || std::chrono::steady_clock::now() > endTime))) {
             return beta;
         }
+
+        searchStats.nodes += 1;
 
         bool depthExtended = false;
         bool isOwnKingInCheck = board.isKingInCheck<color>();
@@ -415,8 +415,6 @@ namespace Zagreus {
     int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                                Move &previousMove,
                                std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth) {
-        searchStats.qnodes += 1;
-
         if (board.getPly() >= MAX_PLY) {
             return evaluate<color>(board, endTime, engine);
         }
@@ -424,6 +422,8 @@ namespace Zagreus {
         if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::steady_clock::now() > endTime)) {
             return beta;
         }
+
+        searchStats.qnodes += 1;
 
         int standPat = evaluate<color>(board, endTime, engine);
 
