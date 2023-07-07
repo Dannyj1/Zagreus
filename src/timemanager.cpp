@@ -74,16 +74,10 @@ namespace Zagreus {
         uint64_t maxTime = timeLeft / 100 * 80;
         uint64_t timePerMove = timeLeft / movesToGo;
 
-        /*// If we are in the opening, give us 25% more time
-        if ((bitboard.getPly() / 2) < 12) {
-            timePerMove += (timePerMove / 100 * 25);
-        }*/
-
         if (timePerMove > maxTime) {
             timePerMove = maxTime;
         }
 
-        std::cout << "Time per move: " << timePerMove << std::endl;
         timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 1ULL);
         return startTime + std::chrono::milliseconds(timePerMove);
     }
