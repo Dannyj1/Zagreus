@@ -79,7 +79,7 @@ namespace Zagreus {
         uint64_t timePerMove = timeLeft / movesToGo;
 
         // If we are in the opening, give us 25% more time
-        if ((bitboard.getPly() / 2) < 15) {
+        if ((bitboard.getPly() / 2) < 12) {
             timePerMove += (timePerMove / 100 * 25);
         }
 
