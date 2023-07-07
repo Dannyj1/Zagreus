@@ -262,6 +262,10 @@ namespace Zagreus {
         bool searchedFirstLegalMove = false;
 
         while (isPv && !searchedFirstLegalMove && moves.hasNext()) {
+            if (std::chrono::steady_clock::now() > endTime) {
+                return beta;
+            }
+
             Move move = moves.getNextMove();
 
             board.makeMove(move);
@@ -322,6 +326,10 @@ namespace Zagreus {
         }
 
         while (moves.hasNext()) {
+            if (std::chrono::steady_clock::now() > endTime) {
+                return beta;
+            }
+
             Move move = moves.getNextMove();
 
             board.makeMove(move);
@@ -448,6 +456,10 @@ namespace Zagreus {
 
         auto moves = MovePicker(moveList);
         while (moves.hasNext()) {
+            if (std::chrono::steady_clock::now() > endTime) {
+                return beta;
+            }
+
             Move move = moves.getNextMove();
             assert(move.from != move.to);
 
