@@ -23,6 +23,7 @@
 #include <iostream>
 #include <random>
 #include <map>
+#include <algorithm>
 
 #include "tuner.h"
 #include "features.h"
