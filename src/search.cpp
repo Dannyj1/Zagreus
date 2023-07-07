@@ -200,8 +200,7 @@ namespace Zagreus {
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                               Move &previousMove,
                               std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
-        if (board.getPly() >= MAX_PLY || ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 &&
-            (engine.stopRequested() || std::chrono::steady_clock::now() > endTime))) {
+        if (board.getPly() >= MAX_PLY || engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
             return beta;
         }
 
@@ -420,7 +419,7 @@ namespace Zagreus {
             return evaluate<color>(board, endTime, engine);
         }
 
-        if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::steady_clock::now() > endTime)) {
+        if (engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
             return beta;
         }
 
@@ -501,7 +500,7 @@ namespace Zagreus {
 
     template<PieceColor color>
     int SearchManager::evaluate(Bitboard &board, std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine) {
-        if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::steady_clock::now() > endTime)) {
+        if (engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
             return 0;
         }
 

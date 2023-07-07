@@ -45,12 +45,11 @@ namespace Zagreus {
 
         int movesToGo = moves - (bitboard.getPly() / 2ULL);
 
-        if (movesToGo < 5) {
-            movesToGo = 5;
+        if (movesToGo < 3) {
+            movesToGo = 3;
         }
 
         uint64_t timeLeft = 0;
-        uint64_t maxTime;
 
         if (movingColor == PieceColor::WHITE) {
             timeLeft += params.wtime;
@@ -58,16 +57,12 @@ namespace Zagreus {
             if (timeLeft > params.winc * 10) {
                 timeLeft += params.winc;
             }
-
-            maxTime = (params.wtime + params.winc) / 100 * 80;
         } else {
             timeLeft += params.btime;
 
             if (timeLeft > params.binc * 10) {
                 timeLeft += params.binc;
             }
-
-            maxTime = (params.btime + params.binc) / 100 * 80;
         }
 
         uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
@@ -76,6 +71,7 @@ namespace Zagreus {
         }
 
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
+        uint64_t maxTime = timeLeft / 100 * 80;
         uint64_t timePerMove = timeLeft / movesToGo;
 
         // If we are in the opening, give us 25% more time
