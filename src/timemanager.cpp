@@ -45,8 +45,8 @@ namespace Zagreus {
 
         int movesToGo = moves - (bitboard.getPly() / 2ULL);
 
-        if (movesToGo < 2) {
-            movesToGo = 2;
+        if (movesToGo < 5) {
+            movesToGo = 5;
         }
 
         uint64_t timeLeft = 0;
