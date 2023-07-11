@@ -75,7 +75,14 @@ namespace Zagreus {
         }
 
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
-        uint64_t maxTime = timeLeft / 100 * 80;
+        uint64_t maxTime;
+
+        if (movingColor == PieceColor::WHITE) {
+            maxTime = (params.wtime - moveOverhead) / 100 * 80;
+        } else {
+            maxTime = (params.btime - moveOverhead) / 100 * 80;
+        }
+
         uint64_t timePerMove = timeLeft / movesToGo;
 
         if (timePerMove > maxTime) {
