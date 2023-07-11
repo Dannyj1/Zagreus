@@ -37,13 +37,13 @@ namespace Zagreus {
         }
 
         // We assume a match lasts 50 moves
-        uint64_t moves = 50ULL;
+        int moves = 50ULL;
 
         if (params.movestogo > 0) {
             moves = params.movestogo;
         }
 
-        int movesToGo = moves - (bitboard.getPly() / 2ULL);
+        int movesToGo = moves - (bitboard.getPly() / 2);
 
         if (movesToGo < 3) {
             movesToGo = 3;
@@ -66,8 +66,12 @@ namespace Zagreus {
         }
 
         uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
-        if (moveOverhead && timeLeft >= moveOverhead + 1) {
-            timeLeft -= moveOverhead;
+        if (moveOverhead) {
+            if (timeLeft >= moveOverhead + 1) {
+                timeLeft -= moveOverhead;
+            } else {
+                timeLeft -= timeLeft / 2;
+            }
         }
 
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
