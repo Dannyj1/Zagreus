@@ -78,9 +78,17 @@ namespace Zagreus {
         uint64_t maxTime;
 
         if (movingColor == PieceColor::WHITE) {
-            maxTime = (params.wtime - moveOverhead) / 100 * 80;
+            if (params.wtime > moveOverhead) {
+                maxTime = (params.wtime - moveOverhead) / 100 * 80;
+            } else {
+                maxTime = (params.wtime / 2) / 100 * 80;
+            }
         } else {
-            maxTime = (params.btime - moveOverhead) / 100 * 80;
+            if (params.btime > moveOverhead) {
+                maxTime = (params.btime - moveOverhead) / 100 * 80;
+            } else {
+                maxTime = (params.btime / 2) / 100 * 80;
+            }
         }
 
         uint64_t timePerMove = timeLeft / movesToGo;
