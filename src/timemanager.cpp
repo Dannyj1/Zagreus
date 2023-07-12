@@ -37,32 +37,22 @@ namespace Zagreus {
         }
 
         // We assume a match lasts 50 moves
-        int moves = 50ULL;
+        int movesToGo = 50ULL;
 
         if (params.movestogo > 0) {
-            moves = params.movestogo;
+            movesToGo = params.movestogo;
         }
 
-        int movesToGo = moves - (bitboard.getPly() / 2);
-
-        if (movesToGo < 3) {
-            movesToGo = 3;
-        }
+//        int movesToGo = moves - (bitboard.getPly() / 2);
 
         uint64_t timeLeft = 0;
 
         if (movingColor == PieceColor::WHITE) {
             timeLeft += params.wtime;
-
-            if (timeLeft > params.winc * 10) {
-                timeLeft += params.winc;
-            }
+            timeLeft += params.winc;
         } else {
             timeLeft += params.btime;
-
-            if (timeLeft > params.binc * 10) {
-                timeLeft += params.binc;
-            }
+            timeLeft += params.binc;
         }
 
         uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
