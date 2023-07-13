@@ -89,7 +89,6 @@ namespace Zagreus {
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
         auto* moveCodes = new uint32_t[previousPv.moveCount];
-        TTEntry* entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
 
         for (int i = 0; i < previousPv.moveCount; i++) {
@@ -120,7 +119,6 @@ namespace Zagreus {
         TranspositionTable* tt = TranspositionTable::getTT();
         Line previousPv = bitboard.getPreviousPvLine();
         auto* moveCodes = new uint32_t[previousPv.moveCount];
-        TTEntry* entry = tt->getEntry(bitboard.getZobristHash());
         uint32_t bestMoveCode = 0;
 
         for (int i = 0; i < previousPv.moveCount; i++) {

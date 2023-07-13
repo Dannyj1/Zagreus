@@ -268,78 +268,11 @@ namespace Zagreus {
             }
         }
 
-        Move bestMove = {};
-        int bestScore = -1000000;
         MoveList* moveList = moveListPool->getMoveList();
         NodeType nodeType = NodeType::FAIL_LOW_NODE;
 
         generateMoves<color>(board, moveList);
         auto moves = MovePicker(moveList);
-        bool searchedFirstLegalMove = false;
-
-        while (isPv && !searchedFirstLegalMove && moves.hasNext()) {
-            if (std::chrono::steady_clock::now() > endTime) {
-                return beta;
-            }
-
-            Move move = moves.getNextMove();
-
-            board.makeMove(move);
-
-            if (board.isKingInCheck<color>()) {
-                board.unmakeMove(move);
-                continue;
-            }
-
-            int score;
-
-            if (color == PieceColor::WHITE) {
-                score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                                                  engine, true, false);
-            } else {
-                score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                                                  engine, true, false);
-            }
-
-            score *= -1;
-
-            if (score > bestScore) {
-                bestMove = move;
-            }
-
-            board.unmakeMove(move);
-
-            if (score > alpha) {
-                if (score >= beta) {
-                    if (move.captureScore == NO_CAPTURE_SCORE) {
-                        TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
-                        TranspositionTable::getTT()->killerMoves[1][board.getPly()] = TranspositionTable::getTT()->killerMoves[0][board.getPly()];
-                        TranspositionTable::getTT()->killerMoves[0][board.getPly()] = encodeMove(&move);
-                        TranspositionTable::getTT()->counterMoves[previousMove.from][previousMove.to] = encodeMove(&move);
-                        TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
-                    }
-
-                    TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
-                                                             NodeType::FAIL_HIGH_NODE);
-                    moveListPool->releaseMoveList(moveList);
-                    return score;
-                }
-
-                pvLine.moves[0] = move;
-                pvLine.moveCount = 1;
-                memcpy(pvLine.moves + 1, line.moves, line.moveCount * sizeof(Move));
-                pvLine.moveCount = line.moveCount + 1;
-                alpha = score;
-                nodeType = NodeType::PV_NODE;
-            }
-
-            searchedFirstLegalMove = true;
-        }
-
-        if (isPv && !searchedFirstLegalMove) {
-            moveListPool->releaseMoveList(moveList);
-            return quiesce<color>(board, alpha, beta, rootMove, previousMove, endTime, engine, isPv);
-        }
 
         while (moves.hasNext()) {
             if (std::chrono::steady_clock::now() > endTime) {
@@ -381,10 +314,10 @@ namespace Zagreus {
 
             if (color == PieceColor::WHITE) {
                 score = search<PieceColor::BLACK>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                                                  previousMove, endTime, line, engine, false, canNull);
+                                                  previousMove, endTime, line, engine, isPv, canNull);
             } else {
                 score = search<PieceColor::WHITE>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                                                  previousMove, endTime, line, engine, false, canNull);
+                                                  previousMove, endTime, line, engine, isPv, canNull);
             }
 
             score *= -1;
@@ -426,6 +359,8 @@ namespace Zagreus {
                 alpha = score;
                 nodeType = NodeType::PV_NODE;
             }
+
+            isPv = false;
         }
 
         TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType);
