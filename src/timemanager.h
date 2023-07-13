@@ -27,5 +27,16 @@
 #include "../senjo/GoParams.h"
 
 namespace Zagreus {
-    std::chrono::time_point<std::chrono::steady_clock> getEndTime(std::chrono::time_point<std::chrono::steady_clock> startTime, senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor);
+
+    struct TimeContext {
+        std::chrono::time_point<std::chrono::steady_clock> startTime;
+        int pvChanges = 0;
+        int rootMoveCount = 0;
+        // A boolean variable that keeps track if the score suddenly went from positive to negative or vice versa
+        bool suddenScoreSwing = false;
+        // A boolean variable that keeps track if the score suddenly had a big drop (-150 or more)
+        bool suddenScoreDrop = false;
+    };
+
+    std::chrono::time_point<std::chrono::steady_clock> getEndTime(TimeContext &context, senjo::GoParams &params, ZagreusEngine &engine, PieceColor movingColor);
 }
