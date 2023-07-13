@@ -312,12 +312,22 @@ namespace Zagreus {
 
             int score;
 
-            if (color == PieceColor::WHITE) {
-                score = search<PieceColor::BLACK>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                                                  previousMove, endTime, line, engine, isPv, canNull);
+            if (isPv) {
+                if (color == PieceColor::WHITE) {
+                    score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+                                                      engine, true, false);
+                } else {
+                    score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+                                                      engine, true, false);
+                }
             } else {
-                score = search<PieceColor::WHITE>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                                                  previousMove, endTime, line, engine, isPv, canNull);
+                if (color == PieceColor::WHITE) {
+                    score = search<PieceColor::BLACK>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
+                                                      previousMove, endTime, line, engine, false, canNull);
+                } else {
+                    score = search<PieceColor::WHITE>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
+                                                      previousMove, endTime, line, engine, false, canNull);
+                }
             }
 
             score *= -1;
@@ -358,9 +368,8 @@ namespace Zagreus {
                 pvLine.moveCount = line.moveCount + 1;
                 alpha = score;
                 nodeType = NodeType::PV_NODE;
+                isPv = false;
             }
-
-            isPv = false;
         }
 
         TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType);
