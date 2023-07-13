@@ -36,12 +36,7 @@ namespace Zagreus {
             return startTime + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
         }
 
-        // We assume a match lasts 50 moves
-        int movesToGo = 50ULL;
-
-        if (params.movestogo > 0) {
-            movesToGo = params.movestogo;
-        }
+        int movesToGo = params.movestogo ? params.movestogo : 50ULL;
 
 //        int movesToGo = moves - (bitboard.getPly() / 2);
 
@@ -49,20 +44,14 @@ namespace Zagreus {
 
         if (movingColor == PieceColor::WHITE) {
             timeLeft += params.wtime;
-            timeLeft += params.winc;
+            timeLeft += params.winc * movesToGo;
         } else {
             timeLeft += params.btime;
-            timeLeft += params.binc;
+            timeLeft += params.binc * movesToGo;
         }
 
         uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
-        if (moveOverhead) {
-            if (timeLeft >= moveOverhead + 1) {
-                timeLeft -= moveOverhead;
-            } else {
-                timeLeft -= timeLeft / 2;
-            }
-        }
+        timeLeft -= moveOverhead * movesToGo;
 
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
         uint64_t maxTime;
