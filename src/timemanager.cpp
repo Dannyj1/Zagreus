@@ -25,20 +25,19 @@
 #include "../senjo/GoParams.h"
 #include "types.h"
 #include "engine.h"
+#include "timemanager.h"
 
 namespace Zagreus {
-    std::chrono::time_point<std::chrono::steady_clock> getEndTime(std::chrono::time_point<std::chrono::steady_clock> startTime, senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor) {
+    std::chrono::time_point<std::chrono::steady_clock> getEndTime(TimeContext &context, senjo::GoParams &params, ZagreusEngine &engine, PieceColor movingColor) {
         if (params.infinite || params.depth > 0 || params.nodes > 0) {
             return std::chrono::time_point<std::chrono::steady_clock>::max();
         }
 
         if (params.movetime > 0) {
-            return startTime + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
+            return context.startTime + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
         }
 
         int movesToGo = params.movestogo ? params.movestogo : 50ULL;
-
-//        int movesToGo = moves - (bitboard.getPly() / 2);
 
         uint64_t timeLeft = 0;
 
@@ -72,11 +71,30 @@ namespace Zagreus {
 
         uint64_t timePerMove = timeLeft / movesToGo;
 
+        if (context.rootMoveCount == 1) {
+            timePerMove /= 2;
+        }
+
+        // Based on context.pvChanges, scale timePerMove between 1.0 and 1.5. After 5 or more move changes, timePerMove will be 1.5 times as long.
+        if (context.pvChanges > 0) {
+            timePerMove = timePerMove * (1.0 + std::min((double) context.pvChanges, 5.0) / 10.0);
+        }
+
+        // if the score suddenly went from positive to negative or vice versa, increase timePerMove by 50%
+        if (context.suddenScoreSwing) {
+            timePerMove = timePerMove * 1.5;
+        }
+
+        // if the score suddenly dropped by 100cp or more, increase timePerMove by 50%
+        if (context.suddenScoreDrop) {
+            timePerMove = timePerMove * 1.5;
+        }
+
         if (timePerMove > maxTime) {
             timePerMove = maxTime;
         }
 
         timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 1ULL);
-        return startTime + std::chrono::milliseconds(timePerMove);
+        return context.startTime + std::chrono::milliseconds(timePerMove);
     }
 }

@@ -38,7 +38,9 @@ namespace Zagreus {
 
     Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
         std::chrono::time_point<std::chrono::steady_clock> startTime = std::chrono::steady_clock::now();
-        std::chrono::time_point<std::chrono::steady_clock> endTime = getEndTime(startTime, params, board, engine, board.getMovingColor());
+        TimeContext context{};
+        context.startTime = startTime;
+        std::chrono::time_point<std::chrono::steady_clock> endTime = getEndTime(context, params, engine, board.getMovingColor());
         searchStats = {};
         isSearching = true;
         int bestScore = -1000000;
@@ -74,13 +76,11 @@ namespace Zagreus {
                 generateMoves<PieceColor::BLACK>(board, moveList);
             }
 
-            if (moveList->size == 1) {
-                // Cut endtime in half when there is only one move
-                auto reduction = startTime.time_since_epoch();
-                reduction /= 2;
-                endTime = startTime + reduction;
+            if (depth == 0) {
+                context.rootMoveCount = moveList->size;
             }
 
+            endTime = getEndTime(context, params, engine, board.getMovingColor());
             auto moves = MovePicker(moveList);
 
             while (moves.hasNext()) {
@@ -146,7 +146,23 @@ namespace Zagreus {
 
             if (depth == 1 || bestScore == -1000000 || std::chrono::steady_clock::now() < endTime) {
                 assert(iterationMove.piece != PieceType::EMPTY);
+                // If bestScore is positive and iterationScore is 0 or negative or vice versa, set suddenScoreSwing to true
+                if (depth > 1 && ((bestScore > 0 && iterationScore <= 0) || (bestScore < 0 && iterationScore >= 0))) {
+                    context.suddenScoreSwing = true;
+                }
+
+                // If the iterationScore suddenly dropped by 150 or more from bestScore, set suddenScoreDrop to true
+                if (depth > 1 && ((bestScore - iterationScore) >= 150)) {
+                    context.suddenScoreDrop = true;
+                }
+
                 bestScore = iterationScore;
+
+                // If bestMove changes, increment context.pvChanges
+                if (depth > 1 && (bestMove.from != iterationMove.from || bestMove.to != iterationMove.to)) {
+                    context.pvChanges += 1;
+                }
+
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
 
@@ -238,10 +254,10 @@ namespace Zagreus {
 
             if (color == PieceColor::WHITE) {
                 score = search<PieceColor::BLACK>(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
-                                              engine, false, false);
+                                                  engine, false, false);
             } else {
                 score = search<PieceColor::WHITE>(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime, line,
-                                              engine, false, false);
+                                                  engine, false, false);
             }
 
             score *= -1;
@@ -279,10 +295,10 @@ namespace Zagreus {
 
             if (color == PieceColor::WHITE) {
                 score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, true, false);
+                                                  engine, true, false);
             } else {
                 score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                               engine, true, false);
+                                                  engine, true, false);
             }
 
             score *= -1;
@@ -365,10 +381,10 @@ namespace Zagreus {
 
             if (color == PieceColor::WHITE) {
                 score = search<PieceColor::BLACK>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                               previousMove, endTime, line, engine, false, canNull);
+                                                  previousMove, endTime, line, engine, false, canNull);
             } else {
                 score = search<PieceColor::WHITE>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
-                               previousMove, endTime, line, engine, false, canNull);
+                                                  previousMove, endTime, line, engine, false, canNull);
             }
 
             score *= -1;
@@ -376,10 +392,10 @@ namespace Zagreus {
             if (score > alpha && score < beta) {
                 if (color == PieceColor::WHITE) {
                     score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                                   engine, true, false);
+                                                      engine, true, false);
                 } else {
                     score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                                   engine, true, false);
+                                                      engine, true, false);
                 }
 
                 score *= -1;
