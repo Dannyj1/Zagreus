@@ -320,6 +320,8 @@ namespace Zagreus {
                     score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
                                                       engine, true, false);
                 }
+
+                score *= -1;
             } else {
                 if (color == PieceColor::WHITE) {
                     score = search<PieceColor::BLACK>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
@@ -328,20 +330,20 @@ namespace Zagreus {
                     score = search<PieceColor::WHITE>(board, depth - 1 - depthReduction, -alpha - 1, -alpha, rootMove,
                                                       previousMove, endTime, line, engine, false, canNull);
                 }
-            }
-
-            score *= -1;
-
-            if (score > alpha && score < beta) {
-                if (color == PieceColor::WHITE) {
-                    score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                                                      engine, true, false);
-                } else {
-                    score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
-                                                      engine, true, false);
-                }
 
                 score *= -1;
+
+                if (score > alpha && score < beta) {
+                    if (color == PieceColor::WHITE) {
+                        score = search<PieceColor::BLACK>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+                                                          engine, true, false);
+                    } else {
+                        score = search<PieceColor::WHITE>(board, depth - 1, -beta, -alpha, rootMove, previousMove, endTime, line,
+                                                          engine, true, false);
+                    }
+
+                    score *= -1;
+                }
             }
 
             board.unmakeMove(move);
