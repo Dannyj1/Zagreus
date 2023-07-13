@@ -170,12 +170,29 @@ message("ENABLE_MTUNE: ${ENABLE_MTUNE}")
 message("MTUNE_VALUE: ${MTUNE_VALUE}")
 
 if (APPEND_VERSION)
-    if (ENABLE_MARCH)
-        set(CMAKE_EXECUTABLE_SUFFIX "-${MARCH_VALUE}${CMAKE_EXECUTABLE_SUFFIX}")
-    endif()
+    execute_process(COMMAND git rev-parse --abbrev-ref HEAD
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            OUTPUT_VARIABLE GIT_BRANCH
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    set(CMAKE_EXECUTABLE_SUFFIX "-${CMAKE_SYSTEM_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
-    set(CMAKE_EXECUTABLE_SUFFIX "-${ZAGREUS_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
+    if(NOT ${GIT_BRANCH} STREQUAL "master" AND NOT ${GIT_BRANCH} STREQUAL "main")
+        # Get the short commit hash
+        execute_process(COMMAND git rev-parse --short HEAD
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                OUTPUT_VARIABLE GIT_COMMIT_HASH
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+        # Append the branch and commit hash to the executable suffix
+        set(CMAKE_EXECUTABLE_SUFFIX "-dev-${GIT_BRANCH}-${GIT_COMMIT_HASH}${CMAKE_EXECUTABLE_SUFFIX}")
+        set(ZAGREUS_VERSION "dev-${GIT_BRANCH}-${GIT_COMMIT_HASH}")
+    else()
+        if (ENABLE_MARCH)
+            set(CMAKE_EXECUTABLE_SUFFIX "-${MARCH_VALUE}${CMAKE_EXECUTABLE_SUFFIX}")
+        endif()
+
+        set(CMAKE_EXECUTABLE_SUFFIX "-${CMAKE_SYSTEM_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
+        set(CMAKE_EXECUTABLE_SUFFIX "-${ZAGREUS_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
+    endif()
 endif()
 
 # Apply toggleable flags to profiles

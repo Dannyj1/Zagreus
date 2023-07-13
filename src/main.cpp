@@ -125,7 +125,8 @@ int main(int argc , char *argv[]) {
     senjo::Output(senjo::Output::NoPrefix) << "               |___/ ";
     senjo::Output(senjo::Output::NoPrefix) << "";
 
-    senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine by Danny Jelsma (https://github.com/Dannyj1/Zagreus)";
+    // ZAGREUS_VERSION preprocessor macro for version number
+    senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine version " << ZAGREUS_VERSION << " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)";
 
     if (argc >= 2) {
         if (strcmp(argv[1], "bench") == 0) {

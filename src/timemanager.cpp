@@ -18,9 +18,7 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <chrono>
 #include <algorithm>
-#include <iostream>
 
 #include "../senjo/GoParams.h"
 #include "types.h"
