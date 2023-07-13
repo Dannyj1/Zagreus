@@ -37,6 +37,8 @@ namespace Zagreus {
     int initialAspirationWindow = std::max(getEvalValue(MIDGAME_PAWN_MATERIAL), getEvalValue(ENDGAME_PAWN_MATERIAL)) * 0.5;
 
     Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
+        std::chrono::time_point<std::chrono::steady_clock> startTime = std::chrono::steady_clock::now();
+        std::chrono::time_point<std::chrono::steady_clock> endTime = getEndTime(startTime, params, board, engine, board.getMovingColor());
         searchStats = {};
         isSearching = true;
         int bestScore = -1000000;
@@ -47,14 +49,12 @@ namespace Zagreus {
         int alphaWindow = initialAspirationWindow;
         int betaWindow = initialAspirationWindow;
         Move iterationMove = {};
-        std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now();
-        std::chrono::time_point<std::chrono::high_resolution_clock> endTime = getEndTime(params, board, engine, board.getMovingColor());
         int depth = 0;
 
         TranspositionTable::getTT()->ageHistoryTable();
 
         Line iterationPvLine = {};
-        while (!engine.stopRequested() && std::chrono::high_resolution_clock::now() - startTime < (endTime - startTime) * 0.7) {
+        while (!engine.stopRequested() && (std::chrono::steady_clock::now() - startTime < (endTime - startTime) * 0.5 || depth == 0)) {
             depth += 1;
 
             if (params.depth > 0 && depth > params.depth) {
@@ -75,9 +75,10 @@ namespace Zagreus {
             }
 
             if (moveList->size == 1) {
-                bestMove = moveList->moves[0];
-                moveListPool->releaseMoveList(moveList);
-                return bestMove;
+                // Cut endtime in half when there is only one move
+                auto reduction = startTime.time_since_epoch();
+                reduction /= 2;
+                endTime = startTime + reduction;
             }
 
             auto moves = MovePicker(moveList);
@@ -115,7 +116,7 @@ namespace Zagreus {
                 score *= -1;
                 board.unmakeMove(move);
 
-                if (iterationScore == -1000000 || (score > iterationScore && std::chrono::high_resolution_clock::now() < endTime)) {
+                if (iterationScore == -1000000 || (score > iterationScore && std::chrono::steady_clock::now() < endTime)) {
                     assert(move.piece != PieceType::EMPTY);
                     iterationScore = score;
                     iterationMove = move;
@@ -139,11 +140,11 @@ namespace Zagreus {
                 }
 
                 searchStats.msecs = duration_cast<std::chrono::milliseconds>(
-                        std::chrono::high_resolution_clock::now() - startTime).count();
+                        std::chrono::steady_clock::now() - startTime).count();
                 senjo::Output(senjo::Output::NoPrefix) << searchStats;
             }
 
-            if (depth == 1 || bestScore == -1000000 || std::chrono::high_resolution_clock::now() < endTime) {
+            if (depth == 1 || bestScore == -1000000 || std::chrono::steady_clock::now() < endTime) {
                 assert(iterationMove.piece != PieceType::EMPTY);
                 bestScore = iterationScore;
                 bestMove = iterationMove;
@@ -189,7 +190,7 @@ namespace Zagreus {
 
         searchStats.score = bestScore;
         searchStats.msecs = duration_cast<std::chrono::milliseconds>(
-                std::chrono::high_resolution_clock::now() - startTime).count();
+                std::chrono::steady_clock::now() - startTime).count();
         isSearching = false;
         senjo::Output(senjo::Output::NoPrefix) << searchStats;
         return bestMove;
@@ -198,13 +199,12 @@ namespace Zagreus {
     template<PieceColor color>
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                               Move &previousMove,
-                              std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
-        searchStats.nodes += 1;
-
-        if (board.getPly() >= MAX_PLY || (searchStats.nodes % 2048 == 0 &&
-            (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime))) {
+                              std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
+        if (board.getPly() >= MAX_PLY || engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
             return beta;
         }
+
+        searchStats.nodes += 1;
 
         bool depthExtended = false;
         bool isOwnKingInCheck = board.isKingInCheck<color>();
@@ -262,6 +262,10 @@ namespace Zagreus {
         bool searchedFirstLegalMove = false;
 
         while (isPv && !searchedFirstLegalMove && moves.hasNext()) {
+            if (std::chrono::steady_clock::now() > endTime) {
+                return beta;
+            }
+
             Move move = moves.getNextMove();
 
             board.makeMove(move);
@@ -322,9 +326,7 @@ namespace Zagreus {
         }
 
         while (moves.hasNext()) {
-            if (searchStats.nodes % 2048 == 0 &&
-                (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
-                moveListPool->releaseMoveList(moveList);
+            if (std::chrono::steady_clock::now() > endTime) {
                 return beta;
             }
 
@@ -420,16 +422,16 @@ namespace Zagreus {
     template<PieceColor color>
     int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                                Move &previousMove,
-                               std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth) {
-        searchStats.qnodes += 1;
-
+                               std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth) {
         if (board.getPly() >= MAX_PLY) {
             return evaluate<color>(board, endTime, engine);
         }
 
-        if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+        if (engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
             return beta;
         }
+
+        searchStats.qnodes += 1;
 
         int standPat = evaluate<color>(board, endTime, engine);
 
@@ -454,13 +456,12 @@ namespace Zagreus {
 
         auto moves = MovePicker(moveList);
         while (moves.hasNext()) {
-            Move move = moves.getNextMove();
-            assert(move.from != move.to);
-
-            if (searchStats.qnodes % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
-                moveListPool->releaseMoveList(moveList);
+            if (std::chrono::steady_clock::now() > endTime) {
                 return beta;
             }
+
+            Move move = moves.getNextMove();
+            assert(move.from != move.to);
 
             if (move.captureScore <= NO_CAPTURE_SCORE) {
                 continue;
@@ -510,8 +511,8 @@ namespace Zagreus {
     }
 
     template<PieceColor color>
-    int SearchManager::evaluate(Bitboard &board, std::chrono::time_point<std::chrono::high_resolution_clock> &endTime, ZagreusEngine &engine) {
-        if ((searchStats.nodes + searchStats.qnodes) % 2048 == 0 && (engine.stopRequested() || std::chrono::high_resolution_clock::now() > endTime)) {
+    int SearchManager::evaluate(Bitboard &board, std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine) {
+        if (engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
             return 0;
         }
 

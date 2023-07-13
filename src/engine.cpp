@@ -219,9 +219,9 @@ namespace Zagreus {
 
     uint64_t ZagreusEngine::perft(const int depth) {
         stoppingSearch = false;
-        auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::steady_clock::now();
         uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);
-        auto end = std::chrono::high_resolution_clock::now();
+        auto end = std::chrono::steady_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
 
         senjo::Output(senjo::Output::InfoPrefix) << "Depth " << depth << " Nodes: " << nodes << ", Took: "

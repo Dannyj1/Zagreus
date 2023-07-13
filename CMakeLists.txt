@@ -50,7 +50,7 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 project(Zagreus)
-set(ZAGREUS_VERSION "v2.4.0")
+set(ZAGREUS_VERSION "v2.3.1")
 
 # Default values
 set(BUILD_FLAGS "")

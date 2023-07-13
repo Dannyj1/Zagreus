@@ -20,62 +20,63 @@
 
 #include <chrono>
 #include <algorithm>
+#include <iostream>
 
 #include "../senjo/GoParams.h"
 #include "types.h"
 #include "engine.h"
 
 namespace Zagreus {
-    std::chrono::time_point<std::chrono::high_resolution_clock> getEndTime(senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor) {
+    std::chrono::time_point<std::chrono::steady_clock> getEndTime(std::chrono::time_point<std::chrono::steady_clock> startTime, senjo::GoParams &params, Bitboard &bitboard, ZagreusEngine &engine, PieceColor movingColor) {
         if (params.infinite || params.depth > 0 || params.nodes > 0) {
-            return std::chrono::time_point<std::chrono::high_resolution_clock>::max();
+            return std::chrono::time_point<std::chrono::steady_clock>::max();
         }
 
         if (params.movetime > 0) {
-            return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
+            return startTime + std::chrono::milliseconds(params.movetime - engine.getOption("MoveOverhead").getIntValue());
         }
 
-        // We assume a match lasts 50 moves
-        uint64_t moves = 50ULL;
+        int movesToGo = params.movestogo ? params.movestogo : 50ULL;
 
-        if (params.movestogo > 0) {
-            moves = params.movestogo;
-        }
-
-        uint64_t movesToGo = moves - bitboard.getPly() / 2ULL;
-
-        if (movesToGo <= 0) {
-            movesToGo = 1;
-        }
+//        int movesToGo = moves - (bitboard.getPly() / 2);
 
         uint64_t timeLeft = 0;
 
         if (movingColor == PieceColor::WHITE) {
             timeLeft += params.wtime;
-            timeLeft += params.winc;
+            timeLeft += params.winc * movesToGo;
         } else {
             timeLeft += params.btime;
-            timeLeft += params.binc;
+            timeLeft += params.binc * movesToGo;
         }
 
         uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
-        if (timeLeft >= moveOverhead + 1) {
-            timeLeft -= moveOverhead;
-        }
+        timeLeft -= moveOverhead * movesToGo;
 
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
-        uint64_t maxTime = timeLeft / 100 * 80;
-        uint64_t timePerMove = timeLeft / movesToGo;
+        uint64_t maxTime;
 
-        if ((bitboard.getPly() / 2) < 10) {
-            timePerMove += (timePerMove / 100 * 50);
+        if (movingColor == PieceColor::WHITE) {
+            if (params.wtime > moveOverhead) {
+                maxTime = (params.wtime - moveOverhead) / 100 * 80;
+            } else {
+                maxTime = (params.wtime / 2) / 100 * 80;
+            }
+        } else {
+            if (params.btime > moveOverhead) {
+                maxTime = (params.btime - moveOverhead) / 100 * 80;
+            } else {
+                maxTime = (params.btime / 2) / 100 * 80;
+            }
         }
+
+        uint64_t timePerMove = timeLeft / movesToGo;
 
         if (timePerMove > maxTime) {
             timePerMove = maxTime;
         }
 
-        timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 10ULL);
-        return std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(timePerMove);
+        timePerMove = std::max((uint64_t) timePerMove, (uint64_t) 1ULL);
+        return startTime + std::chrono::milliseconds(timePerMove);
     }
 }

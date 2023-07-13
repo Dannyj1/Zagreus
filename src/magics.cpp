@@ -445,11 +445,11 @@ namespace Zagreus {
 
             for (int i = 0; i < 50; i++) {
                 gen.seed(seedDis(seedGen));
-                std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
+                std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
 
                 generateMagics();
 
-                std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
+                std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
                 uint64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
                 total += elapsed;
             }

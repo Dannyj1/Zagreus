@@ -22,7 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
-#include <map>
+#include <algorithm>
 
 #include "tuner.h"
 #include "features.h"
@@ -70,7 +70,7 @@ namespace Zagreus {
         return 1.0 / (1.0 + pow(10.0, -K * x / 400.0));
     }
 
-    double evaluationLoss(std::vector<TunePosition> &positions, int amountOfPositions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
+    double evaluationLoss(std::vector<TunePosition> &positions, int amountOfPositions, std::chrono::time_point<std::chrono::steady_clock> &maxEndTime, ZagreusEngine &engine) {
         double totalLoss = 0.0;
 
         for (TunePosition &pos : positions) {
@@ -91,7 +91,7 @@ namespace Zagreus {
         return 1.0 / (2.0 * (double) amountOfPositions) * totalLoss;
     }
 
-    double findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine) {
+    double findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::steady_clock> &maxEndTime, ZagreusEngine &engine) {
         std::vector<int> evalScores(positions.size());
 
         for (TunePosition &pos : positions) {
@@ -134,7 +134,7 @@ namespace Zagreus {
         return bestK;
     }
 
-    std::vector<TunePosition> loadPositions(char* filePath, std::chrono::time_point<std::chrono::high_resolution_clock> &maxEndTime, ZagreusEngine &engine, std::mt19937_64 gen) {
+    std::vector<TunePosition> loadPositions(char* filePath, std::chrono::time_point<std::chrono::steady_clock> &maxEndTime, ZagreusEngine &engine, std::mt19937_64 gen) {
         std::cout << "Loading positions..." << std::endl;
         std::vector<TunePosition> positions;
         std::vector<std::string> lines;
@@ -303,7 +303,7 @@ namespace Zagreus {
 
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
-        std::chrono::time_point<std::chrono::high_resolution_clock> maxEndTime = std::chrono::time_point<std::chrono::high_resolution_clock>::max();
+        std::chrono::time_point<std::chrono::steady_clock> maxEndTime = std::chrono::time_point<std::chrono::steady_clock>::max();
         std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine, gen);
 
         engine.setTuning(false);
