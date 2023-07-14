@@ -84,8 +84,15 @@ namespace Zagreus {
         return "Zagreus";
     }
 
+    std::string majorVersion = ZAGREUS_VERSION_MAJOR;
+    std::string minorVersion = ZAGREUS_VERSION_MINOR;
+
     std::string ZagreusEngine::getEngineVersion() {
-        return ZAGREUS_VERSION;
+        if (majorVersion != "dev") {
+            return "v" + majorVersion + "." + minorVersion;
+        } else {
+            return majorVersion + "-" + minorVersion;
+        }
     }
 
     std::string ZagreusEngine::getAuthorName() {

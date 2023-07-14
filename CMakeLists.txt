@@ -50,7 +50,8 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 project(Zagreus)
-set(ZAGREUS_VERSION "v2.3.1")
+set(ZAGREUS_VERSION_MAJOR "2")
+set(ZAGREUS_VERSION_MINOR "4")
 
 # Default values
 set(BUILD_FLAGS "")
@@ -184,14 +185,15 @@ if (APPEND_VERSION)
 
         # Append the branch and commit hash to the executable suffix
         set(CMAKE_EXECUTABLE_SUFFIX "-dev-${GIT_BRANCH}-${GIT_COMMIT_HASH}${CMAKE_EXECUTABLE_SUFFIX}")
-        set(ZAGREUS_VERSION "dev-${GIT_BRANCH}-${GIT_COMMIT_HASH}")
+        set(ZAGREUS_VERSION_MAJOR "dev")
+        set(ZAGREUS_VERSION_MINOR "${GIT_BRANCH}-${GIT_COMMIT_HASH}")
     else()
         if (ENABLE_MARCH)
             set(CMAKE_EXECUTABLE_SUFFIX "-${MARCH_VALUE}${CMAKE_EXECUTABLE_SUFFIX}")
         endif()
 
         set(CMAKE_EXECUTABLE_SUFFIX "-${CMAKE_SYSTEM_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
-        set(CMAKE_EXECUTABLE_SUFFIX "-${ZAGREUS_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
+        set(CMAKE_EXECUTABLE_SUFFIX "-v${ZAGREUS_VERSION_MAJOR}.${ZAGREUS_VERSION_MINOR}${CMAKE_EXECUTABLE_SUFFIX}")
     endif()
 endif()
 
@@ -262,4 +264,5 @@ file(GLOB inc_senjo "senjo/*.h" "senjo/*.cpp")
 
 add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_zagreus})
 
-target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION="${ZAGREUS_VERSION}")
+target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
+target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")
