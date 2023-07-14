@@ -126,7 +126,15 @@ int main(int argc , char *argv[]) {
     senjo::Output(senjo::Output::NoPrefix) << "";
 
     // ZAGREUS_VERSION preprocessor macro for version number
-    senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine version " << ZAGREUS_VERSION << " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)";
+    std::string majorVersion = ZAGREUS_VERSION_MAJOR;
+    std::string minorVersion = ZAGREUS_VERSION_MINOR;
+    std::string versionString = "v" + majorVersion + "." + minorVersion;
+
+    if (majorVersion == "dev") {
+        versionString = majorVersion + "-" + minorVersion;
+    }
+
+    senjo::Output(senjo::Output::NoPrefix) << "Zagreus UCI chess engine " << versionString << " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)";
 
     if (argc >= 2) {
         if (strcmp(argv[1], "bench") == 0) {
