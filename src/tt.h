@@ -34,6 +34,7 @@ namespace Zagreus {
     struct TTEntry {
         int score = 0;
         uint8_t depth = 0;
+        uint32_t bestMoveCode = 0;
         uint64_t zobristHash = 0;
         NodeType nodeType = NodeType::PV_NODE;
     };
@@ -89,7 +90,7 @@ namespace Zagreus {
 
         void setTableSize(int megaBytes);
 
-        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, std::chrono::time_point<std::chrono::steady_clock> endTime);
+        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, uint32_t bestMoveCode, std::chrono::time_point<std::chrono::steady_clock> endTime);
 
         int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
 

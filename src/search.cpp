@@ -273,6 +273,7 @@ namespace Zagreus {
 
         generateMoves<color>(board, moveList);
         auto moves = MovePicker(moveList);
+        uint32_t bestMoveCode = 0;
 
         while (moves.hasNext()) {
             if (std::chrono::steady_clock::now() > endTime) {
@@ -349,6 +350,8 @@ namespace Zagreus {
             board.unmakeMove(move);
 
             if (score > alpha) {
+                bestMoveCode = encodeMove(&move);
+
                 if (score >= beta) {
                     if (move.captureScore == NO_CAPTURE_SCORE) {
                         TranspositionTable::getTT()->killerMoves[2][board.getPly()] = TranspositionTable::getTT()->killerMoves[1][board.getPly()];
@@ -359,7 +362,7 @@ namespace Zagreus {
                     }
 
                     TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
-                                                             NodeType::FAIL_HIGH_NODE, endTime);
+                                                             NodeType::FAIL_HIGH_NODE, bestMoveCode, endTime);
                     moveListPool->releaseMoveList(moveList);
                     return score;
                 }
@@ -374,7 +377,7 @@ namespace Zagreus {
             }
         }
 
-        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType, endTime);
+        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType, bestMoveCode, endTime);
         moveListPool->releaseMoveList(moveList);
         return alpha;
     }
