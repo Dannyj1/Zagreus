@@ -22,6 +22,8 @@
 
 #include <cstdint>
 #include <map>
+#include <chrono>
+
 #include "bitboard.h"
 
 namespace Zagreus {
