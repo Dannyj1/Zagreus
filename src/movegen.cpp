@@ -90,6 +90,11 @@ namespace Zagreus {
         Line previousPv = bitboard.getPreviousPvLine();
         auto* moveCodes = new uint32_t[previousPv.moveCount];
         uint32_t bestMoveCode = 0;
+        TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
+
+        if (ttEntry->zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = ttEntry->bestMoveCode;
+        }
 
         for (int i = 0; i < previousPv.moveCount; i++) {
             moveCodes[i] = encodeMove(&previousPv.moves[i]);
@@ -120,6 +125,11 @@ namespace Zagreus {
         Line previousPv = bitboard.getPreviousPvLine();
         auto* moveCodes = new uint32_t[previousPv.moveCount];
         uint32_t bestMoveCode = 0;
+        TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
+
+        if (ttEntry->zobristHash == bitboard.getZobristHash()) {
+            bestMoveCode = ttEntry->bestMoveCode;
+        }
 
         for (int i = 0; i < previousPv.moveCount; i++) {
             moveCodes[i] = encodeMove(&previousPv.moves[i]);
