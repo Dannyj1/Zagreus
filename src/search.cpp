@@ -361,8 +361,7 @@ namespace Zagreus {
                         TranspositionTable::getTT()->historyMoves[move.piece][move.to] += depth * depth;
                     }
 
-                    TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta,
-                                                             NodeType::FAIL_HIGH_NODE, bestMoveCode, endTime);
+                    TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, beta, NodeType::FAIL_HIGH_NODE, bestMoveCode, endTime);
                     moveListPool->releaseMoveList(moveList);
                     return score;
                 }
@@ -374,6 +373,7 @@ namespace Zagreus {
                 alpha = score;
                 nodeType = NodeType::PV_NODE;
                 isPv = false;
+                TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, NodeType::FAIL_LOW_NODE, bestMoveCode, endTime);
             }
         }
 
