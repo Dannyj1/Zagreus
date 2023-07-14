@@ -89,7 +89,7 @@ namespace Zagreus {
 
         void setTableSize(int megaBytes);
 
-        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType);
+        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, std::chrono::time_point<std::chrono::steady_clock> endTime);
 
         int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
 

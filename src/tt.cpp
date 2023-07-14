@@ -24,8 +24,12 @@
 #include "tt.h"
 
 namespace Zagreus {
-    void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType) {
+    void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, std::chrono::time_point<std::chrono::steady_clock> endTime) {
         if (score >= 90000000 || score <= -90000000) {
+            return;
+        }
+
+        if (std::chrono::steady_clock::now() > endTime) {
             return;
         }
 
