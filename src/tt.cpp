@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify

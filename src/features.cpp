@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[76] = { 98, 101, 355, 353, 368, 358, 529, 532, 1005, 1006, 4, 7, 4, 0, 6, 4, 0, 7, 0, 14, -40, 8, -23, 9, -38, -2, -8, -2, 0, -2, -6, -2, -10, 0, -10, -17, 7, 13, 15, 10, 13, 11, 0, 10, 10, 9, 24, 20, 13, 8, 0, 7, 8, 2, 8, 7, -30, -22, 22, 6, -11, -8, 3, -3, -20, -20, -6, -4, 10, 12, 15, 2, 16, 12, 12, 5,  };
+    int evalValues[10] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000 };
 
-    int baseEvalValues[76] = {
+    int baseEvalValues[10] = {
             100, // MIDGAME_PAWN_MATERIAL
             100, // ENDGAME_PAWN_MATERIAL
             350, // MIDGAME_KNIGHT_MATERIAL
@@ -36,72 +36,6 @@ namespace Zagreus {
             525, // ENDGAME_ROOK_MATERIAL
             1000, // MIDGAME_QUEEN_MATERIAL
             1000, // ENDGAME_QUEEN_MATERIAL
-            2, // MIDGAME_SQUARE_DEFENDED_BY_PAWN
-            2, // ENDGAME_SQUARE_DEFENDED_BY_PAWN
-            7, // MIDGAME_KNIGHT_MOBILITY
-            2, // ENDGAME_KNIGHT_MOBILITY
-            8, // MIDGAME_BISHOP_MOBILITY
-            3, // ENDGAME_BISHOP_MOBILITY
-            2, // MIDGAME_ROOK_MOBILITY
-            6, // ENDGAME_ROOK_MOBILITY
-            4, // MIDGAME_QUEEN_MOBILITY
-            8, // ENDGAME_QUEEN_MOBILITY
-            -50, // MIDGAME_KING_ON_OPEN_FILE
-            0, // ENDGAME_KING_ON_OPEN_FILE
-            -25, // MIDGAME_KING_NEXT_TO_OPEN_FILE
-            0, // ENDGAME_KING_NEXT_TO_OPEN_FILE
-            -25, // MIDGAME_NO_CASTLING_RIGHTS
-            0, // ENDGAME_NO_CASTLING_RIGHTS
-            -5, // MIDGAME_QUEENSIDE_CASTLING_PREVENTED
-            0, // ENDGAME_QUEENSIDE_CASTLING_PREVENTED
-            -10, // MIDGAME_KINGSIDE_CASTLING_PREVENTED
-            0, // ENDGAME_KINGSIDE_CASTLING_PREVENTED
-            -3, // MIDGAME_BISHOP_ATTACK_NEAR_KING
-            -3, // ENDGAME_BISHOP_ATTACK_NEAR_KING
-            -5, // MIDGAME_ROOK_ATTACK_NEAR_KING
-            -5, // ENDGAME_ROOK_ATTACK_NEAR_KING
-            -10, // MIDGAME_QUEEN_ATTACK_NEAR_KING
-            -10, // ENDGAME_QUEEN_ATTACK_NEAR_KING
-            10, // MIDGAME_PAWN_CONNECTIVITY
-            10, // ENDGAME_PAWN_CONNECTIVITY
-            7, // MIDGAME_KNIGHT_CONNECTIVITY
-            7, // ENDGAME_KNIGHT_CONNECTIVITY
-            7, // MIDGAME_BISHOP_CONNECTIVITY
-            7, // ENDGAME_BISHOP_CONNECTIVITY
-            3, // MIDGAME_ROOK_CONNECTIVITY
-            3, // ENDGAME_ROOK_CONNECTIVITY
-            1, // MIDGAME_QUEEN_CONNECTIVITY
-            1, // ENDGAME_QUEEN_CONNECTIVITY
-            20, // MIDGAME_ROOK_ON_OPEN_FILE
-            20, // ENDGAME_ROOK_ON_OPEN_FILE
-            15, // MIDGAME_ROOK_ON_SEMI_OPEN_FILE
-            15, // ENDGAME_ROOK_ON_SEMI_OPEN_FILE
-            10, // MIDGAME_ROOK_ON_7TH_RANK
-            10, // ENDGAME_ROOK_ON_7TH_RANK
-            5, // MIDGAME_ROOK_ON_QUEEN_FILE
-            5, // ENDGAME_ROOK_ON_QUEEN_FILE
-            5, // MIDGAME_ROOK_LESS_PAWNS_BONUS
-            5, // ENDGAME_ROOK_LESS_PAWNS_BONUS
-            -25, // MIDGAME_NO_BISHOP_PAIR
-            -25, // ENDGAME_NO_BISHOP_PAIR
-            10, // MIDGAME_BISHOP_FIANCHETTO
-            0, // ENDGAME_BISHOP_FIANCHETTO
-            -10, // MIDGAME_PAWN_ON_SAME_FILE
-            -10, // ENDGAME_PAWN_ON_SAME_FILE
-            10, // MIDGAME_PASSED_PAWN
-            10, // ENDGAME_PASSED_PAWN
-            -20, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -20, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -10, // MIDGAME_ISOLATED_PAWN
-            -10, // ENDGAME_ISOLATED_PAWN
-            3, // MIDGAME_PAWN_SEMI_OPEN_FILE
-            3, // ENDGAME_PAWN_SEMI_OPEN_FILE
-            20, // MIDGAME_PAWN_SHIELD
-            0, // ENDGAME_PAWN_SHIELD
-            15, // MIDGAME_KNIGHT_OUTPOST
-            10, // ENDGAME_KNIGHT_OUTPOST
-            10, // MIDGAME_BISHOP_OUTPOST
-            5, // ENDGAME_BISHOP_OUTPOST
     };
 
     void printEvalValues() {

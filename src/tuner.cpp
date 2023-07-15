@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -79,11 +79,12 @@ namespace Zagreus {
 //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
             int evalScore;
 
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
+            // TODO: fix
+            /*if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
                 evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
             } else {
                 evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }
+            }*/
             double loss = pos.result - sigmoid((double) evalScore);
             totalLoss += loss * loss;
         }
@@ -100,11 +101,12 @@ namespace Zagreus {
 //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
             int evalScore;
 
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
+            // TODO: fix
+            /*if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
                 evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
             } else {
                 evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }
+            }*/
             pos.score = evalScore;
         }
 
@@ -195,11 +197,13 @@ namespace Zagreus {
 
             int evalScore;
 
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
+            // TODO: fix
+            /*if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
                 evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
             } else {
                 evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }
+            }*/
+            evalScore = 0;
 
             positions.emplace_back(TunePosition{fen, result, evalScore});
         }

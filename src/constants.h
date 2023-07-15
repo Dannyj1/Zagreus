@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -68,6 +68,9 @@ static constexpr uint64_t BLACK_KING_SIDE_BETWEEN = 0x6000000000000000ULL;
 static constexpr uint64_t BLACK_QUEEN_SIDE_BETWEEN = 0xE00000000000000ULL;
 
 static constexpr int NO_CAPTURE_SCORE = -1;
+
+static constexpr int COLORS = 2;
+static constexpr int PIECE_TYPES = 12;
 
 static constexpr int MVVLVA_TABLE[12][12] = {
         {105, 105, 205, 205, 305, 305, 405, 405, 505, 505, 605, 605},

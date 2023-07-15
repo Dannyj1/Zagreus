@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -927,8 +927,8 @@ namespace Zagreus {
         }
 
         if (pieceCount == 3) {
-            uint64_t bishopBB = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<BLACK_BISHOP>();
-            uint64_t knightBB = getPieceBoard<WHITE_KNIGHT>() | getPieceBoard<BLACK_KNIGHT>();
+            uint64_t bishopBB = getPieceBoard(WHITE_BISHOP) | getPieceBoard(BLACK_BISHOP);
+            uint64_t knightBB = getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT);
 
             if (bishopBB || knightBB) {
                 return true;
@@ -940,8 +940,8 @@ namespace Zagreus {
                 return false;
             }
 
-            uint64_t whiteDrawPieces = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<WHITE_KNIGHT>();
-            uint64_t blackDrawPieces = getPieceBoard<BLACK_BISHOP>() | getPieceBoard<BLACK_KNIGHT>();
+            uint64_t whiteDrawPieces = getPieceBoard(WHITE_BISHOP) | getPieceBoard(WHITE_KNIGHT);
+            uint64_t blackDrawPieces = getPieceBoard(BLACK_BISHOP) | getPieceBoard(BLACK_KNIGHT);
 
             // King not included in the above boards, so if there is only one piece left, it's a draw
             if (popcnt(whiteDrawPieces) == 1 && popcnt(blackDrawPieces) == 1) {
@@ -1018,21 +1018,21 @@ namespace Zagreus {
     }
 
     uint64_t Bitboard::getSquareAttacks(int8_t square) {
-        uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::BLACK_QUEEN>();
+        uint64_t queenBB = getPieceBoard(PieceType::WHITE_QUEEN) | getPieceBoard(PieceType::BLACK_QUEEN);
         uint64_t straightSlidingPieces =
-                getPieceBoard<PieceType::WHITE_ROOK>() | getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;
+                getPieceBoard(PieceType::WHITE_ROOK) | getPieceBoard(PieceType::BLACK_ROOK) | queenBB;
         uint64_t diagonalSlidingPieces =
-                getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::BLACK_BISHOP>() | queenBB;
+                getPieceBoard(PieceType::WHITE_BISHOP) | getPieceBoard(PieceType::BLACK_BISHOP) | queenBB;
 
-        uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
-        pawnAttacks |= getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
+        uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard(PieceType::WHITE_PAWN);
+        pawnAttacks |= getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard(PieceType::BLACK_PAWN);
         uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
         uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
         uint64_t knightAttacks = getKnightAttacks(square) &
-                                 (getPieceBoard<PieceType::WHITE_KNIGHT>() | getPieceBoard<PieceType::BLACK_KNIGHT>());
+                                 (getPieceBoard(PieceType::WHITE_KNIGHT) | getPieceBoard(PieceType::BLACK_KNIGHT));
         uint64_t kingAttacks =
                 getKingAttacks(square) &
-                (getPieceBoard<PieceType::WHITE_KING>() | getPieceBoard<PieceType::BLACK_KING>());
+                (getPieceBoard(PieceType::WHITE_KING) | getPieceBoard(PieceType::BLACK_KING));
 
         return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
     }
@@ -1100,7 +1100,7 @@ namespace Zagreus {
 
     bool Bitboard::isOpenFile(int8_t square) {
         uint64_t fileMask = getFile(square);
-        uint64_t occupied = getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::BLACK_PAWN>();
+        uint64_t occupied = getPieceBoard(PieceType::WHITE_PAWN) | getPieceBoard(PieceType::BLACK_PAWN);
 
         return fileMask == (fileMask & ~occupied);
     }
@@ -1119,5 +1119,9 @@ namespace Zagreus {
 
     int Bitboard::getBlackEndgamePst() const {
         return pstValues[3];
+    }
+
+    uint64_t Bitboard::getPieceBoard(PieceType pieceType) {
+        return pieceBB[pieceType];
     }
 }

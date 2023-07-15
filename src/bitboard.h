@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -71,11 +71,8 @@ namespace Zagreus {
         uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
 
         Bitboard();
-
-        template<PieceType pieceType>
-        uint64_t getPieceBoard() {
-            return pieceBB[pieceType];
-        }
+        
+        uint64_t getPieceBoard(PieceType pieceType);
 
         template<PieceColor color>
         uint64_t getColorBoard() {
@@ -205,29 +202,29 @@ namespace Zagreus {
         template <PieceColor color>
         uint64_t getSquareAttacksByColor(int8_t square) {
             if (color == PieceColor::WHITE) {
-                uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>();
-                uint64_t rookBB = getPieceBoard<PieceType::WHITE_ROOK>();
-                uint64_t bishopBB = getPieceBoard<PieceType::WHITE_BISHOP>();
+                uint64_t queenBB = getPieceBoard(PieceType::WHITE_QUEEN);
+                uint64_t rookBB = getPieceBoard(PieceType::WHITE_ROOK);
+                uint64_t bishopBB = getPieceBoard(PieceType::WHITE_BISHOP);
 
-                uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
+                uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard(PieceType::WHITE_PAWN);
                 uint64_t bishopAttacks = getBishopAttacks(square) & bishopBB;
-                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::WHITE_KNIGHT>();
-                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::WHITE_KING>();
+                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard(PieceType::WHITE_KNIGHT);
+                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard(PieceType::WHITE_KING);
                 uint64_t rookAttacks = getRookAttacks(square) & rookBB;
                 uint64_t queenAttacks = getQueenAttacks(square) & queenBB;
 
                 return pawnAttacks | bishopAttacks | knightAttacks | rookAttacks | queenAttacks | kingAttacks;
             } else {
-                uint64_t queenBB = getPieceBoard<PieceType::BLACK_QUEEN>();
-                uint64_t rookBB = getPieceBoard<PieceType::BLACK_ROOK>();
-                uint64_t bishopBB = getPieceBoard<PieceType::BLACK_BISHOP>();
+                uint64_t queenBB = getPieceBoard(PieceType::BLACK_QUEEN);
+                uint64_t rookBB = getPieceBoard(PieceType::BLACK_ROOK);
+                uint64_t bishopBB = getPieceBoard(PieceType::BLACK_BISHOP);
 
-                uint64_t pawnAttacks = getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
+                uint64_t pawnAttacks = getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard(PieceType::BLACK_PAWN);
                 uint64_t bishopAttacks = getBishopAttacks(square) & bishopBB;
-                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard<PieceType::BLACK_KNIGHT>();
+                uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard(PieceType::BLACK_KNIGHT);
                 uint64_t rookAttacks = getRookAttacks(square) & rookBB;
                 uint64_t queenAttacks = getQueenAttacks(square) & queenBB;
-                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard<PieceType::BLACK_KING>();
+                uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard(PieceType::BLACK_KING);
 
                 return pawnAttacks | bishopAttacks | knightAttacks | rookAttacks | queenAttacks | kingAttacks;
             }
@@ -254,7 +251,7 @@ namespace Zagreus {
                 }
             }
 
-            uint64_t kingBB = getPieceBoard<color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING>();
+            uint64_t kingBB = getPieceBoard(color == PieceColor::WHITE ? PieceType::WHITE_KING : PieceType::BLACK_KING);
             int8_t kingLocation = bitscanForward(kingBB);
             bool result;
 
@@ -303,13 +300,13 @@ namespace Zagreus {
         bool isSemiOpenFile(int8_t square) {
             uint64_t fileMask = getFile(square);
             if (color == PieceColor::WHITE) {
-                uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
-                uint64_t opponentOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
+                uint64_t ownOccupied = getPieceBoard(PieceType::WHITE_PAWN);
+                uint64_t opponentOccupied = getPieceBoard(PieceType::BLACK_PAWN);
 
                 return fileMask == (fileMask & ~ownOccupied) && fileMask != (fileMask & ~opponentOccupied);
             } else {
-                uint64_t ownOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
-                uint64_t opponentOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
+                uint64_t ownOccupied = getPieceBoard(PieceType::BLACK_PAWN);
+                uint64_t opponentOccupied = getPieceBoard(PieceType::WHITE_PAWN);
 
                 return fileMask == (fileMask & ~ownOccupied) && fileMask != (fileMask & ~opponentOccupied);
             }
@@ -321,10 +318,10 @@ namespace Zagreus {
             uint64_t fileMask = getFile(square);
 
             if (color == PieceColor::WHITE) {
-                uint64_t ownOccupied = getPieceBoard<PieceType::WHITE_PAWN>();
+                uint64_t ownOccupied = getPieceBoard(PieceType::WHITE_PAWN);
                 return fileMask == (fileMask & ~ownOccupied);
             } else {
-                uint64_t ownOccupied = getPieceBoard<PieceType::BLACK_PAWN>();
+                uint64_t ownOccupied = getPieceBoard(PieceType::BLACK_PAWN);
                 return fileMask == (fileMask & ~ownOccupied);
             }
         }
@@ -430,9 +427,9 @@ namespace Zagreus {
             }
 
             if (color == PieceColor::WHITE) {
-                return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());
+                return !(neighborMask & getPieceBoard(PieceType::WHITE_PAWN));
             } else {
-                return !(neighborMask & getPieceBoard<PieceType::BLACK_PAWN>());
+                return !(neighborMask & getPieceBoard(PieceType::BLACK_PAWN));
             }
         }
 
@@ -449,9 +446,9 @@ namespace Zagreus {
             }
 
             if (color == PieceColor::WHITE) {
-                return !(neighborMask & getPieceBoard<PieceType::WHITE_PAWN>());
+                return !(neighborMask & getPieceBoard(PieceType::WHITE_PAWN));
             } else {
-                return !(neighborMask & getPieceBoard<PieceType::BLACK_PAWN>());
+                return !(neighborMask & getPieceBoard(PieceType::BLACK_PAWN));
             }
         }
 
@@ -460,18 +457,18 @@ namespace Zagreus {
         template<PieceColor color>
         bool hasMinorOrMajorPieces() {
             if (color == PieceColor::WHITE) {
-                return getColorBoard<color>() & ~(getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::WHITE_KING>());
+                return getColorBoard<color>() & ~(getPieceBoard(PieceType::WHITE_PAWN) | getPieceBoard(PieceType::WHITE_KING));
             } else {
-                return getColorBoard<color>() & ~(getPieceBoard<PieceType::BLACK_PAWN>() | getPieceBoard<PieceType::BLACK_KING>());
+                return getColorBoard<color>() & ~(getPieceBoard(PieceType::BLACK_PAWN) | getPieceBoard(PieceType::BLACK_KING));
             }
         }
 
         template<PieceColor color>
         int getAmountOfMinorOrMajorPieces() {
             if (color == PieceColor::WHITE) {
-                return popcnt(getColorBoard<color>() & ~(getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::WHITE_KING>()));
+                return popcnt(getColorBoard<color>() & ~(getPieceBoard(PieceType::WHITE_PAWN) | getPieceBoard(PieceType::WHITE_KING)));
             } else {
-                return popcnt(getColorBoard<color>() & ~(getPieceBoard<PieceType::BLACK_PAWN>() | getPieceBoard<PieceType::BLACK_KING>()));
+                return popcnt(getColorBoard<color>() & ~(getPieceBoard(PieceType::BLACK_PAWN) | getPieceBoard(PieceType::BLACK_KING)));
             }
         }
 

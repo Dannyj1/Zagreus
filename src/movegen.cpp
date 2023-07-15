@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -151,9 +151,9 @@ namespace Zagreus {
         uint64_t pawnBB;
 
         if (color == PieceColor::WHITE) {
-            pawnBB = bitboard.getPieceBoard<WHITE_PAWN>();
+            pawnBB = bitboard.getPieceBoard(WHITE_PAWN);
         } else {
-            pawnBB = bitboard.getPieceBoard<BLACK_PAWN>();
+            pawnBB = bitboard.getPieceBoard(BLACK_PAWN);
         }
 
         while (pawnBB) {
@@ -166,7 +166,7 @@ namespace Zagreus {
             }
 
             genBB |= (bitboard.getPawnAttacks<color>(index) & attackableSquares);
-            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() | bitboard.getPieceBoard<BLACK_KING>());
+            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) | bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == PieceColor::WHITE) {
@@ -217,17 +217,17 @@ namespace Zagreus {
         uint64_t knightBB;
 
         if (color == PieceColor::WHITE) {
-            knightBB = bitboard.getPieceBoard<WHITE_KNIGHT>();
+            knightBB = bitboard.getPieceBoard(WHITE_KNIGHT);
         } else {
-            knightBB = bitboard.getPieceBoard<BLACK_KNIGHT>();
+            knightBB = bitboard.getPieceBoard(BLACK_KNIGHT);
         }
 
         while (knightBB) {
             int8_t index = popLsb(knightBB);
             uint64_t genBB = bitboard.getKnightAttacks(index);
 
-            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
-                       bitboard.getPieceBoard<BLACK_KING>());
+            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
+                       bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == PieceColor::WHITE) {
@@ -264,17 +264,17 @@ namespace Zagreus {
         uint64_t bishopBB;
 
         if (color == PieceColor::WHITE) {
-            bishopBB = bitboard.getPieceBoard<WHITE_BISHOP>();
+            bishopBB = bitboard.getPieceBoard(WHITE_BISHOP);
         } else {
-            bishopBB = bitboard.getPieceBoard<BLACK_BISHOP>();
+            bishopBB = bitboard.getPieceBoard(BLACK_BISHOP);
         }
 
         while (bishopBB) {
             int8_t index = popLsb(bishopBB);
             uint64_t genBB = bitboard.getBishopAttacks(index);
 
-            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
-                       bitboard.getPieceBoard<BLACK_KING>());
+            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
+                       bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == PieceColor::WHITE) {
@@ -311,17 +311,17 @@ namespace Zagreus {
         uint64_t rookBB;
 
         if (color == PieceColor::WHITE) {
-            rookBB = bitboard.getPieceBoard<WHITE_ROOK>();
+            rookBB = bitboard.getPieceBoard(WHITE_ROOK);
         } else {
-            rookBB = bitboard.getPieceBoard<BLACK_ROOK>();
+            rookBB = bitboard.getPieceBoard(BLACK_ROOK);
         }
 
         while (rookBB) {
             int8_t index = popLsb(rookBB);
             uint64_t genBB = bitboard.getRookAttacks(index);
 
-            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
-                       bitboard.getPieceBoard<BLACK_KING>());
+            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
+                       bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == PieceColor::WHITE) {
@@ -358,17 +358,17 @@ namespace Zagreus {
         uint64_t queenBB;
 
         if (color == PieceColor::WHITE) {
-            queenBB = bitboard.getPieceBoard<WHITE_QUEEN>();
+            queenBB = bitboard.getPieceBoard(WHITE_QUEEN);
         } else {
-            queenBB = bitboard.getPieceBoard<BLACK_QUEEN>();
+            queenBB = bitboard.getPieceBoard(BLACK_QUEEN);
         }
 
         while (queenBB) {
             int8_t index = popLsb(queenBB);
             uint64_t genBB = bitboard.getQueenAttacks(index);
 
-            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard<WHITE_KING>() |
-                       bitboard.getPieceBoard<BLACK_KING>());
+            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
+                       bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == PieceColor::WHITE) {
@@ -406,11 +406,11 @@ namespace Zagreus {
         uint64_t opponentKingBB;
 
         if (color == PieceColor::WHITE) {
-            kingBB = bitboard.getPieceBoard<WHITE_KING>();
-            opponentKingBB = bitboard.getPieceBoard<BLACK_KING>();
+            kingBB = bitboard.getPieceBoard(WHITE_KING);
+            opponentKingBB = bitboard.getPieceBoard(BLACK_KING);
         } else {
-            kingBB = bitboard.getPieceBoard<BLACK_KING>();
-            opponentKingBB = bitboard.getPieceBoard<WHITE_KING>();
+            kingBB = bitboard.getPieceBoard(BLACK_KING);
+            opponentKingBB = bitboard.getPieceBoard(WHITE_KING);
         }
 
         int8_t index = bitscanForward(kingBB);

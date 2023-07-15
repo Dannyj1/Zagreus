@@ -20,29 +20,42 @@
 
 #pragma once
 
-#import <vector>
+#include <map>
 
-#import "types.h"
+#include "bitboard.h"
+#include "constants.h"
 
 namespace Zagreus {
-    static constexpr int INITIAL_POOL_SIZE = 100;
 
-    class MoveListPool {
+    enum TraceMetric {
+        WHITE_MIDGAME_MATERIAL,
+        WHITE_ENDGAME_MATERIAL,
+        BLACK_MIDGAME_MATERIAL,
+        BLACK_ENDGAME_MATERIAL,
+    };
+
+    class Evaluation {
     public:
-        static MoveListPool* getInstance();
+        Evaluation(Bitboard &bitboard);
 
-        MoveList* getMoveList();
-
-        void releaseMoveList(MoveList* moveList);
-
-        ~MoveListPool();
+        template<bool trace>
+        int evaluate();
     private:
-        std::vector<MoveList*> pool{};
+        Bitboard &bitboard;
+        std::map<TraceMetric, int> traceMetrics{};
 
-        MoveListPool();
+        uint64_t attacksByPiece[PIECE_TYPES]{};
+        uint64_t attacksByColor[COLORS]{};
+        uint64_t combinedAttacks{};
 
-        static MoveList* createMoveList();
+        int whiteMidgameScore = 0;
+        int whiteEndgameScore = 0;
+        int blackMidgameScore = 0;
+        int blackEndgameScore = 0;
 
-        static void destroyMoveList(MoveList* moveList);
+        int getPhase();
+
+        template<PieceColor color, bool trace>
+        void evaluateMaterial();
     };
 }
