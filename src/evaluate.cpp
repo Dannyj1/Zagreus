@@ -139,6 +139,9 @@ namespace Zagreus {
         evaluateMaterial<PieceColor::WHITE, trace>();
         evaluateMaterial<PieceColor::BLACK, trace>();
 
+        evaluatePst<PieceColor::WHITE, trace>();
+        evaluatePst<PieceColor::BLACK, trace>();
+
         int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
         int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
 
@@ -205,6 +208,27 @@ namespace Zagreus {
             if (trace) {
                 traceMetrics[BLACK_MIDGAME_MATERIAL] = blackMidgameScore - startMidgameScore;
                 traceMetrics[BLACK_ENDGAME_MATERIAL] = blackEndgameScore - startEndgameScore;
+            }
+        }
+    }
+
+    template<PieceColor color, bool trace>
+    void Evaluation::evaluatePst() {
+        if (color == PieceColor::WHITE) {
+            whiteMidgameScore += bitboard.getWhiteMidgamePst();
+            whiteEndgameScore += bitboard.getWhiteEndgamePst();
+
+            if (trace) {
+                traceMetrics[WHITE_MIDGAME_PST] = bitboard.getWhiteMidgamePst();
+                traceMetrics[WHITE_ENDGAME_PST] = bitboard.getWhiteEndgamePst();
+            }
+        } else {
+            blackMidgameScore += bitboard.getBlackMidgamePst();
+            blackEndgameScore += bitboard.getBlackEndgamePst();
+
+            if (trace) {
+                traceMetrics[BLACK_MIDGAME_PST] = bitboard.getBlackMidgamePst();
+                traceMetrics[BLACK_ENDGAME_PST] = bitboard.getBlackEndgamePst();
             }
         }
     }

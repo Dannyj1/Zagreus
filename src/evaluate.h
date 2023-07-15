@@ -32,6 +32,10 @@ namespace Zagreus {
         WHITE_ENDGAME_MATERIAL,
         BLACK_MIDGAME_MATERIAL,
         BLACK_ENDGAME_MATERIAL,
+        WHITE_MIDGAME_PST,
+        WHITE_ENDGAME_PST,
+        BLACK_MIDGAME_PST,
+        BLACK_ENDGAME_PST,
     };
 
     class Evaluation {
@@ -57,5 +61,8 @@ namespace Zagreus {
 
         template<PieceColor color, bool trace>
         void evaluateMaterial();
+
+        template<PieceColor color, bool trace>
+        void evaluatePst();
     };
 }
