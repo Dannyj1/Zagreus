@@ -277,8 +277,7 @@ namespace Zagreus {
                     whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
                     // Virtual mobility - Get queen attacks from king position, with only occupied squares by own pieces. We also ignore the squares around the king.
-                    uint64_t kingAttacks = attacksFrom[index];
-                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::WHITE>()) & ~kingAttacks;
+                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::WHITE>());
                     whiteMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                     whiteEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                 } else {
@@ -294,8 +293,7 @@ namespace Zagreus {
                     blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
                     // Virtual mobility - Get queen attacks from king position, with only occupied squares by own pieces. We also ignore the squares around the king.
-                    uint64_t kingAttacks = attacksFrom[index];
-                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::BLACK>()) & ~kingAttacks;
+                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::BLACK>());
                     blackMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                     blackEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                 }
