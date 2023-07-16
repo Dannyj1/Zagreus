@@ -35,7 +35,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 namespace Zagreus {
     // Half the biggest pawn value
-    int initialAspirationWindow = std::max(getEvalValue(MIDGAME_PAWN_MATERIAL), getEvalValue(ENDGAME_PAWN_MATERIAL)) * 0.5;
+//    int initialAspirationWindow = std::max(getEvalValue(MIDGAME_PAWN_MATERIAL), getEvalValue(ENDGAME_PAWN_MATERIAL)) * 0.5;
 
     Move SearchManager::getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board) {
         std::chrono::time_point<std::chrono::steady_clock> startTime = std::chrono::steady_clock::now();
@@ -49,8 +49,8 @@ namespace Zagreus {
         int iterationScore = -1000000;
         int alpha = -1000000;
         int beta = 1000000;
-        int alphaWindow = initialAspirationWindow;
-        int betaWindow = initialAspirationWindow;
+//        int alphaWindow = initialAspirationWindow;
+//        int betaWindow = initialAspirationWindow;
         Move iterationMove = {};
         int depth = 0;
 
@@ -167,7 +167,7 @@ namespace Zagreus {
                 bestMove = iterationMove;
                 searchStats.score = bestScore;
 
-                if (depth >= 3) {
+                /*if (depth >= 3) {
                     if (bestScore <= alpha) {
                         alpha += alphaWindow;
                         alphaWindow *= 4;
@@ -186,7 +186,7 @@ namespace Zagreus {
 
                     alpha = bestScore - alphaWindow;
                     beta = bestScore + betaWindow;
-                }
+                }*/
             }
 
             iterationScore = -1000000;
