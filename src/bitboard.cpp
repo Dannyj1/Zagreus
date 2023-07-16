@@ -138,6 +138,11 @@ namespace Zagreus {
         return getBishopAttacks(square) | getRookAttacks(square);
     }
 
+    uint64_t Bitboard::getQueenAttacks(int8_t square, uint64_t occupancy) {
+        assert(square >= 0 && square < 64);
+        return getBishopAttacks(square, occupancy) | getRookAttacks(square, occupancy);
+    }
+
     uint64_t Bitboard::getBishopAttacks(int8_t square) {
         assert(square >= 0 && square < 64);
         uint64_t occupancy = getOccupiedBoard();
@@ -148,9 +153,27 @@ namespace Zagreus {
         return getBishopMagicAttacks(square, occupancy);
     }
 
+    uint64_t Bitboard::getBishopAttacks(int8_t square, uint64_t occupancy) {
+        assert(square >= 0 && square < 64);
+        occupancy &= getBishopMask(square);
+        occupancy *= getBishopMagic(square);
+        occupancy >>= 64 - BBits[square];
+
+        return getBishopMagicAttacks(square, occupancy);
+    }
+
     uint64_t Bitboard::getRookAttacks(int8_t square) {
         assert(square >= 0 && square < 64);
         uint64_t occupancy = getOccupiedBoard();
+        occupancy &= getRookMask(square);
+        occupancy *= getRookMagic(square);
+        occupancy >>= 64 - RBits[square];
+
+        return getRookMagicAttacks(square, occupancy);
+    }
+
+    uint64_t Bitboard::getRookAttacks(int8_t square, uint64_t occupancy) {
+        assert(square >= 0 && square < 64);
         occupancy &= getRookMask(square);
         occupancy *= getRookMagic(square);
         occupancy >>= 64 - RBits[square];

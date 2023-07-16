@@ -23,9 +23,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[20] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0 };
+    int evalValues[22] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0 };
 
-    int baseEvalValues[20] = {
+    int baseEvalValues[22] = {
             100, // MIDGAME_PAWN_MATERIAL
             100, // ENDGAME_PAWN_MATERIAL
             350, // MIDGAME_KNIGHT_MATERIAL
@@ -46,6 +46,8 @@ namespace Zagreus {
             8, // ENDGAME_QUEEN_MOBILITY
             20, // MIDGAME_PAWN_SHIELD
             0, // ENDGAME_PAWN_SHIELD
+            -5, // MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY
+            0
     };
 
     void printEvalValues() {

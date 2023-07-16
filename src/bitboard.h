@@ -120,9 +120,15 @@ namespace Zagreus {
 
         uint64_t getQueenAttacks(int8_t square);
 
+        uint64_t getQueenAttacks(int8_t square, uint64_t occupancy);
+
         uint64_t getBishopAttacks(int8_t square);
 
+        uint64_t getBishopAttacks(int8_t square, uint64_t occupancy);
+
         uint64_t getRookAttacks(int8_t square);
+
+        uint64_t getRookAttacks(int8_t square, uint64_t occupancy);
 
         void setPiece(int8_t square, PieceType piece);
 

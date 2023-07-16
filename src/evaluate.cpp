@@ -264,8 +264,8 @@ namespace Zagreus {
 
             // King safety
             if (isKing(pieceType)) {
-                // Pawn Shield
                 if (color == PieceColor::WHITE) {
+                    // Pawn Shield
                     uint64_t kingBB = bitboard.getPieceBoard(PieceType::WHITE_KING);
                     uint64_t pawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN);
                     uint64_t pawnShieldMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
@@ -275,7 +275,14 @@ namespace Zagreus {
 
                     whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                     whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
+
+                    // Virtual mobility - Get queen attacks from king position, with only occupied squares by own pieces. We also ignore the squares around the king.
+                    uint64_t kingAttacks = attacksFrom[index];
+                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::WHITE>()) & ~kingAttacks;
+                    whiteMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
+                    whiteEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                 } else {
+                    // Pawn Shield
                     uint64_t kingBB = bitboard.getPieceBoard(PieceType::BLACK_KING);
                     uint64_t pawnBB = bitboard.getPieceBoard(PieceType::BLACK_PAWN);
                     uint64_t pawnShieldMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
@@ -285,6 +292,12 @@ namespace Zagreus {
 
                     blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                     blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
+
+                    // Virtual mobility - Get queen attacks from king position, with only occupied squares by own pieces. We also ignore the squares around the king.
+                    uint64_t kingAttacks = attacksFrom[index];
+                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::BLACK>()) & ~kingAttacks;
+                    blackMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
+                    blackEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                 }
             }
         }
