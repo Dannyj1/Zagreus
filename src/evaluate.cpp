@@ -177,6 +177,10 @@ namespace Zagreus {
         return pieceType != PieceType::WHITE_PAWN && pieceType != PieceType::BLACK_PAWN && pieceType != PieceType::WHITE_KING && pieceType != PieceType::BLACK_KING;
     }
 
+    bool isKing(PieceType pieceType) {
+        return pieceType == PieceType::WHITE_KING || pieceType == PieceType::BLACK_KING;
+    }
+
     void Evaluation::addMobilityScoreForPiece(PieceType pieceType, int mobility) {
         switch (pieceType) {
             case PieceType::WHITE_KNIGHT:
@@ -214,7 +218,7 @@ namespace Zagreus {
         }
     }
 
-    template<PieceColor color, bool trace>
+    template<PieceColor color>
     void Evaluation::evaluatePieces() {
         uint64_t colorBoard = bitboard.getColorBoard<color>();
 
@@ -222,6 +226,7 @@ namespace Zagreus {
             uint8_t index = popLsb(colorBoard);
             PieceType pieceType = bitboard.getPieceOnSquare(index);
 
+            // Mobility
             if (isNotPawnOrKing(pieceType)) {
                 uint64_t mobilitySquares = attacksFrom[index];
 
@@ -254,45 +259,49 @@ namespace Zagreus {
                 }
 
                 uint8_t mobility = popcnt(mobilitySquares);
+                addMobilityScoreForPiece(pieceType, mobility);
+            }
 
-                if (trace) {
-                    if (color == PieceColor::WHITE) {
-                        int startMidgameScore = whiteMidgameScore;
-                        int startEndgameScore = whiteEndgameScore;
+            // King safety
+            if (isKing(pieceType)) {
+                // Pawn Shield
+                if (color == PieceColor::WHITE) {
+                    uint64_t kingBB = bitboard.getPieceBoard(PieceType::WHITE_KING);
+                    uint64_t pawnBB = bitboard.getPieceBoard(PieceType::WHITE_PAWN);
+                    uint64_t pawnShieldMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
+                    pawnShieldMask |= nortOne(pawnShieldMask);
+                    uint64_t pawnShield = pawnBB & pawnShieldMask;
+                    uint8_t pawnShieldCount = std::min(popcnt(pawnShield), 3ULL);
 
-                        addMobilityScoreForPiece(pieceType, mobility);
-
-                        traceMetrics[WHITE_MIDGAME_MOBILITY] += whiteMidgameScore - startMidgameScore;
-                        traceMetrics[WHITE_ENDGAME_MOBILITY] += whiteEndgameScore - startEndgameScore;
-                    } else {
-                        int startMidgameScore = blackMidgameScore;
-                        int startEndgameScore = blackEndgameScore;
-
-                        addMobilityScoreForPiece(pieceType, mobility);
-
-                        traceMetrics[BLACK_MIDGAME_MOBILITY] += blackMidgameScore - startMidgameScore;
-                        traceMetrics[BLACK_ENDGAME_MOBILITY] += blackEndgameScore - startEndgameScore;
-                    }
+                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
+                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
                 } else {
-                    addMobilityScoreForPiece(pieceType, mobility);
+                    uint64_t kingBB = bitboard.getPieceBoard(PieceType::BLACK_KING);
+                    uint64_t pawnBB = bitboard.getPieceBoard(PieceType::BLACK_PAWN);
+                    uint64_t pawnShieldMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
+                    pawnShieldMask |= soutOne(pawnShieldMask);
+                    uint64_t pawnShield = pawnBB & pawnShieldMask;
+                    uint8_t pawnShieldCount = std::min(popcnt(pawnShield), 3ULL);
+
+                    blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
+                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
                 }
             }
         }
     }
 
-    template<bool trace>
     int Evaluation::evaluate() {
         int phase = getPhase();
         int modifier = bitboard.getMovingColor() == PieceColor::WHITE ? 1 : -1;
 
-        evaluateMaterial<PieceColor::WHITE, trace>();
-        evaluateMaterial<PieceColor::BLACK, trace>();
+        evaluateMaterial<PieceColor::WHITE>();
+        evaluateMaterial<PieceColor::BLACK>();
 
-        evaluatePst<PieceColor::WHITE, trace>();
-        evaluatePst<PieceColor::BLACK, trace>();
+        evaluatePst<PieceColor::WHITE>();
+        evaluatePst<PieceColor::BLACK>();
 
-        evaluatePieces<PieceColor::WHITE, trace>();
-        evaluatePieces<PieceColor::BLACK, trace>();
+        evaluatePieces<PieceColor::WHITE>();
+        evaluatePieces<PieceColor::BLACK>();
 
         int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
         int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
@@ -300,15 +309,9 @@ namespace Zagreus {
         return (whiteScore - blackScore) * modifier;
     }
 
-    template int Evaluation::evaluate<true>();
-    template int Evaluation::evaluate<false>();
-
-    template<PieceColor color, bool trace>
+    template<PieceColor color>
     void Evaluation::evaluateMaterial() {
         if (color == PieceColor::WHITE) {
-            int startMidgameScore = whiteMidgameScore;
-            int startEndgameScore = whiteEndgameScore;
-
             whiteMidgameScore += bitboard.getMaterialCount<WHITE_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
             whiteEndgameScore += bitboard.getMaterialCount<WHITE_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
@@ -323,15 +326,7 @@ namespace Zagreus {
 
             whiteMidgameScore += bitboard.getMaterialCount<WHITE_QUEEN>() * getEvalValue(MIDGAME_QUEEN_MATERIAL);
             whiteEndgameScore += bitboard.getMaterialCount<WHITE_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
-
-            if (trace) {
-                traceMetrics[WHITE_MIDGAME_MATERIAL] = whiteMidgameScore - startMidgameScore;
-                traceMetrics[WHITE_ENDGAME_MATERIAL] = whiteEndgameScore - startEndgameScore;
-            }
         } else {
-            int startMidgameScore = blackMidgameScore;
-            int startEndgameScore = blackEndgameScore;
-
             blackMidgameScore += bitboard.getMaterialCount<BLACK_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
             blackEndgameScore += bitboard.getMaterialCount<BLACK_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
@@ -346,32 +341,17 @@ namespace Zagreus {
 
             blackMidgameScore += bitboard.getMaterialCount<BLACK_QUEEN>() * getEvalValue(MIDGAME_QUEEN_MATERIAL);
             blackEndgameScore += bitboard.getMaterialCount<BLACK_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
-
-            if (trace) {
-                traceMetrics[BLACK_MIDGAME_MATERIAL] = blackMidgameScore - startMidgameScore;
-                traceMetrics[BLACK_ENDGAME_MATERIAL] = blackEndgameScore - startEndgameScore;
-            }
         }
     }
 
-    template<PieceColor color, bool trace>
+    template<PieceColor color>
     void Evaluation::evaluatePst() {
         if (color == PieceColor::WHITE) {
             whiteMidgameScore += bitboard.getWhiteMidgamePst();
             whiteEndgameScore += bitboard.getWhiteEndgamePst();
-
-            if (trace) {
-                traceMetrics[WHITE_MIDGAME_PST] = bitboard.getWhiteMidgamePst();
-                traceMetrics[WHITE_ENDGAME_PST] = bitboard.getWhiteEndgamePst();
-            }
         } else {
             blackMidgameScore += bitboard.getBlackMidgamePst();
             blackEndgameScore += bitboard.getBlackEndgamePst();
-
-            if (trace) {
-                traceMetrics[BLACK_MIDGAME_PST] = bitboard.getBlackMidgamePst();
-                traceMetrics[BLACK_ENDGAME_PST] = bitboard.getBlackEndgamePst();
-            }
         }
     }
 }

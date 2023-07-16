@@ -46,7 +46,6 @@ namespace Zagreus {
     public:
         Evaluation(Bitboard &bitboard);
 
-        template<bool trace>
         int evaluate();
     private:
         Bitboard &bitboard;
@@ -64,13 +63,13 @@ namespace Zagreus {
 
         int getPhase();
 
-        template<PieceColor color, bool trace>
+        template<PieceColor color>
         void evaluateMaterial();
 
-        template<PieceColor color, bool trace>
+        template<PieceColor color>
         void evaluatePst();
 
-        template<PieceColor color, bool trace>
+        template<PieceColor color>
         void evaluatePieces();
 
         void addMobilityScoreForPiece(PieceType pieceType, int mobility);

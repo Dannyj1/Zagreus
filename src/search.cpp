@@ -390,7 +390,7 @@ namespace Zagreus {
                                Move &previousMove,
                                std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth) {
         if (board.getPly() >= MAX_PLY) {
-            return Evaluation(board).evaluate<false>();
+            return Evaluation(board).evaluate();
         }
 
         if (engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
@@ -399,7 +399,7 @@ namespace Zagreus {
 
         searchStats.qnodes += 1;
 
-        int standPat = Evaluation(board).evaluate<false>();
+        int standPat = Evaluation(board).evaluate();
 
         if (standPat >= beta) {
             return beta;

@@ -42,6 +42,8 @@ namespace Zagreus {
         ENDGAME_ROOK_MOBILITY,
         MIDGAME_QUEEN_MOBILITY,
         ENDGAME_QUEEN_MOBILITY,
+        MIDGAME_PAWN_SHIELD,
+        ENDGAME_PAWN_SHIELD,
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -63,6 +65,8 @@ namespace Zagreus {
             "ENDGAME_ROOK_MOBILITY",
             "MIDGAME_QUEEN_MOBILITY",
             "ENDGAME_QUEEN_MOBILITY",
+            "MIDGAME_PAWN_SHIELD",
+            "ENDGAME_PAWN_SHIELD",
     };
 
     void printEvalValues();
