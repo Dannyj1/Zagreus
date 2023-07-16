@@ -226,8 +226,8 @@ namespace Zagreus {
                 uint64_t mobilitySquares = attacksFrom[index];
 
                 if (color == PieceColor::WHITE) {
-                    // Exclude attacks by opponent pawns, our queen and our king
-                    mobilitySquares &= ~(attacksByPiece[PieceType::BLACK_PAWN] | bitboard.getPieceBoard(PieceType::WHITE_KING) | bitboard.getPieceBoard(PieceType::WHITE_QUEEN));
+                    // Exclude own pieces and attacks by opponent pawns
+                    mobilitySquares &= ~(bitboard.getColorBoard<PieceColor::WHITE>() | attacksByPiece[PieceType::BLACK_PAWN]);
 
                     // If pieceType == queen, exclude tiles attacked by opponent bishop, knight and rook
                     if (pieceType == PieceType::WHITE_QUEEN) {
@@ -239,8 +239,8 @@ namespace Zagreus {
                         mobilitySquares &= ~(attacksByPiece[PieceType::BLACK_BISHOP] | attacksByPiece[PieceType::BLACK_KNIGHT]);
                     }
                 } else {
-                    // Exclude attacks by opponent pawns, our queen and our king
-                    mobilitySquares &= ~(attacksByPiece[PieceType::WHITE_PAWN] | bitboard.getPieceBoard(PieceType::BLACK_KING) | bitboard.getPieceBoard(PieceType::BLACK_QUEEN));
+                    // Exclude own pieces and attacks by opponent pawns
+                    mobilitySquares &= ~(bitboard.getColorBoard<PieceColor::BLACK>() | attacksByPiece[PieceType::WHITE_PAWN]);
 
                     // If pieceType == queen, exclude tiles attacked by opponent bishop, knight and rook
                     if (pieceType == PieceType::BLACK_QUEEN) {
