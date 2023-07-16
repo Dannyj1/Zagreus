@@ -23,35 +23,27 @@
 
 namespace Zagreus {
     Evaluation::Evaluation(Bitboard &bitboard) : bitboard(bitboard) {
-        uint64_t whitePawnAttacks = calculatePawnAttacks<PieceColor::WHITE>(bitboard.getPieceBoard(PieceType::WHITE_PAWN));
-        attacksByPiece[PieceType::WHITE_PAWN] |= whitePawnAttacks;
-        attacksByColor[PieceColor::WHITE] |= whitePawnAttacks;
-        combinedAttacks |= whitePawnAttacks;
+        uint64_t whitePawns = bitboard.getPieceBoard(PieceType::WHITE_PAWN);
+        while (whitePawns) {
+            int square = popLsb(whitePawns);
+            uint64_t attacks = bitboard.getPawnAttacks<PieceColor::WHITE>(square);
 
-        uint64_t whiteKnightAttacks = calculateKnightAttacks(bitboard.getPieceBoard(PieceType::WHITE_KNIGHT));
-        attacksByPiece[PieceType::WHITE_KNIGHT] |= whiteKnightAttacks;
-        attacksByColor[PieceColor::WHITE] |= whiteKnightAttacks;
-        combinedAttacks |= whiteKnightAttacks;
+            attacksByPiece[PieceType::WHITE_PAWN] |= attacks;
+            attacksByColor[PieceColor::WHITE] |= attacks;
+            combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
+        }
 
-        uint64_t whiteKingAttacks = bitboard.getKingAttacks(popcnt(bitboard.getPieceBoard(PieceType::WHITE_KING)));
-        attacksByPiece[PieceType::WHITE_KING] |= whiteKingAttacks;
-        attacksByColor[PieceColor::WHITE] |= whiteKingAttacks;
-        combinedAttacks |= whiteKingAttacks;
+        uint64_t whiteKnights = bitboard.getPieceBoard(PieceType::WHITE_KNIGHT);
+        while (whiteKnights) {
+            int square = popLsb(whiteKnights);
+            uint64_t attacks = bitboard.getKnightAttacks(square);
 
-        uint64_t blackPawnAttacks = calculatePawnAttacks<PieceColor::BLACK>(bitboard.getPieceBoard(PieceType::BLACK_PAWN));
-        attacksByPiece[PieceType::BLACK_PAWN] |= blackPawnAttacks;
-        attacksByColor[PieceColor::BLACK] |= blackPawnAttacks;
-        combinedAttacks |= blackPawnAttacks;
-
-        uint64_t blackKnightAttacks = calculateKnightAttacks(bitboard.getPieceBoard(PieceType::BLACK_KNIGHT));
-        attacksByPiece[PieceType::BLACK_KNIGHT] |= blackKnightAttacks;
-        attacksByColor[PieceColor::BLACK] |= blackKnightAttacks;
-        combinedAttacks |= blackKnightAttacks;
-
-        uint64_t blackKingAttacks = bitboard.getKingAttacks(popcnt(bitboard.getPieceBoard(PieceType::BLACK_KING)));
-        attacksByPiece[PieceType::BLACK_KING] |= blackKingAttacks;
-        attacksByColor[PieceColor::BLACK] |= blackKingAttacks;
-        combinedAttacks |= blackKingAttacks;
+            attacksByPiece[PieceType::WHITE_KNIGHT] |= attacks;
+            attacksByColor[PieceColor::WHITE] |= attacks;
+            combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
+        }
 
         uint64_t whiteBishops = bitboard.getPieceBoard(PieceType::WHITE_BISHOP);
         while (whiteBishops) {
@@ -61,6 +53,7 @@ namespace Zagreus {
             attacksByPiece[PieceType::WHITE_BISHOP] |= attacks;
             attacksByColor[PieceColor::WHITE] |= attacks;
             combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
         }
 
         uint64_t whiteRooks = bitboard.getPieceBoard(PieceType::WHITE_ROOK);
@@ -71,6 +64,7 @@ namespace Zagreus {
             attacksByPiece[PieceType::WHITE_ROOK] |= attacks;
             attacksByColor[PieceColor::WHITE] |= attacks;
             combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
         }
 
         uint64_t whiteQueens = bitboard.getPieceBoard(PieceType::WHITE_QUEEN);
@@ -81,6 +75,40 @@ namespace Zagreus {
             attacksByPiece[PieceType::WHITE_QUEEN] |= attacks;
             attacksByColor[PieceColor::WHITE] |= attacks;
             combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
+        }
+
+        uint64_t whiteKing = bitboard.getPieceBoard(PieceType::WHITE_KING);
+        while (whiteKing) {
+            int square = popLsb(whiteKing);
+            uint64_t attacks = bitboard.getKingAttacks(square);
+
+            attacksByPiece[PieceType::WHITE_KING] |= attacks;
+            attacksByColor[PieceColor::WHITE] |= attacks;
+            combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
+        }
+
+        uint64_t blackPawns = bitboard.getPieceBoard(PieceType::BLACK_PAWN);
+        while (blackPawns) {
+            int square = popLsb(blackPawns);
+            uint64_t attacks = bitboard.getPawnAttacks<PieceColor::BLACK>(square);
+
+            attacksByPiece[PieceType::BLACK_PAWN] |= attacks;
+            attacksByColor[PieceColor::BLACK] |= attacks;
+            combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
+        }
+
+        uint64_t blackKnights = bitboard.getPieceBoard(PieceType::BLACK_KNIGHT);
+        while (blackKnights) {
+            int square = popLsb(blackKnights);
+            uint64_t attacks = bitboard.getKnightAttacks(square);
+
+            attacksByPiece[PieceType::BLACK_KNIGHT] |= attacks;
+            attacksByColor[PieceColor::BLACK] |= attacks;
+            combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
         }
 
         uint64_t blackBishops = bitboard.getPieceBoard(PieceType::BLACK_BISHOP);
@@ -91,6 +119,7 @@ namespace Zagreus {
             attacksByPiece[PieceType::BLACK_BISHOP] |= attacks;
             attacksByColor[PieceColor::BLACK] |= attacks;
             combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
         }
 
         uint64_t blackRooks = bitboard.getPieceBoard(PieceType::BLACK_ROOK);
@@ -101,6 +130,7 @@ namespace Zagreus {
             attacksByPiece[PieceType::BLACK_ROOK] |= attacks;
             attacksByColor[PieceColor::BLACK] |= attacks;
             combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
         }
 
         uint64_t blackQueens = bitboard.getPieceBoard(PieceType::BLACK_QUEEN);
@@ -111,6 +141,18 @@ namespace Zagreus {
             attacksByPiece[PieceType::BLACK_QUEEN] |= attacks;
             attacksByColor[PieceColor::BLACK] |= attacks;
             combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
+        }
+
+        uint64_t blackKing = bitboard.getPieceBoard(PieceType::BLACK_KING);
+        while (blackKing) {
+            int square = popLsb(blackKing);
+            uint64_t attacks = bitboard.getKingAttacks(square);
+
+            attacksByPiece[PieceType::BLACK_KING] |= attacks;
+            attacksByColor[PieceColor::BLACK] |= attacks;
+            combinedAttacks |= attacks;
+            attacksFrom[square] |= attacks;
         }
     }
 
@@ -131,6 +173,111 @@ namespace Zagreus {
         return (phase * 256 + (totalPhase / 2)) / totalPhase;
     }
 
+    bool isNotPawnOrKing(PieceType pieceType) {
+        return pieceType != PieceType::WHITE_PAWN && pieceType != PieceType::BLACK_PAWN && pieceType != PieceType::WHITE_KING && pieceType != PieceType::BLACK_KING;
+    }
+
+    void Evaluation::addMobilityScoreForPiece(PieceType pieceType, int mobility) {
+        switch (pieceType) {
+            case PieceType::WHITE_KNIGHT:
+                whiteMidgameScore += mobility * getEvalValue(MIDGAME_KNIGHT_MOBILITY);
+                whiteEndgameScore += mobility * getEvalValue(ENDGAME_KNIGHT_MOBILITY);
+                break;
+            case PieceType::BLACK_KNIGHT:
+                blackMidgameScore += mobility * getEvalValue(MIDGAME_KNIGHT_MOBILITY);
+                blackEndgameScore += mobility * getEvalValue(ENDGAME_KNIGHT_MOBILITY);
+                break;
+            case PieceType::WHITE_BISHOP:
+                whiteMidgameScore += mobility * getEvalValue(MIDGAME_BISHOP_MOBILITY);
+                whiteEndgameScore += mobility * getEvalValue(ENDGAME_BISHOP_MOBILITY);
+                break;
+            case PieceType::BLACK_BISHOP:
+                blackMidgameScore += mobility * getEvalValue(MIDGAME_BISHOP_MOBILITY);
+                blackEndgameScore += mobility * getEvalValue(ENDGAME_BISHOP_MOBILITY);
+                break;
+            case PieceType::WHITE_ROOK:
+                whiteMidgameScore += mobility * getEvalValue(MIDGAME_ROOK_MOBILITY);
+                whiteEndgameScore += mobility * getEvalValue(ENDGAME_ROOK_MOBILITY);
+                break;
+            case PieceType::BLACK_ROOK:
+                blackMidgameScore += mobility * getEvalValue(MIDGAME_ROOK_MOBILITY);
+                blackEndgameScore += mobility * getEvalValue(ENDGAME_ROOK_MOBILITY);
+                break;
+            case PieceType::WHITE_QUEEN:
+                whiteMidgameScore += mobility * getEvalValue(MIDGAME_QUEEN_MOBILITY);
+                whiteEndgameScore += mobility * getEvalValue(ENDGAME_QUEEN_MOBILITY);
+                break;
+            case PieceType::BLACK_QUEEN:
+                blackMidgameScore += mobility * getEvalValue(MIDGAME_QUEEN_MOBILITY);
+                blackEndgameScore += mobility * getEvalValue(ENDGAME_QUEEN_MOBILITY);
+                break;
+        }
+    }
+
+    template<PieceColor color, bool trace>
+    void Evaluation::evaluatePieces() {
+        uint64_t colorBoard = bitboard.getColorBoard<color>();
+
+        while (colorBoard) {
+            uint8_t index = popLsb(colorBoard);
+            PieceType pieceType = bitboard.getPieceOnSquare(index);
+
+            if (isNotPawnOrKing(pieceType)) {
+                uint64_t mobilitySquares = attacksFrom[index];
+
+                if (color == PieceColor::WHITE) {
+                    mobilitySquares &= ~bitboard.getColorBoard<PieceColor::WHITE>();
+                    mobilitySquares &= ~attacksByPiece[PieceType::BLACK_PAWN];
+
+                    if (pieceType == PieceType::WHITE_QUEEN) {
+                        mobilitySquares &= ~attacksByPiece[PieceType::BLACK_BISHOP];
+                        mobilitySquares &= ~attacksByPiece[PieceType::BLACK_ROOK];
+                        mobilitySquares &= ~attacksByPiece[PieceType::BLACK_QUEEN];
+                    } else if (pieceType == PieceType::WHITE_ROOK) {
+                        mobilitySquares &= ~attacksByPiece[PieceType::BLACK_BISHOP];
+                        mobilitySquares &= ~attacksByPiece[PieceType::BLACK_KNIGHT];
+                    }
+                } else {
+                    mobilitySquares &= ~bitboard.getColorBoard<PieceColor::BLACK>();
+                    mobilitySquares &= ~attacksByPiece[PieceType::WHITE_PAWN];
+
+                    if (pieceType == PieceType::BLACK_QUEEN) {
+                        mobilitySquares &= ~attacksByPiece[PieceType::WHITE_BISHOP];
+                        mobilitySquares &= ~attacksByPiece[PieceType::WHITE_ROOK];
+                        mobilitySquares &= ~attacksByPiece[PieceType::WHITE_QUEEN];
+                    } else if (pieceType == PieceType::BLACK_ROOK) {
+                        mobilitySquares &= ~attacksByPiece[PieceType::WHITE_BISHOP];
+                        mobilitySquares &= ~attacksByPiece[PieceType::WHITE_KNIGHT];
+                    }
+                }
+
+                uint8_t mobility = popcnt(mobilitySquares);
+
+                if (trace) {
+                    if (color == PieceColor::WHITE) {
+                        int startMidgameScore = whiteMidgameScore;
+                        int startEndgameScore = whiteEndgameScore;
+
+                        addMobilityScoreForPiece(pieceType, mobility);
+
+                        traceMetrics[WHITE_MIDGAME_MOBILITY] += whiteMidgameScore - startMidgameScore;
+                        traceMetrics[WHITE_ENDGAME_MOBILITY] += whiteEndgameScore - startEndgameScore;
+                    } else {
+                        int startMidgameScore = blackMidgameScore;
+                        int startEndgameScore = blackEndgameScore;
+
+                        addMobilityScoreForPiece(pieceType, mobility);
+
+                        traceMetrics[BLACK_MIDGAME_MOBILITY] += blackMidgameScore - startMidgameScore;
+                        traceMetrics[BLACK_ENDGAME_MOBILITY] += blackEndgameScore - startEndgameScore;
+                    }
+                } else {
+                    addMobilityScoreForPiece(pieceType, mobility);
+                }
+            }
+        }
+    }
+
     template<bool trace>
     int Evaluation::evaluate() {
         int phase = getPhase();
@@ -141,6 +288,9 @@ namespace Zagreus {
 
         evaluatePst<PieceColor::WHITE, trace>();
         evaluatePst<PieceColor::BLACK, trace>();
+
+        evaluatePieces<PieceColor::WHITE, trace>();
+        evaluatePieces<PieceColor::BLACK, trace>();
 
         int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
         int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
@@ -154,56 +304,46 @@ namespace Zagreus {
     template<PieceColor color, bool trace>
     void Evaluation::evaluateMaterial() {
         if (color == PieceColor::WHITE) {
-            int whitePawnCount = bitboard.getMaterialCount<WHITE_PAWN>();
-            int whiteKnightCount = bitboard.getMaterialCount<WHITE_KNIGHT>();
-            int whiteBishopCount = bitboard.getMaterialCount<WHITE_BISHOP>();
-            int whiteRookCount = bitboard.getMaterialCount<WHITE_ROOK>();
-            int whiteQueenCount = bitboard.getMaterialCount<WHITE_QUEEN>();
             int startMidgameScore = whiteMidgameScore;
             int startEndgameScore = whiteEndgameScore;
 
-            whiteMidgameScore += whitePawnCount * getEvalValue(MIDGAME_PAWN_MATERIAL);
-            whiteEndgameScore += whitePawnCount * getEvalValue(ENDGAME_PAWN_MATERIAL);
+            whiteMidgameScore += bitboard.getMaterialCount<WHITE_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
+            whiteEndgameScore += bitboard.getMaterialCount<WHITE_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
-            whiteMidgameScore += whiteKnightCount * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
-            whiteEndgameScore += whiteKnightCount * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
+            whiteMidgameScore += bitboard.getMaterialCount<WHITE_KNIGHT>() * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
+            whiteEndgameScore += bitboard.getMaterialCount<WHITE_KNIGHT>() * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
 
-            whiteMidgameScore += whiteBishopCount * getEvalValue(MIDGAME_BISHOP_MATERIAL);
-            whiteEndgameScore += whiteBishopCount * getEvalValue(ENDGAME_BISHOP_MATERIAL);
+            whiteMidgameScore += bitboard.getMaterialCount<WHITE_BISHOP>() * getEvalValue(MIDGAME_BISHOP_MATERIAL);
+            whiteEndgameScore += bitboard.getMaterialCount<WHITE_BISHOP>() * getEvalValue(ENDGAME_BISHOP_MATERIAL);
 
-            whiteMidgameScore += whiteRookCount * getEvalValue(MIDGAME_ROOK_MATERIAL);
-            whiteEndgameScore += whiteRookCount * getEvalValue(ENDGAME_ROOK_MATERIAL);
+            whiteMidgameScore += bitboard.getMaterialCount<WHITE_ROOK>() * getEvalValue(MIDGAME_ROOK_MATERIAL);
+            whiteEndgameScore += bitboard.getMaterialCount<WHITE_ROOK>() * getEvalValue(ENDGAME_ROOK_MATERIAL);
 
-            whiteMidgameScore += whiteQueenCount * getEvalValue(MIDGAME_QUEEN_MATERIAL);
-            whiteEndgameScore += whiteQueenCount * getEvalValue(ENDGAME_QUEEN_MATERIAL);
+            whiteMidgameScore += bitboard.getMaterialCount<WHITE_QUEEN>() * getEvalValue(MIDGAME_QUEEN_MATERIAL);
+            whiteEndgameScore += bitboard.getMaterialCount<WHITE_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
 
             if (trace) {
                 traceMetrics[WHITE_MIDGAME_MATERIAL] = whiteMidgameScore - startMidgameScore;
                 traceMetrics[WHITE_ENDGAME_MATERIAL] = whiteEndgameScore - startEndgameScore;
             }
         } else {
-            int blackPawnCount = bitboard.getMaterialCount<BLACK_PAWN>();
-            int blackKnightCount = bitboard.getMaterialCount<BLACK_KNIGHT>();
-            int blackBishopCount = bitboard.getMaterialCount<BLACK_BISHOP>();
-            int blackRookCount = bitboard.getMaterialCount<BLACK_ROOK>();
-            int blackQueenCount = bitboard.getMaterialCount<BLACK_QUEEN>();
             int startMidgameScore = blackMidgameScore;
             int startEndgameScore = blackEndgameScore;
 
-            blackMidgameScore += blackPawnCount * getEvalValue(MIDGAME_PAWN_MATERIAL);
-            blackEndgameScore += blackPawnCount * getEvalValue(ENDGAME_PAWN_MATERIAL);
+            blackMidgameScore += bitboard.getMaterialCount<BLACK_PAWN>() * getEvalValue(MIDGAME_PAWN_MATERIAL);
+            blackEndgameScore += bitboard.getMaterialCount<BLACK_PAWN>() * getEvalValue(ENDGAME_PAWN_MATERIAL);
 
-            blackMidgameScore += blackKnightCount * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
-            blackEndgameScore += blackKnightCount * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
+            blackMidgameScore += bitboard.getMaterialCount<BLACK_KNIGHT>() * getEvalValue(MIDGAME_KNIGHT_MATERIAL);
+            blackEndgameScore += bitboard.getMaterialCount<BLACK_KNIGHT>() * getEvalValue(ENDGAME_KNIGHT_MATERIAL);
 
-            blackMidgameScore += blackBishopCount * getEvalValue(MIDGAME_BISHOP_MATERIAL);
-            blackEndgameScore += blackBishopCount * getEvalValue(ENDGAME_BISHOP_MATERIAL);
+            blackMidgameScore += bitboard.getMaterialCount<BLACK_BISHOP>() * getEvalValue(MIDGAME_BISHOP_MATERIAL);
+            blackEndgameScore += bitboard.getMaterialCount<BLACK_BISHOP>() * getEvalValue(ENDGAME_BISHOP_MATERIAL);
 
-            blackMidgameScore += blackRookCount * getEvalValue(MIDGAME_ROOK_MATERIAL);
-            blackEndgameScore += blackRookCount * getEvalValue(ENDGAME_ROOK_MATERIAL);
+            blackMidgameScore += bitboard.getMaterialCount<BLACK_ROOK>() * getEvalValue(MIDGAME_ROOK_MATERIAL);
+            blackEndgameScore += bitboard.getMaterialCount<BLACK_ROOK>() * getEvalValue(ENDGAME_ROOK_MATERIAL);
 
-            blackMidgameScore += blackQueenCount * getEvalValue(MIDGAME_QUEEN_MATERIAL);
-            blackEndgameScore += blackQueenCount * getEvalValue(ENDGAME_QUEEN_MATERIAL);
+            blackMidgameScore += bitboard.getMaterialCount<BLACK_QUEEN>() * getEvalValue(MIDGAME_QUEEN_MATERIAL);
+            blackEndgameScore += bitboard.getMaterialCount<BLACK_QUEEN>() * getEvalValue(ENDGAME_QUEEN_MATERIAL);
 
             if (trace) {
                 traceMetrics[BLACK_MIDGAME_MATERIAL] = blackMidgameScore - startMidgameScore;

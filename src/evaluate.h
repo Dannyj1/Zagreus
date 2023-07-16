@@ -36,6 +36,10 @@ namespace Zagreus {
         WHITE_ENDGAME_PST,
         BLACK_MIDGAME_PST,
         BLACK_ENDGAME_PST,
+        WHITE_MIDGAME_MOBILITY,
+        WHITE_ENDGAME_MOBILITY,
+        BLACK_MIDGAME_MOBILITY,
+        BLACK_ENDGAME_MOBILITY,
     };
 
     class Evaluation {
@@ -50,6 +54,7 @@ namespace Zagreus {
 
         uint64_t attacksByPiece[PIECE_TYPES]{};
         uint64_t attacksByColor[COLORS]{};
+        uint64_t attacksFrom[SQUARES]{};
         uint64_t combinedAttacks{};
 
         int whiteMidgameScore = 0;
@@ -64,5 +69,10 @@ namespace Zagreus {
 
         template<PieceColor color, bool trace>
         void evaluatePst();
+
+        template<PieceColor color, bool trace>
+        void evaluatePieces();
+
+        void addMobilityScoreForPiece(PieceType pieceType, int mobility);
     };
 }

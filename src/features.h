@@ -33,7 +33,15 @@ namespace Zagreus {
         MIDGAME_ROOK_MATERIAL,
         ENDGAME_ROOK_MATERIAL,
         MIDGAME_QUEEN_MATERIAL,
-        ENDGAME_QUEEN_MATERIAL
+        ENDGAME_QUEEN_MATERIAL,
+        MIDGAME_KNIGHT_MOBILITY,
+        ENDGAME_KNIGHT_MOBILITY,
+        MIDGAME_BISHOP_MOBILITY,
+        ENDGAME_BISHOP_MOBILITY,
+        MIDGAME_ROOK_MOBILITY,
+        ENDGAME_ROOK_MOBILITY,
+        MIDGAME_QUEEN_MOBILITY,
+        ENDGAME_QUEEN_MOBILITY,
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -47,6 +55,14 @@ namespace Zagreus {
             "ENDGAME_ROOK_MATERIAL",
             "MIDGAME_QUEEN_MATERIAL",
             "ENDGAME_QUEEN_MATERIAL",
+            "MIDGAME_KNIGHT_MOBILITY",
+            "ENDGAME_KNIGHT_MOBILITY",
+            "MIDGAME_BISHOP_MOBILITY",
+            "ENDGAME_BISHOP_MOBILITY",
+            "MIDGAME_ROOK_MOBILITY",
+            "ENDGAME_ROOK_MOBILITY",
+            "MIDGAME_QUEEN_MOBILITY",
+            "ENDGAME_QUEEN_MOBILITY",
     };
 
     void printEvalValues();

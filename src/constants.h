@@ -71,6 +71,7 @@ static constexpr int NO_CAPTURE_SCORE = -1;
 
 static constexpr int COLORS = 2;
 static constexpr int PIECE_TYPES = 12;
+static constexpr int SQUARES = 64;
 
 static constexpr int MVVLVA_TABLE[12][12] = {
         {105, 105, 205, 205, 305, 305, 405, 405, 505, 505, 605, 605},
