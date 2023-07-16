@@ -233,10 +233,10 @@ namespace Zagreus {
                         mobilitySquares &= ~attacksByPiece[PieceType::BLACK_KNIGHT];
                         mobilitySquares &= ~attacksByPiece[PieceType::BLACK_BISHOP];
                         mobilitySquares &= ~attacksByPiece[PieceType::BLACK_ROOK];
-                    } else if (pieceType == PieceType::WHITE_ROOK) {
+                    }/* else if (pieceType == PieceType::WHITE_ROOK) {
                         mobilitySquares &= ~attacksByPiece[PieceType::BLACK_KNIGHT];
                         mobilitySquares &= ~attacksByPiece[PieceType::BLACK_BISHOP];
-                    }
+                    }*/
                 } else {
                     mobilitySquares &= ~bitboard.getColorBoard<PieceColor::BLACK>();
                     mobilitySquares &= ~attacksByPiece[PieceType::WHITE_PAWN];
@@ -245,10 +245,10 @@ namespace Zagreus {
                         mobilitySquares &= ~attacksByPiece[PieceType::WHITE_KNIGHT];
                         mobilitySquares &= ~attacksByPiece[PieceType::WHITE_BISHOP];
                         mobilitySquares &= ~attacksByPiece[PieceType::WHITE_ROOK];
-                    } else if (pieceType == PieceType::BLACK_ROOK) {
+                    }/* else if (pieceType == PieceType::BLACK_ROOK) {
                         mobilitySquares &= ~attacksByPiece[PieceType::WHITE_KNIGHT];
                         mobilitySquares &= ~attacksByPiece[PieceType::WHITE_BISHOP];
-                    }
+                    }*/
                 }
 
                 uint8_t mobility = popcnt(mobilitySquares);
