@@ -226,11 +226,31 @@ namespace Zagreus {
                 uint64_t mobilitySquares = attacksFrom[index];
 
                 if (color == PieceColor::WHITE) {
-                    mobilitySquares &= ~bitboard.getColorBoard<PieceColor::WHITE>();
-                    mobilitySquares &= ~attacksByPiece[PieceType::BLACK_PAWN];
+                    // Exclude own pieces and attacks by opponent pawns
+                    mobilitySquares &= ~(bitboard.getColorBoard<PieceColor::WHITE>() | attacksByPiece[PieceType::BLACK_PAWN]);
+
+                    // If pieceType == queen, exclude tiles attacked by opponent bishop, knight and rook
+                    if (pieceType == PieceType::WHITE_QUEEN) {
+                        mobilitySquares &= ~(attacksByPiece[PieceType::BLACK_BISHOP] | attacksByPiece[PieceType::BLACK_KNIGHT] | attacksByPiece[PieceType::BLACK_ROOK]);
+                    }
+
+                    // If pieceType == rook, exclude tiles attacked by opponent bishop and knight
+                    if (pieceType == PieceType::WHITE_ROOK) {
+                        mobilitySquares &= ~(attacksByPiece[PieceType::BLACK_BISHOP] | attacksByPiece[PieceType::BLACK_KNIGHT]);
+                    }
                 } else {
-                    mobilitySquares &= ~bitboard.getColorBoard<PieceColor::BLACK>();
-                    mobilitySquares &= ~attacksByPiece[PieceType::WHITE_PAWN];
+                    // Exclude own pieces and attacks by opponent pawns
+                    mobilitySquares &= ~(bitboard.getColorBoard<PieceColor::BLACK>() | attacksByPiece[PieceType::WHITE_PAWN]);
+
+                    // If pieceType == queen, exclude tiles attacked by opponent bishop, knight and rook
+                    if (pieceType == PieceType::BLACK_QUEEN) {
+                        mobilitySquares &= ~(attacksByPiece[PieceType::WHITE_BISHOP] | attacksByPiece[PieceType::WHITE_KNIGHT] | attacksByPiece[PieceType::WHITE_ROOK]);
+                    }
+
+                    // If pieceType == rook, exclude tiles attacked by opponent bishop and knight
+                    if (pieceType == PieceType::BLACK_ROOK) {
+                        mobilitySquares &= ~(attacksByPiece[PieceType::WHITE_BISHOP] | attacksByPiece[PieceType::WHITE_KNIGHT]);
+                    }
                 }
 
                 uint8_t mobility = popcnt(mobilitySquares);
