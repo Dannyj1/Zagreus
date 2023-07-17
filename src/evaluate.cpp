@@ -299,8 +299,8 @@ namespace Zagreus {
                         uint8_t pawnIndex = popLsb(opponentPawns);
                         uint8_t distance = bitboard.getManhattanDistance(index, pawnIndex);
 
-                        whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_PENALTY) * (8 - distance);
-                        whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_PENALTY) * (8 - distance);
+                        whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_PENALTY) * (6 - distance);
+                        whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_PENALTY) * (6 - distance);
                     }
                 } else {
                     // Pawn Shield
@@ -337,8 +337,8 @@ namespace Zagreus {
                         uint8_t pawnIndex = popLsb(opponentPawns);
                         uint8_t distance = bitboard.getManhattanDistance(index, pawnIndex);
 
-                        blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_PENALTY) * (8 - distance);
-                        blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_PENALTY) * (8 - distance);
+                        blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_PENALTY) * (6 - distance);
+                        blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_PENALTY) * (6 - distance);
                     }
                 }
             }

@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[24] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -5, 0 };
+    int evalValues[24] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -2, 0 };
 
     int baseEvalValues[24] = {
             100, // MIDGAME_PAWN_MATERIAL
@@ -48,7 +48,7 @@ namespace Zagreus {
             0, // ENDGAME_PAWN_SHIELD
             -5, // MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY
             0, // ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY
-            -5, // MIDGAME_PAWN_STORM_PENALTY
+            -2, // MIDGAME_PAWN_STORM_PENALTY
             0 // ENDGAME_PAWN_STORM_PENALTY
     };
 
