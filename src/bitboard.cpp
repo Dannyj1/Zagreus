@@ -63,6 +63,14 @@ namespace Zagreus {
         initializeRayAttacks();
     }
 
+    void Bitboard::initializeManhattanDistanceTable() {
+        for (int8_t from = 0; from < 64; from++) {
+            for (int8_t to = 0; to < 64; to++) {
+                manhattanDistanceTable[from][to] = calculateManhattanDistance(from, to);
+            }
+        }
+    }
+
     void Bitboard::initializeRayAttacks() {
         uint64_t sqBB = 1ULL;
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
@@ -1146,5 +1154,9 @@ namespace Zagreus {
 
     uint64_t Bitboard::getPieceBoard(PieceType pieceType) {
         return pieceBB[pieceType];
+    }
+
+    uint8_t Bitboard::getManhattanDistance(int8_t from, int8_t to) {
+        return manhattanDistanceTable[from][to];
     }
 }

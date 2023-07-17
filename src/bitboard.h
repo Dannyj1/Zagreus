@@ -56,6 +56,7 @@ namespace Zagreus {
         uint64_t pawnAttacks[2][64]{};
         uint64_t rayAttacks[8][64]{};
         uint64_t betweenTable[64][64]{};
+        uint64_t manhattanDistanceTable[64][64]{};
 
         UndoData undoStack[MAX_PLY]{};
         uint64_t moveHistory[MAX_PLY]{};
@@ -196,6 +197,10 @@ namespace Zagreus {
         };
 
         void initializeBetweenLookup();
+
+        void initializeManhattanDistanceTable();
+
+        uint8_t getManhattanDistance(int8_t from, int8_t to);
 
         void setPieceFromFENChar(char character, int index);
 
