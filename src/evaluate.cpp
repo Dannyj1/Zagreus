@@ -277,7 +277,7 @@ namespace Zagreus {
                     whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
                     // Virtual mobility - Get queen attacks from king position, with only occupied squares by own pieces. We also ignore the squares around the king.
-                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::WHITE>());
+                    uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::WHITE>()) & ~(attacksFrom[index]);
                     whiteMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                     whiteEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                 } else {
