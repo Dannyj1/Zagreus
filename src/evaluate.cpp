@@ -280,28 +280,6 @@ namespace Zagreus {
                     uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::WHITE>()) & ~(attacksFrom[index] | bitboard.getColorBoard<PieceColor::WHITE>());
                     whiteMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                     whiteEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
-
-                    // Pawn Storm detection - Penalty for the distance of opponent pawns on the same file or files next to the king to the king. Penalty only starts 4 ranks from the king.
-                    uint64_t kingFiles = bitboard.getFile(index);
-
-                    if (index % 8 != 0) {
-                        kingFiles |= bitboard.getFile(index - 1);
-                    }
-
-                    if (index % 8 != 7) {
-                        kingFiles |= bitboard.getFile(index + 1);
-                    }
-
-                    uint64_t ranks = RANK_4 | RANK_3 | RANK_2 | RANK_1;
-                    uint64_t opponentPawns = bitboard.getPieceBoard(PieceType::BLACK_PAWN) & ranks & kingFiles;
-
-                    while (opponentPawns) {
-                        uint8_t pawnIndex = popLsb(opponentPawns);
-                        uint8_t distance = bitboard.getManhattanDistance(index, pawnIndex);
-
-                        whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_PENALTY) * (6 - distance);
-                        whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_PENALTY) * (6 - distance);
-                    }
                 } else {
                     // Pawn Shield
                     uint64_t kingBB = bitboard.getPieceBoard(PieceType::BLACK_KING);
@@ -318,28 +296,6 @@ namespace Zagreus {
                     uint64_t virtualMobilitySquares = bitboard.getQueenAttacks(index, bitboard.getColorBoard<PieceColor::BLACK>()) & ~(attacksFrom[index] | bitboard.getColorBoard<PieceColor::BLACK>());
                     blackMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                     blackEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
-
-                    // Pawn Storm detection - Penalty for the distance of opponent pawns on the same file or files next to the king to the king. Penalty only starts 4 ranks from the king.
-                    uint64_t kingFiles = bitboard.getFile(index);
-
-                    if (index % 8 != 0) {
-                        kingFiles |= bitboard.getFile(index - 1);
-                    }
-
-                    if (index % 8 != 7) {
-                        kingFiles |= bitboard.getFile(index + 1);
-                    }
-
-                    uint64_t ranks = RANK_5 | RANK_6 | RANK_7 | RANK_8;
-                    uint64_t opponentPawns = bitboard.getPieceBoard(PieceType::WHITE_PAWN) & ranks & kingFiles;
-
-                    while (opponentPawns) {
-                        uint8_t pawnIndex = popLsb(opponentPawns);
-                        uint8_t distance = bitboard.getManhattanDistance(index, pawnIndex);
-
-                        blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_PENALTY) * (6 - distance);
-                        blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_PENALTY) * (6 - distance);
-                    }
                 }
             }
         }

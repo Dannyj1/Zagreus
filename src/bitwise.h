@@ -97,6 +97,4 @@ namespace Zagreus {
 
     template<PieceColor color>
     uint64_t calculatePawnAttacks(uint64_t bb);
-
-    int calculateManhattanDistance(int sq1, int sq2);
 }

@@ -18,8 +18,6 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cmath>
-
 #include "bitwise.h"
 
 namespace Zagreus {
@@ -233,15 +231,4 @@ namespace Zagreus {
 
     template uint64_t calculatePawnAttacks<PieceColor::WHITE>(uint64_t);
     template uint64_t calculatePawnAttacks<PieceColor::BLACK>(uint64_t);
-
-    int calculateManhattanDistance(int sq1, int sq2) {
-        int file1 = sq1  & 7;
-        int file2 = sq2  & 7;
-        int rank1 = sq1 >> 3;
-        int rank2 = sq2 >> 3;
-        int rankDistance = std::abs(rank2 - rank1);
-        int fileDistance = std::abs(file2 - file1);
-
-        return rankDistance + fileDistance;
-    }
 }

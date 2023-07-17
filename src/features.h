@@ -46,8 +46,6 @@ namespace Zagreus {
         ENDGAME_PAWN_SHIELD,
         MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY,
         ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY,
-        MIDGAME_PAWN_STORM_PENALTY,
-        ENDGAME_PAWN_STORM_PENALTY,
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -73,8 +71,6 @@ namespace Zagreus {
             "ENDGAME_PAWN_SHIELD",
             "MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY",
             "ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY",
-            "MIDGAME_PAWN_STORM_PENALTY",
-            "ENDGAME_PAWN_STORM_PENALTY",
     };
 
     void printEvalValues();
