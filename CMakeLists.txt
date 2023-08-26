@@ -70,8 +70,8 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 project(Zagreus)
-set(ZAGREUS_VERSION_MAJOR "2")
-set(ZAGREUS_VERSION_MINOR "4")
+set(ZAGREUS_VERSION_MAJOR "3")
+set(ZAGREUS_VERSION_MINOR "0")
 
 # Default values
 set(BUILD_FLAGS "")
