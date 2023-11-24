@@ -27,6 +27,7 @@
 #include "tuner.h"
 #include "features.h"
 #include "bitboard.h"
+#include "evaluate.h"
 #include "search.h"
 #include "../senjo/UCIAdapter.h"
 #include "pst.h"
@@ -77,19 +78,12 @@ namespace Zagreus {
             tunerBoard.setFromFenTuner(pos.fen);
 //            Move rootMove{};
 //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-            int evalScore;
-
-            // TODO: fix
-            /*if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
-            } else {
-                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }*/
-            double loss = pos.result - sigmoid((double) evalScore);
+            int evalScore = Evaluation(tunerBoard).evaluate();;
+            double loss = pos.result - sigmoid(evalScore);
             totalLoss += loss * loss;
         }
 
-        return 1.0 / (2.0 * (double) amountOfPositions) * totalLoss;
+        return 1.0 / (2.0 * static_cast<double>(amountOfPositions)) * totalLoss;
     }
 
     double findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::steady_clock> &maxEndTime, ZagreusEngine &engine) {
@@ -99,14 +93,8 @@ namespace Zagreus {
             tunerBoard.setFromFenTuner(pos.fen);
 //            Move rootMove{};
 //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-            int evalScore;
+            int evalScore = Evaluation(tunerBoard).evaluate();
 
-            // TODO: fix
-            /*if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
-            } else {
-                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }*/
             pos.score = evalScore;
         }
 
@@ -195,16 +183,7 @@ namespace Zagreus {
                 draw++;
             }
 
-            int evalScore;
-
-            // TODO: fix
-            /*if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
-            } else {
-                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }*/
-            evalScore = 0;
-
+            int evalScore = Evaluation(tunerBoard).evaluate();
             positions.emplace_back(TunePosition{fen, result, evalScore});
         }
 
