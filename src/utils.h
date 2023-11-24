@@ -52,8 +52,8 @@ namespace Zagreus {
     }
 
     inline uint32_t encodeMove(Move* move) {
-        return (move->promotionPiece << 20) | (move->piece << 15) |
-               (move->to << 7) | move->from;
+        return move->promotionPiece << 20 | move->piece << 15 |
+               move->to << 7 | move->from;
     }
 
     inline uint16_t getPieceWeight(PieceType type) {

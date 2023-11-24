@@ -365,73 +365,73 @@ namespace Zagreus {
 
             for (int8_t square = 0; square < 64; square++) {
                 switch (pieceType) {
-                    case PieceType::WHITE_PAWN:
+                    case WHITE_PAWN:
                         midgamePst[pieceType][square] = midgamePawnTable[63 - square];
                         endgamePst[pieceType][square] = endgamePawnTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgamePawnTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgamePawnTable[63 - square];
                         break;
-                    case PieceType::BLACK_PAWN:
+                    case BLACK_PAWN:
                         midgamePst[pieceType][square] = midgamePawnTable[square];
                         endgamePst[pieceType][square] = endgamePawnTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgamePawnTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgamePawnTable[square];
                         break;
-                    case PieceType::WHITE_KNIGHT:
+                    case WHITE_KNIGHT:
                         midgamePst[pieceType][square] = midgameKnightTable[63 - square];
                         endgamePst[pieceType][square] = endgameKnightTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameKnightTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameKnightTable[63 - square];
                         break;
-                    case PieceType::BLACK_KNIGHT:
+                    case BLACK_KNIGHT:
                         midgamePst[pieceType][square] = midgameKnightTable[square];
                         endgamePst[pieceType][square] = endgameKnightTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameKnightTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameKnightTable[square];
                         break;
-                    case PieceType::WHITE_BISHOP:
+                    case WHITE_BISHOP:
                         midgamePst[pieceType][square] = midgameBishopTable[63 - square];
                         endgamePst[pieceType][square] = endgameBishopTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameBishopTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameBishopTable[63 - square];
                         break;
-                    case PieceType::BLACK_BISHOP:
+                    case BLACK_BISHOP:
                         midgamePst[pieceType][square] = midgameBishopTable[square];
                         endgamePst[pieceType][square] = endgameBishopTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameBishopTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameBishopTable[square];
                         break;
-                    case PieceType::WHITE_ROOK:
+                    case WHITE_ROOK:
                         midgamePst[pieceType][square] = midgameRookTable[63 - square];
                         endgamePst[pieceType][square] = endgameRookTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameRookTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameRookTable[63 - square];
                         break;
-                    case PieceType::BLACK_ROOK:
+                    case BLACK_ROOK:
                         midgamePst[pieceType][square] = midgameRookTable[square];
                         endgamePst[pieceType][square] = endgameRookTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameRookTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameRookTable[square];
                         break;
-                    case PieceType::WHITE_QUEEN:
+                    case WHITE_QUEEN:
                         midgamePst[pieceType][square] = midgameQueenTable[63 - square];
                         endgamePst[pieceType][square] = endgameQueenTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameQueenTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameQueenTable[63 - square];
                         break;
-                    case PieceType::BLACK_QUEEN:
+                    case BLACK_QUEEN:
                         midgamePst[pieceType][square] = midgameQueenTable[square];
                         endgamePst[pieceType][square] = endgameQueenTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameQueenTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameQueenTable[square];
                         break;
-                    case PieceType::WHITE_KING:
+                    case WHITE_KING:
                         midgamePst[pieceType][square] = midgameKingTable[63 - square];
                         endgamePst[pieceType][square] = endgameKingTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameKingTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameKingTable[63 - square];
                         break;
-                    case PieceType::BLACK_KING:
+                    case BLACK_KING:
                         midgamePst[pieceType][square] = midgameKingTable[square];
                         endgamePst[pieceType][square] = endgameKingTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameKingTable[square];

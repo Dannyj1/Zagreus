@@ -39,7 +39,7 @@ namespace Zagreus {
 
         uint64_t timeLeft = 0;
 
-        if (movingColor == PieceColor::WHITE) {
+        if (movingColor == WHITE) {
             timeLeft += params.wtime;
             timeLeft += params.winc * movesToGo;
         } else {
@@ -53,17 +53,17 @@ namespace Zagreus {
         timeLeft = std::max((uint64_t) timeLeft, (uint64_t) 1ULL);
         uint64_t maxTime;
 
-        if (movingColor == PieceColor::WHITE) {
+        if (movingColor == WHITE) {
             if (params.wtime > moveOverhead) {
                 maxTime = (params.wtime - moveOverhead) / 100 * 80;
             } else {
-                maxTime = (params.wtime / 2) / 100 * 80;
+                maxTime = params.wtime / 2 / 100 * 80;
             }
         } else {
             if (params.btime > moveOverhead) {
                 maxTime = (params.btime - moveOverhead) / 100 * 80;
             } else {
-                maxTime = (params.btime / 2) / 100 * 80;
+                maxTime = params.btime / 2 / 100 * 80;
             }
         }
 

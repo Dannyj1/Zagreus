@@ -56,7 +56,7 @@ namespace senjo {
 
 //-----------------------------------------------------------------------------
     bool Parameters::firstParamIs(const std::string &paramName) const {
-        return (size() && iEqual(paramName, front()));
+        return size() && iEqual(paramName, front());
     }
 
 //-----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ namespace senjo {
 //-----------------------------------------------------------------------------
     bool Parameters::popString(const std::string &paramName, std::string &value,
                                const std::string &next) {
-        if ((size() < 2) || !iEqual(paramName, front())) {
+        if (size() < 2 || !iEqual(paramName, front())) {
             return false;
         }
 
@@ -105,7 +105,7 @@ namespace senjo {
             pop_front();
         }
 
-        return (value.size() > 0);
+        return value.size() > 0;
     }
 
 } // namespace senjo

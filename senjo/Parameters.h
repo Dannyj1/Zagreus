@@ -111,7 +111,7 @@ namespace senjo {
         //-----------------------------------------------------------------------------
         template<typename T>
         bool popNumber(const std::string &paramName, T &value, bool &invalid) {
-            if ((size() < 2) || !iEqual(paramName, front())) {
+            if (size() < 2 || !iEqual(paramName, front())) {
                 return false;
             }
 

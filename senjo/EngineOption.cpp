@@ -34,35 +34,35 @@ namespace senjo {
 //-----------------------------------------------------------------------------
     EngineOption::OptionType EngineOption::toOptionType(const std::string &name) {
         if (!iEqual(name, OPT_BUTTON_NAME)) {
-            return OptionType::Button;
+            return Button;
         }
         if (!iEqual(name, OPT_CHECK_NAME)) {
-            return OptionType::Checkbox;
+            return Checkbox;
         }
         if (!iEqual(name, OPT_COMBO_NAME)) {
-            return OptionType::ComboBox;
+            return ComboBox;
         }
         if (!iEqual(name, OPT_SPIN_NAME)) {
-            return OptionType::Spin;
+            return Spin;
         }
         if (!iEqual(name, OPT_STRING_NAME)) {
-            return OptionType::String;
+            return String;
         }
-        return OptionType::Unknown;
+        return Unknown;
     }
 
 //-----------------------------------------------------------------------------
-    std::string EngineOption::getTypeName(const EngineOption::OptionType type) {
+    std::string EngineOption::getTypeName(const OptionType type) {
         switch (type) {
-            case OptionType::Button:
+            case Button:
                 return OPT_BUTTON_NAME;
-            case OptionType::Checkbox:
+            case Checkbox:
                 return OPT_CHECK_NAME;
-            case OptionType::ComboBox:
+            case ComboBox:
                 return OPT_COMBO_NAME;
-            case OptionType::Spin:
+            case Spin:
                 return OPT_SPIN_NAME;
-            case OptionType::String:
+            case String:
                 return OPT_STRING_NAME;
             default:
                 break;
@@ -110,24 +110,24 @@ namespace senjo {
 //-----------------------------------------------------------------------------
     bool EngineOption::setValue(const std::string &value) {
         switch (optType) {
-            case OptionType::Checkbox:
+            case Checkbox:
                 if (!iEqual(value, "true") && !iEqual(value, "false")) {
                     return false;
                 }
                 break;
-            case OptionType::ComboBox:
+            case ComboBox:
                 if (!comboValues.count(value)) {
                     return false;
                 }
                 break;
-            case OptionType::Spin: {
-                int64_t intval = toNumber<int64_t>(value, (minValue - 1));
-                if ((intval < minValue) || (intval > maxValue)) {
+            case Spin: {
+                int64_t intval = toNumber<int64_t>(value, minValue - 1);
+                if (intval < minValue || intval > maxValue) {
                     return false;
                 }
                 break;
             }
-            case OptionType::String:
+            case String:
                 break;
             default:
                 return false;

@@ -27,8 +27,8 @@
 #include "tt.h"
 
 namespace Zagreus {
-    void addMoveToList(MoveList* moveList, int8_t from, int8_t to = 0, PieceType piece = PieceType::EMPTY,
-                       int captureScore = 0, PieceType promotionPiece = PieceType::EMPTY, int score = 0) {
+    void addMoveToList(MoveList* moveList, int8_t from, int8_t to = 0, PieceType piece = EMPTY,
+                       int captureScore = 0, PieceType promotionPiece = EMPTY, int score = 0) {
         moveList->moves[moveList->size].from = from;
         moveList->moves[moveList->size].to = to;
         moveList->moves[moveList->size].piece = piece;
@@ -150,7 +150,7 @@ namespace Zagreus {
     void generatePawnMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
         uint64_t pawnBB;
 
-        if (color == PieceColor::WHITE) {
+        if (color == WHITE) {
             pawnBB = bitboard.getPieceBoard(WHITE_PAWN);
         } else {
             pawnBB = bitboard.getPieceBoard(BLACK_PAWN);
@@ -159,20 +159,20 @@ namespace Zagreus {
         while (pawnBB) {
             int8_t index = popLsb(pawnBB);
             uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
-            uint64_t attackableSquares = bitboard.getColorBoard<color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE>();
+            uint64_t attackableSquares = bitboard.getColorBoard<color == WHITE ? BLACK : WHITE>();
 
             if (bitboard.getEnPassantSquare() > NO_SQUARE) {
                 attackableSquares |= 1ULL << bitboard.getEnPassantSquare();
             }
 
-            genBB |= (bitboard.getPawnAttacks<color>(index) & attackableSquares);
+            genBB |= bitboard.getPawnAttacks<color>(index) & attackableSquares;
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) | bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
-                if (color == PieceColor::WHITE) {
-                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                if (color == WHITE) {
+                    genBB &= bitboard.getColorBoard<BLACK>();
                 } else {
-                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                    genBB &= bitboard.getColorBoard<WHITE>();
                 }
             }
 
@@ -181,31 +181,31 @@ namespace Zagreus {
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
-                if (color == PieceColor::WHITE) {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_PAWN, capturedPiece);
+                if (color == WHITE) {
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_PAWN, capturedPiece);
                     }
 
-                    if (genIndex >= Square::A8) {
-                        addMoveToList(moveList, index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_QUEEN);
-                        addMoveToList(moveList, index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_ROOK);
-                        addMoveToList(moveList, index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_BISHOP);
-                        addMoveToList(moveList, index, genIndex, PieceType::WHITE_PAWN, captureScore, PieceType::WHITE_KNIGHT);
+                    if (genIndex >= A8) {
+                        addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore, WHITE_QUEEN);
+                        addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore, WHITE_ROOK);
+                        addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore, WHITE_BISHOP);
+                        addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore, WHITE_KNIGHT);
                     } else {
-                        addMoveToList(moveList, index, genIndex, PieceType::WHITE_PAWN, captureScore);
+                        addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore);
                     }
                 } else {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_PAWN, capturedPiece);
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_PAWN, capturedPiece);
                     }
 
-                    if (genIndex <= Square::H1) {
-                        addMoveToList(moveList, index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_QUEEN);
-                        addMoveToList(moveList, index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_ROOK);
-                        addMoveToList(moveList, index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_BISHOP);
-                        addMoveToList(moveList, index, genIndex, PieceType::BLACK_PAWN, captureScore, PieceType::BLACK_KNIGHT);
+                    if (genIndex <= H1) {
+                        addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore, BLACK_QUEEN);
+                        addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore, BLACK_ROOK);
+                        addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore, BLACK_BISHOP);
+                        addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore, BLACK_KNIGHT);
                     } else {
-                        addMoveToList(moveList, index, genIndex, PieceType::BLACK_PAWN, captureScore);
+                        addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore);
                     }
                 }
             }
@@ -216,7 +216,7 @@ namespace Zagreus {
     void generateKnightMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
         uint64_t knightBB;
 
-        if (color == PieceColor::WHITE) {
+        if (color == WHITE) {
             knightBB = bitboard.getPieceBoard(WHITE_KNIGHT);
         } else {
             knightBB = bitboard.getPieceBoard(BLACK_KNIGHT);
@@ -230,10 +230,10 @@ namespace Zagreus {
                        bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
-                if (color == PieceColor::WHITE) {
-                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                if (color == WHITE) {
+                    genBB &= bitboard.getColorBoard<BLACK>();
                 } else {
-                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                    genBB &= bitboard.getColorBoard<WHITE>();
                 }
             }
 
@@ -242,18 +242,18 @@ namespace Zagreus {
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
-                if (color == PieceColor::WHITE) {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_KNIGHT, capturedPiece);
+                if (color == WHITE) {
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_KNIGHT, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::WHITE_KNIGHT, captureScore);
+                    addMoveToList(moveList, index, genIndex, WHITE_KNIGHT, captureScore);
                 } else {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_KNIGHT, capturedPiece);
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_KNIGHT, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::BLACK_KNIGHT, captureScore);
+                    addMoveToList(moveList, index, genIndex, BLACK_KNIGHT, captureScore);
                 }
             }
         }
@@ -263,7 +263,7 @@ namespace Zagreus {
     void generateBishopMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
         uint64_t bishopBB;
 
-        if (color == PieceColor::WHITE) {
+        if (color == WHITE) {
             bishopBB = bitboard.getPieceBoard(WHITE_BISHOP);
         } else {
             bishopBB = bitboard.getPieceBoard(BLACK_BISHOP);
@@ -277,10 +277,10 @@ namespace Zagreus {
                        bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
-                if (color == PieceColor::WHITE) {
-                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                if (color == WHITE) {
+                    genBB &= bitboard.getColorBoard<BLACK>();
                 } else {
-                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                    genBB &= bitboard.getColorBoard<WHITE>();
                 }
             }
 
@@ -289,18 +289,18 @@ namespace Zagreus {
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
-                if (color == PieceColor::WHITE) {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_BISHOP, capturedPiece);
+                if (color == WHITE) {
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_BISHOP, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::WHITE_BISHOP, captureScore);
+                    addMoveToList(moveList, index, genIndex, WHITE_BISHOP, captureScore);
                 } else {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_BISHOP, capturedPiece);
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_BISHOP, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::BLACK_BISHOP, captureScore);
+                    addMoveToList(moveList, index, genIndex, BLACK_BISHOP, captureScore);
                 }
             }
         }
@@ -310,7 +310,7 @@ namespace Zagreus {
     void generateRookMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
         uint64_t rookBB;
 
-        if (color == PieceColor::WHITE) {
+        if (color == WHITE) {
             rookBB = bitboard.getPieceBoard(WHITE_ROOK);
         } else {
             rookBB = bitboard.getPieceBoard(BLACK_ROOK);
@@ -324,10 +324,10 @@ namespace Zagreus {
                        bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
-                if (color == PieceColor::WHITE) {
-                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                if (color == WHITE) {
+                    genBB &= bitboard.getColorBoard<BLACK>();
                 } else {
-                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                    genBB &= bitboard.getColorBoard<WHITE>();
                 }
             }
 
@@ -336,18 +336,18 @@ namespace Zagreus {
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
-                if (color == PieceColor::WHITE) {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_ROOK, capturedPiece);
+                if (color == WHITE) {
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_ROOK, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::WHITE_ROOK, captureScore);
+                    addMoveToList(moveList, index, genIndex, WHITE_ROOK, captureScore);
                 } else {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_ROOK, capturedPiece);
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_ROOK, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::BLACK_ROOK, captureScore);
+                    addMoveToList(moveList, index, genIndex, BLACK_ROOK, captureScore);
                 }
             }
         }
@@ -357,7 +357,7 @@ namespace Zagreus {
     void generateQueenMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
         uint64_t queenBB;
 
-        if (color == PieceColor::WHITE) {
+        if (color == WHITE) {
             queenBB = bitboard.getPieceBoard(WHITE_QUEEN);
         } else {
             queenBB = bitboard.getPieceBoard(BLACK_QUEEN);
@@ -371,10 +371,10 @@ namespace Zagreus {
                        bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
-                if (color == PieceColor::WHITE) {
-                    genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+                if (color == WHITE) {
+                    genBB &= bitboard.getColorBoard<BLACK>();
                 } else {
-                    genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                    genBB &= bitboard.getColorBoard<WHITE>();
                 }
             }
 
@@ -383,18 +383,18 @@ namespace Zagreus {
                 PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
                 int captureScore = NO_CAPTURE_SCORE;
 
-                if (color == PieceColor::WHITE) {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_QUEEN, capturedPiece);
+                if (color == WHITE) {
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_QUEEN, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::WHITE_QUEEN, captureScore);
+                    addMoveToList(moveList, index, genIndex, WHITE_QUEEN, captureScore);
                 } else {
-                    if (capturedPiece != PieceType::EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_QUEEN, capturedPiece);
+                    if (capturedPiece != EMPTY) {
+                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_QUEEN, capturedPiece);
                     }
 
-                    addMoveToList(moveList, index, genIndex, PieceType::BLACK_QUEEN, captureScore);
+                    addMoveToList(moveList, index, genIndex, BLACK_QUEEN, captureScore);
                 }
             }
         }
@@ -405,7 +405,7 @@ namespace Zagreus {
         uint64_t kingBB;
         uint64_t opponentKingBB;
 
-        if (color == PieceColor::WHITE) {
+        if (color == WHITE) {
             kingBB = bitboard.getPieceBoard(WHITE_KING);
             opponentKingBB = bitboard.getPieceBoard(BLACK_KING);
         } else {
@@ -420,10 +420,10 @@ namespace Zagreus {
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
 
         if (quiesce) {
-            if (color == PieceColor::WHITE) {
-                genBB &= bitboard.getColorBoard<PieceColor::BLACK>();
+            if (color == WHITE) {
+                genBB &= bitboard.getColorBoard<BLACK>();
             } else {
-                genBB &= bitboard.getColorBoard<PieceColor::WHITE>();
+                genBB &= bitboard.getColorBoard<WHITE>();
             }
         }
 
@@ -432,105 +432,105 @@ namespace Zagreus {
             PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
             int captureScore = NO_CAPTURE_SCORE;
 
-            if (color == PieceColor::WHITE) {
-                if (capturedPiece != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::WHITE_KING, capturedPiece);
+            if (color == WHITE) {
+                if (capturedPiece != EMPTY) {
+                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_KING, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, PieceType::WHITE_KING, captureScore);
+                addMoveToList(moveList, index, genIndex, WHITE_KING, captureScore);
             } else {
-                if (capturedPiece != PieceType::EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(PieceType::BLACK_KING, capturedPiece);
+                if (capturedPiece != EMPTY) {
+                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_KING, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, PieceType::BLACK_KING, captureScore);
+                addMoveToList(moveList, index, genIndex, BLACK_KING, captureScore);
             }
         }
 
         uint64_t occupiedBB = bitboard.getOccupiedBoard();
 
-        if (color == PieceColor::WHITE) {
-            if (bitboard.getCastlingRights() & CastlingRights::WHITE_KINGSIDE && (occupiedBB & WHITE_KING_SIDE_BETWEEN) == 0
-            && bitboard.getPieceOnSquare(Square::H1) == PieceType::WHITE_ROOK && !bitboard.isKingInCheck<PieceColor::WHITE>()) {
+        if (color == WHITE) {
+            if (bitboard.getCastlingRights() & WHITE_KINGSIDE && (occupiedBB & WHITE_KING_SIDE_BETWEEN) == 0
+            && bitboard.getPieceOnSquare(H1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
                 uint64_t tilesToCheck = WHITE_KING_SIDE_BETWEEN;
                 bool canCastle = true;
 
                 while (tilesToCheck) {
                     int8_t tileIndex = popLsb(tilesToCheck);
 
-                    if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
+                    if (bitboard.isSquareAttackedByColor<BLACK>(tileIndex)) {
                         canCastle = false;
                         break;
                     }
                 }
 
                 if (canCastle) {
-                    addMoveToList(moveList, index, Square::G1, PieceType::WHITE_KING, -1);
+                    addMoveToList(moveList, index, G1, WHITE_KING, -1);
                 }
             }
 
-            if (bitboard.getCastlingRights() & CastlingRights::WHITE_QUEENSIDE && (occupiedBB & WHITE_QUEEN_SIDE_BETWEEN) == 0
-                && bitboard.getPieceOnSquare(Square::A1) == PieceType::WHITE_ROOK && !bitboard.isKingInCheck<PieceColor::WHITE>()) {
-                uint64_t tilesToCheck = WHITE_QUEEN_SIDE_BETWEEN & ~(1ULL << Square::B1);
+            if (bitboard.getCastlingRights() & WHITE_QUEENSIDE && (occupiedBB & WHITE_QUEEN_SIDE_BETWEEN) == 0
+                && bitboard.getPieceOnSquare(A1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
+                uint64_t tilesToCheck = WHITE_QUEEN_SIDE_BETWEEN & ~(1ULL << B1);
                 bool canCastle = true;
 
                 while (tilesToCheck) {
                     int8_t tileIndex = popLsb(tilesToCheck);
 
-                    if (bitboard.isSquareAttackedByColor<PieceColor::BLACK>(tileIndex)) {
+                    if (bitboard.isSquareAttackedByColor<BLACK>(tileIndex)) {
                         canCastle = false;
                         break;
                     }
                 }
 
                 if (canCastle) {
-                    addMoveToList(moveList, index, Square::C1, PieceType::WHITE_KING, -1);
+                    addMoveToList(moveList, index, C1, WHITE_KING, -1);
                 }
             }
         } else {
-            if (bitboard.getCastlingRights() & CastlingRights::BLACK_KINGSIDE && (occupiedBB & BLACK_KING_SIDE_BETWEEN) == 0
-            && bitboard.getPieceOnSquare(Square::H8) == PieceType::BLACK_ROOK && !bitboard.isKingInCheck<PieceColor::BLACK>()) {
+            if (bitboard.getCastlingRights() & BLACK_KINGSIDE && (occupiedBB & BLACK_KING_SIDE_BETWEEN) == 0
+            && bitboard.getPieceOnSquare(H8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
                 uint64_t tilesToCheck = BLACK_KING_SIDE_BETWEEN;
                 bool canCastle = true;
 
                 while (tilesToCheck) {
                     int8_t tileIndex = popLsb(tilesToCheck);
 
-                    if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
+                    if (bitboard.isSquareAttackedByColor<WHITE>(tileIndex)) {
                         canCastle = false;
                         break;
                     }
                 }
 
                 if (canCastle) {
-                    addMoveToList(moveList, index, Square::G8, PieceType::BLACK_KING, -1);
+                    addMoveToList(moveList, index, G8, BLACK_KING, -1);
                 }
             }
 
-            if (bitboard.getCastlingRights() & CastlingRights::BLACK_QUEENSIDE && (occupiedBB & BLACK_QUEEN_SIDE_BETWEEN) == 0
-            && bitboard.getPieceOnSquare(Square::A8) == PieceType::BLACK_ROOK && !bitboard.isKingInCheck<PieceColor::BLACK>()) {
-                uint64_t tilesToCheck = BLACK_QUEEN_SIDE_BETWEEN & ~(1ULL << Square::B8);
+            if (bitboard.getCastlingRights() & BLACK_QUEENSIDE && (occupiedBB & BLACK_QUEEN_SIDE_BETWEEN) == 0
+            && bitboard.getPieceOnSquare(A8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
+                uint64_t tilesToCheck = BLACK_QUEEN_SIDE_BETWEEN & ~(1ULL << B8);
                 bool canCastle = true;
 
                 while (tilesToCheck) {
                     int8_t tileIndex = popLsb(tilesToCheck);
 
-                    if (bitboard.isSquareAttackedByColor<PieceColor::WHITE>(tileIndex)) {
+                    if (bitboard.isSquareAttackedByColor<WHITE>(tileIndex)) {
                         canCastle = false;
                         break;
                     }
                 }
 
                 if (canCastle) {
-                    addMoveToList(moveList, index, Square::C8, PieceType::BLACK_KING, -1);
+                    addMoveToList(moveList, index, C8, BLACK_KING, -1);
                 }
             }
         }
     }
 
-    template void generateMoves<PieceColor::WHITE>(Bitboard &bitboard, MoveList *moveList);
-    template void generateMoves<PieceColor::BLACK>(Bitboard &bitboard, MoveList *moveList);
+    template void generateMoves<WHITE>(Bitboard &bitboard, MoveList *moveList);
+    template void generateMoves<BLACK>(Bitboard &bitboard, MoveList *moveList);
 
-    template void generateQuiescenceMoves<PieceColor::WHITE>(Bitboard &bitboard, MoveList *moveList);
-    template void generateQuiescenceMoves<PieceColor::BLACK>(Bitboard &bitboard, MoveList *moveList);
+    template void generateQuiescenceMoves<WHITE>(Bitboard &bitboard, MoveList *moveList);
+    template void generateQuiescenceMoves<BLACK>(Bitboard &bitboard, MoveList *moveList);
 }

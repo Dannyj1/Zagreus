@@ -40,10 +40,10 @@ namespace Zagreus {
 
         MoveList* moves = moveListPool->getMoveList();
 
-        if (color == PieceColor::WHITE) {
-            generateMoves<PieceColor::WHITE>(perftBoard, moves);
-        } else if (color == PieceColor::BLACK) {
-            generateMoves<PieceColor::BLACK>(perftBoard, moves);
+        if (color == WHITE) {
+            generateMoves<WHITE>(perftBoard, moves);
+        } else if (color == BLACK) {
+            generateMoves<BLACK>(perftBoard, moves);
         } else {
             return 0;
         }
@@ -53,13 +53,13 @@ namespace Zagreus {
 
             perftBoard.makeMove(move);
 
-            if (color == PieceColor::WHITE) {
-                if (perftBoard.isKingInCheck<PieceColor::WHITE>()) {
+            if (color == WHITE) {
+                if (perftBoard.isKingInCheck<WHITE>()) {
                     perftBoard.unmakeMove(move);
                     continue;
                 }
             } else {
-                if (perftBoard.isKingInCheck<PieceColor::BLACK>()) {
+                if (perftBoard.isKingInCheck<BLACK>()) {
                     perftBoard.unmakeMove(move);
                     continue;
                 }
@@ -90,9 +90,8 @@ namespace Zagreus {
     std::string ZagreusEngine::getEngineVersion() {
         if (majorVersion != "dev") {
             return "v" + majorVersion + "." + minorVersion;
-        } else {
-            return majorVersion + "-" + minorVersion;
         }
+        return majorVersion + "-" + minorVersion;
     }
 
     std::string ZagreusEngine::getAuthorName() {
@@ -169,7 +168,7 @@ namespace Zagreus {
     }
 
     bool ZagreusEngine::whiteToMove() {
-        return board.getMovingColor() == PieceColor::WHITE;
+        return board.getMovingColor() == WHITE;
     }
 
     void ZagreusEngine::clearSearchData() {
@@ -240,7 +239,7 @@ namespace Zagreus {
         stoppingSearch = false;
         Move bestMove = searchManager.getBestMove(params, *this, board);
 
-        if (bestMove.promotionPiece != PieceType::EMPTY) {
+        if (bestMove.promotionPiece != EMPTY) {
             std::string result = getNotation(bestMove.from)
                                  + getNotation(bestMove.to)
                                  + getCharacterForPieceType(bestMove.promotionPiece);

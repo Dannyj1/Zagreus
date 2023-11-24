@@ -162,21 +162,21 @@ namespace Zagreus {
             Move rootMove{};
             int qScore;
 
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                qScore = searchManager.quiesce<PieceColor::WHITE>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
-                                               engine, true);
+            if (tunerBoard.getMovingColor() == WHITE) {
+                qScore = searchManager.quiesce<WHITE>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
+                                                      engine, true);
             } else {
-                qScore = searchManager.quiesce<PieceColor::BLACK>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
-                                               engine, true);
+                qScore = searchManager.quiesce<BLACK>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
+                                                      engine, true);
             }
 
             if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw()
-                || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
-                || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()
-                || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4
-                || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() <= 2
-                || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2)
-                || qScore >= (MATE_SCORE / 2)) {
+                || tunerBoard.isWinner<WHITE>() || tunerBoard.isWinner<BLACK>()
+                || tunerBoard.isKingInCheck<WHITE>() || tunerBoard.isKingInCheck<BLACK>()
+                || popcnt(tunerBoard.getColorBoard<WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<BLACK>()) <= 4
+                || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<WHITE>() <= 2
+                || tunerBoard.getAmountOfMinorOrMajorPieces<BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2)
+                || qScore >= MATE_SCORE / 2) {
                 continue;
             }
 
@@ -280,7 +280,7 @@ namespace Zagreus {
         for (int i = 0; i < 6; i++) {
             fout << "int midgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << (int) (bestParams[getEvalFeatureSize() + i * 64 + j]);
+                fout << (int) bestParams[getEvalFeatureSize() + i * 64 + j];
 
                 if (j != 63) {
                     fout << ", ";
@@ -290,7 +290,7 @@ namespace Zagreus {
 
             fout << "int endgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << (int) (bestParams[getEvalFeatureSize() + pstSize + i * 64 + j]);
+                fout << (int) bestParams[getEvalFeatureSize() + pstSize + i * 64 + j];
 
                 if (j != 63) {
                     fout << ", ";

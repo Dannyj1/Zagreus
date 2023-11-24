@@ -83,10 +83,10 @@ namespace Zagreus {
     };
 
     int pop_1st_bit(uint64_t* bb) {
-        uint64_t b = *bb ^ (*bb - 1);
-        unsigned int fold = (unsigned) ((b & 0xffffffff) ^ (b >> 32));
-        *bb &= (*bb - 1);
-        return BitTable[(fold * 0x783a9b23) >> 26];
+        uint64_t b = *bb ^ *bb - 1;
+        unsigned int fold = (unsigned) (b & 0xffffffff ^ b >> 32);
+        *bb &= *bb - 1;
+        return BitTable[fold * 0x783a9b23 >> 26];
     }
 
     uint64_t index_to_uint64_t(int index, int bits, uint64_t m) {
@@ -94,7 +94,7 @@ namespace Zagreus {
         uint64_t result = 0ULL;
         for (i = 0; i < bits; i++) {
             j = pop_1st_bit(&m);
-            if (index & (1 << i)) result |= (1ULL << j);
+            if (index & 1 << i) result |= 1ULL << j;
         }
         return result;
     }
@@ -102,20 +102,20 @@ namespace Zagreus {
     uint64_t rmask(int sq) {
         uint64_t result = 0ULL;
         int rk = sq / 8, fl = sq % 8, r, f;
-        for (r = rk + 1; r <= 6; r++) result |= (1ULL << (fl + r * 8));
-        for (r = rk - 1; r >= 1; r--) result |= (1ULL << (fl + r * 8));
-        for (f = fl + 1; f <= 6; f++) result |= (1ULL << (f + rk * 8));
-        for (f = fl - 1; f >= 1; f--) result |= (1ULL << (f + rk * 8));
+        for (r = rk + 1; r <= 6; r++) result |= 1ULL << fl + r * 8;
+        for (r = rk - 1; r >= 1; r--) result |= 1ULL << fl + r * 8;
+        for (f = fl + 1; f <= 6; f++) result |= 1ULL << f + rk * 8;
+        for (f = fl - 1; f >= 1; f--) result |= 1ULL << f + rk * 8;
         return result;
     }
 
     uint64_t bmask(int sq) {
         uint64_t result = 0ULL;
         int rk = sq / 8, fl = sq % 8, r, f;
-        for (r = rk + 1, f = fl + 1; r <= 6 && f <= 6; r++, f++) result |= (1ULL << (f + r * 8));
-        for (r = rk + 1, f = fl - 1; r <= 6 && f >= 1; r++, f--) result |= (1ULL << (f + r * 8));
-        for (r = rk - 1, f = fl + 1; r >= 1 && f <= 6; r--, f++) result |= (1ULL << (f + r * 8));
-        for (r = rk - 1, f = fl - 1; r >= 1 && f >= 1; r--, f--) result |= (1ULL << (f + r * 8));
+        for (r = rk + 1, f = fl + 1; r <= 6 && f <= 6; r++, f++) result |= 1ULL << f + r * 8;
+        for (r = rk + 1, f = fl - 1; r <= 6 && f >= 1; r++, f--) result |= 1ULL << f + r * 8;
+        for (r = rk - 1, f = fl + 1; r >= 1 && f <= 6; r--, f++) result |= 1ULL << f + r * 8;
+        for (r = rk - 1, f = fl - 1; r >= 1 && f >= 1; r--, f--) result |= 1ULL << f + r * 8;
         return result;
     }
 
@@ -123,20 +123,20 @@ namespace Zagreus {
         uint64_t result = 0ULL;
         int rk = sq / 8, fl = sq % 8, r, f;
         for (r = rk + 1; r <= 7; r++) {
-            result |= (1ULL << (fl + r * 8));
-            if (block & (1ULL << (fl + r * 8))) break;
+            result |= 1ULL << fl + r * 8;
+            if (block & 1ULL << fl + r * 8) break;
         }
         for (r = rk - 1; r >= 0; r--) {
-            result |= (1ULL << (fl + r * 8));
-            if (block & (1ULL << (fl + r * 8))) break;
+            result |= 1ULL << fl + r * 8;
+            if (block & 1ULL << fl + r * 8) break;
         }
         for (f = fl + 1; f <= 7; f++) {
-            result |= (1ULL << (f + rk * 8));
-            if (block & (1ULL << (f + rk * 8))) break;
+            result |= 1ULL << f + rk * 8;
+            if (block & 1ULL << f + rk * 8) break;
         }
         for (f = fl - 1; f >= 0; f--) {
-            result |= (1ULL << (f + rk * 8));
-            if (block & (1ULL << (f + rk * 8))) break;
+            result |= 1ULL << f + rk * 8;
+            if (block & 1ULL << f + rk * 8) break;
         }
         return result;
     }
@@ -145,20 +145,20 @@ namespace Zagreus {
         uint64_t result = 0ULL;
         int rk = sq / 8, fl = sq % 8, r, f;
         for (r = rk + 1, f = fl + 1; r <= 7 && f <= 7; r++, f++) {
-            result |= (1ULL << (f + r * 8));
-            if (block & (1ULL << (f + r * 8))) break;
+            result |= 1ULL << f + r * 8;
+            if (block & 1ULL << f + r * 8) break;
         }
         for (r = rk + 1, f = fl - 1; r <= 7 && f >= 0; r++, f--) {
-            result |= (1ULL << (f + r * 8));
-            if (block & (1ULL << (f + r * 8))) break;
+            result |= 1ULL << f + r * 8;
+            if (block & 1ULL << f + r * 8) break;
         }
         for (r = rk - 1, f = fl + 1; r >= 0 && f <= 7; r--, f++) {
-            result |= (1ULL << (f + r * 8));
-            if (block & (1ULL << (f + r * 8))) break;
+            result |= 1ULL << f + r * 8;
+            if (block & 1ULL << f + r * 8) break;
         }
         for (r = rk - 1, f = fl - 1; r >= 0 && f >= 0; r--, f--) {
-            result |= (1ULL << (f + r * 8));
-            if (block & (1ULL << (f + r * 8))) break;
+            result |= 1ULL << f + r * 8;
+            if (block & 1ULL << f + r * 8) break;
         }
         return result;
     }
@@ -169,7 +169,7 @@ namespace Zagreus {
         return
         (unsigned)((int)b*(int)magic ^ (int)(b>>32)*(int)(magic>>32)) >> (32-bits);
 #else
-        return (int) ((b * magic) >> (64 - bits));
+        return (int) (b * magic >> 64 - bits);
 #endif
     }
 
@@ -180,15 +180,15 @@ namespace Zagreus {
         mask = bishop ? bmask(sq) : rmask(sq);
         n = count_1s(mask);
 
-        for (i = 0; i < (1 << n); i++) {
+        for (i = 0; i < 1 << n; i++) {
             b[i] = index_to_uint64_t(i, n, mask);
             a[i] = bishop ? batt(sq, b[i]) : ratt(sq, b[i]);
         }
         for (k = 0; k < 100000000; k++) {
             magic = random_uint64_t_fewbits();
-            if (count_1s((mask * magic) & 0xFF00000000000000ULL) < 6) continue;
+            if (count_1s(mask * magic & 0xFF00000000000000ULL) < 6) continue;
             for (i = 0; i < 4096; i++) used[i] = 0ULL;
-            for (i = 0, fail = 0; !fail && i < (1 << n); i++) {
+            for (i = 0, fail = 0; !fail && i < 1 << n; i++) {
                 j = transform(b[i], magic, m);
                 if (used[j] == 0ULL) used[j] = a[i];
                 else if (used[j] != a[i]) fail = 1;
@@ -224,9 +224,8 @@ namespace Zagreus {
             return count_bits((bitboard & -bitboard) - 1);
 
             // otherwise
-        else
             // return illegal index
-            return -1;
+        return -1;
     }
 
     uint64_t set_occupancy(int index, int bits_in_mask, uint64_t attack_mask) {
@@ -236,22 +235,22 @@ namespace Zagreus {
         // loop over the range of bits within attack mask
         for (int count = 0; count < bits_in_mask; count++) {
             // get LS1B index of attacks mask
-            int square = get_ls1b_index(attack_mask);
+            int8_t square = get_ls1b_index(attack_mask);
 
             // pop LS1B in attack map
             pop_bit(attack_mask, square);
 
             // make sure occupancy is on board
-            if (index & (1 << count))
+            if (index & 1 << count)
                 // populate occupancy map
-                occupancy |= (1ULL << square);
+                occupancy |= 1ULL << square;
         }
 
         // return occupancy map
         return occupancy;
     }
 
-    uint64_t mask_bishop_attacks(int square) {
+    uint64_t mask_bishop_attacks(int8_t square) {
         // attack bitboard
         uint64_t attacks = 0ULL;
 
@@ -263,17 +262,17 @@ namespace Zagreus {
         int tf = square % 8;
 
         // generate attacks
-        for (r = tr + 1, f = tf + 1; r <= 6 && f <= 6; r++, f++) attacks |= (1ULL << (r * 8 + f));
-        for (r = tr + 1, f = tf - 1; r <= 6 && f >= 1; r++, f--) attacks |= (1ULL << (r * 8 + f));
-        for (r = tr - 1, f = tf + 1; r >= 1 && f <= 6; r--, f++) attacks |= (1ULL << (r * 8 + f));
-        for (r = tr - 1, f = tf - 1; r >= 1 && f >= 1; r--, f--) attacks |= (1ULL << (r * 8 + f));
+        for (r = tr + 1, f = tf + 1; r <= 6 && f <= 6; r++, f++) attacks |= 1ULL << r * 8 + f;
+        for (r = tr + 1, f = tf - 1; r <= 6 && f >= 1; r++, f--) attacks |= 1ULL << r * 8 + f;
+        for (r = tr - 1, f = tf + 1; r >= 1 && f <= 6; r--, f++) attacks |= 1ULL << r * 8 + f;
+        for (r = tr - 1, f = tf - 1; r >= 1 && f >= 1; r--, f--) attacks |= 1ULL << r * 8 + f;
 
         // return attack map for bishop on a given square
         return attacks;
     }
 
 // mask rook attacks
-    uint64_t mask_rook_attacks(int square) {
+    uint64_t mask_rook_attacks(int8_t square) {
         // attacks bitboard
         uint64_t attacks = 0ULL;
 
@@ -285,16 +284,16 @@ namespace Zagreus {
         int tf = square % 8;
 
         // generate attacks
-        for (r = tr + 1; r <= 6; r++) attacks |= (1ULL << (r * 8 + tf));
-        for (r = tr - 1; r >= 1; r--) attacks |= (1ULL << (r * 8 + tf));
-        for (f = tf + 1; f <= 6; f++) attacks |= (1ULL << (tr * 8 + f));
-        for (f = tf - 1; f >= 1; f--) attacks |= (1ULL << (tr * 8 + f));
+        for (r = tr + 1; r <= 6; r++) attacks |= 1ULL << r * 8 + tf;
+        for (r = tr - 1; r >= 1; r--) attacks |= 1ULL << r * 8 + tf;
+        for (f = tf + 1; f <= 6; f++) attacks |= 1ULL << tr * 8 + f;
+        for (f = tf - 1; f >= 1; f--) attacks |= 1ULL << tr * 8 + f;
 
         // return attack map for bishop on a given square
         return attacks;
     }
 
-    uint64_t bishop_attacks_on_the_fly(int square, uint64_t block) {
+    uint64_t bishop_attacks_on_the_fly(int8_t square, uint64_t block) {
         // attack bitboard
         uint64_t attacks = 0ULL;
 
@@ -307,23 +306,23 @@ namespace Zagreus {
 
         // generate attacks
         for (r = tr + 1, f = tf + 1; r <= 7 && f <= 7; r++, f++) {
-            attacks |= (1ULL << (r * 8 + f));
-            if (block & (1ULL << (r * 8 + f))) break;
+            attacks |= 1ULL << r * 8 + f;
+            if (block & 1ULL << r * 8 + f) break;
         }
 
         for (r = tr + 1, f = tf - 1; r <= 7 && f >= 0; r++, f--) {
-            attacks |= (1ULL << (r * 8 + f));
-            if (block & (1ULL << (r * 8 + f))) break;
+            attacks |= 1ULL << r * 8 + f;
+            if (block & 1ULL << r * 8 + f) break;
         }
 
         for (r = tr - 1, f = tf + 1; r >= 0 && f <= 7; r--, f++) {
-            attacks |= (1ULL << (r * 8 + f));
-            if (block & (1ULL << (r * 8 + f))) break;
+            attacks |= 1ULL << r * 8 + f;
+            if (block & 1ULL << r * 8 + f) break;
         }
 
         for (r = tr - 1, f = tf - 1; r >= 0 && f >= 0; r--, f--) {
-            attacks |= (1ULL << (r * 8 + f));
-            if (block & (1ULL << (r * 8 + f))) break;
+            attacks |= 1ULL << r * 8 + f;
+            if (block & 1ULL << r * 8 + f) break;
         }
 
         // return attack map for bishop on a given square
@@ -331,7 +330,7 @@ namespace Zagreus {
     }
 
 // rook attacks
-    uint64_t rook_attacks_on_the_fly(int square, uint64_t block) {
+    uint64_t rook_attacks_on_the_fly(int8_t square, uint64_t block) {
         // attacks bitboard
         uint64_t attacks = 0ULL;
 
@@ -344,23 +343,23 @@ namespace Zagreus {
 
         // generate attacks
         for (r = tr + 1; r <= 7; r++) {
-            attacks |= (1ULL << (r * 8 + tf));
-            if (block & (1ULL << (r * 8 + tf))) break;
+            attacks |= 1ULL << r * 8 + tf;
+            if (block & 1ULL << r * 8 + tf) break;
         }
 
         for (r = tr - 1; r >= 0; r--) {
-            attacks |= (1ULL << (r * 8 + tf));
-            if (block & (1ULL << (r * 8 + tf))) break;
+            attacks |= 1ULL << r * 8 + tf;
+            if (block & 1ULL << r * 8 + tf) break;
         }
 
         for (f = tf + 1; f <= 7; f++) {
-            attacks |= (1ULL << (tr * 8 + f));
-            if (block & (1ULL << (tr * 8 + f))) break;
+            attacks |= 1ULL << tr * 8 + f;
+            if (block & 1ULL << tr * 8 + f) break;
         }
 
         for (f = tf - 1; f >= 0; f--) {
-            attacks |= (1ULL << (tr * 8 + f));
-            if (block & (1ULL << (tr * 8 + f))) break;
+            attacks |= 1ULL << tr * 8 + f;
+            if (block & 1ULL << tr * 8 + f) break;
         }
 
         // return attack map for bishop on a given square
@@ -369,7 +368,7 @@ namespace Zagreus {
 
     void init_sliders_attacks(int is_bishop) {
         // loop over 64 board squares
-        for (int square = 0; square < 64; square++) {
+        for (int8_t square = 0; square < 64; square++) {
             // init bishop & rook masks
             bishop_masks[square] = mask_bishop_attacks(square);
             rook_masks[square] = mask_rook_attacks(square);
@@ -389,7 +388,7 @@ namespace Zagreus {
                 if (is_bishop) {
                     // init occupancies, magic index & attacks
                     uint64_t occupancy = set_occupancy(count, bit_count, mask);
-                    uint64_t magic_index = occupancy * bishopMagics[square] >> (64 - BBits[square]);
+                    uint64_t magic_index = occupancy * bishopMagics[square] >> 64 - BBits[square];
                     bishop_attacks[square][magic_index] = bishop_attacks_on_the_fly(square, occupancy);
                 }
 
@@ -397,7 +396,7 @@ namespace Zagreus {
                 else {
                     // init occupancies, magic index & attacks
                     uint64_t occupancy = set_occupancy(count, bit_count, mask);
-                    uint64_t magic_index = occupancy * rookMagics[square] >> (64 - RBits[square]);
+                    uint64_t magic_index = occupancy * rookMagics[square] >> 64 - RBits[square];
                     rook_attacks[square][magic_index] = rook_attacks_on_the_fly(square, occupancy);
                 }
             }
@@ -418,14 +417,14 @@ namespace Zagreus {
         gen.seed(generatorSeed);
 
 //        printf("const uint64_t rookMagics[64] = {\n");
-        for (int square = 0; square < 64; square++) {
+        for (int8_t square = 0; square < 64; square++) {
             rookMagics[square] = find_magic(square, RBits[square], 0);
 //            printf("  0x%llxULL,\n", find_magic(square, RBits[square], 0));
         }
 //        printf("};\n\n");
 
 //        printf("const uint64_t bishopMagics[64] = {\n");
-        for (int square = 0; square < 64; square++) {
+        for (int8_t square = 0; square < 64; square++) {
             bishopMagics[square] = find_magic(square, BBits[square], 1);
             //            printf("  0x%llxULL,\n", find_magic(square, BBits[square], 1));
         }

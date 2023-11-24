@@ -90,15 +90,15 @@ namespace Zagreus {
 
     int get_ls1b_index(uint64_t bitboard);
 
-    uint64_t mask_rook_attacks(int square);
+    uint64_t mask_rook_attacks(int8_t square);
 
-    uint64_t mask_bishop_attacks(int square);
+    uint64_t mask_bishop_attacks(int8_t square);
 
     int count_bits(uint64_t bitboard);
 
-    uint64_t rook_attacks_on_the_fly(int square, uint64_t block);
+    uint64_t rook_attacks_on_the_fly(int8_t square, uint64_t block);
 
-    uint64_t bishop_attacks_on_the_fly(int square, uint64_t block);
+    uint64_t bishop_attacks_on_the_fly(int8_t square, uint64_t block);
 
     void initializeMagicBitboards();
 }

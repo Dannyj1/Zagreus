@@ -38,7 +38,7 @@ namespace Zagreus {
         uint8_t depth = 0;
         uint32_t bestMoveCode = 0;
         uint64_t zobristHash = 0;
-        NodeType nodeType = NodeType::PV_NODE;
+        NodeType nodeType = PV_NODE;
     };
 
     class TranspositionTable {
