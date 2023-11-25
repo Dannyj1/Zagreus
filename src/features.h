@@ -192,4 +192,6 @@ namespace Zagreus {
     std::vector<double> getBaseEvalValues();
 
     void updateEvalValues(std::vector<double> &newValues);
+
+    void updateEvalValue(int index, double newValue);
 }

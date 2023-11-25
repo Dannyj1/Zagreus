@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[76] = { 94, 99, 357, 350, 371, 357, 530, 533, 1008, 1005, 4, 6, 3, 0, 5, 6, 0, 6, 0, 13, -38, 7, -24, 7, -35, 0, -9, 2, 0, 1, -9, -1, -8, 5, -11, -16, 8, 11, 17, 7, 13, 11, 2, 13, 13, 9, 27, 20, 14, 10, 0, 10, 10, 4, 7, 8, -29, -18, 22, 6, -13, -6, 2, 0, -12, -12, -7, -5, 9, 15, 16, 0, 20, 19, 14, 11,  };
+    int evalValues[76] = { 94, 100, 353, 348, 359, 355, 524, 526, 1003, 1002, 6, 6, 3, 0, 5, 6, 0, 4, 0, 6, -45, 0, -26, 0, -18, 0, -7, 0, -3, 1, -5, -5, -10, -5, -7, -9, 12, 12, 13, 6, 15, 9, 5, 6, 11, 4, 24, 23, 16, 10, 8, 10, 10, 4, 8, 4, -28, -23, 17, 0, -14, -8, 5, 4, -20, -20, -7, -8, 1, 6, 17, 0, 17, 11, 10, 5,  };
 
     int baseEvalValues[76] = {
             100, // MIDGAME_PAWN_MATERIAL
@@ -173,6 +173,30 @@ namespace Zagreus {
                 setEndgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j, static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
                 setEndgamePstValue(static_cast<PieceType>(pieceIndex + 1), j, static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
             }
+        }
+    }
+
+    void updateEvalValue(int index, double newValue) {
+        int evalFeatureSize = getEvalFeatureSize();
+        int pstSize = getMidgameValues().size();
+        int totalSize = evalFeatureSize + 2 * pstSize * 6 * 64;
+
+        if (index < evalFeatureSize) {
+            evalValues[index] = static_cast<int>(newValue);
+        } else if (index < evalFeatureSize + pstSize * 6 * 64) {
+            int pstIndex = (index - evalFeatureSize) % (64 * 6);
+            int pieceType = (pstIndex / 64) * 2;
+            int position = pstIndex % 64;
+
+            setMidgamePstValue(static_cast<PieceType>(pieceType), 63 - position, static_cast<int>(newValue));
+            setMidgamePstValue(static_cast<PieceType>(pieceType + 1), position, static_cast<int>(newValue));
+        } else if (index < totalSize) {
+            int pstIndex = (index - evalFeatureSize - pstSize * 6 * 64) % (64 * 6);
+            int pieceType = (pstIndex / 64) * 2;
+            int position = pstIndex % 64;
+
+            setEndgamePstValue(static_cast<PieceType>(pieceType), 63 - position, static_cast<int>(newValue));
+            setEndgamePstValue(static_cast<PieceType>(pieceType + 1), position, static_cast<int>(newValue));
         }
     }
 }

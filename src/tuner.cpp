@@ -126,7 +126,7 @@ namespace Zagreus {
                 totalLoss += loss * loss;
             }
 
-            double loss = totalLoss / static_cast<double>(positions.size());
+            double loss = (1.0 / static_cast<double>(positions.size())) * totalLoss;
 
             if (loss < bestLoss) {
                 bestLoss = loss;
@@ -364,11 +364,11 @@ namespace Zagreus {
                 for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                     double oldParam = bestParameters[paramIndex];
                     bestParameters[paramIndex] = oldParam + delta;
-                    updateEvalValues(bestParameters);
+                    updateEvalValue(paramIndex, bestParameters[paramIndex]);
                     double lossPlus = evaluationLoss(position, 1, maxEndTime, engine);
 
                     /*bestParameters[paramIndex] = oldParam - delta;
-                    updateEvalValues(bestParameters);
+                    updateEvalValue(paramIndex, bestParameters[paramIndex]);
                     double lossMinus = evaluationLoss(position, 1, maxEndTime, engine);
 
                     gradients[paramIndex] += (lossPlus - lossMinus) / (2 * delta);*/
@@ -376,6 +376,7 @@ namespace Zagreus {
                     gradients[paramIndex] += (lossPlus - loss) / delta;
                     // reset
                     bestParameters[paramIndex] = oldParam;
+                    updateEvalValue(paramIndex, bestParameters[paramIndex]);
                 }
             }
 
