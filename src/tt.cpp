@@ -74,7 +74,7 @@ namespace Zagreus {
 
     void TranspositionTable::setTableSize(int megaBytes) {
         if ((megaBytes & (megaBytes - 1)) != 0) {
-            megaBytes = 1 << (int) (log2(megaBytes));
+            megaBytes = 1 << static_cast<int>(log2(megaBytes));
         }
 
         uint64_t byteSize = megaBytes * 1024 * 1024;

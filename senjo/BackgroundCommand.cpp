@@ -239,7 +239,7 @@ namespace senjo {
         }
 
         double msecs = getMsecs(start, now());
-        double kLeafs = (double(pcount) / 1000);
+        double kLeafs = (static_cast<double>(pcount) / 1000);
 
         Output() << "Total Perft " << pcount << ' '
                  << rate(kLeafs, msecs) << " KLeafs/sec";

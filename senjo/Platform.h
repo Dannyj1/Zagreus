@@ -64,25 +64,25 @@ namespace senjo {
     inline uint64_t getMsecs(const TimePoint &begin, const TimePoint &end = now()) {
         auto duration = (end - begin);
         auto msecs = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
-        return uint64_t(msecs.count());
+        return static_cast<uint64_t>(msecs.count());
     }
 
 //-----------------------------------------------------------------------------
     template<typename T>
     inline double average(const T total, const T count) {
-        return (count != 0.0) ? (double(total) / double(count)) : 0;
+        return (count != 0.0) ? (static_cast<double>(total) / static_cast<double>(count)) : 0;
     }
 
 //-----------------------------------------------------------------------------
     template<typename T>
     inline double rate(const T count, const T msecs) {
-        return (msecs != 0.0) ? ((double(count) / double(msecs)) * 1000) : 0;
+        return (msecs != 0.0) ? ((static_cast<double>(count) / static_cast<double>(msecs)) * 1000) : 0;
     }
 
 //-----------------------------------------------------------------------------
     template<typename T>
     inline double percent(const T top, const T bottom) {
-        return bottom ? (100 * (double(top) / double(bottom))) : 0;
+        return bottom ? (100 * (static_cast<double>(top) / static_cast<double>(bottom))) : 0;
     }
 
 //-----------------------------------------------------------------------------

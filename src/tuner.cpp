@@ -125,7 +125,7 @@ namespace Zagreus {
                 totalLoss += loss * loss;
             }
 
-            double loss = totalLoss / (double) positions.size();
+            double loss = totalLoss / static_cast<double>(positions.size());
 
             if (loss < bestLoss) {
                 bestLoss = loss;
@@ -265,7 +265,7 @@ namespace Zagreus {
 
         fout << "int evalValues[" << getEvalFeatureSize() << "] = { ";
         for (int i = 0; i < getEvalFeatureSize(); i++) {
-            fout << (int) bestParams[i];
+            fout << static_cast<int>(bestParams[i]);
 
             if (i != bestParams.size() - 1) {
                 fout << ", ";
@@ -279,7 +279,7 @@ namespace Zagreus {
         for (int i = 0; i < 6; i++) {
             fout << "int midgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << (int) (bestParams[getEvalFeatureSize() + i * 64 + j]);
+                fout << static_cast<int>(bestParams[getEvalFeatureSize() + i * 64 + j]);
 
                 if (j != 63) {
                     fout << ", ";
@@ -289,7 +289,7 @@ namespace Zagreus {
 
             fout << "int endgame" << pieceNames[i] << "Table[64] = { ";
             for (int j = 0; j < 64; j++) {
-                fout << (int) (bestParams[getEvalFeatureSize() + pstSize + i * 64 + j]);
+                fout << static_cast<int>(bestParams[getEvalFeatureSize() + pstSize + i * 64 + j]);
 
                 if (j != 63) {
                     fout << ", ";
@@ -344,6 +344,7 @@ namespace Zagreus {
             iteration++;
 
             if (batches.empty()) {
+                std::shuffle(positions.begin(), positions.end(), gen);
                 batches = createBatches(positions, gen);
             }
 
@@ -351,26 +352,30 @@ namespace Zagreus {
             batches.pop_back();
             std::vector<double> gradients(bestParameters.size(), 0.0);
 
-            for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                double oldParam = bestParameters[paramIndex];
-                bestParameters[paramIndex] += delta;
-                updateEvalValues(bestParameters);
-                double lossPlus = evaluationLoss(batch, batchSize, maxEndTime, engine);
+            for (TunePosition &pos : batch) {
+                for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
+                    double oldParam = bestParameters[paramIndex];
+                    bestParameters[paramIndex] = oldParam + delta;
+                    updateEvalValues(bestParameters);
+                    std::vector<TunePosition> position{pos};
+                    double lossPlus = evaluationLoss(position, 1, maxEndTime, engine);
 
-                bestParameters[paramIndex] -= 2 * delta;
-                updateEvalValues(bestParameters);
-                double lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
+                    bestParameters[paramIndex] = oldParam - delta;
+                    updateEvalValues(bestParameters);
+                    double lossMinus = evaluationLoss(position, 1, maxEndTime, engine);
 
-                gradients[paramIndex] = (lossPlus - lossMinus) / (2 * delta);
-                // reset
-                bestParameters[paramIndex] = oldParam;
+                    gradients[paramIndex] += (lossPlus - lossMinus) / (2 * delta);
+                    // reset
+                    bestParameters[paramIndex] = oldParam;
+                }
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
+                gradients[paramIndex] /= static_cast<double>(batch.size());
                 m[paramIndex] = beta1 * m[paramIndex] + (1.0 - beta1) * gradients[paramIndex];
                 v[paramIndex] = beta2 * v[paramIndex] + (1.0 - beta2) * std::pow(gradients[paramIndex], 2.0);
-                double m_hat = m[paramIndex] / (1.0 - pow(beta1, (double) iteration));
-                double v_hat = v[paramIndex] / (1.0 - pow(beta2, (double) iteration));
+                double m_hat = m[paramIndex] / (1.0 - pow(beta1, iteration));
+                double v_hat = v[paramIndex] / (1.0 - pow(beta2, iteration));
                 bestParameters[paramIndex] -= learningRate * (m_hat / (sqrt(v_hat) + optimizerEpsilon));
             }
 
