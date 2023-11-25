@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[76] = { 99, 101, 353, 348, 364, 354, 531, 530, 1008, 1000, 3, 6, 4, 0, 6, 5, 0, 6, 0, 13, -38, 5, -19, 0, -36, -2, -7, -4, -2, 0, -3, -3, -10, -2, -11, -14, 10, 9, 13, 7, 14, 9, 2, 9, 10, 5, 25, 18, 13, 7, 3, 3, 7, -3, 8, 7, -29, -23, 17, 4, -11, -6, 2, 0, -20, -20, -6, -7, 10, 7, 12, 1, 15, 13, 11, 4,  };
+    int evalValues[76] = { 99, 104, 351, 347, 360, 355, 529, 529, 1006, 1001, 2, 5, 5, 0, 5, 4, 1, 5, 0, 10, -40, 7, -20, 4, -36, -4, -6, -1, -4, 0, -2, -4, -8, -4, -11, -14, 9, 11, 11, 6, 13, 10, 2, 9, 9, 3, 21, 20, 11, 8, 2, 6, 5, 4, 6, 5, -28, -24, 17, 2, -8, -9, 1, 0, -20, -20, -6, -5, 7, 10, 12, -1, 15, 11, 10, 6,  };
 
     int baseEvalValues[76] = {
             100, // MIDGAME_PAWN_MATERIAL
@@ -157,21 +157,21 @@ namespace Zagreus {
 
     void updateEvalValues(std::vector<double> &newValues) {
         int evalFeatureSize = getEvalFeatureSize();
-        int pstSize = getMidgameValues().size();
+        size_t pstSize = getMidgameValues().size();
 
         // New features are given as 10000 times the actual value to deal with the fact that gradients are floats
         for (int i = 0; i < evalFeatureSize; i++) {
-            evalValues[i] = (int) newValues[i];
+            evalValues[i] = static_cast<int>(std::round(newValues[i]));
         }
 
         for (int i = 0; i < 6; i++) {
             for (int8_t j = 0; j < 64; j++) {
                 int pieceIndex = i * 2;
 
-                setMidgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + i * 64 + j]);
-                setMidgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + i * 64 + j]);
-                setEndgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
-                setEndgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
+                setMidgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j, static_cast<int>(std::round(newValues[evalFeatureSize + i * 64 + j])));
+                setMidgamePstValue(static_cast<PieceType>(pieceIndex + 1), j, static_cast<int>(std::round(newValues[evalFeatureSize + i * 64 + j])));
+                setEndgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j, static_cast<int>(std::round(newValues[evalFeatureSize + pstSize + i * 64 + j])));
+                setEndgamePstValue(static_cast<PieceType>(pieceIndex + 1), j, static_cast<int>(std::round(newValues[evalFeatureSize + pstSize + i * 64 + j])));
             }
         }
     }
