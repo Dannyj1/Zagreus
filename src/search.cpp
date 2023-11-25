@@ -382,7 +382,7 @@ namespace Zagreus {
         return alpha;
     }
 
-    int delta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL), getEvalValue(MIDGAME_QUEEN_MATERIAL));
+    int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL), getEvalValue(MIDGAME_QUEEN_MATERIAL));
     int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL), getEvalValue(MIDGAME_PAWN_MATERIAL));
     template<PieceColor color>
     int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
@@ -405,10 +405,10 @@ namespace Zagreus {
         }
 
         if (previousMove.promotionPiece != PieceType::EMPTY) {
-            delta += getPieceWeight(previousMove.promotionPiece) - minPawnValue;
+            queenDelta += getPieceWeight(previousMove.promotionPiece) - minPawnValue;
         }
 
-        if (standPat < alpha - delta) {
+        if (standPat < alpha - queenDelta) {
             return alpha;
         }
 

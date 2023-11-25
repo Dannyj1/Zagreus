@@ -42,11 +42,13 @@ namespace Zagreus {
 
     int batchSize = 256;
     double learningRate = 0.1;
-    double epsilon = 1.0;
+    double delta = 1.0;
     double optimizerEpsilon = 1e-6;
     double epsilonDecay = 0.98;
     double beta1 = 0.9;
     double beta2 = 0.999;
+    // 0 = random seed
+    long seed = 0x1cd8a49;
     int epsilonWarmupIterations = 0;
 
     std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> positions, std::mt19937_64 gen) {
@@ -298,8 +300,13 @@ namespace Zagreus {
 
     void startTuning(char* filePath) {
         std::random_device rd;
-        std::mt19937_64 gen(rd());
-        std::uniform_int_distribution<uint64_t> dis;
+        std::mt19937_64 gen; // NOLINT(*-msc51-cpp)
+
+        if (seed == 0) {
+            gen = std::mt19937_64(rd());
+        } else {
+            gen = std::mt19937_64(seed);
+        }
 
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
@@ -316,14 +323,14 @@ namespace Zagreus {
         K = findOptimalK(positions, maxEndTime, engine);
         std::cout << "Optimal K value: " << K << std::endl;
 
+        std::shuffle(positions.begin(), positions.end(), gen);
+
         std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.9, positions.end());
         positions.erase(positions.begin() + positions.size() * 0.9, positions.end());
 
         std::cout << "Starting tuning..." << std::endl;
         std::vector<double> m(bestParameters.size(), 0.0);
         std::vector<double> v(bestParameters.size(), 0.0);
-
-        std::shuffle(positions.begin(), positions.end(), gen);
 
         std::cout << "Calculating the initial loss..." << std::endl;
         double bestLoss = evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
@@ -345,15 +352,15 @@ namespace Zagreus {
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                 double oldParam = bestParameters[paramIndex];
-                bestParameters[paramIndex] += epsilon;
+                bestParameters[paramIndex] += delta;
                 updateEvalValues(bestParameters);
                 double lossPlus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
-                bestParameters[paramIndex] -= 2 * epsilon;
+                bestParameters[paramIndex] -= 2 * delta;
                 updateEvalValues(bestParameters);
                 double lossMinus = evaluationLoss(batch, batchSize, maxEndTime, engine);
 
-                gradients[paramIndex] = (lossPlus - lossMinus) / (2 * epsilon);
+                gradients[paramIndex] = (lossPlus - lossMinus) / (2 * delta);
                 // reset
                 bestParameters[paramIndex] = oldParam;
             }
@@ -371,8 +378,8 @@ namespace Zagreus {
 
             if (iteration > epsilonWarmupIterations) {
                 // Decay epsilon
-                epsilon *= epsilonDecay;
-                epsilon = std::max(epsilon, 1.0);
+                delta *= epsilonDecay;
+                delta = std::max(delta, 1.0);
             }
 
             if (newLoss < bestLoss) {
@@ -383,7 +390,7 @@ namespace Zagreus {
                 stopCounter++;
             }
 
-            std::cout << "Iteration: " << iteration << ", Val Loss: " << newLoss << ", Best Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << epsilon << std::endl;
+            std::cout << "Iteration: " << iteration << ", Val Loss: " << newLoss << ", Best Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << delta << std::endl;
         }
 
         std::cout << "Best loss: " << bestLoss << std::endl;
