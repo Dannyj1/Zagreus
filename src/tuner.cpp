@@ -40,7 +40,7 @@ namespace Zagreus {
     int iteration = 0;
     double K = 0.0;
 
-    int batchSize = 256;
+    int batchSize = 512;
     double learningRate = 0.1;
     double delta = 1.0;
     double optimizerEpsilon = 1e-6;
@@ -50,12 +50,13 @@ namespace Zagreus {
     // 0 = random seed
     long seed = 0x1cd8a49;
     int epsilonWarmupIterations = 0;
+    int patience = 50;
 
-    std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> positions, std::mt19937_64 gen) {
+    std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> &positions) {
         // Create random batches of batchSize positions
         std::vector<std::vector<TunePosition>> batches;
+        batches.reserve(positions.size() / batchSize);
 
-        std::shuffle(positions.begin(), positions.end(), gen);
         for (int i = 0; i < positions.size(); i += batchSize) {
             std::vector<TunePosition> batch;
             for (int j = i; j < i + batchSize && j < positions.size(); j++) {
@@ -150,6 +151,8 @@ namespace Zagreus {
         while (std::getline(fin, line)) {
             lines.emplace_back(line);
         }
+
+        positions.reserve(lines.size());
 
         for (std::string &posLine : lines) {
             if (posLine.empty() || posLine == " ") {
@@ -302,6 +305,7 @@ namespace Zagreus {
     void startTuning(char* filePath) {
         std::random_device rd;
         std::mt19937_64 gen; // NOLINT(*-msc51-cpp)
+        ExponentialMovingAverage smoothedValidationLoss(10);
 
         if (seed == 0) {
             gen = std::mt19937_64(rd());
@@ -335,17 +339,18 @@ namespace Zagreus {
 
         std::cout << "Calculating the initial loss..." << std::endl;
         double bestLoss = evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
+        double bestAverageLoss = bestLoss;
 
         std::cout << "Initial loss: " << bestLoss << std::endl;
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
-        std::vector<std::vector<TunePosition>> batches = createBatches(positions, gen);
+        std::vector<std::vector<TunePosition>> batches = createBatches(positions);
 
-        while (stopCounter <= 20) {
+        while (stopCounter <= 50) {
             iteration++;
 
             if (batches.empty()) {
                 std::shuffle(positions.begin(), positions.end(), gen);
-                batches = createBatches(positions, gen);
+                batches = createBatches(positions);
             }
 
             std::vector<TunePosition> batch = batches.back();
@@ -353,18 +358,22 @@ namespace Zagreus {
             std::vector<double> gradients(bestParameters.size(), 0.0);
 
             for (TunePosition &pos : batch) {
+                std::vector<TunePosition> position{pos};
+                double loss = evaluationLoss(position, 1, maxEndTime, engine);
+
                 for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                     double oldParam = bestParameters[paramIndex];
                     bestParameters[paramIndex] = oldParam + delta;
                     updateEvalValues(bestParameters);
-                    std::vector<TunePosition> position{pos};
                     double lossPlus = evaluationLoss(position, 1, maxEndTime, engine);
 
-                    bestParameters[paramIndex] = oldParam - delta;
+                    /*bestParameters[paramIndex] = oldParam - delta;
                     updateEvalValues(bestParameters);
                     double lossMinus = evaluationLoss(position, 1, maxEndTime, engine);
 
-                    gradients[paramIndex] += (lossPlus - lossMinus) / (2 * delta);
+                    gradients[paramIndex] += (lossPlus - lossMinus) / (2 * delta);*/
+
+                    gradients[paramIndex] += (lossPlus - loss) / delta;
                     // reset
                     bestParameters[paramIndex] = oldParam;
                 }
@@ -380,7 +389,9 @@ namespace Zagreus {
             }
 
             updateEvalValues(bestParameters);
-            double newLoss = evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
+            double validationLoss = evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
+            smoothedValidationLoss.add(validationLoss);
+            double averageValidationLoss = smoothedValidationLoss.getMA();
 
             if (iteration > epsilonWarmupIterations) {
                 // Decay epsilon
@@ -388,15 +399,19 @@ namespace Zagreus {
                 delta = std::max(delta, 1.0);
             }
 
-            if (newLoss < bestLoss) {
-                bestLoss = newLoss;
-                stopCounter = 0;
+            if (validationLoss < bestLoss) {
+                bestLoss = validationLoss;
                 exportNewEvalValues(bestParameters);
+            }
+
+            if (averageValidationLoss < bestAverageLoss) {
+                bestAverageLoss = averageValidationLoss;
+                stopCounter = 0;
             } else {
                 stopCounter++;
             }
 
-            std::cout << "Iteration: " << iteration << ", Val Loss: " << newLoss << ", Best Loss: " << bestLoss << ", Lr: " << learningRate << ", Epsilon: " << delta << std::endl;
+            std::cout << "Iteration: " << iteration << ", Val Loss: " << validationLoss << ", Best Loss: " << bestLoss << ", Avg Val Loss: " << averageValidationLoss << ", Lr: " << learningRate << ", Epsilon: " << delta << std::endl;
         }
 
         std::cout << "Best loss: " << bestLoss << std::endl;
