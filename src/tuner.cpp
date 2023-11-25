@@ -86,11 +86,12 @@ namespace Zagreus {
             } else {
                 evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
             }
-            double loss = pos.result - sigmoid((double) evalScore);
-            totalLoss += loss * loss;
+
+            double loss = std::pow(pos.result - sigmoid((double) evalScore), 2);
+            totalLoss += loss;
         }
 
-        return 1.0 / (2.0 * (double) amountOfPositions) * totalLoss;
+        return (1.0 / amountOfPositions) * totalLoss;
     }
 
     double findOptimalK(std::vector<TunePosition> &positions, std::chrono::time_point<std::chrono::steady_clock> &maxEndTime, ZagreusEngine &engine) {
