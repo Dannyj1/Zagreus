@@ -395,16 +395,9 @@ namespace Zagreus {
             if (isPawn(pieceType)) {
                 // Penalize doubled pawn
                 uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
-                uint64_t doubledPawnsMask;
-
-                if (color == WHITE) {
-                    doubledPawnsMask = nortOne(pawnBB);
-                } else {
-                    doubledPawnsMask = soutOne(pawnBB);
-                }
-
+                uint64_t doubledPawnsMask = bitboard.getFile(index);
                 uint64_t doubledPawns = pawnBB & doubledPawnsMask;
-                uint8_t doubledPawnCount = popcnt(doubledPawns);
+                uint8_t doubledPawnCount = popcnt(doubledPawns) - 1;
 
                 if (color == WHITE) {
                     whiteMidgameScore += doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
