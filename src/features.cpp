@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[34] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -1, 0, -3, -3, -5, -6, -7, -10, -10, -15, -20, -10 };
+    int evalValues[34] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -1, 0, -3, -3, -5, -6, -7, -10, -10, -15, -10, -15 };
 
     int baseEvalValues[34] = {
             100, // MIDGAME_PAWN_MATERIAL
@@ -58,8 +58,8 @@ namespace Zagreus {
             -15, // ENDGAME_KING_ATTACK_ROOK_PENALTY
             -15, // MIDGAME_KING_ATTACK_QUEEN_PENALTY
             -20, // ENDGAME_KING_ATTACK_QUEEN_PENALTY
-            -20, // MIDGAME_DOUBLED_PAWN_PENALTY
-            -10, // ENDGAME_DOUBLED_PAWN_PENALTY
+            -10, // MIDGAME_DOUBLED_PAWN_PENALTY
+            -15, // ENDGAME_DOUBLED_PAWN_PENALTY
     };
 
     void printEvalValues() {
