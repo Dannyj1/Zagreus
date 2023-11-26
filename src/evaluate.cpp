@@ -221,6 +221,11 @@ namespace Zagreus {
     template<PieceColor color>
     void Evaluation::evaluatePieces() {
         uint64_t colorBoard = bitboard.getColorBoard<color>();
+        int8_t blackKingSquare = bitscanForward(bitboard.getPieceBoard(BLACK_KING));
+        int8_t whiteKingSquare = bitscanForward(bitboard.getPieceBoard(WHITE_KING));
+        uint64_t blackKingAttacks = attacksFrom[blackKingSquare];
+        uint64_t whiteKingAttacks = attacksFrom[whiteKingSquare];
+
 
         while (colorBoard) {
             uint8_t index = popLsb(colorBoard);
@@ -264,7 +269,59 @@ namespace Zagreus {
                 addMobilityScoreForPiece(pieceType, mobility);
             }
 
-            // King safety
+            // King safety -  Attacks around king
+            if (!isKing(pieceType)) {
+                uint64_t attackSquares = attacksFrom[index];
+                uint64_t opponentKingAttacks = color == WHITE ? blackKingAttacks : whiteKingAttacks;
+                uint64_t attacksAroundKing = attackSquares & opponentKingAttacks;
+                int attackCount = popcnt(attacksAroundKing);
+
+                switch (pieceType) {
+                    case WHITE_PAWN:
+                        blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
+                        blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
+                        break;
+                    case BLACK_PAWN:
+                        whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
+                        whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
+                        break;
+                    case WHITE_KNIGHT:
+                        blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
+                        blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
+                        break;
+                    case BLACK_KNIGHT:
+                        whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
+                        whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
+                        break;
+                    case WHITE_BISHOP:
+                        blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
+                        blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
+                        break;
+                    case BLACK_BISHOP:
+                        whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
+                        whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
+                        break;
+                    case WHITE_ROOK:
+                        blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
+                        blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
+                        break;
+                    case BLACK_ROOK:
+                        whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
+                        whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
+                        break;
+                    case WHITE_QUEEN:
+                        blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
+                        blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
+                        break;
+                    case BLACK_QUEEN:
+                        whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
+                        whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
+                        break;
+                }
+            }
+
+
+            // Other King safety
             if (isKing(pieceType)) {
                 if (color == WHITE) {
                     // Pawn Shield
@@ -283,25 +340,6 @@ namespace Zagreus {
                         WHITE>());
                     whiteMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                     whiteEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
-
-                    // Penalties for attacks around king by opponent
-                    uint64_t kingAttacks = attacksFrom[index];
-                    uint64_t opponentPawnAttacks = attacksByPiece[BLACK_PAWN] & kingAttacks;
-                    uint64_t opponentKnightAttacks = attacksByPiece[BLACK_KNIGHT] & kingAttacks;
-                    uint64_t opponentBishopAttacks = attacksByPiece[BLACK_BISHOP] & kingAttacks;
-                    uint64_t opponentRookAttacks = attacksByPiece[BLACK_ROOK] & kingAttacks;
-                    uint64_t opponentQueenAttacks = attacksByPiece[BLACK_QUEEN] & kingAttacks;
-
-                    whiteMidgameScore += popcnt(opponentPawnAttacks) * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
-                    whiteEndgameScore += popcnt(opponentPawnAttacks) * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
-                    whiteMidgameScore += popcnt(opponentKnightAttacks) * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
-                    whiteEndgameScore += popcnt(opponentKnightAttacks) * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
-                    whiteMidgameScore += popcnt(opponentBishopAttacks) * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
-                    whiteEndgameScore += popcnt(opponentBishopAttacks) * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
-                    whiteMidgameScore += popcnt(opponentRookAttacks) * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
-                    whiteEndgameScore += popcnt(opponentRookAttacks) * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
-                    whiteMidgameScore += popcnt(opponentQueenAttacks) * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
-                    whiteEndgameScore += popcnt(opponentQueenAttacks) * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
                 } else {
                     // Pawn Shield
                     uint64_t kingBB = bitboard.getPieceBoard(BLACK_KING);
@@ -319,25 +357,6 @@ namespace Zagreus {
                         BLACK>());
                     blackMidgameScore += popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
                     blackEndgameScore += popcnt(virtualMobilitySquares) * getEvalValue(ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
-
-                    // Penalties for attacks around king by opponent
-                    uint64_t kingAttacks = attacksFrom[index];
-                    uint64_t opponentPawnAttacks = attacksByPiece[WHITE_PAWN] & kingAttacks;
-                    uint64_t opponentKnightAttacks = attacksByPiece[WHITE_KNIGHT] & kingAttacks;
-                    uint64_t opponentBishopAttacks = attacksByPiece[WHITE_BISHOP] & kingAttacks;
-                    uint64_t opponentRookAttacks = attacksByPiece[WHITE_ROOK] & kingAttacks;
-                    uint64_t opponentQueenAttacks = attacksByPiece[WHITE_QUEEN] & kingAttacks;
-
-                    blackMidgameScore += popcnt(opponentPawnAttacks) * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
-                    blackEndgameScore += popcnt(opponentPawnAttacks) * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
-                    blackMidgameScore += popcnt(opponentKnightAttacks) * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
-                    blackEndgameScore += popcnt(opponentKnightAttacks) * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
-                    blackMidgameScore += popcnt(opponentBishopAttacks) * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
-                    blackEndgameScore += popcnt(opponentBishopAttacks) * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
-                    blackMidgameScore += popcnt(opponentRookAttacks) * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
-                    blackEndgameScore += popcnt(opponentRookAttacks) * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
-                    blackMidgameScore += popcnt(opponentQueenAttacks) * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
-                    blackEndgameScore += popcnt(opponentQueenAttacks) * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
                 }
             }
         }
