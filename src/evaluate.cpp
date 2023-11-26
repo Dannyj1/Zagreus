@@ -408,7 +408,6 @@ namespace Zagreus {
                 }
 
                 // Passed pawn
-                // TODO: don't count passed pawns that are blocked by own pawns as per https://www.chessprogramming.org/Passed_Pawn
                 if (bitboard.isPassedPawn<color>(index)) {
                     if (color == WHITE) {
                         whiteMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);

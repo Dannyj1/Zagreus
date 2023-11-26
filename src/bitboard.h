@@ -446,14 +446,21 @@ namespace Zagreus {
 
         template <PieceColor color>
         bool isPassedPawn(int8_t square) {
-            uint64_t neighborMask = getFile(square);
+            Direction direction = color == WHITE ? NORTH : SOUTH;
+            uint64_t neighborMask = rayAttacks[direction][square];
+            uint64_t pawnBB = getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
+
+            if (neighborMask & pawnBB) {
+                return false;
+            }
 
             if (square % 8 != 0) {
-                neighborMask |= getFile(square - 1);
+                // neighboring file
+                neighborMask |= rayAttacks[direction][square - 1];
             }
 
             if (square % 8 != 7) {
-                neighborMask |= getFile(square + 1);
+                neighborMask |= rayAttacks[direction][square + 1];
             }
 
             if (color == WHITE) {
