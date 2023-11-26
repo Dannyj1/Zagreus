@@ -348,7 +348,6 @@ namespace Zagreus {
                     updateEvalValues(bestParameters);
                     double lossPlus = evaluationLoss(position, 1, maxEndTime, engine);
 
-                    // TODO: re-test with central finite differences now that evaluation function is faster
                     /*bestParameters[paramIndex] = oldParam - delta;
                     updateEvalValues(bestParameters);
                     double lossMinus = evaluationLoss(position, 1, maxEndTime, engine);
