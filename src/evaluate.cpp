@@ -393,7 +393,7 @@ namespace Zagreus {
 
             // Per piece evaluation
             if (isPawn(pieceType)) {
-                // Penalize doubled pawn
+                // Doubled pawn
                 uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
                 uint64_t doubledPawnsMask = bitboard.getFile(index);
                 uint64_t doubledPawns = pawnBB & doubledPawnsMask;
@@ -405,6 +405,35 @@ namespace Zagreus {
                 } else {
                     blackMidgameScore += doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
                     blackEndgameScore += doubledPawnCount * getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                }
+
+                // Isolated and passed pawn
+                if (bitboard.isPassedPawn<color>(index)) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
+                        whiteEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
+                        blackEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
+                    }
+                } else if (bitboard.isIsolatedPawn<color>(index)) {
+                    if (bitboard.isSemiOpenFile<color>(index)) {
+                        if (color == WHITE) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                            whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                        } else {
+                            blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                            blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN);
+                        }
+                    } else {
+                        if (color == WHITE) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN);
+                            whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
+                        } else {
+                            blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN);
+                            blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN);
+                        }
+                    }
                 }
             }
         }
