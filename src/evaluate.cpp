@@ -407,11 +407,11 @@ namespace Zagreus {
                 uint8_t doubledPawnCount = popcnt(doubledPawns);
 
                 if (color == WHITE) {
-                    whiteMidgameScore -= doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
-                    whiteEndgameScore -= doubledPawnCount * getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                    whiteMidgameScore += doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
+                    whiteEndgameScore += doubledPawnCount * getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
                 } else {
-                    blackMidgameScore -= doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
-                    blackEndgameScore -= doubledPawnCount * getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                    blackMidgameScore += doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
+                    blackEndgameScore += doubledPawnCount * getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
                 }
             }
         }
