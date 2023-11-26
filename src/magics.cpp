@@ -84,7 +84,7 @@ namespace Zagreus {
 
     int pop_1st_bit(uint64_t* bb) {
         uint64_t b = *bb ^ (*bb - 1);
-        unsigned int fold = (unsigned) ((b & 0xffffffff) ^ (b >> 32));
+        unsigned int fold = static_cast<unsigned>((b & 0xffffffff) ^ (b >> 32));
         *bb &= (*bb - 1);
         return BitTable[(fold * 0x783a9b23) >> 26];
     }
@@ -169,7 +169,7 @@ namespace Zagreus {
         return
         (unsigned)((int)b*(int)magic ^ (int)(b>>32)*(int)(magic>>32)) >> (32-bits);
 #else
-        return (int) ((b * magic) >> (64 - bits));
+        return static_cast<int>((b * magic) >> (64 - bits));
 #endif
     }
 

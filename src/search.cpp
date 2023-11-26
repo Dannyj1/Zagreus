@@ -306,7 +306,7 @@ namespace Zagreus {
                     move.promotionPiece == PieceType::EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
                     // Scale the reduction value between 1 and (depth - 1), depending on how many moves have been searched.
                     // It should reach (depth - 1) when 60% of the moves have been searched.
-                    int R = 1 + (int) ((depth - 1) * (1 - moves.movesSearched() / (0.6 * moves.size())));
+                    int R = 1 + static_cast<int>((depth - 1) * (1 - moves.movesSearched() / (0.6 * moves.size())));
                     depthReduction += R;
                 }
             }
@@ -382,7 +382,7 @@ namespace Zagreus {
         return alpha;
     }
 
-    int delta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL), getEvalValue(MIDGAME_QUEEN_MATERIAL));
+    int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL), getEvalValue(MIDGAME_QUEEN_MATERIAL));
     int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL), getEvalValue(MIDGAME_PAWN_MATERIAL));
     template<PieceColor color>
     int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
@@ -405,10 +405,10 @@ namespace Zagreus {
         }
 
         if (previousMove.promotionPiece != PieceType::EMPTY) {
-            delta += getPieceWeight(previousMove.promotionPiece) - minPawnValue;
+            queenDelta += getPieceWeight(previousMove.promotionPiece) - minPawnValue;
         }
 
-        if (standPat < alpha - delta) {
+        if (standPat < alpha - queenDelta) {
             return alpha;
         }
 
@@ -491,7 +491,7 @@ namespace Zagreus {
 
         if (board.isDraw()) {
             // Thanks to Stockfish for the "3-fold blindness avoidance" idea
-            return 0 - 1 + ((int) searchStats.nodes & 0x2);
+            return 0 - 1 + (static_cast<int>(searchStats.nodes) & 0x2);
         }
 
         initEvalContext(board);
@@ -734,8 +734,8 @@ namespace Zagreus {
         uint64_t pawnShield = pawnBB & safetyMask;
         uint64_t pawnShieldCount = popcnt(pawnShield);
 
-        evalContext.blackMidgameScore += std::min(getEvalValue(MIDGAME_PAWN_SHIELD) * 3, (int) (pawnShieldCount * getEvalValue(MIDGAME_PAWN_SHIELD)));
-        evalContext.blackEndgameScore += std::min(getEvalValue(ENDGAME_PAWN_SHIELD) * 3, (int) (pawnShieldCount * getEvalValue(ENDGAME_PAWN_SHIELD)));
+        evalContext.blackMidgameScore += std::min(getEvalValue(MIDGAME_PAWN_SHIELD) * 3, static_cast<int>(pawnShieldCount * getEvalValue(MIDGAME_PAWN_SHIELD)));
+        evalContext.blackEndgameScore += std::min(getEvalValue(ENDGAME_PAWN_SHIELD) * 3, static_cast<int>(pawnShieldCount * getEvalValue(ENDGAME_PAWN_SHIELD)));
         if (bitboard.isSemiOpenFileLenient<PieceColor::BLACK>(kingLocation)) {
             evalContext.blackMidgameScore += getEvalValue(MIDGAME_KING_ON_OPEN_FILE);
             evalContext.blackEndgameScore += getEvalValue(ENDGAME_KING_ON_OPEN_FILE);

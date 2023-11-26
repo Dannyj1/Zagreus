@@ -75,7 +75,7 @@ namespace Zagreus {
 
         // Based on context.pvChanges, scale timePerMove between 1.0 and 1.5. After 5 or more move changes, timePerMove will be 1.5 times as long.
         if (context.pvChanges > 0) {
-            timePerMove = timePerMove * (1.0 + std::min((double) context.pvChanges, 5.0) / 10.0);
+            timePerMove = timePerMove * (1.0 + std::min(static_cast<double>(context.pvChanges), 5.0) / 10.0);
         }
 
         // if the score suddenly went from positive to negative or vice versa, increase timePerMove by 50%

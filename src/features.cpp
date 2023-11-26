@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[76] = { 98, 101, 355, 353, 368, 358, 529, 532, 1005, 1006, 4, 7, 4, 0, 6, 4, 0, 7, 0, 14, -40, 8, -23, 9, -38, -2, -8, -2, 0, -2, -6, -2, -10, 0, -10, -17, 7, 13, 15, 10, 13, 11, 0, 10, 10, 9, 24, 20, 13, 8, 0, 7, 8, 2, 8, 7, -30, -22, 22, 6, -11, -8, 3, -3, -20, -20, -6, -4, 10, 12, 15, 2, 16, 12, 12, 5,  };
+    int evalValues[76] = { 94, 99, 357, 350, 371, 357, 530, 533, 1008, 1005, 4, 6, 3, 0, 5, 6, 0, 6, 0, 13, -38, 7, -24, 7, -35, 0, -9, 2, 0, 1, -9, -1, -8, 5, -11, -16, 8, 11, 17, 7, 13, 11, 2, 13, 13, 9, 27, 20, 14, 10, 0, 10, 10, 4, 7, 8, -29, -18, 22, 6, -13, -6, 2, 0, -12, -12, -7, -5, 9, 15, 16, 0, 20, 19, 14, 11,  };
 
     int baseEvalValues[76] = {
             100, // MIDGAME_PAWN_MATERIAL
@@ -161,17 +161,17 @@ namespace Zagreus {
 
         // New features are given as 10000 times the actual value to deal with the fact that gradients are floats
         for (int i = 0; i < evalFeatureSize; i++) {
-            evalValues[i] = (int) newValues[i];
+            evalValues[i] = static_cast<int>(newValues[i]);
         }
 
         for (int i = 0; i < 6; i++) {
             for (int8_t j = 0; j < 64; j++) {
                 int pieceIndex = i * 2;
 
-                setMidgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + i * 64 + j]);
-                setMidgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + i * 64 + j]);
-                setEndgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
-                setEndgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
+                setMidgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j, static_cast<int>(newValues[evalFeatureSize + i * 64 + j]));
+                setMidgamePstValue(static_cast<PieceType>(pieceIndex + 1), j, static_cast<int>(newValues[evalFeatureSize + i * 64 + j]));
+                setEndgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j, static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
+                setEndgamePstValue(static_cast<PieceType>(pieceIndex + 1), j, static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
             }
         }
     }
