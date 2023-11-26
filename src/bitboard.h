@@ -457,9 +457,9 @@ namespace Zagreus {
             }
 
             if (color == WHITE) {
-                return !(neighborMask & getPieceBoard(WHITE_PAWN));
-            } else {
                 return !(neighborMask & getPieceBoard(BLACK_PAWN));
+            } else {
+                return !(neighborMask & getPieceBoard(WHITE_PAWN));
             }
         }
 

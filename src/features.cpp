@@ -62,10 +62,10 @@ namespace Zagreus {
             -15, // ENDGAME_DOUBLED_PAWN_PENALTY
             10, // MIDGAME_PASSED_PAWN
             10, // ENDGAME_PASSED_PAWN
-            -20, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -20, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -10, // MIDGAME_ISOLATED_PAWN
-            -10, // ENDGAME_ISOLATED_PAWN
+            -10, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
+            -15, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
+            -5, // MIDGAME_ISOLATED_PAWN_PENALTY
+            -10, // ENDGAME_ISOLATED_PAWN_PENALTY
     };
 
     void printEvalValues() {
