@@ -37,8 +37,9 @@ namespace Zagreus {
         moveList->moves[moveList->size].promotionPiece = promotionPiece;
         moveList->size++;
     }
-    
-    int scoreMove(int ply, Line &previousPv, const uint32_t* previousPvMoveCodes, Move* move, Move &previousMove, uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
+
+    int scoreMove(int ply, Line& previousPv, const uint32_t* previousPvMoveCodes, Move* move, Move& previousMove,
+                  uint32_t moveCode, uint32_t bestMoveCode, TranspositionTable* tt) {
         for (int i = 0; i < previousPv.moveCount; i++) {
             if (moveCode == previousPvMoveCodes[i]) {
                 return 50000 - i;
@@ -76,8 +77,8 @@ namespace Zagreus {
         return tt->historyMoves[move->piece][move->to];
     }
 
-    template<PieceColor color>
-    void generateMoves(Bitboard &bitboard, MoveList *moveList) {
+    template <PieceColor color>
+    void generateMoves(Bitboard& bitboard, MoveList* moveList) {
         generatePawnMoves<color>(bitboard, moveList);
         generateKnightMoves<color>(bitboard, moveList);
         generateBishopMoves<color>(bitboard, moveList);
@@ -111,8 +112,8 @@ namespace Zagreus {
         delete[] moveCodes;
     }
 
-    template<PieceColor color>
-    void generateQuiescenceMoves(Bitboard &bitboard, MoveList *moveList) {
+    template <PieceColor color>
+    void generateQuiescenceMoves(Bitboard& bitboard, MoveList* moveList) {
         generatePawnMoves<color>(bitboard, moveList, true);
         generateKnightMoves<color>(bitboard, moveList, true);
         generateBishopMoves<color>(bitboard, moveList, true);
@@ -146,8 +147,8 @@ namespace Zagreus {
         delete[] moveCodes;
     }
 
-    template<PieceColor color>
-    void generatePawnMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
+    template <PieceColor color>
+    void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
         uint64_t pawnBB;
 
         if (color == WHITE) {
@@ -166,7 +167,8 @@ namespace Zagreus {
             }
 
             genBB |= bitboard.getPawnAttacks<color>(index) & attackableSquares;
-            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) | bitboard.getPieceBoard(BLACK_KING));
+            genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) | bitboard.getPieceBoard(
+                BLACK_KING));
 
             if (quiesce) {
                 if (color == WHITE) {
@@ -183,7 +185,9 @@ namespace Zagreus {
 
                 if (color == WHITE) {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_PAWN, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(WHITE_PAWN, capturedPiece);
                     }
 
                     if (genIndex >= A8) {
@@ -196,7 +200,9 @@ namespace Zagreus {
                     }
                 } else {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_PAWN, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(BLACK_PAWN, capturedPiece);
                     }
 
                     if (genIndex <= H1) {
@@ -212,8 +218,8 @@ namespace Zagreus {
         }
     }
 
-    template<PieceColor color>
-    void generateKnightMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
+    template <PieceColor color>
+    void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
         uint64_t knightBB;
 
         if (color == WHITE) {
@@ -227,7 +233,7 @@ namespace Zagreus {
             uint64_t genBB = bitboard.getKnightAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
-                       bitboard.getPieceBoard(BLACK_KING));
+                bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == WHITE) {
@@ -244,13 +250,17 @@ namespace Zagreus {
 
                 if (color == WHITE) {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_KNIGHT, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(WHITE_KNIGHT, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, WHITE_KNIGHT, captureScore);
                 } else {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_KNIGHT, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(BLACK_KNIGHT, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, BLACK_KNIGHT, captureScore);
@@ -259,8 +269,8 @@ namespace Zagreus {
         }
     }
 
-    template<PieceColor color>
-    void generateBishopMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
+    template <PieceColor color>
+    void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
         uint64_t bishopBB;
 
         if (color == WHITE) {
@@ -274,7 +284,7 @@ namespace Zagreus {
             uint64_t genBB = bitboard.getBishopAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
-                       bitboard.getPieceBoard(BLACK_KING));
+                bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == WHITE) {
@@ -291,13 +301,17 @@ namespace Zagreus {
 
                 if (color == WHITE) {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_BISHOP, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(WHITE_BISHOP, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, WHITE_BISHOP, captureScore);
                 } else {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_BISHOP, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(BLACK_BISHOP, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, BLACK_BISHOP, captureScore);
@@ -306,8 +320,8 @@ namespace Zagreus {
         }
     }
 
-    template<PieceColor color>
-    void generateRookMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
+    template <PieceColor color>
+    void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
         uint64_t rookBB;
 
         if (color == WHITE) {
@@ -321,7 +335,7 @@ namespace Zagreus {
             uint64_t genBB = bitboard.getRookAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
-                       bitboard.getPieceBoard(BLACK_KING));
+                bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == WHITE) {
@@ -338,13 +352,17 @@ namespace Zagreus {
 
                 if (color == WHITE) {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_ROOK, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(WHITE_ROOK, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, WHITE_ROOK, captureScore);
                 } else {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_ROOK, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(BLACK_ROOK, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, BLACK_ROOK, captureScore);
@@ -353,8 +371,8 @@ namespace Zagreus {
         }
     }
 
-    template<PieceColor color>
-    void generateQueenMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
+    template <PieceColor color>
+    void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
         uint64_t queenBB;
 
         if (color == WHITE) {
@@ -368,7 +386,7 @@ namespace Zagreus {
             uint64_t genBB = bitboard.getQueenAttacks(index);
 
             genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
-                       bitboard.getPieceBoard(BLACK_KING));
+                bitboard.getPieceBoard(BLACK_KING));
 
             if (quiesce) {
                 if (color == WHITE) {
@@ -385,13 +403,17 @@ namespace Zagreus {
 
                 if (color == WHITE) {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_QUEEN, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(WHITE_QUEEN, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, WHITE_QUEEN, captureScore);
                 } else {
                     if (capturedPiece != EMPTY) {
-                        captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_QUEEN, capturedPiece);
+                        captureScore = quiesce
+                                           ? bitboard.seeCapture<color>(index, genIndex)
+                                           : mvvlva(BLACK_QUEEN, capturedPiece);
                     }
 
                     addMoveToList(moveList, index, genIndex, BLACK_QUEEN, captureScore);
@@ -400,8 +422,8 @@ namespace Zagreus {
         }
     }
 
-    template<PieceColor color>
-    void generateKingMoves(Bitboard &bitboard, MoveList *moveList, bool quiesce = false) {
+    template <PieceColor color>
+    void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
         uint64_t kingBB;
         uint64_t opponentKingBB;
 
@@ -434,13 +456,17 @@ namespace Zagreus {
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(WHITE_KING, capturedPiece);
+                    captureScore = quiesce
+                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       : mvvlva(WHITE_KING, capturedPiece);
                 }
 
                 addMoveToList(moveList, index, genIndex, WHITE_KING, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce ? bitboard.seeCapture<color>(index, genIndex) : mvvlva(BLACK_KING, capturedPiece);
+                    captureScore = quiesce
+                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       : mvvlva(BLACK_KING, capturedPiece);
                 }
 
                 addMoveToList(moveList, index, genIndex, BLACK_KING, captureScore);
@@ -451,7 +477,7 @@ namespace Zagreus {
 
         if (color == WHITE) {
             if (bitboard.getCastlingRights() & WHITE_KINGSIDE && (occupiedBB & WHITE_KING_SIDE_BETWEEN) == 0
-            && bitboard.getPieceOnSquare(H1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
+                && bitboard.getPieceOnSquare(H1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
                 uint64_t tilesToCheck = WHITE_KING_SIDE_BETWEEN;
                 bool canCastle = true;
 
@@ -489,7 +515,7 @@ namespace Zagreus {
             }
         } else {
             if (bitboard.getCastlingRights() & BLACK_KINGSIDE && (occupiedBB & BLACK_KING_SIDE_BETWEEN) == 0
-            && bitboard.getPieceOnSquare(H8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
+                && bitboard.getPieceOnSquare(H8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
                 uint64_t tilesToCheck = BLACK_KING_SIDE_BETWEEN;
                 bool canCastle = true;
 
@@ -508,7 +534,7 @@ namespace Zagreus {
             }
 
             if (bitboard.getCastlingRights() & BLACK_QUEENSIDE && (occupiedBB & BLACK_QUEEN_SIDE_BETWEEN) == 0
-            && bitboard.getPieceOnSquare(A8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
+                && bitboard.getPieceOnSquare(A8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
                 uint64_t tilesToCheck = BLACK_QUEEN_SIDE_BETWEEN & ~(1ULL << B8);
                 bool canCastle = true;
 
@@ -528,9 +554,9 @@ namespace Zagreus {
         }
     }
 
-    template void generateMoves<WHITE>(Bitboard &bitboard, MoveList *moveList);
-    template void generateMoves<BLACK>(Bitboard &bitboard, MoveList *moveList);
+    template void generateMoves<WHITE>(Bitboard& bitboard, MoveList* moveList);
+    template void generateMoves<BLACK>(Bitboard& bitboard, MoveList* moveList);
 
-    template void generateQuiescenceMoves<WHITE>(Bitboard &bitboard, MoveList *moveList);
-    template void generateQuiescenceMoves<BLACK>(Bitboard &bitboard, MoveList *moveList);
+    template void generateQuiescenceMoves<WHITE>(Bitboard& bitboard, MoveList* moveList);
+    template void generateQuiescenceMoves<BLACK>(Bitboard& bitboard, MoveList* moveList);
 }

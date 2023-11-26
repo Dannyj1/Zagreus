@@ -55,7 +55,9 @@ namespace Zagreus {
         MIDGAME_KING_ATTACK_ROOK_PENALTY,
         ENDGAME_KING_ATTACK_ROOK_PENALTY,
         MIDGAME_KING_ATTACK_QUEEN_PENALTY,
-        ENDGAME_KING_ATTACK_QUEEN_PENALTY
+        ENDGAME_KING_ATTACK_QUEEN_PENALTY,
+        MIDGAME_DOUBLED_PAWN_PENALTY,
+        ENDGAME_DOUBLED_PAWN_PENALTY
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -90,7 +92,9 @@ namespace Zagreus {
             "MIDGAME_KING_ATTACK_ROOK_PENALTY",
             "ENDGAME_KING_ATTACK_ROOK_PENALTY",
             "MIDGAME_KING_ATTACK_QUEEN_PENALTY",
-            "ENDGAME_KING_ATTACK_QUEEN_PENALTY"
+            "ENDGAME_KING_ATTACK_QUEEN_PENALTY",
+            "MIDGAME_DOUBLED_PAWN_PENALTY",
+            "ENDGAME_DOUBLED_PAWN_PENALTY"
     };
 
     void printEvalValues();

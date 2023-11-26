@@ -36,10 +36,10 @@
 namespace Zagreus {
     class Bitboard {
     private:
-        uint64_t pieceBB[12]{ 0ULL };
+        uint64_t pieceBB[12]{0ULL};
         PieceType pieceSquareMapping[64]{EMPTY};
-        uint64_t colorBB[2]{ 0ULL };
-        uint64_t occupiedBB{ 0ULL };
+        uint64_t colorBB[2]{0ULL};
+        uint64_t occupiedBB{0ULL};
 
         PieceColor movingColor = NONE;
         uint16_t ply = 0;
@@ -67,6 +67,7 @@ namespace Zagreus {
         int materialCount[12]{};
 
         MoveListPool* moveListPool = MoveListPool::getInstance();
+
     public:
         uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
 
@@ -74,12 +75,12 @@ namespace Zagreus {
 
         uint64_t getPieceBoard(PieceType pieceType);
 
-        template<PieceColor color>
+        template <PieceColor color>
         uint64_t getColorBoard() {
             return colorBB[color];
         }
 
-        template<PieceColor color>
+        template <PieceColor color>
         uint64_t getPawnDoublePush(uint64_t pawns) {
             const uint64_t singlePush = getPawnSinglePush<color>(pawns);
 
@@ -94,13 +95,12 @@ namespace Zagreus {
             return 0;
         }
 
-        template<PieceColor color>
-        uint64_t getPawnAttacks(int8_t square) const
-        {
+        template <PieceColor color>
+        uint64_t getPawnAttacks(int8_t square) const {
             return pawnAttacks[color][square];
         }
 
-        template<PieceColor color>
+        template <PieceColor color>
         uint64_t getPawnSinglePush(uint64_t pawns) {
             if (color == WHITE) {
                 return nortOne(pawns) & getEmptyBoard();
@@ -139,26 +139,26 @@ namespace Zagreus {
 
         void removePiece(int8_t square, PieceType piece);
 
-        template<PieceType piece>
+        template <PieceType piece>
         int getMaterialCount() {
             return materialCount[piece];
         }
 
-        void makeMove(Move &move);
+        void makeMove(Move& move);
 
-        void unmakeMove(Move &move);
+        void unmakeMove(Move& move);
 
         void print();
 
         void printAvailableMoves(MoveList* moves);
 
-        bool setFromFen(const std::string &fen);
+        bool setFromFen(const std::string& fen);
 
-        bool setFromFenTuner(std::string &fen);
+        bool setFromFenTuner(std::string& fen);
 
         bool isDraw();
 
-        template<PieceColor color>
+        template <PieceColor color>
         bool isWinner() {
             if (color == WHITE) {
                 if (!isKingInCheck<BLACK>()) {
@@ -246,7 +246,7 @@ namespace Zagreus {
             return getSquareAttacksByColor<color>(square) != 0;
         }
 
-        template<PieceColor color>
+        template <PieceColor color>
         bool isKingInCheck() {
             if (color == NONE) {
                 return true;
@@ -293,21 +293,21 @@ namespace Zagreus {
 
         void setZobristHash(uint64_t zobristHash);
 
-        bool makeStrMove(const std::string &strMove);
+        bool makeStrMove(const std::string& strMove);
 
         Line getPreviousPvLine();
 
-        void setPreviousPvLine(Line &previousPvLine);
+        void setPreviousPvLine(Line& previousPvLine);
 
         uint16_t getPly() const;
 
         void setPly(uint16_t ply);
 
-        uint64_t getZobristForMove(Move &move);
+        uint64_t getZobristForMove(Move& move);
 
         bool isOpenFile(int8_t square);
 
-        template<PieceColor color>
+        template <PieceColor color>
         bool isSemiOpenFile(int8_t square) {
             uint64_t fileMask = getFile(square);
             if (color == WHITE) {
@@ -324,7 +324,7 @@ namespace Zagreus {
         }
 
         // Also returns true when it is an open file
-        template<PieceColor color>
+        template <PieceColor color>
         bool isSemiOpenFileLenient(int8_t square) {
             uint64_t fileMask = getFile(square);
 
@@ -416,16 +416,16 @@ namespace Zagreus {
 
         uint64_t getTilesBetween(int8_t from, int8_t to);
 
-        [[nodiscard]] const Move &getPreviousMove() const;
+        [[nodiscard]] const Move& getPreviousMove() const;
 
         uint64_t getFile(int8_t square);
 
-        template<PieceColor color>
+        template <PieceColor color>
         uint64_t getPawnsOnSameFile(int8_t square) {
             return pieceBB[WHITE_PAWN + color] & getFile(square);
         }
 
-        template<PieceColor color>
+        template <PieceColor color>
         bool isIsolatedPawn(int8_t square) {
             uint64_t neighborMask = 0;
 
@@ -444,7 +444,7 @@ namespace Zagreus {
             }
         }
 
-        template<PieceColor color>
+        template <PieceColor color>
         bool isPassedPawn(int8_t square) {
             uint64_t neighborMask = getFile(square);
 
@@ -465,7 +465,7 @@ namespace Zagreus {
 
         bool hasMinorOrMajorPieces();
 
-        template<PieceColor color>
+        template <PieceColor color>
         bool hasMinorOrMajorPieces() {
             if (color == WHITE) {
                 return getColorBoard<color>() & ~(getPieceBoard(WHITE_PAWN) | getPieceBoard(WHITE_KING));
@@ -474,7 +474,7 @@ namespace Zagreus {
             }
         }
 
-        template<PieceColor color>
+        template <PieceColor color>
         int getAmountOfMinorOrMajorPieces() {
             if (color == WHITE) {
                 return popcnt(getColorBoard<color>() & ~(getPieceBoard(WHITE_PAWN) | getPieceBoard(WHITE_KING)));

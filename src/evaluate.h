@@ -26,7 +26,6 @@
 #include "constants.h"
 
 namespace Zagreus {
-
     enum TraceMetric {
         WHITE_MIDGAME_MATERIAL,
         WHITE_ENDGAME_MATERIAL,
@@ -44,11 +43,12 @@ namespace Zagreus {
 
     class Evaluation {
     public:
-        Evaluation(Bitboard &bitboard);
+        Evaluation(Bitboard& bitboard);
 
         int evaluate();
+
     private:
-        Bitboard &bitboard;
+        Bitboard& bitboard;
         std::map<TraceMetric, int> traceMetrics{};
 
         uint64_t attacksByPiece[PIECE_TYPES]{};
@@ -63,15 +63,17 @@ namespace Zagreus {
 
         int getPhase();
 
-        template<PieceColor color>
+        template <PieceColor color>
         void evaluateMaterial();
 
-        template<PieceColor color>
+        template <PieceColor color>
         void evaluatePst();
 
-        template<PieceColor color>
+        template <PieceColor color>
         void evaluatePieces();
 
-        void addMobilityScoreForPiece(PieceType pieceType, int mobility);
+        inline void addMobilityScoreForPiece(PieceType pieceType, int mobility);
+
+        inline void addKingAttackScore(PieceType pieceType, int attackCount);
     };
 }

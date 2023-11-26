@@ -35,11 +35,11 @@ namespace Zagreus {
         gen.seed(0x6C7CCC580A348E7BULL);
         std::uniform_int_distribution<uint64_t> dis;
 
-        for (uint64_t &zobristConstant : zobristConstants) {
+        for (uint64_t& zobristConstant : zobristConstants) {
             zobristConstant = dis(gen);
         }
 
-        for (PieceType &type : pieceSquareMapping) {
+        for (PieceType& type : pieceSquareMapping) {
             type = EMPTY;
         }
 
@@ -68,30 +68,30 @@ namespace Zagreus {
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             for (int direction = 0; direction < 8; direction++) {
                 switch (static_cast<Direction>(direction)) {
-                    case NORTH:
-                        rayAttacks[direction][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case SOUTH:
-                        rayAttacks[direction][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case EAST:
-                        rayAttacks[direction][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case WEST:
-                        rayAttacks[direction][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case NORTH_EAST:
-                        rayAttacks[direction][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case NORTH_WEST:
-                        rayAttacks[direction][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case SOUTH_EAST:
-                        rayAttacks[direction][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case SOUTH_WEST:
-                        rayAttacks[direction][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
+                case NORTH:
+                    rayAttacks[direction][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case SOUTH:
+                    rayAttacks[direction][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case EAST:
+                    rayAttacks[direction][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case WEST:
+                    rayAttacks[direction][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case NORTH_EAST:
+                    rayAttacks[direction][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case NORTH_WEST:
+                    rayAttacks[direction][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case SOUTH_EAST:
+                    rayAttacks[direction][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case SOUTH_WEST:
+                    rayAttacks[direction][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
                 }
             }
         }
@@ -205,7 +205,7 @@ namespace Zagreus {
         pstValues[piece % 2 + 2] -= getEndgamePstValue(piece, square);
     }
 
-    void Bitboard::makeMove(Move &move) {
+    void Bitboard::makeMove(Move& move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
         assert(move.piece % 2 == movingColor);
@@ -244,7 +244,7 @@ namespace Zagreus {
                 enPassantSquare = move.to + 8;
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
             } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
-                       move.to == enPassantSquare) {
+                move.to == enPassantSquare) {
                 int8_t enPassantCaptureSquare = move.to - (movingColor == WHITE ? 8 : -8);
                 removePiece(enPassantCaptureSquare, getPieceOnSquare(enPassantCaptureSquare));
                 undoStack[ply].moveType = EN_PASSANT;
@@ -354,7 +354,7 @@ namespace Zagreus {
         previousMove = move;
     }
 
-    void Bitboard::unmakeMove(Move &move) {
+    void Bitboard::unmakeMove(Move& move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
 
@@ -377,7 +377,7 @@ namespace Zagreus {
             int8_t enPassantCaptureSquare = move.to - (getOppositeColor(movingColor) == WHITE ? 8 : -8);
             setPiece(enPassantCaptureSquare, getOppositeColor(movingColor) == WHITE
                                                  ? BLACK_PAWN
-                                                                                                : WHITE_PAWN);
+                                                 : WHITE_PAWN);
         }
 
         if (undoData.moveType == CASTLING) {
@@ -456,12 +456,12 @@ namespace Zagreus {
         }
     }
 
-    const Move &Bitboard::getPreviousMove() const {
+    const Move& Bitboard::getPreviousMove() const {
         return previousMove;
     }
 
 
-    uint64_t Bitboard::getZobristForMove(Move &move) {
+    uint64_t Bitboard::getZobristForMove(Move& move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
         assert(move.piece % 2 == movingColor);
@@ -487,7 +487,7 @@ namespace Zagreus {
                 result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to + 8) % 8];
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
             } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
-                       move.to == enPassantSquare) {
+                move.to == enPassantSquare) {
                 int8_t enPassantCaptureSquare = move.to - (movingColor == WHITE ? 8 : -8);
                 result ^= zobristConstants[enPassantCaptureSquare + 64 * getPieceOnSquare(enPassantCaptureSquare)];
             }
@@ -613,31 +613,31 @@ namespace Zagreus {
         std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
     }
 
-    bool Bitboard::setFromFen(const std::string &fen) {
+    bool Bitboard::setFromFen(const std::string& fen) {
         int index = A8;
         int spaces = 0;
 
-        for (PieceType &type : pieceSquareMapping) {
+        for (PieceType& type : pieceSquareMapping) {
             type = EMPTY;
         }
 
-        for (uint64_t &bb : pieceBB) {
+        for (uint64_t& bb : pieceBB) {
             bb = 0;
         }
 
-        for (uint64_t &bb : colorBB) {
+        for (uint64_t& bb : colorBB) {
             bb = 0;
         }
 
-        for (uint64_t &hash : moveHistory) {
+        for (uint64_t& hash : moveHistory) {
             hash = 0;
         }
 
-        for (UndoData &undo : undoStack) {
+        for (UndoData& undo : undoStack) {
             undo = {};
         }
 
-        for (int &count : materialCount) {
+        for (int& count : materialCount) {
             count = 0;
         }
 
@@ -759,23 +759,23 @@ namespace Zagreus {
     }
 
     // Faster setFromFen version without validity checks and some features the tuner doesn't need
-    bool Bitboard::setFromFenTuner(std::string &fen) {
+    bool Bitboard::setFromFenTuner(std::string& fen) {
         int index = A8;
         int spaces = 0;
 
-        for (PieceType &type : pieceSquareMapping) {
+        for (PieceType& type : pieceSquareMapping) {
             type = EMPTY;
         }
 
-        for (uint64_t &bb : pieceBB) {
+        for (uint64_t& bb : pieceBB) {
             bb = 0;
         }
 
-        for (uint64_t &bb : colorBB) {
+        for (uint64_t& bb : colorBB) {
             bb = 0;
         }
 
-        for (int &count : materialCount) {
+        for (int& count : materialCount) {
             count = 0;
         }
 
@@ -788,7 +788,7 @@ namespace Zagreus {
         pstValues[2] = 0;
         pstValues[3] = 0;
 
-        for (char &character : fen) {
+        for (char& character : fen) {
             if (character == ' ') {
                 spaces++;
                 continue;
@@ -994,7 +994,7 @@ namespace Zagreus {
                 line += (rank + file & 15) - 1 & h1b7; /* h1b7 if same antidiag */
                 line *= btwn & -btwn; /* mul acts like shift by smaller square */
 
-                betweenTable[from][to] = line & btwn;   /* return the bits on that line in-between */
+                betweenTable[from][to] = line & btwn; /* return the bits on that line in-between */
             }
         }
     }
@@ -1002,61 +1002,61 @@ namespace Zagreus {
     void Bitboard::setPieceFromFENChar(char character, int index) {
         // Uppercase = WHITE, lowercase = black
         switch (character) {
-            case 'P':
-                setPiece(index, WHITE_PAWN);
-                break;
-            case 'p':
-                setPiece(index, BLACK_PAWN);
-                break;
-            case 'N':
-                setPiece(index, WHITE_KNIGHT);
-                break;
-            case 'n':
-                setPiece(index, BLACK_KNIGHT);
-                break;
-            case 'B':
-                setPiece(index, WHITE_BISHOP);
-                break;
-            case 'b':
-                setPiece(index, BLACK_BISHOP);
-                break;
-            case 'R':
-                setPiece(index, WHITE_ROOK);
-                break;
-            case 'r':
-                setPiece(index, BLACK_ROOK);
-                break;
-            case 'Q':
-                setPiece(index, WHITE_QUEEN);
-                break;
-            case 'q':
-                setPiece(index, BLACK_QUEEN);
-                break;
-            case 'K':
-                setPiece(index, WHITE_KING);
-                break;
-            case 'k':
-                setPiece(index, BLACK_KING);
-                break;
+        case 'P':
+            setPiece(index, WHITE_PAWN);
+            break;
+        case 'p':
+            setPiece(index, BLACK_PAWN);
+            break;
+        case 'N':
+            setPiece(index, WHITE_KNIGHT);
+            break;
+        case 'n':
+            setPiece(index, BLACK_KNIGHT);
+            break;
+        case 'B':
+            setPiece(index, WHITE_BISHOP);
+            break;
+        case 'b':
+            setPiece(index, BLACK_BISHOP);
+            break;
+        case 'R':
+            setPiece(index, WHITE_ROOK);
+            break;
+        case 'r':
+            setPiece(index, BLACK_ROOK);
+            break;
+        case 'Q':
+            setPiece(index, WHITE_QUEEN);
+            break;
+        case 'q':
+            setPiece(index, BLACK_QUEEN);
+            break;
+        case 'K':
+            setPiece(index, WHITE_KING);
+            break;
+        case 'k':
+            setPiece(index, BLACK_KING);
+            break;
         }
     }
 
     uint64_t Bitboard::getSquareAttacks(int8_t square) {
         uint64_t queenBB = getPieceBoard(WHITE_QUEEN) | getPieceBoard(BLACK_QUEEN);
         uint64_t straightSlidingPieces =
-                getPieceBoard(WHITE_ROOK) | getPieceBoard(BLACK_ROOK) | queenBB;
+            getPieceBoard(WHITE_ROOK) | getPieceBoard(BLACK_ROOK) | queenBB;
         uint64_t diagonalSlidingPieces =
-                getPieceBoard(WHITE_BISHOP) | getPieceBoard(BLACK_BISHOP) | queenBB;
+            getPieceBoard(WHITE_BISHOP) | getPieceBoard(BLACK_BISHOP) | queenBB;
 
         uint64_t pawnAttacks = getPawnAttacks<BLACK>(square) & getPieceBoard(WHITE_PAWN);
         pawnAttacks |= getPawnAttacks<WHITE>(square) & getPieceBoard(BLACK_PAWN);
         uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
         uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
         uint64_t knightAttacks = getKnightAttacks(square) &
-                                 (getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT));
+            (getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT));
         uint64_t kingAttacks =
-                getKingAttacks(square) &
-                (getPieceBoard(WHITE_KING) | getPieceBoard(BLACK_KING));
+            getKingAttacks(square) &
+            (getPieceBoard(WHITE_KING) | getPieceBoard(BLACK_KING));
 
         return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
     }
@@ -1081,7 +1081,7 @@ namespace Zagreus {
         return rayAttacks[NORTH][square] | rayAttacks[SOUTH][square] | 1ULL << square;
     }
 
-    bool Bitboard::makeStrMove(const std::string &strMove) {
+    bool Bitboard::makeStrMove(const std::string& strMove) {
         int8_t fromSquare = getSquareFromString(strMove.substr(0, 2));
         int8_t toSquare = getSquareFromString(strMove.substr(2, 2));
         PieceType promotionPiece = EMPTY;
@@ -1089,15 +1089,15 @@ namespace Zagreus {
         if (strMove.length() == 5) {
             if (strMove.ends_with("q")) {
                 promotionPiece =
-                        getMovingColor() == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+                    getMovingColor() == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
             } else if (strMove.ends_with("r")) {
                 promotionPiece = getMovingColor() == WHITE ? WHITE_ROOK : BLACK_ROOK;
             } else if (strMove.ends_with("b")) {
                 promotionPiece =
-                        getMovingColor() == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+                    getMovingColor() == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
             } else if (strMove.ends_with("n")) {
                 promotionPiece =
-                        getMovingColor() == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+                    getMovingColor() == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
             }
         }
 
@@ -1110,7 +1110,7 @@ namespace Zagreus {
         return previousPvLine;
     }
 
-    void Bitboard::setPreviousPvLine(Line &previousPvLine) {
+    void Bitboard::setPreviousPvLine(Line& previousPvLine) {
         Bitboard::previousPvLine = previousPvLine;
     }
 
