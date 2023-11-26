@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a UCI chess engine
+ Zagreus is a chess engine that supports the UCI protocol
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ namespace Zagreus {
             return;
         }
 
-        uint64_t index = zobristHash & hashSize;
+        uint64_t index = (zobristHash & hashSize);
         TTEntry* entry = &transpositionTable[index];
 
         if (entry->depth <= depth) {
@@ -46,14 +46,13 @@ namespace Zagreus {
     }
 
     int TranspositionTable::getScore(uint64_t zobristHash, int depth, int alpha, int beta) {
-        uint64_t index = zobristHash & hashSize;
+        uint64_t index = (zobristHash & hashSize);
         TTEntry* entry = &transpositionTable[index];
 
         if (entry->zobristHash == zobristHash && entry->depth >= depth) {
             if (entry->nodeType == PV_NODE) {
                 return entry->score;
-            }
-            if (entry->nodeType == FAIL_LOW_NODE) {
+            } else if (entry->nodeType == FAIL_LOW_NODE) {
                 if (entry->score <= alpha) {
                     return alpha;
                 }
@@ -68,14 +67,14 @@ namespace Zagreus {
     }
 
     TTEntry* TranspositionTable::getEntry(uint64_t zobristHash) {
-        uint64_t index = zobristHash & hashSize;
+        uint64_t index = (zobristHash & hashSize);
 
         return &transpositionTable[index];
     }
 
     void TranspositionTable::setTableSize(int megaBytes) {
-        if ((megaBytes & megaBytes - 1) != 0) {
-            megaBytes = 1 << (int) log2(megaBytes);
+        if ((megaBytes & (megaBytes - 1)) != 0) {
+            megaBytes = 1 << static_cast<int>(log2(megaBytes));
         }
 
         uint64_t byteSize = megaBytes * 1024 * 1024;
@@ -90,7 +89,7 @@ namespace Zagreus {
         }
     }
 
-    TranspositionTable* TranspositionTable::getTT() {
+    TranspositionTable* TranspositionTable::TranspositionTable::getTT() {
         static TranspositionTable instance{};
         return &instance;
     }

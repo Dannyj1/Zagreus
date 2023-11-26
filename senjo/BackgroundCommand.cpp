@@ -192,12 +192,12 @@ namespace senjo {
             line++;
 
             size_t i = fen.find_first_not_of(" \t\r\n");
-            if (i == std::string::npos || fen[i] == '#') {
+            if ((i == std::string::npos) || (fen[i] == '#')) {
                 continue;
             }
 
             positions++;
-            if (skip > 0 && positions <= skip) {
+            if ((skip > 0) && (positions <= skip)) {
                 continue;
             }
 
@@ -211,7 +211,7 @@ namespace senjo {
             Parameters params(remain);
             while (!done && params.size()) {
                 std::string depthToken = trim(params.popString(), " ;");
-                if (depthToken.empty() || depthToken.at(0) != 'D') {
+                if (depthToken.empty() || (depthToken.at(0) != 'D')) {
                     continue;
                 }
 
@@ -235,11 +235,11 @@ namespace senjo {
                 done |= !process(depth, leafs, pcount);
             }
 
-            done |= count > 0 && positions >= count;
+            done |= ((count > 0) && (positions >= count));
         }
 
         double msecs = getMsecs(start, now());
-        double kLeafs = double(pcount) / 1000;
+        double kLeafs = (static_cast<double>(pcount) / 1000);
 
         Output() << "Total Perft " << pcount << ' '
                  << rate(kLeafs, msecs) << " KLeafs/sec";
@@ -255,11 +255,11 @@ namespace senjo {
     bool PerftCommandHandle::process(const int depth,
                                      const uint64_t expected_leaf_count,
                                      uint64_t &leaf_count) {
-        if (maxDepth > 0 && depth > maxDepth) {
+        if ((maxDepth > 0) && (depth > maxDepth)) {
             return true;
         }
 
-        if (maxLeafs > 0 && expected_leaf_count > maxLeafs) {
+        if ((maxLeafs > 0) && (expected_leaf_count > maxLeafs)) {
             return true;
         }
 
