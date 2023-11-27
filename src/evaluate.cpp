@@ -469,20 +469,6 @@ namespace Zagreus {
                             blackEndgameScore += getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
                         }
                     }
-
-                    uint64_t file = bitboard.getFile(index);
-                    uint64_t opponentQueens = bitboard.getPieceBoard(color == WHITE ? BLACK_QUEEN : WHITE_QUEEN);
-
-                    // Bonus for rook with enemy queen on same file
-                    if (file & opponentQueens) {
-                        if (color == WHITE) {
-                            whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
-                            whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
-                        } else {
-                            blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
-                            blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
-                        }
-                    }
                 }
 
                 // Isolated pawn
@@ -656,6 +642,20 @@ namespace Zagreus {
                     if (index & (RANK_2 | RANK_1)) {
                         blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
                         blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
+                    }
+                }
+
+                uint64_t file = bitboard.getFile(index);
+                uint64_t opponentQueens = bitboard.getPieceBoard(color == WHITE ? BLACK_QUEEN : WHITE_QUEEN);
+
+                // Bonus for rook with enemy queen on same file
+                if (file & opponentQueens) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
+                        whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
+                        blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
                     }
                 }
             }
