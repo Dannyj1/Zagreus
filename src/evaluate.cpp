@@ -491,7 +491,7 @@ namespace Zagreus {
                         }
                     }
 
-                    if (index & DE_FILE) {
+                    if ((1ULL << index) & DE_FILE) {
                         if (color == WHITE) {
                             whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
                             whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);

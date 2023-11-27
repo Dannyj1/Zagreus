@@ -42,7 +42,7 @@ namespace Zagreus {
     double K = 0.0;
 
     int batchSize = 512;
-    double learningRate = 0.1;
+    double learningRate = 0.25;
     double delta = 1.0;
     double optimizerEpsilon = 1e-6;
     double epsilonDecay = 0.98;

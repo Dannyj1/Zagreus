@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[70] = { 88, 94, 363, 350, 392, 366, 538, 534, 1016, 1010, 8, 1, 5, 6, 0, 5, 0, 22, 20, 1, -8, 0, -6, 9, 3, 0, -9, -3, -16, 0, -10, -28, -11, -12, 0, 15, 3, -1, -14, -9, 0, 0, 0, 0, 4, 7, -3, 5, -7, -6, -31, -25, 21, 7, 0, 13, 32, 24, 17, 11, 0, 2, 9, 0, 6, 16, 8, 0, 12, 4,  };
+    int evalValues[70] = { 87, 88, 364, 347, 394, 365, 538, 522, 1019, 1002, 7, 1, 5, 6, 0, 7, 0, 22, 19, 0, -8, 0, -7, 5, 10, 0, -12, 0, -18, 0, -11, -27, -9, -18, 0, 14, 5, 0, -11, -8, -15, -14, 0, 0, 7, 10, -2, 10, -8, -12, -32, -24, 20, 6, 0, 15, 34, 27, 19, 6, 0, 0, 14, 5, 13, 23, 10, 2, 11, -1,  };
 
     int baseEvalValues[70] = {
         100, // MIDGAME_PAWN_MATERIAL
@@ -49,7 +49,7 @@ namespace Zagreus {
         -5, // MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY
         0, // ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY
         -2, // MIDGAME_KING_ATTACK_PAWN_PENALTY
-        0, // ENDGAME_KING_ATTACK_PAWN_PENALTY
+        -2, // ENDGAME_KING_ATTACK_PAWN_PENALTY
         -5, // MIDGAME_KING_ATTACK_KNIGHT_PENALTY
         -7, // ENDGAME_KING_ATTACK_KNIGHT_PENALTY
         -7, // MIDGAME_KING_ATTACK_BISHOP_PENALTY
