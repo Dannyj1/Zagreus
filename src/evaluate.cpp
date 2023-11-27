@@ -398,14 +398,15 @@ namespace Zagreus {
                 Direction direction = color == WHITE ? NORTH : SOUTH;
                 uint64_t doubledPawnsMask = bitboard.getRayAttack(index, direction);
                 uint64_t doubledPawns = pawnBB & doubledPawnsMask;
-                uint8_t doubledPawnCount = popcnt(doubledPawns);
 
-                if (color == WHITE) {
-                    whiteMidgameScore += doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
-                    whiteEndgameScore += doubledPawnCount * getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
-                } else {
-                    blackMidgameScore += doubledPawnCount * getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
-                    blackEndgameScore += doubledPawnCount * getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                if (doubledPawns) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                    }
                 }
 
                 // Passed pawn
