@@ -510,11 +510,11 @@ namespace Zagreus {
                 uint8_t pawnCount = popcnt(pawnBB);
 
                 if (color == WHITE) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
-                    whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
+                    whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (8 - pawnCount);
+                    whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (8 - pawnCount);
                 } else {
-                    blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
-                    blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
+                    blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (8 - pawnCount);
+                    blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (8 - pawnCount);
                 }
 
                 // Slight bonus for knights defended by a pawn
@@ -606,11 +606,11 @@ namespace Zagreus {
                 uint8_t pawnCount = popcnt(pawnBB);
 
                 if (color == WHITE) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT) * pawnCount;
-                    whiteEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT) * pawnCount;
+                    whiteMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT) * (8 - pawnCount);
+                    whiteEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT) * (8 - pawnCount);
                 } else {
-                    blackMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT) * pawnCount;
-                    blackEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT) * pawnCount;
+                    blackMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT) * (8 - pawnCount);
+                    blackEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT) * (8 - pawnCount);
                 }
 
                 // Rook on open file
@@ -634,12 +634,12 @@ namespace Zagreus {
 
                 // Rook on 7th or 8th rank (or 2nd or 1st rank for black)
                 if (color == WHITE) {
-                    if (index & (RANK_7 | RANK_8)) {
+                    if ((1ULL << index) & (RANK_8| RANK_7)) {
                         whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
                         whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
                     }
                 } else {
-                    if (index & (RANK_2 | RANK_1)) {
+                    if ((1ULL << index) & (RANK_1 | RANK_2)) {
                         blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
                         blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
                     }

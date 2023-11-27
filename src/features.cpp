@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[70] = { 87, 88, 364, 347, 394, 365, 538, 522, 1019, 1002, 7, 1, 5, 6, 0, 7, 0, 22, 19, 0, -8, 0, -7, 5, 10, 0, -12, 0, -18, 0, -11, -27, -9, -18, 0, 14, 5, 0, -11, -8, -15, -14, 0, 0, 7, 10, -2, 10, -8, -12, -32, -24, 20, 6, 0, 15, 34, 27, 19, 6, 0, 0, 14, 5, 13, 23, 10, 2, 11, -1,  };
+    int evalValues[70] = { 97, 108, 363, 353, 383, 364, 536, 529, 1017, 1008, 7, 0, 5, 4, 0, 6, 0, 19, 19, 7, -7, 0, 1, 11, 7, 0, -9, -5, -12, 0, -9, -25, -11, -13, 0, 23, 8, 3, -8, -13, -15, -14, -4, -2, 11, 12, -2, 10, -5, -5, -30, -23, 20, 10, 8, 10, 29, 22, 14, 6, 3, 12, 12, 4, 7, 21, 12, 2, 10, 2,  };
 
     int baseEvalValues[70] = {
         100, // MIDGAME_PAWN_MATERIAL
@@ -86,8 +86,8 @@ namespace Zagreus {
         15, // ENDGAME_ROOK_ON_OPEN_FILE
         5, // MIDGAME_ROOK_ON_SEMI_OPEN_FILE
         7, // ENDGAME_ROOK_ON_SEMI_OPEN_FILE
-        10, // MIDGAME_ROOK_ON_SEVENTH_RANK
-        15, // ENDGAME_ROOK_ON_SEVENTH_RANK
+        10, // MIDGAME_ROOK_ON_7TH_RANK
+        15, // MIDGAME_ROOK_ON_7TH_RANK
         0, // MIDGAME_TARRASCH_OWN_ROOK_PENALTY
         -10, // ENDGAME_TARRASCH_OWN_ROOK_PENALTY
         0, // MIDGAME_TARRASCH_OWN_ROOK_DEFEND
