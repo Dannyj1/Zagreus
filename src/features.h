@@ -72,6 +72,8 @@ namespace Zagreus {
         ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS,
         MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY,
         ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY,
+        MIDGAME_BAD_BISHOP_PENALTY,
+        ENDGAME_BAD_BISHOP_PENALTY,
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -123,6 +125,8 @@ namespace Zagreus {
         "ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS",
         "MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY",
         "ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY",
+        "MIDGAME_BAD_BISHOP_PENALTY",
+        "ENDGAME_BAD_BISHOP_PENALTY",
     };
 
     void printEvalValues();

@@ -351,7 +351,7 @@ namespace Zagreus {
                 uint64_t attackSquares = attacksFrom[index];
                 uint64_t opponentKingAttacks = color == WHITE ? blackKingAttacks : whiteKingAttacks;
                 uint64_t attacksAroundKing = attackSquares & opponentKingAttacks;
-                int attackCount = popcnt(attacksAroundKing);
+                uint8_t attackCount = popcnt(attacksAroundKing);
 
                 addKingAttackScore(pieceType, attackCount);
             }
@@ -497,6 +497,38 @@ namespace Zagreus {
                     } else {
                         blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
                         blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+                    }
+                }
+            }
+
+            // Bishop eval
+            if (isBishop(pieceType)) {
+                // Bad bishop
+                uint64_t bishopAttacks = attacksFrom[index];
+                uint64_t pawnBB = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
+                uint64_t forwardMobility;
+
+                if (color == WHITE) {
+                    forwardMobility = bitboard.getRayAttack(index, NORTH_WEST) | bitboard.getRayAttack(index, NORTH_EAST);
+                } else {
+                    forwardMobility = bitboard.getRayAttack(index, SOUTH_WEST) | bitboard.getRayAttack(index, SOUTH_EAST);
+                }
+
+                bishopAttacks &= forwardMobility;
+
+                // If one of our own pawns is on the same diagonal as the bishop and the bishop has <= 3 squares of mobility, it's a bad bishop
+                if (bishopAttacks & pawnBB) {
+                    uint64_t bishopAttacksWithoutPawns = bishopAttacks & ~pawnBB;
+                    uint64_t attackCount = popcnt(bishopAttacksWithoutPawns);
+
+                    if (attackCount <= 3) {
+                        if (color == WHITE) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_BAD_BISHOP_PENALTY);
+                            whiteEndgameScore += getEvalValue(ENDGAME_BAD_BISHOP_PENALTY);
+                        } else {
+                            blackMidgameScore += getEvalValue(MIDGAME_BAD_BISHOP_PENALTY);
+                            blackEndgameScore += getEvalValue(ENDGAME_BAD_BISHOP_PENALTY);
+                        }
                     }
                 }
             }
