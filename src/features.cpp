@@ -23,9 +23,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[40] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -1, 0, -3, -3, -5, -6, -7, -10, -10, -15, -10, -15, 10, 10, -20, -20, -10, -10 };
+    int evalValues[42] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -2, 0, -5, -7, -7, -10, -10, -15, -15,  -20, -10, -15, 10,  20, -4, -7, -10, -15 };
 
-    int baseEvalValues[40] = {
+    int baseEvalValues[42] = {
             100, // MIDGAME_PAWN_MATERIAL
             100, // ENDGAME_PAWN_MATERIAL
             350, // MIDGAME_KNIGHT_MATERIAL
@@ -61,11 +61,13 @@ namespace Zagreus {
             -10, // MIDGAME_DOUBLED_PAWN_PENALTY
             -15, // ENDGAME_DOUBLED_PAWN_PENALTY
             10, // MIDGAME_PASSED_PAWN
-            10, // ENDGAME_PASSED_PAWN
-            -10, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
-            -15, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
-            -5, // MIDGAME_ISOLATED_PAWN_PENALTY
-            -10, // ENDGAME_ISOLATED_PAWN_PENALTY
+            20, // ENDGAME_PASSED_PAWN
+            -5, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
+            -10, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
+            -10, // MIDGAME_ISOLATED_PAWN_PENALTY
+            -15, // ENDGAME_ISOLATED_PAWN_PENALTY
+            -3, // MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY
+            -6 // ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY
     };
 
     void printEvalValues() {

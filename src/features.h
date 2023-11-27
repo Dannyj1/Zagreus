@@ -64,6 +64,8 @@ namespace Zagreus {
         ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY,
         MIDGAME_ISOLATED_PAWN_PENALTY,
         ENDGAME_ISOLATED_PAWN_PENALTY,
+        MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY,
+        ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -107,6 +109,8 @@ namespace Zagreus {
             "ENDGAME_ISOLATED_SEMI_OPEN_PAWN",
             "MIDGAME_ISOLATED_PAWN",
             "ENDGAME_ISOLATED_PAWN",
+            "MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY",
+            "ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY"
     };
 
     void printEvalValues();

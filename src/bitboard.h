@@ -339,6 +339,8 @@ namespace Zagreus {
 
         void initializeRayAttacks();
 
+        uint64_t getRayAttack(int8_t square, Direction direction);
+
         template <PieceColor attackingColor>
         int seeCapture(int8_t fromSquare, int8_t toSquare) {
             assert(fromSquare >= 0);

@@ -37,7 +37,14 @@ static constexpr int ZOBRIST_EN_PASSANT_INDEX = ZOBRIST_BLACK_QUEENSIDE_INDEX + 
 static constexpr int MATE_SCORE = 20000;
 
 static constexpr uint64_t A_FILE = 0x0101010101010101ULL;
+static constexpr uint64_t B_FILE = 0x0202020202020202ULL;
+static constexpr uint64_t C_FILE = 0x0404040404040404ULL;
+static constexpr uint64_t D_FILE = 0x0808080808080808ULL;
+static constexpr uint64_t E_FILE = 0x1010101010101010ULL;
+static constexpr uint64_t F_FILE = 0x2020202020202020ULL;
+static constexpr uint64_t G_FILE = 0x4040404040404040ULL;
 static constexpr uint64_t H_FILE = 0x8080808080808080ULL;
+static constexpr uint64_t DE_FILE = 0x01818181818181818ULL;
 static constexpr uint64_t NOT_A_FILE = 0XFEFEFEFEFEFEFEFEULL;
 static constexpr uint64_t NOT_AB_FILE = 0XFCFCFCFCFCFCFCFCULL;
 static constexpr uint64_t NOT_GH_FILE = 0X3F3F3F3F3F3F3F3FULL;

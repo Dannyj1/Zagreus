@@ -97,6 +97,10 @@ namespace Zagreus {
         }
     }
 
+    uint64_t Bitboard::getRayAttack(int8_t square, Direction direction) {
+        return rayAttacks[direction][square];
+    }
+
     uint64_t Bitboard::getOccupiedBoard() {
         return occupiedBB;
     }
