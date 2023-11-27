@@ -488,17 +488,6 @@ namespace Zagreus {
                         blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
                     }
                 }
-
-                if (!(index & attacksByColor[color])) {
-                    // Penalize a minor piece for not being defended
-                    if (color == WHITE) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                    } else {
-                        blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                    }
-                }
             }
 
             // Bishop eval
@@ -529,6 +518,56 @@ namespace Zagreus {
                             blackMidgameScore += getEvalValue(MIDGAME_BAD_BISHOP_PENALTY);
                             blackEndgameScore += getEvalValue(ENDGAME_BAD_BISHOP_PENALTY);
                         }
+                    }
+                }
+
+                // Only one bishop (no bishop pair)
+                if (color == WHITE) {
+                    if (bitboard.getMaterialCount<WHITE_BISHOP>() == 1) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                    }
+                } else {
+                    if (bitboard.getMaterialCount<BLACK_BISHOP>() == 1) {
+                        blackMidgameScore += getEvalValue(MIDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                    }
+                }
+
+                // Fiachetto
+                if (color == WHITE) {
+                    if (index == G2 || index == B2) {
+                        uint64_t fianchettoPattern = nortOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
+                        uint64_t antiPattern = noWeOne(1ULL << index) | noEaOne(1ULL << index);
+
+                        if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_FIANCHETTO);
+                            whiteEndgameScore += getEvalValue(ENDGAME_BISHOP_FIANCHETTO);
+                        }
+                    }
+                } else {
+                    if (index == G7 || index == B7) {
+                        uint64_t fianchettoPattern = soutOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
+                        uint64_t antiPattern = soWeOne(1ULL << index) | soEaOne(1ULL << index);
+
+                        if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
+                            blackMidgameScore += getEvalValue(MIDGAME_BISHOP_FIANCHETTO);
+                            blackEndgameScore += getEvalValue(ENDGAME_BISHOP_FIANCHETTO);
+                        }
+                    }
+                }
+            }
+
+            // Undefended minor pieces
+            if (isKnight(pieceType) || isBishop(pieceType)) {
+                if (!(index & attacksByColor[color])) {
+                    // Penalize a minor piece for not being defended
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
                     }
                 }
             }
