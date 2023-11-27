@@ -315,6 +315,11 @@ namespace Zagreus {
                     if (pieceType == WHITE_ROOK) {
                         mobilitySquares &= ~(attacksByPiece[BLACK_BISHOP] | attacksByPiece[BLACK_KNIGHT]);
                     }
+
+                    // Exclude knight tiles attacked by opponent pawns
+                    if (pieceType == WHITE_KNIGHT) {
+                        mobilitySquares &= ~(attacksByPiece[BLACK_PAWN]);
+                    }
                 } else {
                     // Exclude own pieces and attacks by opponent pawns
                     mobilitySquares &= ~(bitboard.getColorBoard<BLACK>() | attacksByPiece[WHITE_PAWN]);
@@ -330,13 +335,18 @@ namespace Zagreus {
                     if (pieceType == BLACK_ROOK) {
                         mobilitySquares &= ~(attacksByPiece[WHITE_BISHOP] | attacksByPiece[WHITE_KNIGHT]);
                     }
+
+                    // Exclude knight tiles attacked by opponent pawns
+                    if (pieceType == BLACK_KNIGHT) {
+                        mobilitySquares &= ~(attacksByPiece[WHITE_PAWN]);
+                    }
                 }
 
                 uint8_t mobility = popcnt(mobilitySquares);
                 addMobilityScoreForPiece(pieceType, mobility);
             }
 
-            // King safety -  Attacks around king
+            // King safety - Attacks around king
             if (!isKing(pieceType)) {
                 uint64_t attackSquares = attacksFrom[index];
                 uint64_t opponentKingAttacks = color == WHITE ? blackKingAttacks : whiteKingAttacks;
@@ -448,6 +458,45 @@ namespace Zagreus {
                             blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
                             blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
                         }
+                    }
+                }
+            }
+
+            // Knight eval
+            if (isKnight(pieceType)) {
+                // Penalize the knight's value for each missing pawn
+                uint64_t pawnBB = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
+                uint8_t pawnCount = popcnt(pawnBB);
+
+                if (color == WHITE) {
+                    whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
+                    whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
+                } else {
+                    blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
+                    blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * pawnCount;
+                }
+
+                // Slight bonus for knights defended by a pawn
+                uint64_t pawnAttacks = attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
+
+                if (index & pawnAttacks) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
+                        blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
+                    }
+                }
+
+                if (!(index & attacksByColor[color])) {
+                    // Penalize a minor piece for not being defended
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
                     }
                 }
             }
