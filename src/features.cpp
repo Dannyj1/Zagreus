@@ -23,9 +23,9 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[56] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -2, 0, -5, -7, -7, -10, -10, -15, -15,  -20, -10, -15, 10,  20, -4, -7, -10, -15, -3, -6, -5, -3, 5, 3, -5, -5, -15, -10, 15, 0, 15, 0, 5, 5 };
+    int evalValues[70] = { 100, 100, 350, 350, 350, 350, 525, 525, 1000, 1000, 7, 2, 8, 3, 2, 6, 4, 8, 20, 0, -5, 0, -2, 0, -5, -7, -7, -10, -10, -15, -15,  -20, -10, -15, 10,  20, -4, -7, -10, -15, -3, -6, -5, -3, 5, 3, -5, -5, -15, -10, 15, 0, 15, 0, 5, 5, 10, 15, 5, 7, 10, 15, 0, -10, 0, 10, 0, -10, 6, 3 };
 
-    int baseEvalValues[56] = {
+    int baseEvalValues[70] = {
         100, // MIDGAME_PAWN_MATERIAL
         100, // ENDGAME_PAWN_MATERIAL
         350, // MIDGAME_KNIGHT_MATERIAL
@@ -70,8 +70,8 @@ namespace Zagreus {
         -6, // ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY
         -5, // MIDGAME_KNIGHT_MISSING_PAWN_PENALTY
         -3, // ENDGAME_KNIGHT_MISSING_PAWN_PENALTY
-        5, // MIDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS
-        3, // ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS
+        5, // MIDGAME_KNIGHT_DEFENDED_BY_PAWN
+        3, // ENDGAME_KNIGHT_DEFENDED_BY_PAWN
         -5, // MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
         -5, // ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
         -15, // MIDGAME_BAD_BISHOP_PENALTY
@@ -80,8 +80,22 @@ namespace Zagreus {
         -50, // ENDGAME_MISSING_BISHOP_PAIR_PENALTY
         15, // MIDGAME_BISHOP_FIANCHETTO
         0, // ENDGAME_BISHOP_FIANCHETTO
-        5, // MIDGAME_ROOK_PAWN_COUNT_BONUS
-        5, // ENDGAME_ROOK_PAWN_COUNT_BONUS
+        5, // MIDGAME_ROOK_PAWN_COUNT
+        5, // ENDGAME_ROOK_PAWN_COUNT
+        10, // MIDGAME_ROOK_ON_OPEN_FILE
+        15, // ENDGAME_ROOK_ON_OPEN_FILE
+        5, // MIDGAME_ROOK_ON_SEMI_OPEN_FILE
+        7, // ENDGAME_ROOK_ON_SEMI_OPEN_FILE
+        10, // MIDGAME_ROOK_ON_SEVENTH_RANK
+        15, // ENDGAME_ROOK_ON_SEVENTH_RANK
+        0, // MIDGAME_TARRASCH_OWN_ROOK_PENALTY
+        -10, // ENDGAME_TARRASCH_OWN_ROOK_PENALTY
+        0, // MIDGAME_TARRASCH_OWN_ROOK_DEFEND
+        10, // ENDGAME_TARRASCH_OWN_ROOK_DEFEND
+        0, // MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY
+        -10, // ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY
+        6, // MIDGAME_ROOK_ON_QUEEN_FILE
+        3, // ENDGAME_ROOK_ON_QUEEN_FILE
     };
 
     void printEvalValues() {

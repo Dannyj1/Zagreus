@@ -406,8 +406,10 @@ namespace Zagreus {
                 // Doubled pawn
                 uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
                 Direction direction = color == WHITE ? NORTH : SOUTH;
-                uint64_t doubledPawnsMask = bitboard.getRayAttack(index, direction);
-                uint64_t doubledPawns = pawnBB & doubledPawnsMask;
+                Direction oppositeDirection = color == WHITE ? SOUTH : NORTH;
+                uint64_t frontMask = bitboard.getRayAttack(index, direction);
+                uint64_t behindMask = bitboard.getRayAttack(index, oppositeDirection);
+                uint64_t doubledPawns = pawnBB & frontMask;
 
                 if (doubledPawns) {
                     if (color == WHITE) {
@@ -427,6 +429,59 @@ namespace Zagreus {
                     } else {
                         blackMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
                         blackEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
+                    }
+
+                    // Tarrasch rule
+                    if (color == WHITE) {
+                        // Rook in front of own passed pawn penalty
+                        if (frontMask & bitboard.getPieceBoard(WHITE_ROOK)) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                            whiteEndgameScore += getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                        }
+
+                        // Rook behind own passed pawn bonus
+                        if (behindMask & bitboard.getPieceBoard(WHITE_ROOK)) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_DEFEND);
+                            whiteEndgameScore += getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_DEFEND);
+                        }
+
+                        // Opponent rook behind own passed pawn penalty
+                        if (behindMask & bitboard.getPieceBoard(BLACK_ROOK)) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                            whiteEndgameScore += getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                        }
+                    } else {
+                        // Rook in front of own passed pawn penalty
+                        if (frontMask & bitboard.getPieceBoard(BLACK_ROOK)) {
+                            blackMidgameScore += getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                            blackEndgameScore += getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                        }
+
+                        // Rook behind own passed pawn bonus
+                        if (behindMask & bitboard.getPieceBoard(BLACK_ROOK)) {
+                            blackMidgameScore += getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_DEFEND);
+                            blackEndgameScore += getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_DEFEND);
+                        }
+
+                        // Opponent rook behind own passed pawn penalty
+                        if (behindMask & bitboard.getPieceBoard(WHITE_ROOK)) {
+                            blackMidgameScore += getEvalValue(MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                            blackEndgameScore += getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                        }
+                    }
+
+                    uint64_t file = bitboard.getFile(index);
+                    uint64_t opponentQueens = bitboard.getPieceBoard(color == WHITE ? BLACK_QUEEN : WHITE_QUEEN);
+
+                    // Bonus for rook with enemy queen on same file
+                    if (file & opponentQueens) {
+                        if (color == WHITE) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
+                            whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
+                        } else {
+                            blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_QUEEN_FILE);
+                            blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_QUEEN_FILE);
+                        }
                     }
                 }
 
@@ -481,11 +536,11 @@ namespace Zagreus {
 
                 if (index & pawnAttacks) {
                     if (color == WHITE) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
-                        whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
+                        whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN);
                     } else {
-                        blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
-                        blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN_BONUS);
+                        blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN);
+                        blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN);
                     }
                 }
             }
@@ -558,20 +613,52 @@ namespace Zagreus {
                 }
             }
 
-            /*// Rook eval
+            // Rook eval
             if (isRook(pieceType)) {
                 // Increase in value as pawns disappear
                 uint64_t pawnBB = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
                 uint8_t pawnCount = popcnt(pawnBB);
 
                 if (color == WHITE) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
-                    whiteEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
+                    whiteMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT) * pawnCount;
+                    whiteEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT) * pawnCount;
                 } else {
-                    blackMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
-                    blackEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
+                    blackMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT) * pawnCount;
+                    blackEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT) * pawnCount;
                 }
-            }*/
+
+                // Rook on open file
+                if (bitboard.isOpenFile(index)) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_OPEN_FILE);
+                        whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_OPEN_FILE);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_OPEN_FILE);
+                        blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_OPEN_FILE);
+                    }
+                } else if (bitboard.isSemiOpenFile<color>(index)) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_SEMI_OPEN_FILE);
+                        whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_SEMI_OPEN_FILE);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_SEMI_OPEN_FILE);
+                        blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_SEMI_OPEN_FILE);
+                    }
+                }
+
+                // Rook on 7th or 8th rank (or 2nd or 1st rank for black)
+                if (color == WHITE) {
+                    if (index & (RANK_7 | RANK_8)) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
+                        whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
+                    }
+                } else {
+                    if (index & (RANK_2 | RANK_1)) {
+                        blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
+                        blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
+                    }
+                }
+            }
 
             // Undefended minor pieces
             if (isKnight(pieceType) || isBishop(pieceType)) {
