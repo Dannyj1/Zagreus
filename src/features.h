@@ -78,6 +78,8 @@ namespace Zagreus {
         ENDGAME_MISSING_BISHOP_PAIR_PENALTY,
         MIDGAME_BISHOP_FIANCHETTO,
         ENDGAME_BISHOP_FIANCHETTO,
+        MIDGAME_ROOK_PAWN_COUNT_BONUS,
+        ENDGAME_ROOK_PAWN_COUNT_BONUS,
     };
 
     static std::vector<const char*> evalFeatureNames = {
@@ -135,6 +137,8 @@ namespace Zagreus {
         "ENDGAME_MISSING_BISHOP_PAIR_PENALTY",
         "MIDGAME_BISHOP_FIANCHETTO",
         "ENDGAME_BISHOP_FIANCHETTO",
+        "MIDGAME_ROOK_PAWN_COUNT_BONUS",
+        "ENDGAME_ROOK_PAWN_COUNT_BONUS",
     };
 
     void printEvalValues();

@@ -534,7 +534,7 @@ namespace Zagreus {
                     }
                 }
 
-                // Fiachetto
+                // Fianchetto
                 if (color == WHITE) {
                     if (index == G2 || index == B2) {
                         uint64_t fianchettoPattern = nortOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
@@ -557,6 +557,21 @@ namespace Zagreus {
                     }
                 }
             }
+
+            /*// Rook eval
+            if (isRook(pieceType)) {
+                // Increase in value as pawns disappear
+                uint64_t pawnBB = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
+                uint8_t pawnCount = popcnt(pawnBB);
+
+                if (color == WHITE) {
+                    whiteMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
+                    whiteEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
+                } else {
+                    blackMidgameScore += getEvalValue(MIDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
+                    blackEndgameScore += getEvalValue(ENDGAME_ROOK_PAWN_COUNT_BONUS) * pawnCount;
+                }
+            }*/
 
             // Undefended minor pieces
             if (isKnight(pieceType) || isBishop(pieceType)) {
