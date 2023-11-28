@@ -54,7 +54,6 @@ namespace Zagreus {
         uint64_t attacksByPiece[PIECE_TYPES]{};
         uint64_t attacksByColor[COLORS]{};
         uint64_t attacksFrom[SQUARES]{};
-        uint64_t combinedAttacks{};
 
         int whiteMidgameScore = 0;
         int whiteEndgameScore = 0;

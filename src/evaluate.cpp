@@ -30,7 +30,6 @@ namespace Zagreus {
 
             attacksByPiece[WHITE_PAWN] |= attacks;
             attacksByColor[WHITE] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -41,7 +40,6 @@ namespace Zagreus {
 
             attacksByPiece[WHITE_KNIGHT] |= attacks;
             attacksByColor[WHITE] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -52,7 +50,6 @@ namespace Zagreus {
 
             attacksByPiece[WHITE_BISHOP] |= attacks;
             attacksByColor[WHITE] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -63,7 +60,6 @@ namespace Zagreus {
 
             attacksByPiece[WHITE_ROOK] |= attacks;
             attacksByColor[WHITE] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -74,18 +70,16 @@ namespace Zagreus {
 
             attacksByPiece[WHITE_QUEEN] |= attacks;
             attacksByColor[WHITE] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
-        uint64_t whiteKing = bitboard.getPieceBoard(WHITE_KING);
-        while (whiteKing) {
+        {
+            uint64_t whiteKing = bitboard.getPieceBoard(WHITE_KING);
             uint8_t square = popLsb(whiteKing);
             uint64_t attacks = bitboard.getKingAttacks(square);
 
             attacksByPiece[WHITE_KING] |= attacks;
             attacksByColor[WHITE] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -96,7 +90,6 @@ namespace Zagreus {
 
             attacksByPiece[BLACK_PAWN] |= attacks;
             attacksByColor[BLACK] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -107,7 +100,6 @@ namespace Zagreus {
 
             attacksByPiece[BLACK_KNIGHT] |= attacks;
             attacksByColor[BLACK] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -118,7 +110,6 @@ namespace Zagreus {
 
             attacksByPiece[BLACK_BISHOP] |= attacks;
             attacksByColor[BLACK] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -129,7 +120,6 @@ namespace Zagreus {
 
             attacksByPiece[BLACK_ROOK] |= attacks;
             attacksByColor[BLACK] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
@@ -140,18 +130,16 @@ namespace Zagreus {
 
             attacksByPiece[BLACK_QUEEN] |= attacks;
             attacksByColor[BLACK] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
 
-        uint64_t blackKing = bitboard.getPieceBoard(BLACK_KING);
-        while (blackKing) {
+        {
+            uint64_t blackKing = bitboard.getPieceBoard(BLACK_KING);
             uint8_t square = popLsb(blackKing);
             uint64_t attacks = bitboard.getKingAttacks(square);
 
             attacksByPiece[BLACK_KING] |= attacks;
             attacksByColor[BLACK] |= attacks;
-            combinedAttacks |= attacks;
             attacksFrom[square] |= attacks;
         }
     }
@@ -315,11 +303,6 @@ namespace Zagreus {
                     if (pieceType == WHITE_ROOK) {
                         mobilitySquares &= ~(attacksByPiece[BLACK_BISHOP] | attacksByPiece[BLACK_KNIGHT]);
                     }
-
-                    // Exclude knight tiles attacked by opponent pawns
-                    if (pieceType == WHITE_KNIGHT) {
-                        mobilitySquares &= ~(attacksByPiece[BLACK_PAWN]);
-                    }
                 } else {
                     // Exclude own pieces and attacks by opponent pawns
                     mobilitySquares &= ~(bitboard.getColorBoard<BLACK>() | attacksByPiece[WHITE_PAWN]);
@@ -334,11 +317,6 @@ namespace Zagreus {
                     // If pieceType == rook, exclude tiles attacked by opponent bishop and knight
                     if (pieceType == BLACK_ROOK) {
                         mobilitySquares &= ~(attacksByPiece[WHITE_BISHOP] | attacksByPiece[WHITE_KNIGHT]);
-                    }
-
-                    // Exclude knight tiles attacked by opponent pawns
-                    if (pieceType == BLACK_KNIGHT) {
-                        mobilitySquares &= ~(attacksByPiece[WHITE_PAWN]);
                     }
                 }
 
@@ -520,7 +498,7 @@ namespace Zagreus {
                 // Slight bonus for knights defended by a pawn
                 uint64_t pawnAttacks = attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
 
-                if (index & pawnAttacks) {
+                if ((1ULL << index) & pawnAttacks) {
                     if (color == WHITE) {
                         whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN);
                         whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN);
@@ -662,7 +640,7 @@ namespace Zagreus {
 
             // Undefended minor pieces
             if (isKnight(pieceType) || isBishop(pieceType)) {
-                if (!(index & attacksByColor[color])) {
+                if (!((1ULL << index) & attacksByColor[color])) {
                     // Penalize a minor piece for not being defended
                     if (color == WHITE) {
                         whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
