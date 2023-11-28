@@ -43,7 +43,7 @@ namespace Zagreus {
 
     class Evaluation {
     public:
-        Evaluation(Bitboard& bitboard);
+        Evaluation(Bitboard& bitboard) : bitboard(bitboard) {}
 
         int evaluate();
 
@@ -74,5 +74,7 @@ namespace Zagreus {
         inline void addMobilityScoreForPiece(PieceType pieceType, int mobility);
 
         inline void addKingAttackScore(PieceType pieceType, int attackCount);
+
+        void initEvalContext(Bitboard& bitboard);
     };
 }

@@ -22,7 +22,7 @@
 #include "features.h"
 
 namespace Zagreus {
-    Evaluation::Evaluation(Bitboard& bitboard) : bitboard(bitboard) {
+    void Evaluation::initEvalContext(Bitboard& bitboard) {
         uint64_t whitePawns = bitboard.getPieceBoard(WHITE_PAWN);
         while (whitePawns) {
             uint8_t square = popLsb(whitePawns);
@@ -657,6 +657,17 @@ namespace Zagreus {
     int Evaluation::evaluate() {
         int phase = getPhase();
         int modifier = bitboard.getMovingColor() == WHITE ? 1 : -1;
+
+        // Check for win/loss/draw
+        if (bitboard.isWinner<WHITE>()) {
+            return (MATE_SCORE - bitboard.getPly()) * modifier;
+        } else if (bitboard.isWinner<BLACK>()) {
+            return (-MATE_SCORE + bitboard.getPly()) * modifier;
+        } else if (bitboard.isDraw()) {
+            return 0;
+        }
+
+        initEvalContext(bitboard);
 
         evaluateMaterial<WHITE>();
         evaluateMaterial<BLACK>();

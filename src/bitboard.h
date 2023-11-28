@@ -159,46 +159,7 @@ namespace Zagreus {
         bool isDraw();
 
         template <PieceColor color>
-        bool isWinner() {
-            if (color == WHITE) {
-                if (!isKingInCheck<BLACK>()) {
-                    return false;
-                }
-            } else {
-                if (!isKingInCheck<WHITE>()) {
-                    return false;
-                }
-            }
-
-            MoveList* moveList = moveListPool->getMoveList();
-            generateMoves<color == WHITE ? BLACK : WHITE>(*this, moveList);
-
-            for (int i = 0; i < moveList->size; i++) {
-                Move move = moveList->moves[i];
-                assert(move.from != move.to);
-
-                makeMove(move);
-
-                if (color == WHITE) {
-                    if (isKingInCheck<BLACK>()) {
-                        unmakeMove(move);
-                        continue;
-                    }
-                } else {
-                    if (isKingInCheck<WHITE>()) {
-                        unmakeMove(move);
-                        continue;
-                    }
-                }
-
-                unmakeMove(move);
-                moveListPool->releaseMoveList(moveList);
-                return false;
-            }
-
-            moveListPool->releaseMoveList(moveList);
-            return true;
-        };
+        bool isWinner();
 
         void initializeBetweenLookup();
 
