@@ -896,7 +896,7 @@ namespace Zagreus {
             }
         }
 
-        MoveList* moveList = moveListPool->getMoveList();
+        /*MoveList* moveList = moveListPool->getMoveList();
         if (movingColor == WHITE) {
             generateMoves<WHITE>(*this, moveList);
         } else {
@@ -930,7 +930,7 @@ namespace Zagreus {
 
         if (!hasLegalMove) {
             return true;
-        }
+        }*/
 
         return false;
     }

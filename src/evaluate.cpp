@@ -658,14 +658,14 @@ namespace Zagreus {
         int phase = getPhase();
         int modifier = bitboard.getMovingColor() == WHITE ? 1 : -1;
 
-        // Check for win/loss/draw
+        /*// Check for win/loss/draw
         if (bitboard.isWinner<WHITE>()) {
             return (MATE_SCORE - bitboard.getPly()) * modifier;
         } else if (bitboard.isWinner<BLACK>()) {
             return (-MATE_SCORE + bitboard.getPly()) * modifier;
         } else if (bitboard.isDraw()) {
             return 0;
-        }
+        }*/
 
         initEvalContext(bitboard);
 

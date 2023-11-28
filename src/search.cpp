@@ -217,6 +217,10 @@ namespace Zagreus {
     int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove,
                               Move &previousMove,
                               std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull) {
+        if (board.isDraw()) {
+            return 0;
+        }
+
         if (board.getPly() >= MAX_PLY || engine.stopRequested() || std::chrono::steady_clock::now() > endTime) {
             return beta;
         }
@@ -231,8 +235,7 @@ namespace Zagreus {
             depthExtended = true;
         }
 
-        if (depth == 0 || board.isWinner<WHITE>() || board.isWinner<BLACK>() ||
-            board.isDraw()) {
+        if (depth == 0) {
             pvLine.moveCount = 0;
             return quiesce<color>(board, alpha, beta, rootMove, previousMove, endTime, engine, isPv);
         }
@@ -275,6 +278,7 @@ namespace Zagreus {
         generateMoves<color>(board, moveList);
         auto moves = MovePicker(moveList);
         uint32_t bestMoveCode = 0;
+        int moveCount = moveList->size;
 
         while (moves.hasNext()) {
             if (std::chrono::steady_clock::now() > endTime) {
@@ -287,6 +291,7 @@ namespace Zagreus {
 
             if (board.isKingInCheck<color>()) {
                 board.unmakeMove(move);
+                moveCount -= 1;
                 continue;
             }
 
@@ -378,6 +383,14 @@ namespace Zagreus {
             }
         }
 
+        if (!moveCount) {
+            if (isOwnKingInCheck) {
+                return -MATE_SCORE + board.getPly();
+            } else {
+                return 0;
+            }
+        }
+
         TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType, bestMoveCode, endTime);
         moveListPool->releaseMoveList(moveList);
         return alpha;
@@ -389,6 +402,10 @@ namespace Zagreus {
     int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
                                Move &previousMove,
                                std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth) {
+        if (board.isDraw()) {
+            return 0;
+        }
+
         if (board.getPly() >= MAX_PLY) {
             return Evaluation(board).evaluate();
         }
@@ -418,6 +435,7 @@ namespace Zagreus {
         }
 
         MoveList* moveList = moveListPool->getMoveList();
+        int moveCount = moveList->size;
         generateQuiescenceMoves<color>(board, moveList);
 
         auto moves = MovePicker(moveList);
@@ -437,6 +455,7 @@ namespace Zagreus {
 
             if (board.isKingInCheck<color>()) {
                 board.unmakeMove(move);
+                moveCount -= 1;
                 continue;
             }
 
@@ -460,6 +479,12 @@ namespace Zagreus {
 
             if (score > alpha) {
                 alpha = score;
+            }
+        }
+
+        if (!moveCount) {
+            if (board.isKingInCheck<color>()) {
+                return -MATE_SCORE + board.getPly();
             }
         }
 
