@@ -20,9 +20,8 @@
 
 #pragma once
 
-#import <vector>
-
-#import "types.h"
+#include <vector>
+#include "types.h"
 
 namespace Zagreus {
     static constexpr int INITIAL_POOL_SIZE = 100;

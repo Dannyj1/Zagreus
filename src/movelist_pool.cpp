@@ -20,6 +20,8 @@
 
 #include "movelist_pool.h"
 
+#include "types.h"
+
 namespace Zagreus {
     MoveListPool::MoveListPool() {
         for (int i = 0; i < INITIAL_POOL_SIZE; ++i) {

@@ -45,6 +45,7 @@ namespace Zagreus {
         } else if (color == BLACK) {
             generateMoves<BLACK>(perftBoard, moves);
         } else {
+            moveListPool->releaseMoveList(moves);
             return 0;
         }
 
