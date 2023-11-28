@@ -348,13 +348,12 @@ namespace Zagreus {
                     updateEvalValues(bestParameters);
                     double lossPlus = evaluationLoss(position, 1, maxEndTime, engine);
 
-                    /*bestParameters[paramIndex] = oldParam - delta;
+                    bestParameters[paramIndex] = oldParam - delta;
                     updateEvalValues(bestParameters);
                     double lossMinus = evaluationLoss(position, 1, maxEndTime, engine);
 
-                    gradients[paramIndex] += (lossPlus - lossMinus) / (2 * delta);*/
+                    gradients[paramIndex] += (lossPlus - lossMinus) / (2 * delta);
 
-                    gradients[paramIndex] += (lossPlus - loss) / delta;
                     // reset
                     bestParameters[paramIndex] = oldParam;
                 }
