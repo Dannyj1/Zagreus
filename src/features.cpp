@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -23,85 +23,79 @@
 #include <iostream>
 
 namespace Zagreus {
-    int evalValues[76] = { 94, 99, 357, 350, 371, 357, 530, 533, 1008, 1005, 4, 6, 3, 0, 5, 6, 0, 6, 0, 13, -38, 7, -24, 7, -35, 0, -9, 2, 0, 1, -9, -1, -8, 5, -11, -16, 8, 11, 17, 7, 13, 11, 2, 13, 13, 9, 27, 20, 14, 10, 0, 10, 10, 4, 7, 8, -29, -18, 22, 6, -13, -6, 2, 0, -12, -12, -7, -5, 9, 15, 16, 0, 20, 19, 14, 11,  };
+    int evalValues[70] = { 95, 105, 358, 349, 377, 356, 535, 529, 1011, 1004, 7, 3, 5, 4, 0, 7, 0, 18, 18, 1, -7, -1, 0, 7, 4, -2, -9, -3, -9, -1, -11, -22, -8, -14, 3, 20, 1, -3, -7, -8, -15, -11, -5, -4, 7, 0, -5, -6, -3, -6, -35, -32, 22, 12, 7, 6, 25, 21, 14, 8, 1, 13, 3, -2, 1, 18, 5, -5, 8, 6,  };
 
-    int baseEvalValues[76] = {
-            100, // MIDGAME_PAWN_MATERIAL
-            100, // ENDGAME_PAWN_MATERIAL
-            350, // MIDGAME_KNIGHT_MATERIAL
-            350, // ENDGAME_KNIGHT_MATERIAL
-            350, // MIDGAME_BISHOP_MATERIAL
-            350, // ENDGAME_BISHOP_MATERIAL
-            525, // MIDGAME_ROOK_MATERIAL
-            525, // ENDGAME_ROOK_MATERIAL
-            1000, // MIDGAME_QUEEN_MATERIAL
-            1000, // ENDGAME_QUEEN_MATERIAL
-            2, // MIDGAME_SQUARE_DEFENDED_BY_PAWN
-            2, // ENDGAME_SQUARE_DEFENDED_BY_PAWN
-            7, // MIDGAME_KNIGHT_MOBILITY
-            2, // ENDGAME_KNIGHT_MOBILITY
-            8, // MIDGAME_BISHOP_MOBILITY
-            3, // ENDGAME_BISHOP_MOBILITY
-            2, // MIDGAME_ROOK_MOBILITY
-            6, // ENDGAME_ROOK_MOBILITY
-            4, // MIDGAME_QUEEN_MOBILITY
-            8, // ENDGAME_QUEEN_MOBILITY
-            -50, // MIDGAME_KING_ON_OPEN_FILE
-            0, // ENDGAME_KING_ON_OPEN_FILE
-            -25, // MIDGAME_KING_NEXT_TO_OPEN_FILE
-            0, // ENDGAME_KING_NEXT_TO_OPEN_FILE
-            -25, // MIDGAME_NO_CASTLING_RIGHTS
-            0, // ENDGAME_NO_CASTLING_RIGHTS
-            -5, // MIDGAME_QUEENSIDE_CASTLING_PREVENTED
-            0, // ENDGAME_QUEENSIDE_CASTLING_PREVENTED
-            -10, // MIDGAME_KINGSIDE_CASTLING_PREVENTED
-            0, // ENDGAME_KINGSIDE_CASTLING_PREVENTED
-            -3, // MIDGAME_BISHOP_ATTACK_NEAR_KING
-            -3, // ENDGAME_BISHOP_ATTACK_NEAR_KING
-            -5, // MIDGAME_ROOK_ATTACK_NEAR_KING
-            -5, // ENDGAME_ROOK_ATTACK_NEAR_KING
-            -10, // MIDGAME_QUEEN_ATTACK_NEAR_KING
-            -10, // ENDGAME_QUEEN_ATTACK_NEAR_KING
-            10, // MIDGAME_PAWN_CONNECTIVITY
-            10, // ENDGAME_PAWN_CONNECTIVITY
-            7, // MIDGAME_KNIGHT_CONNECTIVITY
-            7, // ENDGAME_KNIGHT_CONNECTIVITY
-            7, // MIDGAME_BISHOP_CONNECTIVITY
-            7, // ENDGAME_BISHOP_CONNECTIVITY
-            3, // MIDGAME_ROOK_CONNECTIVITY
-            3, // ENDGAME_ROOK_CONNECTIVITY
-            1, // MIDGAME_QUEEN_CONNECTIVITY
-            1, // ENDGAME_QUEEN_CONNECTIVITY
-            20, // MIDGAME_ROOK_ON_OPEN_FILE
-            20, // ENDGAME_ROOK_ON_OPEN_FILE
-            15, // MIDGAME_ROOK_ON_SEMI_OPEN_FILE
-            15, // ENDGAME_ROOK_ON_SEMI_OPEN_FILE
-            10, // MIDGAME_ROOK_ON_7TH_RANK
-            10, // ENDGAME_ROOK_ON_7TH_RANK
-            5, // MIDGAME_ROOK_ON_QUEEN_FILE
-            5, // ENDGAME_ROOK_ON_QUEEN_FILE
-            5, // MIDGAME_ROOK_LESS_PAWNS_BONUS
-            5, // ENDGAME_ROOK_LESS_PAWNS_BONUS
-            -25, // MIDGAME_NO_BISHOP_PAIR
-            -25, // ENDGAME_NO_BISHOP_PAIR
-            10, // MIDGAME_BISHOP_FIANCHETTO
-            0, // ENDGAME_BISHOP_FIANCHETTO
-            -10, // MIDGAME_PAWN_ON_SAME_FILE
-            -10, // ENDGAME_PAWN_ON_SAME_FILE
-            10, // MIDGAME_PASSED_PAWN
-            10, // ENDGAME_PASSED_PAWN
-            -20, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -20, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN
-            -10, // MIDGAME_ISOLATED_PAWN
-            -10, // ENDGAME_ISOLATED_PAWN
-            3, // MIDGAME_PAWN_SEMI_OPEN_FILE
-            3, // ENDGAME_PAWN_SEMI_OPEN_FILE
-            20, // MIDGAME_PAWN_SHIELD
-            0, // ENDGAME_PAWN_SHIELD
-            15, // MIDGAME_KNIGHT_OUTPOST
-            10, // ENDGAME_KNIGHT_OUTPOST
-            10, // MIDGAME_BISHOP_OUTPOST
-            5, // ENDGAME_BISHOP_OUTPOST
+    int baseEvalValues[70] = {
+        100, // MIDGAME_PAWN_MATERIAL
+        100, // ENDGAME_PAWN_MATERIAL
+        350, // MIDGAME_KNIGHT_MATERIAL
+        350, // ENDGAME_KNIGHT_MATERIAL
+        350, // MIDGAME_BISHOP_MATERIAL
+        350, // ENDGAME_BISHOP_MATERIAL
+        525, // MIDGAME_ROOK_MATERIAL
+        525, // ENDGAME_ROOK_MATERIAL
+        1000, // MIDGAME_QUEEN_MATERIAL
+        1000, // ENDGAME_QUEEN_MATERIAL
+        7, // MIDGAME_KNIGHT_MOBILITY
+        2, // ENDGAME_KNIGHT_MOBILITY
+        8, // MIDGAME_BISHOP_MOBILITY
+        3, // ENDGAME_BISHOP_MOBILITY
+        2, // MIDGAME_ROOK_MOBILITY
+        6, // ENDGAME_ROOK_MOBILITY
+        4, // MIDGAME_QUEEN_MOBILITY
+        8, // ENDGAME_QUEEN_MOBILITY
+        20, // MIDGAME_PAWN_SHIELD
+        0, // ENDGAME_PAWN_SHIELD
+        -5, // MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY
+        0, // ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY
+        -2, // MIDGAME_KING_ATTACK_PAWN_PENALTY
+        -2, // ENDGAME_KING_ATTACK_PAWN_PENALTY
+        -5, // MIDGAME_KING_ATTACK_KNIGHT_PENALTY
+        -7, // ENDGAME_KING_ATTACK_KNIGHT_PENALTY
+        -7, // MIDGAME_KING_ATTACK_BISHOP_PENALTY
+        -10, // ENDGAME_KING_ATTACK_BISHOP_PENALTY
+        -10, // MIDGAME_KING_ATTACK_ROOK_PENALTY
+        -15, // ENDGAME_KING_ATTACK_ROOK_PENALTY
+        -15, // MIDGAME_KING_ATTACK_QUEEN_PENALTY
+        -20, // ENDGAME_KING_ATTACK_QUEEN_PENALTY
+        -10, // MIDGAME_DOUBLED_PAWN_PENALTY
+        -15, // ENDGAME_DOUBLED_PAWN_PENALTY
+        10, // MIDGAME_PASSED_PAWN
+        20, // ENDGAME_PASSED_PAWN
+        -5, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
+        -10, // ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
+        -10, // MIDGAME_ISOLATED_PAWN_PENALTY
+        -15, // ENDGAME_ISOLATED_PAWN_PENALTY
+        -3, // MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY
+        -6, // ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY
+        -5, // MIDGAME_KNIGHT_MISSING_PAWN_PENALTY
+        -3, // ENDGAME_KNIGHT_MISSING_PAWN_PENALTY
+        5, // MIDGAME_KNIGHT_DEFENDED_BY_PAWN
+        3, // ENDGAME_KNIGHT_DEFENDED_BY_PAWN
+        -5, // MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
+        -5, // ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
+        -15, // MIDGAME_BAD_BISHOP_PENALTY
+        -10, // ENDGAME_BAD_BISHOP_PENALTY
+        -50, // MIDGAME_MISSING_BISHOP_PAIR_PENALTY
+        -50, // ENDGAME_MISSING_BISHOP_PAIR_PENALTY
+        15, // MIDGAME_BISHOP_FIANCHETTO
+        0, // ENDGAME_BISHOP_FIANCHETTO
+        5, // MIDGAME_ROOK_PAWN_COUNT
+        5, // ENDGAME_ROOK_PAWN_COUNT
+        10, // MIDGAME_ROOK_ON_OPEN_FILE
+        15, // ENDGAME_ROOK_ON_OPEN_FILE
+        5, // MIDGAME_ROOK_ON_SEMI_OPEN_FILE
+        7, // ENDGAME_ROOK_ON_SEMI_OPEN_FILE
+        10, // MIDGAME_ROOK_ON_7TH_RANK
+        15, // MIDGAME_ROOK_ON_7TH_RANK
+        0, // MIDGAME_TARRASCH_OWN_ROOK_PENALTY
+        -10, // ENDGAME_TARRASCH_OWN_ROOK_PENALTY
+        0, // MIDGAME_TARRASCH_OWN_ROOK_DEFEND
+        10, // ENDGAME_TARRASCH_OWN_ROOK_DEFEND
+        0, // MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY
+        -10, // ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY
+        6, // MIDGAME_ROOK_ON_QUEEN_FILE
+        3, // ENDGAME_ROOK_ON_QUEEN_FILE
     };
 
     void printEvalValues() {
@@ -161,17 +155,17 @@ namespace Zagreus {
 
         // New features are given as 10000 times the actual value to deal with the fact that gradients are floats
         for (int i = 0; i < evalFeatureSize; i++) {
-            evalValues[i] = static_cast<int>(newValues[i]);
+            evalValues[i] = (int) newValues[i];
         }
 
         for (int i = 0; i < 6; i++) {
             for (int8_t j = 0; j < 64; j++) {
                 int pieceIndex = i * 2;
 
-                setMidgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j, static_cast<int>(newValues[evalFeatureSize + i * 64 + j]));
-                setMidgamePstValue(static_cast<PieceType>(pieceIndex + 1), j, static_cast<int>(newValues[evalFeatureSize + i * 64 + j]));
-                setEndgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j, static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
-                setEndgamePstValue(static_cast<PieceType>(pieceIndex + 1), j, static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
+                setMidgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + i * 64 + j]);
+                setMidgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + i * 64 + j]);
+                setEndgamePstValue((PieceType) pieceIndex, 63 - j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
+                setEndgamePstValue((PieceType) (pieceIndex + 1), j, (int) newValues[evalFeatureSize + pstSize + i * 64 + j]);
             }
         }
     }

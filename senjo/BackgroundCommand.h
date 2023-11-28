@@ -139,8 +139,8 @@ namespace senjo {
         PerftCommandHandle(ChessEngine &eng) : BackgroundCommand(eng) {}
 
         std::string usage() const {
-            return ("perft [unsorted] [depth <x>] [count <x>] [skip <x>] [leafs <x>] "
-                    "[epd] [file <x> (default=" + _TEST_FILE + ")]");
+            return "perft [unsorted] [depth <x>] [count <x>] [skip <x>] [leafs <x>] "
+                "[epd] [file <x> (default=" + _TEST_FILE + ")]";
         }
 
         std::string description() const {

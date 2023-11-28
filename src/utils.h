@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -52,8 +52,8 @@ namespace Zagreus {
     }
 
     inline uint32_t encodeMove(Move* move) {
-        return (move->promotionPiece << 20) | (move->piece << 15) |
-               (move->to << 7) | move->from;
+        return move->promotionPiece << 20 | move->piece << 15 |
+               move->to << 7 | move->from;
     }
 
     inline uint16_t getPieceWeight(PieceType type) {

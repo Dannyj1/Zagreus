@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@
 #include "tuner.h"
 #include "features.h"
 #include "bitboard.h"
+#include "evaluate.h"
 #include "search.h"
 #include "../senjo/UCIAdapter.h"
 #include "pst.h"
@@ -41,14 +42,14 @@ namespace Zagreus {
     double K = 0.0;
 
     int batchSize = 512;
-    double learningRate = 0.1;
+    double learningRate = 0.25;
     double delta = 1.0;
     double optimizerEpsilon = 1e-6;
     double epsilonDecay = 0.98;
     double beta1 = 0.9;
     double beta2 = 0.999;
     // 0 = random seed
-    long seed = 0x1cd8a49;
+    long seed = 0;
     int epsilonWarmupIterations = 0;
     int patience = 50;
 
@@ -78,17 +79,9 @@ namespace Zagreus {
 
         for (TunePosition &pos : positions) {
             tunerBoard.setFromFenTuner(pos.fen);
-//            Move rootMove{};
-//            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-            int evalScore;
+            int evalScore = Evaluation(tunerBoard).evaluate();;
 
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
-            } else {
-                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }
-
-            double loss = std::pow(pos.result - sigmoid((double) evalScore), 2);
+            double loss = std::pow(pos.result - sigmoid(evalScore), 2);
             totalLoss += loss;
         }
 
@@ -102,13 +95,8 @@ namespace Zagreus {
             tunerBoard.setFromFenTuner(pos.fen);
 //            Move rootMove{};
 //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove, rootMove, maxEndTime, engine);
-            int evalScore;
+            int evalScore = Evaluation(tunerBoard).evaluate();
 
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
-            } else {
-                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }
             pos.score = evalScore;
         }
 
@@ -166,21 +154,21 @@ namespace Zagreus {
             Move rootMove{};
             int qScore;
 
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                qScore = searchManager.quiesce<PieceColor::WHITE>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
-                                               engine, true);
+            if (tunerBoard.getMovingColor() == WHITE) {
+                qScore = searchManager.quiesce<WHITE>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
+                                                      engine, true);
             } else {
-                qScore = searchManager.quiesce<PieceColor::BLACK>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
-                                               engine, true);
+                qScore = searchManager.quiesce<BLACK>(tunerBoard, -999999999, 999999999, rootMove, rootMove, maxEndTime,
+                                                      engine, true);
             }
 
             if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw()
-                || tunerBoard.isWinner<PieceColor::WHITE>() || tunerBoard.isWinner<PieceColor::BLACK>()
-                || tunerBoard.isKingInCheck<PieceColor::WHITE>() || tunerBoard.isKingInCheck<PieceColor::BLACK>()
-                || popcnt(tunerBoard.getColorBoard<PieceColor::WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<PieceColor::BLACK>()) <= 4
-                || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() <= 2
-                || tunerBoard.getAmountOfMinorOrMajorPieces<PieceColor::BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2)
-                || qScore >= (MATE_SCORE / 2)) {
+                || tunerBoard.isWinner<WHITE>() || tunerBoard.isWinner<BLACK>()
+                || tunerBoard.isKingInCheck<WHITE>() || tunerBoard.isKingInCheck<BLACK>()
+                || popcnt(tunerBoard.getColorBoard<WHITE>()) <= 4 || popcnt(tunerBoard.getColorBoard<BLACK>()) <= 4
+                || tunerBoard.getAmountOfMinorOrMajorPieces() < 4 || tunerBoard.getAmountOfMinorOrMajorPieces<WHITE>() <= 2
+                || tunerBoard.getAmountOfMinorOrMajorPieces<BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2)
+                || qScore >= MATE_SCORE / 2) {
                 continue;
             }
 
@@ -199,14 +187,7 @@ namespace Zagreus {
                 draw++;
             }
 
-            int evalScore;
-
-            if (tunerBoard.getMovingColor() == PieceColor::WHITE) {
-                evalScore = searchManager.evaluate<PieceColor::WHITE>(tunerBoard, maxEndTime, engine);
-            } else {
-                evalScore = searchManager.evaluate<PieceColor::BLACK>(tunerBoard, maxEndTime, engine);
-            }
-
+            int evalScore = Evaluation(tunerBoard).evaluate();
             positions.emplace_back(TunePosition{fen, result, evalScore});
         }
 
@@ -345,7 +326,7 @@ namespace Zagreus {
         std::cout << "Finding the best parameters. This may take a while..." << std::endl;
         std::vector<std::vector<TunePosition>> batches = createBatches(positions);
 
-        while (stopCounter <= 50) {
+        while (stopCounter <= patience) {
             iteration++;
 
             if (batches.empty()) {

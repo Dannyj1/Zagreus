@@ -41,7 +41,7 @@ namespace senjo {
             return false;
         }
 
-        thread.reset(new std::thread(Thread::staticRun, this));
+        thread.reset(new std::thread(staticRun, this));
         return true;
     }
 

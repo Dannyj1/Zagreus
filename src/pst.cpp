@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -23,23 +23,24 @@
 #include <vector>
 
 namespace Zagreus {
-    int midgamePawnTable[64] = { 7, 7, 7, 7, 7, 7, 7, 7, 103, 135, 68, 101, 75, 131, 42, -1, 1, 12, 34, 36, 64, 64, 28, -12, -10, 10, 7, 20, 24, 22, 23, -11, -38, -9, -5, 11, 17, 11, 9, -30, -21, 0, -3, -1, 0, 9, 10, -15, -23, 7, -4, -18, -14, 6, 29, -13, 7, 7, 7, 7, 7, 7, 7, 7 };
-    int endgamePawnTable[64] = { 7, 7, 7, 7, 7, 7, 7, 7, 184, 178, 165, 140, 153, 138, 171, 195, 101, 106, 91, 72, 60, 59, 89, 90, 39, 31, 17, 4, 1, 12, 19, 24, 15, 9, -2, -5, -10, -9, 5, 7, 7, 7, 1, 10, 9, 0, 0, -3, 15, 11, 14, 17, 18, 8, 0, -3, 7, 7, 7, 7, 7, 7, 7, 7 };
+    int midgamePawnTable[64] = { 6, 6, 6, 6, 6, 6, 6, 6, 103, 135, 66, 101, 76, 129, 42, -2, 2, 6, 36, 36, 64, 61, 26, -13, -8, 8, 5, 24, 25, 18, 24, -11, -41, -9, -4, 17, 20, 10, 5, -25, -25, -3, -7, -2, 0, 2, 10, -16, -23, 8, -6, -16, -14, 5, 27, -13, 6, 6, 6, 6, 6, 6, 6, 6 };
+    int endgamePawnTable[64] = { 6, 6, 6, 6, 6, 6, 6, 6, 184, 177, 162, 141, 153, 135, 172, 194, 99, 104, 93, 75, 57, 56, 86, 89, 37, 27, 14, -5, -2, 13, 18, 25, 7, 8, -1, -6, -4, -7, 1, 1, 2, 11, 1, 10, 5, 0, -1, -11, 17, 2, 13, 17, 21, 0, 0, 0, 6, 6, 6, 6, 6, 6, 6, 6 };
 
-    int midgameKnightTable[64] = { -159, -82, -28, -41, 67, -88, -7, -101, -64, -33, 78, 44, 31, 72, 12, -12, -37, 63, 43, 70, 90, 129, 76, 50, 0, 19, 24, 45, 40, 63, 20, 28, -13, 10, 19, 20, 29, 23, 27, -9, -23, 1, 18, 20, 25, 18, 20, -15, -20, -44, -5, 4, 11, 23, -6, -9, -97, -26, -49, -32, -14, -21, -19, -16 };
-    int endgameKnightTable[64] = { -49, -31, -6, -20, -24, -18, -55, -91, -17, 0, -18, 4, 0, -16, -16, -43, -15, -14, 18, 15, 7, -3, -12, -33, -7, 13, 31, 27, 32, 15, 16, -10, -12, 0, 23, 31, 21, 23, 9, -13, -17, 4, 0, 21, 15, 0, -14, -17, -34, -12, -2, 1, 2, -14, -15, -36, -20, -42, -14, -11, -17, -11, -49, -57 };
+    int midgameKnightTable[64] = { -162, -82, -26, -42, 66, -89, -8, -102, -66, -32, 78, 43, 30, 73, 13, -13, -37, 61, 43, 68, 87, 126, 76, 49, -3, 16, 22, 47, 38, 68, 17, 27, -9, 11, 16, 21, 30, 26, 27, -5, -20, -3, 14, 15, 22, 12, 19, -12, -20, -42, -4, 6, 10, 23, -6, -10, -99, -21, -49, -27, -10, -22, -14, -17 };
+    int endgameKnightTable[64] = { -51, -31, -6, -21, -25, -20, -56, -92, -20, 0, -17, 3, -2, -15, -17, -45, -15, -15, 18, 14, 5, -5, -12, -33, -10, 10, 28, 27, 30, 18, 12, -12, -13, 0, 17, 33, 15, 21, 11, -13, -16, 1, 0, 18, 18, -8, -15, -16, -35, -12, -2, 0, 1, -14, -18, -38, -22, -40, -13, -9, -15, -11, -46, -57 };
 
-    int midgameBishopTable[64] = { -22, 10, -72, -29, -18, -35, 14, 0, -20, 15, -11, -4, 36, 63, 22, -35, -3, 42, 49, 45, 38, 58, 43, 8, 1, 3, 21, 44, 37, 37, 9, 1, 0, 16, 6, 29, 36, 7, 15, 5, 7, 21, 18, 12, 11, 27, 19, 22, 11, 31, 20, 10, 12, 28, 43, 5, -22, 2, -12, -15, -5, -3, -29, -14 };
-    int endgameBishopTable[64] = { -6, -13, -3, 0, 0, -1, -9, -15, -1, 0, 14, -4, 3, -7, 2, -4, 11, -1, 7, 5, 5, 13, 7, 11, 4, 15, 17, 12, 21, 15, 8, 8, 0, 8, 13, 24, 11, 10, 3, -1, -4, 3, 14, 14, 13, 5, -2, -6, -6, -8, 0, 8, 8, -2, -6, -20, -15, -3, -19, 3, -2, -14, 3, -10 };
+    int midgameBishopTable[64] = { -22, 10, -73, -29, -19, -36, 12, 0, -17, 11, -14, -5, 35, 61, 21, -39, 0, 40, 45, 44, 37, 57, 41, 6, 0, 0, 17, 45, 38, 34, 8, 0, 2, 17, 6, 24, 35, 9, 14, 5, 10, 22, 20, 16, 12, 32, 18, 23, 9, 29, 20, 5, 11, 24, 45, 4, -26, 2, -6, -14, -4, 0, -30, -11 };
+    int endgameBishopTable[64] = { -7, -14, -3, -1, -1, -3, -11, -16, -3, -6, 11, -4, 2, -8, 0, -6, 12, -3, 5, 5, 3, 10, 3, 9, -1, 10, 14, 12, 19, 10, 7, 8, 0, 7, 14, 19, 12, 13, 1, -4, -4, 1, 14, 15, 11, 9, 0, -7, -7, -8, 0, 6, 9, -4, -6, -22, -16, -4, -20, 2, 0, -6, 2, -8 };
 
-    int midgameRookTable[64] = { 39, 49, 38, 59, 69, 16, 38, 50, 30, 32, 63, 66, 84, 72, 30, 50, 3, 26, 30, 41, 26, 50, 67, 23, -17, -4, 12, 31, 29, 40, 0, -12, -32, -18, -8, 2, 13, 0, 12, -16, -40, -18, -10, -11, 8, 4, 0, -28, -41, -8, -14, -6, 1, 11, 0, -60, -10, -15, 5, 8, 9, 7, -19, -18 };
-    int endgameRookTable[64] = { 21, 18, 25, 23, 18, 19, 15, 11, 16, 18, 19, 16, 2, 9, 13, 10, 14, 15, 12, 10, 14, 4, 1, 5, 10, 9, 20, 5, 8, 8, 6, 9, 9, 12, 13, 9, 0, 2, 0, -3, 3, 6, 1, 5, -1, -5, -2, -9, 0, 1, 7, 7, -4, -3, -2, 4, 0, 8, 6, -3, -7, -3, 12, -10 };
+    int midgameRookTable[64] = { 38, 48, 37, 58, 70, 16, 38, 49, 28, 32, 59, 64, 83, 70, 29, 46, 3, 24, 32, 42, 24, 51, 66, 20, -18, -7, 12, 32, 26, 38, 0, -12, -29, -21, -11, 0, 11, -1, 12, -20, -36, -20, -11, -11, 5, 5, 3, -26, -41, -8, -11, -2, 6, 7, -2, -64, -6, -13, 0, 9, 10, 2, -18, -13 };
+    int endgameRookTable[64] = { 19, 16, 23, 21, 18, 18, 16, 11, 14, 19, 15, 16, 3, 7, 14, 8, 13, 13, 13, 12, 10, 3, 1, 3, 9, 8, 18, 9, 5, 5, 4, 9, 10, 10, 10, 5, 0, 0, 0, -5, 2, 6, 0, 5, -2, -7, -3, -8, 0, 0, 4, 7, -2, -8, -5, 2, -3, 1, 3, -4, -6, -9, 14, -11 };
 
-    int midgameQueenTable[64] = { -19, 7, 36, 19, 65, 51, 49, 50, -15, -41, 0, 3, -10, 61, 23, 54, -2, -9, 13, 13, 35, 58, 53, 58, -13, -19, -13, -12, 0, 20, 1, 3, -11, -16, -12, -8, -2, 0, 7, 4, -10, 3, 0, -5, -3, 1, 12, 8, -26, -3, 11, 6, 8, 17, 9, 9, 4, -13, -9, 0, 2, -13, -24, -33 };
-    int endgameQueenTable[64] = { 0, 29, 29, 34, 34, 26, 17, 26, -6, 24, 38, 44, 64, 30, 33, 5, -10, 13, 17, 56, 53, 39, 26, 14, 11, 30, 29, 51, 62, 45, 63, 41, -13, 36, 23, 52, 37, 39, 46, 28, -8, -20, 24, 11, 13, 23, 13, 11, -13, -14, -21, -8, -11, -16, -27, -24, -26, -20, -15, -41, 5, -22, -12, -28 };
+    int midgameQueenTable[64] = { -21, 5, 36, 20, 65, 50, 48, 48, -21, -46, -1, 2, -10, 62, 22, 55, -5, -10, 14, 11, 39, 56, 52, 55, -15, -20, -12, -11, -2, 22, 0, 2, -10, -18, -9, -10, 0, 4, 3, 1, -11, 0, -5, -4, -5, 5, 17, 4, -29, 0, 8, 11, 14, 16, 7, 6, 4, -16, -3, 0, 7, -18, -19, -35 };
+    int endgameQueenTable[64] = { -2, 27, 28, 35, 33, 25, 16, 24, -10, 26, 38, 45, 66, 30, 33, 5, -14, 12, 15, 56, 56, 39, 25, 12, 11, 30, 30, 50, 60, 45, 62, 38, -11, 36, 23, 49, 35, 43, 41, 30, -10, -26, 18, 9, 14, 24, 16, 7, -16, -16, -24, -11, -5, -22, -27, -26, -27, -21, -15, -38, 0, -25, -12, -32 };
 
-    int midgameKingTable[64] = { -57, 30, 23, -7, -48, -26, 9, 20, 36, 6, -12, 0, 0, 3, -30, -21, -1, 31, 9, -8, -12, 13, 29, -14, -9, -12, -4, -19, -22, -17, -6, -28, -41, 6, -20, -31, -39, -36, -26, -43, -7, -8, -14, -41, -39, -24, -7, -19, 13, 13, -2, -56, -44, -11, 15, 10, 1, 32, 2, -17, 0, -24, 22, 11 };
-    int endgameKingTable[64] = { -66, -27, -10, -10, -3, 22, 11, -9, -4, 24, 21, 24, 24, 45, 30, 18, 17, 24, 30, 22, 27, 52, 51, 20, 0, 29, 31, 34, 33, 40, 33, 10, -10, 3, 28, 31, 33, 31, 15, -3, -12, 2, 20, 26, 30, 23, 14, -1, -17, -5, 11, 26, 20, 13, 2, -14, -45, -34, -21, 0, -33, -7, -23, -43 };
+    int midgameKingTable[64] = { -58, 29, 22, -8, -49, -27, 8, 19, 35, 5, -13, 0, -1, 2, -31, -22, -2, 30, 8, -9, -13, 12, 28, -15, -10, -13, -6, -20, -23, -18, -7, -29, -42, 4, -21, -32, -39, -36, -26, -44, -7, -7, -14, -41, -41, -23, -11, -19, 9, 15, -4, -60, -45, -16, 12, 13, 0, 23, 0, -16, 0, -31, 14, 10 };
+    int endgameKingTable[64] = { -67, -28, -11, -11, -4, 21, 10, -10, -5, 23, 20, 23, 23, 44, 29, 17, 16, 23, 29, 21, 26, 51, 50, 19, -1, 28, 30, 33, 32, 39, 32, 9, -11, 2, 26, 30, 33, 30, 15, -4, -13, 1, 19, 27, 29, 23, 11, 0, -22, -5, 9, 25, 21, 10, 1, -11, -43, -40, -21, 5, -32, -10, -25, -44 };
+
 
     // Base tables from https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
     int baseMidgamePawnTable[64] = {
@@ -251,73 +252,73 @@ namespace Zagreus {
 
             for (int8_t square = 0; square < 64; square++) {
                 switch (pieceType) {
-                    case PieceType::WHITE_PAWN:
+                    case WHITE_PAWN:
                         midgamePst[pieceType][square] = midgamePawnTable[63 - square];
                         endgamePst[pieceType][square] = endgamePawnTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgamePawnTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgamePawnTable[63 - square];
                         break;
-                    case PieceType::BLACK_PAWN:
+                    case BLACK_PAWN:
                         midgamePst[pieceType][square] = midgamePawnTable[square];
                         endgamePst[pieceType][square] = endgamePawnTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgamePawnTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgamePawnTable[square];
                         break;
-                    case PieceType::WHITE_KNIGHT:
+                    case WHITE_KNIGHT:
                         midgamePst[pieceType][square] = midgameKnightTable[63 - square];
                         endgamePst[pieceType][square] = endgameKnightTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameKnightTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameKnightTable[63 - square];
                         break;
-                    case PieceType::BLACK_KNIGHT:
+                    case BLACK_KNIGHT:
                         midgamePst[pieceType][square] = midgameKnightTable[square];
                         endgamePst[pieceType][square] = endgameKnightTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameKnightTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameKnightTable[square];
                         break;
-                    case PieceType::WHITE_BISHOP:
+                    case WHITE_BISHOP:
                         midgamePst[pieceType][square] = midgameBishopTable[63 - square];
                         endgamePst[pieceType][square] = endgameBishopTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameBishopTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameBishopTable[63 - square];
                         break;
-                    case PieceType::BLACK_BISHOP:
+                    case BLACK_BISHOP:
                         midgamePst[pieceType][square] = midgameBishopTable[square];
                         endgamePst[pieceType][square] = endgameBishopTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameBishopTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameBishopTable[square];
                         break;
-                    case PieceType::WHITE_ROOK:
+                    case WHITE_ROOK:
                         midgamePst[pieceType][square] = midgameRookTable[63 - square];
                         endgamePst[pieceType][square] = endgameRookTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameRookTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameRookTable[63 - square];
                         break;
-                    case PieceType::BLACK_ROOK:
+                    case BLACK_ROOK:
                         midgamePst[pieceType][square] = midgameRookTable[square];
                         endgamePst[pieceType][square] = endgameRookTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameRookTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameRookTable[square];
                         break;
-                    case PieceType::WHITE_QUEEN:
+                    case WHITE_QUEEN:
                         midgamePst[pieceType][square] = midgameQueenTable[63 - square];
                         endgamePst[pieceType][square] = endgameQueenTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameQueenTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameQueenTable[63 - square];
                         break;
-                    case PieceType::BLACK_QUEEN:
+                    case BLACK_QUEEN:
                         midgamePst[pieceType][square] = midgameQueenTable[square];
                         endgamePst[pieceType][square] = endgameQueenTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameQueenTable[square];
                         baseEndgamePst[pieceType][square] = baseEndgameQueenTable[square];
                         break;
-                    case PieceType::WHITE_KING:
+                    case WHITE_KING:
                         midgamePst[pieceType][square] = midgameKingTable[63 - square];
                         endgamePst[pieceType][square] = endgameKingTable[63 - square];
                         baseMidgamePst[pieceType][square] = baseMidgameKingTable[63 - square];
                         baseEndgamePst[pieceType][square] = baseEndgameKingTable[63 - square];
                         break;
-                    case PieceType::BLACK_KING:
+                    case BLACK_KING:
                         midgamePst[pieceType][square] = midgameKingTable[square];
                         endgamePst[pieceType][square] = endgameKingTable[square];
                         baseMidgamePst[pieceType][square] = baseMidgameKingTable[square];

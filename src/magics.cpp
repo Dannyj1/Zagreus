@@ -224,9 +224,8 @@ namespace Zagreus {
             return count_bits((bitboard & -bitboard) - 1);
 
             // otherwise
-        else
             // return illegal index
-            return -1;
+        return -1;
     }
 
     uint64_t set_occupancy(int index, int bits_in_mask, uint64_t attack_mask) {
@@ -236,7 +235,7 @@ namespace Zagreus {
         // loop over the range of bits within attack mask
         for (int count = 0; count < bits_in_mask; count++) {
             // get LS1B index of attacks mask
-            int square = get_ls1b_index(attack_mask);
+            int8_t square = get_ls1b_index(attack_mask);
 
             // pop LS1B in attack map
             pop_bit(attack_mask, square);
@@ -251,7 +250,7 @@ namespace Zagreus {
         return occupancy;
     }
 
-    uint64_t mask_bishop_attacks(int square) {
+    uint64_t mask_bishop_attacks(int8_t square) {
         // attack bitboard
         uint64_t attacks = 0ULL;
 
@@ -273,7 +272,7 @@ namespace Zagreus {
     }
 
 // mask rook attacks
-    uint64_t mask_rook_attacks(int square) {
+    uint64_t mask_rook_attacks(int8_t square) {
         // attacks bitboard
         uint64_t attacks = 0ULL;
 
@@ -294,7 +293,7 @@ namespace Zagreus {
         return attacks;
     }
 
-    uint64_t bishop_attacks_on_the_fly(int square, uint64_t block) {
+    uint64_t bishop_attacks_on_the_fly(int8_t square, uint64_t block) {
         // attack bitboard
         uint64_t attacks = 0ULL;
 
@@ -331,7 +330,7 @@ namespace Zagreus {
     }
 
 // rook attacks
-    uint64_t rook_attacks_on_the_fly(int square, uint64_t block) {
+    uint64_t rook_attacks_on_the_fly(int8_t square, uint64_t block) {
         // attacks bitboard
         uint64_t attacks = 0ULL;
 
@@ -369,7 +368,7 @@ namespace Zagreus {
 
     void init_sliders_attacks(int is_bishop) {
         // loop over 64 board squares
-        for (int square = 0; square < 64; square++) {
+        for (int8_t square = 0; square < 64; square++) {
             // init bishop & rook masks
             bishop_masks[square] = mask_bishop_attacks(square);
             rook_masks[square] = mask_rook_attacks(square);
@@ -418,14 +417,14 @@ namespace Zagreus {
         gen.seed(generatorSeed);
 
 //        printf("const uint64_t rookMagics[64] = {\n");
-        for (int square = 0; square < 64; square++) {
+        for (int8_t square = 0; square < 64; square++) {
             rookMagics[square] = find_magic(square, RBits[square], 0);
 //            printf("  0x%llxULL,\n", find_magic(square, RBits[square], 0));
         }
 //        printf("};\n\n");
 
 //        printf("const uint64_t bishopMagics[64] = {\n");
-        for (int square = 0; square < 64; square++) {
+        for (int8_t square = 0; square < 64; square++) {
             bishopMagics[square] = find_magic(square, BBits[square], 1);
             //            printf("  0x%llxULL,\n", find_magic(square, BBits[square], 1));
         }

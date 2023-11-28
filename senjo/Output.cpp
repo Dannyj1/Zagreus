@@ -39,10 +39,10 @@ namespace senjo {
     Output::Output(const OutputPrefix prefix) {
         _mutex.lock();
         switch (prefix) {
-            case OutputPrefix::InfoPrefix:
+            case InfoPrefix:
                 std::cout << "info string ";
                 break;
-            case OutputPrefix::NoPrefix:
+            case NoPrefix:
                 break;
         }
     }

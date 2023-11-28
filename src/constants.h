@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -37,7 +37,14 @@ static constexpr int ZOBRIST_EN_PASSANT_INDEX = ZOBRIST_BLACK_QUEENSIDE_INDEX + 
 static constexpr int MATE_SCORE = 20000;
 
 static constexpr uint64_t A_FILE = 0x0101010101010101ULL;
+static constexpr uint64_t B_FILE = 0x0202020202020202ULL;
+static constexpr uint64_t C_FILE = 0x0404040404040404ULL;
+static constexpr uint64_t D_FILE = 0x0808080808080808ULL;
+static constexpr uint64_t E_FILE = 0x1010101010101010ULL;
+static constexpr uint64_t F_FILE = 0x2020202020202020ULL;
+static constexpr uint64_t G_FILE = 0x4040404040404040ULL;
 static constexpr uint64_t H_FILE = 0x8080808080808080ULL;
+static constexpr uint64_t DE_FILE = 0x01818181818181818ULL;
 static constexpr uint64_t NOT_A_FILE = 0XFEFEFEFEFEFEFEFEULL;
 static constexpr uint64_t NOT_AB_FILE = 0XFCFCFCFCFCFCFCFCULL;
 static constexpr uint64_t NOT_GH_FILE = 0X3F3F3F3F3F3F3F3FULL;
@@ -68,6 +75,10 @@ static constexpr uint64_t BLACK_KING_SIDE_BETWEEN = 0x6000000000000000ULL;
 static constexpr uint64_t BLACK_QUEEN_SIDE_BETWEEN = 0xE00000000000000ULL;
 
 static constexpr int NO_CAPTURE_SCORE = -1;
+
+static constexpr int COLORS = 2;
+static constexpr int PIECE_TYPES = 12;
+static constexpr int8_t SQUARES = 64;
 
 static constexpr int MVVLVA_TABLE[12][12] = {
         {105, 105, 205, 205, 305, 305, 405, 405, 505, 505, 605, 605},

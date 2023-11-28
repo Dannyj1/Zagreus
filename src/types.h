@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -60,9 +60,9 @@ namespace Zagreus {
     struct Move {
         int8_t from = 0;
         int8_t to = 0;
-        PieceType piece = PieceType::EMPTY;
+        PieceType piece = EMPTY;
         int captureScore = NO_CAPTURE_SCORE;
-        PieceType promotionPiece = PieceType::EMPTY;
+        PieceType promotionPiece = EMPTY;
         int score = 0;
     };
 
@@ -76,8 +76,8 @@ namespace Zagreus {
         uint8_t halfMoveClock = 0;
         int8_t enPassantSquare = NO_SQUARE;
         uint8_t castlingRights = 0;
-        PieceType capturedPiece = PieceType::EMPTY;
-        MoveType moveType = MoveType::REGULAR;
+        PieceType capturedPiece = EMPTY;
+        MoveType moveType = REGULAR;
         uint64_t zobristHash = 0ULL;
         uint8_t kingInCheck = 0b00001100;
         Move previousMove{};

@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -193,7 +193,7 @@ void benchmark() {
     for (const std::string &position : benchmarkPositions) {
         for (int i = 0; i < 2; i++) {
             Bitboard bb;
-            PieceColor color = i == 0 ? PieceColor::WHITE : PieceColor::BLACK;
+            PieceColor color = i == 0 ? WHITE : BLACK;
 
             bb.setFromFen(position);
             bb.setMovingColor(color);
@@ -241,10 +241,10 @@ void addHashes(Bitboard &board, int depth, std::map<uint64_t, uint64_t> &collisi
 
     MoveList* moves = moveListPool->getMoveList();
 
-    if (board.getMovingColor() == PieceColor::WHITE) {
-        generateMoves<PieceColor::WHITE>(board, moves);
+    if (board.getMovingColor() == WHITE) {
+        generateMoves<WHITE>(board, moves);
     } else {
-        generateMoves<PieceColor::BLACK>(board, moves);
+        generateMoves<BLACK>(board, moves);
     }
 
     for (Move &move : moves->moves) {

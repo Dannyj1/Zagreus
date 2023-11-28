@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -44,44 +44,10 @@ namespace Zagreus {
                              Move &previousMove,
                              std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth = 0);
 
-        template<PieceColor color>
-        int evaluate(Bitboard &board, std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine);
-
         bool isCurrentlySearching();
 
         senjo::SearchStats getSearchStats();
-
-        void getBlackMaterialScore(Bitboard &board);
-        void getWhiteMaterialScore(Bitboard &board);
-
-        void getWhitePositionalScore(Bitboard &bitboard);
-        void getBlackPositionalScore(Bitboard &bitboard);
-
-        void getWhiteMobilityScore(Bitboard &bitboard);
-        void getBlackMobilityScore(Bitboard &bitboard);
-
-        void getWhiteKingScore(Bitboard &bitboard);
-        void getBlackKingScore(Bitboard &bitboard);
-
-        void getWhiteConnectivityScore(Bitboard &bitboard);
-        void getBlackConnectivityScore(Bitboard &bitboard);
-
-        void getWhiteRookScore(Bitboard &bitboard);
-        void getBlackRookScore(Bitboard &bitboard);
-
-        void getWhiteBishopScore(Bitboard &bitboard);
-        void getBlackBishopScore(Bitboard &bitboard);
-
-        template<PieceColor color>
-        void getPawnScore(Bitboard &bitboard);
-
-        void initEvalContext(Bitboard &bitboard);
-
-        template<PieceColor color>
-        void getOutpostScore(Bitboard &bitboard);
     };
 
     static SearchManager searchManager{};
-
-    int getGamePhase(Bitboard &bitboard);
 }

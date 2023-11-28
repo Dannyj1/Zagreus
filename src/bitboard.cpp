@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -35,12 +35,12 @@ namespace Zagreus {
         gen.seed(0x6C7CCC580A348E7BULL);
         std::uniform_int_distribution<uint64_t> dis;
 
-        for (uint64_t &zobristConstant : zobristConstants) {
+        for (uint64_t& zobristConstant : zobristConstants) {
             zobristConstant = dis(gen);
         }
 
-        for (PieceType &type : pieceSquareMapping) {
-            type = PieceType::EMPTY;
+        for (PieceType& type : pieceSquareMapping) {
+            type = EMPTY;
         }
 
         uint64_t sqBB = 1ULL;
@@ -55,8 +55,8 @@ namespace Zagreus {
 
         sqBB = 1ULL;
         for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-            pawnAttacks[PieceColor::WHITE][sq] = calculatePawnAttacks<PieceColor::WHITE>(sqBB) & ~sqBB;
-            pawnAttacks[PieceColor::BLACK][sq] = calculatePawnAttacks<PieceColor::BLACK>(sqBB) & ~sqBB;
+            pawnAttacks[WHITE][sq] = calculatePawnAttacks<WHITE>(sqBB) & ~sqBB;
+            pawnAttacks[BLACK][sq] = calculatePawnAttacks<BLACK>(sqBB) & ~sqBB;
         }
 
         initializeBetweenLookup();
@@ -68,33 +68,37 @@ namespace Zagreus {
         for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
             for (int direction = 0; direction < 8; direction++) {
                 switch (static_cast<Direction>(direction)) {
-                    case NORTH:
-                        rayAttacks[direction][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case SOUTH:
-                        rayAttacks[direction][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case EAST:
-                        rayAttacks[direction][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case WEST:
-                        rayAttacks[direction][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case NORTH_EAST:
-                        rayAttacks[direction][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case NORTH_WEST:
-                        rayAttacks[direction][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case SOUTH_EAST:
-                        rayAttacks[direction][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
-                    case SOUTH_WEST:
-                        rayAttacks[direction][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
-                        break;
+                case NORTH:
+                    rayAttacks[direction][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case SOUTH:
+                    rayAttacks[direction][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case EAST:
+                    rayAttacks[direction][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case WEST:
+                    rayAttacks[direction][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case NORTH_EAST:
+                    rayAttacks[direction][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case NORTH_WEST:
+                    rayAttacks[direction][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case SOUTH_EAST:
+                    rayAttacks[direction][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
+                case SOUTH_WEST:
+                    rayAttacks[direction][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
+                    break;
                 }
             }
         }
+    }
+
+    uint64_t Bitboard::getRayAttack(int8_t square, Direction direction) {
+        return rayAttacks[direction][square];
     }
 
     uint64_t Bitboard::getOccupiedBoard() {
@@ -138,6 +142,11 @@ namespace Zagreus {
         return getBishopAttacks(square) | getRookAttacks(square);
     }
 
+    uint64_t Bitboard::getQueenAttacks(int8_t square, uint64_t occupancy) {
+        assert(square >= 0 && square < 64);
+        return getBishopAttacks(square, occupancy) | getRookAttacks(square, occupancy);
+    }
+
     uint64_t Bitboard::getBishopAttacks(int8_t square) {
         assert(square >= 0 && square < 64);
         uint64_t occupancy = getOccupiedBoard();
@@ -148,9 +157,27 @@ namespace Zagreus {
         return getBishopMagicAttacks(square, occupancy);
     }
 
+    uint64_t Bitboard::getBishopAttacks(int8_t square, uint64_t occupancy) {
+        assert(square >= 0 && square < 64);
+        occupancy &= getBishopMask(square);
+        occupancy *= getBishopMagic(square);
+        occupancy >>= 64 - BBits[square];
+
+        return getBishopMagicAttacks(square, occupancy);
+    }
+
     uint64_t Bitboard::getRookAttacks(int8_t square) {
         assert(square >= 0 && square < 64);
         uint64_t occupancy = getOccupiedBoard();
+        occupancy &= getRookMask(square);
+        occupancy *= getRookMagic(square);
+        occupancy >>= 64 - RBits[square];
+
+        return getRookMagicAttacks(square, occupancy);
+    }
+
+    uint64_t Bitboard::getRookAttacks(int8_t square, uint64_t occupancy) {
+        assert(square >= 0 && square < 64);
         occupancy &= getRookMask(square);
         occupancy *= getRookMagic(square);
         occupancy >>= 64 - RBits[square];
@@ -175,14 +202,14 @@ namespace Zagreus {
         pieceBB[piece] &= ~(1ULL << square);
         occupiedBB &= ~(1ULL << square);
         colorBB[piece % 2] &= ~(1ULL << square);
-        pieceSquareMapping[square] = PieceType::EMPTY;
+        pieceSquareMapping[square] = EMPTY;
         zobristHash ^= zobristConstants[square + 64 * piece];
         materialCount[piece] -= 1;
         pstValues[piece % 2] -= getMidgamePstValue(piece, square);
         pstValues[piece % 2 + 2] -= getEndgamePstValue(piece, square);
     }
 
-    void Bitboard::makeMove(Move &move) {
+    void Bitboard::makeMove(Move& move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
         assert(move.piece % 2 == movingColor);
@@ -193,14 +220,14 @@ namespace Zagreus {
         undoStack[ply].halfMoveClock = halfMoveClock;
         undoStack[ply].enPassantSquare = enPassantSquare;
         undoStack[ply].castlingRights = castlingRights;
-        undoStack[ply].moveType = MoveType::REGULAR;
+        undoStack[ply].moveType = REGULAR;
         undoStack[ply].zobristHash = zobristHash;
         undoStack[ply].kingInCheck = kingInCheck;
         undoStack[ply].previousMove = previousMove;
 
         halfMoveClock += 1;
 
-        if (capturedPiece != PieceType::EMPTY) {
+        if (capturedPiece != EMPTY) {
             removePiece(move.to, capturedPiece);
             halfMoveClock = 0;
         }
@@ -211,7 +238,7 @@ namespace Zagreus {
             zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
         }
 
-        if (move.piece == PieceType::WHITE_PAWN || move.piece == PieceType::BLACK_PAWN) {
+        if (move.piece == WHITE_PAWN || move.piece == BLACK_PAWN) {
             halfMoveClock = 0;
 
             if (move.to - move.from == 16) {
@@ -221,10 +248,10 @@ namespace Zagreus {
                 enPassantSquare = move.to + 8;
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
             } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
-                       move.to == enPassantSquare) {
-                int8_t enPassantCaptureSquare = move.to - (movingColor == PieceColor::WHITE ? 8 : -8);
+                move.to == enPassantSquare) {
+                int8_t enPassantCaptureSquare = move.to - (movingColor == WHITE ? 8 : -8);
                 removePiece(enPassantCaptureSquare, getPieceOnSquare(enPassantCaptureSquare));
-                undoStack[ply].moveType = MoveType::EN_PASSANT;
+                undoStack[ply].moveType = EN_PASSANT;
                 enPassantSquare = NO_SQUARE;
             } else {
                 enPassantSquare = NO_SQUARE;
@@ -239,87 +266,87 @@ namespace Zagreus {
 
         if (move.piece == WHITE_KING || move.piece == BLACK_KING) {
             if (std::abs(move.to - move.from) == 2) {
-                if (move.to == Square::G1) {
-                    removePiece(Square::H1, PieceType::WHITE_ROOK);
-                    setPiece(Square::F1, PieceType::WHITE_ROOK);
+                if (move.to == G1) {
+                    removePiece(H1, WHITE_ROOK);
+                    setPiece(F1, WHITE_ROOK);
                     castlingRights |= HAS_WHITE_CASTLED;
-                } else if (move.to == Square::C1) {
-                    removePiece(Square::A1, PieceType::WHITE_ROOK);
-                    setPiece(Square::D1, PieceType::WHITE_ROOK);
+                } else if (move.to == C1) {
+                    removePiece(A1, WHITE_ROOK);
+                    setPiece(D1, WHITE_ROOK);
                     castlingRights |= HAS_WHITE_CASTLED;
-                } else if (move.to == Square::G8) {
-                    removePiece(Square::H8, PieceType::BLACK_ROOK);
-                    setPiece(Square::F8, PieceType::BLACK_ROOK);
+                } else if (move.to == G8) {
+                    removePiece(H8, BLACK_ROOK);
+                    setPiece(F8, BLACK_ROOK);
                     castlingRights |= HAS_BLACK_CASTLED;
-                } else if (move.to == Square::C8) {
-                    removePiece(Square::A8, PieceType::BLACK_ROOK);
-                    setPiece(Square::D8, PieceType::BLACK_ROOK);
+                } else if (move.to == C8) {
+                    removePiece(A8, BLACK_ROOK);
+                    setPiece(D8, BLACK_ROOK);
                     castlingRights |= HAS_BLACK_CASTLED;
                 }
 
-                undoStack[ply].moveType = MoveType::CASTLING;
+                undoStack[ply].moveType = CASTLING;
             }
 
             if (move.piece == WHITE_KING) {
-                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                if (castlingRights & WHITE_KINGSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
                 }
 
-                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                if (castlingRights & WHITE_QUEENSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
                 }
 
-                castlingRights &= ~(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
+                castlingRights &= ~(WHITE_KINGSIDE | WHITE_QUEENSIDE);
             } else {
-                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                if (castlingRights & BLACK_KINGSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
                 }
 
-                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                if (castlingRights & BLACK_QUEENSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
                 }
 
-                castlingRights &= ~(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
+                castlingRights &= ~(BLACK_KINGSIDE | BLACK_QUEENSIDE);
             }
         }
 
-        if (move.piece == PieceType::WHITE_ROOK) {
-            if (move.from == Square::A1 && (castlingRights & CastlingRights::WHITE_QUEENSIDE)) {
-                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+        if (move.piece == WHITE_ROOK) {
+            if (move.from == A1 && castlingRights & WHITE_QUEENSIDE) {
+                if (castlingRights & WHITE_QUEENSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
                 }
 
-                castlingRights &= ~CastlingRights::WHITE_QUEENSIDE;
-            } else if (move.from == Square::H1 && (castlingRights & CastlingRights::WHITE_KINGSIDE)) {
-                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                castlingRights &= ~WHITE_QUEENSIDE;
+            } else if (move.from == H1 && castlingRights & WHITE_KINGSIDE) {
+                if (castlingRights & WHITE_KINGSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
                 }
 
-                castlingRights &= ~CastlingRights::WHITE_KINGSIDE;
+                castlingRights &= ~WHITE_KINGSIDE;
             }
-        } else if (move.piece == PieceType::BLACK_ROOK) {
-            if (move.from == Square::A8 && (castlingRights & CastlingRights::BLACK_QUEENSIDE)) {
-                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+        } else if (move.piece == BLACK_ROOK) {
+            if (move.from == A8 && castlingRights & BLACK_QUEENSIDE) {
+                if (castlingRights & BLACK_QUEENSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
                 }
 
-                castlingRights &= ~CastlingRights::BLACK_QUEENSIDE;
-            } else if (move.from == Square::H8 && (castlingRights & CastlingRights::BLACK_KINGSIDE)) {
-                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                castlingRights &= ~BLACK_QUEENSIDE;
+            } else if (move.from == H8 && castlingRights & BLACK_KINGSIDE) {
+                if (castlingRights & BLACK_KINGSIDE) {
                     zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
                 }
 
-                castlingRights &= ~CastlingRights::BLACK_KINGSIDE;
+                castlingRights &= ~BLACK_KINGSIDE;
             }
         }
 
-        if (move.promotionPiece != PieceType::EMPTY) {
+        if (move.promotionPiece != EMPTY) {
             setPiece(move.to, move.promotionPiece);
         } else {
             setPiece(move.to, move.piece);
         }
 
-        if (movingColor == PieceColor::BLACK) {
+        if (movingColor == BLACK) {
             fullmoveClock += 1;
         }
 
@@ -331,44 +358,45 @@ namespace Zagreus {
         previousMove = move;
     }
 
-    void Bitboard::unmakeMove(Move &move) {
+    void Bitboard::unmakeMove(Move& move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
 
         moveHistory[ply] = 0;
         UndoData undoData = undoStack[ply - 1];
 
-        if (move.promotionPiece != PieceType::EMPTY) {
+        if (move.promotionPiece != EMPTY) {
             removePiece(move.to, move.promotionPiece);
         } else {
             removePiece(move.to, move.piece);
         }
 
-        if (undoData.capturedPiece != PieceType::EMPTY) {
+        if (undoData.capturedPiece != EMPTY) {
             setPiece(move.to, undoData.capturedPiece);
         }
 
         setPiece(move.from, move.piece);
 
-        if (undoData.moveType == MoveType::EN_PASSANT) {
-            int8_t enPassantCaptureSquare = move.to - (getOppositeColor(movingColor) == PieceColor::WHITE ? 8 : -8);
-            setPiece(enPassantCaptureSquare, getOppositeColor(movingColor) == PieceColor::WHITE ? PieceType::BLACK_PAWN
-                                                                                                : PieceType::WHITE_PAWN);
+        if (undoData.moveType == EN_PASSANT) {
+            int8_t enPassantCaptureSquare = move.to - (getOppositeColor(movingColor) == WHITE ? 8 : -8);
+            setPiece(enPassantCaptureSquare, getOppositeColor(movingColor) == WHITE
+                                                 ? BLACK_PAWN
+                                                 : WHITE_PAWN);
         }
 
-        if (undoData.moveType == MoveType::CASTLING) {
-            if (move.to == Square::G1) {
-                removePiece(Square::F1, PieceType::WHITE_ROOK);
-                setPiece(Square::H1, PieceType::WHITE_ROOK);
-            } else if (move.to == Square::C1) {
-                removePiece(Square::D1, PieceType::WHITE_ROOK);
-                setPiece(Square::A1, PieceType::WHITE_ROOK);
-            } else if (move.to == Square::G8) {
-                removePiece(Square::F8, PieceType::BLACK_ROOK);
-                setPiece(Square::H8, PieceType::BLACK_ROOK);
-            } else if (move.to == Square::C8) {
-                removePiece(Square::D8, PieceType::BLACK_ROOK);
-                setPiece(Square::A8, PieceType::BLACK_ROOK);
+        if (undoData.moveType == CASTLING) {
+            if (move.to == G1) {
+                removePiece(F1, WHITE_ROOK);
+                setPiece(H1, WHITE_ROOK);
+            } else if (move.to == C1) {
+                removePiece(D1, WHITE_ROOK);
+                setPiece(A1, WHITE_ROOK);
+            } else if (move.to == G8) {
+                removePiece(F8, BLACK_ROOK);
+                setPiece(H8, BLACK_ROOK);
+            } else if (move.to == C8) {
+                removePiece(D8, BLACK_ROOK);
+                setPiece(A8, BLACK_ROOK);
             }
         }
 
@@ -382,17 +410,17 @@ namespace Zagreus {
         kingInCheck = undoData.kingInCheck;
         previousMove = undoData.previousMove;
 
-        if (movingColor == PieceColor::BLACK) {
+        if (movingColor == BLACK) {
             fullmoveClock -= 1;
         }
     }
 
     void Bitboard::makeNullMove() {
-        undoStack[ply].capturedPiece = PieceType::EMPTY;
+        undoStack[ply].capturedPiece = EMPTY;
         undoStack[ply].halfMoveClock = halfMoveClock;
         undoStack[ply].enPassantSquare = enPassantSquare;
         undoStack[ply].castlingRights = castlingRights;
-        undoStack[ply].moveType = MoveType::REGULAR;
+        undoStack[ply].moveType = REGULAR;
         undoStack[ply].zobristHash = zobristHash;
         undoStack[ply].kingInCheck = kingInCheck;
         undoStack[ply].previousMove = previousMove;
@@ -402,7 +430,7 @@ namespace Zagreus {
             enPassantSquare = NO_SQUARE;
         }
 
-        if (movingColor == PieceColor::BLACK) {
+        if (movingColor == BLACK) {
             fullmoveClock += 1;
         }
 
@@ -427,17 +455,17 @@ namespace Zagreus {
         kingInCheck = undoData.kingInCheck;
         previousMove = undoData.previousMove;
 
-        if (movingColor == PieceColor::BLACK) {
+        if (movingColor == BLACK) {
             fullmoveClock -= 1;
         }
     }
 
-    const Move &Bitboard::getPreviousMove() const {
+    const Move& Bitboard::getPreviousMove() const {
         return previousMove;
     }
 
 
-    uint64_t Bitboard::getZobristForMove(Move &move) {
+    uint64_t Bitboard::getZobristForMove(Move& move) {
         assert(move.from >= 0 && move.from < 64);
         assert(move.to >= 0 && move.to < 64);
         assert(move.piece % 2 == movingColor);
@@ -445,7 +473,7 @@ namespace Zagreus {
         uint64_t result = getZobristHash();
         PieceType capturedPiece = getPieceOnSquare(move.to);
 
-        if (capturedPiece != PieceType::EMPTY) {
+        if (capturedPiece != EMPTY) {
             result ^= zobristConstants[move.to + 64 * capturedPiece];
         }
 
@@ -455,7 +483,7 @@ namespace Zagreus {
             result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
         }
 
-        if (move.piece == PieceType::WHITE_PAWN || move.piece == PieceType::BLACK_PAWN) {
+        if (move.piece == WHITE_PAWN || move.piece == BLACK_PAWN) {
             if (move.to - move.from == 16) {
                 result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to - 8) % 8];
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
@@ -463,71 +491,71 @@ namespace Zagreus {
                 result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to + 8) % 8];
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
             } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
-                       move.to == enPassantSquare) {
-                int8_t enPassantCaptureSquare = move.to - (movingColor == PieceColor::WHITE ? 8 : -8);
+                move.to == enPassantSquare) {
+                int8_t enPassantCaptureSquare = move.to - (movingColor == WHITE ? 8 : -8);
                 result ^= zobristConstants[enPassantCaptureSquare + 64 * getPieceOnSquare(enPassantCaptureSquare)];
             }
         }
 
         if (move.piece == WHITE_KING || move.piece == BLACK_KING) {
             if (std::abs(move.to - move.from) == 2) {
-                if (move.to == Square::G1) {
-                    result ^= zobristConstants[Square::H1 + 64 * PieceType::WHITE_ROOK];
-                    result ^= zobristConstants[Square::F1 + 64 * PieceType::WHITE_ROOK];
-                } else if (move.to == Square::C1) {
-                    result ^= zobristConstants[Square::A1 + 64 * PieceType::WHITE_ROOK];
-                    result ^= zobristConstants[Square::D1 + 64 * PieceType::WHITE_ROOK];
-                } else if (move.to == Square::G8) {
-                    result ^= zobristConstants[Square::H8 + 64 * PieceType::BLACK_ROOK];
-                    result ^= zobristConstants[Square::F8 + 64 * PieceType::BLACK_ROOK];
-                } else if (move.to == Square::C8) {
-                    result ^= zobristConstants[Square::A8 + 64 * PieceType::BLACK_ROOK];
-                    result ^= zobristConstants[Square::D8 + 64 * PieceType::BLACK_ROOK];
+                if (move.to == G1) {
+                    result ^= zobristConstants[H1 + 64 * WHITE_ROOK];
+                    result ^= zobristConstants[F1 + 64 * WHITE_ROOK];
+                } else if (move.to == C1) {
+                    result ^= zobristConstants[A1 + 64 * WHITE_ROOK];
+                    result ^= zobristConstants[D1 + 64 * WHITE_ROOK];
+                } else if (move.to == G8) {
+                    result ^= zobristConstants[H8 + 64 * BLACK_ROOK];
+                    result ^= zobristConstants[F8 + 64 * BLACK_ROOK];
+                } else if (move.to == C8) {
+                    result ^= zobristConstants[A8 + 64 * BLACK_ROOK];
+                    result ^= zobristConstants[D8 + 64 * BLACK_ROOK];
                 }
             }
 
             if (move.piece == WHITE_KING) {
-                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+                if (castlingRights & WHITE_KINGSIDE) {
                     result ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
                 }
 
-                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+                if (castlingRights & WHITE_QUEENSIDE) {
                     result ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
                 }
             } else {
-                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+                if (castlingRights & BLACK_KINGSIDE) {
                     result ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
                 }
 
-                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+                if (castlingRights & BLACK_QUEENSIDE) {
                     result ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
                 }
             }
         }
 
-        if (move.piece == PieceType::WHITE_ROOK) {
-            if (move.from == Square::A1 && (castlingRights & CastlingRights::WHITE_QUEENSIDE)) {
-                if (castlingRights & CastlingRights::WHITE_QUEENSIDE) {
+        if (move.piece == WHITE_ROOK) {
+            if (move.from == A1 && castlingRights & WHITE_QUEENSIDE) {
+                if (castlingRights & WHITE_QUEENSIDE) {
                     result ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
                 }
-            } else if (move.from == Square::H1 && (castlingRights & CastlingRights::WHITE_KINGSIDE)) {
-                if (castlingRights & CastlingRights::WHITE_KINGSIDE) {
+            } else if (move.from == H1 && castlingRights & WHITE_KINGSIDE) {
+                if (castlingRights & WHITE_KINGSIDE) {
                     result ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
                 }
             }
-        } else if (move.piece == PieceType::BLACK_ROOK) {
-            if (move.from == Square::A8 && (castlingRights & CastlingRights::BLACK_QUEENSIDE)) {
-                if (castlingRights & CastlingRights::BLACK_QUEENSIDE) {
+        } else if (move.piece == BLACK_ROOK) {
+            if (move.from == A8 && castlingRights & BLACK_QUEENSIDE) {
+                if (castlingRights & BLACK_QUEENSIDE) {
                     result ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
                 }
-            } else if (move.from == Square::H8 && (castlingRights & CastlingRights::BLACK_KINGSIDE)) {
-                if (castlingRights & CastlingRights::BLACK_KINGSIDE) {
+            } else if (move.from == H8 && castlingRights & BLACK_KINGSIDE) {
+                if (castlingRights & BLACK_KINGSIDE) {
                     result ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
                 }
             }
         }
 
-        if (move.promotionPiece != PieceType::EMPTY) {
+        if (move.promotionPiece != EMPTY) {
             result ^= zobristConstants[move.to + 64 * move.promotionPiece];
         } else {
             result ^= zobristConstants[move.to + 64 * move.piece];
@@ -538,11 +566,11 @@ namespace Zagreus {
     }
 
     bool Bitboard::hasMinorOrMajorPieces() {
-        return hasMinorOrMajorPieces<PieceColor::WHITE>() || hasMinorOrMajorPieces<PieceColor::BLACK>();
+        return hasMinorOrMajorPieces<WHITE>() || hasMinorOrMajorPieces<BLACK>();
     }
 
     int Bitboard::getAmountOfMinorOrMajorPieces() {
-        return getAmountOfMinorOrMajorPieces<PieceColor::WHITE>() + getAmountOfMinorOrMajorPieces<PieceColor::BLACK>();
+        return getAmountOfMinorOrMajorPieces<WHITE>() + getAmountOfMinorOrMajorPieces<BLACK>();
     }
 
     void Bitboard::print() {
@@ -550,7 +578,7 @@ namespace Zagreus {
 
         for (int index = 0; index < 64; index++) {
             if (index % 8 == 0) {
-                std::cout << std::endl << (index / 8) + 1 << " | ";
+                std::cout << std::endl << index / 8 + 1 << " | ";
             }
 
             std::cout << getCharacterForPieceType(pieceSquareMapping[index]) << " | ";
@@ -565,7 +593,7 @@ namespace Zagreus {
 
         for (int index = 0; index < 64; index++) {
             if (index % 8 == 0) {
-                std::cout << std::endl << (index / 8) + 1 << " | ";
+                std::cout << std::endl << index / 8 + 1 << " | ";
             }
 
             bool didPrint = false;
@@ -589,40 +617,40 @@ namespace Zagreus {
         std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
     }
 
-    bool Bitboard::setFromFen(const std::string &fen) {
-        int index = Square::A8;
+    bool Bitboard::setFromFen(const std::string& fen) {
+        int index = A8;
         int spaces = 0;
 
-        for (PieceType &type : pieceSquareMapping) {
-            type = PieceType::EMPTY;
+        for (PieceType& type : pieceSquareMapping) {
+            type = EMPTY;
         }
 
-        for (uint64_t &bb : pieceBB) {
+        for (uint64_t& bb : pieceBB) {
             bb = 0;
         }
 
-        for (uint64_t &bb : colorBB) {
+        for (uint64_t& bb : colorBB) {
             bb = 0;
         }
 
-        for (uint64_t &hash : moveHistory) {
+        for (uint64_t& hash : moveHistory) {
             hash = 0;
         }
 
-        for (UndoData &undo : undoStack) {
+        for (UndoData& undo : undoStack) {
             undo = {};
         }
 
-        for (int &count : materialCount) {
+        for (int& count : materialCount) {
             count = 0;
         }
 
         occupiedBB = 0;
-        movingColor = PieceColor::NONE;
+        movingColor = NONE;
         ply = 0;
         halfMoveClock = 0;
         fullmoveClock = 1;
-        enPassantSquare = Square::NO_SQUARE;
+        enPassantSquare = NO_SQUARE;
         castlingRights = 0;
         zobristHash = 0;
         pstValues[0] = 0;
@@ -662,9 +690,9 @@ namespace Zagreus {
 
             if (spaces == 1) {
                 if (tolower(character) == 'w') {
-                    movingColor = PieceColor::WHITE;
+                    movingColor = WHITE;
                 } else if (tolower(character) == 'b') {
-                    movingColor = PieceColor::BLACK;
+                    movingColor = BLACK;
                     zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
                 } else {
                     senjo::Output(senjo::Output::InfoPrefix) << "Invalid color to move!";
@@ -676,19 +704,19 @@ namespace Zagreus {
                 if (character == '-') {
                     continue;
                 } else if (character == 'K') {
-                    castlingRights |= CastlingRights::WHITE_KINGSIDE;
+                    castlingRights |= WHITE_KINGSIDE;
                     zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
                     continue;
                 } else if (character == 'Q') {
-                    castlingRights |= CastlingRights::WHITE_QUEENSIDE;
+                    castlingRights |= WHITE_QUEENSIDE;
                     zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
                     continue;
                 } else if (character == 'k') {
-                    castlingRights |= CastlingRights::BLACK_KINGSIDE;
+                    castlingRights |= BLACK_KINGSIDE;
                     zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
                     continue;
                 } else if (character == 'q') {
-                    castlingRights |= CastlingRights::BLACK_QUEENSIDE;
+                    castlingRights |= BLACK_QUEENSIDE;
                     zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
                     continue;
                 }
@@ -707,14 +735,14 @@ namespace Zagreus {
                 }
 
                 int8_t file = tolower(character) - 'a'; // NOLINT(cppcoreguidelines-narrowing-conversions)
-                int8_t rank = (getOppositeColor(movingColor) == PieceColor::WHITE) ? 2 : 5;
+                int8_t rank = getOppositeColor(movingColor) == WHITE ? 2 : 5;
 
                 if (file < 0 || file > 7) {
                     senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant file!";
                     return false;
                 }
 
-                enPassantSquare = (rank * 8) + file;
+                enPassantSquare = rank * 8 + file;
                 zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
 
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
@@ -735,36 +763,36 @@ namespace Zagreus {
     }
 
     // Faster setFromFen version without validity checks and some features the tuner doesn't need
-    bool Bitboard::setFromFenTuner(std::string &fen) {
-        int index = Square::A8;
+    bool Bitboard::setFromFenTuner(std::string& fen) {
+        int index = A8;
         int spaces = 0;
 
-        for (PieceType &type : pieceSquareMapping) {
-            type = PieceType::EMPTY;
+        for (PieceType& type : pieceSquareMapping) {
+            type = EMPTY;
         }
 
-        for (uint64_t &bb : pieceBB) {
+        for (uint64_t& bb : pieceBB) {
             bb = 0;
         }
 
-        for (uint64_t &bb : colorBB) {
+        for (uint64_t& bb : colorBB) {
             bb = 0;
         }
 
-        for (int &count : materialCount) {
+        for (int& count : materialCount) {
             count = 0;
         }
 
         occupiedBB = 0;
-        enPassantSquare = Square::NO_SQUARE;
-        movingColor = PieceColor::WHITE;
+        enPassantSquare = NO_SQUARE;
+        movingColor = WHITE;
         castlingRights = 0;
         pstValues[0] = 0;
         pstValues[1] = 0;
         pstValues[2] = 0;
         pstValues[3] = 0;
 
-        for (char &character : fen) {
+        for (char& character : fen) {
             if (character == ' ') {
                 spaces++;
                 continue;
@@ -797,16 +825,16 @@ namespace Zagreus {
                 if (character == '-') {
                     continue;
                 } else if (character == 'K') {
-                    castlingRights |= CastlingRights::WHITE_KINGSIDE;
+                    castlingRights |= WHITE_KINGSIDE;
                     continue;
                 } else if (character == 'Q') {
-                    castlingRights |= CastlingRights::WHITE_QUEENSIDE;
+                    castlingRights |= WHITE_QUEENSIDE;
                     continue;
                 } else if (character == 'k') {
-                    castlingRights |= CastlingRights::BLACK_KINGSIDE;
+                    castlingRights |= BLACK_KINGSIDE;
                     continue;
                 } else if (character == 'q') {
-                    castlingRights |= CastlingRights::BLACK_QUEENSIDE;
+                    castlingRights |= BLACK_QUEENSIDE;
                     continue;
                 } else {
                     continue;
@@ -823,9 +851,9 @@ namespace Zagreus {
                 }
 
                 int8_t file = tolower(character) - 'a'; // NOLINT(cppcoreguidelines-narrowing-conversions)
-                int8_t rank = (getOppositeColor(movingColor) == PieceColor::WHITE) ? 2 : 5;
+                int8_t rank = getOppositeColor(movingColor) == WHITE ? 2 : 5;
 
-                enPassantSquare = (rank * 8) + file;
+                enPassantSquare = rank * 8 + file;
 
                 assert(enPassantSquare >= 0 && enPassantSquare < 64);
                 index += 2;
@@ -868,11 +896,11 @@ namespace Zagreus {
             }
         }
 
-        MoveList* moveList = moveListPool->getMoveList();
-        if (movingColor == PieceColor::WHITE) {
-            generateMoves<PieceColor::WHITE>(*this, moveList);
+        /*MoveList* moveList = moveListPool->getMoveList();
+        if (movingColor == WHITE) {
+            generateMoves<WHITE>(*this, moveList);
         } else {
-            generateMoves<PieceColor::BLACK>(*this, moveList);
+            generateMoves<BLACK>(*this, moveList);
         }
 
         bool hasLegalMove = false;
@@ -881,14 +909,14 @@ namespace Zagreus {
             Move move = moveList->moves[i];
             makeMove(move);
 
-            if (movingColor == PieceColor::WHITE) {
-                if (!isKingInCheck<PieceColor::BLACK>()) {
+            if (movingColor == WHITE) {
+                if (!isKingInCheck<BLACK>()) {
                     unmakeMove(move);
                     hasLegalMove = true;
                     break;
                 }
             } else {
-                if (!isKingInCheck<PieceColor::WHITE>()) {
+                if (!isKingInCheck<WHITE>()) {
                     unmakeMove(move);
                     hasLegalMove = true;
                     break;
@@ -902,7 +930,7 @@ namespace Zagreus {
 
         if (!hasLegalMove) {
             return true;
-        }
+        }*/
 
         return false;
     }
@@ -927,8 +955,8 @@ namespace Zagreus {
         }
 
         if (pieceCount == 3) {
-            uint64_t bishopBB = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<BLACK_BISHOP>();
-            uint64_t knightBB = getPieceBoard<WHITE_KNIGHT>() | getPieceBoard<BLACK_KNIGHT>();
+            uint64_t bishopBB = getPieceBoard(WHITE_BISHOP) | getPieceBoard(BLACK_BISHOP);
+            uint64_t knightBB = getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT);
 
             if (bishopBB || knightBB) {
                 return true;
@@ -936,12 +964,12 @@ namespace Zagreus {
         }
 
         if (pieceCount == 4) {
-            if (popcnt(getColorBoard<PieceColor::WHITE>()) != 2) {
+            if (popcnt(getColorBoard<WHITE>()) != 2) {
                 return false;
             }
 
-            uint64_t whiteDrawPieces = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<WHITE_KNIGHT>();
-            uint64_t blackDrawPieces = getPieceBoard<BLACK_BISHOP>() | getPieceBoard<BLACK_KNIGHT>();
+            uint64_t whiteDrawPieces = getPieceBoard(WHITE_BISHOP) | getPieceBoard(WHITE_KNIGHT);
+            uint64_t blackDrawPieces = getPieceBoard(BLACK_BISHOP) | getPieceBoard(BLACK_KNIGHT);
 
             // King not included in the above boards, so if there is only one piece left, it's a draw
             if (popcnt(whiteDrawPieces) == 1 && popcnt(blackDrawPieces) == 1) {
@@ -961,16 +989,16 @@ namespace Zagreus {
                 uint64_t h1b7 = 0x0002040810204080ULL;
                 uint64_t btwn, line, rank, file;
 
-                btwn = (m1 << from) ^ (m1 << to);
+                btwn = m1 << from ^ m1 << to;
                 file = (to & 7) - (from & 7);
-                rank = ((to | 7) - from) >> 3;
-                line = ((file & 7) - 1) & a2a7; /* a2a7 if same file */
-                line += 2 * (((rank & 7) - 1) >> 58); /* b1g1 if same rank */
-                line += (((rank - file) & 15) - 1) & b2g7; /* b2g7 if same diagonal */
-                line += (((rank + file) & 15) - 1) & h1b7; /* h1b7 if same antidiag */
+                rank = (to | 7) - from >> 3;
+                line = (file & 7) - 1 & a2a7; /* a2a7 if same file */
+                line += 2 * ((rank & 7) - 1 >> 58); /* b1g1 if same rank */
+                line += (rank - file & 15) - 1 & b2g7; /* b2g7 if same diagonal */
+                line += (rank + file & 15) - 1 & h1b7; /* h1b7 if same antidiag */
                 line *= btwn & -btwn; /* mul acts like shift by smaller square */
 
-                betweenTable[from][to] = line & btwn;   /* return the bits on that line in-between */
+                betweenTable[from][to] = line & btwn; /* return the bits on that line in-between */
             }
         }
     }
@@ -978,61 +1006,61 @@ namespace Zagreus {
     void Bitboard::setPieceFromFENChar(char character, int index) {
         // Uppercase = WHITE, lowercase = black
         switch (character) {
-            case 'P':
-                setPiece(index, PieceType::WHITE_PAWN);
-                break;
-            case 'p':
-                setPiece(index, PieceType::BLACK_PAWN);
-                break;
-            case 'N':
-                setPiece(index, PieceType::WHITE_KNIGHT);
-                break;
-            case 'n':
-                setPiece(index, PieceType::BLACK_KNIGHT);
-                break;
-            case 'B':
-                setPiece(index, PieceType::WHITE_BISHOP);
-                break;
-            case 'b':
-                setPiece(index, PieceType::BLACK_BISHOP);
-                break;
-            case 'R':
-                setPiece(index, PieceType::WHITE_ROOK);
-                break;
-            case 'r':
-                setPiece(index, PieceType::BLACK_ROOK);
-                break;
-            case 'Q':
-                setPiece(index, PieceType::WHITE_QUEEN);
-                break;
-            case 'q':
-                setPiece(index, PieceType::BLACK_QUEEN);
-                break;
-            case 'K':
-                setPiece(index, PieceType::WHITE_KING);
-                break;
-            case 'k':
-                setPiece(index, PieceType::BLACK_KING);
-                break;
+        case 'P':
+            setPiece(index, WHITE_PAWN);
+            break;
+        case 'p':
+            setPiece(index, BLACK_PAWN);
+            break;
+        case 'N':
+            setPiece(index, WHITE_KNIGHT);
+            break;
+        case 'n':
+            setPiece(index, BLACK_KNIGHT);
+            break;
+        case 'B':
+            setPiece(index, WHITE_BISHOP);
+            break;
+        case 'b':
+            setPiece(index, BLACK_BISHOP);
+            break;
+        case 'R':
+            setPiece(index, WHITE_ROOK);
+            break;
+        case 'r':
+            setPiece(index, BLACK_ROOK);
+            break;
+        case 'Q':
+            setPiece(index, WHITE_QUEEN);
+            break;
+        case 'q':
+            setPiece(index, BLACK_QUEEN);
+            break;
+        case 'K':
+            setPiece(index, WHITE_KING);
+            break;
+        case 'k':
+            setPiece(index, BLACK_KING);
+            break;
         }
     }
 
     uint64_t Bitboard::getSquareAttacks(int8_t square) {
-        uint64_t queenBB = getPieceBoard<PieceType::WHITE_QUEEN>() | getPieceBoard<PieceType::BLACK_QUEEN>();
+        uint64_t queenBB = getPieceBoard(WHITE_QUEEN) | getPieceBoard(BLACK_QUEEN);
         uint64_t straightSlidingPieces =
-                getPieceBoard<PieceType::WHITE_ROOK>() | getPieceBoard<PieceType::BLACK_ROOK>() | queenBB;
+            getPieceBoard(WHITE_ROOK) | getPieceBoard(BLACK_ROOK) | queenBB;
         uint64_t diagonalSlidingPieces =
-                getPieceBoard<PieceType::WHITE_BISHOP>() | getPieceBoard<PieceType::BLACK_BISHOP>() | queenBB;
+            getPieceBoard(WHITE_BISHOP) | getPieceBoard(BLACK_BISHOP) | queenBB;
 
-        uint64_t pawnAttacks = getPawnAttacks<PieceColor::BLACK>(square) & getPieceBoard<PieceType::WHITE_PAWN>();
-        pawnAttacks |= getPawnAttacks<PieceColor::WHITE>(square) & getPieceBoard<PieceType::BLACK_PAWN>();
+        uint64_t pawnAttacks = getPawnAttacks<BLACK>(square) & getPieceBoard(WHITE_PAWN);
+        pawnAttacks |= getPawnAttacks<WHITE>(square) & getPieceBoard(BLACK_PAWN);
         uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
         uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
         uint64_t knightAttacks = getKnightAttacks(square) &
-                                 (getPieceBoard<PieceType::WHITE_KNIGHT>() | getPieceBoard<PieceType::BLACK_KNIGHT>());
+            (getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT));
         uint64_t kingAttacks =
-                getKingAttacks(square) &
-                (getPieceBoard<PieceType::WHITE_KING>() | getPieceBoard<PieceType::BLACK_KING>());
+            getKingAttacks(square) &
+            (getPieceBoard(WHITE_KING) | getPieceBoard(BLACK_KING));
 
         return pawnAttacks | rookAttacks | bishopAttacks | knightAttacks | kingAttacks;
     }
@@ -1054,26 +1082,26 @@ namespace Zagreus {
     }
 
     uint64_t Bitboard::getFile(int8_t square) {
-        return rayAttacks[Direction::NORTH][square] | rayAttacks[Direction::SOUTH][square] | (1ULL << square);
+        return rayAttacks[NORTH][square] | rayAttacks[SOUTH][square] | 1ULL << square;
     }
 
-    bool Bitboard::makeStrMove(const std::string &strMove) {
+    bool Bitboard::makeStrMove(const std::string& strMove) {
         int8_t fromSquare = getSquareFromString(strMove.substr(0, 2));
         int8_t toSquare = getSquareFromString(strMove.substr(2, 2));
-        PieceType promotionPiece = PieceType::EMPTY;
+        PieceType promotionPiece = EMPTY;
 
         if (strMove.length() == 5) {
             if (strMove.ends_with("q")) {
                 promotionPiece =
-                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_QUEEN : PieceType::BLACK_QUEEN;
+                    getMovingColor() == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
             } else if (strMove.ends_with("r")) {
-                promotionPiece = getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_ROOK : PieceType::BLACK_ROOK;
+                promotionPiece = getMovingColor() == WHITE ? WHITE_ROOK : BLACK_ROOK;
             } else if (strMove.ends_with("b")) {
                 promotionPiece =
-                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_BISHOP : PieceType::BLACK_BISHOP;
+                    getMovingColor() == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
             } else if (strMove.ends_with("n")) {
                 promotionPiece =
-                        getMovingColor() == PieceColor::WHITE ? PieceType::WHITE_KNIGHT : PieceType::BLACK_KNIGHT;
+                    getMovingColor() == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
             }
         }
 
@@ -1086,7 +1114,7 @@ namespace Zagreus {
         return previousPvLine;
     }
 
-    void Bitboard::setPreviousPvLine(Line &previousPvLine) {
+    void Bitboard::setPreviousPvLine(Line& previousPvLine) {
         Bitboard::previousPvLine = previousPvLine;
     }
 
@@ -1100,7 +1128,7 @@ namespace Zagreus {
 
     bool Bitboard::isOpenFile(int8_t square) {
         uint64_t fileMask = getFile(square);
-        uint64_t occupied = getPieceBoard<PieceType::WHITE_PAWN>() | getPieceBoard<PieceType::BLACK_PAWN>();
+        uint64_t occupied = getPieceBoard(WHITE_PAWN) | getPieceBoard(BLACK_PAWN);
 
         return fileMask == (fileMask & ~occupied);
     }
@@ -1120,4 +1148,53 @@ namespace Zagreus {
     int Bitboard::getBlackEndgamePst() const {
         return pstValues[3];
     }
+
+    uint64_t Bitboard::getPieceBoard(PieceType pieceType) {
+        return pieceBB[pieceType];
+    }
+
+    template <PieceColor color>
+    bool Bitboard::isWinner() {
+        if (color == WHITE) {
+            if (!isKingInCheck<BLACK>()) {
+                return false;
+            }
+        } else {
+            if (!isKingInCheck<WHITE>()) {
+                return false;
+            }
+        }
+
+        MoveList* moveList = moveListPool->getMoveList();
+        generateMoves<color == WHITE ? BLACK : WHITE>(*this, moveList);
+
+        for (int i = 0; i < moveList->size; i++) {
+            Move move = moveList->moves[i];
+            assert(move.from != move.to);
+
+            makeMove(move);
+
+            if (color == WHITE) {
+                if (isKingInCheck<BLACK>()) {
+                    unmakeMove(move);
+                    continue;
+                }
+            } else {
+                if (isKingInCheck<WHITE>()) {
+                    unmakeMove(move);
+                    continue;
+                }
+            }
+
+            unmakeMove(move);
+            moveListPool->releaseMoveList(moveList);
+            return false;
+        }
+
+        moveListPool->releaseMoveList(moveList);
+        return true;
+    }
+
+    template bool Bitboard::isWinner<WHITE>();
+    template bool Bitboard::isWinner<BLACK>();
 }

@@ -1,7 +1,7 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
+ Zagreus is a UCI chess engine
  Copyright (C) 2023  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ namespace Zagreus {
         uint8_t depth = 0;
         uint32_t bestMoveCode = 0;
         uint64_t zobristHash = 0;
-        NodeType nodeType = NodeType::PV_NODE;
+        NodeType nodeType = PV_NODE;
     };
 
     class TranspositionTable {
