@@ -345,7 +345,7 @@ namespace Zagreus {
                     uint64_t pawnShieldMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
                     pawnShieldMask |= nortOne(pawnShieldMask);
                     uint64_t pawnShield = pawnBB & pawnShieldMask;
-                    uint8_t pawnShieldCount = std::min(popcnt(pawnShield), 3ULL);
+                    uint8_t pawnShieldCount = std::min<uint64_t>(popcnt(pawnShield), 3ULL);
 
                     whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                     whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
@@ -365,7 +365,7 @@ namespace Zagreus {
                     uint64_t pawnShieldMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
                     pawnShieldMask |= soutOne(pawnShieldMask);
                     uint64_t pawnShield = pawnBB & pawnShieldMask;
-                    uint8_t pawnShieldCount = std::min(popcnt(pawnShield), 3ULL);
+                    uint8_t pawnShieldCount = std::min<uint64_t>(popcnt(pawnShield), 3ULL);
 
                     blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                     blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
