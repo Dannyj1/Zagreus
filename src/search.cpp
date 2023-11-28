@@ -383,6 +383,8 @@ namespace Zagreus {
             }
         }
 
+        moveListPool->releaseMoveList(moveList);
+
         if (!moveCount) {
             if (isOwnKingInCheck) {
                 return -MATE_SCORE + board.getPly();
@@ -392,7 +394,6 @@ namespace Zagreus {
         }
 
         TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, nodeType, bestMoveCode, endTime);
-        moveListPool->releaseMoveList(moveList);
         return alpha;
     }
 
@@ -482,13 +483,14 @@ namespace Zagreus {
             }
         }
 
+        moveListPool->releaseMoveList(moveList);
+
         if (!moveCount) {
             if (board.isKingInCheck<color>()) {
                 return -MATE_SCORE + board.getPly();
             }
         }
 
-        moveListPool->releaseMoveList(moveList);
 //        TranspositionTable::getTT()->addPosition(board.getZobristHash(), depth, alpha, NodeType::PV_NODE);
         return alpha;
     }
