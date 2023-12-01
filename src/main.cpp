@@ -45,7 +45,7 @@ MoveListPool *moveListPool = MoveListPool::getInstance();
 
 // Some of these benchmark positions are taken from Stockfish's benchmark.cpp:
 // https://github.com/official-stockfish/Stockfish/blob/master/src/benchmark.cpp
-const std::vector<std::string> BENCHMARK_POSITIONS = {
+const std::vector<std::string> benchmarkPositions = {
     "8/8/1n3k2/8/3P3P/5K2/8/1N4Q1 w - -",
     "1rb1kbnr/p1q1pppp/np4B1/2pp4/P1PP4/2N1P3/1P3PPP/R1BQK1NR w Kk",
     "1rbk1bnr/pp1p1ppp/n1pq4/4pP1Q/P1B1P3/2P4P/1P1P2P1/RNB2KNR b - -",
@@ -198,7 +198,7 @@ void benchmark() {
 
   engine.initialize();
 
-  for (const std::string &position : BENCHMARK_POSITIONS) {
+  for (const std::string &position : benchmarkPositions) {
     for (int i = 0; i < 2; i++) {
       Bitboard bb;
       PieceColor color = i == 0 ? WHITE : BLACK;

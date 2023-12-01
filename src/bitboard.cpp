@@ -102,9 +102,9 @@ uint64_t Bitboard::getRayAttack(int8_t square, Direction direction) {
   return rayAttacks[direction][square];
 }
 
-uint64_t Bitboard::getOccupiedBoard() const { return occupiedBB; }
+uint64_t Bitboard::getOccupiedBoard() { return occupiedBB; }
 
-uint64_t Bitboard::getEmptyBoard() const { return ~occupiedBB; }
+uint64_t Bitboard::getEmptyBoard() { return ~occupiedBB; }
 
 uint64_t Bitboard::getTilesBetween(int8_t from, int8_t to) { return betweenTable[from][to]; }
 
@@ -138,7 +138,7 @@ uint64_t Bitboard::getQueenAttacks(int8_t square, uint64_t occupancy) {
   return getBishopAttacks(square, occupancy) | getRookAttacks(square, occupancy);
 }
 
-uint64_t Bitboard::getBishopAttacks(int8_t square) const {
+uint64_t Bitboard::getBishopAttacks(int8_t square) {
   assert(square >= 0 && square < 64);
   uint64_t occupancy = getOccupiedBoard();
   occupancy &= getBishopMask(square);
@@ -157,7 +157,7 @@ uint64_t Bitboard::getBishopAttacks(int8_t square, uint64_t occupancy) {
   return getBishopMagicAttacks(square, occupancy);
 }
 
-uint64_t Bitboard::getRookAttacks(int8_t square) const {
+uint64_t Bitboard::getRookAttacks(int8_t square) {
   assert(square >= 0 && square < 64);
   uint64_t occupancy = getOccupiedBoard();
   occupancy &= getRookMask(square);

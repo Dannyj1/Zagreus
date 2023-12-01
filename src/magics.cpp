@@ -34,27 +34,23 @@ std::uniform_int_distribution<uint64_t> dis;
 auto rookMagics = new uint64_t[64]{};
 auto bishopMagics = new uint64_t[64]{};
 
-auto bishopMasks = new uint64_t[64]{};
-auto rookMasks = new uint64_t[64]{};
+auto bishop_masks = new uint64_t[64]{};
+auto rook_masks = new uint64_t[64]{};
 
-auto bishopAttacks = new uint64_t[64][512]{};
-auto rookAttacks = new uint64_t[64][4096]{};
+auto bishop_attacks = new uint64_t[64][512]{};
+auto rook_attacks = new uint64_t[64][4096]{};
 
 uint64_t getRookMagic(int sq) { return rookMagics[sq]; }
 
 uint64_t getBishopMagic(int sq) { return bishopMagics[sq]; }
 
-uint64_t getRookMask(int sq) { return rookMasks[sq]; }
+uint64_t getRookMask(int sq) { return rook_masks[sq]; }
 
-uint64_t getBishopMask(int sq) { return bishopMasks[sq]; }
+uint64_t getBishopMask(int sq) { return bishop_masks[sq]; }
 
-uint64_t getRookMagicAttacks(int sq, uint64_t index) {
-  return rookAttacks[sq][index];
-}
+uint64_t getRookMagicAttacks(int sq, uint64_t index) { return rook_attacks[sq][index]; }
 
-uint64_t getBishopMagicAttacks(int sq, uint64_t index) {
-  return bishopAttacks[sq][index];
-}
+uint64_t getBishopMagicAttacks(int sq, uint64_t index) { return bishop_attacks[sq][index]; }
 
 uint64_t random_uint64_t_fewbits() { return dis(gen) & dis(gen) & dis(gen); }
 
@@ -65,17 +61,16 @@ int count_1s(uint64_t b) {
   return r;
 }
 
-const int BIT_TABLE[64] = {63, 30, 3,  32, 25, 41, 22, 33, 15, 50, 42, 13, 11,
-                           53, 19, 34, 61, 29, 2,  51, 21, 43, 45, 10, 18, 47,
-                           1,  54, 9,  57, 0,  35, 62, 31, 40, 4,  49, 5,  52,
-                           26, 60, 6,  23, 44, 46, 27, 56, 16, 7,  39, 48, 24,
-                           59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8};
+const int BitTable[64] = {63, 30, 3,  32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34,
+                          61, 29, 2,  51, 21, 43, 45, 10, 18, 47, 1,  54, 9,  57, 0,  35,
+                          62, 31, 40, 4,  49, 5,  52, 26, 60, 6,  23, 44, 46, 27, 56, 16,
+                          7,  39, 48, 24, 59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8};
 
 int pop_1st_bit(uint64_t* bb) {
   uint64_t b = *bb ^ (*bb - 1);
-  auto fold = static_cast<unsigned>((b & 0xffffffff) ^ (b >> 32));
+  unsigned int fold = static_cast<unsigned>((b & 0xffffffff) ^ (b >> 32));
   *bb &= (*bb - 1);
-  return BIT_TABLE[(fold * 0x783a9b23) >> 26];
+  return BitTable[(fold * 0x783a9b23) >> 26];
 }
 
 uint64_t index_to_uint64_t(int index, int bits, uint64_t m) {
@@ -217,17 +212,17 @@ int get_ls1b_index(uint64_t bitboard) {
   return -1;
 }
 
-uint64_t set_occupancy(int index, int bitsInMask, uint64_t attackMask) {
+uint64_t set_occupancy(int index, int bits_in_mask, uint64_t attack_mask) {
   // occupancy map
   uint64_t occupancy = 0ULL;
 
   // loop over the range of bits within attack mask
-  for (int count = 0; count < bitsInMask; count++) {
+  for (int count = 0; count < bits_in_mask; count++) {
     // get LS1B index of attacks mask
-    int8_t square = get_ls1b_index(attackMask);
+    int8_t square = get_ls1b_index(attack_mask);
 
     // pop LS1B in attack map
-    pop_bit(attackMask, square);
+    pop_bit(attack_mask, square);
 
     // make sure occupancy is on board
     if (index & (1 << count))
@@ -355,43 +350,38 @@ uint64_t rook_attacks_on_the_fly(int8_t square, uint64_t block) {
   return attacks;
 }
 
-void init_sliders_attacks(int isBishop) {
+void init_sliders_attacks(int is_bishop) {
   // loop over 64 board squares
   for (int8_t square = 0; square < 64; square++) {
     // init bishop & rook masks
-    bishopMasks[square] = mask_bishop_attacks(square);
-    rookMasks[square] = mask_rook_attacks(square);
+    bishop_masks[square] = mask_bishop_attacks(square);
+    rook_masks[square] = mask_rook_attacks(square);
 
     // init current mask
-    uint64_t mask =
-        isBishop ? mask_bishop_attacks(square) : mask_rook_attacks(square);
+    uint64_t mask = is_bishop ? mask_bishop_attacks(square) : mask_rook_attacks(square);
 
     // size attack mask bits
-    int bitCount = count_bits(mask);
+    int bit_count = count_bits(mask);
 
     // occupancy variations size
-    int occupancyVariations = 1 << bitCount;
+    int occupancy_variations = 1 << bit_count;
 
     // loop over occupancy variations
-    for (int count = 0; count < occupancyVariations; count++) {
+    for (int count = 0; count < occupancy_variations; count++) {
       // bishop
-      if (isBishop) {
+      if (is_bishop) {
         // init occupancies, magic index & attacks
-        uint64_t occupancy = set_occupancy(count, bitCount, mask);
-        uint64_t magicIndex =
-            occupancy * bishopMagics[square] >> (64 - BBits[square]);
-        bishopAttacks[square][magicIndex] =
-            bishop_attacks_on_the_fly(square, occupancy);
+        uint64_t occupancy = set_occupancy(count, bit_count, mask);
+        uint64_t magic_index = occupancy * bishopMagics[square] >> (64 - BBits[square]);
+        bishop_attacks[square][magic_index] = bishop_attacks_on_the_fly(square, occupancy);
       }
 
       // rook
       else {
         // init occupancies, magic index & attacks
-        uint64_t occupancy = set_occupancy(count, bitCount, mask);
-        uint64_t magicIndex =
-            occupancy * rookMagics[square] >> (64 - RBits[square]);
-        rookAttacks[square][magicIndex] =
-            rook_attacks_on_the_fly(square, occupancy);
+        uint64_t occupancy = set_occupancy(count, bit_count, mask);
+        uint64_t magic_index = occupancy * rookMagics[square] >> (64 - RBits[square]);
+        rook_attacks[square][magic_index] = rook_attacks_on_the_fly(square, occupancy);
       }
     }
   }

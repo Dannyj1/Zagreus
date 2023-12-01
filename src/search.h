@@ -46,7 +46,7 @@ class SearchManager {
               std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine,
               bool isPv, int depth = 0);
 
-  bool isCurrentlySearching() const;
+  bool isCurrentlySearching();
 
   senjo::SearchStats getSearchStats();
 };

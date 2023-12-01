@@ -119,7 +119,6 @@ int getEvalFeatureSize() { return sizeof(evalValues) / sizeof(evalValues[0]); }
 std::vector<double> getBaseEvalValues() {
   std::vector<double> values;
 
-  values.reserve(getEvalFeatureSize());
   for (int i = 0; i < getEvalFeatureSize(); i++) {
     values.emplace_back(baseEvalValues[i]);
   }
@@ -138,7 +137,6 @@ std::vector<double> getBaseEvalValues() {
 std::vector<double> getEvalValues() {
   std::vector<double> values;
 
-  values.reserve(getEvalFeatureSize());
   for (int i = 0; i < getEvalFeatureSize(); i++) {
     values.emplace_back(evalValues[i]);
   }

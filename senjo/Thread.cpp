@@ -21,9 +21,6 @@
 //-----------------------------------------------------------------------------
 
 #include "Thread.h"
-
-#include <memory>
-
 #include "Output.h"
 
 namespace senjo {
@@ -44,7 +41,7 @@ namespace senjo {
             return false;
         }
 
-        thread = std::make_shared<std::thread>(staticRun, this);
+        thread.reset(new std::thread(staticRun, this));
         return true;
     }
 

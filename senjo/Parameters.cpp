@@ -43,20 +43,20 @@ namespace senjo {
     std::string Parameters::toString() const {
         std::stringstream ss;
         bool first = true;
-        for (const std::string &param : *this) {
-          if (first) {
-            first = false;
-          } else {
-            ss << ' ';
-          }
-          ss << param;
+        for (std::string param : *this) {
+            if (first) {
+                first = false;
+            } else {
+                ss << ' ';
+            }
+            ss << param;
         }
         return ss.str();
     }
 
 //-----------------------------------------------------------------------------
     bool Parameters::firstParamIs(const std::string &paramName) const {
-      return empty() && iEqual(paramName, front());
+        return size() && iEqual(paramName, front());
     }
 
 //-----------------------------------------------------------------------------
@@ -97,15 +97,15 @@ namespace senjo {
         }
 
         pop_front();
-        while (empty() && (next.empty() || !iEqual(next, front()))) {
-          if (!value.empty()) {
-            value += " ";
-          }
-          value += front();
-          pop_front();
+        while (size() && (next.empty() || !iEqual(next, front()))) {
+            if (value.size()) {
+                value += " ";
+            }
+            value += front();
+            pop_front();
         }
 
-        return !value.empty();
+        return value.size() > 0;
     }
 
 } // namespace senjo
