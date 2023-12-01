@@ -199,15 +199,19 @@ message("MARCH_VALUE: ${MARCH_VALUE}")
 message("ENABLE_MTUNE: ${ENABLE_MTUNE}")
 message("MTUNE_VALUE: ${MTUNE_VALUE}")
 
-if (APPEND_VERSION)
-    execute_process(COMMAND git rev-parse --abbrev-ref HEAD
+# If APPEND_VERSION is enabled and git is available and .git exists, append the version number to the executable filename
+# Find git
+find_package(Git)
+
+if (APPEND_VERSION AND EXISTS "${CMAKE_SOURCE_DIR}/.git" AND GIT_FOUND)
+    execute_process(COMMAND GIT_EXECUTABLE rev-parse --abbrev-ref HEAD
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             OUTPUT_VARIABLE GIT_BRANCH
             OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     if(NOT ${GIT_BRANCH} STREQUAL "master" AND NOT ${GIT_BRANCH} STREQUAL "main")
         # Get the short commit hash
-        execute_process(COMMAND git rev-parse --short HEAD
+        execute_process(COMMAND GIT_EXECUTABLE rev-parse --short HEAD
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                 OUTPUT_VARIABLE GIT_COMMIT_HASH
                 OUTPUT_STRIP_TRAILING_WHITESPACE)

@@ -349,8 +349,16 @@ namespace Zagreus {
                 uint64_t attackSquares = attacksFrom[index];
                 uint64_t opponentKingAttacks = color == WHITE ? blackKingAttacks : whiteKingAttacks;
                 uint64_t attacksAroundKing = attackSquares & opponentKingAttacks;
-                uint8_t attackCount = popcnt(attacksAroundKing);
+                uint64_t weakSquares;
 
+                if (color == WHITE) {
+                    weakSquares = attackedBy2[BLACK] & ~attackedBy2[WHITE];
+                } else {
+                    weakSquares = attackedBy2[WHITE] & ~attackedBy2[BLACK];
+                }
+
+                attacksAroundKing &= ~weakSquares;
+                uint8_t attackCount = popcnt(attacksAroundKing);
                 addKingAttackScore(pieceType, attackCount);
             }
 
