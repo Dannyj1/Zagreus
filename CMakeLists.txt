@@ -81,11 +81,11 @@ set(DEBUG_FLAGS "-static-libgcc -static-libstdc++ -fno-omit-frame-pointer -pthre
 set(PROFILING_FLAGS "-static-libgcc -static-libstdc++ -pthread -g -Wno-unused-command-line-argument")
 set(RELEASE_FLAGS "-static-libgcc -static-libstdc++ -pthread -Wno-unused-command-line-argument")
 
-if(WIN32)
+if (WIN32)
     # Add the --pdb flag for Windows
     set(DEBUG_FLAGS "${DEBUG_FLAGS} -gcodeview -Wl,--pdb=Zagreus.pdb")
     set(PROFILING_FLAGS "${PROFILING_FLAGS} -gcodeview -Wl,--pdb=Zagreus.pdb")
-endif()
+endif ()
 
 # Define toggleable flags
 option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)
@@ -113,81 +113,81 @@ endif ()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION)
     set(ENABLE_OPTIMIZATION OFF CACHE BOOL "Enable optimization flags (-O3)" FORCE)
     set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif()
+endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
     set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif()
+endif ()
 
 # If debug build type and ENABLE_LTO is not defined, set LTO to OFF
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_LTO)
     set(ENABLE_LTO OFF CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
-endif()
+endif ()
 
 # If debug build type and ENABLE_WARNINGS is not defined, set warnings to ON
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_WARNINGS)
     set(ENABLE_WARNINGS ON CACHE BOOL "Enable all compiler warnings" FORCE)
-endif()
+endif ()
 
 # If debug build type and ENABLE_MARCH is not defined, set march to OFF
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MARCH)
     set(ENABLE_MARCH OFF CACHE BOOL "Enable -march flag" FORCE)
-endif()
+endif ()
 
 # If debug build type and MARCH_VALUE is not defined, set march value to an empty string
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MARCH_VALUE)
     set(MARCH_VALUE "" CACHE STRING "Value for -march flag" FORCE)
-endif()
+endif ()
 
 # If debug build type and ENABLE_MTUNE is not defined, set mtune to OFF
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MTUNE)
     set(ENABLE_MTUNE OFF CACHE BOOL "Enable -mtune flag" FORCE)
-endif()
+endif ()
 
 # If debug build type and MTUNE_VALUE is not defined, set mtune value to an empty string
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MTUNE_VALUE)
     set(MTUNE_VALUE "" CACHE STRING "Value for -mtune flag" FORCE)
-endif()
+endif ()
 
 # If release build type and ENABLE_OPTIMIZATION is not defined, set optimization to ON
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION)
     set(ENABLE_OPTIMIZATION ON CACHE BOOL "Enable optimization flags (-O3)" FORCE)
-endif()
+endif ()
 
 # If release build type and ENABLE_OPTIMIZATION_FAST_MATH is not defined, set optimization to ON
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
     set(ENABLE_OPTIMIZATION_FAST_MATH ON CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif()
+endif ()
 
 # If release build type and ENABLE_LTO is not defined, set LTO to ON
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_LTO)
     set(ENABLE_LTO ON CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
-endif()
+endif ()
 
 # If release build type and ENABLE_WARNINGS is not defined, set warnings to OFF
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_WARNINGS)
     set(ENABLE_WARNINGS OFF CACHE BOOL "Enable all compiler warnings" FORCE)
-endif()
+endif ()
 
 # If release build type and ENABLE_MARCH is not defined, set march to ON
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MARCH)
     set(ENABLE_MARCH ON CACHE BOOL "Enable -march flag" FORCE)
-endif()
+endif ()
 
 # If release build type and MARCH_VALUE is not defined, set march value to "x86-64"
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MARCH_VALUE)
     set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag" FORCE)
-endif()
+endif ()
 
 # If release build type and ENABLE_MTUNE is not defined, set mtune to ON
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MTUNE)
     set(ENABLE_MTUNE ON CACHE BOOL "Enable -mtune flag" FORCE)
-endif()
+endif ()
 
 # If release build type and MTUNE_VALUE is not defined, set mtune value to "native"
 if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MTUNE_VALUE)
     set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag" FORCE)
-endif()
+endif ()
 
 message("ENABLE_OPTIMIZATION: ${ENABLE_OPTIMIZATION}")
 message("ENABLE_OPTIMIZATION_FAST_MATH: ${ENABLE_OPTIMIZATION_FAST_MATH}")
@@ -199,15 +199,19 @@ message("MARCH_VALUE: ${MARCH_VALUE}")
 message("ENABLE_MTUNE: ${ENABLE_MTUNE}")
 message("MTUNE_VALUE: ${MTUNE_VALUE}")
 
-if (APPEND_VERSION)
-    execute_process(COMMAND git rev-parse --abbrev-ref HEAD
+# If APPEND_VERSION is enabled and git is available and .git exists, append the version number to the executable filename
+# Find git
+find_package(Git)
+
+if (APPEND_VERSION AND EXISTS "${CMAKE_SOURCE_DIR}/.git" AND GIT_FOUND)
+    execute_process(COMMAND GIT_EXECUTABLE rev-parse --abbrev-ref HEAD
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             OUTPUT_VARIABLE GIT_BRANCH
             OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    if(NOT ${GIT_BRANCH} STREQUAL "master" AND NOT ${GIT_BRANCH} STREQUAL "main")
+    if (NOT ${GIT_BRANCH} STREQUAL "master" AND NOT ${GIT_BRANCH} STREQUAL "main")
         # Get the short commit hash
-        execute_process(COMMAND git rev-parse --short HEAD
+        execute_process(COMMAND GIT_EXECUTABLE rev-parse --short HEAD
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                 OUTPUT_VARIABLE GIT_COMMIT_HASH
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -216,15 +220,15 @@ if (APPEND_VERSION)
         set(CMAKE_EXECUTABLE_SUFFIX "-dev-${GIT_BRANCH}-${GIT_COMMIT_HASH}${CMAKE_EXECUTABLE_SUFFIX}")
         set(ZAGREUS_VERSION_MAJOR "dev")
         set(ZAGREUS_VERSION_MINOR "${GIT_BRANCH}-${GIT_COMMIT_HASH}")
-    else()
+    else ()
         if (ENABLE_MARCH)
             set(CMAKE_EXECUTABLE_SUFFIX "-${MARCH_VALUE}${CMAKE_EXECUTABLE_SUFFIX}")
-        endif()
+        endif ()
 
         set(CMAKE_EXECUTABLE_SUFFIX "-${CMAKE_SYSTEM_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
         set(CMAKE_EXECUTABLE_SUFFIX "-v${ZAGREUS_VERSION_MAJOR}.${ZAGREUS_VERSION_MINOR}${CMAKE_EXECUTABLE_SUFFIX}")
-    endif()
-endif()
+    endif ()
+endif ()
 
 # Apply toggleable flags to profiles
 if (ENABLE_OPTIMIZATION)
@@ -232,40 +236,40 @@ if (ENABLE_OPTIMIZATION)
         set(RELEASE_FLAGS "${RELEASE_FLAGS} -Ofast")
         set(DEBUG_FLAGS "${DEBUG_FLAGS} -Ofast")
         set(PROFILING_FLAGS "${PROFILING_FLAGS} -Ofast")
-    else()
+    else ()
         set(RELEASE_FLAGS "${RELEASE_FLAGS} -O3")
         set(DEBUG_FLAGS "${DEBUG_FLAGS} -O3")
         set(PROFILING_FLAGS "${PROFILING_FLAGS} -O3")
-    endif()
-else()
+    endif ()
+else ()
     set(RELEASE_FLAGS "${RELEASE_FLAGS} -O0")
     set(DEBUG_FLAGS "${DEBUG_FLAGS} -O0")
     set(PROFILING_FLAGS "${PROFILING_FLAGS} -O0")
-endif()
+endif ()
 
 if (ENABLE_LTO)
     set(RELEASE_FLAGS "${RELEASE_FLAGS} -flto")
-endif()
+endif ()
 
 if (ENABLE_WARNINGS)
     set(DEBUG_FLAGS "${DEBUG_FLAGS} -Wall -Wextra")
     set(PROFILING_FLAGS "${PROFILING_FLAGS} -Wall -Wextra")
     set(RELEASE_FLAGS "${RELEASE_FLAGS} -Wall -Wextra")
-endif()
+endif ()
 
 if (ENABLE_MARCH)
     set(MARCH_FLAG "-march=${MARCH_VALUE}")
-endif()
+endif ()
 
 if (ENABLE_MTUNE)
     set(MTUNE_FLAG "-mtune=${MTUNE_VALUE}")
-endif()
+endif ()
 
 if (ENABLE_SANITIZER)
     set(DEBUG_FLAGS "${DEBUG_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
     set(PROFILING_FLAGS "${PROFILING_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
     set(RELEASE_FLAGS "${RELEASE_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
-endif()
+endif ()
 
 # Construct the final flags based on the selected profile and toggleable flags
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -274,15 +278,15 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL 
     set(BUILD_FLAGS "${PROFILING_FLAGS}")
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(BUILD_FLAGS "${RELEASE_FLAGS}")
-endif()
+endif ()
 
 # Add the march and mtune flags
 if (ENABLE_MARCH)
     set(BUILD_FLAGS "${BUILD_FLAGS} ${MARCH_FLAG}")
     if (ENABLE_MTUNE)
         set(BUILD_FLAGS "${BUILD_FLAGS} ${MTUNE_FLAG}")
-    endif()
-endif()
+    endif ()
+endif ()
 
 # Set the flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_FLAGS}")

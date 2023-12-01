@@ -3,16 +3,21 @@ Senjo
 
 Universal Chess Interface (UCI) adapter by Shawn Chidester <zd3nik@gmail.com>.
 
-Just write your chess engine and let Senjo's UCIAdapter deal with the UCI protocol.  See [Clubfoot](https://github.com/zd3nik/Clubfoot) for an example chess engine that uses Senjo.
+Just write your chess engine and let Senjo's UCIAdapter deal with the UCI protocol.
+See [Clubfoot](https://github.com/zd3nik/Clubfoot) for an example chess engine that uses Senjo.
 
-See the [senjo-light](https://github.com/zd3nik/SenjoUCIAdapter/tree/senjo-light) branch for a version that does not include a built-in `test` command.
+See the [senjo-light](https://github.com/zd3nik/SenjoUCIAdapter/tree/senjo-light) branch for a version that does not
+include a built-in `test` command.
 
 Description
 -----------
 
-Senjo is a UCI adapter for C++ chess engines.  It handles the interaction between your chess engine and any UCI compliant user interface.  All you have to do is implement a ChessEngine class that does the "thinking" parts, Senjo will deal with the rest.
+Senjo is a UCI adapter for C++ chess engines. It handles the interaction between your chess engine and any UCI compliant
+user interface. All you have to do is implement a ChessEngine class that does the "thinking" parts, Senjo will deal with
+the rest.
 
-The Senjo UCI adapter comes with a few extra commands that are not part of the UCI specification.  Here are some examples:
+The Senjo UCI adapter comes with a few extra commands that are not part of the UCI specification. Here are some
+examples:
 
     * help
     * fen
@@ -20,7 +25,8 @@ The Senjo UCI adapter comes with a few extra commands that are not part of the U
     * perft
     * test
 
-In particular the *perft* and *test* commands are very handy for testing and tuning.  A few EPD files are included in this repository for use with these commands.  But of course you can use any EPD file(s) you prefer.
+In particular the *perft* and *test* commands are very handy for testing and tuning. A few EPD files are included in
+this repository for use with these commands. But of course you can use any EPD file(s) you prefer.
 
 How-To
 ------
@@ -66,15 +72,20 @@ To create a chess engine named "Trout" using the Senjo UCI adapter do the follow
             }
         }
 
-
 Notes
 -----
 
-This example uses `std::getline` to obtain one line of input at a time from stdin.  This is only an example.  You may get input any way you prefer.  All that is required is that you assign each line of input to a std::string, pass it to the senjo::UCIAdapter's doCommand() method, and exit the input loop if doCommand() returns false.
+This example uses `std::getline` to obtain one line of input at a time from stdin. This is only an example. You may get
+input any way you prefer. All that is required is that you assign each line of input to a std::string, pass it to the
+senjo::UCIAdapter's doCommand() method, and exit the input loop if doCommand() returns false.
 
-The `senjo::Output` class (from Output.h) is very useful for debugging.  Use it anywhere; it's thread safe and it prefixes your output with "string info " so it won't confuse UCI compliant user interfaces.  See `Output.h` for more details.
+The `senjo::Output` class (from Output.h) is very useful for debugging. Use it anywhere; it's thread safe and it
+prefixes your output with "string info " so it won't confuse UCI compliant user interfaces. See `Output.h` for more
+details.
 
-The senjo source directory contains a `CMakelists.txt` file, which is a cmake project file.  If you're using cmake simply add the senjo directory to your project with `add_subirectory(senjo)`.  If you're not using cmake simply remove he CMakeLists.txt file and include the senjo source files in your project in whatever way is most convenient for you.
+The senjo source directory contains a `CMakelists.txt` file, which is a cmake project file. If you're using cmake simply
+add the senjo directory to your project with `add_subirectory(senjo)`. If you're not using cmake simply remove he
+CMakeLists.txt file and include the senjo source files in your project in whatever way is most convenient for you.
 
 License
 -------

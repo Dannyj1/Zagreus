@@ -670,6 +670,24 @@ namespace Zagreus {
                         blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
                     }
                 }
+
+                uint64_t weakSquares;
+
+                if (color == WHITE) {
+                    weakSquares = attackedBy2[BLACK] & ~attackedBy2[WHITE];
+
+                    if ((1ULL << index) & weakSquares) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
+                    }
+                } else {
+                    weakSquares = attackedBy2[WHITE] & ~attackedBy2[BLACK];
+
+                    if ((1ULL << index) & weakSquares) {
+                        blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
+                    }
+                }
             }
         }
     }
@@ -677,15 +695,6 @@ namespace Zagreus {
     int Evaluation::evaluate() {
         int phase = getPhase();
         int modifier = bitboard.getMovingColor() == WHITE ? 1 : -1;
-
-        /*// Check for win/loss/draw
-        if (bitboard.isWinner<WHITE>()) {
-            return (MATE_SCORE - bitboard.getPly()) * modifier;
-        } else if (bitboard.isWinner<BLACK>()) {
-            return (-MATE_SCORE + bitboard.getPly()) * modifier;
-        } else if (bitboard.isDraw()) {
-            return 0;
-        }*/
 
         initEvalContext(bitboard);
 
