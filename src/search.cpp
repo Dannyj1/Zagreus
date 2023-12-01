@@ -267,16 +267,16 @@ int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move 
 
   if (!depthExtended && !isPv && canNull && depth >= 3 && board.hasMinorOrMajorPieces()) {
     board.makeNullMove();
-    int R = depth > 6 ? 3 : 2;
+    int r = depth > 6 ? 3 : 2;
     Move nullMove = {};
     int score;
 
     if (color == WHITE) {
-      score = search<BLACK>(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime,
-                            line, engine, false, false);
+      score = search<BLACK>(board, depth - r - 1, -beta, -beta + 1, rootMove,
+                            nullMove, endTime, line, engine, false, false);
     } else {
-      score = search<WHITE>(board, depth - R - 1, -beta, -beta + 1, rootMove, nullMove, endTime,
-                            line, engine, false, false);
+      score = search<WHITE>(board, depth - r - 1, -beta, -beta + 1, rootMove,
+                            nullMove, endTime, line, engine, false, false);
     }
 
     score *= -1;
@@ -327,8 +327,10 @@ int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move 
           move.promotionPiece == EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
         // Scale the reduction value between 1 and (depth - 1), depending on how many moves have
         // been searched. It should reach (depth - 1) when 60% of the moves have been searched.
-        int R = 1 + static_cast<int>((depth - 1) * (1 - moves.movesSearched() / (0.6 * moves.size())));
-        depthReduction += R;
+        int r =
+            1 + static_cast<int>((depth - 1) * (1 - moves.movesSearched() /
+                                                        (0.6 * moves.size())));
+        depthReduction += r;
       }
     }
 
@@ -519,7 +521,7 @@ int SearchManager::quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
   return alpha;
 }
 
-bool SearchManager::isCurrentlySearching() { return isSearching; }
+bool SearchManager::isCurrentlySearching() const { return isSearching; }
 
 senjo::SearchStats SearchManager::getSearchStats() { return searchStats; }
 }  // namespace Zagreus

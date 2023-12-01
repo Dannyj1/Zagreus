@@ -92,14 +92,15 @@ class TranspositionTable {
 
   void setTableSize(int megaBytes);
 
-  void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType,
-                   uint32_t bestMoveCode,
-                   std::chrono::time_point<std::chrono::steady_clock> endTime);
+  void addPosition(
+      uint64_t zobristHash, int depth, int score, NodeType nodeType,
+      uint32_t bestMoveCode,
+      std::chrono::time_point<std::chrono::steady_clock> endTime) const;
 
-  int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
+  int getScore(uint64_t zobristHash, int depth, int alpha, int beta) const;
 
-  TTEntry* getEntry(uint64_t zobristHash);
+  TTEntry* getEntry(uint64_t zobristHash) const;
 
-  void ageHistoryTable();
+  void ageHistoryTable() const;
 };
 }  // namespace Zagreus

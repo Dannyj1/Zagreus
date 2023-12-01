@@ -147,25 +147,25 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
   }
 }
 
-constexpr int knightPhase = 1;
-constexpr int bishopPhase = 1;
-constexpr int rookPhase = 2;
-constexpr int queenPhase = 4;
-constexpr int totalPhase = knightPhase * 4 + bishopPhase * 4 + rookPhase * 4 + queenPhase * 2;
+constexpr int KNIGHT_PHASE = 1;
+constexpr int BISHOP_PHASE = 1;
+constexpr int ROOK_PHASE = 2;
+constexpr int QUEEN_PHASE = 4;
+constexpr int TOTAL_PHASE = KNIGHT_PHASE * 4 + BISHOP_PHASE * 4 + ROOK_PHASE * 4 + QUEEN_PHASE * 2;
 
 int Evaluation::getPhase() {
-  int phase = totalPhase;
+  int phase = TOTAL_PHASE;
 
   phase -= popcnt(bitboard.getPieceBoard(WHITE_KNIGHT) | bitboard.getPieceBoard(BLACK_KNIGHT)) *
-           knightPhase;
+           KNIGHT_PHASE;
   phase -= popcnt(bitboard.getPieceBoard(WHITE_BISHOP) | bitboard.getPieceBoard(BLACK_BISHOP)) *
-           bishopPhase;
+           BISHOP_PHASE;
   phase -=
-      popcnt(bitboard.getPieceBoard(WHITE_ROOK) | bitboard.getPieceBoard(BLACK_ROOK)) * rookPhase;
+      popcnt(bitboard.getPieceBoard(WHITE_ROOK) | bitboard.getPieceBoard(BLACK_ROOK)) * ROOK_PHASE;
   phase -= popcnt(bitboard.getPieceBoard(WHITE_QUEEN) | bitboard.getPieceBoard(BLACK_QUEEN)) *
-           queenPhase;
+           QUEEN_PHASE;
 
-  return (phase * 256 + (totalPhase / 2)) / totalPhase;
+  return (phase * 256 + (TOTAL_PHASE / 2)) / TOTAL_PHASE;
 }
 
 inline bool isNotPawnOrKing(PieceType pieceType) {
@@ -356,7 +356,8 @@ void Evaluation::evaluatePieces() {
         // Virtual mobility - Get queen attacks from king position, with only occupied squares by
         // own pieces. We also ignore the squares around the king.
         uint64_t virtualMobilitySquares =
-            bitboard.getQueenAttacks(index, bitboard.getColorBoard<WHITE>()) &
+            Zagreus::Bitboard::getQueenAttacks(
+                index, bitboard.getColorBoard<WHITE>()) &
             ~(attacksFrom[index] | bitboard.getColorBoard<WHITE>());
         whiteMidgameScore +=
             popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
@@ -377,7 +378,8 @@ void Evaluation::evaluatePieces() {
         // Virtual mobility - Get queen attacks from king position, with only occupied squares by
         // own pieces. We also ignore the squares around the king.
         uint64_t virtualMobilitySquares =
-            bitboard.getQueenAttacks(index, bitboard.getColorBoard<BLACK>()) &
+            Zagreus::Bitboard::getQueenAttacks(
+                index, bitboard.getColorBoard<BLACK>()) &
             ~(attacksFrom[index] | bitboard.getColorBoard<BLACK>());
         blackMidgameScore +=
             popcnt(virtualMobilitySquares) * getEvalValue(MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);

@@ -94,10 +94,19 @@ option(ENABLE_LTO "Enable Link Time Optimization (LTO)" ON)
 option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
 option(ENABLE_MARCH "Enable -march flag" ON)
 option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags" OFF)
+option(ENABLE_CLANG_TIDY "Enable the use of clang-tidy (slows down compiling a lot)" OFF)
 set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
 option(ENABLE_MTUNE "Enable -mtune flag" ON)
 set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
 option(APPEND_VERSION "Append version to filename" OFF)
+
+if (ENABLE_CLANG_TIDY)
+    # if clang-tidy is available, enable it
+    find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+    if (CLANG_TIDY_EXE)
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--config-file=${CMAKE_SOURCE_DIR}/.clang-tidy")
+    endif ()
+endif ()
 
 # Profile defaults
 # If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF

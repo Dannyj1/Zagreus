@@ -68,11 +68,11 @@ namespace senjo {
 
         void doSetOptionCommand(Parameters &params);
 
-        void doStopCommand(Parameters params = {});
+        void doStopCommand(const Parameters &params = {});
 
         void doUCICommand(Parameters &params);
 
-        void doUCINewGameCommand(Parameters params = {});
+        void doUCINewGameCommand(const Parameters &params = {});
 
         void doPositionCommand(const std::string &line, Parameters &params);
 

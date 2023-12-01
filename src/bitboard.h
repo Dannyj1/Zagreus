@@ -61,7 +61,7 @@ class Bitboard {
   uint64_t moveHistory[MAX_PLY]{};
   Line previousPvLine{};
 
-  int pstValues[4];
+  int pstValues[4]{};
 
   Move previousMove{};
   int materialCount[12]{};
@@ -113,9 +113,9 @@ class Bitboard {
     return 0;
   }
 
-  uint64_t getOccupiedBoard();
+  uint64_t getOccupiedBoard() const;
 
-  uint64_t getEmptyBoard();
+  uint64_t getEmptyBoard() const;
 
   PieceType getPieceOnSquare(int8_t square);
 
@@ -125,15 +125,15 @@ class Bitboard {
 
   uint64_t getQueenAttacks(int8_t square);
 
-  uint64_t getQueenAttacks(int8_t square, uint64_t occupancy);
+  static uint64_t getQueenAttacks(int8_t square, uint64_t occupancy);
 
-  uint64_t getBishopAttacks(int8_t square);
+  uint64_t getBishopAttacks(int8_t square) const;
 
-  uint64_t getBishopAttacks(int8_t square, uint64_t occupancy);
+  static uint64_t getBishopAttacks(int8_t square, uint64_t occupancy);
 
-  uint64_t getRookAttacks(int8_t square);
+  uint64_t getRookAttacks(int8_t square) const;
 
-  uint64_t getRookAttacks(int8_t square, uint64_t occupancy);
+  static uint64_t getRookAttacks(int8_t square, uint64_t occupancy);
 
   void setPiece(int8_t square, PieceType piece);
 

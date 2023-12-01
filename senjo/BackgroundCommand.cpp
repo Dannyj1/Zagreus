@@ -54,9 +54,9 @@ namespace senjo {
         params.popString("name", name, "code");
         params.popString("code", code);
 
-        if (params.size()) {
-            Output() << "Unexpected token: " << params.front();
-            return false;
+        if (!params.empty()) {
+          Output() << "Unexpected token: " << params.front();
+          return false;
         }
 
         return true;
@@ -64,16 +64,16 @@ namespace senjo {
 
 //-----------------------------------------------------------------------------
     void RegisterCommandHandle::doWork() {
-        static const std::string registrationOK = "registration ok";
+      static const std::string REGISTRATION_OK = "registration ok";
 
-        Output(Output::NoPrefix) << "registration checking";
-        if (engine.isRegistered()) {
-            Output(Output::NoPrefix) << registrationOK;
+      Output(Output::NoPrefix) << "registration checking";
+      if (engine.isRegistered()) {
+        Output(Output::NoPrefix) << REGISTRATION_OK;
         } else if (later) {
             engine.registerLater();
-            Output(Output::NoPrefix) << registrationOK;
+            Output(Output::NoPrefix) << REGISTRATION_OK;
         } else if (engine.doRegistration(name, code)) {
-            Output(Output::NoPrefix) << registrationOK;
+          Output(Output::NoPrefix) << REGISTRATION_OK;
         } else {
             Output(Output::NoPrefix) << "registration error";
         }
@@ -84,25 +84,25 @@ namespace senjo {
         goParams = GoParams(); // reset all params to default values
 
         bool invalid = false;
-        while (!invalid && params.size()) {
-            if (params.firstParamIs("searchmoves")) {
-                Output() << "searchmoves not implemented!"; // TODO
-                break;
-            }
-            if (params.popParam("infinite", goParams.infinite) ||
-                params.popParam("ponder", goParams.ponder) ||
-                params.popNumber("depth", goParams.depth) ||
-                params.popNumber("movestogo", goParams.movestogo) ||
-                params.popNumber("binc", goParams.binc) ||
-                params.popNumber("btime", goParams.btime) ||
-                params.popNumber("movetime", goParams.movetime) ||
-                params.popNumber("nodes", goParams.nodes) ||
-                params.popNumber("winc", goParams.winc) ||
-                params.popNumber("wtime", goParams.wtime)) {
-                continue;
-            }
-            Output() << "Unexpected token: " << params.front();
-            return false;
+        while (!invalid && !params.empty()) {
+          if (params.firstParamIs("searchmoves")) {
+            Output() << "searchmoves not implemented!";  // TODO
+            break;
+          }
+          if (params.popParam("infinite", goParams.infinite) ||
+              params.popParam("ponder", goParams.ponder) ||
+              params.popNumber("depth", goParams.depth) ||
+              params.popNumber("movestogo", goParams.movestogo) ||
+              params.popNumber("binc", goParams.binc) ||
+              params.popNumber("btime", goParams.btime) ||
+              params.popNumber("movetime", goParams.movetime) ||
+              params.popNumber("nodes", goParams.nodes) ||
+              params.popNumber("winc", goParams.winc) ||
+              params.popNumber("wtime", goParams.wtime)) {
+            continue;
+          }
+          Output() << "Unexpected token: " << params.front();
+          return false;
         }
 
         if (invalid) {
@@ -123,11 +123,11 @@ namespace senjo {
             ponderMove.clear();
         }
 
-        if (ponderMove.size()) {
-            Output(Output::NoPrefix) << "bestmove " << bestMove
-                                     << " ponder " << ponderMove;
+        if (!ponderMove.empty()) {
+          Output(Output::NoPrefix)
+              << "bestmove " << bestMove << " ponder " << ponderMove;
         } else {
-            Output(Output::NoPrefix) << "bestmove " << bestMove;
+          Output(Output::NoPrefix) << "bestmove " << bestMove;
         }
     }
 
@@ -145,17 +145,17 @@ namespace senjo {
         bool epd = false;
         bool invalid = false;
 
-        while (params.size() && !invalid) {
-            if (params.popParam("epd", epd) ||
-                params.popNumber("count", count, invalid) ||
-                params.popNumber("skip", skip, invalid) ||
-                params.popNumber("depth", maxDepth, invalid) ||
-                params.popNumber("leafs", maxLeafs, invalid) ||
-                params.popString("file", fileName)) {
-                continue;
-            }
-            Output() << "Unexpected token: " << params.front();
-            return false;
+        while (!params.empty() && !invalid) {
+          if (params.popParam("epd", epd) ||
+              params.popNumber("count", count, invalid) ||
+              params.popNumber("skip", skip, invalid) ||
+              params.popNumber("depth", maxDepth, invalid) ||
+              params.popNumber("leafs", maxLeafs, invalid) ||
+              params.popString("file", fileName)) {
+            continue;
+          }
+          Output() << "Unexpected token: " << params.front();
+          return false;
         }
 
         if (invalid) {
@@ -209,30 +209,30 @@ namespace senjo {
 
             // process "D<depth> <leafs>" parameters (e.g. D5 4865609)
             Parameters params(remain);
-            while (!done && params.size()) {
-                std::string depthToken = trim(params.popString(), " ;");
-                if (depthToken.empty() || (depthToken.at(0) != 'D')) {
-                    continue;
-                }
+            while (!done && !params.empty()) {
+              std::string depthToken = trim(params.popString(), " ;");
+              if (depthToken.empty() || (depthToken.at(0) != 'D')) {
+                continue;
+              }
 
-                int depth = toNumber<int>(depthToken.substr(1));
-                if (depth < 1) {
-                    Output() << "--- invalid depth: " << depthToken;
-                    break;
-                }
+              int depth = toNumber<int>(depthToken.substr(1));
+              if (depth < 1) {
+                Output() << "--- invalid depth: " << depthToken;
+                break;
+              }
 
-                if (params.empty()) {
-                    Output() << "--- missing expected leaf count";
-                    break;
-                }
+              if (params.empty()) {
+                Output() << "--- missing expected leaf count";
+                break;
+              }
 
-                uint64_t leafs = params.popNumber<uint64_t>();
-                if (leafs < 1) {
-                    Output() << "--- invalid expected leaf count";
-                    break;
-                }
+              auto leafs = params.popNumber<uint64_t>();
+              if (leafs < 1) {
+                Output() << "--- invalid expected leaf count";
+                break;
+              }
 
-                done |= !process(depth, leafs, pcount);
+              done |= !process(depth, leafs, pcount);
             }
 
             done |= ((count > 0) && (positions >= count));
@@ -253,25 +253,25 @@ namespace senjo {
 //! \return false if leaf_count count does not match expected leaf count
 //-----------------------------------------------------------------------------
     bool PerftCommandHandle::process(const int depth,
-                                     const uint64_t expected_leaf_count,
-                                     uint64_t &leaf_count) {
-        if ((maxDepth > 0) && (depth > maxDepth)) {
-            return true;
-        }
-
-        if ((maxLeafs > 0) && (expected_leaf_count > maxLeafs)) {
-            return true;
-        }
-
-        Output() << "--- " << depth << " => " << expected_leaf_count;
-        uint64_t perft_count = engine.perft(depth);
-        leaf_count += perft_count;
-
-        if (perft_count != expected_leaf_count) {
-            Output() << "--- " << perft_count << " != " << expected_leaf_count;
-            return false;
-        }
-
+                                     const uint64_t expectedLeafCount,
+                                     uint64_t &leafCount) {
+      if ((maxDepth > 0) && (depth > maxDepth)) {
         return true;
+      }
+
+      if ((maxLeafs > 0) && (expectedLeafCount > maxLeafs)) {
+        return true;
+      }
+
+      Output() << "--- " << depth << " => " << expectedLeafCount;
+      uint64_t perftCount = engine.perft(depth);
+      leafCount += perftCount;
+
+      if (perftCount != expectedLeafCount) {
+        Output() << "--- " << perftCount << " != " << expectedLeafCount;
+        return false;
+      }
+
+      return true;
     }
 } // namespace senjo

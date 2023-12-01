@@ -24,7 +24,7 @@
 
 namespace Zagreus {
 std::string getNotation(int8_t square) {
-  std::string notation = "";
+  std::string notation;
 
   notation += static_cast<char>(square % 8 + 'a');
   notation += static_cast<char>(square / 8 + '1');

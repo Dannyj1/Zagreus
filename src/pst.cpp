@@ -235,7 +235,7 @@ std::vector<int> getEndgameValues() {
 
 void initializePst() {
   for (int piece = 0; piece < 12; piece++) {
-    PieceType pieceType = static_cast<PieceType>(piece);
+    auto pieceType = static_cast<PieceType>(piece);
 
     for (int8_t square = 0; square < 64; square++) {
       switch (pieceType) {

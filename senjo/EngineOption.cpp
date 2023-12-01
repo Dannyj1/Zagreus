@@ -22,32 +22,34 @@
 
 #include "EngineOption.h"
 
+#include <utility>
+
 namespace senjo {
 
-    static const char* OPT_BUTTON_NAME = "button";
-    static const char* OPT_CHECK_NAME = "check";
-    static const char* OPT_COMBO_NAME = "combo";
-    static const char* OPT_SPIN_NAME = "spin";
-    static const char* OPT_STRING_NAME = "string";
-    static const char* OPT_UNKNOWN_NAME = "unknown";
+static const char* optButtonName = "button";
+static const char* optCheckName = "check";
+static const char* optComboName = "combo";
+static const char* optSpinName = "spin";
+static const char* optStringName = "string";
+static const char* optUnknownName = "unknown";
 
 //-----------------------------------------------------------------------------
     EngineOption::OptionType EngineOption::toOptionType(const std::string &name) {
-        if (!iEqual(name, OPT_BUTTON_NAME)) {
-            return Button;
-        }
-        if (!iEqual(name, OPT_CHECK_NAME)) {
-            return Checkbox;
-        }
-        if (!iEqual(name, OPT_COMBO_NAME)) {
-            return ComboBox;
-        }
-        if (!iEqual(name, OPT_SPIN_NAME)) {
-            return Spin;
-        }
-        if (!iEqual(name, OPT_STRING_NAME)) {
-            return String;
-        }
+      if (!iEqual(name, optButtonName)) {
+        return Button;
+      }
+      if (!iEqual(name, optCheckName)) {
+        return Checkbox;
+      }
+      if (!iEqual(name, optComboName)) {
+        return ComboBox;
+      }
+      if (!iEqual(name, optSpinName)) {
+        return Spin;
+      }
+      if (!iEqual(name, optStringName)) {
+        return String;
+      }
         return Unknown;
     }
 
@@ -55,37 +57,36 @@ namespace senjo {
     std::string EngineOption::getTypeName(const OptionType type) {
         switch (type) {
             case Button:
-                return OPT_BUTTON_NAME;
+              return optButtonName;
             case Checkbox:
-                return OPT_CHECK_NAME;
+              return optCheckName;
             case ComboBox:
-                return OPT_COMBO_NAME;
+              return optComboName;
             case Spin:
-                return OPT_SPIN_NAME;
+              return optSpinName;
             case String:
-                return OPT_STRING_NAME;
+              return optStringName;
             default:
                 break;
         }
-        return OPT_UNKNOWN_NAME;
+        return optUnknownName;
     }
 
 //-----------------------------------------------------------------------------
-    EngineOption::EngineOption(const std::string &optName,
-                               const std::string &defaultValue,
-                               const OptionType optType,
-                               const int64_t minValue,
+    EngineOption::EngineOption(std::string optName,
+                               const std::string& defaultValue,
+                               const OptionType optType, const int64_t minValue,
                                const int64_t maxValue,
-                               const std::set<std::string> &comboValues)
-            : optType(optType),
-              optName(optName),
-              optValue(defaultValue),
-              defaultValue(defaultValue),
-              minValue(minValue),
-              maxValue(maxValue),
-              comboValues(comboValues) {}
+                               const std::set<std::string>& comboValues)
+        : optType(optType),
+          optName(std::move(optName)),
+          optValue(defaultValue),
+          defaultValue(defaultValue),
+          minValue(minValue),
+          maxValue(maxValue),
+          comboValues(comboValues) {}
 
-//-----------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
     int64_t EngineOption::getIntValue() const {
         return toNumber<int64_t>(optValue);
     }
@@ -98,11 +99,11 @@ namespace senjo {
 //-----------------------------------------------------------------------------
     std::set<int64_t> EngineOption::getIntComboValues() const {
         std::set<int64_t> values;
-        for (auto value : comboValues) {
-            int64_t n = toNumber<int64_t>(value, -1);
-            if (n >= 0) {
-                values.insert(n);
-            }
+        for (const auto& value : comboValues) {
+          auto n = toNumber<int64_t>(value, -1);
+          if (n >= 0) {
+            values.insert(n);
+          }
         }
         return values;
     }
@@ -121,9 +122,9 @@ namespace senjo {
                 }
                 break;
             case Spin: {
-                int64_t intval = toNumber<int64_t>(value, minValue - 1);
-                if (intval < minValue || intval > maxValue) {
-                    return false;
+              auto intval = toNumber<int64_t>(value, minValue - 1);
+              if (intval < minValue || intval > maxValue) {
+                return false;
                 }
                 break;
             }

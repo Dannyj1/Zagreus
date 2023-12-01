@@ -67,12 +67,12 @@ namespace senjo {
         //! \param[in] maxValue The max value for Spin options (default = INT64_MAX)
         //! \param[in] combo Set of legal ComboBox values (default = empty)
         //--------------------------------------------------------------------------
-        EngineOption(const std::string &name = std::string(),
-                     const std::string &defaultValue = std::string(),
-                     const OptionType type = String,
-                     const int64_t minValue = INT64_MIN,
-                     const int64_t maxValue = INT64_MAX,
-                     const std::set<std::string> &combo = std::set<std::string>());
+        EngineOption(
+            std::string name = std::string(),
+            const std::string &defaultValue = std::string(),
+            const OptionType type = String, const int64_t minValue = INT64_MIN,
+            const int64_t maxValue = INT64_MAX,
+            const std::set<std::string> &combo = std::set<std::string>());
 
         //--------------------------------------------------------------------------
         //! \brief Get the option type

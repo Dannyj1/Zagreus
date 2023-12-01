@@ -40,7 +40,7 @@ Bitboard tunerBoard{};
 
 int stopCounter = 0;
 int iteration = 0;
-double K = 0.0;
+double k = 0.0;
 
 int batchSize = 512;
 double learningRate = 0.25;
@@ -70,7 +70,7 @@ std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition> &
   return batches;
 }
 
-double sigmoid(double x) { return 1.0 / (1.0 + pow(10.0, -K * x / 400.0)); }
+double sigmoid(double x) { return 1.0 / (1.0 + pow(10.0, -k * x / 400.0)); }
 
 double evaluationLoss(std::vector<TunePosition> &positions, int amountOfPositions,
                       std::chrono::time_point<std::chrono::steady_clock> &maxEndTime,
@@ -107,10 +107,10 @@ double findOptimalK(std::vector<TunePosition> &positions,
   // Find optimal K
   double bestK = 0.0;
   double bestLoss = 9999999.0;
-  double oldK = K;
+  double oldK = k;
 
   for (double k = 0.0; k <= 2.0; k += 0.001) {
-    K = k;
+    k = k;
     double totalLoss = 0.0;
 
     for (TunePosition &pos : positions) {
@@ -126,7 +126,7 @@ double findOptimalK(std::vector<TunePosition> &positions,
     }
   }
 
-  K = oldK;
+  k = oldK;
   return bestK;
 }
 
@@ -316,8 +316,8 @@ void startTuning(char *filePath) {
   exportNewEvalValues(bestParameters);
 
   std::cout << "Finding the optimal K value..." << std::endl;
-  K = findOptimalK(positions, maxEndTime, engine);
-  std::cout << "Optimal K value: " << K << std::endl;
+  k = findOptimalK(positions, maxEndTime, engine);
+  std::cout << "Optimal K value: " << k << std::endl;
 
   std::shuffle(positions.begin(), positions.end(), gen);
 
@@ -375,9 +375,10 @@ void startTuning(char *filePath) {
       gradients[paramIndex] /= static_cast<double>(batch.size());
       m[paramIndex] = beta1 * m[paramIndex] + (1.0 - beta1) * gradients[paramIndex];
       v[paramIndex] = beta2 * v[paramIndex] + (1.0 - beta2) * std::pow(gradients[paramIndex], 2.0);
-      double m_hat = m[paramIndex] / (1.0 - pow(beta1, iteration));
-      double v_hat = v[paramIndex] / (1.0 - pow(beta2, iteration));
-      bestParameters[paramIndex] -= learningRate * (m_hat / (sqrt(v_hat) + optimizerEpsilon));
+      double mHat = m[paramIndex] / (1.0 - pow(beta1, iteration));
+      double vHat = v[paramIndex] / (1.0 - pow(beta2, iteration));
+      bestParameters[paramIndex] -=
+          learningRate * (mHat / (sqrt(vHat) + optimizerEpsilon));
     }
 
     updateEvalValues(bestParameters);

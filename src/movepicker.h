@@ -43,6 +43,6 @@ class MovePicker {
 
   int remaining();
 
-  int movesSearched();
+  int movesSearched() const;
 };
 }  // namespace Zagreus
