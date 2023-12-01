@@ -21,27 +21,29 @@
 #pragma once
 
 #include <vector>
+
 #include "types.h"
 
 namespace Zagreus {
-    static constexpr int INITIAL_POOL_SIZE = 100;
+static constexpr int INITIAL_POOL_SIZE = 100;
 
-    class MoveListPool {
-    public:
-        static MoveListPool* getInstance();
+class MoveListPool {
+ public:
+  static MoveListPool* getInstance();
 
-        MoveList* getMoveList();
+  MoveList* getMoveList();
 
-        void releaseMoveList(MoveList* moveList);
+  void releaseMoveList(MoveList* moveList);
 
-        ~MoveListPool();
-    private:
-        std::vector<MoveList*> pool{};
+  ~MoveListPool();
 
-        MoveListPool();
+ private:
+  std::vector<MoveList*> pool{};
 
-        static MoveList* createMoveList();
+  MoveListPool();
 
-        static void destroyMoveList(MoveList* moveList);
-    };
-}
+  static MoveList* createMoveList();
+
+  static void destroyMoveList(MoveList* moveList);
+};
+}  // namespace Zagreus

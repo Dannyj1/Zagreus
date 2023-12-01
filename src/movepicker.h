@@ -24,25 +24,25 @@
 
 #include "types.h"
 
-
 namespace Zagreus {
-    class MovePicker {
-    private:
-        MoveList* moveList = nullptr;
-        int searchStartIndex = 0;
-    public:
-        MovePicker() = delete;
+class MovePicker {
+ private:
+  MoveList* moveList = nullptr;
+  int searchStartIndex = 0;
 
-        MovePicker(MoveList* moveList) : moveList(moveList) {};
+ public:
+  MovePicker() = delete;
 
-        Move getNextMove();
+  MovePicker(MoveList* moveList) : moveList(moveList){};
 
-        bool hasNext();
+  Move getNextMove();
 
-        int size();
+  bool hasNext();
 
-        int remaining();
+  int size();
 
-        int movesSearched();
-    };
-}
+  int remaining();
+
+  int movesSearched();
+};
+}  // namespace Zagreus

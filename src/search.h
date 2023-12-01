@@ -21,33 +21,35 @@
 #pragma once
 
 #include "../senjo/SearchStats.h"
-#include "types.h"
 #include "bitboard.h"
 #include "engine.h"
+#include "types.h"
 
 namespace Zagreus {
-    class SearchManager {
-    private:
-        bool isSearching = false;
-        senjo::SearchStats searchStats{};
-        EvalContext evalContext;
-        MoveListPool* moveListPool = MoveListPool::getInstance();
-    public:
-        Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
+class SearchManager {
+ private:
+  bool isSearching = false;
+  senjo::SearchStats searchStats{};
+  EvalContext evalContext;
+  MoveListPool *moveListPool = MoveListPool::getInstance();
 
-        template<PieceColor color>
-        int search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
-               std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine, ZagreusEngine &engine, bool isPv, bool canNull);
+ public:
+  Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
 
-        template<PieceColor color>
-        int quiesce(Bitboard &board, int alpha, int beta, Move &rootMove,
-                             Move &previousMove,
-                             std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine, bool isPv, int depth = 0);
+  template <PieceColor color>
+  int search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
+             std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine,
+             ZagreusEngine &engine, bool isPv, bool canNull);
 
-        bool isCurrentlySearching();
+  template <PieceColor color>
+  int quiesce(Bitboard &board, int alpha, int beta, Move &rootMove, Move &previousMove,
+              std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine,
+              bool isPv, int depth = 0);
 
-        senjo::SearchStats getSearchStats();
-    };
+  bool isCurrentlySearching();
 
-    static SearchManager searchManager{};
-}
+  senjo::SearchStats getSearchStats();
+};
+
+static SearchManager searchManager{};
+}  // namespace Zagreus

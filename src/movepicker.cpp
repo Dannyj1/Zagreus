@@ -22,36 +22,28 @@
 
 namespace Zagreus {
 
-    Move MovePicker::getNextMove() {
-        int highestScore = moveList->moves[searchStartIndex].score;
-        int moveIndex = searchStartIndex;
+Move MovePicker::getNextMove() {
+  int highestScore = moveList->moves[searchStartIndex].score;
+  int moveIndex = searchStartIndex;
 
-        for (int i = searchStartIndex + 1; i < moveList->size; i++) {
-            int currentScore = moveList->moves[i].score;
-            if (currentScore > highestScore) {
-                highestScore = currentScore;
-                moveIndex = i;
-            }
-        }
-
-        std::swap(moveList->moves[searchStartIndex], moveList->moves[moveIndex]);
-        searchStartIndex++;
-        return moveList->moves[searchStartIndex - 1];
+  for (int i = searchStartIndex + 1; i < moveList->size; i++) {
+    int currentScore = moveList->moves[i].score;
+    if (currentScore > highestScore) {
+      highestScore = currentScore;
+      moveIndex = i;
     }
+  }
 
-    bool MovePicker::hasNext() {
-        return searchStartIndex < moveList->size;
-    }
-
-    int MovePicker::size() {
-        return moveList->size;
-    }
-
-    int MovePicker::remaining() {
-        return moveList->size - searchStartIndex;
-    }
-
-    int MovePicker::movesSearched() {
-        return searchStartIndex;
-    }
+  std::swap(moveList->moves[searchStartIndex], moveList->moves[moveIndex]);
+  searchStartIndex++;
+  return moveList->moves[searchStartIndex - 1];
 }
+
+bool MovePicker::hasNext() { return searchStartIndex < moveList->size; }
+
+int MovePicker::size() { return moveList->size; }
+
+int MovePicker::remaining() { return moveList->size - searchStartIndex; }
+
+int MovePicker::movesSearched() { return searchStartIndex; }
+}  // namespace Zagreus

@@ -23,9 +23,9 @@
 #include "bitboard.h"
 
 namespace Zagreus {
-    template<PieceColor color>
-    void generateMoves(Bitboard &bitboard, MoveList* moveList);
+template <PieceColor color>
+void generateMoves(Bitboard& bitboard, MoveList* moveList);
 
-    template<PieceColor color>
-    void generateQuiescenceMoves(Bitboard &bitboard, MoveList* moveList);
-}
+template <PieceColor color>
+void generateQuiescenceMoves(Bitboard& bitboard, MoveList* moveList);
+}  // namespace Zagreus

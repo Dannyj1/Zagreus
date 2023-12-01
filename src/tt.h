@@ -20,84 +20,86 @@
 
 #pragma once
 
+#include <chrono>
 #include <cstdint>
 #include <map>
-#include <chrono>
 
 #include "bitboard.h"
 
 namespace Zagreus {
-    enum NodeType {
-        PV_NODE,  // Exact score
-        FAIL_LOW_NODE, // Alpha score
-        FAIL_HIGH_NODE // Beta score
-    };
+enum NodeType {
+  PV_NODE,        // Exact score
+  FAIL_LOW_NODE,  // Alpha score
+  FAIL_HIGH_NODE  // Beta score
+};
 
-    struct TTEntry {
-        int score = 0;
-        uint8_t depth = 0;
-        uint32_t bestMoveCode = 0;
-        uint64_t zobristHash = 0;
-        NodeType nodeType = PV_NODE;
-    };
+struct TTEntry {
+  int score = 0;
+  uint8_t depth = 0;
+  uint32_t bestMoveCode = 0;
+  uint64_t zobristHash = 0;
+  NodeType nodeType = PV_NODE;
+};
 
-    class TranspositionTable {
-    public:
-        TTEntry* transpositionTable = new TTEntry[1]{};
-        uint32_t** killerMoves = new uint32_t*[3]{};
-        uint32_t** historyMoves = new uint32_t*[12]{};
-        uint32_t** counterMoves = new uint32_t*[64]{};
+class TranspositionTable {
+ public:
+  TTEntry* transpositionTable = new TTEntry[1]{};
+  uint32_t** killerMoves = new uint32_t* [3] {};
+  uint32_t** historyMoves = new uint32_t* [12] {};
+  uint32_t** counterMoves = new uint32_t* [64] {};
 
-        uint64_t hashSize = 0;
+  uint64_t hashSize = 0;
 
-        TranspositionTable() {
-            for (int i = 0; i < 3; i++) {
-                killerMoves[i] = new uint32_t[MAX_PLY]{};
-            }
+  TranspositionTable() {
+    for (int i = 0; i < 3; i++) {
+      killerMoves[i] = new uint32_t[MAX_PLY]{};
+    }
 
-            for (int i = 0; i < 12; i++) {
-                historyMoves[i] = new uint32_t[64]{};
-            }
+    for (int i = 0; i < 12; i++) {
+      historyMoves[i] = new uint32_t[64]{};
+    }
 
-            for (int i = 0; i < 64; i++) {
-                counterMoves[i] = new uint32_t[64]{};
-            }
-        }
+    for (int i = 0; i < 64; i++) {
+      counterMoves[i] = new uint32_t[64]{};
+    }
+  }
 
-        ~TranspositionTable() {
-            delete[] transpositionTable;
+  ~TranspositionTable() {
+    delete[] transpositionTable;
 
-            for (int i = 0; i < 3; i++) {
-                delete[] killerMoves[i];
-            }
+    for (int i = 0; i < 3; i++) {
+      delete[] killerMoves[i];
+    }
 
-            for (int i = 0; i < 12; i++) {
-                delete[] historyMoves[i];
-            }
+    for (int i = 0; i < 12; i++) {
+      delete[] historyMoves[i];
+    }
 
-            for (int i = 0; i < 64; i++) {
-                delete[] counterMoves[i];
-            }
+    for (int i = 0; i < 64; i++) {
+      delete[] counterMoves[i];
+    }
 
-            delete[] killerMoves;
-            delete[] historyMoves;
-            delete[] counterMoves;
-        }
+    delete[] killerMoves;
+    delete[] historyMoves;
+    delete[] counterMoves;
+  }
 
-        TranspositionTable(TranspositionTable &other) = delete;
+  TranspositionTable(TranspositionTable& other) = delete;
 
-        void operator=(const TranspositionTable &) = delete;
+  void operator=(const TranspositionTable&) = delete;
 
-        static TranspositionTable* getTT();
+  static TranspositionTable* getTT();
 
-        void setTableSize(int megaBytes);
+  void setTableSize(int megaBytes);
 
-        void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType, uint32_t bestMoveCode, std::chrono::time_point<std::chrono::steady_clock> endTime);
+  void addPosition(uint64_t zobristHash, int depth, int score, NodeType nodeType,
+                   uint32_t bestMoveCode,
+                   std::chrono::time_point<std::chrono::steady_clock> endTime);
 
-        int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
+  int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
 
-        TTEntry* getEntry(uint64_t zobristHash);
+  TTEntry* getEntry(uint64_t zobristHash);
 
-        void ageHistoryTable();
-    };
-}
+  void ageHistoryTable();
+};
+}  // namespace Zagreus

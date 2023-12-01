@@ -18,55 +18,55 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <x86intrin.h>
-
 #include "utils.h"
 
+#include <x86intrin.h>
+
 namespace Zagreus {
-    std::string getNotation(int8_t square) {
-        std::string notation = "";
+std::string getNotation(int8_t square) {
+  std::string notation = "";
 
-        notation += static_cast<char>(square % 8 + 'a');
-        notation += static_cast<char>(square / 8 + '1');
+  notation += static_cast<char>(square % 8 + 'a');
+  notation += static_cast<char>(square / 8 + '1');
 
-        return notation;
-    }
-
-    int8_t getSquareFromString(std::string move) {
-        int file = move[0] - 'a';
-        int rank = move[1] - '1';
-
-        return file + rank * 8;
-    }
-
-    char getCharacterForPieceType(PieceType pieceType) {
-        switch (pieceType) {
-            case WHITE_PAWN:
-                return 'P';
-            case BLACK_PAWN:
-                return 'p';
-            case WHITE_KNIGHT:
-                return 'N';
-            case BLACK_KNIGHT:
-                return 'n';
-            case WHITE_BISHOP:
-                return 'B';
-            case BLACK_BISHOP:
-                return 'b';
-            case WHITE_ROOK:
-                return 'R';
-            case BLACK_ROOK:
-                return 'r';
-            case WHITE_QUEEN:
-                return 'Q';
-            case BLACK_QUEEN:
-                return 'q';
-            case WHITE_KING:
-                return 'K';
-            case BLACK_KING:
-                return 'k';
-            case EMPTY:
-                return ' ';
-        }
-    }
+  return notation;
 }
+
+int8_t getSquareFromString(std::string move) {
+  int file = move[0] - 'a';
+  int rank = move[1] - '1';
+
+  return file + rank * 8;
+}
+
+char getCharacterForPieceType(PieceType pieceType) {
+  switch (pieceType) {
+    case WHITE_PAWN:
+      return 'P';
+    case BLACK_PAWN:
+      return 'p';
+    case WHITE_KNIGHT:
+      return 'N';
+    case BLACK_KNIGHT:
+      return 'n';
+    case WHITE_BISHOP:
+      return 'B';
+    case BLACK_BISHOP:
+      return 'b';
+    case WHITE_ROOK:
+      return 'R';
+    case BLACK_ROOK:
+      return 'r';
+    case WHITE_QUEEN:
+      return 'Q';
+    case BLACK_QUEEN:
+      return 'q';
+    case WHITE_KING:
+      return 'K';
+    case BLACK_KING:
+      return 'k';
+    case EMPTY:
+      return ' ';
+  }
+}
+}  // namespace Zagreus

@@ -20,81 +20,81 @@
 
 #pragma once
 
-
 #include <cstdint>
+
 #include "types.h"
 
 namespace Zagreus {
-    uint64_t soutOne(uint64_t b);
+uint64_t soutOne(uint64_t b);
 
-    uint64_t nortOne(uint64_t b);
+uint64_t nortOne(uint64_t b);
 
-    uint64_t eastOne(uint64_t b);
+uint64_t eastOne(uint64_t b);
 
-    uint64_t noEaOne(uint64_t b);
+uint64_t noEaOne(uint64_t b);
 
-    uint64_t soEaOne(uint64_t b);
+uint64_t soEaOne(uint64_t b);
 
-    uint64_t westOne(uint64_t b);
+uint64_t westOne(uint64_t b);
 
-    uint64_t soWeOne(uint64_t b);
+uint64_t soWeOne(uint64_t b);
 
-    uint64_t noWeOne(uint64_t b);
+uint64_t noWeOne(uint64_t b);
 
-    uint64_t noNoEa(uint64_t b);
+uint64_t noNoEa(uint64_t b);
 
-    uint64_t noEaEa(uint64_t b);
+uint64_t noEaEa(uint64_t b);
 
-    uint64_t soEaEa(uint64_t b);
+uint64_t soEaEa(uint64_t b);
 
-    uint64_t soSoEa(uint64_t b);
+uint64_t soSoEa(uint64_t b);
 
-    uint64_t noNoWe(uint64_t b);
+uint64_t noNoWe(uint64_t b);
 
-    uint64_t noWeWe(uint64_t b);
+uint64_t noWeWe(uint64_t b);
 
-    uint64_t soWeWe(uint64_t b);
+uint64_t soWeWe(uint64_t b);
 
-    uint64_t soSoWe(uint64_t b);
+uint64_t soSoWe(uint64_t b);
 
-    uint64_t soutOccl(uint64_t pieceBB, uint64_t empty);
+uint64_t soutOccl(uint64_t pieceBB, uint64_t empty);
 
-    uint64_t nortOccl(uint64_t pieceBB, uint64_t empty);
+uint64_t nortOccl(uint64_t pieceBB, uint64_t empty);
 
-    uint64_t eastOccl(uint64_t pieceBB, uint64_t empty);
+uint64_t eastOccl(uint64_t pieceBB, uint64_t empty);
 
-    uint64_t noEaOccl(uint64_t pieceBB, uint64_t empty);
+uint64_t noEaOccl(uint64_t pieceBB, uint64_t empty);
 
-    uint64_t soEaOccl(uint64_t pieceBB, uint64_t empty);
+uint64_t soEaOccl(uint64_t pieceBB, uint64_t empty);
 
-    uint64_t westOccl(uint64_t rooks, uint64_t empty);
+uint64_t westOccl(uint64_t rooks, uint64_t empty);
 
-    uint64_t soWeOccl(uint64_t bishops, uint64_t empty);
+uint64_t soWeOccl(uint64_t bishops, uint64_t empty);
 
-    uint64_t noWeOccl(uint64_t bishops, uint64_t empty);
+uint64_t noWeOccl(uint64_t bishops, uint64_t empty);
 
-    uint64_t nortFill(uint64_t gen);
+uint64_t nortFill(uint64_t gen);
 
-    uint64_t soutFill(uint64_t gen);
+uint64_t soutFill(uint64_t gen);
 
-    uint64_t whiteFrontSpans(uint64_t pawns);
+uint64_t whiteFrontSpans(uint64_t pawns);
 
-    uint64_t whiteRearSpans(uint64_t pawns);
+uint64_t whiteRearSpans(uint64_t pawns);
 
-    uint64_t blackRearSpans(uint64_t pawns);
+uint64_t blackRearSpans(uint64_t pawns);
 
-    uint64_t blackFrontSpans(uint64_t pawns);
+uint64_t blackFrontSpans(uint64_t pawns);
 
-    template<PieceColor color>
-    uint64_t calculatePawnEastAttacks(uint64_t pawns);
+template <PieceColor color>
+uint64_t calculatePawnEastAttacks(uint64_t pawns);
 
-    template<PieceColor color>
-    uint64_t calculatePawnWestAttacks(uint64_t pawns);
+template <PieceColor color>
+uint64_t calculatePawnWestAttacks(uint64_t pawns);
 
-    uint64_t calculateKnightAttacks(uint64_t knights);
+uint64_t calculateKnightAttacks(uint64_t knights);
 
-    uint64_t calculateKingAttacks(uint64_t kingSet);
+uint64_t calculateKingAttacks(uint64_t kingSet);
 
-    template<PieceColor color>
-    uint64_t calculatePawnAttacks(uint64_t bb);
-}
+template <PieceColor color>
+uint64_t calculatePawnAttacks(uint64_t bb);
+}  // namespace Zagreus

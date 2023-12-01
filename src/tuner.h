@@ -22,39 +22,37 @@
 
 #include <deque>
 #include <string>
+
 #include "bitboard.h"
 
 namespace Zagreus {
-    struct TunePosition {
-        std::string fen;
-        double result = 0.0f;
-        int score = 0;
-    };
+struct TunePosition {
+  std::string fen;
+  double result = 0.0f;
+  int score = 0;
+};
 
-    class ExponentialMovingAverage {
-    private:
-        double alpha;
-        double ma;
-        bool initialized;
+class ExponentialMovingAverage {
+ private:
+  double alpha;
+  double ma;
+  bool initialized;
 
-    public:
-        ExponentialMovingAverage(size_t period)
-        : alpha(2.0 / (period + 1)), ma(0), initialized(false) {}
+ public:
+  ExponentialMovingAverage(size_t period) : alpha(2.0 / (period + 1)), ma(0), initialized(false) {}
 
-        void add(double value) {
-            if (!initialized) {
-                ma = value;
-                initialized = true;
-            } else {
-                ma = alpha * value + (1 - alpha) * ma;
-            }
-        }
+  void add(double value) {
+    if (!initialized) {
+      ma = value;
+      initialized = true;
+    } else {
+      ma = alpha * value + (1 - alpha) * ma;
+    }
+  }
 
-        double getMA() const {
-            return ma;
-        }
-    };
+  double getMA() const { return ma; }
+};
 
-    void startTuning(char* filePath);
+void startTuning(char* filePath);
 
-}
+}  // namespace Zagreus

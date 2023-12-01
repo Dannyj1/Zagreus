@@ -24,21 +24,21 @@
 
 namespace Zagreus {
 // PST tables from https://www.chessprogramming.org/Simplified_Evaluation_Function
-    void initializePst();
+void initializePst();
 
-    int getMidgamePstValue(PieceType piece, int8_t square);
+int getMidgamePstValue(PieceType piece, int8_t square);
 
-    int getEndgamePstValue(PieceType piece, int8_t square);
+int getEndgamePstValue(PieceType piece, int8_t square);
 
-    void setMidgamePstValue(PieceType piece, int8_t square, int value);
+void setMidgamePstValue(PieceType piece, int8_t square, int value);
 
-    void setEndgamePstValue(PieceType piece, int8_t square, int value);
+void setEndgamePstValue(PieceType piece, int8_t square, int value);
 
-    std::vector<int> getMidgameValues();
+std::vector<int> getMidgameValues();
 
-    std::vector<int> getEndgameValues();
+std::vector<int> getEndgameValues();
 
-    std::vector<int> getBaseMidgameValues();
+std::vector<int> getBaseMidgameValues();
 
-    std::vector<int> getBaseEndgameValues();
-}
+std::vector<int> getBaseEndgameValues();
+}  // namespace Zagreus
