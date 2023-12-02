@@ -327,8 +327,7 @@ int SearchManager::search(Bitboard &board, int depth, int alpha, int beta, Move 
           move.promotionPiece == EMPTY && !isOwnKingInCheck && !isOpponentKingInCheck) {
         // Scale the reduction value between 1 and (depth - 1), depending on how many moves have
         // been searched. It should reach (depth - 1) when 60% of the moves have been searched.
-        int R =
-            1 + static_cast<int>((depth - 1) * (1 - moves.movesSearched() / (0.6 * moves.size())));
+        int R = 1 + static_cast<int>((depth - 1) * (1 - moves.movesSearched() / (0.6 * moves.size())));
         depthReduction += R;
       }
     }

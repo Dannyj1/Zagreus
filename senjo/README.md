@@ -72,6 +72,7 @@ To create a chess engine named "Trout" using the Senjo UCI adapter do the follow
             }
         }
 
+
 Notes
 -----
 

@@ -5,6 +5,7 @@
 
 ![License](https://img.shields.io/github/license/Dannyj1/Zagreus?style=for-the-badge) ![Downloads](https://img.shields.io/github/downloads/Dannyj1/Zagreus/total?style=for-the-badge) ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/Dannyj1/Zagreus?style=for-the-badge) ![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/Dannyj1/Zagreus/latest?include_prereleases&style=for-the-badge)
 
+
 # Zagreus Chess Engine
 
 Zagreus is a work in progress UCI Chess Engine. You can play against Zagreus on
@@ -18,7 +19,6 @@ This engine requires a GUI that supports the UCI (Universal Chess Interface) pro
 use [CuteChess](https://cutechess.com/).
 
 # Features
-
 - Bitboard board representation with Plain Magic Bitboards for sliding piece move generation
 - Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square
   tables and more
@@ -33,7 +33,6 @@ use [CuteChess](https://cutechess.com/).
 - And more! This list is constantly growing and changing, but it is difficult to keep track of all features and changes.
 
 # UCI Options
-
 Zagreus Engine has the following UCI options that can be changed:
 
 - `MoveOverhead` - The amount of time that will be substracted from the internal timer for each move. This helps when
@@ -48,20 +47,16 @@ Zagreus uses CMake to build. On Windows you can use the [CMake-GUI](https://cmak
 following commands:
 
 Clone the repository:
-
 ```bash
 git clone https://github.com/Dannyj1/Zagreus.git
 ```
 
 Set the compiler to clang++:
-
 ```bash
 export CC=/usr/bin/clang-15
 export CXX=/usr/bin/clang++-15
 ```
-
 Build:
-
 ```bash
 cd <directory of Zagreus engine>
 cmake -DCMAKE_BUILD_TYPE=Release .
@@ -69,21 +64,19 @@ cmake --build .
 ```
 
 # Credits
-
 Thanks to:
 
 - [zd3nik](https://github.com/zd3nik) for the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter), which I
-  slightly modified.
+  slightly modified
 - [AndyGrant](https://github.com/AndyGrant) for the easy to use and open
-  source [OpenBench Testing Framework](https://github.com/AndyGrant/OpenBench), making testing my engine so much easier
-  and allowing you to distribute test over multiple devices (I use a private instance of OpenBench).
+  source [OpenBench Testing Framework](https://github.com/AndyGrant/OpenBench), making testing my engine SO much easier
+  and allowing you to distribute test over multiple devices (I use a private instance of OpenBench)
 - [maksimKorzh](https://github.com/maksimKorzh) for the
   great [tutorials](https://www.youtube.com/channel/UCB9-prLkPwgvlKKqDgXhsMQ)
-  and [engine](https://github.com/maksimKorzh/chess_programming).
+  and [engine](https://github.com/maksimKorzh/chess_programming)
 - The [Chessprogramming wiki](https://www.chessprogramming.org/Main_Page) contributors for all the information about
-  chess programming.
+  chess programming
 - Some ideas in this engine are inspired by [Stockfish](https://github.com/official-stockfish/Stockfish)
-  and [Ethereal](https://github.com/AndyGrant/Ethereal).
 
 # License
 

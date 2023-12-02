@@ -26,10 +26,10 @@
 
 namespace Zagreus {
 int evalValues[72] = {
-    104, 108, 378, 356, 405, 372, 549, 547, 1033, 1024, 10,  3,  7,   4,   0,   7,   1,   22,
-    26,  -1,  -6,  0,   -9,  13,  3,   0,   -11,  0,    -16, 7,  -11, -29, -11, -12, 0,   24,
-    -5,  -10, -12, -9,  -17, -13, -4,  -6,  6,    0,    -7,  -7, -5,  -14, -33, -13, 19,  0,
-    7,   6,   42,  13,  14,  6,   -13, 4,   4,    7,    9,   23, 0,   -12, 14,  -7,  -29, -22,
+  104, 108, 378, 356, 405, 372, 549, 547, 1033, 1024, 10,  3,  7,   4,   0,   7,   1,   22,
+  26,  -1,  -6,  0,   -9,  13,  3,   0,   -11,  0,    -16, 7,  -11, -29, -11, -12, 0,   24,
+  -5,  -10, -12, -9,  -17, -13, -4,  -6,  6,    0,    -7,  -7, -5,  -14, -33, -13, 19,  0,
+  7,   6,   42,  13,  14,  6,   -13, 4,   4,    7,    9,   23, 0,   -12, 14,  -7,  -29, -22,
 };
 
 int baseEvalValues[72] = {
@@ -158,24 +158,22 @@ void updateEvalValues(std::vector<double> &newValues) {
   int evalFeatureSize = getEvalFeatureSize();
   int pstSize = getMidgameValues().size();
 
-  // New features are given as 10000 times the actual value to deal with the fact that gradients are
-  // floats
   for (int i = 0; i < evalFeatureSize; i++) {
-    evalValues[i] = (int)newValues[i];
+    evalValues[i] = static_cast<int>(newValues[i]);
   }
 
   for (int i = 0; i < 6; i++) {
     for (int8_t j = 0; j < 64; j++) {
       int pieceIndex = i * 2;
 
-      setMidgamePstValue((PieceType)pieceIndex, 63 - j,
-                         (int)newValues[evalFeatureSize + i * 64 + j]);
-      setMidgamePstValue((PieceType)(pieceIndex + 1), j,
-                         (int)newValues[evalFeatureSize + i * 64 + j]);
-      setEndgamePstValue((PieceType)pieceIndex, 63 - j,
-                         (int)newValues[evalFeatureSize + pstSize + i * 64 + j]);
-      setEndgamePstValue((PieceType)(pieceIndex + 1), j,
-                         (int)newValues[evalFeatureSize + pstSize + i * 64 + j]);
+      setMidgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j,
+                         static_cast<int>(newValues[evalFeatureSize + i * 64 + j]));
+      setMidgamePstValue(static_cast<PieceType>(pieceIndex + 1), j,
+                         static_cast<int>(newValues[evalFeatureSize + i * 64 + j]));
+      setEndgamePstValue(static_cast<PieceType>(pieceIndex), 63 - j,
+                         static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
+      setEndgamePstValue(static_cast<PieceType>(pieceIndex + 1), j,
+                         static_cast<int>(newValues[evalFeatureSize + pstSize + i * 64 + j]));
     }
   }
 }
