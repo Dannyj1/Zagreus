@@ -53,6 +53,7 @@ class Evaluation {
 
   uint64_t attacksByPiece[PIECE_TYPES]{};
   uint64_t attacksByColor[COLORS]{};
+  uint64_t attackedBy2[COLORS]{};
   uint64_t attacksFrom[SQUARES]{};
 
   int whiteMidgameScore = 0;

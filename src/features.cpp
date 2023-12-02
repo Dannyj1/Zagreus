@@ -25,14 +25,14 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[70] = {
-    105, 103, 371, 354, 398, 370, 543, 548, 1032, 1021, 9,   5,  6,   4,   0,   7,   0,  22,
-    21,  -1,  -6,  -1,  -12, 9,   6,   -5,  -12,  0,    -20, 1,  -13, -30, -13, -6,  0,  23,
-    -5,  -10, -10, -9,  -21, -9,  -5,  -9,  7,    -7,   -5,  -9, -5,  -17, -31, -17, 22, 5,
-    8,   7,   36,  22,  19,  0,   -5,  0,   11,   4,    6,   16, 0,   -6,  11,  0,
+int evalValues[72] = {
+  104, 108, 378, 356, 405, 372, 549, 547, 1033, 1024, 10,  3,  7,   4,   0,   7,   1,   22,
+  26,  -1,  -6,  0,   -9,  13,  3,   0,   -11,  0,    -16, 7,  -11, -29, -11, -12, 0,   24,
+  -5,  -10, -12, -9,  -17, -13, -4,  -6,  6,    0,    -7,  -7, -5,  -14, -33, -13, 19,  0,
+  7,   6,   42,  13,  14,  6,   -13, 4,   4,    7,    9,   23, 0,   -12, 14,  -7,  -29, -22,
 };
 
-int baseEvalValues[70] = {
+int baseEvalValues[72] = {
     100,   // MIDGAME_PAWN_MATERIAL
     100,   // ENDGAME_PAWN_MATERIAL
     350,   // MIDGAME_KNIGHT_MATERIAL
@@ -103,6 +103,8 @@ int baseEvalValues[70] = {
     -10,   // ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY
     6,     // MIDGAME_ROOK_ON_QUEEN_FILE
     3,     // ENDGAME_ROOK_ON_QUEEN_FILE
+    -3,    // MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
+    -3,    // ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
 };
 
 void printEvalValues() {

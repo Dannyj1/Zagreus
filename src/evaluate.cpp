@@ -32,6 +32,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getPawnAttacks<WHITE>(square);
 
     attacksByPiece[WHITE_PAWN] |= attacks;
+    attackedBy2[WHITE] |= (attacks & attacksByColor[WHITE]);
     attacksByColor[WHITE] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -42,6 +43,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getKnightAttacks(square);
 
     attacksByPiece[WHITE_KNIGHT] |= attacks;
+    attackedBy2[WHITE] |= (attacks & attacksByColor[WHITE]);
     attacksByColor[WHITE] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -52,6 +54,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getBishopAttacks(square);
 
     attacksByPiece[WHITE_BISHOP] |= attacks;
+    attackedBy2[WHITE] |= (attacks & attacksByColor[WHITE]);
     attacksByColor[WHITE] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -62,6 +65,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getRookAttacks(square);
 
     attacksByPiece[WHITE_ROOK] |= attacks;
+    attackedBy2[WHITE] |= (attacks & attacksByColor[WHITE]);
     attacksByColor[WHITE] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -72,6 +76,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getQueenAttacks(square);
 
     attacksByPiece[WHITE_QUEEN] |= attacks;
+    attackedBy2[WHITE] |= (attacks & attacksByColor[WHITE]);
     attacksByColor[WHITE] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -92,6 +97,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getPawnAttacks<BLACK>(square);
 
     attacksByPiece[BLACK_PAWN] |= attacks;
+    attackedBy2[BLACK] |= (attacks & attacksByColor[BLACK]);
     attacksByColor[BLACK] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -102,6 +108,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getKnightAttacks(square);
 
     attacksByPiece[BLACK_KNIGHT] |= attacks;
+    attackedBy2[BLACK] |= (attacks & attacksByColor[BLACK]);
     attacksByColor[BLACK] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -112,6 +119,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getBishopAttacks(square);
 
     attacksByPiece[BLACK_BISHOP] |= attacks;
+    attackedBy2[BLACK] |= (attacks & attacksByColor[BLACK]);
     attacksByColor[BLACK] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -122,6 +130,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getRookAttacks(square);
 
     attacksByPiece[BLACK_ROOK] |= attacks;
+    attackedBy2[BLACK] |= (attacks & attacksByColor[BLACK]);
     attacksByColor[BLACK] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -132,6 +141,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t attacks = bitboard.getQueenAttacks(square);
 
     attacksByPiece[BLACK_QUEEN] |= attacks;
+    attackedBy2[BLACK] |= (attacks & attacksByColor[BLACK]);
     attacksByColor[BLACK] |= attacks;
     attacksFrom[square] |= attacks;
   }
@@ -296,6 +306,8 @@ void Evaluation::evaluatePieces() {
       uint64_t mobilitySquares = attacksFrom[index];
 
       if (color == WHITE) {
+        uint64_t weakSquares = attackedBy2[BLACK] & ~attackedBy2[WHITE];
+
         // Exclude own pieces and attacks by opponent pawns
         mobilitySquares &= ~(bitboard.getColorBoard<WHITE>() | attacksByPiece[BLACK_PAWN]);
 
@@ -309,7 +321,11 @@ void Evaluation::evaluatePieces() {
         if (pieceType == WHITE_ROOK) {
           mobilitySquares &= ~(attacksByPiece[BLACK_BISHOP] | attacksByPiece[BLACK_KNIGHT]);
         }
+
+        mobilitySquares &= ~weakSquares;
       } else {
+        uint64_t weakSquares = attackedBy2[WHITE] & ~attackedBy2[BLACK];
+
         // Exclude own pieces and attacks by opponent pawns
         mobilitySquares &= ~(bitboard.getColorBoard<BLACK>() | attacksByPiece[WHITE_PAWN]);
 
@@ -323,6 +339,8 @@ void Evaluation::evaluatePieces() {
         if (pieceType == BLACK_ROOK) {
           mobilitySquares &= ~(attacksByPiece[WHITE_BISHOP] | attacksByPiece[WHITE_KNIGHT]);
         }
+
+        mobilitySquares &= ~weakSquares;
       }
 
       uint8_t mobility = popcnt(mobilitySquares);
@@ -660,6 +678,24 @@ void Evaluation::evaluatePieces() {
         } else {
           blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
           blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+        }
+      }
+
+      uint64_t weakSquares;
+
+      if (color == WHITE) {
+        weakSquares = attackedBy2[BLACK] & ~attackedBy2[WHITE];
+
+        if ((1ULL << index) & weakSquares) {
+          whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
+          whiteEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
+        }
+      } else {
+        weakSquares = attackedBy2[WHITE] & ~attackedBy2[BLACK];
+
+        if ((1ULL << index) & weakSquares) {
+          blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
+          blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
         }
       }
     }
