@@ -102,9 +102,9 @@ uint64_t Bitboard::getRayAttack(int8_t square, Direction direction) {
   return rayAttacks[direction][square];
 }
 
-uint64_t Bitboard::getOccupiedBoard() { return occupiedBB; }
+uint64_t Bitboard::getOccupiedBoard() const { return occupiedBB; }
 
-uint64_t Bitboard::getEmptyBoard() { return ~occupiedBB; }
+uint64_t Bitboard::getEmptyBoard() const { return ~occupiedBB; }
 
 uint64_t Bitboard::getTilesBetween(int8_t from, int8_t to) { return betweenTable[from][to]; }
 
