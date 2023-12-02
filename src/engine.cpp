@@ -197,8 +197,7 @@ uint64_t ZagreusEngine::perft(const int depth) {
   std::chrono::duration<double> elapsedSeconds = end - start;
 
   senjo::Output(senjo::Output::InfoPrefix)
-      << "Depth " << depth << " Nodes: " << nodes
-      << ", Took: " << elapsedSeconds.count() << "s";
+      << "Depth " << depth << " Nodes: " << nodes << ", Took: " << elapsedSeconds.count() << "s";
   return nodes;
 }
 
