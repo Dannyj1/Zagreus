@@ -97,4 +97,4 @@ uint64_t calculateKingAttacks(uint64_t kingSet);
 
 template <PieceColor color>
 uint64_t calculatePawnAttacks(uint64_t bb);
-}  // namespace Zagreus
+} // namespace Zagreus

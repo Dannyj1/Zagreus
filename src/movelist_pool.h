@@ -28,22 +28,22 @@ namespace Zagreus {
 static constexpr int INITIAL_POOL_SIZE = 100;
 
 class MoveListPool {
- public:
-  static MoveListPool* getInstance();
+public:
+    static MoveListPool* getInstance();
 
-  MoveList* getMoveList();
+    MoveList* getMoveList();
 
-  void releaseMoveList(MoveList* moveList);
+    void releaseMoveList(MoveList* moveList);
 
-  ~MoveListPool();
+    ~MoveListPool();
 
- private:
-  std::vector<MoveList*> pool{};
+private:
+    std::vector<MoveList*> pool{};
 
-  MoveListPool();
+    MoveListPool();
 
-  static MoveList* createMoveList();
+    static MoveList* createMoveList();
 
-  static void destroyMoveList(MoveList* moveList);
+    static void destroyMoveList(MoveList* moveList);
 };
-}  // namespace Zagreus
+} // namespace Zagreus

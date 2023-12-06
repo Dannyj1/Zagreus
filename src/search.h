@@ -19,37 +19,26 @@
  */
 
 #pragma once
+#include <vector>
 
-#include "../senjo/SearchStats.h"
 #include "bitboard.h"
 #include "engine.h"
 #include "types.h"
+#include "../senjo/GoParams.h"
 
 namespace Zagreus {
-class SearchManager {
- private:
-  bool isSearching = false;
-  senjo::SearchStats searchStats{};
-  EvalContext evalContext;
-  MoveListPool *moveListPool = MoveListPool::getInstance();
-
- public:
-  Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
-
-  template <PieceColor color>
-  int search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
-             std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine,
-             ZagreusEngine &engine, bool isPv, bool canNull);
-
-  template <PieceColor color>
-  int quiesce(Bitboard &board, int alpha, int beta, Move &rootMove, Move &previousMove,
-              std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine,
-              bool isPv, int depth = 0);
-
-  bool isCurrentlySearching();
-
-  senjo::SearchStats getSearchStats();
+struct SearchContext {
+    std::chrono::time_point<std::chrono::steady_clock> endTime;
+    std::vector<Move> pv;
 };
 
-static SearchManager searchManager{};
-}  // namespace Zagreus
+template <PieceColor color>
+Move getBestMove(Bitboard& board, senjo::GoParams params, ZagreusEngine& engine,
+                 senjo::SearchStats& searchStats);
+
+template <PieceColor color, NodeType nodeType>
+int search(Bitboard& board, int alpha, int beta, int depth, SearchContext& context);
+
+template <PieceColor color, NodeType nodeType>
+int qsearch(Bitboard& board, int alpha, int beta, int depth, SearchContext& context);
+} // namespace Zagreus

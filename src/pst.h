@@ -41,4 +41,4 @@ std::vector<int> getEndgameValues();
 std::vector<int> getBaseMidgameValues();
 
 std::vector<int> getBaseEndgameValues();
-}  // namespace Zagreus
+} // namespace Zagreus

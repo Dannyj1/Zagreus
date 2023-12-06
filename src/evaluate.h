@@ -27,55 +27,57 @@
 
 namespace Zagreus {
 enum TraceMetric {
-  WHITE_MIDGAME_MATERIAL,
-  WHITE_ENDGAME_MATERIAL,
-  BLACK_MIDGAME_MATERIAL,
-  BLACK_ENDGAME_MATERIAL,
-  WHITE_MIDGAME_PST,
-  WHITE_ENDGAME_PST,
-  BLACK_MIDGAME_PST,
-  BLACK_ENDGAME_PST,
-  WHITE_MIDGAME_MOBILITY,
-  WHITE_ENDGAME_MOBILITY,
-  BLACK_MIDGAME_MOBILITY,
-  BLACK_ENDGAME_MOBILITY,
+    WHITE_MIDGAME_MATERIAL,
+    WHITE_ENDGAME_MATERIAL,
+    BLACK_MIDGAME_MATERIAL,
+    BLACK_ENDGAME_MATERIAL,
+    WHITE_MIDGAME_PST,
+    WHITE_ENDGAME_PST,
+    BLACK_MIDGAME_PST,
+    BLACK_ENDGAME_PST,
+    WHITE_MIDGAME_MOBILITY,
+    WHITE_ENDGAME_MOBILITY,
+    BLACK_MIDGAME_MOBILITY,
+    BLACK_ENDGAME_MOBILITY,
 };
 
 class Evaluation {
- public:
-  Evaluation(Bitboard& bitboard) : bitboard(bitboard) {}
+public:
+    Evaluation(Bitboard& bitboard)
+        : bitboard(bitboard) {
+    }
 
-  int evaluate();
+    int evaluate();
 
- private:
-  Bitboard& bitboard;
-  std::map<TraceMetric, int> traceMetrics{};
+private:
+    Bitboard& bitboard;
+    std::map<TraceMetric, int> traceMetrics{};
 
-  uint64_t attacksByPiece[PIECE_TYPES]{};
-  uint64_t attacksByColor[COLORS]{};
-  uint64_t attackedBy2[COLORS]{};
-  uint64_t attacksFrom[SQUARES]{};
+    uint64_t attacksByPiece[PIECE_TYPES]{};
+    uint64_t attacksByColor[COLORS]{};
+    uint64_t attackedBy2[COLORS]{};
+    uint64_t attacksFrom[SQUARES]{};
 
-  int whiteMidgameScore = 0;
-  int whiteEndgameScore = 0;
-  int blackMidgameScore = 0;
-  int blackEndgameScore = 0;
+    int whiteMidgameScore = 0;
+    int whiteEndgameScore = 0;
+    int blackMidgameScore = 0;
+    int blackEndgameScore = 0;
 
-  int getPhase();
+    int getPhase();
 
-  template <PieceColor color>
-  void evaluateMaterial();
+    template <PieceColor color>
+    void evaluateMaterial();
 
-  template <PieceColor color>
-  void evaluatePst();
+    template <PieceColor color>
+    void evaluatePst();
 
-  template <PieceColor color>
-  void evaluatePieces();
+    template <PieceColor color>
+    void evaluatePieces();
 
-  inline void addMobilityScoreForPiece(PieceType pieceType, int mobility);
+    inline void addMobilityScoreForPiece(PieceType pieceType, int mobility);
 
-  inline void addKingAttackScore(PieceType pieceType, int attackCount);
+    inline void addKingAttackScore(PieceType pieceType, int attackCount);
 
-  void initEvalContext(Bitboard& bitboard);
+    void initEvalContext(Bitboard& bitboard);
 };
-}  // namespace Zagreus
+} // namespace Zagreus
