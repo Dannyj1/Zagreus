@@ -91,7 +91,7 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
 
     assert(moveList->size <= MAX_MOVES);
     TranspositionTable* tt = TranspositionTable::getTT();
-    Line previousPv = bitboard.getPreviousPvLine();
+    Line previousPv = bitboard.getPvLine();
     auto* moveCodes = new uint32_t[previousPv.moveCount];
     uint32_t bestMoveCode = 0;
     TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
@@ -127,7 +127,7 @@ void generateQuiescenceMoves(Bitboard& bitboard, MoveList* moveList) {
 
     assert(moveList->size <= MAX_MOVES);
     TranspositionTable* tt = TranspositionTable::getTT();
-    Line previousPv = bitboard.getPreviousPvLine();
+    Line previousPv = bitboard.getPvLine();
     auto* moveCodes = new uint32_t[previousPv.moveCount];
     uint32_t bestMoveCode = 0;
     TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());

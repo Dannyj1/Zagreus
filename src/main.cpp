@@ -22,6 +22,7 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <map>
 
 #include "../senjo/Output.h"
 #include "../senjo/UCIAdapter.h"
@@ -213,9 +214,9 @@ void benchmark() {
             auto start = std::chrono::steady_clock::now();
 
             if (color == WHITE) {
-                getBestMove<WHITE>(bb, params, engine, searchStats);
+                getBestMove<WHITE>(params, engine, bb, searchStats);
             } else {
-                getBestMove<BLACK>(bb, params, engine, searchStats);
+                getBestMove<BLACK>(params, engine, bb, searchStats);
             }
 
             auto end = std::chrono::steady_clock::now();

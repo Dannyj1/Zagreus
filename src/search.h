@@ -29,16 +29,21 @@
 namespace Zagreus {
 struct SearchContext {
     std::chrono::time_point<std::chrono::steady_clock> endTime;
-    std::vector<Move> pv;
+    int startPly;
 };
 
 template <PieceColor color>
-Move getBestMove(Bitboard& board, senjo::GoParams params, ZagreusEngine& engine,
+Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
                  senjo::SearchStats& searchStats);
 
 template <PieceColor color, NodeType nodeType>
-int search(Bitboard& board, int alpha, int beta, int depth, SearchContext& context);
+int search(Bitboard& board, int alpha, int beta, int depth, SearchContext& context,
+           senjo::SearchStats& searchStats, Line& pvLine);
 
 template <PieceColor color, NodeType nodeType>
-int qsearch(Bitboard& board, int alpha, int beta, int depth, SearchContext& context);
+int qsearch(Bitboard& board, int alpha, int beta, int depth, SearchContext& context,
+            senjo::SearchStats& searchStats);
+
+void printPv(senjo::SearchStats& searchStats, std::chrono::steady_clock::time_point& startTime,
+             Line& pvLine);
 } // namespace Zagreus

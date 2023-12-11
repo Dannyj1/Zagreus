@@ -33,6 +33,7 @@ private:
     bool isEngineInitialized = false;
     senjo::SearchStats searchStats{};
     bool stoppingSearch = false;
+    bool searching = false;
     bool tuning = false;
     MoveListPool* moveListPool = MoveListPool::getInstance();
 

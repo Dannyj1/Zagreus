@@ -1089,10 +1089,10 @@ bool Bitboard::makeStrMove(const std::string& strMove) {
     return true;
 }
 
-Line Bitboard::getPreviousPvLine() { return previousPvLine; }
+Line Bitboard::getPvLine() { return pvLine; }
 
-void Bitboard::setPreviousPvLine(Line& previousPvLine) {
-    Bitboard::previousPvLine = previousPvLine;
+void Bitboard::setPvLine(Line& pvLine) {
+    Bitboard::pvLine = pvLine;
 }
 
 uint16_t Bitboard::getPly() const { return ply; }

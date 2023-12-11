@@ -24,6 +24,8 @@
 
 #include "../senjo/ChessEngine.h"
 #include "../senjo/Output.h"
+#include "../senjo/GoParams.h"
+#include "../senjo/SearchStats.h"
 #include "bitboard.h"
 #include "movegen.h"
 #include "search.h"
@@ -182,14 +184,16 @@ void ZagreusEngine::setDebug(const bool flag) {
 
 bool ZagreusEngine::isDebugOn() { return false; }
 
-bool ZagreusEngine::isSearching() { return searchManager.isCurrentlySearching(); }
+bool ZagreusEngine::isSearching() {
+    return searching;
+}
 
 void ZagreusEngine::stopSearching() { stoppingSearch = true; }
 
 bool ZagreusEngine::stopRequested() { return stoppingSearch; }
 
 void ZagreusEngine::waitForSearchFinish() {
-    while (searchManager.isCurrentlySearching()) {
+    while (isSearching()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
@@ -209,7 +213,15 @@ uint64_t ZagreusEngine::perft(const int depth) {
 
 std::string ZagreusEngine::go(senjo::GoParams& params, std::string* ponder) {
     stoppingSearch = false;
-    Move bestMove = searchManager.getBestMove(params, *this, board);
+    searching = true;
+    searchStats = {};
+    Move bestMove;
+
+    if (board.getMovingColor() == WHITE) {
+        bestMove = getBestMove<WHITE>(params, *this, board, searchStats);
+    } else {
+        bestMove = getBestMove<BLACK>(params, *this, board, searchStats);
+    }
 
     if (bestMove.promotionPiece != EMPTY) {
         std::string result = getNotation(bestMove.from) + getNotation(bestMove.to) +
@@ -218,11 +230,13 @@ std::string ZagreusEngine::go(senjo::GoParams& params, std::string* ponder) {
         std::transform(result.begin(), result.end(), result.begin(),
                        [](unsigned char c) { return std::tolower(c); });
 
+        searching = false;
         return result;
     }
 
     std::string result = getNotation(bestMove.from) + getNotation(bestMove.to);
 
+    searching = false;searching = true;
     return getNotation(bestMove.from) + getNotation(bestMove.to);
 }
 

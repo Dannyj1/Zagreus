@@ -156,9 +156,10 @@ std::vector<TunePosition> loadPositions(
         std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
         Move rootMove{};
-        int qScore;
+        int qScore = 0;
 
-        if (tunerBoard.getMovingColor() == WHITE) {
+        // TODO: re-enable, remove = 0
+        /*if (tunerBoard.getMovingColor() == WHITE) {
             qScore = searchManager.quiesce<WHITE>(tunerBoard, -999999999, 999999999, rootMove,
                                                   rootMove,
                                                   maxEndTime, engine, true);
@@ -166,7 +167,7 @@ std::vector<TunePosition> loadPositions(
             qScore = searchManager.quiesce<BLACK>(tunerBoard, -999999999, 999999999, rootMove,
                                                   rootMove,
                                                   maxEndTime, engine, true);
-        }
+        }*/
 
         if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>() ||
             tunerBoard.isWinner<BLACK>() || tunerBoard.isKingInCheck<WHITE>() ||

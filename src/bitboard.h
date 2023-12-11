@@ -59,7 +59,7 @@ private:
 
     UndoData undoStack[MAX_PLY]{};
     uint64_t moveHistory[MAX_PLY]{};
-    Line previousPvLine{};
+    Line pvLine{};
 
     int pstValues[4]{};
 
@@ -258,9 +258,9 @@ public:
 
     bool makeStrMove(const std::string& strMove);
 
-    Line getPreviousPvLine();
+    Line getPvLine();
 
-    void setPreviousPvLine(Line& previousPvLine);
+    void setPvLine(Line& pvLine);
 
     uint16_t getPly() const;
 
