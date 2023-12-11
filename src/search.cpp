@@ -39,11 +39,8 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     auto startTime = std::chrono::steady_clock::now();
     SearchContext searchContext{};
     searchContext.startTime = startTime;
-    Move bestMove = {};
     int depth = 0;
     Line pvLine{};
-    int alpha = MAX_NEGATIVE;
-    int beta = MAX_POSITIVE;
 
     while (!engine.stopRequested()) {
         auto currentTime = std::chrono::steady_clock::now();
@@ -65,17 +62,17 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
 
         // If the go command has a max depth argument, terminate when reaching the desired depth.
         if (params.depth > 0 && depth > params.depth) {
-            return bestMove;
+            return pvLine.moves[0];
         }
 
-        int score = search<color, PV>(board, alpha, beta, depth, bestMove, searchContext,
-                                      searchStats, pvLine);
+        int score = search<color, PV>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, pvLine.moves[0],
+                                      searchContext, searchStats, pvLine);
         board.setPvLine(pvLine);
         searchStats.score = score;
         printPv(searchStats, startTime, pvLine);
     }
 
-    return bestMove;
+    return pvLine.moves[0];
 }
 
 template Move getBestMove<WHITE>(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
