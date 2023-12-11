@@ -47,7 +47,6 @@ private:
     uint8_t fullmoveClock = 1;
     int8_t enPassantSquare = NO_SQUARE;
     uint8_t castlingRights = 0b00001111;
-    uint8_t kingInCheck = 0b00001100;
 
     uint64_t zobristHash = 0ULL;
 
@@ -211,35 +210,11 @@ public:
 
     template <PieceColor color>
     bool isKingInCheck() {
-        if (color == NONE) {
-            return true;
-        }
-
-        if (color == WHITE) {
-            if (!(kingInCheck & WHITE_KING_CHECK_RESET_BIT)) {
-                return kingInCheck & WHITE_KING_CHECK_BIT;
-            }
-        } else {
-            if (!(kingInCheck & BLACK_KING_CHECK_RESET_BIT)) {
-                return kingInCheck & BLACK_KING_CHECK_BIT;
-            }
-        }
-
+        constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
         uint64_t kingBB = getPieceBoard(color == WHITE ? WHITE_KING : BLACK_KING);
         int8_t kingLocation = bitscanForward(kingBB);
-        bool result;
 
-        if (color == WHITE) {
-            result = isSquareAttackedByColor<BLACK>(kingLocation);
-            kingInCheck &= ~WHITE_KING_CHECK_RESET_BIT;
-            kingInCheck |= result ? WHITE_KING_CHECK_BIT : 0;
-        } else {
-            result = isSquareAttackedByColor<WHITE>(kingLocation);
-            kingInCheck &= ~BLACK_KING_CHECK_RESET_BIT;
-            kingInCheck |= result ? BLACK_KING_CHECK_BIT : 0;
-        }
-
-        return result;
+        return isSquareAttackedByColor<OPPOSITE_COLOR>(kingLocation);
     }
 
     int8_t getEnPassantSquare() const;

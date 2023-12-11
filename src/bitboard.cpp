@@ -213,7 +213,6 @@ void Bitboard::makeMove(Move& move) {
     undoStack[ply].castlingRights = castlingRights;
     undoStack[ply].moveType = REGULAR;
     undoStack[ply].zobristHash = zobristHash;
-    undoStack[ply].kingInCheck = kingInCheck;
     undoStack[ply].previousMove = previousMove;
 
     halfMoveClock += 1;
@@ -341,7 +340,6 @@ void Bitboard::makeMove(Move& move) {
         fullmoveClock += 1;
     }
 
-    kingInCheck = 0b00001100;
     movingColor = getOppositeColor(movingColor);
     zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
     ply += 1;
@@ -397,7 +395,6 @@ void Bitboard::unmakeMove(Move& move) {
     castlingRights = undoData.castlingRights;
     movingColor = getOppositeColor(movingColor);
     zobristHash = undoData.zobristHash;
-    kingInCheck = undoData.kingInCheck;
     previousMove = undoData.previousMove;
 
     if (movingColor == BLACK) {
@@ -412,7 +409,6 @@ void Bitboard::makeNullMove() {
     undoStack[ply].castlingRights = castlingRights;
     undoStack[ply].moveType = REGULAR;
     undoStack[ply].zobristHash = zobristHash;
-    undoStack[ply].kingInCheck = kingInCheck;
     undoStack[ply].previousMove = previousMove;
 
     if (enPassantSquare != NO_SQUARE) {
@@ -425,7 +421,6 @@ void Bitboard::makeNullMove() {
     }
 
     halfMoveClock = 0;
-    kingInCheck = 0b00001100;
     movingColor = getOppositeColor(movingColor);
     zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
     ply += 1;
@@ -442,7 +437,6 @@ void Bitboard::unmakeNullMove() {
     castlingRights = undoData.castlingRights;
     movingColor = getOppositeColor(movingColor);
     zobristHash = undoData.zobristHash;
-    kingInCheck = undoData.kingInCheck;
     previousMove = undoData.previousMove;
 
     if (movingColor == BLACK) {

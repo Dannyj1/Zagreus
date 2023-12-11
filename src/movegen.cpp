@@ -117,7 +117,7 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
 }
 
 template <PieceColor color>
-void generateQuiescenceMoves(Bitboard& bitboard, MoveList* moveList) {
+void generateQuiesceMoves(Bitboard& bitboard, MoveList* moveList) {
     generatePawnMoves<color>(bitboard, moveList, true);
     generateKnightMoves<color>(bitboard, moveList, true);
     generateBishopMoves<color>(bitboard, moveList, true);
@@ -155,6 +155,7 @@ void generateQuiescenceMoves(Bitboard& bitboard, MoveList* moveList) {
 template <PieceColor color>
 void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
     uint64_t pawnBB;
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
 
     if (color == WHITE) {
         pawnBB = bitboard.getPieceBoard(WHITE_PAWN);
@@ -176,11 +177,7 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
                    bitboard.getPieceBoard(BLACK_KING));
 
         if (quiesce) {
-            if (color == WHITE) {
-                genBB &= bitboard.getColorBoard<BLACK>();
-            } else {
-                genBB &= bitboard.getColorBoard<WHITE>();
-            }
+            genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
         }
 
         while (genBB) {
@@ -229,6 +226,7 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
 template <PieceColor color>
 void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t knightBB;
 
     if (color == WHITE) {
@@ -245,11 +243,7 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
                    bitboard.getPieceBoard(BLACK_KING));
 
         if (quiesce) {
-            if (color == WHITE) {
-                genBB &= bitboard.getColorBoard<BLACK>();
-            } else {
-                genBB &= bitboard.getColorBoard<WHITE>();
-            }
+            genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
         }
 
         while (genBB) {
@@ -280,6 +274,7 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
 
 template <PieceColor color>
 void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t bishopBB;
 
     if (color == WHITE) {
@@ -296,11 +291,7 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
                    bitboard.getPieceBoard(BLACK_KING));
 
         if (quiesce) {
-            if (color == WHITE) {
-                genBB &= bitboard.getColorBoard<BLACK>();
-            } else {
-                genBB &= bitboard.getColorBoard<WHITE>();
-            }
+            genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
         }
 
         while (genBB) {
@@ -331,6 +322,7 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
 
 template <PieceColor color>
 void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t rookBB;
 
     if (color == WHITE) {
@@ -347,11 +339,7 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
                    bitboard.getPieceBoard(BLACK_KING));
 
         if (quiesce) {
-            if (color == WHITE) {
-                genBB &= bitboard.getColorBoard<BLACK>();
-            } else {
-                genBB &= bitboard.getColorBoard<WHITE>();
-            }
+            genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
         }
 
         while (genBB) {
@@ -382,6 +370,7 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
 template <PieceColor color>
 void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t queenBB;
 
     if (color == WHITE) {
@@ -398,11 +387,7 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
                    bitboard.getPieceBoard(BLACK_KING));
 
         if (quiesce) {
-            if (color == WHITE) {
-                genBB &= bitboard.getColorBoard<BLACK>();
-            } else {
-                genBB &= bitboard.getColorBoard<WHITE>();
-            }
+            genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
         }
 
         while (genBB) {
@@ -433,6 +418,7 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
 
 template <PieceColor color>
 void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t kingBB;
     uint64_t opponentKingBB;
 
@@ -451,11 +437,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
 
     if (quiesce) {
-        if (color == WHITE) {
-            genBB &= bitboard.getColorBoard<BLACK>();
-        } else {
-            genBB &= bitboard.getColorBoard<WHITE>();
-        }
+        genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
     }
 
     while (genBB) {
@@ -570,6 +552,6 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 template void generateMoves<WHITE>(Bitboard& bitboard, MoveList* moveList);
 template void generateMoves<BLACK>(Bitboard& bitboard, MoveList* moveList);
 
-template void generateQuiescenceMoves<WHITE>(Bitboard& bitboard, MoveList* moveList);
-template void generateQuiescenceMoves<BLACK>(Bitboard& bitboard, MoveList* moveList);
+template void generateQuiesceMoves<WHITE>(Bitboard& bitboard, MoveList* moveList);
+template void generateQuiesceMoves<BLACK>(Bitboard& bitboard, MoveList* moveList);
 } // namespace Zagreus

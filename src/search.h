@@ -28,8 +28,15 @@
 
 namespace Zagreus {
 struct SearchContext {
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
     std::chrono::time_point<std::chrono::steady_clock> endTime;
-    int startPly;
+    int pvChanges = 0;
+    int rootMoveCount = 0;
+    // A boolean variable that keeps track if the score suddenly went from positive to negative or
+    // vice versa
+    bool suddenScoreSwing = false;
+    // A boolean variable that keeps track if the score suddenly had a big drop (-150 or more)
+    bool suddenScoreDrop = false;
 };
 
 template <PieceColor color>
@@ -37,11 +44,13 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
                  senjo::SearchStats& searchStats);
 
 template <PieceColor color, NodeType nodeType>
-int search(Bitboard& board, int alpha, int beta, int depth, SearchContext& context,
+int search(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
+           SearchContext& context,
            senjo::SearchStats& searchStats, Line& pvLine);
 
 template <PieceColor color, NodeType nodeType>
-int qsearch(Bitboard& board, int alpha, int beta, int depth, SearchContext& context,
+int qsearch(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
+            SearchContext& context,
             senjo::SearchStats& searchStats);
 
 void printPv(senjo::SearchStats& searchStats, std::chrono::steady_clock::time_point& startTime,
