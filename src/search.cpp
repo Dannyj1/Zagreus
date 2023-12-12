@@ -40,6 +40,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     SearchContext searchContext{};
     searchContext.startTime = startTime;
     int depth = 0;
+    int bestScore = 0;
     Line pvLine{};
 
     while (!engine.stopRequested()) {
@@ -68,6 +69,28 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
         Move emptyMove{};
         int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, emptyMove,
                                         searchContext, searchStats, pvLine);
+        Move bestMove = pvLine.moves[0];
+        Move previousBestMove = board.getPvLine().moves[0];
+
+        // If bestScore is positive and iterationScore is 0 or negative or vice versa, set suddenScoreSwing to true
+        if (depth > 1 && ((bestScore > 0 && score < 0) || (bestScore < 0 && score > 0))) {
+            searchContext.suddenScoreSwing = true;
+        }
+
+        // If the iterationScore suddenly dropped by 150 or more from bestScore, set suddenScoreDrop to true
+        if (depth > 1 && score - bestScore <= -150) {
+            searchContext.suddenScoreDrop = true;
+        }
+
+        // If bestMove changes, increment context.pvChanges
+        if (depth > 1 && (bestMove.from != previousBestMove.from || bestMove.to != previousBestMove.to)) {
+            searchContext.pvChanges += 1;
+        }
+
+        if (score > bestScore) {
+            bestScore = score;
+        }
+
         board.setPvLine(pvLine);
         searchStats.score = score;
         printPv(searchStats, startTime, pvLine);

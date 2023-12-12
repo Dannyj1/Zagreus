@@ -31,7 +31,6 @@ struct SearchContext {
     std::chrono::time_point<std::chrono::steady_clock> startTime;
     std::chrono::time_point<std::chrono::steady_clock> endTime;
     int pvChanges = 0;
-    int rootMoveCount = 0;
     // A boolean variable that keeps track if the score suddenly went from positive to negative or
     // vice versa
     bool suddenScoreSwing = false;

@@ -76,10 +76,6 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
 
     uint64_t timePerMove = timeLeft / movesToGo;
 
-    if (context.rootMoveCount == 1) {
-        timePerMove /= 2;
-    }
-
     // Based on context.pvChanges, scale timePerMove between 1.0 and 1.5. After 5 or more move
     // changes, timePerMove will be 1.5 times as long.
     if (context.pvChanges > 0) {
