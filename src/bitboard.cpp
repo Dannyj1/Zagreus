@@ -881,42 +881,6 @@ bool Bitboard::isDraw() {
         }
     }
 
-    /*MoveList* moveList = moveListPool->getMoveList();
-    if (movingColor == WHITE) {
-        generateMoves<WHITE>(*this, moveList);
-    } else {
-        generateMoves<BLACK>(*this, moveList);
-    }
-  
-    bool hasLegalMove = false;
-  
-    for (int i = 0; i < moveList->size; i++) {
-        Move move = moveList->moves[i];
-        makeMove(move);
-  
-        if (movingColor == WHITE) {
-            if (!isKingInCheck<BLACK>()) {
-                unmakeMove(move);
-                hasLegalMove = true;
-                break;
-            }
-        } else {
-            if (!isKingInCheck<WHITE>()) {
-                unmakeMove(move);
-                hasLegalMove = true;
-                break;
-            }
-        }
-  
-        unmakeMove(move);
-    }
-  
-    moveListPool->releaseMoveList(moveList);
-  
-    if (!hasLegalMove) {
-        return true;
-    }*/
-
     return false;
 }
 
@@ -925,35 +889,39 @@ uint64_t Bitboard::getZobristHash() const { return zobristHash; }
 void Bitboard::setZobristHash(uint64_t zobristHash) { Bitboard::zobristHash = zobristHash; }
 
 bool Bitboard::isInsufficientMaterial() {
-    int pieceCount = popcnt(getOccupiedBoard());
+    uint64_t kingBB = getPieceBoard(WHITE_KING) | getPieceBoard(BLACK_KING);
+    uint64_t piecesBB = getOccupiedBoard();
+    uint64_t piecesWithoutKings = piecesBB & ~kingBB;
+    uint64_t sufficientPieces = getPieceBoard(WHITE_QUEEN) | getPieceBoard(BLACK_QUEEN) |
+                                getPieceBoard(WHITE_ROOK) | getPieceBoard(BLACK_ROOK) |
+                                getPieceBoard(WHITE_PAWN) | getPieceBoard(BLACK_PAWN);
 
-    if (pieceCount > 4) {
+    if (sufficientPieces) {
         return false;
     }
 
+    int pieceCountWithoutKings = popcnt(piecesWithoutKings);
+
+    if (pieceCountWithoutKings > 2) {
+        return false;
+    }
+
+    if (pieceCountWithoutKings == 1) {
+        return true;
+    }
+
+    int pieceCount = popcnt(getOccupiedBoard());
     if (pieceCount == 2) {
         return true;
     }
 
-    if (pieceCount == 3) {
-        uint64_t bishopBB = getPieceBoard(WHITE_BISHOP) | getPieceBoard(BLACK_BISHOP);
-        uint64_t knightBB = getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT);
+    if (pieceCountWithoutKings == 2) {
+        uint64_t whiteKnights = getPieceBoard(WHITE_KNIGHT);
+        uint64_t blackKnights = getPieceBoard(BLACK_KNIGHT);
+        int whiteKnightCount = popcnt(whiteKnights);
+        int blackKnightCount = popcnt(blackKnights);
 
-        if (bishopBB || knightBB) {
-            return true;
-        }
-    }
-
-    if (pieceCount == 4) {
-        if (popcnt(getColorBoard<WHITE>()) != 2) {
-            return false;
-        }
-
-        uint64_t whiteDrawPieces = getPieceBoard(WHITE_BISHOP) | getPieceBoard(WHITE_KNIGHT);
-        uint64_t blackDrawPieces = getPieceBoard(BLACK_BISHOP) | getPieceBoard(BLACK_KNIGHT);
-
-        // King not included in the above boards, so if there is only one piece left, it's a draw
-        if (popcnt(whiteDrawPieces) == 1 && popcnt(blackDrawPieces) == 1) {
+        if (whiteKnightCount == 2 || blackKnightCount == 2) {
             return true;
         }
     }

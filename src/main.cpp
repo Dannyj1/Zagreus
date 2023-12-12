@@ -31,6 +31,7 @@
 #include "features.h"
 #include "magics.h"
 #include "movegen.h"
+#include "movepicker.h"
 #include "pst.h"
 #include "search.h"
 #include "tt.h"
@@ -165,6 +166,8 @@ int main(int argc, char* argv[]) {
         senjo::Output(senjo::Output::NoPrefix) << "Unknown argument!";
         return 0;
     }
+
+    // 8/8/4b3/5k2/1K6/8/N7/8 b - - 0 57
 
     try {
         ZagreusEngine engine;

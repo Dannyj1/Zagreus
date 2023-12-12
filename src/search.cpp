@@ -65,8 +65,9 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
             return pvLine.moves[0];
         }
 
-        int score = search<color, PV>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, pvLine.moves[0],
-                                      searchContext, searchStats, pvLine);
+        Move emptyMove{};
+        int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, emptyMove,
+                                        searchContext, searchStats, pvLine);
         board.setPvLine(pvLine);
         searchStats.score = score;
         printPv(searchStats, startTime, pvLine);
@@ -92,10 +93,10 @@ int search(Bitboard& board, int alpha, int beta, int depth, Move& previousMove,
     }
 
     auto currentTime = std::chrono::steady_clock::now();
-    if (currentTime > context.endTime || board.getPly() >= MAX_PLY) {
+    if (!IS_ROOT_NODE && (currentTime > context.endTime || board.getPly() >= MAX_PLY)) {
         pvLine.moveCount = 0;
         // Immediately evaluate when time is up
-        return Evaluation(board).evaluate();
+        return beta;
     }
 
     searchStats.nodes += 1;
@@ -195,7 +196,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int depth, Move& previousMove,
 
     auto currentTime = std::chrono::steady_clock::now();
     if (currentTime > context.endTime || board.getPly() >= MAX_PLY) {
-        return Evaluation(board).evaluate();
+        return beta;
     }
 
     searchStats.qnodes += 1;
