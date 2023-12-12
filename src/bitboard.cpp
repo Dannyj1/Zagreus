@@ -1123,7 +1123,7 @@ bool Bitboard::isWinner() {
     }
 
     MoveList* moveList = moveListPool->getMoveList();
-    generateMoves<color == WHITE ? BLACK : WHITE>(*this, moveList);
+    generateMoves<color == WHITE ? BLACK : WHITE, NORMAL>(*this, moveList);
 
     for (int i = 0; i < moveList->size; i++) {
         Move move = moveList->moves[i];

@@ -81,29 +81,30 @@ template Move getBestMove<BLACK>(senjo::GoParams params, ZagreusEngine& engine, 
                                  senjo::SearchStats& searchStats);
 
 template <PieceColor color, NodeType nodeType>
-int search(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
+int search(Bitboard& board, int alpha, int beta, int depth, Move& previousMove,
            SearchContext& context,
            senjo::SearchStats& searchStats, Line& pvLine) {
-    constexpr bool IS_PV_NODE = nodeType == PV;
-    auto currentTime = std::chrono::steady_clock::now();
+    constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
+    constexpr bool IS_ROOT_NODE = nodeType == ROOT;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
     }
 
+    auto currentTime = std::chrono::steady_clock::now();
     if (currentTime > context.endTime || board.getPly() >= MAX_PLY) {
         pvLine.moveCount = 0;
         // Immediately evaluate when time is up
         return Evaluation(board).evaluate();
     }
 
+    searchStats.nodes += 1;
+
     if (depth <= 0) {
         pvLine.moveCount = 0;
         return qsearch<color, nodeType>(board, alpha, beta, depth, previousMove, context,
                                         searchStats);
     }
-
-    searchStats.nodes += 1;
 
     /*if (!IS_PV_NODE) {
         int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha, beta);
@@ -117,7 +118,7 @@ int search(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
     bool doPvSearch = true;
     MoveList* moves = moveListPool->getMoveList();
 
-    generateMoves<color>(board, moves);
+    generateMoves<color, NORMAL>(board, moves);
 
     auto movePicker = MovePicker(moves);
     int legalMoveCount = 0;
@@ -145,7 +146,7 @@ int search(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
                                                    previousMove, context,
                                                    searchStats, nodeLine);
 
-            if (score > alpha) {
+            if (score > alpha && score < beta) {
                 score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, previousMove,
                                                     context,
                                                     searchStats, nodeLine);
@@ -154,12 +155,11 @@ int search(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
 
         board.unmakeMove(move);
 
-        if (score >= beta) {
-            moveListPool->releaseMoveList(moves);
-            return beta;
-        }
-
         if (score > alpha) {
+            if (score >= beta) {
+                return score;
+            }
+
             alpha = score;
             doPvSearch = false;
 
@@ -171,7 +171,7 @@ int search(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
 
     moveListPool->releaseMoveList(moves);
 
-    if (legalMoveCount == 0) {
+    if (!legalMoveCount) {
         if (board.isKingInCheck<color>()) {
             alpha = -MATE_SCORE + board.getPly();
         } else {
@@ -182,24 +182,8 @@ int search(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
     return alpha;
 }
 
-template int search<WHITE, PV>(Bitboard& board, int alpha, int beta, int depth,
-                               Move previousMove, SearchContext& context,
-                               senjo::SearchStats& searchStats,
-                               Line& line);
-template int search<WHITE, NO_PV>(Bitboard& board, int alpha, int beta, int depth,
-                                  Move previousMove, SearchContext& context,
-                                  senjo::SearchStats& searchStats,
-                                  Line& line);
-template int search<BLACK, PV>(Bitboard& board, int alpha, int beta, int depth,
-                               Move previousMove, SearchContext& context,
-                               senjo::SearchStats& searchStats, Line& line);
-template int search<BLACK, NO_PV>(Bitboard& board, int alpha, int beta, int depth,
-                                  Move previousMove, SearchContext& context,
-                                  senjo::SearchStats& searchStats,
-                                  Line& line);
-
 template <PieceColor color, NodeType nodeType>
-int qsearch(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
+int qsearch(Bitboard& board, int alpha, int beta, int depth, Move& previousMove,
             SearchContext& context,
             senjo::SearchStats& searchStats) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
@@ -208,19 +192,20 @@ int qsearch(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
         return DRAW_SCORE;
     }
 
-    if (board.getPly() >= MAX_PLY) {
+    auto currentTime = std::chrono::steady_clock::now();
+    if (currentTime > context.endTime || board.getPly() >= MAX_PLY) {
         return Evaluation(board).evaluate();
     }
 
     searchStats.qnodes += 1;
 
-    // TODO: check if I need to check for time here, kinda depends on what happens during testing.
+    bool inCheck = board.isKingInCheck<color>();
 
-    if (!board.isKingInCheck<color>()) {
+    if (!inCheck) {
         int standPat = Evaluation(board).evaluate();
 
         if (standPat >= beta) {
-            return beta;
+            return standPat;
         }
 
         int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
@@ -242,13 +227,22 @@ int qsearch(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
     }
 
     MoveList* moves = moveListPool->getMoveList();
-    generateQuiesceMoves<color>(board, moves);
+
+    if (inCheck) {
+        // TODO: implement evasions eval. Have a validSquares argument for each generate move function which determines which squares can be moved to. This will also clean up the movegen code a bit.
+        generateMoves<color, NORMAL>(board, moves);
+    } else {
+        generateMoves<color, QUIESCE>(board, moves);
+    }
+
     auto movePicker = MovePicker(moves);
+    int legalMoveCount = 0;
+    previousMove = {};
 
     while (movePicker.hasNext()) {
         Move move = movePicker.getNextMove();
 
-        if (move.captureScore <= NO_CAPTURE_SCORE) {
+        if (!inCheck && move.captureScore <= NO_CAPTURE_SCORE) {
             continue;
         }
 
@@ -259,22 +253,28 @@ int qsearch(Bitboard& board, int alpha, int beta, int depth, Move previousMove,
             continue;
         }
 
-        previousMove = {};
+        legalMoveCount += 1;
+
         int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1,
                                                        previousMove, context, searchStats);
         board.unmakeMove(move);
 
-        if (score >= beta) {
-            moveListPool->releaseMoveList(moves);
-            return beta;
-        }
-
         if (score > alpha) {
+            if (score >= beta) {
+                moveListPool->releaseMoveList(moves);
+                return beta;
+            }
+
             alpha = score;
         }
     }
 
     moveListPool->releaseMoveList(moves);
+
+    if (legalMoveCount == 0 && inCheck) {
+        return -MATE_SCORE + board.getPly();
+    }
+
     return alpha;
 }
 

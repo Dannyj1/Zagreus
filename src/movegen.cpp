@@ -80,50 +80,15 @@ int scoreMove(int ply, Line& previousPv, const uint32_t* previousPvMoveCodes, Mo
     return tt->historyMoves[move->piece][move->to];
 }
 
-template <PieceColor color>
+template <PieceColor color, GenerationType type>
 void generateMoves(Bitboard& bitboard, MoveList* moveList) {
-    generatePawnMoves<color>(bitboard, moveList);
-    generateKnightMoves<color>(bitboard, moveList);
-    generateBishopMoves<color>(bitboard, moveList);
-    generateRookMoves<color>(bitboard, moveList);
-    generateQueenMoves<color>(bitboard, moveList);
-    generateKingMoves<color>(bitboard, moveList);
-
-    assert(moveList->size <= MAX_MOVES);
-    TranspositionTable* tt = TranspositionTable::getTT();
-    Line previousPv = bitboard.getPvLine();
-    auto* moveCodes = new uint32_t[previousPv.moveCount];
-    uint32_t bestMoveCode = 0;
-    TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
-
-    if (ttEntry->zobristHash == bitboard.getZobristHash()) {
-        bestMoveCode = ttEntry->bestMoveCode;
-    }
-
-    for (int i = 0; i < previousPv.moveCount; i++) {
-        moveCodes[i] = encodeMove(&previousPv.moves[i]);
-    }
-
-    int ply = bitboard.getPly();
-    Move previousMove = bitboard.getPreviousMove();
-
-    for (int i = 0; i < moveList->size; i++) {
-        Move* move = &moveList->moves[i];
-        move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move),
-                                bestMoveCode, tt);
-    }
-
-    delete[] moveCodes;
-}
-
-template <PieceColor color>
-void generateQuiesceMoves(Bitboard& bitboard, MoveList* moveList) {
-    generatePawnMoves<color>(bitboard, moveList, true);
-    generateKnightMoves<color>(bitboard, moveList, true);
-    generateBishopMoves<color>(bitboard, moveList, true);
-    generateRookMoves<color>(bitboard, moveList, true);
-    generateQueenMoves<color>(bitboard, moveList, true);
-    generateKingMoves<color>(bitboard, moveList, true);
+    constexpr bool IS_QUIESCE = type == QUIESCE;
+    generatePawnMoves<color>(bitboard, moveList, IS_QUIESCE);
+    generateKnightMoves<color>(bitboard, moveList, IS_QUIESCE);
+    generateBishopMoves<color>(bitboard, moveList, IS_QUIESCE);
+    generateRookMoves<color>(bitboard, moveList, IS_QUIESCE);
+    generateQueenMoves<color>(bitboard, moveList, IS_QUIESCE);
+    generateKingMoves<color>(bitboard, moveList, IS_QUIESCE);
 
     assert(moveList->size <= MAX_MOVES);
     TranspositionTable* tt = TranspositionTable::getTT();
@@ -154,8 +119,8 @@ void generateQuiesceMoves(Bitboard& bitboard, MoveList* moveList) {
 
 template <PieceColor color>
 void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
-    uint64_t pawnBB;
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
+    uint64_t pawnBB;
 
     if (color == WHITE) {
         pawnBB = bitboard.getPieceBoard(WHITE_PAWN);
@@ -166,9 +131,9 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     while (pawnBB) {
         int8_t index = popLsb(pawnBB);
         uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
-        uint64_t attackableSquares = bitboard.getColorBoard<color == WHITE ? BLACK : WHITE>();
+        uint64_t attackableSquares = bitboard.getColorBoard<OPPOSITE_COLOR>();
 
-        if (bitboard.getEnPassantSquare() > NO_SQUARE) {
+        if (bitboard.getEnPassantSquare() != NO_SQUARE) {
             attackableSquares |= 1ULL << bitboard.getEnPassantSquare();
         }
 
@@ -464,6 +429,10 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
         }
     }
 
+    if (quiesce) {
+        return;
+    }
+
     uint64_t occupiedBB = bitboard.getOccupiedBoard();
 
     if (color == WHITE) {
@@ -549,9 +518,8 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     }
 }
 
-template void generateMoves<WHITE>(Bitboard& bitboard, MoveList* moveList);
-template void generateMoves<BLACK>(Bitboard& bitboard, MoveList* moveList);
-
-template void generateQuiesceMoves<WHITE>(Bitboard& bitboard, MoveList* moveList);
-template void generateQuiesceMoves<BLACK>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<WHITE, NORMAL>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<WHITE, QUIESCE>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<BLACK, NORMAL>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<BLACK, QUIESCE>(Bitboard& bitboard, MoveList* moveList);
 } // namespace Zagreus

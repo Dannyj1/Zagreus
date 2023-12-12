@@ -26,7 +26,6 @@
 #include "types.h"
 
 namespace Zagreus {
-
 std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& context,
                                                               senjo::GoParams& params,
                                                               ZagreusEngine& engine,

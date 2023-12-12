@@ -45,9 +45,9 @@ uint64_t ZagreusEngine::doPerft(Bitboard& perftBoard, PieceColor color, int dept
     MoveList* moves = moveListPool->getMoveList();
 
     if (color == WHITE) {
-        generateMoves<WHITE>(perftBoard, moves);
+        generateMoves<WHITE, NORMAL>(perftBoard, moves);
     } else if (color == BLACK) {
-        generateMoves<BLACK>(perftBoard, moves);
+        generateMoves<BLACK, NORMAL>(perftBoard, moves);
     } else {
         moveListPool->releaseMoveList(moves);
         return 0;
@@ -236,7 +236,8 @@ std::string ZagreusEngine::go(senjo::GoParams& params, std::string* ponder) {
 
     std::string result = getNotation(bestMove.from) + getNotation(bestMove.to);
 
-    searching = false;searching = true;
+    searching = false;
+    searching = true;
     return getNotation(bestMove.from) + getNotation(bestMove.to);
 }
 

@@ -258,9 +258,9 @@ void addHashes(Bitboard& board, int depth, std::map<uint64_t, uint64_t>& collisi
     MoveList* moves = moveListPool->getMoveList();
 
     if (board.getMovingColor() == WHITE) {
-        generateMoves<WHITE>(board, moves);
+        generateMoves<WHITE, NORMAL>(board, moves);
     } else {
-        generateMoves<BLACK>(board, moves);
+        generateMoves<BLACK, NORMAL>(board, moves);
     }
 
     for (Move& move : moves->moves) {

@@ -24,6 +24,7 @@
 
 namespace Zagreus {
 enum NodeType {
+    ROOT,
     PV,
     NO_PV,
 };
