@@ -157,6 +157,7 @@ int search(Bitboard& board, int alpha, int beta, int depth, Move& previousMove,
 
         if (score > alpha) {
             if (score >= beta) {
+                moveListPool->releaseMoveList(moves);
                 return score;
             }
 
