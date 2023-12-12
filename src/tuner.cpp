@@ -94,9 +94,19 @@ double findOptimalK(std::vector<TunePosition>& positions,
 
     for (TunePosition& pos : positions) {
         tunerBoard.setFromFenTuner(pos.fen);
-        //            Move rootMove{};
-        //            int qScore = searchManager.quiesce(tunerBoard, -9999999, 9999999, rootMove,
-        //            rootMove, maxEndTime, engine);
+        Move rootMove{};
+        SearchContext context{};
+        context.endTime = maxEndTime;
+        senjo::SearchStats stats{};
+
+        /*if (tunerBoard.getMovingColor() == WHITE) {
+            int qScore = qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
+                                                           rootMove, context, stats);
+        } else {
+            int qScore = qScore = qsearch<BLACK, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
+                                                           rootMove, context, stats);
+        }*/
+
         int evalScore = Evaluation(tunerBoard).evaluate();
 
         pos.score = evalScore;
@@ -156,18 +166,18 @@ std::vector<TunePosition> loadPositions(
         std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
         Move rootMove{};
-        int qScore = 0;
+        SearchContext context{};
+        senjo::SearchStats stats{};
+        context.endTime = maxEndTime;
+        int qScore;
 
-        // TODO: re-enable, remove = 0
-        /*if (tunerBoard.getMovingColor() == WHITE) {
-            qScore = searchManager.quiesce<WHITE>(tunerBoard, -999999999, 999999999, rootMove,
-                                                  rootMove,
-                                                  maxEndTime, engine, true);
+        if (tunerBoard.getMovingColor() == WHITE) {
+            qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
+                                                       rootMove, context, stats);
         } else {
-            qScore = searchManager.quiesce<BLACK>(tunerBoard, -999999999, 999999999, rootMove,
-                                                  rootMove,
-                                                  maxEndTime, engine, true);
-        }*/
+            qScore = qsearch<BLACK, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
+                                                       rootMove, context, stats);
+        }
 
         if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>() ||
             tunerBoard.isWinner<BLACK>() || tunerBoard.isKingInCheck<WHITE>() ||
@@ -175,8 +185,8 @@ std::vector<TunePosition> loadPositions(
             popcnt(tunerBoard.getColorBoard<BLACK>()) <= 4 ||
             tunerBoard.getAmountOfMinorOrMajorPieces() < 4 ||
             tunerBoard.getAmountOfMinorOrMajorPieces<WHITE>() <= 2 ||
-            tunerBoard.getAmountOfMinorOrMajorPieces<BLACK>() <= 2 || qScore <= -(MATE_SCORE / 2) ||
-            qScore >= MATE_SCORE / 2) {
+            tunerBoard.getAmountOfMinorOrMajorPieces<BLACK>() <= 2 || qScore <= -(MATE_SCORE - MAX_PLY) ||
+            qScore >= (MATE_SCORE - MAX_PLY)) {
             continue;
         }
 
