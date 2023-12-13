@@ -173,10 +173,10 @@ std::vector<TunePosition> loadPositions(
 
         if (tunerBoard.getMovingColor() == WHITE) {
             qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
-                                                       rootMove, context, stats);
+                                        rootMove, context, stats);
         } else {
             qScore = qsearch<BLACK, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
-                                                       rootMove, context, stats);
+                                        rootMove, context, stats);
         }
 
         if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>() ||
@@ -185,7 +185,8 @@ std::vector<TunePosition> loadPositions(
             popcnt(tunerBoard.getColorBoard<BLACK>()) <= 4 ||
             tunerBoard.getAmountOfMinorOrMajorPieces() < 4 ||
             tunerBoard.getAmountOfMinorOrMajorPieces<WHITE>() <= 2 ||
-            tunerBoard.getAmountOfMinorOrMajorPieces<BLACK>() <= 2 || qScore <= -(MATE_SCORE - MAX_PLY) ||
+            tunerBoard.getAmountOfMinorOrMajorPieces<BLACK>() <= 2 || qScore <= -(
+                MATE_SCORE - MAX_PLY) ||
             qScore >= (MATE_SCORE - MAX_PLY)) {
             continue;
         }

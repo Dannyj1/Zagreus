@@ -34,7 +34,7 @@
 #include "utils.h"
 
 namespace Zagreus {
-uint64_t ZagreusEngine::doPerft(Bitboard& perftBoard, PieceColor color, int depth,
+uint64_t ZagreusEngine::doPerft(Bitboard& perftBoard, PieceColor color, int16_t depth,
                                 int startingDepth) {
     uint64_t nodes = 0ULL;
 
@@ -198,7 +198,7 @@ void ZagreusEngine::waitForSearchFinish() {
     }
 }
 
-uint64_t ZagreusEngine::perft(const int depth) {
+uint64_t ZagreusEngine::perft(const int16_t depth) {
     stoppingSearch = false;
     auto start = std::chrono::steady_clock::now();
     uint64_t nodes = doPerft(board, board.getMovingColor(), depth, depth);

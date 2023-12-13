@@ -24,22 +24,17 @@
 #include <iostream>
 
 namespace Zagreus {
-void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score,
+void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int score,
                                      TTNodeType nodeType,
-                                     uint32_t bestMoveCode,
-                                     std::chrono::time_point<std::chrono::steady_clock> endTime) {
-    if (score >= 90000000 || score <= -90000000) {
+                                     uint32_t bestMoveCode) {
+    if (score > MAX_POSITIVE || score < MAX_NEGATIVE) {
         return;
     }
 
-    if (std::chrono::steady_clock::now() > endTime) {
-        return;
-    }
-
-    uint64_t index = (zobristHash & hashSize);
+    uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
-    if (entry->depth <= depth) {
+    if (depth > entry->depth) {
         entry->zobristHash = zobristHash;
         entry->depth = depth;
         entry->bestMoveCode = bestMoveCode;
@@ -48,7 +43,7 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int depth, int score,
     }
 }
 
-int TranspositionTable::getScore(uint64_t zobristHash, int depth, int alpha, int beta) {
+int TranspositionTable::getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta) {
     uint64_t index = (zobristHash & hashSize);
     TTEntry* entry = &transpositionTable[index];
 
@@ -70,7 +65,7 @@ int TranspositionTable::getScore(uint64_t zobristHash, int depth, int alpha, int
 }
 
 TTEntry* TranspositionTable::getEntry(uint64_t zobristHash) {
-    uint64_t index = (zobristHash & hashSize);
+    uint64_t index = zobristHash & hashSize;
 
     return &transpositionTable[index];
 }

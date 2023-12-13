@@ -44,7 +44,7 @@ private:
     };
 
 public:
-    //        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int
+    //        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int16_t depth, int
     //        startingDepth);
 
     std::string getEngineName() override;
@@ -101,7 +101,7 @@ public:
 
     void waitForSearchFinish() override;
 
-    uint64_t perft(const int depth) override;
+    uint64_t perft(const int16_t depth) override;
 
     std::string go(senjo::GoParams& params, std::string* ponder) override;
 
@@ -113,7 +113,7 @@ public:
 
     senjo::EngineOption getOption(const std::string& optionName);
 
-    uint64_t doPerft(Bitboard& perftBoard, PieceColor color, int depth, int startingDepth);
+    uint64_t doPerft(Bitboard& perftBoard, PieceColor color, int16_t depth, int startingDepth);
 
     bool isTuning() const;
 

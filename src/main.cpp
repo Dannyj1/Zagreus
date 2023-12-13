@@ -241,7 +241,7 @@ void benchmark() {
     senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nodesPerSecond << " nps";
 }
 
-void addHashes(Bitboard& board, int depth, std::map<uint64_t, uint64_t>& collisionMap) {
+void addHashes(Bitboard& board, int16_t depth, std::map<uint64_t, uint64_t>& collisionMap) {
     uint64_t zobristHash = board.getZobristHash() & 1398100ULL;
 
     if (zobristHash == 0) {

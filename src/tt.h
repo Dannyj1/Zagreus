@@ -36,7 +36,7 @@ enum TTNodeType {
 
 struct TTEntry {
     int score = 0;
-    uint8_t depth = 0;
+    int16_t depth = INT16_MIN;
     uint32_t bestMoveCode = 0;
     uint64_t zobristHash = 0;
     TTNodeType nodeType = EXACT_NODE;
@@ -93,11 +93,10 @@ public:
 
     void setTableSize(int megaBytes);
 
-    void addPosition(uint64_t zobristHash, int depth, int score, TTNodeType nodeType,
-                     uint32_t bestMoveCode,
-                     std::chrono::time_point<std::chrono::steady_clock> endTime);
+    void addPosition(uint64_t zobristHash, int16_t depth, int score, TTNodeType nodeType,
+                     uint32_t bestMoveCode);
 
-    int getScore(uint64_t zobristHash, int depth, int alpha, int beta);
+    int getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta);
 
     TTEntry* getEntry(uint64_t zobristHash);
 

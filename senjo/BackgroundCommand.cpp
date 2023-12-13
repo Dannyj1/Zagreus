@@ -215,7 +215,7 @@ namespace senjo {
                     continue;
                 }
 
-                int depth = toNumber<int>(depthToken.substr(1));
+                int16_t depth = toNumber<int>(depthToken.substr(1));
                 if (depth < 1) {
                     Output() << "--- invalid depth: " << depthToken;
                     break;
@@ -252,7 +252,7 @@ namespace senjo {
 //! \param[out] leaf_count The actual leaf count at \p depth
 //! \return false if leaf_count count does not match expected leaf count
 //-----------------------------------------------------------------------------
-    bool PerftCommandHandle::process(const int depth,
+    bool PerftCommandHandle::process(const int16_t depth,
                                      const uint64_t expected_leaf_count,
                                      uint64_t &leaf_count) {
         if ((maxDepth > 0) && (depth > maxDepth)) {
