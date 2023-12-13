@@ -31,7 +31,7 @@
 
 namespace Zagreus {
 MoveListPool* moveListPool = MoveListPool::getInstance();
-TranspositionTable* tt = TranspositionTable::getTT();
+TranspositionTable* tt = tt;
 
 template <PieceColor color>
 Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
@@ -132,8 +132,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
     }
 
     if (!IS_PV_NODE) {
-        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha,
-                                                            beta);
+        int ttScore = tt->getScore(board.getZobristHash(), depth, alpha,
+                                   beta);
 
         if (ttScore != INT32_MIN) {
             return ttScore;
@@ -233,7 +233,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
             SearchContext& context,
             senjo::SearchStats& searchStats) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
-    constexpr TTNodeType IS_PV_NODE = nodeType == PV ? EXACT_NODE : FAIL_LOW_NODE;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -244,15 +243,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
         return beta;
     }
 
-    if (!IS_PV_NODE) {
-        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha,
-                                                            beta);
-
-        if (ttScore != INT32_MIN) {
-            return ttScore;
-        }
-    }
-
     searchStats.qnodes += 1;
 
     bool inCheck = board.isKingInCheck<color>();
@@ -261,7 +251,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
         int standPat = Evaluation(board).evaluate();
 
         if (standPat >= beta) {
-            tt->addPosition(board.getZobristHash(), depth, standPat, FAIL_HIGH_NODE, 0);
             return standPat;
         }
 
@@ -295,8 +284,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
     auto movePicker = MovePicker(moves);
     int legalMoveCount = 0;
     previousMove = {};
-    int bestScore = MAX_NEGATIVE;
-    Move bestMove = {NO_SQUARE, NO_SQUARE};
 
     while (movePicker.hasNext()) {
         Move move = movePicker.getNextMove();
@@ -318,20 +305,14 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
                                                        previousMove, context, searchStats);
         board.unmakeMove(move);
 
-        if (score > bestScore) {
-            bestScore = score;
-
-            if (score > alpha) {
-                bestMove = move;
-
-                if (score >= beta) {
-                    moveListPool->releaseMoveList(moves);
-                    tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE, 0);
-                    return beta;
-                }
-
-                alpha = score;
+        if (score > alpha) {
+            if (score >= beta) {
+                moveListPool->releaseMoveList(moves);
+                // tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE, 0);
+                return beta;
             }
+
+            alpha = score;
         }
     }
 
@@ -341,13 +322,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
         return -MATE_SCORE + board.getPly();
     }
 
-    TTNodeType ttNodeType = FAIL_LOW_NODE;
-
-    if (IS_PV_NODE && (bestMove.from != NO_SQUARE && bestMove.to != NO_SQUARE)) {
-        ttNodeType = EXACT_NODE;
-    }
-
-    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, 0);
     return alpha;
 }
 
