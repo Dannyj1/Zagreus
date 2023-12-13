@@ -31,7 +31,7 @@
 
 namespace Zagreus {
 MoveListPool* moveListPool = MoveListPool::getInstance();
-TranspositionTable* tt = TranspositionTable::getTT();
+TranspositionTable* tt = tt;
 
 template <PieceColor color>
 Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
@@ -132,7 +132,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
     }
 
     if (!IS_PV_NODE) {
-        int ttScore = tt->getScore(board.getZobristHash(), depth, alpha, beta);
+        int ttScore = tt->getScore(board.getZobristHash(), depth, alpha,
+                                   beta);
 
         if (ttScore != INT32_MIN) {
             return ttScore;
@@ -232,7 +233,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
             SearchContext& context,
             senjo::SearchStats& searchStats) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
-    constexpr TTNodeType IS_PV_NODE = nodeType == PV ? EXACT_NODE : FAIL_LOW_NODE;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -241,15 +241,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
     auto currentTime = std::chrono::steady_clock::now();
     if (currentTime > context.endTime || board.getPly() >= MAX_PLY) {
         return beta;
-    }
-
-    if (!IS_PV_NODE) {
-        int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha,
-                                                            beta);
-
-        if (ttScore != INT32_MIN) {
-            return ttScore;
-        }
     }
 
     searchStats.qnodes += 1;
@@ -316,7 +307,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
 
         if (score > alpha) {
             if (score >= beta) {
-                moveListPool->releaseMoveList(moves);;
+                moveListPool->releaseMoveList(moves);
+                // tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE, 0);
                 return beta;
             }
 
