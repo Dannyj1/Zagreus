@@ -43,6 +43,8 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     int bestScore = MAX_NEGATIVE;
     Line pvLine{};
 
+    tt->ageHistoryTable();
+
     while (!engine.stopRequested()) {
         auto currentTime = std::chrono::steady_clock::now();
         // Update the endtime using new data
@@ -190,6 +192,14 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
                 bestMove = move;
 
                 if (score >= beta) {
+                    if (move.captureScore == NO_CAPTURE_SCORE && move.promotionPiece == EMPTY) {
+                        tt->killerMoves[2][board.getPly()] = tt->killerMoves[1][board.getPly()];
+                        tt->killerMoves[1][board.getPly()] = tt->killerMoves[0][board.getPly()];
+                        tt->killerMoves[0][board.getPly()] = encodeMove(&move);
+                        tt->historyMoves[move.piece][move.to] += depth * depth;
+                        tt->counterMoves[move.piece][move.to] = encodeMove(&move);
+                    }
+
                     moveListPool->releaseMoveList(moves);
                     uint32_t bestMoveCode = encodeMove(&bestMove);
                     tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE,

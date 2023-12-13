@@ -73,6 +73,7 @@ int scoreMove(int ply, Line& previousPv, const uint32_t* previousPvMoveCodes, Mo
         return 2000;
     }
 
+    // No capture score is -1, so we need to use < -1
     if (move->captureScore < -1) {
         return move->captureScore - 5000;
     }

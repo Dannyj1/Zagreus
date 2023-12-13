@@ -212,7 +212,7 @@ void benchmark() {
 
             senjo::GoParams params{};
             senjo::SearchStats searchStats{};
-            params.depth = 4;
+            params.depth = 5;
 
             auto start = std::chrono::steady_clock::now();
 
