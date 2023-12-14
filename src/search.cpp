@@ -145,18 +145,22 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
 
     bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
 
-    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<WHITE>() >= 2 && board.getAmountOfMinorOrMajorPieces<BLACK>() >= 2) {
+    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<color>() > 0) {
         bool ownKingInCheck = board.isKingInCheck<color>();
 
         if (!ownKingInCheck
             && Evaluation(board).evaluate() >= beta) {
-            int r = 2 + (depth >= 6) + (depth >= 12);
+            int r = 3 + (depth >= 6) + (depth >= 12);
 
             Move nullMove{NO_SQUARE, NO_SQUARE};
             Line nullLine{};
+            SearchContext nullContext{};
+            nullContext.startTime = context.startTime;
+            nullContext.endTime = context.endTime;
             board.makeNullMove();
             int nullScore = -search<OPPOSITE_COLOR, NO_PV>(board, -beta, -beta + 1, depth - r,
-                                                           nullMove, context, searchStats, nullLine);
+                                                           nullMove, nullContext, searchStats,
+                                                           nullLine);
             board.unmakeNullMove();
             int mateScores = MATE_SCORE - MAX_PLY;
 

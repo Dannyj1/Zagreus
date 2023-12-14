@@ -423,10 +423,11 @@ void Bitboard::makeNullMove() {
     halfMoveClock += 1;
     movingColor = getOppositeColor(movingColor);
     zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
-    previousMove = {};
+    ply += 1;
 }
 
 void Bitboard::unmakeNullMove() {
+    ply -= 1;
     UndoData undoData = undoStack[ply];
 
     halfMoveClock = undoData.halfMoveClock;

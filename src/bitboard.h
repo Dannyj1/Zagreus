@@ -436,6 +436,11 @@ public:
         }
     }
 
+    template <PieceColor color>
+    int getAmountOfPieces() {
+        return popcnt(getColorBoard<color>());
+    }
+
     void makeNullMove();
 
     void unmakeNullMove();
