@@ -18,18 +18,29 @@ You can download binaries here: https://github.com/Dannyj1/Zagreus/releases
 This engine requires a GUI that supports the UCI (Universal Chess Interface) protocol to use it. I personally
 use [CuteChess](https://cutechess.com/).
 
+# Development
+
+Development of all new changes and bug fixes happens in a separate branch for each change. When the change is properly
+tested using OpenBench and proven to improve ELO, it will be merged with the master branch. Because of this, the master
+branch is not the latest released version and may contain bugs.
+Every stable release (as in the version has been uploaded under releases) will have a tag. If you want to compile the
+stable version for yourself, you can use the tag. You can list all tags and search for tags under the branches dropdown
+on GitHub.
+
 # Features
 - Bitboard board representation with Plain Magic Bitboards for sliding piece move generation
-- Tapered Evaluation consisting of material balance, mobility, very simple connectivity, king safety, piece square
-  tables and more
-- Evaluation values automatically tuned with a gradient descent tuner with the Adam optimizer.
+- Tapered Evaluation with:
+  - Material
+  - Piece-Square Tables
+  - Several evaluation terms per piece type (e.g. passed pawn, king safety, etc.)
+  - Penalty for undefended minor pieces
+  - And more
+- Evaluation values automatically tuned using a gradient descent tuner with the Adam optimizer.
 - Principal Variation Search with Alpha-Beta pruning
-- Aspiration Windows
 - Quiescence Search with delta pruning and SEE move ordering
 - Move ordering using MVV/LVA, killer moves, history heuristic, countermove heuristic
 - Transposition Table
 - Null Move Pruning
-- Late Move Reduction
 - And more! This list is constantly growing and changing, but it is difficult to keep track of all features and changes.
 
 # UCI Options
@@ -42,7 +53,8 @@ Zagreus Engine has the following UCI options that can be changed:
 # Build Instructions
 
 To build Zagreus, you will need to use LLVM. On Windows, I use [LLVM MinGW](https://github.com/mstorsjo/llvm-mingw). On
-Linux I just use [LLVM](https://releases.llvm.org/download.html).
+Linux I just use [LLVM](https://releases.llvm.org/download.html), but it is also possible to use GCC. LLVM seems to have
+slightly better performance.
 Zagreus uses CMake to build. On Windows you can use the [CMake-GUI](https://cmake.org/runningcmake/). On Linux, use the
 following commands:
 
@@ -51,10 +63,11 @@ Clone the repository:
 git clone https://github.com/Dannyj1/Zagreus.git
 ```
 
-Set the compiler to clang++:
+If you want to use Clang/LLVM, set the compiler to clang++ (not required. If you don't run these commands, your default
+compiler will be used which works fine in most cases):
 ```bash
-export CC=/usr/bin/clang-15
-export CXX=/usr/bin/clang++-15
+export CC=/usr/bin/clang-<version here>
+export CXX=/usr/bin/clang++-<version here>
 ```
 Build:
 ```bash
