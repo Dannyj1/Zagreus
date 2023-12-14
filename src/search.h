@@ -45,7 +45,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
 template <PieceColor color, NodeType nodeType>
 int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,
            SearchContext& context,
-           senjo::SearchStats& searchStats, Line& pvLine, bool canNull);
+           senjo::SearchStats& searchStats, Line& pvLine);
 
 template <PieceColor color, NodeType nodeType>
 int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,

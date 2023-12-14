@@ -70,7 +70,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
 
         Move emptyMove{};
         int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, emptyMove,
-                                        searchContext, searchStats, pvLine, true);
+                                        searchContext, searchStats, pvLine);
         Move bestMove = pvLine.moves[0];
         Move previousBestMove = board.getPvLine().moves[0];
 
@@ -110,7 +110,7 @@ template Move getBestMove<BLACK>(senjo::GoParams params, ZagreusEngine& engine, 
 template <PieceColor color, NodeType nodeType>
 int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,
            SearchContext& context,
-           senjo::SearchStats& searchStats, Line& pvLine, bool canNull) {
+           senjo::SearchStats& searchStats, Line& pvLine) {
     constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
     constexpr bool IS_ROOT_NODE = nodeType == ROOT;
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
@@ -143,7 +143,9 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
         }
     }
 
-    if (!IS_PV_NODE && depth >= 3 && canNull && board.hasMinorOrMajorPieces()) {
+    bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
+
+    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<WHITE>() >= 2 && board.getAmountOfMinorOrMajorPieces<BLACK>() >= 2) {
         bool ownKingInCheck = board.isKingInCheck<color>();
 
         if (!ownKingInCheck
@@ -154,12 +156,12 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
             Line nullLine{};
             board.makeNullMove();
             int nullScore = -search<OPPOSITE_COLOR, NO_PV>(board, -beta, -beta + 1, depth - r,
-                                                           nullMove, context, searchStats, nullLine,
-                                                           false);
+                                                           nullMove, context, searchStats, nullLine);
             board.unmakeNullMove();
+            int mateScores = MATE_SCORE - MAX_PLY;
 
-            if (nullScore >= beta) {
-                return beta;
+            if (nullScore >= beta && nullScore < mateScores) {
+                return nullScore;
             }
         }
     }
@@ -191,16 +193,16 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
         if (IS_PV_NODE && doPvSearch) {
             score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, previousMove,
                                                 context,
-                                                searchStats, nodeLine, false);
+                                                searchStats, nodeLine);
         } else {
             score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha, depth - 1,
                                                    previousMove, context,
-                                                   searchStats, nodeLine, canNull);
+                                                   searchStats, nodeLine);
 
             if (score > alpha && score < beta) {
                 score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, previousMove,
                                                     context,
-                                                    searchStats, nodeLine, false);
+                                                    searchStats, nodeLine);
             }
         }
 
