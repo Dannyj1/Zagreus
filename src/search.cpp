@@ -148,12 +148,13 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
 
         if (!ownKingInCheck
             && Evaluation(board).evaluate() >= beta) {
-            int R = 2 + (depth >= 6) + (depth >= 12);
+            int r = 2 + (depth >= 6) + (depth >= 12);
 
             Move nullMove{NO_SQUARE, NO_SQUARE};
+            Line nullLine{};
             board.makeNullMove();
-            int nullScore = -search<OPPOSITE_COLOR, NO_PV>(board, -beta, -beta + 1, depth - R,
-                                                           nullMove, context, searchStats, pvLine,
+            int nullScore = -search<OPPOSITE_COLOR, NO_PV>(board, -beta, -beta + 1, depth - r,
+                                                           nullMove, context, searchStats, nullLine,
                                                            false);
             board.unmakeNullMove();
 
