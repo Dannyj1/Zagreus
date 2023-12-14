@@ -150,8 +150,11 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
 
+    // Null move pruning
     if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<
-            color>() > 0) {
+            color>() >= 2 && board.getAmountOfMinorOrMajorPieces<OPPOSITE_COLOR>() >= 2
+        && board.getAmountOfPieces<color>() >= 6 && board.getAmountOfPieces<OPPOSITE_COLOR>() >=
+        6) {
         bool ownKingInCheck = board.isKingInCheck<color>();
 
         if (!ownKingInCheck
@@ -196,7 +199,6 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
 
         legalMoveCount += 1;
-        previousMove = move;
 
         int score;
         if (IS_PV_NODE && doPvSearch) {
