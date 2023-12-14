@@ -97,7 +97,6 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
         timePerMove = maxTime;
     }
 
-    std::cout << timePerMove << std::endl;
     timePerMove = std::max((uint64_t)timePerMove, (uint64_t)1ULL);
     return context.startTime + std::chrono::milliseconds(timePerMove);
 }
