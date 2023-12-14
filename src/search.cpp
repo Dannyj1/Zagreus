@@ -148,7 +148,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
-    /*bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
+    bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
 
     // Null move pruning
     if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<
@@ -175,7 +175,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                 return nullScore;
             }
         }
-    }*/
+    }
 
     bool doPvSearch = true;
     MoveList* moves = moveListPool->getMoveList();
