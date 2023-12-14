@@ -70,7 +70,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
 
         Move emptyMove{};
         int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, emptyMove,
-                                        searchContext, searchStats, pvLine);
+                                        searchContext, searchStats, pvLine, true);
         Move bestMove = pvLine.moves[0];
         Move previousBestMove = board.getPvLine().moves[0];
 
@@ -110,9 +110,10 @@ template Move getBestMove<BLACK>(senjo::GoParams params, ZagreusEngine& engine, 
 template <PieceColor color, NodeType nodeType>
 int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,
            SearchContext& context,
-           senjo::SearchStats& searchStats, Line& pvLine) {
+           senjo::SearchStats& searchStats, Line& pvLine, bool canNull) {
     constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
     constexpr bool IS_ROOT_NODE = nodeType == ROOT;
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -142,7 +143,26 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
         }
     }
 
-    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
+    if (!IS_PV_NODE && depth >= 3 && canNull && board.hasMinorOrMajorPieces()) {
+        bool ownKingInCheck = board.isKingInCheck<color>();
+
+        if (!ownKingInCheck
+            && Evaluation(board).evaluate() >= beta) {
+            int R = 2 + (depth >= 6) + (depth >= 12);
+
+            Move nullMove{NO_SQUARE, NO_SQUARE};
+            board.makeNullMove();
+            int nullScore = -search<OPPOSITE_COLOR, NO_PV>(board, -beta, -beta + 1, depth - R,
+                                                           nullMove, context, searchStats, pvLine,
+                                                           false);
+            board.unmakeNullMove();
+
+            if (nullScore >= beta) {
+                return beta;
+            }
+        }
+    }
+
     bool doPvSearch = true;
     MoveList* moves = moveListPool->getMoveList();
 
@@ -170,16 +190,16 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
         if (IS_PV_NODE && doPvSearch) {
             score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, previousMove,
                                                 context,
-                                                searchStats, nodeLine);
+                                                searchStats, nodeLine, false);
         } else {
             score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha, depth - 1,
                                                    previousMove, context,
-                                                   searchStats, nodeLine);
+                                                   searchStats, nodeLine, canNull);
 
             if (score > alpha && score < beta) {
                 score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, previousMove,
                                                     context,
-                                                    searchStats, nodeLine);
+                                                    searchStats, nodeLine, false);
             }
         }
 
