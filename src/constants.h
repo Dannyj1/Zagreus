@@ -35,6 +35,9 @@ static constexpr int ZOBRIST_BLACK_QUEENSIDE_INDEX = ZOBRIST_BLACK_KINGSIDE_INDE
 static constexpr int ZOBRIST_EN_PASSANT_INDEX = ZOBRIST_BLACK_QUEENSIDE_INDEX + 1;
 
 static constexpr int MATE_SCORE = 20000;
+static constexpr int MAX_POSITIVE = 1000000;
+static constexpr int MAX_NEGATIVE = -1000000;
+static constexpr int DRAW_SCORE = 0;
 
 static constexpr uint64_t A_FILE = 0x0101010101010101ULL;
 static constexpr uint64_t B_FILE = 0x0202020202020202ULL;

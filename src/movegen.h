@@ -23,9 +23,11 @@
 #include "bitboard.h"
 
 namespace Zagreus {
-template <PieceColor color>
-void generateMoves(Bitboard& bitboard, MoveList* moveList);
+enum GenerationType {
+    NORMAL,
+    QUIESCE,
+};
 
-template <PieceColor color>
-void generateQuiescenceMoves(Bitboard& bitboard, MoveList* moveList);
-}  // namespace Zagreus
+template <PieceColor color, GenerationType type>
+void generateMoves(Bitboard& bitboard, MoveList* moveList);
+} // namespace Zagreus

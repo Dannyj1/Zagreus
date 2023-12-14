@@ -30,7 +30,7 @@ namespace senjo {
     struct GoParams {
         bool infinite = false; // SearchManager until the "stop" command
         bool ponder = false; // Start searching in pondering mode
-        int depth = 0; // Maximum number of half-moves (plies) to search
+        int16_t depth = 0; // Maximum number of half-moves (plies) to search
         int movestogo = 0; // Number of moves remaining until next time control
         uint64_t binc = 0; // BLACK increment per move in milliseconds
         uint64_t btime = 0; // Milliseconds remaining on black's clock

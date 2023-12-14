@@ -157,7 +157,7 @@ namespace senjo {
         void doWork();
 
     private:
-        bool process(const int depth, const uint64_t expected_leaf_count,
+        bool process(const int16_t depth, const uint64_t expected_leaf_count,
                      uint64_t &leaf_count);
 
         static const std::string _TEST_FILE;

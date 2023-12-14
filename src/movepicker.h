@@ -26,23 +26,25 @@
 
 namespace Zagreus {
 class MovePicker {
- private:
-  MoveList* moveList = nullptr;
-  int searchStartIndex = 0;
+private:
+    MoveList* moveList = nullptr;
+    int searchStartIndex = 0;
 
- public:
-  MovePicker() = delete;
+public:
+    MovePicker() = delete;
 
-  MovePicker(MoveList* moveList) : moveList(moveList){};
+    MovePicker(MoveList* moveList)
+        : moveList(moveList) {
+    };
 
-  Move getNextMove();
+    Move getNextMove();
 
-  bool hasNext();
+    bool hasNext();
 
-  int size();
+    int size();
 
-  int remaining();
+    int remaining();
 
-  int movesSearched();
+    int movesSearched();
 };
-}  // namespace Zagreus
+} // namespace Zagreus

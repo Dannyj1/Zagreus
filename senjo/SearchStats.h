@@ -29,7 +29,7 @@ namespace senjo {
 
 //-----------------------------------------------------------------------------
     struct SearchStats {
-        int depth = 0; // The current search depth
+        int16_t depth = 0; // The current search depth
         int seldepth = 0; // The maximum selective depth reached on "move"
         uint64_t nodes = 0; // The number of nodes searched so far
         uint64_t qnodes = 0; // The number of quiescence nodes searched so far

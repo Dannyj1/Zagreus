@@ -27,32 +27,33 @@
 
 namespace Zagreus {
 struct TunePosition {
-  std::string fen;
-  double result = 0.0f;
-  int score = 0;
+    std::string fen;
+    double result = 0.0f;
+    int score = 0;
 };
 
 class ExponentialMovingAverage {
- private:
-  double alpha;
-  double ma;
-  bool initialized;
+private:
+    double alpha;
+    double ma;
+    bool initialized;
 
- public:
-  ExponentialMovingAverage(size_t period) : alpha(2.0 / (period + 1)), ma(0), initialized(false) {}
-
-  void add(double value) {
-    if (!initialized) {
-      ma = value;
-      initialized = true;
-    } else {
-      ma = alpha * value + (1 - alpha) * ma;
+public:
+    ExponentialMovingAverage(size_t period)
+        : alpha(2.0 / (period + 1)), ma(0), initialized(false) {
     }
-  }
 
-  double getMA() const { return ma; }
+    void add(double value) {
+        if (!initialized) {
+            ma = value;
+            initialized = true;
+        } else {
+            ma = alpha * value + (1 - alpha) * ma;
+        }
+    }
+
+    double getMA() const { return ma; }
 };
 
 void startTuning(char* filePath);
-
-}  // namespace Zagreus
+} // namespace Zagreus

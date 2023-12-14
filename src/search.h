@@ -19,37 +19,39 @@
  */
 
 #pragma once
+#include <vector>
 
-#include "../senjo/SearchStats.h"
 #include "bitboard.h"
 #include "engine.h"
 #include "types.h"
+#include "../senjo/GoParams.h"
 
 namespace Zagreus {
-class SearchManager {
- private:
-  bool isSearching = false;
-  senjo::SearchStats searchStats{};
-  EvalContext evalContext;
-  MoveListPool *moveListPool = MoveListPool::getInstance();
-
- public:
-  Move getBestMove(senjo::GoParams &params, ZagreusEngine &engine, Bitboard &board);
-
-  template <PieceColor color>
-  int search(Bitboard &board, int depth, int alpha, int beta, Move &rootMove, Move &previousMove,
-             std::chrono::time_point<std::chrono::steady_clock> &endTime, Line &pvLine,
-             ZagreusEngine &engine, bool isPv, bool canNull);
-
-  template <PieceColor color>
-  int quiesce(Bitboard &board, int alpha, int beta, Move &rootMove, Move &previousMove,
-              std::chrono::time_point<std::chrono::steady_clock> &endTime, ZagreusEngine &engine,
-              bool isPv, int depth = 0);
-
-  bool isCurrentlySearching();
-
-  senjo::SearchStats getSearchStats();
+struct SearchContext {
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
+    std::chrono::time_point<std::chrono::steady_clock> endTime;
+    int pvChanges = 0;
+    // A boolean variable that keeps track if the score suddenly went from positive to negative or
+    // vice versa
+    bool suddenScoreSwing = false;
+    // A boolean variable that keeps track if the score suddenly had a big drop (-150 or more)
+    bool suddenScoreDrop = false;
 };
 
-static SearchManager searchManager{};
-}  // namespace Zagreus
+template <PieceColor color>
+Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
+                 senjo::SearchStats& searchStats);
+
+template <PieceColor color, NodeType nodeType>
+int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,
+           SearchContext& context,
+           senjo::SearchStats& searchStats, Line& pvLine);
+
+template <PieceColor color, NodeType nodeType>
+int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,
+            SearchContext& context,
+            senjo::SearchStats& searchStats);
+
+void printPv(senjo::SearchStats& searchStats, std::chrono::steady_clock::time_point& startTime,
+             Line& pvLine);
+} // namespace Zagreus

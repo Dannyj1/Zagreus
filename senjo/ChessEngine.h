@@ -241,7 +241,7 @@ namespace senjo {
         //! \param[in] depth How many half-moves (plies) to search
         //! \return The number of leaf nodes visited at \p depth
         //---------------------------------------------------------------------------
-        virtual uint64_t perft(const int depth) = 0;
+        virtual uint64_t perft(const int16_t depth) = 0;
 
         //---------------------------------------------------------------------------
         //! \brief Execute search on current position to find best move

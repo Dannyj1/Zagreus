@@ -21,86 +21,84 @@
 #include "timemanager.h"
 
 #include <algorithm>
+#include <iostream>
 
 #include "../senjo/GoParams.h"
 #include "engine.h"
 #include "types.h"
 
 namespace Zagreus {
-std::chrono::time_point<std::chrono::steady_clock> getEndTime(TimeContext &context,
-                                                              senjo::GoParams &params,
-                                                              ZagreusEngine &engine,
+std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& context,
+                                                              senjo::GoParams& params,
+                                                              ZagreusEngine& engine,
                                                               PieceColor movingColor) {
-  if (params.infinite || params.depth > 0 || params.nodes > 0) {
-    return std::chrono::time_point<std::chrono::steady_clock>::max();
-  }
-
-  if (params.movetime > 0) {
-    return context.startTime +
-           std::chrono::milliseconds(params.movetime -
-                                     engine.getOption("MoveOverhead").getIntValue());
-  }
-
-  int movesToGo = params.movestogo ? params.movestogo : 50ULL;
-
-  uint64_t timeLeft = 0;
-
-  if (movingColor == WHITE) {
-    timeLeft += params.wtime;
-    timeLeft += params.winc * movesToGo;
-  } else {
-    timeLeft += params.btime;
-    timeLeft += params.binc * movesToGo;
-  }
-
-  uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
-  timeLeft -= moveOverhead * movesToGo;
-
-  timeLeft = std::max((uint64_t)timeLeft, (uint64_t)1ULL);
-  uint64_t maxTime;
-
-  if (movingColor == WHITE) {
-    if (params.wtime > moveOverhead) {
-      maxTime = (params.wtime - moveOverhead) / 100 * 80;
-    } else {
-      maxTime = params.wtime / 2 / 100 * 80;
+    if (params.infinite || params.depth > 0 || params.nodes > 0) {
+        return std::chrono::time_point<std::chrono::steady_clock>::max();
     }
-  } else {
-    if (params.btime > moveOverhead) {
-      maxTime = (params.btime - moveOverhead) / 100 * 80;
-    } else {
-      maxTime = params.btime / 2 / 100 * 80;
+
+    if (params.movetime > 0) {
+        return context.startTime +
+               std::chrono::milliseconds(params.movetime -
+                                         engine.getOption("MoveOverhead").getIntValue());
     }
-  }
 
-  uint64_t timePerMove = timeLeft / movesToGo;
+    int movesToGo = params.movestogo ? params.movestogo : 50ULL;
 
-  if (context.rootMoveCount == 1) {
-    timePerMove /= 2;
-  }
+    uint64_t timeLeft = 0;
 
-  // Based on context.pvChanges, scale timePerMove between 1.0 and 1.5. After 5 or more move
-  // changes, timePerMove will be 1.5 times as long.
-  if (context.pvChanges > 0) {
-    timePerMove =
-        timePerMove * (1.0 + std::min(static_cast<double>(context.pvChanges), 5.0) / 10.0);
-  }
+    if (movingColor == WHITE) {
+        timeLeft += params.wtime;
+        timeLeft += params.winc * movesToGo;
+    } else {
+        timeLeft += params.btime;
+        timeLeft += params.binc * movesToGo;
+    }
 
-  // if the score suddenly went from positive to negative or vice versa, increase timePerMove by 50%
-  if (context.suddenScoreSwing) {
-    timePerMove = timePerMove * 1.5;
-  }
+    uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
+    timeLeft -= moveOverhead * movesToGo;
 
-  // if the score suddenly dropped by 100cp or more, increase timePerMove by 50%
-  if (context.suddenScoreDrop) {
-    timePerMove = timePerMove * 1.5;
-  }
+    timeLeft = std::max((uint64_t)timeLeft, (uint64_t)1ULL);
+    uint64_t maxTime;
 
-  if (timePerMove > maxTime) {
-    timePerMove = maxTime;
-  }
+    if (movingColor == WHITE) {
+        if (params.wtime > moveOverhead) {
+            maxTime = (params.wtime - moveOverhead) / 100 * 80;
+        } else {
+            maxTime = params.wtime / 2 / 100 * 80;
+        }
+    } else {
+        if (params.btime > moveOverhead) {
+            maxTime = (params.btime - moveOverhead) / 100 * 80;
+        } else {
+            maxTime = params.btime / 2 / 100 * 80;
+        }
+    }
 
-  timePerMove = std::max((uint64_t)timePerMove, (uint64_t)1ULL);
-  return context.startTime + std::chrono::milliseconds(timePerMove);
+    uint64_t timePerMove = timeLeft / movesToGo;
+
+    // Based on context.pvChanges, scale timePerMove between 1.0 and 1.5. After 5 or more move
+    // changes, timePerMove will be 1.5 times as long.
+    if (context.pvChanges > 0) {
+        timePerMove =
+            timePerMove * (1.0 + std::min(static_cast<double>(context.pvChanges), 5.0) / 10.0);
+    }
+
+    // if the score suddenly went from positive to negative or vice versa, increase timePerMove by 50%
+    if (context.suddenScoreSwing) {
+        timePerMove = timePerMove * 1.5;
+    }
+
+    // if the score suddenly dropped by 100cp or more, increase timePerMove by 50%
+    if (context.suddenScoreDrop) {
+        timePerMove = timePerMove * 1.5;
+    }
+
+    if (timePerMove > maxTime) {
+        timePerMove = maxTime;
+    }
+
+    std::cout << timePerMove << std::endl;
+    timePerMove = std::max((uint64_t)timePerMove, (uint64_t)1ULL);
+    return context.startTime + std::chrono::milliseconds(timePerMove);
 }
-}  // namespace Zagreus
+} // namespace Zagreus

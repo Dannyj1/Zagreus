@@ -89,4 +89,4 @@ uint64_t rook_attacks_on_the_fly(int8_t square, uint64_t block);
 uint64_t bishop_attacks_on_the_fly(int8_t square, uint64_t block);
 
 void initializeMagicBitboards();
-}  // namespace Zagreus
+} // namespace Zagreus

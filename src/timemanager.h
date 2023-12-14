@@ -20,27 +20,14 @@
 
 #pragma once
 
-#include <chrono>
-
 #include "../senjo/GoParams.h"
 #include "engine.h"
+#include "search.h"
 #include "types.h"
 
 namespace Zagreus {
-
-struct TimeContext {
-  std::chrono::time_point<std::chrono::steady_clock> startTime;
-  int pvChanges = 0;
-  int rootMoveCount = 0;
-  // A boolean variable that keeps track if the score suddenly went from positive to negative or
-  // vice versa
-  bool suddenScoreSwing = false;
-  // A boolean variable that keeps track if the score suddenly had a big drop (-150 or more)
-  bool suddenScoreDrop = false;
-};
-
-std::chrono::time_point<std::chrono::steady_clock> getEndTime(TimeContext &context,
-                                                              senjo::GoParams &params,
-                                                              ZagreusEngine &engine,
+std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& context,
+                                                              senjo::GoParams& params,
+                                                              ZagreusEngine& engine,
                                                               PieceColor movingColor);
-}  // namespace Zagreus
+} // namespace Zagreus

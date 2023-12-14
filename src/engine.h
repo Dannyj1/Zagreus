@@ -28,94 +28,95 @@
 
 namespace Zagreus {
 class ZagreusEngine : public senjo::ChessEngine {
- private:
-  Bitboard board{};
-  bool isEngineInitialized = false;
-  senjo::SearchStats searchStats{};
-  bool stoppingSearch = false;
-  bool tuning = false;
-  MoveListPool *moveListPool = MoveListPool::getInstance();
+private:
+    Bitboard board{};
+    bool isEngineInitialized = false;
+    senjo::SearchStats searchStats{};
+    bool stoppingSearch = false;
+    bool searching = false;
+    bool tuning = false;
+    MoveListPool* moveListPool = MoveListPool::getInstance();
 
-  std::list<senjo::EngineOption> options{
-      senjo::EngineOption("MoveOverhead", "50", senjo::EngineOption::OptionType::Spin, 0, 5000),
-      senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, 33554432),
-      senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 1),
-  };
+    std::list<senjo::EngineOption> options{
+        senjo::EngineOption("MoveOverhead", "50", senjo::EngineOption::OptionType::Spin, 0, 5000),
+        senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, 33554432),
+        senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 1),
+    };
 
- public:
-  //        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int depth, int
-  //        startingDepth);
+public:
+    //        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int16_t depth, int
+    //        startingDepth);
 
-  std::string getEngineName() override;
+    std::string getEngineName() override;
 
-  std::string getEngineVersion() override;
+    std::string getEngineVersion() override;
 
-  std::string getAuthorName() override;
+    std::string getAuthorName() override;
 
-  std::string getEmailAddress() override;
+    std::string getEmailAddress() override;
 
-  std::string getCountryName() override;
+    std::string getCountryName() override;
 
-  std::list<senjo::EngineOption> getOptions() override;
+    std::list<senjo::EngineOption> getOptions() override;
 
-  bool setEngineOption(const std::string &optionName, const std::string &optionValue) override;
+    bool setEngineOption(const std::string& optionName, const std::string& optionValue) override;
 
-  void initialize() override;
+    void initialize() override;
 
-  bool isInitialized() override;
+    bool isInitialized() override;
 
-  bool setPosition(const std::string &fen, std::string *remain) override;
+    bool setPosition(const std::string& fen, std::string* remain) override;
 
-  bool makeMove(const std::string &move) override;
+    bool makeMove(const std::string& move) override;
 
-  std::string getFEN() override;
+    std::string getFEN() override;
 
-  void printBoard() override;
+    void printBoard() override;
 
-  bool whiteToMove() override;
+    bool whiteToMove() override;
 
-  void clearSearchData() override;
+    void clearSearchData() override;
 
-  void ponderHit() override;
+    void ponderHit() override;
 
-  bool isRegistered() override;
+    bool isRegistered() override;
 
-  void registerLater() override;
+    void registerLater() override;
 
-  bool doRegistration(const std::string &name, const std::string &code) override;
+    bool doRegistration(const std::string& name, const std::string& code) override;
 
-  bool isCopyProtected() override;
+    bool isCopyProtected() override;
 
-  bool copyIsOK() override;
+    bool copyIsOK() override;
 
-  void setDebug(const bool flag) override;
+    void setDebug(const bool flag) override;
 
-  bool isDebugOn() override;
+    bool isDebugOn() override;
 
-  bool isSearching() override;
+    bool isSearching() override;
 
-  void stopSearching() override;
+    void stopSearching() override;
 
-  bool stopRequested() override;
+    bool stopRequested() override;
 
-  void waitForSearchFinish() override;
+    void waitForSearchFinish() override;
 
-  uint64_t perft(const int depth) override;
+    uint64_t perft(const int16_t depth) override;
 
-  std::string go(senjo::GoParams &params, std::string *ponder) override;
+    std::string go(senjo::GoParams& params, std::string* ponder) override;
 
-  senjo::SearchStats getSearchStats() override;
+    senjo::SearchStats getSearchStats() override;
 
-  void resetEngineStats() override;
+    void resetEngineStats() override;
 
-  void showEngineStats() override;
+    void showEngineStats() override;
 
-  senjo::EngineOption getOption(const std::string &optionName);
+    senjo::EngineOption getOption(const std::string& optionName);
 
-  uint64_t doPerft(Bitboard &perftBoard, PieceColor color, int depth, int startingDepth);
+    uint64_t doPerft(Bitboard& perftBoard, PieceColor color, int16_t depth, int startingDepth);
 
-  bool isTuning() const;
+    bool isTuning() const;
 
-  void setTuning(bool tuning);
+    void setTuning(bool tuning);
 };
-}  // namespace Zagreus
+} // namespace Zagreus

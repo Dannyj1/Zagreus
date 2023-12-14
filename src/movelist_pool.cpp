@@ -24,49 +24,49 @@
 
 namespace Zagreus {
 MoveListPool::MoveListPool() {
-  for (int i = 0; i < INITIAL_POOL_SIZE; ++i) {
-    MoveList* moveList = createMoveList();
-    pool.push_back(moveList);
-  }
+    for (int i = 0; i < INITIAL_POOL_SIZE; ++i) {
+        MoveList* moveList = createMoveList();
+        pool.push_back(moveList);
+    }
 }
 
 MoveListPool::~MoveListPool() {
-  for (MoveList* moveList : pool) {
-    destroyMoveList(moveList);
-  }
+    for (MoveList* moveList : pool) {
+        destroyMoveList(moveList);
+    }
 }
 
 MoveListPool* MoveListPool::getInstance() {
-  static MoveListPool instance{};
-  return &instance;
+    static MoveListPool instance{};
+    return &instance;
 }
 
 MoveList* MoveListPool::getMoveList() {
-  if (pool.empty()) {
-    MoveList* moveList = createMoveList();
-    return moveList;
-  }
+    if (pool.empty()) {
+        MoveList* moveList = createMoveList();
+        return moveList;
+    }
 
-  MoveList* moveList = pool.back();
-  pool.pop_back();
-  moveList->size = 0;
-  return moveList;
+    MoveList* moveList = pool.back();
+    pool.pop_back();
+    moveList->size = 0;
+    return moveList;
 }
 
 void MoveListPool::releaseMoveList(MoveList* moveList) {
-  moveList->size = 0;
-  pool.push_back(moveList);
+    moveList->size = 0;
+    pool.push_back(moveList);
 }
 
 MoveList* MoveListPool::createMoveList() {
-  auto* moveList = new MoveList();
+    auto* moveList = new MoveList();
 
-  for (auto& move : moveList->moves) {
-    move = Move();
-  }
+    for (auto& move : moveList->moves) {
+        move = Move();
+    }
 
-  return moveList;
+    return moveList;
 }
 
 void MoveListPool::destroyMoveList(MoveList* moveList) { delete moveList; }
-}  // namespace Zagreus
+} // namespace Zagreus
