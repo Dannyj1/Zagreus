@@ -172,11 +172,9 @@ std::vector<TunePosition> loadPositions(
         int qScore;
 
         if (tunerBoard.getMovingColor() == WHITE) {
-            qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
-                                        rootMove, context, stats);
+            qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0, context, stats);
         } else {
-            qScore = qsearch<BLACK, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
-                                        rootMove, context, stats);
+            qScore = qsearch<BLACK, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0, context, stats);
         }
 
         if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>() ||

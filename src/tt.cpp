@@ -23,11 +23,13 @@
 #include <cmath>
 #include <iostream>
 
+#include "search.h"
+
 namespace Zagreus {
-void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int score,
-                                     TTNodeType nodeType,
-                                     uint32_t bestMoveCode) {
-    if (score > MAX_POSITIVE || score < MAX_NEGATIVE) {
+void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int score, TTNodeType nodeType, uint32_t bestMoveCode, SearchContext& context) {
+    // current time
+    auto currentTime = std::chrono::steady_clock::now();
+    if (score > MAX_POSITIVE || score < MAX_NEGATIVE || currentTime > context.endTime) {
         return;
     }
 

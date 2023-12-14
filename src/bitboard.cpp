@@ -423,6 +423,7 @@ void Bitboard::makeNullMove() {
     halfMoveClock += 1;
     movingColor = getOppositeColor(movingColor);
     zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
+    previousMove = {NO_SQUARE, NO_SQUARE, EMPTY, 0, EMPTY, 0};
     ply += 1;
 }
 

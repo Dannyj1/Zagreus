@@ -154,6 +154,7 @@ enum Direction { NORTH, SOUTH, EAST, WEST, NORTH_EAST, NORTH_WEST, SOUTH_EAST, S
 
 struct Line {
     int moveCount = 0;
+    int startPly = 0;
     Move moves[MAX_MOVES]{};
 };
 

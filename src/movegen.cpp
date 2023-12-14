@@ -40,13 +40,11 @@ void addMoveToList(MoveList* moveList, int8_t from, int8_t to = 0, PieceType pie
     moveList->size++;
 }
 
-int scoreMove(int ply, Line& previousPv, const uint32_t* previousPvMoveCodes, Move* move,
+int scoreMove(int ply, uint32_t pvMoveCode, const uint32_t* previousPvMoveCodes, Move* move,
               Move& previousMove, uint32_t moveCode, uint32_t bestMoveCode,
               TranspositionTable* tt) {
-    for (int i = 0; i < previousPv.moveCount; i++) {
-        if (moveCode == previousPvMoveCodes[i]) {
-            return 50000 - i;
-        }
+    if (moveCode == pvMoveCode) {
+        return 50000;
     }
 
     if (moveCode == bestMoveCode) {
@@ -69,7 +67,8 @@ int scoreMove(int ply, Line& previousPv, const uint32_t* previousPvMoveCodes, Mo
         return 3000;
     }
 
-    if (tt->counterMoves[previousMove.from][previousMove.to] == moveCode) {
+    if (previousMove.from != NO_SQUARE && previousMove.to != NO_SQUARE
+        && tt->counterMoves[previousMove.from][previousMove.to] == moveCode) {
         return 2000;
     }
 
@@ -107,11 +106,14 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     }
 
     int ply = bitboard.getPly();
+    int pvIndex = ply - previousPv.startPly;
+    Move pvMove = previousPv.moves[pvIndex];
+    uint32_t pvMoveCode = encodeMove(&pvMove);
     Move previousMove = bitboard.getPreviousMove();
 
     for (int i = 0; i < moveList->size; i++) {
         Move* move = &moveList->moves[i];
-        move->score = scoreMove(ply, previousPv, moveCodes, move, previousMove, encodeMove(move),
+        move->score = scoreMove(ply, pvMoveCode, moveCodes, move, previousMove, encodeMove(move),
                                 bestMoveCode, tt);
     }
 

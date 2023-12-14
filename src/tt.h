@@ -23,6 +23,7 @@
 #include <chrono>
 #include <cstdint>
 
+#include "search.h"
 #include "types.h"
 
 namespace Zagreus {
@@ -94,7 +95,7 @@ public:
     void setTableSize(int megaBytes);
 
     void addPosition(uint64_t zobristHash, int16_t depth, int score, TTNodeType nodeType,
-                     uint32_t bestMoveCode);
+                     uint32_t bestMoveCode, SearchContext& context);
 
     int getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta);
 

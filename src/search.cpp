@@ -42,6 +42,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     int depth = 0;
     int bestScore = MAX_NEGATIVE;
     Line pvLine{};
+    pvLine.startPly = board.getPly();
 
     tt->ageHistoryTable();
 
@@ -68,9 +69,13 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
             return pvLine.moves[0];
         }
 
-        Move emptyMove{};
-        int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, emptyMove,
-                                        searchContext, searchStats, pvLine);
+        int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, searchContext,
+                                        searchStats, pvLine);
+
+        if (currentTime > searchContext.endTime) {
+            break;
+        }
+
         Move bestMove = pvLine.moves[0];
         Move previousBestMove = board.getPvLine().moves[0];
 
@@ -108,7 +113,7 @@ template Move getBestMove<BLACK>(senjo::GoParams params, ZagreusEngine& engine, 
                                  senjo::SearchStats& searchStats);
 
 template <PieceColor color, NodeType nodeType>
-int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,
+int search(Bitboard& board, int alpha, int beta, int16_t depth,
            SearchContext& context,
            senjo::SearchStats& searchStats, Line& pvLine) {
     constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
@@ -127,11 +132,11 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
     }
 
     searchStats.nodes += 1;
+    Move previousMove = board.getPreviousMove();
 
     if (depth <= 0) {
         pvLine.moveCount = 0;
-        return qsearch<color, nodeType>(board, alpha, beta, depth, previousMove, context,
-                                        searchStats);
+        return qsearch<color, nodeType>(board, alpha, beta, depth, context, searchStats);
     }
 
     if (!IS_PV_NODE) {
@@ -153,15 +158,13 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
             && Evaluation(board).evaluate() >= beta) {
             int r = 3 + (depth >= 6) + (depth >= 12);
 
-            Move nullMove{NO_SQUARE, NO_SQUARE};
             Line nullLine{};
             SearchContext nullContext{};
             nullContext.startTime = context.startTime;
             nullContext.endTime = context.endTime;
             board.makeNullMove();
             int nullScore = -search<OPPOSITE_COLOR, NO_PV>(board, -beta, -beta + 1, depth - r,
-                                                           nullMove, nullContext, searchStats,
-                                                           nullLine);
+                                                           nullContext, searchStats, nullLine);
             board.unmakeNullMove();
             int mateScores = MATE_SCORE - MAX_PLY;
 
@@ -179,6 +182,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
     auto movePicker = MovePicker(moves);
     int legalMoveCount = 0;
     Line nodeLine{};
+    nodeLine.startPly = board.getPly();
     int bestScore = MAX_NEGATIVE;
     Move bestMove = {NO_SQUARE, NO_SQUARE};
 
@@ -196,18 +200,14 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
 
         int score;
         if (IS_PV_NODE && doPvSearch) {
-            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, previousMove,
-                                                context,
+            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, context,
                                                 searchStats, nodeLine);
         } else {
-            score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha, depth - 1,
-                                                   previousMove, context,
+            score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha, depth - 1, context,
                                                    searchStats, nodeLine);
 
             if (score > alpha && score < beta) {
-                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, previousMove,
-                                                    context,
-                                                    searchStats, nodeLine);
+                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, context, searchStats, nodeLine);
             }
         }
 
@@ -231,7 +231,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
                     moveListPool->releaseMoveList(moves);
                     uint32_t bestMoveCode = encodeMove(&bestMove);
                     tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE,
-                                    bestMoveCode);
+                                    bestMoveCode, context);
                     return score;
                 }
 
@@ -262,12 +262,12 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMo
     }
 
     uint32_t bestMoveCode = encodeMove(&bestMove);
-    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode);
+    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode, context);
     return alpha;
 }
 
 template <PieceColor color, NodeType nodeType>
-int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousMove,
+int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
             SearchContext& context,
             senjo::SearchStats& searchStats) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
@@ -294,12 +294,13 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
     searchStats.qnodes += 1;
 
     bool inCheck = board.isKingInCheck<color>();
+    Move previousMove = board.getPreviousMove();
 
     if (!inCheck) {
         int standPat = Evaluation(board).evaluate();
 
         if (standPat >= beta) {
-            tt->addPosition(board.getZobristHash(), depth, standPat, FAIL_HIGH_NODE, 0);
+            tt->addPosition(board.getZobristHash(), depth, standPat, FAIL_HIGH_NODE, 0, context);
             return standPat;
         }
 
@@ -352,8 +353,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
 
         legalMoveCount += 1;
 
-        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1,
-                                                       previousMove, context, searchStats);
+        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context, searchStats);
         board.unmakeMove(move);
 
         if (score > bestScore) {
@@ -364,7 +364,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
 
                 if (score >= beta) {
                     moveListPool->releaseMoveList(moves);
-                    tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE, 0);
+                    uint32_t bestMoveCode = encodeMove(&bestMove);
+                    tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE, bestMoveCode, context);
                     return beta;
                 }
 
@@ -385,7 +386,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth, Move& previousM
         ttNodeType = EXACT_NODE;
     }
 
-    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, 0);
+    uint32_t bestMoveCode = encodeMove(&bestMove);
+    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode, context);
     return alpha;
 }
 
