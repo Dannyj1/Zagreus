@@ -157,7 +157,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         bool ownKingInCheck = board.isKingInCheck<color>();
 
         if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
-            int r = 2 + (depth >= 6) + (depth >= 12);
+            int r = 3 + (depth >= 6) + (depth >= 12);
 
             Line nullLine{};
             SearchContext nullContext{};
