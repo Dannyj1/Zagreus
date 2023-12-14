@@ -152,7 +152,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
 
     // Null move pruning
-    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<color>() > 0) {
+    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<
+            color>() > 0) {
         bool ownKingInCheck = board.isKingInCheck<color>();
 
         if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
