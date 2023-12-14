@@ -41,26 +41,23 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     searchContext.startTime = startTime;
     int depth = 0;
     int bestScore = MAX_NEGATIVE;
+    Line bestPvLine{};
     Line pvLine{};
     pvLine.startPly = board.getPly();
 
     tt->ageHistoryTable();
 
     while (!engine.stopRequested()) {
-        auto currentTime = std::chrono::steady_clock::now();
         // Update the endtime using new data
         searchContext.endTime = getEndTime(searchContext, params, engine, board.getMovingColor());
 
+        auto currentTime = std::chrono::steady_clock::now();
         if (currentTime > searchContext.endTime) {
+            engine.stopSearching();
             break;
         }
 
         depth += 1;
-
-        if (depth + board.getPly() >= MAX_PLY) {
-            break;
-        }
-
         searchStats.depth = depth;
         searchStats.seldepth = 0;
 
@@ -72,7 +69,9 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
         int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, searchContext,
                                         searchStats, pvLine);
 
+        currentTime = std::chrono::steady_clock::now();
         if (currentTime > searchContext.endTime) {
+            engine.stopSearching();
             break;
         }
 
@@ -99,12 +98,14 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
             bestScore = score;
         }
 
-        board.setPvLine(pvLine);
+        bestPvLine = pvLine;
+        board.setPvLine(bestPvLine);
         searchStats.score = score;
-        printPv(searchStats, startTime, pvLine);
+        printPv(searchStats, startTime, bestPvLine);
     }
 
-    return pvLine.moves[0];
+    engine.stopSearching();
+    return bestPvLine.moves[0];
 }
 
 template Move getBestMove<WHITE>(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
@@ -132,7 +133,6 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     }
 
     searchStats.nodes += 1;
-    Move previousMove = board.getPreviousMove();
 
     if (depth <= 0) {
         pvLine.moveCount = 0;
@@ -148,14 +148,15 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
+    Move previousMove = board.getPreviousMove();
     bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
 
+    // Null move pruning
     if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<
             color>() > 0) {
         bool ownKingInCheck = board.isKingInCheck<color>();
 
-        if (!ownKingInCheck
-            && Evaluation(board).evaluate() >= beta) {
+        if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
             int r = 3 + (depth >= 6) + (depth >= 12);
 
             Line nullLine{};
@@ -196,7 +197,6 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
 
         legalMoveCount += 1;
-        previousMove = move;
 
         int score;
         if (IS_PV_NODE && doPvSearch) {

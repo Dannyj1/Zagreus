@@ -416,11 +416,6 @@ void Bitboard::makeNullMove() {
         enPassantSquare = NO_SQUARE;
     }
 
-    if (movingColor == BLACK) {
-        fullmoveClock += 1;
-    }
-
-    halfMoveClock += 1;
     movingColor = getOppositeColor(movingColor);
     zobristHash ^= zobristConstants[ZOBRIST_COLOR_INDEX];
     previousMove = {NO_SQUARE, NO_SQUARE, EMPTY, 0, EMPTY, 0};
@@ -430,17 +425,12 @@ void Bitboard::makeNullMove() {
 void Bitboard::unmakeNullMove() {
     ply -= 1;
     UndoData undoData = undoStack[ply];
-
-    halfMoveClock = undoData.halfMoveClock;
+    
     enPassantSquare = undoData.enPassantSquare;
     castlingRights = undoData.castlingRights;
     movingColor = getOppositeColor(movingColor);
     zobristHash = undoData.zobristHash;
     previousMove = undoData.previousMove;
-
-    if (movingColor == BLACK) {
-        fullmoveClock -= 1;
-    }
 }
 
 const Move& Bitboard::getPreviousMove() const { return previousMove; }
