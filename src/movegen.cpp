@@ -93,16 +93,14 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
 
         // Only generate king moves if there is more than one attacker
         if (popcnt(kingAttackers) == 1) {
-            while (kingAttackers) {
-                int8_t attackerSquare = popLsb(kingAttackers);
-                PieceType attackerPiece = bitboard.getPieceOnSquare(attackerSquare);
+            int8_t attackerSquare = popLsb(kingAttackers);
+            PieceType attackerPiece = bitboard.getPieceOnSquare(attackerSquare);
 
-                if (isSlidingPiece(attackerPiece)) {
-                    evasionSquaresBB |= bitboard.getBetweenSquares(attackerSquare, kingSquare);
-                }
-
-                evasionSquaresBB |= 1ULL << attackerSquare;
+            if (isSlidingPiece(attackerPiece)) {
+                evasionSquaresBB |= bitboard.getBetweenSquares(attackerSquare, kingSquare);
             }
+
+            evasionSquaresBB |= 1ULL << attackerSquare;
         }
     }
 
@@ -189,11 +187,14 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
 
                 if (to >= A8) {
                     addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_QUEEN);
-                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_ROOK);
-                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
-                                  WHITE_BISHOP);
-                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
-                                  WHITE_KNIGHT);
+
+                    if (type == NORMAL) {
+                        addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_ROOK);
+                        addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
+                                      WHITE_BISHOP);
+                        addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
+                                      WHITE_KNIGHT);
+                    }
                 } else {
                     addMoveToList(moveList, from, to, WHITE_PAWN, captureScore);
                 }
@@ -206,11 +207,14 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
 
                 if (to <= H1) {
                     addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_QUEEN);
-                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_ROOK);
-                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
-                                  BLACK_BISHOP);
-                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
-                                  BLACK_KNIGHT);
+
+                    if (type == NORMAL) {
+                        addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_ROOK);
+                        addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
+                                      BLACK_BISHOP);
+                        addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
+                                      BLACK_KNIGHT);
+                    }
                 } else {
                     addMoveToList(moveList, from, to, BLACK_PAWN, captureScore);
                 }
