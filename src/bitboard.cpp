@@ -351,6 +351,10 @@ void Bitboard::makeMove(Move& move) {
     previousMove = move;
 }
 
+int Bitboard::getHalfMoveClock() {
+    return halfMoveClock;
+}
+
 void Bitboard::unmakeMove(Move& move) {
     assert(move.from >= 0 && move.from < 64);
     assert(move.to >= 0 && move.to < 64);

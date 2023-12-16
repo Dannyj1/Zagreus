@@ -139,7 +139,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         return qsearch<color, nodeType>(board, alpha, beta, depth, context, searchStats);
     }
 
-    if (!IS_PV_NODE) {
+    if (!IS_PV_NODE && board.getHalfMoveClock() < 80) {
         int ttScore = tt->getScore(board.getZobristHash(), depth, alpha,
                                    beta, board.getPly());
 
@@ -288,7 +288,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         return beta;
     }
 
-    if (!IS_PV_NODE) {
+    if (!IS_PV_NODE && board.getHalfMoveClock() < 80) {
         int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha,
                                                             beta, board.getPly());
 

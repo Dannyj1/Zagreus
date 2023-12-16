@@ -144,6 +144,7 @@ public:
     }
 
     void makeMove(Move& move);
+    int getHalfMoveClock();
 
     void unmakeMove(Move& move);
 
