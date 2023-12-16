@@ -148,8 +148,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
-    Move previousMove = board.getPreviousMove();
-    bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
+    constexpr bool isPreviousMoveNull = nodeType == NULL_MOVE;
     bool ownKingInCheck = board.isKingInCheck<color>();
 
     // Null move pruning
@@ -163,7 +162,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             nullContext.startTime = context.startTime;
             nullContext.endTime = context.endTime;
             board.makeNullMove();
-            int nullScore = -search<OPPOSITE_COLOR, NO_PV>(board, -beta, -beta + 1, depth - r,
+            int nullScore = -search<OPPOSITE_COLOR, NULL_MOVE>(board, -beta, -beta + 1, depth - r,
                                                            nullContext, searchStats, nullLine);
             board.unmakeNullMove();
             int mateScores = MATE_SCORE - MAX_PLY;

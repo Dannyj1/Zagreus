@@ -27,6 +27,7 @@ enum NodeType {
     ROOT,
     PV,
     NO_PV,
+    NULL_MOVE,
 };
 
 enum PieceType {
