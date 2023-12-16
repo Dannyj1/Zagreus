@@ -265,8 +265,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     if (!IS_ROOT_NODE) {
         uint32_t bestMoveCode = encodeMove(&bestMove);
-        tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, board.getPly(), bestMoveCode,
-                        context);
+        tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, board.getPly(),
+                        bestMoveCode, context);
     }
 
     return alpha;

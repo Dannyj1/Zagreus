@@ -218,7 +218,11 @@ void Bitboard::makeMove(Move& move) {
     halfMoveClock += 1;
 
     if (capturedPiece != EMPTY) {
+        halfMoveClock = 0;
         removePiece(move.to, capturedPiece);
+    }
+
+    if (move.piece == WHITE_PAWN || move.piece == BLACK_PAWN) {
         halfMoveClock = 0;
     }
 
