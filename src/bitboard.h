@@ -284,25 +284,14 @@ public:
 
     template <PieceColor attackingColor>
     int seeCapture(int8_t fromSquare, int8_t toSquare) {
-        assert(fromSquare >= 0);
-        assert(fromSquare <= 63);
-        assert(toSquare >= 0);
-        assert(toSquare <= 63);
-        int score;
+        constexpr PieceColor OPPOSITE_COLOR = attackingColor == WHITE ? BLACK : WHITE;
         PieceType movingPiece = pieceSquareMapping[fromSquare];
         PieceType capturedPieceType = pieceSquareMapping[toSquare];
+        int captureScore = mvvlva(movingPiece, capturedPieceType);
+        Move move{fromSquare, toSquare, movingPiece, captureScore};
 
-        assert(movingPiece != PieceType::EMPTY);
-        assert(capturedPieceType != PieceType::EMPTY);
-        Move move{fromSquare, toSquare, movingPiece};
         makeMove(move);
-
-        if (attackingColor == WHITE) {
-            score = getPieceWeight(capturedPieceType) - see<BLACK>(toSquare);
-        } else {
-            score = getPieceWeight(capturedPieceType) - see<WHITE>(toSquare);
-        }
-
+        int score = getPieceWeight(capturedPieceType) - see<OPPOSITE_COLOR>(toSquare);
         unmakeMove(move);
 
         return score;
@@ -311,12 +300,11 @@ public:
     template <PieceColor attackingColor>
     int8_t getSmallestAttackerSquare(int8_t square) {
         uint64_t attacks = getSquareAttacksByColor<attackingColor>(square);
-        int smallestAttackerSquare = -1;
+        int8_t smallestAttackerSquare = NO_SQUARE;
         int smallestAttackerWeight = 999999999;
 
         while (attacks) {
-            int attackerSquare = bitscanForward(attacks);
-            attacks &= ~(1ULL << attackerSquare);
+            int attackerSquare = popLsb(attacks);
             PieceType pieceType = pieceSquareMapping[attackerSquare];
             int weight = getPieceWeight(pieceType);
 
@@ -331,26 +319,17 @@ public:
 
     template <PieceColor attackingColor>
     int see(int8_t square) {
-        assert(square >= 0);
-        assert(square <= 63);
+        constexpr PieceColor OPPOSITE_COLOR = attackingColor == WHITE ? BLACK : WHITE;
         int score = 0;
         int8_t smallestAttackerSquare = getSmallestAttackerSquare<attackingColor>(square);
 
-        if (smallestAttackerSquare >= 0) {
+        if (smallestAttackerSquare != NO_SQUARE) {
             PieceType movingPiece = pieceSquareMapping[smallestAttackerSquare];
             PieceType capturedPieceType = pieceSquareMapping[square];
-
-            assert(movingPiece != PieceType::EMPTY);
-            assert(capturedPieceType != PieceType::EMPTY);
-            Move move{smallestAttackerSquare, square, movingPiece};
+            int captureScore = mvvlva(movingPiece, capturedPieceType);
+            Move move{smallestAttackerSquare, square, movingPiece, captureScore};
             makeMove(move);
-
-            if (attackingColor == WHITE) {
-                score = std::max(0, getPieceWeight(capturedPieceType) - see<BLACK>(square));
-            } else {
-                score = std::max(0, getPieceWeight(capturedPieceType) - see<WHITE>(square));
-            }
-
+            score = std::max(0, getPieceWeight(capturedPieceType) - see<OPPOSITE_COLOR>(square));
             unmakeMove(move);
         }
 

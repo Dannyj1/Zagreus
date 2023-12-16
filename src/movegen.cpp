@@ -106,8 +106,8 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     }
 
     int ply = bitboard.getPly();
-    int pvIndex = ply - previousPv.startPly;
-    Move pvMove = previousPv.moves[pvIndex];
+    int pvfrom = ply - previousPv.startPly;
+    Move pvMove = previousPv.moves[pvfrom];
     uint32_t pvMoveCode = encodeMove(&pvMove);
     Move previousMove = bitboard.getPreviousMove();
 
@@ -132,15 +132,15 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     }
 
     while (pawnBB) {
-        int8_t index = popLsb(pawnBB);
-        uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << index);
+        int8_t from = popLsb(pawnBB);
+        uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << from);
         uint64_t attackableSquares = bitboard.getColorBoard<OPPOSITE_COLOR>();
 
         if (bitboard.getEnPassantSquare() != NO_SQUARE) {
             attackableSquares |= 1ULL << bitboard.getEnPassantSquare();
         }
 
-        genBB |= bitboard.getPawnAttacks<color>(index) & attackableSquares;
+        genBB |= bitboard.getPawnAttacks<color>(from) & attackableSquares;
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
@@ -149,43 +149,43 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
         }
 
         while (genBB) {
-            int8_t genIndex = popLsb(genBB);
-            PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+            int8_t to = popLsb(genBB);
+            PieceType capturedPiece = bitboard.getPieceOnSquare(to);
             int captureScore = NO_CAPTURE_SCORE;
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_PAWN, capturedPiece);
                 }
 
-                if (genIndex >= A8) {
-                    addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore, WHITE_QUEEN);
-                    addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore, WHITE_ROOK);
-                    addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore,
+                if (to >= A8) {
+                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_QUEEN);
+                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_ROOK);
+                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
                                   WHITE_BISHOP);
-                    addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore,
+                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
                                   WHITE_KNIGHT);
                 } else {
-                    addMoveToList(moveList, index, genIndex, WHITE_PAWN, captureScore);
+                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore);
                 }
             } else {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_PAWN, capturedPiece);
                 }
 
-                if (genIndex <= H1) {
-                    addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore, BLACK_QUEEN);
-                    addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore, BLACK_ROOK);
-                    addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore,
+                if (to <= H1) {
+                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_QUEEN);
+                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_ROOK);
+                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
                                   BLACK_BISHOP);
-                    addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore,
+                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
                                   BLACK_KNIGHT);
                 } else {
-                    addMoveToList(moveList, index, genIndex, BLACK_PAWN, captureScore);
+                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore);
                 }
             }
         }
@@ -204,8 +204,8 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
     }
 
     while (knightBB) {
-        int8_t index = popLsb(knightBB);
-        uint64_t genBB = bitboard.getKnightAttacks(index);
+        int8_t from = popLsb(knightBB);
+        uint64_t genBB = bitboard.getKnightAttacks(from);
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -215,26 +215,26 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
         }
 
         while (genBB) {
-            int8_t genIndex = popLsb(genBB);
-            PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+            int8_t to = popLsb(genBB);
+            PieceType capturedPiece = bitboard.getPieceOnSquare(to);
             int captureScore = NO_CAPTURE_SCORE;
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_KNIGHT, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, WHITE_KNIGHT, captureScore);
+                addMoveToList(moveList, from, to, WHITE_KNIGHT, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_KNIGHT, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, BLACK_KNIGHT, captureScore);
+                addMoveToList(moveList, from, to, BLACK_KNIGHT, captureScore);
             }
         }
     }
@@ -252,8 +252,8 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
     }
 
     while (bishopBB) {
-        int8_t index = popLsb(bishopBB);
-        uint64_t genBB = bitboard.getBishopAttacks(index);
+        int8_t from = popLsb(bishopBB);
+        uint64_t genBB = bitboard.getBishopAttacks(from);
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -263,26 +263,26 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
         }
 
         while (genBB) {
-            int8_t genIndex = popLsb(genBB);
-            PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+            int8_t to = popLsb(genBB);
+            PieceType capturedPiece = bitboard.getPieceOnSquare(to);
             int captureScore = NO_CAPTURE_SCORE;
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_BISHOP, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, WHITE_BISHOP, captureScore);
+                addMoveToList(moveList, from, to, WHITE_BISHOP, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_BISHOP, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, BLACK_BISHOP, captureScore);
+                addMoveToList(moveList, from, to, BLACK_BISHOP, captureScore);
             }
         }
     }
@@ -300,8 +300,8 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     }
 
     while (rookBB) {
-        int8_t index = popLsb(rookBB);
-        uint64_t genBB = bitboard.getRookAttacks(index);
+        int8_t from = popLsb(rookBB);
+        uint64_t genBB = bitboard.getRookAttacks(from);
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -311,26 +311,26 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
         }
 
         while (genBB) {
-            int8_t genIndex = popLsb(genBB);
-            PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+            int8_t to = popLsb(genBB);
+            PieceType capturedPiece = bitboard.getPieceOnSquare(to);
             int captureScore = NO_CAPTURE_SCORE;
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_ROOK, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, WHITE_ROOK, captureScore);
+                addMoveToList(moveList, from, to, WHITE_ROOK, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_ROOK, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, BLACK_ROOK, captureScore);
+                addMoveToList(moveList, from, to, BLACK_ROOK, captureScore);
             }
         }
     }
@@ -348,8 +348,8 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
     }
 
     while (queenBB) {
-        int8_t index = popLsb(queenBB);
-        uint64_t genBB = bitboard.getQueenAttacks(index);
+        int8_t from = popLsb(queenBB);
+        uint64_t genBB = bitboard.getQueenAttacks(from);
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -359,26 +359,26 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
         }
 
         while (genBB) {
-            int8_t genIndex = popLsb(genBB);
-            PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+            int8_t to = popLsb(genBB);
+            PieceType capturedPiece = bitboard.getPieceOnSquare(to);
             int captureScore = NO_CAPTURE_SCORE;
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_QUEEN, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, WHITE_QUEEN, captureScore);
+                addMoveToList(moveList, from, to, WHITE_QUEEN, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
                     captureScore = quiesce
-                                       ? bitboard.seeCapture<color>(index, genIndex)
+                                       ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_QUEEN, capturedPiece);
                 }
 
-                addMoveToList(moveList, index, genIndex, BLACK_QUEEN, captureScore);
+                addMoveToList(moveList, from, to, BLACK_QUEEN, captureScore);
             }
         }
     }
@@ -398,8 +398,8 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
         opponentKingBB = bitboard.getPieceBoard(WHITE_KING);
     }
 
-    int8_t index = bitscanForward(kingBB);
-    uint64_t genBB = bitboard.getKingAttacks(index);
+    int8_t from = bitscanForward(kingBB);
+    uint64_t genBB = bitboard.getKingAttacks(from);
     int8_t opponentKingSquare = bitscanForward(opponentKingBB);
 
     genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
@@ -409,26 +409,26 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     }
 
     while (genBB) {
-        int8_t genIndex = popLsb(genBB);
-        PieceType capturedPiece = bitboard.getPieceOnSquare(genIndex);
+        int8_t to = popLsb(genBB);
+        PieceType capturedPiece = bitboard.getPieceOnSquare(to);
         int captureScore = NO_CAPTURE_SCORE;
 
         if (color == WHITE) {
             if (capturedPiece != EMPTY) {
                 captureScore = quiesce
-                                   ? bitboard.seeCapture<color>(index, genIndex)
+                                   ? bitboard.seeCapture<color>(from, to)
                                    : mvvlva(WHITE_KING, capturedPiece);
             }
 
-            addMoveToList(moveList, index, genIndex, WHITE_KING, captureScore);
+            addMoveToList(moveList, from, to, WHITE_KING, captureScore);
         } else {
             if (capturedPiece != EMPTY) {
                 captureScore = quiesce
-                                   ? bitboard.seeCapture<color>(index, genIndex)
+                                   ? bitboard.seeCapture<color>(from, to)
                                    : mvvlva(BLACK_KING, capturedPiece);
             }
 
-            addMoveToList(moveList, index, genIndex, BLACK_KING, captureScore);
+            addMoveToList(moveList, from, to, BLACK_KING, captureScore);
         }
     }
 
@@ -446,16 +446,16 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
             bool canCastle = true;
 
             while (tilesToCheck) {
-                int8_t tileIndex = popLsb(tilesToCheck);
+                int8_t tilefrom = popLsb(tilesToCheck);
 
-                if (bitboard.isSquareAttackedByColor<BLACK>(tileIndex)) {
+                if (bitboard.isSquareAttackedByColor<BLACK>(tilefrom)) {
                     canCastle = false;
                     break;
                 }
             }
 
             if (canCastle) {
-                addMoveToList(moveList, index, G1, WHITE_KING, -1);
+                addMoveToList(moveList, from, G1, WHITE_KING, -1);
             }
         }
 
@@ -466,16 +466,16 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
             bool canCastle = true;
 
             while (tilesToCheck) {
-                int8_t tileIndex = popLsb(tilesToCheck);
+                int8_t tilefrom = popLsb(tilesToCheck);
 
-                if (bitboard.isSquareAttackedByColor<BLACK>(tileIndex)) {
+                if (bitboard.isSquareAttackedByColor<BLACK>(tilefrom)) {
                     canCastle = false;
                     break;
                 }
             }
 
             if (canCastle) {
-                addMoveToList(moveList, index, C1, WHITE_KING, -1);
+                addMoveToList(moveList, from, C1, WHITE_KING, -1);
             }
         }
     } else {
@@ -486,16 +486,16 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
             bool canCastle = true;
 
             while (tilesToCheck) {
-                int8_t tileIndex = popLsb(tilesToCheck);
+                int8_t tilefrom = popLsb(tilesToCheck);
 
-                if (bitboard.isSquareAttackedByColor<WHITE>(tileIndex)) {
+                if (bitboard.isSquareAttackedByColor<WHITE>(tilefrom)) {
                     canCastle = false;
                     break;
                 }
             }
 
             if (canCastle) {
-                addMoveToList(moveList, index, G8, BLACK_KING, -1);
+                addMoveToList(moveList, from, G8, BLACK_KING, -1);
             }
         }
 
@@ -506,16 +506,16 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
             bool canCastle = true;
 
             while (tilesToCheck) {
-                int8_t tileIndex = popLsb(tilesToCheck);
+                int8_t tilefrom = popLsb(tilesToCheck);
 
-                if (bitboard.isSquareAttackedByColor<WHITE>(tileIndex)) {
+                if (bitboard.isSquareAttackedByColor<WHITE>(tilefrom)) {
                     canCastle = false;
                     break;
                 }
             }
 
             if (canCastle) {
-                addMoveToList(moveList, index, C8, BLACK_KING, -1);
+                addMoveToList(moveList, from, C8, BLACK_KING, -1);
             }
         }
     }
