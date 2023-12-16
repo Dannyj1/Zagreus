@@ -172,7 +172,7 @@ public:
     uint64_t getSquareAttacks(int8_t square);
 
     template <PieceColor color>
-    uint64_t getSquareAttacksByColor(int8_t square) {
+    uint64_t getSquareAttackersByColor(int8_t square) {
         if (color == WHITE) {
             uint64_t queenBB = getPieceBoard(WHITE_QUEEN);
             uint64_t rookBB = getPieceBoard(WHITE_ROOK);
@@ -206,7 +206,7 @@ public:
 
     template <PieceColor color>
     bool isSquareAttackedByColor(int8_t square) {
-        return getSquareAttacksByColor<color>(square) != 0;
+        return getSquareAttackersByColor<color>(square) != 0;
     }
 
     template <PieceColor color>
@@ -299,7 +299,7 @@ public:
 
     template <PieceColor attackingColor>
     int8_t getSmallestAttackerSquare(int8_t square) {
-        uint64_t attacks = getSquareAttacksByColor<attackingColor>(square);
+        uint64_t attacks = getSquareAttackersByColor<attackingColor>(square);
         int8_t smallestAttackerSquare = NO_SQUARE;
         int smallestAttackerWeight = 999999999;
 
@@ -336,7 +336,7 @@ public:
         return score;
     }
 
-    uint64_t getTilesBetween(int8_t from, int8_t to);
+    uint64_t getBetweenSquares(int8_t from, int8_t to);
 
     [[nodiscard]] const Move& getPreviousMove() const;
 

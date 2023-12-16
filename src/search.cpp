@@ -150,12 +150,11 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     Move previousMove = board.getPreviousMove();
     bool isPreviousMoveNull = previousMove.from == NO_SQUARE && previousMove.to == NO_SQUARE;
+    bool ownKingInCheck = board.isKingInCheck<color>();
 
     // Null move pruning
     if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<
             color>() > 0) {
-        bool ownKingInCheck = board.isKingInCheck<color>();
-
         if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
             int r = 3 + (depth >= 6) + (depth >= 12);
 
@@ -178,7 +177,11 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     bool doPvSearch = true;
     MoveList* moves = moveListPool->getMoveList();
 
-    generateMoves<color, NORMAL>(board, moves);
+    if (ownKingInCheck) {
+        generateMoves<color, EVASIONS>(board, moves);
+    } else {
+        generateMoves<color, NORMAL>(board, moves);
+    }
 
     auto movePicker = MovePicker(moves);
     int legalMoveCount = 0;
@@ -250,7 +253,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     moveListPool->releaseMoveList(moves);
 
     if (!legalMoveCount) {
-        if (board.isKingInCheck<color>()) {
+        if (ownKingInCheck) {
             alpha = -MATE_SCORE + board.getPly();
         } else {
             alpha = DRAW_SCORE;
@@ -332,10 +335,9 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
     MoveList* moves = moveListPool->getMoveList();
 
     if (inCheck) {
-        // TODO: implement evasions eval. Have a validSquares argument for each generate move function which determines which squares can be moved to. This will also clean up the movegen code a bit.
-        generateMoves<color, NORMAL>(board, moves);
+        generateMoves<color, EVASIONS>(board, moves);
     } else {
-        generateMoves<color, QUIESCE>(board, moves);
+        generateMoves<color, QSEARCH>(board, moves);
     }
 
     auto movePicker = MovePicker(moves);

@@ -106,7 +106,7 @@ uint64_t Bitboard::getOccupiedBoard() const { return occupiedBB; }
 
 uint64_t Bitboard::getEmptyBoard() const { return ~occupiedBB; }
 
-uint64_t Bitboard::getTilesBetween(int8_t from, int8_t to) { return betweenTable[from][to]; }
+uint64_t Bitboard::getBetweenSquares(int8_t from, int8_t to) { return betweenTable[from][to]; }
 
 PieceColor Bitboard::getMovingColor() const { return movingColor; }
 
