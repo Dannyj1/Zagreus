@@ -114,14 +114,14 @@ void TranspositionTable::setTableSize(int megaBytes) {
     }
 }
 
-TranspositionTable* TranspositionTable::TranspositionTable::getTT() {
+TranspositionTable* TranspositionTable::getTT() {
     static TranspositionTable instance{};
     return &instance;
 }
 
 void TranspositionTable::ageHistoryTable() {
-    for (int i = 0; i < 12; i++) {
-        for (int j = 0; j < 64; j++) {
+    for (int i = 0; i < PIECE_TYPES; i++) {
+        for (int j = 0; j < SQUARES; j++) {
             historyMoves[i][j] /= 8;
         }
     }
