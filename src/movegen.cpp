@@ -23,6 +23,7 @@
 #include <x86intrin.h>
 
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "tt.h"
@@ -44,32 +45,32 @@ int scoreMove(int ply, uint32_t pvMoveCode, const uint32_t* previousPvMoveCodes,
               Move& previousMove, uint32_t moveCode, uint32_t bestMoveCode,
               TranspositionTable* tt) {
     if (moveCode == pvMoveCode) {
-        return 50000;
+        return 500000;
     }
 
     if (moveCode == bestMoveCode) {
-        return 25000;
+        return 250000;
     }
 
     if (move->captureScore >= 0) {
-        return 10000 + move->captureScore;
+        return 100000 + move->captureScore;
     }
 
     if (tt->killerMoves[0][ply] == moveCode) {
-        return 5000;
+        return 50000;
     }
 
     if (tt->killerMoves[1][ply] == moveCode) {
-        return 4000;
+        return 40000;
     }
 
     if (tt->killerMoves[2][ply] == moveCode) {
-        return 3000;
+        return 30000;
     }
 
-    if (previousMove.from != NO_SQUARE && previousMove.to != NO_SQUARE
-        && tt->counterMoves[previousMove.from][previousMove.to] == moveCode) {
-        return 2000;
+    if (previousMove.piece != EMPTY && previousMove.to != NO_SQUARE
+        && tt->counterMoves[previousMove.piece][previousMove.to] == moveCode) {
+        return 20000;
     }
 
     // No capture score is -1, so we need to use < -1
