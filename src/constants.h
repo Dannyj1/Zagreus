@@ -66,6 +66,7 @@ static constexpr uint64_t LIGHT_SQUARES = 0x55AA55AA55AA55AAULL;
 static constexpr uint64_t DARK_SQUARES = 0xAA55AA55AA55AA55ULL;
 static constexpr uint64_t CENTER_SQUARES = 0x0000001818000000;
 static constexpr uint64_t EXTENDED_CENTER_SQUARES = 0x00003C3C3C3C0000;
+static constexpr uint64_t PROMOTION_SQUARES = 0xFF000000000000FFULL;
 
 static constexpr uint8_t WHITE_KING_CHECK_BIT = 1 << 0;
 static constexpr uint8_t BLACK_KING_CHECK_BIT = 1 << 1;

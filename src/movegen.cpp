@@ -145,7 +145,7 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
                    bitboard.getPieceBoard(BLACK_KING));
 
         if (quiesce) {
-            genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
+            genBB &= (bitboard.getColorBoard<OPPOSITE_COLOR>() | PROMOTION_SQUARES);
         }
 
         while (genBB) {
