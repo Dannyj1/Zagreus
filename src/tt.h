@@ -95,9 +95,9 @@ public:
     void setTableSize(int megaBytes);
 
     void addPosition(uint64_t zobristHash, int16_t depth, int score, TTNodeType nodeType,
-                     uint32_t bestMoveCode, SearchContext& context);
+                     uint32_t bestMoveCode, int ply, SearchContext& context);
 
-    int getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta);
+    int getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta, int ply);
 
     TTEntry* getEntry(uint64_t zobristHash);
 
