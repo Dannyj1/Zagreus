@@ -119,6 +119,7 @@ int getEvalFeatureSize() { return sizeof(evalValues) / sizeof(evalValues[0]); }
 std::vector<double> getBaseEvalValues() {
     std::vector<double> values;
 
+    values.reserve(getEvalFeatureSize());
     for (int i = 0; i < getEvalFeatureSize(); i++) {
         values.emplace_back(baseEvalValues[i]);
     }
@@ -137,6 +138,7 @@ std::vector<double> getBaseEvalValues() {
 std::vector<double> getEvalValues() {
     std::vector<double> values;
 
+    values.reserve(getEvalFeatureSize());
     for (int i = 0; i < getEvalFeatureSize(); i++) {
         values.emplace_back(evalValues[i]);
     }
@@ -154,7 +156,7 @@ std::vector<double> getEvalValues() {
 
 void updateEvalValues(std::vector<double>& newValues) {
     int evalFeatureSize = getEvalFeatureSize();
-    int pstSize = getMidgameValues().size();
+    size_t pstSize = getMidgameValues().size();
 
     for (int i = 0; i < evalFeatureSize; i++) {
         evalValues[i] = static_cast<int>(newValues[i]);

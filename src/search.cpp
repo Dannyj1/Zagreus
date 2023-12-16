@@ -141,7 +141,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     if (!IS_PV_NODE) {
         int ttScore = tt->getScore(board.getZobristHash(), depth, alpha,
-                                   beta);
+                                   beta, board.getPly());
 
         if (ttScore != INT32_MIN) {
             return ttScore;
@@ -231,7 +231,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                     moveListPool->releaseMoveList(moves);
                     uint32_t bestMoveCode = encodeMove(&bestMove);
                     tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE,
-                                    bestMoveCode, context);
+                                    bestMoveCode, board.getPly(), context);
                     return score;
                 }
 
@@ -262,7 +262,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     }
 
     uint32_t bestMoveCode = encodeMove(&bestMove);
-    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode, context);
+    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, board.getPly(), bestMoveCode,
+                    context);
     return alpha;
 }
 
@@ -284,7 +285,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
 
     if (!IS_PV_NODE) {
         int ttScore = TranspositionTable::getTT()->getScore(board.getZobristHash(), depth, alpha,
-                                                            beta);
+                                                            beta, board.getPly());
 
         if (ttScore != INT32_MIN) {
             return ttScore;
@@ -300,7 +301,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         int standPat = Evaluation(board).evaluate();
 
         if (standPat >= beta) {
-            tt->addPosition(board.getZobristHash(), depth, standPat, FAIL_HIGH_NODE, 0, context);
+            tt->addPosition(board.getZobristHash(), depth, standPat, FAIL_HIGH_NODE, 0,
+                            board.getPly(), context);
             return standPat;
         }
 
@@ -365,7 +367,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
                 if (score >= beta) {
                     moveListPool->releaseMoveList(moves);
                     uint32_t bestMoveCode = encodeMove(&bestMove);
-                    tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE, bestMoveCode, context);
+                    tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE,
+                                    bestMoveCode, board.getPly(), context);
                     return beta;
                 }
 
@@ -387,7 +390,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
     }
 
     uint32_t bestMoveCode = encodeMove(&bestMove);
-    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode, context);
+    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode, board.getPly(), context);
     return alpha;
 }
 
