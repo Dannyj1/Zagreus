@@ -55,7 +55,8 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int sc
     }
 }
 
-int TranspositionTable::getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta, int ply) {
+int TranspositionTable::getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta,
+                                 int ply) {
     uint64_t index = (zobristHash & hashSize);
     TTEntry* entry = &transpositionTable[index];
 
