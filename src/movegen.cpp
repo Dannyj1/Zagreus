@@ -82,13 +82,34 @@ int scoreMove(int ply, uint32_t pvMoveCode, const uint32_t* previousPvMoveCodes,
 
 template <PieceColor color, GenerationType type>
 void generateMoves(Bitboard& bitboard, MoveList* moveList) {
-    constexpr bool IS_QUIESCE = type == QUIESCE;
-    generatePawnMoves<color>(bitboard, moveList, IS_QUIESCE);
-    generateKnightMoves<color>(bitboard, moveList, IS_QUIESCE);
-    generateBishopMoves<color>(bitboard, moveList, IS_QUIESCE);
-    generateRookMoves<color>(bitboard, moveList, IS_QUIESCE);
-    generateQueenMoves<color>(bitboard, moveList, IS_QUIESCE);
-    generateKingMoves<color>(bitboard, moveList, IS_QUIESCE);
+    constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
+    uint64_t evasionSquaresBB = 0;
+
+    if (type == EVASIONS) {
+        int8_t kingSquare = bitscanForward(bitboard.getPieceBoard(color == WHITE
+            ? WHITE_KING
+            : BLACK_KING));
+        uint64_t kingAttackers = bitboard.getSquareAttackersByColor<OPPOSITE_COLOR>(kingSquare);
+
+        // Only generate king moves if there is more than one attacker
+        if (popcnt(kingAttackers) == 1) {
+            int8_t attackerSquare = popLsb(kingAttackers);
+            PieceType attackerPiece = bitboard.getPieceOnSquare(attackerSquare);
+
+            if (isSlidingPiece(attackerPiece)) {
+                evasionSquaresBB |= bitboard.getBetweenSquares(attackerSquare, kingSquare);
+            }
+
+            evasionSquaresBB |= 1ULL << attackerSquare;
+        }
+    }
+
+    generatePawnMoves<color, type>(bitboard, moveList, evasionSquaresBB);
+    generateKnightMoves<color, type>(bitboard, moveList, evasionSquaresBB);
+    generateBishopMoves<color, type>(bitboard, moveList, evasionSquaresBB);
+    generateRookMoves<color, type>(bitboard, moveList, evasionSquaresBB);
+    generateQueenMoves<color, type>(bitboard, moveList, evasionSquaresBB);
+    generateKingMoves<color, type>(bitboard, moveList);
 
     assert(moveList->size <= MAX_MOVES);
     TranspositionTable* tt = TranspositionTable::getTT();
@@ -120,8 +141,8 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     delete[] moveCodes;
 }
 
-template <PieceColor color>
-void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+template <PieceColor color, GenerationType type>
+void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionSquaresBB) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t pawnBB;
 
@@ -144,8 +165,12 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
-        if (quiesce) {
-            genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
+        if (type == QSEARCH) {
+            genBB &= (bitboard.getColorBoard<OPPOSITE_COLOR>() | PROMOTION_SQUARES);
+        }
+
+        if (type == EVASIONS) {
+            genBB &= evasionSquaresBB;
         }
 
         while (genBB) {
@@ -155,35 +180,41 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_PAWN, capturedPiece);
                 }
 
                 if (to >= A8) {
                     addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_QUEEN);
-                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_ROOK);
-                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
-                                  WHITE_BISHOP);
-                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
-                                  WHITE_KNIGHT);
+
+                    if (type == NORMAL) {
+                        addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_ROOK);
+                        addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
+                                      WHITE_BISHOP);
+                        addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
+                                      WHITE_KNIGHT);
+                    }
                 } else {
                     addMoveToList(moveList, from, to, WHITE_PAWN, captureScore);
                 }
             } else {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_PAWN, capturedPiece);
                 }
 
                 if (to <= H1) {
                     addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_QUEEN);
-                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_ROOK);
-                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
-                                  BLACK_BISHOP);
-                    addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
-                                  BLACK_KNIGHT);
+
+                    if (type == NORMAL) {
+                        addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_ROOK);
+                        addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
+                                      BLACK_BISHOP);
+                        addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
+                                      BLACK_KNIGHT);
+                    }
                 } else {
                     addMoveToList(moveList, from, to, BLACK_PAWN, captureScore);
                 }
@@ -192,8 +223,8 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     }
 }
 
-template <PieceColor color>
-void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+template <PieceColor color, GenerationType type>
+void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionSquaresBB) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t knightBB;
 
@@ -210,8 +241,12 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
-        if (quiesce) {
+        if (type == QSEARCH) {
             genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
+        }
+
+        if (type == EVASIONS) {
+            genBB &= evasionSquaresBB;
         }
 
         while (genBB) {
@@ -221,7 +256,7 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_KNIGHT, capturedPiece);
                 }
@@ -229,7 +264,7 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
                 addMoveToList(moveList, from, to, WHITE_KNIGHT, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_KNIGHT, capturedPiece);
                 }
@@ -240,8 +275,8 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
     }
 }
 
-template <PieceColor color>
-void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+template <PieceColor color, GenerationType type>
+void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionSquaresBB) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t bishopBB;
 
@@ -258,8 +293,12 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
-        if (quiesce) {
+        if (type == QSEARCH) {
             genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
+        }
+
+        if (type == EVASIONS) {
+            genBB &= evasionSquaresBB;
         }
 
         while (genBB) {
@@ -269,7 +308,7 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_BISHOP, capturedPiece);
                 }
@@ -277,7 +316,7 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
                 addMoveToList(moveList, from, to, WHITE_BISHOP, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_BISHOP, capturedPiece);
                 }
@@ -288,8 +327,8 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = 
     }
 }
 
-template <PieceColor color>
-void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+template <PieceColor color, GenerationType type>
+void generateRookMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionSquaresBB) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t rookBB;
 
@@ -306,8 +345,12 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
-        if (quiesce) {
+        if (type == QSEARCH) {
             genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
+        }
+
+        if (type == EVASIONS) {
+            genBB &= evasionSquaresBB;
         }
 
         while (genBB) {
@@ -317,7 +360,7 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_ROOK, capturedPiece);
                 }
@@ -325,7 +368,7 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
                 addMoveToList(moveList, from, to, WHITE_ROOK, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_ROOK, capturedPiece);
                 }
@@ -336,8 +379,8 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     }
 }
 
-template <PieceColor color>
-void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+template <PieceColor color, GenerationType type>
+void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionSquaresBB) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t queenBB;
 
@@ -354,8 +397,12 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
-        if (quiesce) {
+        if (type == QSEARCH) {
             genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
+        }
+
+        if (type == EVASIONS) {
+            genBB &= evasionSquaresBB;
         }
 
         while (genBB) {
@@ -365,7 +412,7 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
 
             if (color == WHITE) {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(WHITE_QUEEN, capturedPiece);
                 }
@@ -373,7 +420,7 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
                 addMoveToList(moveList, from, to, WHITE_QUEEN, captureScore);
             } else {
                 if (capturedPiece != EMPTY) {
-                    captureScore = quiesce
+                    captureScore = type == QSEARCH
                                        ? bitboard.seeCapture<color>(from, to)
                                        : mvvlva(BLACK_QUEEN, capturedPiece);
                 }
@@ -384,8 +431,8 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = f
     }
 }
 
-template <PieceColor color>
-void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = false) {
+template <PieceColor color, GenerationType type>
+void generateKingMoves(Bitboard& bitboard, MoveList* moveList) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
     uint64_t kingBB;
     uint64_t opponentKingBB;
@@ -404,7 +451,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
     genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
 
-    if (quiesce) {
+    if (type == QSEARCH) {
         genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
     }
 
@@ -415,7 +462,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
         if (color == WHITE) {
             if (capturedPiece != EMPTY) {
-                captureScore = quiesce
+                captureScore = type == QSEARCH
                                    ? bitboard.seeCapture<color>(from, to)
                                    : mvvlva(WHITE_KING, capturedPiece);
             }
@@ -423,7 +470,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
             addMoveToList(moveList, from, to, WHITE_KING, captureScore);
         } else {
             if (capturedPiece != EMPTY) {
-                captureScore = quiesce
+                captureScore = type == QSEARCH
                                    ? bitboard.seeCapture<color>(from, to)
                                    : mvvlva(BLACK_KING, capturedPiece);
             }
@@ -432,7 +479,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
         }
     }
 
-    if (quiesce) {
+    if (type == QSEARCH || type == EVASIONS) {
         return;
     }
 
@@ -441,7 +488,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     if (color == WHITE) {
         if (bitboard.getCastlingRights() & WHITE_KINGSIDE &&
             (occupiedBB & WHITE_KING_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(H1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
+            bitboard.getPieceOnSquare(H1) == WHITE_ROOK) {
             uint64_t tilesToCheck = WHITE_KING_SIDE_BETWEEN;
             bool canCastle = true;
 
@@ -461,7 +508,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
         if (bitboard.getCastlingRights() & WHITE_QUEENSIDE &&
             (occupiedBB & WHITE_QUEEN_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(A1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
+            bitboard.getPieceOnSquare(A1) == WHITE_ROOK) {
             uint64_t tilesToCheck = WHITE_QUEEN_SIDE_BETWEEN & ~(1ULL << B1);
             bool canCastle = true;
 
@@ -481,7 +528,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
     } else {
         if (bitboard.getCastlingRights() & BLACK_KINGSIDE &&
             (occupiedBB & BLACK_KING_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(H8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
+            bitboard.getPieceOnSquare(H8) == BLACK_ROOK) {
             uint64_t tilesToCheck = BLACK_KING_SIDE_BETWEEN;
             bool canCastle = true;
 
@@ -501,7 +548,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 
         if (bitboard.getCastlingRights() & BLACK_QUEENSIDE &&
             (occupiedBB & BLACK_QUEEN_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(A8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
+            bitboard.getPieceOnSquare(A8) == BLACK_ROOK) {
             uint64_t tilesToCheck = BLACK_QUEEN_SIDE_BETWEEN & ~(1ULL << B8);
             bool canCastle = true;
 
@@ -522,7 +569,9 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList, bool quiesce = fa
 }
 
 template void generateMoves<WHITE, NORMAL>(Bitboard& bitboard, MoveList* moveList);
-template void generateMoves<WHITE, QUIESCE>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<WHITE, QSEARCH>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<WHITE, EVASIONS>(Bitboard& bitboard, MoveList* moveList);
 template void generateMoves<BLACK, NORMAL>(Bitboard& bitboard, MoveList* moveList);
-template void generateMoves<BLACK, QUIESCE>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<BLACK, QSEARCH>(Bitboard& bitboard, MoveList* moveList);
+template void generateMoves<BLACK, EVASIONS>(Bitboard& bitboard, MoveList* moveList);
 } // namespace Zagreus

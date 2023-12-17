@@ -25,7 +25,8 @@
 namespace Zagreus {
 enum GenerationType {
     NORMAL,
-    QUIESCE,
+    QSEARCH,
+    EVASIONS,
 };
 
 template <PieceColor color, GenerationType type>
