@@ -242,8 +242,6 @@ public:
 
     void setPly(uint16_t ply);
 
-    uint64_t getZobristForMove(Move& move);
-
     bool isOpenFile(int8_t square);
 
     template <PieceColor color>
