@@ -178,35 +178,6 @@ int Evaluation::getPhase() {
     return (phase * 256 + (totalPhase / 2)) / totalPhase;
 }
 
-inline bool isNotPawnOrKing(PieceType pieceType) {
-    return pieceType != WHITE_PAWN && pieceType != BLACK_PAWN && pieceType != WHITE_KING &&
-           pieceType != BLACK_KING;
-}
-
-inline bool isPawn(PieceType pieceType) {
-    return pieceType == WHITE_PAWN || pieceType == BLACK_PAWN;
-}
-
-inline bool isKnight(PieceType pieceType) {
-    return pieceType == WHITE_KNIGHT || pieceType == BLACK_KNIGHT;
-}
-
-inline bool isBishop(PieceType pieceType) {
-    return pieceType == WHITE_BISHOP || pieceType == BLACK_BISHOP;
-}
-
-inline bool isRook(PieceType pieceType) {
-    return pieceType == WHITE_ROOK || pieceType == BLACK_ROOK;
-}
-
-inline bool isQueen(PieceType pieceType) {
-    return pieceType == WHITE_QUEEN || pieceType == BLACK_QUEEN;
-}
-
-inline bool isKing(PieceType pieceType) {
-    return pieceType == WHITE_KING || pieceType == BLACK_KING;
-}
-
 void Evaluation::addMobilityScoreForPiece(PieceType pieceType, int mobility) {
     switch (pieceType) {
         case WHITE_KNIGHT:

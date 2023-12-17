@@ -27,6 +27,7 @@ enum NodeType {
     ROOT,
     PV,
     NO_PV,
+    NULL_MOVE,
 };
 
 enum PieceType {
@@ -47,6 +48,7 @@ enum PieceType {
 
 enum PieceColor { NONE = -1, WHITE = 0, BLACK = 1 };
 
+// clang-format off
 enum Square {
     A1,
     B1,
@@ -114,6 +116,7 @@ enum Square {
     H8,
     NO_SQUARE = -1
 };
+// clang-format on
 
 struct Move {
     int8_t from = 0;

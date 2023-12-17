@@ -106,7 +106,7 @@ uint64_t Bitboard::getOccupiedBoard() const { return occupiedBB; }
 
 uint64_t Bitboard::getEmptyBoard() const { return ~occupiedBB; }
 
-uint64_t Bitboard::getTilesBetween(int8_t from, int8_t to) { return betweenTable[from][to]; }
+uint64_t Bitboard::getBetweenSquares(int8_t from, int8_t to) { return betweenTable[from][to]; }
 
 PieceColor Bitboard::getMovingColor() const { return movingColor; }
 
@@ -218,7 +218,11 @@ void Bitboard::makeMove(Move& move) {
     halfMoveClock += 1;
 
     if (capturedPiece != EMPTY) {
+        halfMoveClock = 0;
         removePiece(move.to, capturedPiece);
+    }
+
+    if (move.piece == WHITE_PAWN || move.piece == BLACK_PAWN) {
         halfMoveClock = 0;
     }
 
@@ -345,6 +349,10 @@ void Bitboard::makeMove(Move& move) {
     ply += 1;
     moveHistory[ply] = getZobristHash();
     previousMove = move;
+}
+
+int Bitboard::getHalfMoveClock() {
+    return halfMoveClock;
 }
 
 void Bitboard::unmakeMove(Move& move) {

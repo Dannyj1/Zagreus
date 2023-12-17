@@ -26,7 +26,9 @@
 #include "search.h"
 
 namespace Zagreus {
-void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int score, TTNodeType nodeType, uint32_t bestMoveCode, SearchContext& context) {
+void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int score,
+                                     TTNodeType nodeType, uint32_t bestMoveCode, int ply,
+                                     SearchContext& context) {
     // current time
     auto currentTime = std::chrono::steady_clock::now();
     if (score > MAX_POSITIVE || score < MAX_NEGATIVE || currentTime > context.endTime) {
@@ -37,29 +39,52 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int sc
     TTEntry* entry = &transpositionTable[index];
 
     if (depth > entry->depth) {
+        int adjustedScore = score;
+
+        if (adjustedScore >= (MATE_SCORE - MAX_PLY)) {
+            adjustedScore += ply;
+        } else if (adjustedScore <= (-MATE_SCORE + MAX_PLY)) {
+            adjustedScore -= ply;
+        }
+
         entry->zobristHash = zobristHash;
         entry->depth = depth;
         entry->bestMoveCode = bestMoveCode;
-        entry->score = score;
+        entry->score = adjustedScore;
         entry->nodeType = nodeType;
     }
 }
 
-int TranspositionTable::getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta) {
+int TranspositionTable::getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta,
+                                 int ply) {
     uint64_t index = (zobristHash & hashSize);
     TTEntry* entry = &transpositionTable[index];
 
     if (entry->zobristHash == zobristHash && entry->depth >= depth) {
+        bool returnScore = false;
+
         if (entry->nodeType == EXACT_NODE) {
-            return entry->score;
+            returnScore = true;
         } else if (entry->nodeType == FAIL_LOW_NODE) {
             if (entry->score <= alpha) {
-                return alpha;
+                returnScore = true;
             }
         } else if (entry->nodeType == FAIL_HIGH_NODE) {
             if (entry->score >= beta) {
-                return beta;
+                returnScore = true;
             }
+        }
+
+        if (returnScore) {
+            int adjustedScore = entry->score;
+
+            if (adjustedScore >= MATE_SCORE) {
+                adjustedScore -= ply;
+            } else if (adjustedScore <= -MATE_SCORE) {
+                adjustedScore += ply;
+            }
+
+            return adjustedScore;
         }
     }
 
@@ -89,14 +114,14 @@ void TranspositionTable::setTableSize(int megaBytes) {
     }
 }
 
-TranspositionTable* TranspositionTable::TranspositionTable::getTT() {
+TranspositionTable* TranspositionTable::getTT() {
     static TranspositionTable instance{};
     return &instance;
 }
 
 void TranspositionTable::ageHistoryTable() {
-    for (int i = 0; i < 12; i++) {
-        for (int j = 0; j < 64; j++) {
+    for (int i = 0; i < PIECE_TYPES; i++) {
+        for (int j = 0; j < SQUARES; j++) {
             historyMoves[i][j] /= 8;
         }
     }

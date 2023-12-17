@@ -57,4 +57,37 @@ std::string getNotation(int8_t square);
 int8_t getSquareFromString(std::string move);
 
 char getCharacterForPieceType(PieceType pieceType);
+
+inline bool isNotPawnOrKing(PieceType pieceType) {
+    return pieceType != WHITE_PAWN && pieceType != BLACK_PAWN && pieceType != WHITE_KING &&
+           pieceType != BLACK_KING;
+}
+
+inline bool isPawn(PieceType pieceType) {
+    return pieceType == WHITE_PAWN || pieceType == BLACK_PAWN;
+}
+
+inline bool isKnight(PieceType pieceType) {
+    return pieceType == WHITE_KNIGHT || pieceType == BLACK_KNIGHT;
+}
+
+inline bool isBishop(PieceType pieceType) {
+    return pieceType == WHITE_BISHOP || pieceType == BLACK_BISHOP;
+}
+
+inline bool isRook(PieceType pieceType) {
+    return pieceType == WHITE_ROOK || pieceType == BLACK_ROOK;
+}
+
+inline bool isQueen(PieceType pieceType) {
+    return pieceType == WHITE_QUEEN || pieceType == BLACK_QUEEN;
+}
+
+inline bool isKing(PieceType pieceType) {
+    return pieceType == WHITE_KING || pieceType == BLACK_KING;
+}
+
+inline bool isSlidingPiece(PieceType pieceType) {
+    return isBishop(pieceType) || isRook(pieceType) || isQueen(pieceType);
+}
 } // namespace Zagreus
