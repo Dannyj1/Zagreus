@@ -47,8 +47,8 @@ class TranspositionTable {
 public:
     TTEntry* transpositionTable = new TTEntry[1]{};
     uint32_t** killerMoves = new uint32_t*[3]{};
-    uint32_t** historyMoves = new uint32_t*[12]{};
-    uint32_t** counterMoves = new uint32_t*[64]{};
+    uint32_t** historyMoves = new uint32_t*[PIECE_TYPES]{};
+    uint32_t** counterMoves = new uint32_t*[PIECE_TYPES]{};
 
     uint64_t hashSize = 0;
 
@@ -57,11 +57,11 @@ public:
             killerMoves[i] = new uint32_t[MAX_PLY]{};
         }
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < PIECE_TYPES; i++) {
             historyMoves[i] = new uint32_t[64]{};
         }
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < PIECE_TYPES; i++) {
             counterMoves[i] = new uint32_t[64]{};
         }
     }
@@ -77,7 +77,7 @@ public:
             delete[] historyMoves[i];
         }
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < PIECE_TYPES; i++) {
             delete[] counterMoves[i];
         }
 
