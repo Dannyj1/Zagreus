@@ -348,7 +348,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
     while (movePicker.hasNext()) {
         Move move = movePicker.getNextMove();
 
-        if (!inCheck && move.captureScore <= NO_CAPTURE_SCORE) {
+        if (!inCheck && move.captureScore < NO_CAPTURE_SCORE) {
             continue;
         }
 
