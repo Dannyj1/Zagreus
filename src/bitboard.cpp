@@ -66,35 +66,16 @@ Bitboard::Bitboard() {
 
 void Bitboard::initializeRayAttacks() {
     uint64_t sqBB = 1ULL;
+
     for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-        for (int direction = 0; direction < 8; direction++) {
-            switch (static_cast<Direction>(direction)) {
-                case NORTH:
-                    rayAttacks[direction][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-                case SOUTH:
-                    rayAttacks[direction][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-                case EAST:
-                    rayAttacks[direction][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-                case WEST:
-                    rayAttacks[direction][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-                case NORTH_EAST:
-                    rayAttacks[direction][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-                case NORTH_WEST:
-                    rayAttacks[direction][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-                case SOUTH_EAST:
-                    rayAttacks[direction][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-                case SOUTH_WEST:
-                    rayAttacks[direction][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
-                    break;
-            }
-        }
+        rayAttacks[NORTH][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[SOUTH][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[EAST][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[WEST][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[NORTH_EAST][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[NORTH_WEST][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[SOUTH_EAST][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[SOUTH_WEST][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
     }
 }
 
@@ -110,36 +91,29 @@ uint64_t Bitboard::getBetweenSquares(int8_t from, int8_t to) { return betweenTab
 
 PieceColor Bitboard::getMovingColor() const { return movingColor; }
 
-void Bitboard::setMovingColor(PieceColor movingColor) { Bitboard::movingColor = movingColor; }
+void Bitboard::setMovingColor(PieceColor movingColor) { this->movingColor = movingColor; }
 
 PieceType Bitboard::getPieceOnSquare(int8_t square) {
-    assert(square >= 0 && square < 64);
-    assert(pieceSquareMapping[square] >= -1 && pieceSquareMapping[square] <= 11);
     return pieceSquareMapping[square];
 }
 
 uint64_t Bitboard::getKingAttacks(int8_t square) {
-    assert(square >= 0 && square < 64);
     return kingAttacks[square];
 }
 
 uint64_t Bitboard::getKnightAttacks(int8_t square) {
-    assert(square >= 0 && square < 64);
     return knightAttacks[square];
 }
 
 uint64_t Bitboard::getQueenAttacks(int8_t square) {
-    assert(square >= 0 && square < 64);
     return getBishopAttacks(square) | getRookAttacks(square);
 }
 
 uint64_t Bitboard::getQueenAttacks(int8_t square, uint64_t occupancy) {
-    assert(square >= 0 && square < 64);
     return getBishopAttacks(square, occupancy) | getRookAttacks(square, occupancy);
 }
 
 uint64_t Bitboard::getBishopAttacks(int8_t square) {
-    assert(square >= 0 && square < 64);
     uint64_t occupancy = getOccupiedBoard();
     occupancy &= getBishopMask(square);
     occupancy *= getBishopMagic(square);
@@ -149,7 +123,6 @@ uint64_t Bitboard::getBishopAttacks(int8_t square) {
 }
 
 uint64_t Bitboard::getBishopAttacks(int8_t square, uint64_t occupancy) {
-    assert(square >= 0 && square < 64);
     occupancy &= getBishopMask(square);
     occupancy *= getBishopMagic(square);
     occupancy >>= 64 - BBits[square];
@@ -158,7 +131,6 @@ uint64_t Bitboard::getBishopAttacks(int8_t square, uint64_t occupancy) {
 }
 
 uint64_t Bitboard::getRookAttacks(int8_t square) {
-    assert(square >= 0 && square < 64);
     uint64_t occupancy = getOccupiedBoard();
     occupancy &= getRookMask(square);
     occupancy *= getRookMagic(square);
@@ -168,7 +140,6 @@ uint64_t Bitboard::getRookAttacks(int8_t square) {
 }
 
 uint64_t Bitboard::getRookAttacks(int8_t square, uint64_t occupancy) {
-    assert(square >= 0 && square < 64);
     occupancy &= getRookMask(square);
     occupancy *= getRookMagic(square);
     occupancy >>= 64 - RBits[square];
@@ -177,7 +148,6 @@ uint64_t Bitboard::getRookAttacks(int8_t square, uint64_t occupancy) {
 }
 
 void Bitboard::setPiece(int8_t square, PieceType piece) {
-    assert(square >= 0 && square < 64);
     pieceBB[piece] |= 1ULL << square;
     occupiedBB |= 1ULL << square;
     colorBB[piece % 2] |= 1ULL << square;
@@ -189,7 +159,6 @@ void Bitboard::setPiece(int8_t square, PieceType piece) {
 }
 
 void Bitboard::removePiece(int8_t square, PieceType piece) {
-    assert(square >= 0 && square < 64);
     pieceBB[piece] &= ~(1ULL << square);
     occupiedBB &= ~(1ULL << square);
     colorBB[piece % 2] &= ~(1ULL << square);
@@ -201,10 +170,6 @@ void Bitboard::removePiece(int8_t square, PieceType piece) {
 }
 
 void Bitboard::makeMove(Move& move) {
-    assert(move.from >= 0 && move.from < 64);
-    assert(move.to >= 0 && move.to < 64);
-    assert(move.piece % 2 == movingColor);
-
     PieceType capturedPiece = getPieceOnSquare(move.to);
 
     undoStack[ply].capturedPiece = capturedPiece;
@@ -237,10 +202,8 @@ void Bitboard::makeMove(Move& move) {
 
         if (move.to - move.from == 16) {
             enPassantSquare = move.to - 8;
-            assert(enPassantSquare >= 0 && enPassantSquare < 64);
         } else if (move.to - move.from == -16) {
             enPassantSquare = move.to + 8;
-            assert(enPassantSquare >= 0 && enPassantSquare < 64);
         } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
                    move.to == enPassantSquare) {
             int8_t enPassantCaptureSquare = move.to - (movingColor == WHITE ? 8 : -8);
@@ -284,52 +247,40 @@ void Bitboard::makeMove(Move& move) {
         if (move.piece == WHITE_KING) {
             if (castlingRights & WHITE_KINGSIDE) {
                 zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
+                castlingRights &= ~WHITE_KINGSIDE;
             }
 
             if (castlingRights & WHITE_QUEENSIDE) {
                 zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
+                castlingRights &= ~WHITE_QUEENSIDE;
             }
-
-            castlingRights &= ~(WHITE_KINGSIDE | WHITE_QUEENSIDE);
         } else {
             if (castlingRights & BLACK_KINGSIDE) {
                 zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
+                castlingRights &= ~BLACK_KINGSIDE;
             }
 
             if (castlingRights & BLACK_QUEENSIDE) {
                 zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
+                castlingRights &= ~BLACK_QUEENSIDE;
             }
-
-            castlingRights &= ~(BLACK_KINGSIDE | BLACK_QUEENSIDE);
         }
     }
 
     if (move.piece == WHITE_ROOK) {
-        if (move.from == A1 && castlingRights & WHITE_QUEENSIDE) {
-            if (castlingRights & WHITE_QUEENSIDE) {
-                zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
-            }
-
+        if (move.from == A1 && (castlingRights & WHITE_QUEENSIDE)) {
+            zobristHash ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
             castlingRights &= ~WHITE_QUEENSIDE;
-        } else if (move.from == H1 && castlingRights & WHITE_KINGSIDE) {
-            if (castlingRights & WHITE_KINGSIDE) {
-                zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
-            }
-
+        } else if (move.from == H1 && (castlingRights & WHITE_KINGSIDE)) {
+            zobristHash ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
             castlingRights &= ~WHITE_KINGSIDE;
         }
     } else if (move.piece == BLACK_ROOK) {
-        if (move.from == A8 && castlingRights & BLACK_QUEENSIDE) {
-            if (castlingRights & BLACK_QUEENSIDE) {
-                zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
-            }
-
+        if (move.from == A8 && (castlingRights & BLACK_QUEENSIDE)) {
+            zobristHash ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
             castlingRights &= ~BLACK_QUEENSIDE;
-        } else if (move.from == H8 && castlingRights & BLACK_KINGSIDE) {
-            if (castlingRights & BLACK_KINGSIDE) {
-                zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
-            }
-
+        } else if (move.from == H8 && (castlingRights & BLACK_KINGSIDE)) {
+            zobristHash ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
             castlingRights &= ~BLACK_KINGSIDE;
         }
     }
@@ -356,9 +307,6 @@ int Bitboard::getHalfMoveClock() {
 }
 
 void Bitboard::unmakeMove(Move& move) {
-    assert(move.from >= 0 && move.from < 64);
-    assert(move.to >= 0 && move.to < 64);
-
     moveHistory[ply] = 0;
     UndoData undoData = undoStack[ply - 1];
 
@@ -399,7 +347,6 @@ void Bitboard::unmakeMove(Move& move) {
     ply -= 1;
     halfMoveClock = undoData.halfMoveClock;
     enPassantSquare = undoData.enPassantSquare;
-    assert(enPassantSquare >= NO_SQUARE && enPassantSquare < 64);
     castlingRights = undoData.castlingRights;
     movingColor = getOppositeColor(movingColor);
     zobristHash = undoData.zobristHash;
@@ -442,108 +389,6 @@ void Bitboard::unmakeNullMove() {
 }
 
 const Move& Bitboard::getPreviousMove() const { return previousMove; }
-
-uint64_t Bitboard::getZobristForMove(Move& move) {
-    assert(move.from >= 0 && move.from < 64);
-    assert(move.to >= 0 && move.to < 64);
-    assert(move.piece % 2 == movingColor);
-
-    uint64_t result = getZobristHash();
-    PieceType capturedPiece = getPieceOnSquare(move.to);
-
-    if (capturedPiece != EMPTY) {
-        result ^= zobristConstants[move.to + 64 * capturedPiece];
-    }
-
-    result ^= zobristConstants[move.from + 64 * move.piece];
-
-    if (enPassantSquare != NO_SQUARE) {
-        result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
-    }
-
-    if (move.piece == WHITE_PAWN || move.piece == BLACK_PAWN) {
-        if (move.to - move.from == 16) {
-            result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to - 8) % 8];
-            assert(enPassantSquare >= 0 && enPassantSquare < 64);
-        } else if (move.to - move.from == -16) {
-            result ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + (move.to + 8) % 8];
-            assert(enPassantSquare >= 0 && enPassantSquare < 64);
-        } else if ((std::abs(move.to - move.from) == 7 || std::abs(move.to - move.from) == 9) &&
-                   move.to == enPassantSquare) {
-            int8_t enPassantCaptureSquare = move.to - (movingColor == WHITE ? 8 : -8);
-            result ^=
-                zobristConstants[enPassantCaptureSquare + 64 * getPieceOnSquare(
-                                     enPassantCaptureSquare)];
-        }
-    }
-
-    if (move.piece == WHITE_KING || move.piece == BLACK_KING) {
-        if (std::abs(move.to - move.from) == 2) {
-            if (move.to == G1) {
-                result ^= zobristConstants[H1 + 64 * WHITE_ROOK];
-                result ^= zobristConstants[F1 + 64 * WHITE_ROOK];
-            } else if (move.to == C1) {
-                result ^= zobristConstants[A1 + 64 * WHITE_ROOK];
-                result ^= zobristConstants[D1 + 64 * WHITE_ROOK];
-            } else if (move.to == G8) {
-                result ^= zobristConstants[H8 + 64 * BLACK_ROOK];
-                result ^= zobristConstants[F8 + 64 * BLACK_ROOK];
-            } else if (move.to == C8) {
-                result ^= zobristConstants[A8 + 64 * BLACK_ROOK];
-                result ^= zobristConstants[D8 + 64 * BLACK_ROOK];
-            }
-        }
-
-        if (move.piece == WHITE_KING) {
-            if (castlingRights & WHITE_KINGSIDE) {
-                result ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
-            }
-
-            if (castlingRights & WHITE_QUEENSIDE) {
-                result ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
-            }
-        } else {
-            if (castlingRights & BLACK_KINGSIDE) {
-                result ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
-            }
-
-            if (castlingRights & BLACK_QUEENSIDE) {
-                result ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
-            }
-        }
-    }
-
-    if (move.piece == WHITE_ROOK) {
-        if (move.from == A1 && castlingRights & WHITE_QUEENSIDE) {
-            if (castlingRights & WHITE_QUEENSIDE) {
-                result ^= zobristConstants[ZOBRIST_WHITE_QUEENSIDE_INDEX];
-            }
-        } else if (move.from == H1 && castlingRights & WHITE_KINGSIDE) {
-            if (castlingRights & WHITE_KINGSIDE) {
-                result ^= zobristConstants[ZOBRIST_WHITE_KINGSIDE_INDEX];
-            }
-        }
-    } else if (move.piece == BLACK_ROOK) {
-        if (move.from == A8 && castlingRights & BLACK_QUEENSIDE) {
-            if (castlingRights & BLACK_QUEENSIDE) {
-                result ^= zobristConstants[ZOBRIST_BLACK_QUEENSIDE_INDEX];
-            }
-        } else if (move.from == H8 && castlingRights & BLACK_KINGSIDE) {
-            if (castlingRights & BLACK_KINGSIDE) {
-                result ^= zobristConstants[ZOBRIST_BLACK_KINGSIDE_INDEX];
-            }
-        }
-    }
-
-    if (move.promotionPiece != EMPTY) {
-        result ^= zobristConstants[move.to + 64 * move.promotionPiece];
-    } else {
-        result ^= zobristConstants[move.to + 64 * move.piece];
-    }
-
-    result ^= zobristConstants[ZOBRIST_COLOR_INDEX];
-    return result;
-}
 
 bool Bitboard::hasMinorOrMajorPieces() {
     return hasMinorOrMajorPieces<WHITE>() || hasMinorOrMajorPieces<BLACK>();
@@ -726,7 +571,6 @@ bool Bitboard::setFromFen(const std::string& fen) {
             enPassantSquare = rank * 8 + file;
             zobristHash ^= zobristConstants[ZOBRIST_EN_PASSANT_INDEX + enPassantSquare % 8];
 
-            assert(enPassantSquare >= 0 && enPassantSquare < 64);
             index += 2;
         }
 
@@ -836,8 +680,6 @@ bool Bitboard::setFromFenTuner(std::string& fen) {
             int8_t rank = getOppositeColor(movingColor) == WHITE ? 2 : 5;
 
             enPassantSquare = rank * 8 + file;
-
-            assert(enPassantSquare >= 0 && enPassantSquare < 64);
             index += 2;
         }
 
@@ -867,8 +709,6 @@ bool Bitboard::isDraw() {
     uint64_t boardHash = getZobristHash();
 
     for (int i = ply; i >= 0; i--) {
-        assert(moveHistory[i] != 0);
-
         if (moveHistory[i] == boardHash) {
             samePositionCount++;
         }
@@ -1043,7 +883,15 @@ bool Bitboard::makeStrMove(const std::string& strMove) {
         }
     }
 
-    Move move = {fromSquare, toSquare, getPieceOnSquare(fromSquare), -1, promotionPiece};
+    PieceType movingPiece = getPieceOnSquare(fromSquare);
+    PieceType capturedPiece = getPieceOnSquare(toSquare);
+    int captureScore = -1;
+
+    if (capturedPiece != EMPTY) {
+        captureScore = mvvlva(movingPiece, capturedPiece);
+    }
+
+    Move move = {fromSquare, toSquare, movingPiece, captureScore, promotionPiece};
     makeMove(move);
     return true;
 }
@@ -1056,7 +904,7 @@ void Bitboard::setPvLine(Line& pvLine) {
 
 uint16_t Bitboard::getPly() const { return ply; }
 
-void Bitboard::setPly(uint16_t ply) { Bitboard::ply = ply; }
+void Bitboard::setPly(uint16_t ply) { this->ply = ply; }
 
 bool Bitboard::isOpenFile(int8_t square) {
     uint64_t fileMask = getFile(square);
@@ -1092,7 +940,6 @@ bool Bitboard::isWinner() {
 
     for (int i = 0; i < moveList->size; i++) {
         Move move = moveList->moves[i];
-        assert(move.from != move.to);
 
         makeMove(move);
 
