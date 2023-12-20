@@ -26,6 +26,7 @@ namespace Zagreus {
 enum GenerationType {
     NORMAL,
     QSEARCH,
+    QSEARCH_CHECKS,
     EVASIONS,
 };
 
