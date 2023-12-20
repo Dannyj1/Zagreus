@@ -313,17 +313,20 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
             return standPat;
         }
 
-        int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
-                                  getEvalValue(MIDGAME_QUEEN_MATERIAL));
-        int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL),
-                                    getEvalValue(MIDGAME_PAWN_MATERIAL));
+        if (board.getAmountOfMinorOrMajorPieces<color>() >= 2 && board.getAmountOfMinorOrMajorPieces
+            <OPPOSITE_COLOR>() >= 2  && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns<OPPOSITE_COLOR>() > 0) {
+            int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
+                                      getEvalValue(MIDGAME_QUEEN_MATERIAL));
+            int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL),
+                                        getEvalValue(MIDGAME_PAWN_MATERIAL));
 
-        if (previousMove.promotionPiece != EMPTY) {
-            queenDelta += getPieceWeight(previousMove.promotionPiece) - minPawnValue;
-        }
+            if (previousMove.promotionPiece != EMPTY) {
+                queenDelta += getPieceWeight(previousMove.promotionPiece) - minPawnValue;
+            }
 
-        if (standPat < alpha - queenDelta) {
-            return alpha;
+            if (standPat < alpha - queenDelta) {
+                return alpha;
+            }
         }
 
         if (alpha < standPat) {
