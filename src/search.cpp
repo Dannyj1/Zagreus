@@ -335,8 +335,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
 
     if (inCheck) {
         generateMoves<color, EVASIONS>(board, moves);
-    } else if (depth >= 0) {
-        generateMoves<color, QSEARCH_CHECKS>(board, moves);
     } else {
         generateMoves<color, QSEARCH>(board, moves);
     }
