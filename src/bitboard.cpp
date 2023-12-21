@@ -740,47 +740,9 @@ bool Bitboard::isInsufficientMaterial() {
 
     int pieceCountWithoutKings = popcnt(piecesWithoutKings);
 
-    // If there are more than 2 minor pieces on the board, it can't be a draw
-    if (pieceCountWithoutKings > 2) {
-        return false;
-    }
-
-    // If there is only one minor piece on the board, it's a draw. Covers KBvK and KNvK
-    if (pieceCountWithoutKings == 1) {
+    // If there is only one minor piece on the board, it's a draw. Covers KBvK, KNvK and KvK
+    if (pieceCountWithoutKings == 1 || pieceCountWithoutKings == 0) {
         return true;
-    }
-
-    int pieceCount = popcnt(getOccupiedBoard());
-    // KvK
-    if (pieceCount == 2) {
-        return true;
-    }
-
-    if (pieceCountWithoutKings == 2) {
-        uint64_t whiteKnights = getPieceBoard(WHITE_KNIGHT);
-        uint64_t blackKnights = getPieceBoard(BLACK_KNIGHT);
-        int whiteKnightCount = popcnt(whiteKnights);
-        int blackKnightCount = popcnt(blackKnights);
-
-        // KNvKN
-        if (whiteKnightCount == 1 && blackKnightCount == 1) {
-            return true;
-        }
-
-        uint64_t whiteBishops = getPieceBoard(WHITE_BISHOP);
-        uint64_t blackBishops = getPieceBoard(BLACK_BISHOP);
-        int whiteBishopCount = popcnt(whiteBishops);
-        int blackBishopCount = popcnt(blackBishops);
-        uint64_t lightSquareBishops = whiteBishops & LIGHT_SQUARES;
-        int lightSquareBishopCount = popcnt(lightSquareBishops);
-
-        // KBvKB, but only when both bishops are on the same color square
-        if (whiteBishopCount == 1 && blackBishopCount == 1) {
-            // Can't be opposite color bishops
-            if (lightSquareBishopCount != 1) {
-                return true;
-            }
-        }
     }
 
     return false;
