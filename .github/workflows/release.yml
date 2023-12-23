@@ -55,12 +55,10 @@ jobs:
         run: cmake --build .
 
       - name: Configure CMake (Windows)
-        shell: msys2 {0}
         if: matrix.os == 'windows-latest'
         run: ${{ matrix.config-command }}
 
       - name: Build (Windows)
-        shell: msys2 {0}
         if: matrix.os == 'windows-latest'
         run: cmake --build .
 
