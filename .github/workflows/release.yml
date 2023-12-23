@@ -16,7 +16,7 @@ jobs:
             artifact-extension: .tar.gz
             build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
             archive-command: tar -czvf
-          - os: windows-latest
+          - os: windows-2019
             build-name: Windows
             artifact-extension: .zip
             build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF -G "MinGW Makefiles" .
