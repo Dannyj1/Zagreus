@@ -49,7 +49,7 @@ jobs:
           install: >-
             make
             cmake
-            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-llvm
 
       - name: Create build directory
         run: mkdir build
