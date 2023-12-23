@@ -27,7 +27,7 @@ jobs:
 
     defaults:
       run:
-        shell: ${{ matrix.config.shell }}
+        shell: ${{ matrix.shell }}
 
     steps:
       - name: Checkout repository
