@@ -11,12 +11,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             build-name: Linux
             artifact-extension: .tar.gz
             build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
             archive-command: tar -czvf
-          - os: windows-latest
+          - os: windows-2019
             build-name: Windows
             artifact-extension: .zip
             build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF -G "MinGW Makefiles" .
@@ -33,7 +33,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: KyleMayes/install-llvm-action@v1
         with:
-          version: "14"
+          version: "17.0.6"
           
       - name: Install 7-Zip (Windows)
         if: matrix.os == 'windows-latest'
@@ -44,6 +44,7 @@ jobs:
         uses: egor-tensin/setup-mingw@v2
         with:
           platform: x64
+          version: 12.2.0
 
       - name: Create build directory
         run: mkdir build
@@ -60,10 +61,16 @@ jobs:
       - name: Archive Artifacts
         run: |
           executable_name=$(echo Zagreus-v*)
+          echo "EXECUTABLE_NAME=$executable_name" >> $GITHUB_ENV
           mkdir rel
           cp "$executable_name" rel/
           cp LICENSE README.md rel/
-          cp -r . "rel/$executable_name-source-code"
+          mkdir "rel/source-code"
+          cp -r src "rel/source-code"
+          cp -r senjo "rel/source-code"
+          cp LICENSE "rel/source-code"
+          cp README.md "rel/source-code"
+          cp CMakeLists.txt "rel/source-code"
           cd rel
           ${{ matrix.archive-command }} "../$executable_name${{ matrix.artifact-extension }}" *
 
@@ -71,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.build-name }}
-          path: "../$executable_name${{ matrix.artifact-extension }}"
+          path: "${{ env.EXECUTABLE_NAME }}${{ matrix.artifact-extension }}"
 
   create-release:
     needs: build-and-release
