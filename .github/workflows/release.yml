@@ -33,7 +33,7 @@ jobs:
         if: matrix.os == 'ubuntu-22.04'
         uses: KyleMayes/install-llvm-action@v1
         with:
-          version: "17.0.6"
+          version: "16"
           
       - name: Install 7-Zip (Windows)
         if: matrix.os == 'windows-2019'
