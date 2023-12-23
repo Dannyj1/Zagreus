@@ -48,6 +48,7 @@ jobs:
           update: true
           install: >-
             cmake
+            mingw-w64-ucrt-x86_64-gcc
 
       - name: Create build directory
         run: mkdir build
