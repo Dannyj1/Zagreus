@@ -60,6 +60,7 @@ jobs:
       - name: Archive Artifacts
         run: |
           executable_name=$(echo Zagreus-v*)
+          echo "EXECUTABLE_NAME=$executable_name" >> $GITHUB_ENV
           mkdir rel
           cp "$executable_name" rel/
           cp LICENSE README.md rel/
@@ -75,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.build-name }}
-          path: "$executable_name${{ matrix.artifact-extension }}"
+          path: "${{ env.EXECUTABLE_NAME }}${{ matrix.artifact-extension }}"
 
   create-release:
     needs: build-and-release
