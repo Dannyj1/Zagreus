@@ -70,13 +70,13 @@ jobs:
           cp README.md "rel/$executable_name-source-code"
           cp CMakeLists.txt "rel/$executable_name-source-code"
           cd rel
-          ${{ matrix.archive-command }} "../$executable_name${{ matrix.artifact-extension }}" *
+          ${{ matrix.archive-command }} "$executable_name${{ matrix.artifact-extension }}" *
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.build-name }}
-          path: "../$executable_name${{ matrix.artifact-extension }}"
+          path: "rel/$executable_name${{ matrix.artifact-extension }}"
 
   create-release:
     needs: build-and-release
