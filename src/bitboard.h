@@ -22,13 +22,10 @@
 #pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 #pragma once
 
-#include <x86intrin.h>
-
-#include <cassert>
 #include <cstdint>
 #include <string>
 
-#include "bitwise.h"
+#include "attacks.h"
 #include "movelist_pool.h"
 #include "types.h"
 #include "utils.h"
@@ -50,10 +47,6 @@ private:
 
     uint64_t zobristHash = 0ULL;
 
-    uint64_t kingAttacks[64]{};
-    uint64_t knightAttacks[64]{};
-    uint64_t pawnAttacks[2][64]{};
-    uint64_t rayAttacks[8][64]{};
     uint64_t betweenTable[64][64]{};
 
     UndoData undoStack[MAX_PLY]{};
@@ -79,60 +72,11 @@ public:
         return colorBB[color];
     }
 
-    template <PieceColor color>
-    uint64_t getPawnDoublePush(uint64_t pawns) {
-        const uint64_t singlePush = getPawnSinglePush<color>(pawns);
-
-        if (color == WHITE) {
-            return singlePush | (nortOne(singlePush) & getEmptyBoard() & RANK_4);
-        }
-
-        if (color == BLACK) {
-            return singlePush | (soutOne(singlePush) & getEmptyBoard() & RANK_5);
-        }
-
-        return 0;
-    }
-
-    template <PieceColor color>
-    uint64_t getPawnAttacks(int8_t square) const {
-        return pawnAttacks[color][square];
-    }
-
-    template <PieceColor color>
-    uint64_t getPawnSinglePush(uint64_t pawns) {
-        if (color == WHITE) {
-            return nortOne(pawns) & getEmptyBoard();
-        }
-
-        if (color == BLACK) {
-            return soutOne(pawns) & getEmptyBoard();
-        }
-
-        return 0;
-    }
-
     uint64_t getOccupiedBoard() const;
 
     uint64_t getEmptyBoard() const;
 
     PieceType getPieceOnSquare(int8_t square);
-
-    uint64_t getKingAttacks(int8_t square);
-
-    uint64_t getKnightAttacks(int8_t square);
-
-    uint64_t getQueenAttacks(int8_t square);
-
-    uint64_t getQueenAttacks(int8_t square, uint64_t occupancy);
-
-    uint64_t getBishopAttacks(int8_t square);
-
-    static uint64_t getBishopAttacks(int8_t square, uint64_t occupancy);
-
-    uint64_t getRookAttacks(int8_t square);
-
-    static uint64_t getRookAttacks(int8_t square, uint64_t occupancy);
 
     void setPiece(int8_t square, PieceType piece);
 
@@ -173,17 +117,19 @@ public:
 
     template <PieceColor color>
     uint64_t getSquareAttackersByColor(int8_t square) {
+        uint64_t occ = getOccupiedBoard();
+
         if (color == WHITE) {
             uint64_t queenBB = getPieceBoard(WHITE_QUEEN);
             uint64_t rookBB = getPieceBoard(WHITE_ROOK);
             uint64_t bishopBB = getPieceBoard(WHITE_BISHOP);
 
             uint64_t pawnAttacks = getPawnAttacks<BLACK>(square) & getPieceBoard(WHITE_PAWN);
-            uint64_t bishopAttacks = getBishopAttacks(square) & bishopBB;
+            uint64_t bishopAttacks = getBishopAttacks(square, occ) & bishopBB;
             uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard(WHITE_KNIGHT);
             uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard(WHITE_KING);
-            uint64_t rookAttacks = getRookAttacks(square) & rookBB;
-            uint64_t queenAttacks = getQueenAttacks(square) & queenBB;
+            uint64_t rookAttacks = getRookAttacks(square, occ) & rookBB;
+            uint64_t queenAttacks = getQueenAttacks(square, occ) & queenBB;
 
             return pawnAttacks | bishopAttacks | knightAttacks | rookAttacks | queenAttacks |
                    kingAttacks;
@@ -193,10 +139,10 @@ public:
             uint64_t bishopBB = getPieceBoard(BLACK_BISHOP);
 
             uint64_t pawnAttacks = getPawnAttacks<WHITE>(square) & getPieceBoard(BLACK_PAWN);
-            uint64_t bishopAttacks = getBishopAttacks(square) & bishopBB;
+            uint64_t bishopAttacks = getBishopAttacks(square, occ) & bishopBB;
             uint64_t knightAttacks = getKnightAttacks(square) & getPieceBoard(BLACK_KNIGHT);
-            uint64_t rookAttacks = getRookAttacks(square) & rookBB;
-            uint64_t queenAttacks = getQueenAttacks(square) & queenBB;
+            uint64_t rookAttacks = getRookAttacks(square, occ) & rookBB;
+            uint64_t queenAttacks = getQueenAttacks(square, occ) & queenBB;
             uint64_t kingAttacks = getKingAttacks(square) & getPieceBoard(BLACK_KING);
 
             return pawnAttacks | bishopAttacks | knightAttacks | rookAttacks | queenAttacks |
@@ -275,10 +221,6 @@ public:
             return fileMask == (fileMask & ~ownOccupied);
         }
     }
-
-    void initializeRayAttacks();
-
-    uint64_t getRayAttack(int8_t square, Direction direction);
 
     template <PieceColor attackingColor>
     int seeCapture(int8_t fromSquare, int8_t toSquare) {
@@ -367,7 +309,7 @@ public:
     template <PieceColor color>
     bool isPassedPawn(int8_t square) {
         Direction direction = color == WHITE ? NORTH : SOUTH;
-        uint64_t neighborMask = rayAttacks[direction][square];
+        uint64_t neighborMask = getRayAttack(square, direction);
         uint64_t pawnBB = getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
 
         if (neighborMask & pawnBB) {
@@ -376,11 +318,11 @@ public:
 
         if (square % 8 != 0) {
             // neighboring file
-            neighborMask |= rayAttacks[direction][square - 1];
+            neighborMask |= getRayAttack(square - 1, direction);
         }
 
         if (square % 8 != 7) {
-            neighborMask |= rayAttacks[direction][square + 1];
+            neighborMask |= getRayAttack(square + 1, direction);
         }
 
         if (color == WHITE) {

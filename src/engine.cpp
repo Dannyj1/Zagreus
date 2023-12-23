@@ -22,10 +22,10 @@
 
 #include <algorithm>
 
-#include "../senjo/ChessEngine.h"
-#include "../senjo/Output.h"
-#include "../senjo/GoParams.h"
-#include "../senjo/SearchStats.h"
+#include "ChessEngine.h"
+#include "Output.h"
+#include "GoParams.h"
+#include "SearchStats.h"
 #include "bitboard.h"
 #include "movegen.h"
 #include "search.h"

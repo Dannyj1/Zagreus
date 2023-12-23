@@ -24,14 +24,13 @@
 #include <vector>
 #include <map>
 
-#include "../senjo/Output.h"
-#include "../senjo/UCIAdapter.h"
+#include "Output.h"
+#include "UCIAdapter.h"
 #include "bitboard.h"
 #include "engine.h"
 #include "features.h"
 #include "magics.h"
 #include "movegen.h"
-#include "movepicker.h"
 #include "pst.h"
 #include "search.h"
 #include "tt.h"
@@ -110,6 +109,7 @@ int main(int argc, char* argv[]) {
 
     initializeMagicBitboards();
     initializePst();
+    intializeAttacks();
 
     senjo::Output(senjo::Output::NoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
     senjo::Output(senjo::Output::NoPrefix) << "";

@@ -26,7 +26,7 @@
 #include <iostream>
 #include <random>
 
-#include "../senjo/UCIAdapter.h"
+#include "UCIAdapter.h"
 #include "bitboard.h"
 #include "evaluate.h"
 #include "features.h"

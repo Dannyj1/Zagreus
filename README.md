@@ -108,5 +108,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with Zagreus. If not, see <https://www.gnu.org/licenses/>.
 
-This project uses the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter) by zd3nik which is licensed under
+Zagreus uses the following third party libraries, which are licensed under their own licenses:
+
+- [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter) by [zd3nik](https://github.com/zd3nik/), which is
+  licensed under
 the MIT license. All files from the Senjo UCI Adapter retain their original copyright and license notices.
+- [Pyrrhic](https://github.com/AndyGrant/Pyrrhic/) by [AndyGrant](https://github.com/AndyGrant),
+  which is licensed under the MIT license. All files from Pyrrhic retain their original copyright and license notices.

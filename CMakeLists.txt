@@ -284,14 +284,23 @@ if (ENABLE_MARCH)
     endif ()
 endif ()
 
+INCLUDE_DIRECTORIES(lib/senjo)
+INCLUDE_DIRECTORIES(lib/Pyrrhic)
+INCLUDE_DIRECTORIES(src)
+
 # Set the flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${BUILD_FLAGS}")
 
 file(GLOB inc_zagreus "src/*.h" "src/*.cpp")
-file(GLOB inc_senjo "senjo/*.h" "senjo/*.cpp")
+file(GLOB inc_senjo "lib/senjo/*.h" "lib/senjo/*.cpp")
+file(GLOB inc_pyrrhic "lib/Pyrrhic/*.h" "lib/Pyrrhic/*.cpp")
 
-add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_zagreus})
+add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_pyrrhic} ${inc_zagreus}
+        src/Attacks.cpp
+        src/Attacks.h
+        src/attacks.cpp
+        src/attacks.h)
 
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")

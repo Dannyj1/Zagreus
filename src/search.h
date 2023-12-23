@@ -24,7 +24,7 @@
 #include "bitboard.h"
 #include "engine.h"
 #include "types.h"
-#include "../senjo/GoParams.h"
+#include "GoParams.h"
 
 namespace Zagreus {
 struct SearchContext {

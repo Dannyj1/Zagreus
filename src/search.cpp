@@ -20,7 +20,7 @@
 
 #include "search.h"
 
-#include "../senjo/Output.h"
+#include "Output.h"
 #include "evaluate.h"
 #include "features.h"
 #include "movegen.h"

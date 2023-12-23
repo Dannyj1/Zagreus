@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "../senjo/ChessEngine.h"
+#include "ChessEngine.h"
 #include "bitboard.h"
 #include "types.h"
 

@@ -22,7 +22,7 @@
 
 #include <random>
 
-#include "../senjo/Output.h"
+#include "Output.h"
 #include "bitwise.h"
 #include "magics.h"
 #include "movegen.h"
@@ -44,43 +44,7 @@ Bitboard::Bitboard() {
         type = EMPTY;
     }
 
-    uint64_t sqBB = 1ULL;
-    for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-        kingAttacks[sq] = calculateKingAttacks(sqBB) & ~sqBB;
-    }
-
-    sqBB = 1ULL;
-    for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-        knightAttacks[sq] = calculateKnightAttacks(sqBB) & ~sqBB;
-    }
-
-    sqBB = 1ULL;
-    for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-        pawnAttacks[WHITE][sq] = calculatePawnAttacks<WHITE>(sqBB) & ~sqBB;
-        pawnAttacks[BLACK][sq] = calculatePawnAttacks<BLACK>(sqBB) & ~sqBB;
-    }
-
     initializeBetweenLookup();
-    initializeRayAttacks();
-}
-
-void Bitboard::initializeRayAttacks() {
-    uint64_t sqBB = 1ULL;
-
-    for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
-        rayAttacks[NORTH][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
-        rayAttacks[SOUTH][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
-        rayAttacks[EAST][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
-        rayAttacks[WEST][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
-        rayAttacks[NORTH_EAST][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
-        rayAttacks[NORTH_WEST][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
-        rayAttacks[SOUTH_EAST][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
-        rayAttacks[SOUTH_WEST][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
-    }
-}
-
-uint64_t Bitboard::getRayAttack(int8_t square, Direction direction) {
-    return rayAttacks[direction][square];
 }
 
 uint64_t Bitboard::getOccupiedBoard() const { return occupiedBB; }
@@ -95,56 +59,6 @@ void Bitboard::setMovingColor(PieceColor movingColor) { this->movingColor = movi
 
 PieceType Bitboard::getPieceOnSquare(int8_t square) {
     return pieceSquareMapping[square];
-}
-
-uint64_t Bitboard::getKingAttacks(int8_t square) {
-    return kingAttacks[square];
-}
-
-uint64_t Bitboard::getKnightAttacks(int8_t square) {
-    return knightAttacks[square];
-}
-
-uint64_t Bitboard::getQueenAttacks(int8_t square) {
-    return getBishopAttacks(square) | getRookAttacks(square);
-}
-
-uint64_t Bitboard::getQueenAttacks(int8_t square, uint64_t occupancy) {
-    return getBishopAttacks(square, occupancy) | getRookAttacks(square, occupancy);
-}
-
-uint64_t Bitboard::getBishopAttacks(int8_t square) {
-    uint64_t occupancy = getOccupiedBoard();
-    occupancy &= getBishopMask(square);
-    occupancy *= getBishopMagic(square);
-    occupancy >>= 64 - BBits[square];
-
-    return getBishopMagicAttacks(square, occupancy);
-}
-
-uint64_t Bitboard::getBishopAttacks(int8_t square, uint64_t occupancy) {
-    occupancy &= getBishopMask(square);
-    occupancy *= getBishopMagic(square);
-    occupancy >>= 64 - BBits[square];
-
-    return getBishopMagicAttacks(square, occupancy);
-}
-
-uint64_t Bitboard::getRookAttacks(int8_t square) {
-    uint64_t occupancy = getOccupiedBoard();
-    occupancy &= getRookMask(square);
-    occupancy *= getRookMagic(square);
-    occupancy >>= 64 - RBits[square];
-
-    return getRookMagicAttacks(square, occupancy);
-}
-
-uint64_t Bitboard::getRookAttacks(int8_t square, uint64_t occupancy) {
-    occupancy &= getRookMask(square);
-    occupancy *= getRookMagic(square);
-    occupancy >>= 64 - RBits[square];
-
-    return getRookMagicAttacks(square, occupancy);
 }
 
 void Bitboard::setPiece(int8_t square, PieceType piece) {
@@ -814,6 +728,7 @@ void Bitboard::setPieceFromFENChar(char character, int index) {
 }
 
 uint64_t Bitboard::getSquareAttacks(int8_t square) {
+    uint64_t occ = getOccupiedBoard();
     uint64_t queenBB = getPieceBoard(WHITE_QUEEN) | getPieceBoard(BLACK_QUEEN);
     uint64_t straightSlidingPieces = getPieceBoard(WHITE_ROOK) | getPieceBoard(BLACK_ROOK) |
                                      queenBB;
@@ -822,8 +737,8 @@ uint64_t Bitboard::getSquareAttacks(int8_t square) {
 
     uint64_t pawnAttacks = getPawnAttacks<BLACK>(square) & getPieceBoard(WHITE_PAWN);
     pawnAttacks |= getPawnAttacks<WHITE>(square) & getPieceBoard(BLACK_PAWN);
-    uint64_t rookAttacks = getRookAttacks(square) & straightSlidingPieces;
-    uint64_t bishopAttacks = getBishopAttacks(square) & diagonalSlidingPieces;
+    uint64_t rookAttacks = getRookAttacks(square, occ) & straightSlidingPieces;
+    uint64_t bishopAttacks = getBishopAttacks(square, occ) & diagonalSlidingPieces;
     uint64_t knightAttacks =
         getKnightAttacks(square) & (getPieceBoard(WHITE_KNIGHT) | getPieceBoard(BLACK_KNIGHT));
     uint64_t kingAttacks =
@@ -845,7 +760,7 @@ void Bitboard::setEnPassantSquare(int8_t enPassantSquare) {
 }
 
 uint64_t Bitboard::getFile(int8_t square) {
-    return rayAttacks[NORTH][square] | rayAttacks[SOUTH][square] | 1ULL << square;
+    return getRayAttack(square, NORTH) | getRayAttack(square, SOUTH) | 1ULL << square;
 }
 
 bool Bitboard::makeStrMove(const std::string& strMove) {

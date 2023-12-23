@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../senjo/GoParams.h"
+#include "GoParams.h"
 #include "engine.h"
 #include "types.h"
 

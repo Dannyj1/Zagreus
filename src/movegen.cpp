@@ -20,10 +20,7 @@
 
 #include "movegen.h"
 
-#include <x86intrin.h>
-
 #include <cassert>
-#include <iostream>
 
 #include "bitboard.h"
 #include "tt.h"
@@ -155,14 +152,14 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
 
     while (pawnBB) {
         int8_t from = popLsb(pawnBB);
-        uint64_t genBB = bitboard.getPawnDoublePush<color>(1ULL << from);
+        uint64_t genBB = getPawnDoublePush<color>(1ULL << from, bitboard.getEmptyBoard());
         uint64_t attackableSquares = bitboard.getColorBoard<OPPOSITE_COLOR>();
 
         if (bitboard.getEnPassantSquare() != NO_SQUARE) {
             attackableSquares |= 1ULL << bitboard.getEnPassantSquare();
         }
 
-        genBB |= bitboard.getPawnAttacks<color>(from) & attackableSquares;
+        genBB |= getPawnAttacks<color>(from) & attackableSquares;
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
@@ -237,7 +234,7 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasio
 
     while (knightBB) {
         int8_t from = popLsb(knightBB);
-        uint64_t genBB = bitboard.getKnightAttacks(from);
+        uint64_t genBB = getKnightAttacks(from);
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -289,7 +286,7 @@ void generateBishopMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasio
 
     while (bishopBB) {
         int8_t from = popLsb(bishopBB);
-        uint64_t genBB = bitboard.getBishopAttacks(from);
+        uint64_t genBB = getBishopAttacks(from, bitboard.getOccupiedBoard());
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -341,7 +338,7 @@ void generateRookMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
 
     while (rookBB) {
         int8_t from = popLsb(rookBB);
-        uint64_t genBB = bitboard.getRookAttacks(from);
+        uint64_t genBB = getRookAttacks(from, bitboard.getOccupiedBoard());
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -393,7 +390,7 @@ void generateQueenMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasion
 
     while (queenBB) {
         int8_t from = popLsb(queenBB);
-        uint64_t genBB = bitboard.getQueenAttacks(from);
+        uint64_t genBB = getQueenAttacks(from, bitboard.getOccupiedBoard());
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -447,10 +444,10 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList) {
     }
 
     int8_t from = bitscanForward(kingBB);
-    uint64_t genBB = bitboard.getKingAttacks(from);
+    uint64_t genBB = getKingAttacks(from);
     int8_t opponentKingSquare = bitscanForward(opponentKingBB);
 
-    genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
+    genBB &= ~(bitboard.getColorBoard<color>() | getKingAttacks(opponentKingSquare));
 
     if (type == QSEARCH) {
         genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();
