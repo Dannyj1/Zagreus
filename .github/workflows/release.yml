@@ -14,11 +14,11 @@ jobs:
           - os: ubuntu-latest
             build-name: Linux
             artifact-extension: .tar.gz
-            build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON ..
+            build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON .
           - os: windows-latest
             build-name: Windows
             artifact-extension: .zip
-            build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -G "MinGW Makefiles" ..
+            build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -G "MinGW Makefiles" .
 
     steps:
       - name: Checkout repository
