@@ -30,17 +30,17 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Setup Clang (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         uses: KyleMayes/install-llvm-action@v1
         with:
           version: "17.0.6"
           
       - name: Install 7-Zip (Windows)
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         run: choco install 7zip
 
       - name: Setup MinGW (Windows)
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
@@ -52,21 +52,21 @@ jobs:
         run: cd build
 
       - name: Configure CMake (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         run: ${{ matrix.build-command }}
 
       - name: Build (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         run: cmake --build .
 
       - name: Configure CMake (Windows)
         shell: msys2 {0}
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         run: ${{ matrix.build-command }}
 
       - name: Build (Windows)
         shell: msys2 {0}
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         run: cmake --build .
 
       - name: Archive Artifacts
@@ -93,7 +93,7 @@ jobs:
 
   create-release:
     needs: build-and-release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
