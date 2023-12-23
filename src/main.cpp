@@ -235,37 +235,3 @@ void benchmark() {
 
     senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nodesPerSecond << " nps";
 }
-
-void addHashes(Bitboard& board, int16_t depth, std::map<uint64_t, uint64_t>& collisionMap) {
-    uint64_t zobristHash = board.getZobristHash() & 1398100ULL;
-
-    if (zobristHash == 0) {
-        return;
-    }
-
-    if (collisionMap.contains(zobristHash)) {
-        collisionMap[zobristHash] += 1;
-    } else {
-        collisionMap[zobristHash] = 1;
-    }
-
-    if (depth == 0) {
-        return;
-    }
-
-    MoveList* moves = moveListPool->getMoveList();
-
-    if (board.getMovingColor() == WHITE) {
-        generateMoves<WHITE, NORMAL>(board, moves);
-    } else {
-        generateMoves<BLACK, NORMAL>(board, moves);
-    }
-
-    for (Move& move : moves->moves) {
-        board.makeMove(move);
-        addHashes(board, depth - 1, collisionMap);
-        board.unmakeMove(move);
-    }
-
-    moveListPool->releaseMoveList(moves);
-}
