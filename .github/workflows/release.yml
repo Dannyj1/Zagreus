@@ -9,6 +9,7 @@ jobs:
   build-and-release:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-22.04
@@ -16,29 +17,42 @@ jobs:
             artifact-extension: .tar.gz
             config-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
             archive-command: tar -czvf
+            shell: bash
           - os: windows-latest
             build-name: Windows
             artifact-extension: .zip
             config-command: cmake -DCMAKE_C_COMPILER=C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin\gcc.exe -DCMAKE_CXX_COMPILER=C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin\g++.exe -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
-            archive-command: 7z a
+            archive-command: zip -r
+            shell: msys2 {0}
+
+    defaults:
+      run:
+        shell: ${{ matrix.config.shell }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup CMake (Linux)
-        if: matrix.os == 'ubuntu-22.04'
+        if: runner.os == 'Linux'
         uses: lukka/get-cmake@latest
 
       - name: Setup Clang (Linux)
-        if: matrix.os == 'ubuntu-22.04'
+        if: runner.os == 'Linux'
         uses: KyleMayes/install-llvm-action@v1
         with:
           version: "16"
           
-      - name: Install Windows Dependencies (Windows)
-        if: matrix.os == 'windows-latest'
-        run: choco install mingw 7zip
+      - name: Install 7-Zip (Windows)
+        if: runner.os == 'Windows'
+        run: choco install 7zip
+
+      - name: Setup msys and install required packages
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw64
+          install: mingw-w64-x86_64-gcc make git zip
 
       - name: Create build directory
         run: mkdir build
@@ -47,19 +61,18 @@ jobs:
         run: cd build
 
       - name: Configure CMake (Linux)
-        if: matrix.os == 'ubuntu-22.04'
+        if: runner.os == 'Linux'
         run: ${{ matrix.config-command }}
 
       - name: Build (Linux)
-        if: matrix.os == 'ubuntu-22.04'
+        if: runner.os == 'Linux'
         run: cmake --build .
 
       - name: Configure CMake (Windows)
-        if: matrix.os == 'windows-latest'
+        if: runner.os == 'Windows'
         run: ${{ matrix.config-command }}
 
-      - name: Build (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Build
         run: cmake --build .
 
       - name: Archive Artifacts
