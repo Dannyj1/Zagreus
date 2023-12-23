@@ -41,8 +41,6 @@ using namespace Zagreus;
 
 void benchmark();
 
-void findZobristSeed();
-
 MoveListPool* moveListPool = MoveListPool::getInstance();
 
 // Some of these benchmark positions are taken from Stockfish's benchmark.cpp:
@@ -151,9 +149,6 @@ int main(int argc, char* argv[]) {
             senjo::Output(senjo::Output::NoPrefix) << "Starting benchmark...";
 
             benchmark();
-            return 0;
-        } else if (strcmp(argv[1], "findzobristseed") == 0) {
-            findZobristSeed();
             return 0;
         } else if (strcmp(argv[1], "tune") == 0) {
             startTuning(argv[2]);
@@ -273,68 +268,4 @@ void addHashes(Bitboard& board, int16_t depth, std::map<uint64_t, uint64_t>& col
     }
 
     moveListPool->releaseMoveList(moves);
-}
-
-void findZobristSeed() {
-    senjo::Output(senjo::Output::NoPrefix) << "Loading positions...";
-    std::ifstream fin("perft.txt");
-    std::vector<std::string> seedFindPositions{};
-
-    std::string line;
-    while (std::getline(fin, line)) {
-        seedFindPositions.emplace_back(line);
-    }
-
-    senjo::Output(senjo::Output::NoPrefix) << "Removing invalid positions...";
-    for (const std::string& position : seedFindPositions) {
-        Bitboard bb;
-
-        if (!bb.setFromFen(position) || position.empty()) {
-            std::erase(seedFindPositions, position);
-        }
-    }
-
-    senjo::Output(senjo::Output::NoPrefix)
-        << "Finding the best Zobrist seed with the least collisions...";
-
-    uint64_t bestSeed = 0x6C7CCC580A348E7B;
-    uint64_t leastCollisions = 444143880;
-    std::random_device seedRd;
-    std::mt19937_64 seedGen(seedRd());
-    std::uniform_int_distribution<uint64_t> seedDis;
-
-    while (true) {
-        std::map<uint64_t, uint64_t> collisionMap{};
-        uint64_t seed = seedDis(seedGen);
-
-        for (std::string& position : seedFindPositions) {
-            Bitboard board;
-            std::random_device rd;
-            std::mt19937_64 gen(rd());
-            gen.seed(seed);
-            std::uniform_int_distribution<uint64_t> dis;
-
-            for (uint64_t& zobristConstant : board.zobristConstants) {
-                zobristConstant = dis(gen);
-            }
-
-            board.setFromFen(position);
-            addHashes(board, 2, collisionMap);
-        }
-
-        uint64_t collisions = 0;
-        for (const auto& [key, value] : collisionMap) {
-            if (value > 1) {
-                collisions += value;
-            }
-        }
-
-        if (collisions < leastCollisions) {
-            leastCollisions = collisions;
-            bestSeed = seed;
-            std::cout << "Found new best seed (" << leastCollisions << " collisions): 0x" <<
-                std::hex
-                << std::uppercase << bestSeed << std::dec << std::nouppercase << std::endl;
-        }
-    }
 }
