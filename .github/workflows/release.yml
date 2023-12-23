@@ -51,10 +51,22 @@ jobs:
       - name: Change to build directory
         run: cd build
 
-      - name: Configure CMake
+      - name: Configure CMake (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: ${{ matrix.build-command }}
 
-      - name: Build
+      - name: Build (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: cmake --build .
+
+      - name: Configure CMake (Windows)
+        shell: msys2 {0}
+        if: matrix.os == 'windows-latest'
+        run: ${{ matrix.build-command }}
+
+      - name: Build (Windows)
+        shell: msys2 {0}
+        if: matrix.os == 'windows-latest'
         run: cmake --build .
 
       - name: Archive Artifacts
