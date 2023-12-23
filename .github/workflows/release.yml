@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             build-name: Linux
             artifact-extension: .tar.gz
             build-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
@@ -33,7 +33,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: KyleMayes/install-llvm-action@v1
         with:
-          version: "14"
+          version: "17.0.6"
           
       - name: Install 7-Zip (Windows)
         if: matrix.os == 'windows-latest'
