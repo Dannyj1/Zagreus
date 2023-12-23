@@ -39,12 +39,11 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: choco install 7zip
 
-      - name: Setup MinGW-LLVM (Windows)
+      - name: Setup MinGW (Windows)
         if: matrix.os == 'windows-latest'
-        uses: egor-tensin/setup-mingw@v2
+        uses: msys2/setup-msys2@v2
         with:
-          platform: x64
-          version: 12.2.0
+          msystem: UCRT64
 
       - name: Create build directory
         run: mkdir build
