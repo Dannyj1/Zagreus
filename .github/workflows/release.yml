@@ -64,13 +64,14 @@ jobs:
           mkdir rel
           cp "$executable_name" rel/
           cp LICENSE README.md rel/
-          mkdir "rel/$executable_name-source-code"
-          cp -r src "rel/$executable_name-source-code"
-          cp -r senjo "rel/$executable_name-source-code"
-          cp LICENSE "rel/$executable_name-source-code"
-          cp README.md "rel/$executable_name-source-code"
-          cp CMakeLists.txt "rel/$executable_name-source-code"
-          ${{ matrix.archive-command }} "$executable_name${{ matrix.artifact-extension }}" rel/*
+          mkdir "rel/source-code"
+          cp -r src "rel/source-code"
+          cp -r senjo "rel/source-code"
+          cp LICENSE "rel/source-code"
+          cp README.md "rel/source-code"
+          cp CMakeLists.txt "rel/source-code"
+          cd rel
+          ${{ matrix.archive-command }} "../$executable_name${{ matrix.artifact-extension }}" *
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
