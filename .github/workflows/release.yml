@@ -16,10 +16,10 @@ jobs:
             artifact-extension: .tar.gz
             config-command: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
             archive-command: tar -czvf
-          - os: windows-2019
+          - os: windows-latest
             build-name: Windows
             artifact-extension: .zip
-            config-command: cmake -DCMAKE_C_COMPILER=/mingw64/bin/clang -DCMAKE_CXX_COMPILER=/mingw64/bin/clang++ -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
+            config-command: cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
             archive-command: 7z a
 
     steps:
@@ -36,20 +36,9 @@ jobs:
         with:
           version: "16"
           
-      - name: Install 7-Zip (Windows)
-        if: matrix.os == 'windows-2019'
-        run: choco install 7zip
-
-      - name: Setup MinGW (Windows)
-        if: matrix.os == 'windows-2019'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: CLANG64
-          update: true
-          install: >-
-            make
-            cmake
-            mingw-w64-x86_64-clang
+      - name: Install Windows Dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        run: choco install mingw 7zip
 
       - name: Create build directory
         run: mkdir build
@@ -67,12 +56,12 @@ jobs:
 
       - name: Configure CMake (Windows)
         shell: msys2 {0}
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-latest'
         run: ${{ matrix.config-command }}
 
       - name: Build (Windows)
         shell: msys2 {0}
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-latest'
         run: cmake --build .
 
       - name: Archive Artifacts
