@@ -26,7 +26,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup CMake
+      - name: Setup CMake (Linux)
+        if: matrix.os == 'ubuntu-22.04'
         uses: lukka/get-cmake@latest
 
       - name: Setup Clang (Linux)
@@ -44,6 +45,9 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
+          update: true
+          install: >-
+            cmake
 
       - name: Create build directory
         run: mkdir build
