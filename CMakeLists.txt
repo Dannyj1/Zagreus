@@ -98,6 +98,7 @@ set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
 option(ENABLE_MTUNE "Enable -mtune flag" ON)
 set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
 option(APPEND_VERSION "Append version to filename" OFF)
+option(APPEND_VERSION_USE_GIT "Append version or branch to filename using git, when off it always uses just the version" ON)
 option(ENABLE_CLANG_TIDY "Enable the use of clang-tidy (slows down compiling a lot)" OFF)
 
 if (ENABLE_CLANG_TIDY)
@@ -205,7 +206,7 @@ if (APPEND_VERSION)
             OUTPUT_VARIABLE GIT_BRANCH
             OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    if (NOT ${GIT_BRANCH} STREQUAL "master" AND NOT ${GIT_BRANCH} STREQUAL "main")
+    if ((NOT ${GIT_BRANCH} STREQUAL "master") AND (NOT ${GIT_BRANCH} STREQUAL "main") AND APPEND_VERSION_USE_GIT)
         # Get the short commit hash
         execute_process(COMMAND git rev-parse --short HEAD
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
