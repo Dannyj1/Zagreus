@@ -41,6 +41,8 @@ private:
         senjo::EngineOption("MoveOverhead", "50", senjo::EngineOption::OptionType::Spin, 0, 5000),
         senjo::EngineOption("Hash", "512", senjo::EngineOption::OptionType::Spin, 1, 33554432),
         senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 1),
+        senjo::EngineOption("SyzygyPath", "", senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SyzygyProbeLimit", "0", senjo::EngineOption::OptionType::Spin, 0, 100),
     };
 
 public:
