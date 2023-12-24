@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -94,7 +94,7 @@ jobs:
           path: "${{ env.EXECUTABLE_NAME }}${{ matrix.artifact-extension }}"
 
   create-release:
-    needs: build-and-release
+    needs: build
     runs-on: ubuntu-22.04
     steps:
       - name: Download artifacts
@@ -106,6 +106,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: true
+          generate_release_notes: true
           files: |
             artifacts/Windows/*
             artifacts/Linux/*
