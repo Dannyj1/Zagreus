@@ -21,7 +21,7 @@ jobs:
           - os: windows-latest
             build-name: Windows
             artifact-extension: .zip
-            config-command: cmake -DCMAKE_C_COMPILER=/mingw64/bin/gcc -DCMAKE_CXX_COMPILER=/mingw64/bin/g++ -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
+            config-command: cmake -DCMAKE_C_COMPILER=/clang64/bin/clang -DCMAKE_CXX_COMPILER=/clang64/bin/clang++ -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF -G Ninja .
             archive-command: zip -r
             shell: msys2 {0}
 
@@ -47,8 +47,8 @@ jobs:
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
         with:
-          msystem: mingw64
-          install: mingw-w64-x86_64-gcc cmake make zip
+          msystem: clang64
+          install: mingw-w64-clang-x86_64-toolchain ninja cmake zip
 
       - name: Create build directory
         run: mkdir build
