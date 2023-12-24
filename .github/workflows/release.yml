@@ -42,10 +42,6 @@ jobs:
         uses: KyleMayes/install-llvm-action@v1
         with:
           version: "16"
-          
-      - name: Install 7-Zip (Windows)
-        if: runner.os == 'Windows'
-        run: choco install 7zip
 
       - name: Setup msys and install required packages
         if: runner.os == 'Windows'
