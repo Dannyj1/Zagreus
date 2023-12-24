@@ -21,7 +21,7 @@ jobs:
           - os: windows-latest
             build-name: Windows
             artifact-extension: .zip
-            config-command: cmake -DCMAKE_C_COMPILER=/mingw64/bin/clang -DCMAKE_CXX_COMPILER=/mingw64/bin/clang++ -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
+            config-command: cmake -DCMAKE_C_COMPILER=/mingw64/bin/gcc -DCMAKE_CXX_COMPILER=/mingw64/bin/g++ -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF .
             archive-command: zip -r
             shell: msys2 {0}
 
@@ -48,7 +48,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: mingw64
-          install: mingw-w64-x86_64-clang cmake make zip
+          install: mingw-w64-x86_64-gcc cmake make zip
 
       - name: Create build directory
         run: mkdir build
