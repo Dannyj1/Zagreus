@@ -357,15 +357,15 @@ bool pyrrhic_do_move(PyrrhicPosition *pos, const PyrrhicPosition *pos0, PyrrhicM
         // Check for a double push by White
         Zagreus::PieceColor whiteColor = Zagreus::WHITE;
         if (   (from ^ to) == 16
-            &&  pos0->turn == PYRRHIC_WHITE
-            && (PYRRHIC_PAWN_ATTACKS(from + 8, whiteColor) & pos0->pawns & pos0->black))
+               && pos0->turn == PYRRHIC_WHITE
+               && (PYRRHIC_PAWN_ATTACKS(from + 8, whiteColor) & pos0->pawns & pos0->black))
             pos->ep = from + 8;
 
         // Check for a double push by Black
         Zagreus::PieceColor blackColor = Zagreus::BLACK;
         if (   (from ^ to) == 16
-            &&  pos0->turn == PYRRHIC_BLACK
-            && (PYRRHIC_PAWN_ATTACKS(from - 8, blackColor) & pos0->pawns & pos0->white))
+               && pos0->turn == PYRRHIC_BLACK
+               && (PYRRHIC_PAWN_ATTACKS(from - 8, blackColor) & pos0->pawns & pos0->white))
             pos->ep = from - 8;
 
         // Check for an Enpassant being played
@@ -388,7 +388,7 @@ bool pyrrhic_do_move(PyrrhicPosition *pos, const PyrrhicPosition *pos0, PyrrhicM
     return pyrrhic_is_legal(pos);
 }
 
-bool pyrrhic_legal_move(const PyrrhicPosition *pos, PyrrhicMove move) {
+bool pyrrhic_legal_move(const PyrrhicPosition* pos, PyrrhicMove move) {
     PyrrhicPosition pos1;
     return pyrrhic_do_move(&pos1, pos, move);
 }
