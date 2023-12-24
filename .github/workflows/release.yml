@@ -21,7 +21,7 @@ jobs:
           - os: windows-latest
             build-name: Windows
             artifact-extension: .zip
-            config-command: cmake -DCMAKE_C_COMPILER=/mingw64/bin/clang -DCMAKE_CXX_COMPILER=/mingw64/bin/clang++ -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF -G Ninja .
+            config-command: cmake -DCMAKE_C_COMPILER=/clang64/bin/clang -DCMAKE_CXX_COMPILER=/clang64/bin/clang++ -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_BUILD_TYPE=Release -DENABLE_OPTIMIZATION_FAST_MATH=ON -DAPPEND_VERSION=ON -DAPPEND_VERSION_USE_GIT=OFF -G Ninja .
             archive-command: zip -r
             shell: msys2 {0}
 
