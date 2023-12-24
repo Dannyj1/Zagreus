@@ -73,7 +73,7 @@ jobs:
 
       - name: Archive Artifacts
         run: |
-          executable_name=$(echo Zagreus-v* | sed 's/\.[^.]*$//')
+          executable_name=$(echo Zagreus-v* | sed 's/\.exe$//')
           echo "EXECUTABLE_NAME=$executable_name" >> $GITHUB_ENV
           mkdir rel
           cp "$executable_name" rel/
