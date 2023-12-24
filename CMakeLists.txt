@@ -301,7 +301,10 @@ add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_pyrrhic} ${inc_zagreus}
         src/Attacks.cpp
         src/Attacks.h
         src/attacks.cpp
-        src/attacks.h)
+        src/attacks.h
+        src/syzygy.cpp
+        src/syzygy.h
+        lib/Pyrrhic/tbchess.h)
 
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")

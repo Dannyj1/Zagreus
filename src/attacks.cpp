@@ -84,6 +84,10 @@ uint64_t getPawnDoublePush(uint64_t pawns, uint64_t emptyBB) {
 template uint64_t getPawnDoublePush<WHITE>(uint64_t pawns, uint64_t emptyBB);
 template uint64_t getPawnDoublePush<BLACK>(uint64_t pawns, uint64_t emptyBB);
 
+uint64_t getPawnAttacks(int8_t square, PieceColor color) {
+    return pawnAttacks[color][square];
+}
+
 template <PieceColor color>
 uint64_t getPawnAttacks(int8_t square) {
     return pawnAttacks[color][square];

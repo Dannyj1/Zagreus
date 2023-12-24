@@ -29,6 +29,7 @@
 #include "bitboard.h"
 #include "movegen.h"
 #include "search.h"
+#include "tbprobe.h"
 #include "tt.h"
 #include "types.h"
 #include "utils.h"
@@ -85,6 +86,12 @@ uint64_t ZagreusEngine::doPerft(Bitboard& perftBoard, PieceColor color, int16_t 
     return nodes;
 }
 
+ZagreusEngine::~ZagreusEngine() {
+    if (!getOption("SyzygyPath").getValue().empty()) {
+        tb_free();
+    }
+}
+
 std::string ZagreusEngine::getEngineName() { return "Zagreus"; }
 
 std::string majorVersion = ZAGREUS_VERSION_MAJOR;
@@ -124,6 +131,21 @@ bool ZagreusEngine::setEngineOption(const std::string& optionName, const std::st
                 TranspositionTable::getTT()->setTableSize(option.getIntValue());
             }
 
+            if (option.getName() == "SyzygyPath") {
+                if (!optionValue.empty()) {
+                    senjo::Output(senjo::Output::InfoPrefix) << "Initializing Syzygy tablebases...";
+                    if (!tb_init(optionValue.c_str())) {
+                        senjo::Output(senjo::Output::InfoPrefix)
+                            << "Failed to initialize Syzygy tablebases!";
+                    } else {
+                        senjo::Output(senjo::Output::InfoPrefix)
+                            << "Syzygy tablebases initialized!";
+                    }
+                } else {
+                    tb_free();
+                }
+            }
+
             return true;
         }
     }
@@ -135,6 +157,17 @@ void ZagreusEngine::initialize() {
     stoppingSearch = false;
     board = Bitboard{};
     TranspositionTable::getTT()->setTableSize(getOption("Hash").getIntValue());
+
+    std::string tbPath = getOption("SyzygyPath").getValue();
+    if (!tbPath.empty()) {
+        senjo::Output(senjo::Output::InfoPrefix) << "Initializing Syzygy tablebases...";
+        if (!tb_init(tbPath.c_str())) {
+            senjo::Output(senjo::Output::InfoPrefix) << "Failed to initialize Syzygy tablebases!";
+        } else {
+            senjo::Output(senjo::Output::InfoPrefix) << "Syzygy tablebases initialized!";
+        }
+    }
+
     isEngineInitialized = true;
 }
 

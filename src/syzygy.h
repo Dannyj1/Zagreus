@@ -19,35 +19,9 @@
  */
 
 #pragma once
-#include <cstdint>
-
-#include "types.h"
+#include "bitboard.h"
+#include "search.h"
 
 namespace Zagreus {
-void intializeAttacks();
-
-void initializeRayAttacks();
-
-template <PieceColor color>
-uint64_t getPawnDoublePush(uint64_t pawns, uint64_t emptyBB);
-
-template <PieceColor color>
-uint64_t getPawnAttacks(int8_t square);
-
-uint64_t getPawnAttacks(int8_t square, PieceColor color);
-
-template <PieceColor color>
-uint64_t getPawnSinglePush(uint64_t pawns, uint64_t emptyBB);
-
-uint64_t getKingAttacks(int8_t square);
-
-uint64_t getKnightAttacks(int8_t square);
-
-uint64_t getQueenAttacks(int8_t square, uint64_t occupancy);
-
-uint64_t getBishopAttacks(int8_t square, uint64_t occupancy);
-
-uint64_t getRookAttacks(int8_t square, uint64_t occupancy);
-
-uint64_t getRayAttack(int8_t square, Direction direction);
+int tablebaseProbe(Bitboard board, int depth, SearchContext& context);
 } // namespace Zagreus

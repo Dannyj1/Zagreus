@@ -38,6 +38,9 @@
 
 #include "tbprobe.h"
 
+#include "tbchess.h"
+#include "utils.h"
+
 #define TB_PIECES    (7)
 #define TB_HASHBITS  (TB_PIECES < 7 ?  11 : 12)
 #define TB_MAX_DTZ   (0x40000)
@@ -262,9 +265,6 @@ static uint32_t tbMagic[] = { 0x5d23e871, 0x88ac504b, 0xa50c66d7 };
 
 enum { WDL, DTM, DTZ };
 enum { PIECE_ENC, FILE_ENC, RANK_ENC };
-
-// Attack and move generation code
-#include "tbchess.c"
 
 struct PairsData {
   uint8_t *indexTable;
@@ -1507,7 +1507,7 @@ inline static int fill_squares(const PyrrhicPosition *pos, uint8_t *pc, bool fli
   uint64_t bb = pyrrhic_pieces_by_type(pos, color, pyrrhic_type_of_piece(pc[i]));
   unsigned sq;
   do {
-    sq = PYRRHIC_POPLSB(&bb);
+    sq = PYRRHIC_POPLSB(bb);
     p[i++] = sq ^ mirror;
   } while (bb);
   return i;
@@ -2117,4 +2117,3 @@ static uint16_t probe_root(PyrrhicPosition *pos, int *score, unsigned *results)
         return 0;
     }
 }
-

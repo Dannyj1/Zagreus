@@ -26,6 +26,8 @@
 #include "movegen.h"
 #include "movelist_pool.h"
 #include "movepicker.h"
+#include "syzygy.h"
+#include "tbprobe.h"
 #include "timemanager.h"
 #include "tt.h"
 
@@ -39,6 +41,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     auto startTime = std::chrono::steady_clock::now();
     SearchContext searchContext{};
     searchContext.startTime = startTime;
+    searchContext.syzygyProbeDepth = engine.getOption("SyzygyProbeDepth").getIntValue();
     int depth = 0;
     int bestScore = MAX_NEGATIVE;
     Line bestPvLine{};
@@ -152,6 +155,45 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
+    // Probe tablebases
+    int tbResult;
+    int tbMin = -MATE_SCORE;
+    int tbMax = MATE_SCORE;
+    int bestScore = MAX_NEGATIVE;
+    if (!IS_ROOT_NODE && (tbResult = tablebaseProbe(board, depth, context)) != TB_RESULT_FAILED) {
+        int score = tbResult == TB_LOSS ? -MATE_SCORE + board.getPly()
+                  : tbResult == TB_WIN ? MATE_SCORE - board.getPly()
+                  : DRAW_SCORE;
+
+        if ((tbResult == TB_LOSS && score <= alpha)) {
+            tt->addPosition(board.getZobristHash(), depth, score, FAIL_LOW_NODE, 0,
+                            board.getPly(), context);
+            return score;
+        }
+
+        if ((tbResult == TB_WIN && score >= beta)) {
+            tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE, 0,
+                            board.getPly(), context);
+            return score;
+        }
+
+        if (tbResult == TB_DRAW) {
+            tt->addPosition(board.getZobristHash(), depth, score, EXACT_NODE, 0,
+                            board.getPly(), context);
+            return score;
+        }
+
+        if (IS_PV_NODE) {
+            if (tbResult == TB_WIN) {
+                bestScore = score;
+                tbMin = score;
+                alpha = std::max(score, alpha);
+            } else if (tbResult == TB_LOSS) {
+                tbMax = score;
+            }
+        }
+    }
+
     constexpr bool isPreviousMoveNull = nodeType == NULL_MOVE;
     bool ownKingInCheck = board.isKingInCheck<color>();
 
@@ -190,7 +232,6 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     int legalMoveCount = 0;
     Line nodeLine{};
     nodeLine.startPly = board.getPly();
-    int bestScore = MAX_NEGATIVE;
     Move bestMove = {NO_SQUARE, NO_SQUARE};
 
     while (movePicker.hasNext()) {
@@ -257,10 +298,14 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     if (!legalMoveCount) {
         if (ownKingInCheck) {
-            alpha = -MATE_SCORE + board.getPly();
+            return -MATE_SCORE + board.getPly();
         } else {
-            alpha = DRAW_SCORE;
+            return DRAW_SCORE;
         }
+    }
+
+    if (IS_PV_NODE) {
+        alpha = std::max(tbMin, std::min(alpha, tbMax));
     }
 
     TTNodeType ttNodeType = FAIL_LOW_NODE;

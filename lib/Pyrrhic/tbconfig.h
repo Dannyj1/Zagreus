@@ -38,19 +38,20 @@
  * to define White as 0 and Black as 1.
  */
 
-#include "../attacks.h"
-#include "../bitboards.h"
+#include "attacks.h"
+#include "constants.h"
+#include "utils.h"
 
-#define PYRRHIC_POPCOUNT(x)              (popcount(x))
-#define PYRRHIC_LSB(x)                   (getlsb(x))
-#define PYRRHIC_POPLSB(x)                (poplsb(x))
+#define PYRRHIC_POPCOUNT(x)              (Zagreus::popcnt(x))
+#define PYRRHIC_LSB(x)                   (Zagreus::bitscanForward(x))
+#define PYRRHIC_POPLSB(x)                (Zagreus::popLsb(x))
 
-#define PYRRHIC_PAWN_ATTACKS(sq, c)      (pawnAttacks(!c, sq))
-#define PYRRHIC_KNIGHT_ATTACKS(sq)       (knightAttacks(sq))
-#define PYRRHIC_BISHOP_ATTACKS(sq, occ)  (bishopAttacks(sq, occ))
-#define PYRRHIC_ROOK_ATTACKS(sq, occ)    (rookAttacks(sq, occ))
-#define PYRRHIC_QUEEN_ATTACKS(sq, occ)   (queenAttacks(sq, occ))
-#define PYRRHIC_KING_ATTACKS(sq)         (kingAttacks(sq))
+#define PYRRHIC_PAWN_ATTACKS(sq, c)      (Zagreus::getPawnAttacks(sq, c))
+#define PYRRHIC_KNIGHT_ATTACKS(sq)       (Zagreus::getKnightAttacks(sq))
+#define PYRRHIC_BISHOP_ATTACKS(sq, occ)  (Zagreus::getBishopAttacks(sq, occ))
+#define PYRRHIC_ROOK_ATTACKS(sq, occ)    (Zagreus::getRookAttacks(sq, occ))
+#define PYRRHIC_QUEEN_ATTACKS(sq, occ)   (Zagreus::getQueenAttacks(sq, occ))
+#define PYRRHIC_KING_ATTACKS(sq)         (Zagreus::getKingAttacks(sq))
 
 /*
  * Pyrrhic can produce scores for tablebase moves. These depend on the value
@@ -60,7 +61,7 @@
  * moves. Without these values you are still able to detmine which moves Win,
  * Draw, and Lose. PYRRHIC_MAX_MATE_PLY should be your max search height.
  */
-#define PYRRHIC_VALUE_PAWN     (  100)
-#define PYRRHIC_VALUE_MATE     (32000)
-#define PYRRHIC_VALUE_DRAW     (    0)
-#define PYRRHIC_MAX_MATE_PLY   (  255)
+#define PYRRHIC_VALUE_PAWN     (100)
+#define PYRRHIC_VALUE_MATE     (MATE_SCORE)
+#define PYRRHIC_VALUE_DRAW     (DRAW_SCORE)
+#define PYRRHIC_MAX_MATE_PLY   (MAX_PLY)
