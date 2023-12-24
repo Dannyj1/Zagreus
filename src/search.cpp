@@ -61,6 +61,10 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
         searchStats.depth = depth;
         searchStats.seldepth = 0;
 
+        if (board.getPly() + depth >= MAX_PLY + 1) {
+            break;
+        }
+
         // If the go command has a max depth argument, terminate when reaching the desired depth.
         if (params.depth > 0 && depth > params.depth) {
             return pvLine.moves[0];
