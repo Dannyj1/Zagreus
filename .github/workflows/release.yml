@@ -107,6 +107,7 @@ jobs:
         with:
           draft: true
           files: |
-            artifacts/*
+            artifacts/Windows/*
+            artifacts/Linux/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
