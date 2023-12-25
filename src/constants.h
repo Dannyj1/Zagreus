@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <cstdint>
+# include <cstdint>
 
 static constexpr uint16_t MAX_PLY = 500;
 static constexpr uint8_t MAX_MOVES = 255;

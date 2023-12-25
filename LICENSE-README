@@ -1,5 +1,5 @@
 Files in Zagreus are licensed under the GNU Affero General Public License version 3, unless noted otherwise. See the LICENSE file for the license text of the GNU Affero General Public License version 3.
 
 Zagreus uses the following third-party libraries, which are licensed under their own licenses:
-- Senjo UCI Adapter by zd3nik, which is licensed under the MIT license. All files from the Senjo UCI Adapter retain their original copyright and license notices.
-- Pyrrhic by AndyGrant, which is licensed under the MIT license. All files from Pyrrhic retain their original copyright and license notices.
+- Senjo UCI Adapter by zd3nik on Github, which is licensed under the MIT license. All files from the Senjo UCI Adapter retain their original copyright and license notices.
+- Pyrrhic by AndyGrant on Github, which is licensed under the MIT license. All files from Pyrrhic retain their original copyright and license notices.

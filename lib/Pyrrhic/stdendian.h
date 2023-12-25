@@ -139,7 +139,6 @@ inline uint32_t bswap32(uint32_t x) {
 
 #ifndef bswap64
 #if defined __GNUC__
-#include <intrin.h>
 #define bswap64(x) __builtin_bswap64(x)
 #else
 inline uint64_t bswap64(uint64_t x) {

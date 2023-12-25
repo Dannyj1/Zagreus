@@ -34,13 +34,19 @@ static constexpr uint16_t pieceWeights[12] = {100, 100, 350, 350, 350, 350,
 
 inline uint64_t popcnt(uint64_t b) { return __builtin_popcountll(b); }
 
-inline int8_t bitscanForward(uint64_t b) { return __builtin_ctzll(b); }
+inline int bitscanForward(uint64_t b) { return __builtin_ctzll(b); }
 
-inline int8_t bitscanReverse(uint64_t b) { return 63 ^ __builtin_clzll(b); }
+inline int bitscanReverse(uint64_t b) { return 63 ^ __builtin_clzll(b); }
 
-inline int8_t popLsb(uint64_t& b) {
-    int8_t lsb = bitscanForward(b);
+inline int popLsb(uint64_t& b) {
+    int lsb = bitscanForward(b);
     b &= b - 1;
+    return lsb;
+}
+
+inline int popLsbTb(uint64_t* b) {
+    int lsb = bitscanForward(*b);
+    *b &= *b - 1;
     return lsb;
 }
 

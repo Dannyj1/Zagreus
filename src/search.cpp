@@ -41,6 +41,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     auto startTime = std::chrono::steady_clock::now();
     SearchContext searchContext{};
     searchContext.startTime = startTime;
+    searchContext.useSyzygy = !(engine.getOption("SyzygyPath").getValue().empty());
     searchContext.syzygyProbeDepth = engine.getOption("SyzygyProbeDepth").getIntValue();
     int depth = 0;
     int bestScore = MAX_NEGATIVE;
@@ -157,13 +158,14 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     // Probe tablebases
     int tbResult;
-    int tbMin = -MATE_SCORE;
-    int tbMax = MATE_SCORE;
+    int tbMin = MAX_NEGATIVE;
+    int tbMax = MAX_POSITIVE;
     int bestScore = MAX_NEGATIVE;
-    if (!IS_ROOT_NODE && (tbResult = tablebaseProbe(board, depth, context)) != TB_RESULT_FAILED) {
+    if (!IS_ROOT_NODE && context.useSyzygy && (tbResult = tablebaseProbe(board, depth, context)) !=
+        TB_RESULT_FAILED) {
         int score = tbResult == TB_LOSS ? -MATE_SCORE + board.getPly()
-                  : tbResult == TB_WIN ? MATE_SCORE - board.getPly()
-                  : DRAW_SCORE;
+                        : tbResult == TB_WIN ? MATE_SCORE - board.getPly()
+                        : DRAW_SCORE;
 
         if ((tbResult == TB_LOSS && score <= alpha)) {
             tt->addPosition(board.getZobristHash(), depth, score, FAIL_LOW_NODE, 0,
@@ -304,7 +306,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
-    if (IS_PV_NODE) {
+    if (IS_PV_NODE && context.useSyzygy) {
         alpha = std::max(tbMin, std::min(alpha, tbMax));
     }
 

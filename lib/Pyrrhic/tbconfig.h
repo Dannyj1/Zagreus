@@ -44,7 +44,7 @@
 
 #define PYRRHIC_POPCOUNT(x)              (Zagreus::popcnt(x))
 #define PYRRHIC_LSB(x)                   (Zagreus::bitscanForward(x))
-#define PYRRHIC_POPLSB(x)                (Zagreus::popLsb(x))
+#define PYRRHIC_POPLSB(x)                (Zagreus::popLsbTb(x))
 
 #define PYRRHIC_PAWN_ATTACKS(sq, c)      (Zagreus::getPawnAttacks(sq, c))
 #define PYRRHIC_KNIGHT_ATTACKS(sq)       (Zagreus::getKnightAttacks(sq))

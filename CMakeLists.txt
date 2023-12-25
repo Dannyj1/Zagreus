@@ -69,6 +69,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_C_STANDARD 17)
 project(Zagreus)
 set(ZAGREUS_VERSION_MAJOR "4")
 set(ZAGREUS_VERSION_MINOR "1")
@@ -107,87 +108,6 @@ if (ENABLE_CLANG_TIDY)
     if (CLANG_TIDY_EXE)
         set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--config-file=${CMAKE_SOURCE_DIR}/.clang-tidy")
     endif ()
-endif ()
-
-# Profile defaults
-# If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION)
-    set(ENABLE_OPTIMIZATION OFF CACHE BOOL "Enable optimization flags (-O3)" FORCE)
-    set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif ()
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
-    set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif ()
-
-# If debug build type and ENABLE_LTO is not defined, set LTO to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_LTO)
-    set(ENABLE_LTO OFF CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
-endif ()
-
-# If debug build type and ENABLE_WARNINGS is not defined, set warnings to ON
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_WARNINGS)
-    set(ENABLE_WARNINGS ON CACHE BOOL "Enable all compiler warnings" FORCE)
-endif ()
-
-# If debug build type and ENABLE_MARCH is not defined, set march to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MARCH)
-    set(ENABLE_MARCH OFF CACHE BOOL "Enable -march flag" FORCE)
-endif ()
-
-# If debug build type and MARCH_VALUE is not defined, set march value to an empty string
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MARCH_VALUE)
-    set(MARCH_VALUE "" CACHE STRING "Value for -march flag" FORCE)
-endif ()
-
-# If debug build type and ENABLE_MTUNE is not defined, set mtune to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MTUNE)
-    set(ENABLE_MTUNE OFF CACHE BOOL "Enable -mtune flag" FORCE)
-endif ()
-
-# If debug build type and MTUNE_VALUE is not defined, set mtune value to an empty string
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MTUNE_VALUE)
-    set(MTUNE_VALUE "" CACHE STRING "Value for -mtune flag" FORCE)
-endif ()
-
-# If release build type and ENABLE_OPTIMIZATION is not defined, set optimization to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION)
-    set(ENABLE_OPTIMIZATION ON CACHE BOOL "Enable optimization flags (-O3)" FORCE)
-endif ()
-
-# If release build type and ENABLE_OPTIMIZATION_FAST_MATH is not defined, set optimization to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
-    set(ENABLE_OPTIMIZATION_FAST_MATH ON CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif ()
-
-# If release build type and ENABLE_LTO is not defined, set LTO to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_LTO)
-    set(ENABLE_LTO ON CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
-endif ()
-
-# If release build type and ENABLE_WARNINGS is not defined, set warnings to OFF
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_WARNINGS)
-    set(ENABLE_WARNINGS OFF CACHE BOOL "Enable all compiler warnings" FORCE)
-endif ()
-
-# If release build type and ENABLE_MARCH is not defined, set march to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MARCH)
-    set(ENABLE_MARCH ON CACHE BOOL "Enable -march flag" FORCE)
-endif ()
-
-# If release build type and MARCH_VALUE is not defined, set march value to "x86-64"
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MARCH_VALUE)
-    set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag" FORCE)
-endif ()
-
-# If release build type and ENABLE_MTUNE is not defined, set mtune to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MTUNE)
-    set(ENABLE_MTUNE ON CACHE BOOL "Enable -mtune flag" FORCE)
-endif ()
-
-# If release build type and MTUNE_VALUE is not defined, set mtune value to "native"
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MTUNE_VALUE)
-    set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag" FORCE)
 endif ()
 
 message("ENABLE_OPTIMIZATION: ${ENABLE_OPTIMIZATION}")
@@ -295,16 +215,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${BUILD_FLAGS}")
 
 file(GLOB inc_zagreus "src/*.h" "src/*.cpp")
 file(GLOB inc_senjo "lib/senjo/*.h" "lib/senjo/*.cpp")
-file(GLOB inc_pyrrhic "lib/Pyrrhic/*.h" "lib/Pyrrhic/*.cpp")
 
-add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_pyrrhic} ${inc_zagreus}
-        src/Attacks.cpp
-        src/Attacks.h
-        src/attacks.cpp
-        src/attacks.h
-        src/syzygy.cpp
-        src/syzygy.h
-        lib/Pyrrhic/tbchess.h)
+add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_pyrrhic} ${inc_zagreus} "lib/Pyrrhic/tbprobe.h" "lib/Pyrrhic/tbprobe.cpp")
 
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")

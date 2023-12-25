@@ -132,17 +132,13 @@ bool ZagreusEngine::setEngineOption(const std::string& optionName, const std::st
             }
 
             if (option.getName() == "SyzygyPath") {
-                if (!optionValue.empty()) {
-                    senjo::Output(senjo::Output::InfoPrefix) << "Initializing Syzygy tablebases...";
-                    if (!tb_init(optionValue.c_str())) {
-                        senjo::Output(senjo::Output::InfoPrefix)
-                            << "Failed to initialize Syzygy tablebases!";
-                    } else {
-                        senjo::Output(senjo::Output::InfoPrefix)
-                            << "Syzygy tablebases initialized!";
-                    }
+                senjo::Output(senjo::Output::InfoPrefix) << "Initializing Syzygy tablebases...";
+                if (!tb_init(optionValue.c_str())) {
+                    senjo::Output(senjo::Output::InfoPrefix)
+                        << "Failed to initialize Syzygy tablebases!";
                 } else {
-                    tb_free();
+                    senjo::Output(senjo::Output::InfoPrefix)
+                        << "Syzygy tablebases initialized!";
                 }
             }
 

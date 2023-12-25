@@ -19,7 +19,8 @@
  */
 
 #pragma once
-#include <cstdint>
+
+# include <cstdint>
 
 #include "types.h"
 
@@ -34,7 +35,7 @@ uint64_t getPawnDoublePush(uint64_t pawns, uint64_t emptyBB);
 template <PieceColor color>
 uint64_t getPawnAttacks(int8_t square);
 
-uint64_t getPawnAttacks(int8_t square, PieceColor color);
+uint64_t getPawnAttacks(int8_t square, bool turn);
 
 template <PieceColor color>
 uint64_t getPawnSinglePush(uint64_t pawns, uint64_t emptyBB);

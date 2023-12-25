@@ -27,13 +27,13 @@
 #include "types.h"
 
 namespace Zagreus {
+// clang-format off
 enum TTNodeType {
-    EXACT_NODE,
-    // Not a PV node
-    FAIL_LOW_NODE,
-    // Alpha score
+    EXACT_NODE, // Not a PV node
+    FAIL_LOW_NODE, // Alpha score
     FAIL_HIGH_NODE // Beta score
 };
+// clang-format on
 
 struct TTEntry {
     int score = 0;

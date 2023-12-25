@@ -20,21 +20,19 @@ This file is part of Zagreus.
 
 #include "tbprobe.h"
 #include "syzygy.h"
-
-#include "engine.h"
+#include "utils.h"
 #include "search.h"
 
 namespace Zagreus {
-int tablebaseProbe(Bitboard board, int depth, SearchContext& context) {
-    uint64_t occ = board.getOccupiedBoard();
-    int occCount = std::popcount(occ);
-
-    if (occCount > TB_LARGEST) {
+int tablebaseProbe(Bitboard& board, int depth, SearchContext& context) {
+    int probeDepth = context.syzygyProbeDepth;
+    if (probeDepth != 0 && depth < probeDepth) {
         return TB_RESULT_FAILED;
     }
 
-    int probeDepth = context.syzygyProbeDepth;
-    if (probeDepth != 0 && depth < probeDepth) {
+    // Take out the "has castled" bits
+    uint64_t castlingRights = board.getCastlingRights() & 0b00001111;
+    if (castlingRights != 0 || board.getHalfMoveClock() != 0 || popcnt(board.getOccupiedBoard()) > TB_LARGEST) {
         return TB_RESULT_FAILED;
     }
 
@@ -50,7 +48,10 @@ int tablebaseProbe(Bitboard board, int depth, SearchContext& context) {
         ep = 0;
     }
 
-    return tb_probe_wdl(board.getColorBoard<WHITE>(), board.getColorBoard<BLACK>(), kings, queens,
-                        rooks, bishops, knights, pawns, ep, board.getMovingColor() == WHITE);
+    return tb_probe_wdl(board.getColorBoard<WHITE>(), board.getColorBoard<BLACK>(),
+                        kings, queens,
+                        rooks, bishops,
+                        knights, pawns,
+                        ep, board.getMovingColor() == WHITE);
 }
 } // namespace Zagreus

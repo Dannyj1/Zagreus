@@ -23,5 +23,5 @@
 #include "search.h"
 
 namespace Zagreus {
-int tablebaseProbe(Bitboard board, int depth, SearchContext& context);
+int tablebaseProbe(Bitboard& board, int depth, SearchContext& context);
 } // namespace Zagreus

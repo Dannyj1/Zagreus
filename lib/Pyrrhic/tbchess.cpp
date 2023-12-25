@@ -22,12 +22,52 @@
  * SOFTWARE.
  */
 
-#include <cassert>
+enum {
 
-#include "tbconfig.h"
-#include "tbprobe.h"
-#include "tbchess.h"
-#include "utils.h"
+    PYRRHIC_BLACK   = 0, PYRRHIC_WHITE   = 1,
+    PYRRHIC_PAWN    = 1, PYRRHIC_KNIGHT  = 2,
+    PYRRHIC_BISHOP  = 3, PYRRHIC_ROOK    = 4,
+    PYRRHIC_QUEEN   = 5, PYRRHIC_KING    = 6,
+
+    PYRRHIC_WPAWN   = 1, PYRRHIC_BPAWN   = 9,
+    PYRRHIC_WKNIGHT = 2, PYRRHIC_BKNIGHT = 10,
+    PYRRHIC_WBISHOP = 3, PYRRHIC_BBISHOP = 11,
+    PYRRHIC_WROOK   = 4, PYRRHIC_BROOK   = 12,
+    PYRRHIC_WQUEEN  = 5, PYRRHIC_BQUEEN  = 13,
+    PYRRHIC_WKING   = 6, PYRRHIC_BKING   = 14,
+
+    PYRRHIC_PROMOTES_NONE   = 0,
+    PYRRHIC_PROMOTES_QUEEN  = 1,
+    PYRRHIC_PROMOTES_ROOK   = 2,
+    PYRRHIC_PROMOTES_BISHOP = 3,
+    PYRRHIC_PROMOTES_KNIGHT = 4,
+};
+
+enum {
+
+    PYRRHIC_PROMOSQS      = 0XFF000000000000FFULL,
+
+    PYRRHIC_PRIME_WKING   = 00000000000000000000ULL,
+    PYRRHIC_PRIME_WQUEEN  = 11811845319353239651ULL,
+    PYRRHIC_PRIME_WROOK   = 10979190538029446137ULL,
+    PYRRHIC_PRIME_WBISHOP = 12311744257139811149ULL,
+    PYRRHIC_PRIME_WKNIGHT = 15202887380319082783ULL,
+    PYRRHIC_PRIME_WPAWN   = 17008651141875982339ULL,
+    PYRRHIC_PRIME_BKING   = 00000000000000000000ULL,
+    PYRRHIC_PRIME_BQUEEN  = 15484752644942473553ULL,
+    PYRRHIC_PRIME_BROOK   = 18264461213049635989ULL,
+    PYRRHIC_PRIME_BBISHOP = 15394650811035483107ULL,
+    PYRRHIC_PRIME_BKNIGHT = 13469005675588064321ULL,
+    PYRRHIC_PRIME_BPAWN   = 11695583624105689831ULL,
+    PYRRHIC_PRIME_NONE    = 00000000000000000000ULL,
+};
+
+typedef struct PyrrhicPosition {
+    uint64_t white, black;
+    uint64_t kings, queens, rooks;
+    uint64_t bishops, knights, pawns;
+    uint8_t rule50, ep; bool turn;
+} PyrrhicPosition;
 
 unsigned pyrrhic_move_from      (PyrrhicMove move) { return (move >>  6) & 0x3F; }
 unsigned pyrrhic_move_to        (PyrrhicMove move) { return (move >>  0) & 0x3F; }
@@ -45,6 +85,9 @@ bool pyrrhic_pawn_start_square  (int colour, int sq)   { return (sq >> 3) == (co
 // The only two forward-declarations that are needed
 bool pyrrhic_do_move(PyrrhicPosition *pos, const PyrrhicPosition *pos0, PyrrhicMove move);
 bool pyrrhic_legal_move(const PyrrhicPosition *pos, PyrrhicMove move);
+
+
+const char pyrrhic_piece_to_char[] = " PNBRQK  pnbrqk";
 
 uint64_t pyrrhic_pieces_by_type(const PyrrhicPosition *pos, int colour, int piece) {
 
@@ -151,36 +194,34 @@ PyrrhicMove* pyrrhic_gen_captures(const PyrrhicPosition *pos, PyrrhicMove *moves
     uint64_t b, att;
 
     // Generate captures for the King
-    for (b = us & pos->kings; b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_KING_ATTACKS(PYRRHIC_LSB(b)) & them; att; PYRRHIC_POPLSB(att))
+    for (b = us & pos->kings; b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_KING_ATTACKS(PYRRHIC_LSB(b)) & them; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, false, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate captures for the Rooks & Queens
-    for (b = us & (pos->rooks | pos->queens); b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_ROOK_ATTACKS(PYRRHIC_LSB(b), us | them) & them; att; PYRRHIC_POPLSB(att))
+    for (b = us & (pos->rooks | pos->queens); b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_ROOK_ATTACKS(PYRRHIC_LSB(b), us | them) & them; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, false, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate captures for the Bishops & Queens
-    for (b = us & (pos->bishops | pos->queens); b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_BISHOP_ATTACKS(PYRRHIC_LSB(b), us | them) & them; att;
-             PYRRHIC_POPLSB(att))
+    for (b = us & (pos->bishops | pos->queens); b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_BISHOP_ATTACKS(PYRRHIC_LSB(b), us | them) & them; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, false, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate captures for the Knights
-    for (b = us & pos->knights; b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_KNIGHT_ATTACKS(PYRRHIC_LSB(b)) & them; att; PYRRHIC_POPLSB(att))
+    for (b = us & pos->knights; b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_KNIGHT_ATTACKS(PYRRHIC_LSB(b)) & them; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, false, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate captures for the Pawns
-    Zagreus::PieceColor color = (pos->turn ? Zagreus::BLACK : Zagreus::WHITE);
-    for (b = us & pos->pawns; b; PYRRHIC_POPLSB(b)) {
+    for (b = us & pos->pawns; b; PYRRHIC_POPLSB(&b)) {
 
         // Generate Enpassant Captures
-        if (pos->ep && pyrrhic_test_bit(PYRRHIC_PAWN_ATTACKS(PYRRHIC_LSB(b), color), pos->ep))
+        if (pos->ep && pyrrhic_test_bit(PYRRHIC_PAWN_ATTACKS(PYRRHIC_LSB(b), pos->turn), pos->ep))
             moves = pyrrhic_add_move(moves, false, PYRRHIC_LSB(b), pos->ep);
 
         // Generate non-Enpassant Captures
-        for (att = PYRRHIC_PAWN_ATTACKS(PYRRHIC_LSB(b), color) & them; att; PYRRHIC_POPLSB(att))
+        for (att = PYRRHIC_PAWN_ATTACKS(PYRRHIC_LSB(b), pos->turn) & them; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, pyrrhic_promo_square(PYRRHIC_LSB(att)), PYRRHIC_LSB(b), PYRRHIC_LSB(att));
     }
 
@@ -196,34 +237,32 @@ PyrrhicMove* pyrrhic_gen_moves(const PyrrhicPosition *pos, PyrrhicMove *moves) {
     uint64_t b, att;
 
     // Generate moves for the King
-    for (b = us & pos->kings; b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_KING_ATTACKS(PYRRHIC_LSB(b)) & ~us; att; PYRRHIC_POPLSB(att))
+    for (b = us & pos->kings; b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_KING_ATTACKS(PYRRHIC_LSB(b)) & ~us; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, 0, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate moves for the Rooks
-    for (b = us & (pos->rooks | pos->queens); b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_ROOK_ATTACKS(PYRRHIC_LSB(b), us | them) & ~us; att; PYRRHIC_POPLSB(att))
+    for (b = us & (pos->rooks | pos->queens); b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_ROOK_ATTACKS(PYRRHIC_LSB(b), us | them) & ~us; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, 0, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate moves for the Bishops
-    for (b = us & (pos->bishops | pos->queens); b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_BISHOP_ATTACKS(PYRRHIC_LSB(b), us | them) & ~us; att;
-             PYRRHIC_POPLSB(att))
+    for (b = us & (pos->bishops | pos->queens); b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_BISHOP_ATTACKS(PYRRHIC_LSB(b), us | them) & ~us; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, 0, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate moves for the Knights
-    for (b = us & pos->knights; b; PYRRHIC_POPLSB(b))
-        for (att = PYRRHIC_KNIGHT_ATTACKS(PYRRHIC_LSB(b)) & ~us; att; PYRRHIC_POPLSB(att))
+    for (b = us & pos->knights; b; PYRRHIC_POPLSB(&b))
+        for (att = PYRRHIC_KNIGHT_ATTACKS(PYRRHIC_LSB(b)) & ~us; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, 0, PYRRHIC_LSB(b), PYRRHIC_LSB(att));
 
     // Generate moves for the Pawns
-    Zagreus::PieceColor color = (pos->turn ? Zagreus::BLACK : Zagreus::WHITE);
-    for (b = us & pos->pawns; b; PYRRHIC_POPLSB(b)) {
+    for (b = us & pos->pawns; b; PYRRHIC_POPLSB(&b)) {
 
         unsigned from = PYRRHIC_LSB(b);
 
         // Generate Enpassant Captures
-        if (pos->ep && pyrrhic_test_bit(PYRRHIC_PAWN_ATTACKS(from, color), pos->ep))
+        if (pos->ep && pyrrhic_test_bit(PYRRHIC_PAWN_ATTACKS(from, pos->turn), pos->ep))
             moves = pyrrhic_add_move(moves, false, from, pos->ep);
 
         // Generate any single pawn pushes
@@ -237,7 +276,7 @@ PyrrhicMove* pyrrhic_gen_moves(const PyrrhicPosition *pos, PyrrhicMove *moves) {
             moves = pyrrhic_add_move(moves, false, from, from + 2 * Forward);
 
         // Generate non-Enpassant Captures
-        for (att = PYRRHIC_PAWN_ATTACKS(from, color) & them; att; PYRRHIC_POPLSB(att))
+        for (att = PYRRHIC_PAWN_ATTACKS(from, pos->turn) & them; att; PYRRHIC_POPLSB(&att))
             moves = pyrrhic_add_move(moves, pyrrhic_promo_square(PYRRHIC_LSB(att)), from, PYRRHIC_LSB(att));
     }
 
@@ -267,10 +306,10 @@ bool pyrrhic_is_en_passant(const PyrrhicPosition *pos, PyrrhicMove move) {
         && pyrrhic_move_to(move) == pos->ep && pos->ep;
 }
 
-bool pyrrhic_is_capture(const PyrrhicPosition* pos, PyrrhicMove move) {
-    uint64_t them = pos->turn ? pos->black : pos->white;
-    return pyrrhic_test_bit(them, pyrrhic_move_to(move))
-           || pyrrhic_is_en_passant(pos, move);
+bool pyrrhic_is_capture(const PyrrhicPosition *pos, PyrrhicMove move) {
+   uint64_t them = pos->turn ? pos->black : pos->white;
+   return pyrrhic_test_bit(them, pyrrhic_move_to(move))
+       || pyrrhic_is_en_passant(pos, move);
 }
 
 bool pyrrhic_is_legal(const PyrrhicPosition *pos) {
@@ -278,13 +317,12 @@ bool pyrrhic_is_legal(const PyrrhicPosition *pos) {
     uint64_t us   = pos->turn ? pos->black : pos->white;
     uint64_t them = pos->turn ? pos->white : pos->black;
     unsigned sq   = PYRRHIC_LSB(pos->kings & us);
-    Zagreus::PieceColor color = (!pos->turn ? Zagreus::BLACK : Zagreus::WHITE);
 
     return !(PYRRHIC_KING_ATTACKS(sq) & pos->kings & them)
         && !(PYRRHIC_ROOK_ATTACKS(sq, us | them) & (pos->rooks | pos->queens) & them)
         && !(PYRRHIC_BISHOP_ATTACKS(sq, us | them) & (pos->bishops | pos->queens) & them)
         && !(PYRRHIC_KNIGHT_ATTACKS(sq) & pos->knights & them)
-        && !(PYRRHIC_PAWN_ATTACKS(sq, color) & pos->pawns & them);
+        && !(PYRRHIC_PAWN_ATTACKS(sq, !pos->turn) & pos->pawns & them);
 }
 
 bool pyrrhic_is_check(const PyrrhicPosition *pos) {
@@ -292,12 +330,11 @@ bool pyrrhic_is_check(const PyrrhicPosition *pos) {
     uint64_t us   = pos->turn ? pos->white : pos->black;
     uint64_t them = pos->turn ? pos->black : pos->white;
     unsigned sq   = PYRRHIC_LSB(pos->kings & us);
-    Zagreus::PieceColor color = (pos->turn ? Zagreus::BLACK : Zagreus::WHITE);
 
     return (PYRRHIC_ROOK_ATTACKS(sq, us | them) & ((pos->rooks | pos->queens) & them))
         || (PYRRHIC_BISHOP_ATTACKS(sq, us | them) & ((pos->bishops | pos->queens) & them))
         || (PYRRHIC_KNIGHT_ATTACKS(sq) & (pos->knights & them))
-        || (PYRRHIC_PAWN_ATTACKS(sq, color) & (pos->pawns & them));
+        || (PYRRHIC_PAWN_ATTACKS(sq, pos->turn) & (pos->pawns & them));
 }
 
 bool pyrrhic_is_mate(const PyrrhicPosition *pos) {
@@ -355,17 +392,15 @@ bool pyrrhic_do_move(PyrrhicPosition *pos, const PyrrhicPosition *pos0, PyrrhicM
         pos->rule50 = 0; // Pawn move
 
         // Check for a double push by White
-        Zagreus::PieceColor whiteColor = Zagreus::WHITE;
         if (   (from ^ to) == 16
-               && pos0->turn == PYRRHIC_WHITE
-               && (PYRRHIC_PAWN_ATTACKS(from + 8, whiteColor) & pos0->pawns & pos0->black))
+            &&  pos0->turn == PYRRHIC_WHITE
+            && (PYRRHIC_PAWN_ATTACKS(from + 8, PYRRHIC_WHITE) & pos0->pawns & pos0->black))
             pos->ep = from + 8;
 
         // Check for a double push by Black
-        Zagreus::PieceColor blackColor = Zagreus::BLACK;
         if (   (from ^ to) == 16
-               && pos0->turn == PYRRHIC_BLACK
-               && (PYRRHIC_PAWN_ATTACKS(from - 8, blackColor) & pos0->pawns & pos0->white))
+            &&  pos0->turn == PYRRHIC_BLACK
+            && (PYRRHIC_PAWN_ATTACKS(from - 8, PYRRHIC_BLACK) & pos0->pawns & pos0->white))
             pos->ep = from - 8;
 
         // Check for an Enpassant being played
@@ -388,7 +423,8 @@ bool pyrrhic_do_move(PyrrhicPosition *pos, const PyrrhicPosition *pos0, PyrrhicM
     return pyrrhic_is_legal(pos);
 }
 
-bool pyrrhic_legal_move(const PyrrhicPosition* pos, PyrrhicMove move) {
-    PyrrhicPosition pos1;
-    return pyrrhic_do_move(&pos1, pos, move);
+bool pyrrhic_legal_move(const PyrrhicPosition *pos, PyrrhicMove move) {
+   PyrrhicPosition pos1;
+   return pyrrhic_do_move(&pos1, pos, move);
 }
+
