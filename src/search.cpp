@@ -164,7 +164,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     if (!IS_ROOT_NODE && context.useSyzygy && (tbResult = tablebaseProbe(board, depth, context)) !=
         TB_RESULT_FAILED) {
         int score = tbResult == TB_LOSS ? -MATE_SCORE + board.getPly()
-                        : tbResult == TB_WIN ? MATE_SCORE - board.getPly()
+                        : tbResult == TB_WIN
+                        ? MATE_SCORE - board.getPly()
                         : DRAW_SCORE;
 
         if ((tbResult == TB_LOSS && score <= alpha)) {
