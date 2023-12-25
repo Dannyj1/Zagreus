@@ -43,6 +43,7 @@ private:
         senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 1),
         senjo::EngineOption("SyzygyPath", "", senjo::EngineOption::OptionType::String),
         senjo::EngineOption("SyzygyProbeLimit", "0", senjo::EngineOption::OptionType::Spin, 0, 100),
+        senjo::EngineOption("SyzygyProbeDepth", "0", senjo::EngineOption::OptionType::Spin, 0, 7),
     };
 
 public:

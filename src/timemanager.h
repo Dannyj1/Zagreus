@@ -21,7 +21,7 @@
 #pragma once
 
 #include "GoParams.h"
-#include "engine.h"
+#include "uci.h"
 #include "search.h"
 #include "types.h"
 

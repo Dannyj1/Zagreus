@@ -24,7 +24,7 @@
 #include <iostream>
 
 #include "GoParams.h"
-#include "engine.h"
+#include "uci.h"
 #include "types.h"
 
 namespace Zagreus {

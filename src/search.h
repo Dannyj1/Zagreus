@@ -22,7 +22,7 @@
 #include <vector>
 
 #include "bitboard.h"
-#include "engine.h"
+#include "uci.h"
 #include "types.h"
 #include "GoParams.h"
 
@@ -38,6 +38,7 @@ struct SearchContext {
     bool suddenScoreDrop = false;
     int syzygyProbeDepth = 0;
     bool useSyzygy = false;
+    int syzygyProbeLimit = 0;
 };
 
 template <PieceColor color>

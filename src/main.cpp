@@ -26,7 +26,7 @@
 #include "Output.h"
 #include "UCIAdapter.h"
 #include "bitboard.h"
-#include "engine.h"
+#include "uci.h"
 #include "features.h"
 #include "magics.h"
 #include "movegen.h"
