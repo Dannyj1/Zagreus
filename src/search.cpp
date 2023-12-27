@@ -137,6 +137,11 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     searchStats.nodes += 1;
 
+    bool ownKingInCheck = board.isKingInCheck<color>();
+    if (ownKingInCheck) {
+        depth += 1;
+    }
+
     if (depth <= 0) {
         pvLine.moveCount = 0;
         return qsearch<color, nodeType>(board, alpha, beta, depth, context, searchStats);
@@ -151,16 +156,10 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
-    bool ownKingInCheck = board.isKingInCheck<color>();
-    int depthExtension = 0;
     constexpr bool isPreviousMoveNull = nodeType == NULL_MOVE;
 
-    if (ownKingInCheck) {
-        depthExtension += 1;
-    }
-
     // Null move pruning
-    if (!IS_PV_NODE && depth >= 3 && !depthExtension && !isPreviousMoveNull && board.
+    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.
         getAmountOfMinorOrMajorPieces<
             color>() > 0) {
         if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
@@ -211,16 +210,18 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         int score;
         if (IS_PV_NODE && doPvSearch) {
-            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + depthExtension,
+            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1,
                                                 context,
                                                 searchStats, nodeLine);
         } else {
             score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha,
-                                                   depth - 1 + depthExtension, context,
+                                                   depth - 1, context,
                                                    searchStats, nodeLine);
 
             if (score > alpha && score < beta) {
-                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + depthExtension, context, searchStats, nodeLine);
+                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha,
+                                                    depth - 1, context,
+                                                    searchStats, nodeLine);
             }
         }
 
