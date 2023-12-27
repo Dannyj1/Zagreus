@@ -132,7 +132,6 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     auto currentTime = std::chrono::steady_clock::now();
     if (!IS_ROOT_NODE && (currentTime > context.endTime || board.getPly() >= MAX_PLY)) {
         pvLine.moveCount = 0;
-        // Immediately evaluate when time is up
         return beta;
     }
 
@@ -152,11 +151,17 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
-    constexpr bool isPreviousMoveNull = nodeType == NULL_MOVE;
     bool ownKingInCheck = board.isKingInCheck<color>();
+    int depthExtension = 0;
+    constexpr bool isPreviousMoveNull = nodeType == NULL_MOVE;
+
+    if (ownKingInCheck) {
+        depthExtension += 1;
+    }
 
     // Null move pruning
-    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.getAmountOfMinorOrMajorPieces<
+    if (!IS_PV_NODE && depth >= 3 && !depthExtension && !isPreviousMoveNull && board.
+        getAmountOfMinorOrMajorPieces<
             color>() > 0) {
         if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
             int r = 3 + (depth >= 6) + (depth >= 12);
@@ -206,14 +211,16 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         int score;
         if (IS_PV_NODE && doPvSearch) {
-            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, context,
+            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + depthExtension,
+                                                context,
                                                 searchStats, nodeLine);
         } else {
-            score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha, depth - 1, context,
+            score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha,
+                                                   depth - 1 + depthExtension, context,
                                                    searchStats, nodeLine);
 
             if (score > alpha && score < beta) {
-                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1, context, searchStats, nodeLine);
+                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + depthExtension, context, searchStats, nodeLine);
             }
         }
 
