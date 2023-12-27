@@ -334,6 +334,28 @@ public:
         return score;
     }
 
+    // See, but after a move has already been made. We just check if the opponent can win material.
+    // This method is basically seeCapture where the move has already been made. It is used to analyze a move already made to see if it appears to be safe.
+    template <PieceColor movedColor>
+    int seeOpponent(int8_t square) {
+        // moved color is the color that just moved
+        constexpr PieceColor OPPOSITE_COLOR = movedColor == WHITE ? BLACK : WHITE;
+        int score = NO_CAPTURE_SCORE;
+        int8_t smallestAttackerSquare = getSmallestAttackerSquare<OPPOSITE_COLOR>(square);
+
+        if (smallestAttackerSquare != NO_SQUARE) {
+            PieceType movingPiece = pieceSquareMapping[smallestAttackerSquare];
+            PieceType capturedPieceType = pieceSquareMapping[square];
+            int captureScore = mvvlva(movingPiece, capturedPieceType);
+            Move move{smallestAttackerSquare, square, movingPiece, captureScore};
+            makeMove(move);
+            score = getPieceWeight(capturedPieceType) - see<OPPOSITE_COLOR>(square);
+            unmakeMove(move);
+        }
+
+        return score;
+    }
+
     uint64_t getBetweenSquares(int8_t from, int8_t to);
 
     [[nodiscard]] const Move& getPreviousMove() const;

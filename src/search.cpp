@@ -139,7 +139,11 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
     bool ownKingInCheck = board.isKingInCheck<color>();
     if (ownKingInCheck) {
-        depth += 1;
+        int see = board.seeOpponent<OPPOSITE_COLOR>(board.getPreviousMove().to);
+
+        if (see >= NO_CAPTURE_SCORE) {
+            depth += 1;
+        }
     }
 
     if (depth <= 0) {
