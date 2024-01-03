@@ -232,11 +232,11 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                         R += 1;
                     }
 
-                    int lmrScore = -search<OPPOSITE_COLOR, NO_PV>(
+                    score = -search<OPPOSITE_COLOR, NO_PV>(
                         board, -alpha - 1, -alpha, depth - 1 - R, context, searchStats, nodeLine);
                     didLmr = true;
 
-                    if (lmrScore > alpha) {
+                    if (score > alpha) {
                         shouldFullSearch = true;
                     }
                 }
