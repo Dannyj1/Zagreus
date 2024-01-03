@@ -20,8 +20,6 @@
 
 #include "search.h"
 
-#include <cmath>
-
 #include "../senjo/Output.h"
 #include "evaluate.h"
 #include "features.h"
@@ -215,7 +213,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         legalMoveCount += 1;
 
-        int score = 0;
+        int score;
         if (IS_PV_NODE && doPvSearch) {
             score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + extension,
                                                 context,
@@ -230,16 +228,15 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                 if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
                     int R = 1;
 
-                    // After 60% of the moves have been made, increase R by 1
-                    if (movePicker.movesSearched() > std::ceil(moves->size * 0.6)) {
+                    // If more than 60% of the moves have been searched, increase R by 1
+                    if (movePicker.movesSearched() > ceil(0.6 * movePicker.size())) {
                         R += 1;
                     }
 
-                    score = -search<OPPOSITE_COLOR, NO_PV>(
-                        board, -alpha - 1, -alpha, depth - 1 - R, context, searchStats, nodeLine);
+                    int lmrScore = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha, depth - 1 - R, context, searchStats, nodeLine);
                     didLmr = true;
 
-                    if (score > alpha) {
+                    if (lmrScore > alpha) {
                         shouldFullSearch = true;
                     }
                 }
