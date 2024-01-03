@@ -224,11 +224,12 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
             // LMR (Not in PV/Root nodes)
             if (depth >= 3 && !extension && move.captureScore == NO_CAPTURE_SCORE && move.
-                promotionPiece == EMPTY && movePicker.movesSearched() >= 4) {
+                promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
                 if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
                     int R = 1;
 
-                    if (movePicker.movesSearched() > 8) {
+                    // After 60% of the moves have been made, increase R by 1
+                    if (movePicker.movesSearched() > ceil(moves->size * 0.6)) {
                         R += 1;
                     }
 
