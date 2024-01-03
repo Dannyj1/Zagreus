@@ -224,7 +224,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
             // LMR (Not in PV/Root nodes)
             if (depth >= 3 && !extension && move.captureScore == NO_CAPTURE_SCORE && move.
-                promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
+                promotionPiece == EMPTY && movePicker.movesSearched() >= 4) {
                 if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
                     int R = 1;
 
