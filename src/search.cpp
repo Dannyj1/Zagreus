@@ -213,7 +213,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         legalMoveCount += 1;
 
-        int score;
+        int score = 0;
         if (IS_PV_NODE && doPvSearch) {
             score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + extension,
                                                 context,
@@ -228,7 +228,6 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                 if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
                     int R = 1;
 
-                    // If more than 60% of the moves have been searched, increase R by 1
                     if (movePicker.movesSearched() > 8) {
                         R += 1;
                     }
