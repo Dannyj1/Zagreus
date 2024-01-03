@@ -223,21 +223,17 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             bool shouldFullSearch = false;
 
             // LMR (Not in PV/Root nodes)
-            if (depth >= 3 && !extension && move.captureScore != NO_CAPTURE_SCORE && move.
+            if (depth >= 3 && !extension && move.captureScore == NO_CAPTURE_SCORE && move.
                 promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
                 if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
                     int R = 1;
 
-                    // If more than half of the moves have been searched, reduce more
-                    if (movePicker.movesSearched() > (movePicker.size() / 2)) {
-                        R = 2;
+                    // If more than 60% of the moves have been searched, increase R by 1
+                    if (movePicker.movesSearched() > ceil(0.6 * movePicker.size())) {
+                        R += 1;
                     }
 
-                    // TODO: maybe consider SEE for captures and reduce bad captures anyway? We already calculate it.
-                    int lmrScore = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha,
-                        depth - 1 + extension - R,
-                        context,
-                        searchStats, nodeLine);
+                    int lmrScore = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha, depth - 1 - R, context, searchStats, nodeLine);
                     didLmr = true;
 
                     if (lmrScore > alpha) {
