@@ -124,6 +124,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
     constexpr bool IS_ROOT_NODE = nodeType == ROOT;
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
+    int extension = 0;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -142,7 +143,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         int see = board.seeOpponent<OPPOSITE_COLOR>(board.getPreviousMove().to);
 
         if (see >= NO_CAPTURE_SCORE) {
-            depth += 1;
+            extension += 1;
         }
     }
 
@@ -214,17 +215,17 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         int score;
         if (IS_PV_NODE && doPvSearch) {
-            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1,
+            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + extension,
                                                 context,
                                                 searchStats, nodeLine);
         } else {
             score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha,
-                                                   depth - 1, context,
+                                                   depth - 1 + extension, context,
                                                    searchStats, nodeLine);
 
             if (score > alpha && score < beta) {
                 score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha,
-                                                    depth - 1, context,
+                                                    depth - 1 + extension, context,
                                                     searchStats, nodeLine);
             }
         }
