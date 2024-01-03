@@ -229,7 +229,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                     int R = 1;
 
                     // If more than 60% of the moves have been searched, increase R by 1
-                    if (movePicker.movesSearched() > ceil(0.6 * movePicker.size())) {
+                    if (movePicker.movesSearched() > movePicker.size() / 10 * 6) {
                         R += 1;
                     }
 
