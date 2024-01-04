@@ -101,6 +101,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
 
             if (reSearch) {
                 depth -= 1;
+                searchContext.aspirationReSearches += 1;
                 continue;
             }
         }

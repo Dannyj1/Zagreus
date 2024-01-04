@@ -93,6 +93,10 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
         timePerMove = timePerMove * 1.5;
     }
 
+    if (context.aspirationReSearches) {
+        timePerMove += timePerMove * std::min(context.aspirationReSearches, 5);
+    }
+
     if (timePerMove > maxTime) {
         timePerMove = maxTime;
     }

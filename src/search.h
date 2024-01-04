@@ -36,6 +36,7 @@ struct SearchContext {
     bool suddenScoreSwing = false;
     // A boolean variable that keeps track if the score suddenly had a big drop (-150 or more)
     bool suddenScoreDrop = false;
+    int aspirationReSearches = 0;
 };
 
 template <PieceColor color>
