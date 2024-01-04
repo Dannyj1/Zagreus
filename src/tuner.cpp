@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2024  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -51,7 +51,7 @@ double beta2 = 0.999;
 // 0 = random seed
 long seed = 0;
 int epsilonWarmupIterations = 0;
-int patience = 50;
+int patience = 20;
 
 std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& positions) {
     // Create random batches of batchSize positions
