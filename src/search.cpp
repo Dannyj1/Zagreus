@@ -20,6 +20,8 @@
 
 #include "search.h"
 
+#include <cmath>
+
 #include "../senjo/Output.h"
 #include "evaluate.h"
 #include "features.h"
@@ -229,7 +231,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                     int R = 1;
 
                     // After 60% of the moves have been made, increase R by 1
-                    if (movePicker.movesSearched() > ceil(moves->size * 0.6)) {
+                    if (movePicker.movesSearched() > std::ceil(moves->size * 0.6)) {
                         R += 1;
                     }
 
