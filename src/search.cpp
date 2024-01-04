@@ -44,7 +44,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     int alpha = MAX_NEGATIVE;
     int beta = MAX_POSITIVE;
     // Delta is used for the aspiration window
-    int delta = 75;
+    int delta = 60;
     Line bestPvLine{};
     Line pvLine{};
     pvLine.startPly = board.getPly();
@@ -87,11 +87,11 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
             bool reSearch = false;
             if (score <= alpha) {
                 delta *= 2;
-                alpha = std::max(score - delta, MAX_NEGATIVE);
+                alpha = std::max(score - delta, -MATE_SCORE);
                 reSearch = true;
             } else if (score >= beta) {
                 delta *= 2;
-                beta = std::min(score + delta, MAX_POSITIVE);
+                beta = std::min(score + delta, MATE_SCORE);
                 reSearch = true;
             } else {
                 alpha = score - delta;
