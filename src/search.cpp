@@ -86,18 +86,17 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
         if (depth >= 5) {
             bool reSearch = false;
             if (score <= alpha) {
-                delta *= 3;
+                delta *= 4;
                 alpha = std::max(score - delta, -MATE_SCORE);
                 reSearch = true;
             } else if (score >= beta) {
-                delta *= 3;
+                delta *= 4;
                 beta = std::min(score + delta, MATE_SCORE);
                 reSearch = true;
             } else {
                 alpha = score - delta;
                 beta = score + delta;
             }
-
 
             if (reSearch) {
                 depth -= 1;
