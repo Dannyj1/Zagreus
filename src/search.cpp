@@ -41,6 +41,10 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     searchContext.startTime = startTime;
     int depth = 0;
     int bestScore = MAX_NEGATIVE;
+    int alpha = MAX_NEGATIVE;
+    int beta = MAX_POSITIVE;
+    // Delta is used for the aspiration window
+    int delta = 75;
     Line bestPvLine{};
     Line pvLine{};
     pvLine.startPly = board.getPly();
@@ -70,8 +74,36 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
             return pvLine.moves[0];
         }
 
-        int score = search<color, ROOT>(board, MAX_NEGATIVE, MAX_POSITIVE, depth, searchContext,
+        int score = search<color, ROOT>(board, alpha, beta, depth, searchContext,
                                         searchStats, pvLine);
+
+        // Set windows after depth 4 is reached (so they are started to be used at depth 5)
+        if (depth == 4) {
+            alpha = score - delta;
+            beta = score + delta;
+        }
+
+        if (depth >= 5) {
+            bool reSearch = false;
+            if (score <= alpha) {
+                delta *= 2;
+                alpha = std::max(score - delta, MAX_NEGATIVE);
+                reSearch = true;
+            } else if (score >= beta) {
+                delta *= 2;
+                beta = std::min(score + delta, MAX_POSITIVE);
+                reSearch = true;
+            } else {
+                alpha = score - delta;
+                beta = score + delta;
+            }
+
+
+            if (reSearch) {
+                depth -= 1;
+                continue;
+            }
+        }
 
         currentTime = std::chrono::steady_clock::now();
         if (currentTime > searchContext.endTime) {
