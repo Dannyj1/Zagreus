@@ -213,20 +213,46 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         legalMoveCount += 1;
 
-        int score;
+        int score = 0;
         if (IS_PV_NODE && doPvSearch) {
             score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + extension,
                                                 context,
                                                 searchStats, nodeLine);
         } else {
-            score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha,
-                                                   depth - 1 + extension, context,
-                                                   searchStats, nodeLine);
+            bool didLmr = false;
+            bool shouldFullSearch = false;
 
-            if (score > alpha && score < beta) {
-                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha,
-                                                    depth - 1 + extension, context,
-                                                    searchStats, nodeLine);
+            // LMR (Not in PV/Root nodes)
+            if (depth >= 3 && !extension && move.captureScore == NO_CAPTURE_SCORE && move.
+                promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
+                if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
+                    int R = 1;
+
+                    // After 60% of the moves have been made, increase R by 1
+                    if (movePicker.movesSearched() > ceil(moves->size * 0.6)) {
+                        R += 1;
+                    }
+
+                    score = -search<OPPOSITE_COLOR, NO_PV>(
+                        board, -alpha - 1, -alpha, depth - 1 - R, context, searchStats, nodeLine);
+                    didLmr = true;
+
+                    if (score > alpha) {
+                        shouldFullSearch = true;
+                    }
+                }
+            }
+
+            if (!didLmr || shouldFullSearch) {
+                score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha,
+                                                       depth - 1 + extension, context,
+                                                       searchStats, nodeLine);
+
+                if (score > alpha && score < beta) {
+                    score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha,
+                                                        depth - 1 + extension, context,
+                                                        searchStats, nodeLine);
+                }
             }
         }
 
