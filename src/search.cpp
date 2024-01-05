@@ -77,33 +77,18 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
         int score = search<color, ROOT>(board, alpha, beta, depth, searchContext,
                                         searchStats, pvLine);
 
-        // Set windows after depth 4 is reached (so they are started to be used at depth 5)
-        if (depth == 4) {
-            alpha = score - delta;
-            beta = score + delta;
+        // Start using aspiration windows at depth 4
+        if (score <= alpha || score >= beta) {
+            delta *= 2;
+            alpha = MAX_NEGATIVE;
+            beta = MAX_POSITIVE;
+            depth -= 1;
+            searchContext.aspirationReSearches += 1;
+            continue;
         }
 
-        if (depth >= 5) {
-            bool reSearch = false;
-            if (score <= alpha) {
-                delta *= 4;
-                alpha = std::max(score - delta, -MATE_SCORE);
-                reSearch = true;
-            } else if (score >= beta) {
-                delta *= 4;
-                beta = std::min(score + delta, MATE_SCORE);
-                reSearch = true;
-            } else {
-                alpha = score - delta;
-                beta = score + delta;
-            }
-
-            if (reSearch) {
-                depth -= 1;
-                searchContext.aspirationReSearches += 1;
-                continue;
-            }
-        }
+        alpha = score - delta;
+        beta = score + delta;
 
         currentTime = std::chrono::steady_clock::now();
         if (currentTime > searchContext.endTime) {
