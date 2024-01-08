@@ -51,7 +51,7 @@ double beta2 = 0.999;
 // 0 = random seed
 long seed = 0;
 int epsilonWarmupIterations = 0;
-int patience = 20;
+int patience = 50;
 
 std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& positions) {
     // Create random batches of batchSize positions

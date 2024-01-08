@@ -688,27 +688,6 @@ void Evaluation::evaluatePieces() {
     }
 }
 
-int Evaluation::evaluate() {
-    int phase = getPhase();
-    int modifier = bitboard.getMovingColor() == WHITE ? 1 : -1;
-
-    initEvalContext(bitboard);
-
-    evaluateMaterial<WHITE>();
-    evaluateMaterial<BLACK>();
-
-    evaluatePst<WHITE>();
-    evaluatePst<BLACK>();
-
-    evaluatePieces<WHITE>();
-    evaluatePieces<BLACK>();
-
-    int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
-    int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
-
-    return (whiteScore - blackScore) * modifier;
-}
-
 template <PieceColor color>
 void Evaluation::evaluateMaterial() {
     if (color == WHITE) {
@@ -773,5 +752,58 @@ void Evaluation::evaluatePst() {
         blackMidgameScore += bitboard.getBlackMidgamePst();
         blackEndgameScore += bitboard.getBlackEndgamePst();
     }
+}
+
+template <PieceColor color>
+void Evaluation::evaluateSpace() {
+    constexpr PieceColor OPPONENT = color == WHITE ? BLACK : WHITE;
+    uint64_t weakSquares = attackedBy2[OPPONENT] & ~attackedBy2[color];
+    uint64_t strongSquares = attackedBy2[color] & ~attackedBy2[OPPONENT];
+    uint64_t pawnAttacks = attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
+    weakSquares &= ~pawnAttacks;
+    uint64_t controlledSquares = attacksByColor[color];
+    controlledSquares &= ~weakSquares;
+
+    int controlledSquareCount = popcnt(controlledSquares);
+    int strongSquareCount = popcnt(strongSquares);
+    int midgameScore = 0;
+    int endgameScore = 0;
+
+    midgameScore += controlledSquareCount * getEvalValue(MIDGAME_CONTROLLED_SQUARE);
+    endgameScore += controlledSquareCount * getEvalValue(ENDGAME_CONTROLLED_SQUARE);
+    midgameScore += strongSquareCount * getEvalValue(MIDGAME_STRONG_SQUARE);
+    endgameScore += strongSquareCount * getEvalValue(ENDGAME_STRONG_SQUARE);
+
+    if (color == WHITE) {
+        whiteMidgameScore += midgameScore;
+        whiteEndgameScore += endgameScore;
+    } else {
+        blackMidgameScore += midgameScore;
+        blackEndgameScore += endgameScore;
+    }
+}
+
+int Evaluation::evaluate() {
+    int phase = getPhase();
+    int modifier = bitboard.getMovingColor() == WHITE ? 1 : -1;
+
+    initEvalContext(bitboard);
+
+    evaluateMaterial<WHITE>();
+    evaluateMaterial<BLACK>();
+
+    evaluatePst<WHITE>();
+    evaluatePst<BLACK>();
+
+    evaluatePieces<WHITE>();
+    evaluatePieces<BLACK>();
+
+    evaluateSpace<WHITE>();
+    evaluateSpace<BLACK>();
+
+    int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
+    int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
+
+    return (whiteScore - blackScore) * modifier;
 }
 } // namespace Zagreus

@@ -25,12 +25,9 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[72] = {105, 106, 382, 353, 410, 365, 559, 540, 1048, 1016, 9, 4, 7, 2, 0, 7, 2, 21,
-                      24, -2, -6, 0, -6, 11, 9, -3, -13, 0, -19, 6, -7, -31, -8, -11, 0, 22, -5,
-                      -10, -12, -7, -16, -18, -4, -8, 6, -6, -6, -7, -6, -16, -29, -21, 20, 11, 8,
-                      9, 33, 19, 18, 4, -10, -2, 1, 2, 10, 25, -2, -11, 11, -5, -28, -24,};
+int evalValues[76] = { 96, 103, 368, 344, 390, 362, 548, 531, 1023, 1006, 8, 0, 7, 0, 0, 1, 0, 15, 20, 3, -6, 0, -6, 8, 6, 0, -10, 0, -12, 2, -5, -26, -9, -15, 0, 15, -3, -6, -7, -10, -15, -15, -5, -7, 2, -7, -6, -9, -1, -18, -31, -22, 17, 6, 7, 11, 27, 11, 15, -1, -9, 0, 3, -5, 2, 23, -2, -15, 6, -6, -22, -18, 0, 10, 3, 2,  };
 
-int baseEvalValues[72] = {
+int baseEvalValues[76] = {
     100,  // MIDGAME_PAWN_MATERIAL
     100,  // ENDGAME_PAWN_MATERIAL
     350,  // MIDGAME_KNIGHT_MATERIAL
@@ -103,6 +100,10 @@ int baseEvalValues[72] = {
     4,    // ENDGAME_ROOK_ON_QUEEN_FILE
     -4,   // MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY
     -4,   // ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY
+    1,    // MIDGAME_CONTROLLED_SQUARE
+    1,    // ENDGAME_CONTROLLED_SQUARE
+    2,    // MIDGAME_STRONG_SQUARE
+    2,    // ENDGAME_STRONG_SQUARE
 };
 
 void printEvalValues() {
