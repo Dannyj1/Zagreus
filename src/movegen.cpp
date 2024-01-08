@@ -41,7 +41,7 @@ void addMoveToList(MoveList* moveList, int8_t from, int8_t to = 0, PieceType pie
     moveList->size++;
 }
 
-int scoreMove(int ply, uint32_t pvMoveCode, const uint32_t* previousPvMoveCodes, Move* move,
+int scoreMove(int ply, uint32_t pvMoveCode, Move* move,
               Move& previousMove, uint32_t moveCode, uint32_t bestMoveCode,
               TranspositionTable* tt) {
     if (moveCode == pvMoveCode) {
@@ -112,19 +112,13 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     generateQueenMoves<color, type>(bitboard, moveList, evasionSquaresBB);
     generateKingMoves<color, type>(bitboard, moveList);
 
-    assert(moveList->size <= MAX_MOVES);
     TranspositionTable* tt = TranspositionTable::getTT();
     Line previousPv = bitboard.getPvLine();
-    auto* moveCodes = new uint32_t[previousPv.moveCount];
     uint32_t bestMoveCode = 0;
     TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
 
     if (ttEntry->zobristHash == bitboard.getZobristHash()) {
         bestMoveCode = ttEntry->bestMoveCode;
-    }
-
-    for (int i = 0; i < previousPv.moveCount; i++) {
-        moveCodes[i] = encodeMove(&previousPv.moves[i]);
     }
 
     int ply = bitboard.getPly();
@@ -135,11 +129,9 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
 
     for (int i = 0; i < moveList->size; i++) {
         Move* move = &moveList->moves[i];
-        move->score = scoreMove(ply, pvMoveCode, moveCodes, move, previousMove, encodeMove(move),
+        move->score = scoreMove(ply, pvMoveCode, move, previousMove, encodeMove(move),
                                 bestMoveCode, tt);
     }
-
-    delete[] moveCodes;
 }
 
 template <PieceColor color, GenerationType type>
