@@ -685,6 +685,35 @@ void Evaluation::evaluatePieces() {
                 }
             }
         }
+
+        // Space/Square Control
+        constexpr uint64_t OPPONENT_HALF = color == WHITE
+                                               ? RANK_5 | RANK_6 | RANK_7 | RANK_8
+                                               : RANK_1 | RANK_2 | RANK_3 | RANK_4;
+        uint64_t strongSquares = color == WHITE
+                                     ? attackedBy2[WHITE] & ~attackedBy2[BLACK]
+                                     : attackedBy2[BLACK] & ~attackedBy2[WHITE];
+        uint64_t squaresControlled = attacksFrom[index] & (OPPONENT_HALF | CENTER_SQUARES);
+        uint64_t kingBB = bitboard.getPieceBoard(color == WHITE ? WHITE_KING : BLACK_KING);
+        squaresControlled |= (bitboard.getColorBoard<color>() & ~kingBB);
+
+        int squareControlCount = popcnt(squaresControlled);
+        int strongSquaresCount = popcnt(strongSquares & squaresControlled);
+        int midgameScore = 0;
+        int endgameScore = 0;
+
+        midgameScore += squareControlCount * getEvalValue(MIDGAME_CONTROLLED_SQUARE);
+        endgameScore += squareControlCount * getEvalValue(ENDGAME_CONTROLLED_SQUARE);
+        midgameScore += strongSquaresCount * getEvalValue(MIDGAME_STRONG_SQUARE);
+        endgameScore += strongSquaresCount * getEvalValue(ENDGAME_STRONG_SQUARE);
+
+        if (color == WHITE) {
+            whiteMidgameScore += midgameScore;
+            whiteEndgameScore += endgameScore;
+        } else {
+            blackMidgameScore += midgameScore;
+            blackEndgameScore += endgameScore;
+        }
     }
 }
 
@@ -754,35 +783,6 @@ void Evaluation::evaluatePst() {
     }
 }
 
-template <PieceColor color>
-void Evaluation::evaluateSpace() {
-    constexpr PieceColor OPPONENT = color == WHITE ? BLACK : WHITE;
-    uint64_t weakSquares = attackedBy2[OPPONENT] & ~attackedBy2[color];
-    uint64_t strongSquares = attackedBy2[color] & ~attackedBy2[OPPONENT];
-    uint64_t pawnAttacks = attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
-    weakSquares &= ~pawnAttacks;
-    uint64_t controlledSquares = attacksByColor[color];
-    controlledSquares &= ~weakSquares;
-
-    int controlledSquareCount = popcnt(controlledSquares);
-    int strongSquareCount = popcnt(strongSquares);
-    int midgameScore = 0;
-    int endgameScore = 0;
-
-    midgameScore += controlledSquareCount * getEvalValue(MIDGAME_CONTROLLED_SQUARE);
-    endgameScore += controlledSquareCount * getEvalValue(ENDGAME_CONTROLLED_SQUARE);
-    midgameScore += strongSquareCount * getEvalValue(MIDGAME_STRONG_SQUARE);
-    endgameScore += strongSquareCount * getEvalValue(ENDGAME_STRONG_SQUARE);
-
-    if (color == WHITE) {
-        whiteMidgameScore += midgameScore;
-        whiteEndgameScore += endgameScore;
-    } else {
-        blackMidgameScore += midgameScore;
-        blackEndgameScore += endgameScore;
-    }
-}
-
 int Evaluation::evaluate() {
     int phase = getPhase();
     int modifier = bitboard.getMovingColor() == WHITE ? 1 : -1;
@@ -797,9 +797,6 @@ int Evaluation::evaluate() {
 
     evaluatePieces<WHITE>();
     evaluatePieces<BLACK>();
-
-    evaluateSpace<WHITE>();
-    evaluateSpace<BLACK>();
 
     int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
     int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;

@@ -438,8 +438,9 @@ public:
 
     template <PieceColor color>
     int getAmountOfPawns() {
-        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE ? WHITE_PAWN
-                                                                            : BLACK_PAWN));
+        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE
+                                                                 ? WHITE_PAWN
+                                                                 : BLACK_PAWN));
     }
 
     template <PieceColor color>

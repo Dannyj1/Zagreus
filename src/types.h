@@ -116,6 +116,7 @@ enum Square {
     H8,
     NO_SQUARE = -1
 };
+
 // clang-format on
 
 struct Move {

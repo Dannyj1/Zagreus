@@ -190,7 +190,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             nullContext.endTime = context.endTime;
             board.makeNullMove();
             int nullScore = -search<OPPOSITE_COLOR, NULL_MOVE>(board, -beta, -beta + 1, depth - r,
-                                                           nullContext, searchStats, nullLine);
+                                                               nullContext, searchStats, nullLine);
             board.unmakeNullMove();
             int mateScores = MATE_SCORE - MAX_PLY;
 
@@ -371,7 +371,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         }
 
         if (board.getAmountOfMinorOrMajorPieces<color>() >= 2 && board.getAmountOfMinorOrMajorPieces
-            <OPPOSITE_COLOR>() >= 2  && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns<OPPOSITE_COLOR>() > 0) {
+            <OPPOSITE_COLOR>() >= 2 && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns
+            <OPPOSITE_COLOR>() > 0) {
             int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
                                       getEvalValue(MIDGAME_QUEEN_MATERIAL));
             int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL),
@@ -421,7 +422,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
 
         legalMoveCount += 1;
 
-        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context, searchStats);
+        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context,
+                                                       searchStats);
         board.unmakeMove(move);
 
         if (score > bestScore) {

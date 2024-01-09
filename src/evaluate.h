@@ -74,9 +74,6 @@ private:
     template <PieceColor color>
     void evaluatePieces();
 
-    template <PieceColor color>
-    void evaluateSpace();
-
     inline void addMobilityScoreForPiece(PieceType pieceType, int mobility);
 
     inline void addKingAttackScore(PieceType pieceType, int attackCount);

@@ -380,7 +380,7 @@ void Bitboard::makeNullMove() {
 void Bitboard::unmakeNullMove() {
     ply -= 1;
     UndoData undoData = undoStack[ply];
-    
+
     enPassantSquare = undoData.enPassantSquare;
     castlingRights = undoData.castlingRights;
     movingColor = getOppositeColor(movingColor);
