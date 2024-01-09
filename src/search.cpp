@@ -111,7 +111,19 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
     }
 
     engine.stopSearching();
-    return bestPvLine.moves[0];
+    Move bestMove = bestPvLine.moves[0];
+    MoveList* legalMoves = moveListPool->getMoveList();
+    generateMoves<color, NORMAL>(board, legalMoves);
+
+    // Check if bestMove is a legal move (sometimes in endgames that drag on for long time, the PV is empty)
+    for (int i = 0; i < legalMoves->size; i++) {
+        if (legalMoves->moves[i].from == bestMove.from && legalMoves->moves[i].to == bestMove.to) {
+            moveListPool->releaseMoveList(legalMoves);
+            return bestMove;
+        }
+    }
+
+    return legalMoves->moves[0];
 }
 
 template Move getBestMove<WHITE>(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
