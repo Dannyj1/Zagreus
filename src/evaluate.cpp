@@ -693,9 +693,15 @@ void Evaluation::evaluatePieces() {
         uint64_t strongSquares = color == WHITE
                                      ? attackedBy2[WHITE] & ~attackedBy2[BLACK]
                                      : attackedBy2[BLACK] & ~attackedBy2[WHITE];
+        uint64_t weakSquares = color == WHITE
+                                   ? attackedBy2[BLACK] & ~attackedBy2[WHITE]
+                                   : attackedBy2[WHITE] & ~attackedBy2[BLACK];
         uint64_t squaresControlled = attacksFrom[index] & (OPPONENT_HALF | CENTER_SQUARES);
         uint64_t kingBB = bitboard.getPieceBoard(color == WHITE ? WHITE_KING : BLACK_KING);
+        uint64_t opponentPawnAttacks = bitboard.getPieceBoard(
+            color == WHITE ? BLACK_PAWN : WHITE_PAWN);
         squaresControlled |= (bitboard.getColorBoard<color>() & ~kingBB);
+        squaresControlled &= ~(weakSquares | opponentPawnAttacks);
 
         int squareControlCount = popcnt(squaresControlled);
         int strongSquaresCount = popcnt(strongSquares & squaresControlled);
