@@ -155,15 +155,20 @@ int main(int argc, char* argv[]) {
             return 0;
         }
 
-        senjo::Output(senjo::Output::NoPrefix) << "Unknown argument!";
-        return 0;
+        if (!(strcmp(argv[1], "spsa") == 0)) {
+            senjo::Output(senjo::Output::NoPrefix) << "Unknown argument!";
+            return 0;
+        }
     }
-
-    // 8/8/4b3/5k2/1K6/8/N7/8 b - - 0 57
 
     try {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
+
+        if (strcmp(argv[1], "spsa") == 0) {
+            engine.printSPSAParameters();
+            return 0;
+        }
 
         std::string line;
         line.reserve(16384);

@@ -131,5 +131,9 @@ public:
     bool isTuning() const;
 
     void setTuning(bool tuning);
+
+#ifdef SPSA_TUNE
+    void printSPSAParameters();
+#endif
 };
 } // namespace Zagreus

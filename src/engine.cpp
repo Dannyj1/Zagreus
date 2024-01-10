@@ -252,4 +252,22 @@ void ZagreusEngine::showEngineStats() {
 bool ZagreusEngine::isTuning() const { return tuning; }
 
 void ZagreusEngine::setTuning(bool tuning) { ZagreusEngine::tuning = tuning; }
+
+#ifdef SPSA_TUNE
+void ZagreusEngine::printSPSAParameters() {
+    for (auto& option : options) {
+        if (option.getName().find("SPSA_") != std::string::npos) {
+            bool isSpin = option.getType() == senjo::EngineOption::Spin;
+            if (isSpin) {
+                senjo::Output(senjo::Output::NoPrefix) << option.getName() << ", int, " << option.
+                    getDefaultIntValue() << ", " << option.getMinValue() << ", " << option.
+                    getMaxValue() << ", 1, 0.002";
+            } else {
+                senjo::Output(senjo::Output::NoPrefix) << option.getName() << ", float, " << option.
+                    getDefaultValue() << ", 0.01, 1.00, 0.01, 0.002";
+            }
+        }
+    }
+}
+#endif
 } // namespace Zagreus
