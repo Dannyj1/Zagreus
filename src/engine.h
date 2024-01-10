@@ -43,12 +43,23 @@ private:
         senjo::EngineOption("Threads", "1", senjo::EngineOption::OptionType::Spin, 1, 1),
         senjo::EngineOption("SyzygyPath", "", senjo::EngineOption::OptionType::String),
         senjo::EngineOption("SyzygyProbeLimit", "0", senjo::EngineOption::OptionType::Spin, 0, 100),
+#ifdef SPSA_TUNE
+        senjo::EngineOption("SPSA_NMPBaseR", "3", senjo::EngineOption::OptionType::Spin, 1, 10),
+        senjo::EngineOption("SPSA_NMPMinDepth", "3", senjo::EngineOption::OptionType::Spin, 1, 10),
+        senjo::EngineOption("SPSA_NMPDepthMultiplier", "0.33",
+                            senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SPSA_NMPMinPieces", "1", senjo::EngineOption::OptionType::Spin, 0, 10),
+        senjo::EngineOption("SPSA_LMRMoveCountThreshold", "0.6",
+                            senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SPSA_LMRDepthMultiplier", "0.33",
+                            senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SPSA_LMRMinMovesSearched", "5", senjo::EngineOption::OptionType::Spin,
+                            0, 10),
+        senjo::EngineOption("SPSA_LMRMinDepth", "3", senjo::EngineOption::OptionType::Spin, 1, 10),
+#endif
     };
 
 public:
-    //        uint64_t doPerft(Zagreus::Bitboard &board, Zagreus::PieceColor color, int16_t depth, int
-    //        startingDepth);
-
     std::string getEngineName() override;
 
     std::string getEngineVersion() override;

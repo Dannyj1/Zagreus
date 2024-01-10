@@ -35,9 +35,46 @@ namespace Zagreus {
 MoveListPool* moveListPool = MoveListPool::getInstance();
 TranspositionTable* tt = TranspositionTable::getTT();
 
+#ifndef SPSA_TUNE
+constexpr int NMP_BASE_R = 3;
+constexpr int NMP_MIN_DEPTH = 3;
+constexpr float NMP_DEPTH_MULTIPLIER = 0.33;
+constexpr int NMP_MIN_PIECES = 1;
+constexpr float LMR_MOVE_COUNT_THRESHOLD = 0.6;
+constexpr float LMR_DEPTH_MULTIPLIER = 0.33;
+constexpr int LMR_MIN_MOVES_SEARCHED = 5;
+constexpr int LMR_MIN_DEPTH = 3;
+#else
+int NMP_BASE_R = 3;
+int NMP_MIN_DEPTH = 3;
+float NMP_DEPTH_MULTIPLIER = 0.33;
+int NMP_MIN_PIECES = 1;
+float LMR_MOVE_COUNT_THRESHOLD = 0.6;
+float LMR_DEPTH_MULTIPLIER = 0.33;
+int LMR_MIN_MOVES_SEARCHED = 5;
+int LMR_MIN_DEPTH = 3;
+#endif
+
+#ifdef SPSA_TUNE
+void setSearchParamsFromUCI(ZagreusEngine& engine) {
+    NMP_BASE_R = engine.getOption("SPSA_NMPBaseR").getIntValue();
+    NMP_MIN_DEPTH = engine.getOption("SPSA_NMPMinDepth").getIntValue();
+    NMP_DEPTH_MULTIPLIER = std::stof(engine.getOption("SPSA_NMPDepthMultiplier").getValue());
+    NMP_MIN_PIECES = engine.getOption("SPSA_NMPMinPieces").getIntValue();
+    LMR_MOVE_COUNT_THRESHOLD = std::stof(engine.getOption("SPSA_LMRMoveCountThreshold").getValue());
+    LMR_DEPTH_MULTIPLIER = std::stof(engine.getOption("SPSA_LMRDepthMultiplier").getValue());
+    LMR_MIN_MOVES_SEARCHED = engine.getOption("SPSA_LMRMinMovesSearched").getIntValue();
+    LMR_MIN_DEPTH = engine.getOption("SPSA_LMRMinDepth").getIntValue();
+}
+#endif
+
 template <PieceColor color>
 Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
                  senjo::SearchStats& searchStats) {
+#ifdef SPSA_TUNE
+    setSearchParamsFromUCI(engine);
+#endif
+
     auto startTime = std::chrono::steady_clock::now();
     SearchContext searchContext{};
     searchContext.startTime = startTime;
@@ -178,11 +215,10 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     constexpr bool isPreviousMoveNull = nodeType == NULL_MOVE;
 
     // Null move pruning
-    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.
-        getAmountOfMinorOrMajorPieces<
-            color>() > 0) {
+    if (!IS_PV_NODE && depth >= NMP_MIN_DEPTH && !isPreviousMoveNull && board.
+        getAmountOfMinorOrMajorPieces<color>() >= NMP_MIN_PIECES) {
         if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
-            int r = 3 + (depth >= 6) + (depth >= 12);
+            int r = NMP_BASE_R + std::floor(depth * NMP_DEPTH_MULTIPLIER - 1);
 
             Line nullLine{};
             SearchContext nullContext{};
@@ -190,7 +226,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             nullContext.endTime = context.endTime;
             board.makeNullMove();
             int nullScore = -search<OPPOSITE_COLOR, NULL_MOVE>(board, -beta, -beta + 1, depth - r,
-                                                           nullContext, searchStats, nullLine);
+                                                               nullContext, searchStats, nullLine);
             board.unmakeNullMove();
             int mateScores = MATE_SCORE - MAX_PLY;
 
@@ -237,14 +273,16 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             bool shouldFullSearch = false;
 
             // LMR (Not in PV/Root nodes)
-            if (depth >= 3 && !extension && move.captureScore == NO_CAPTURE_SCORE && move.
-                promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
+            if (depth >= LMR_MIN_DEPTH && !extension && move.captureScore == NO_CAPTURE_SCORE &&
+                move.
+                promotionPiece == EMPTY && movePicker.movesSearched() >= LMR_MIN_MOVES_SEARCHED) {
                 if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
                     int R = 1;
 
                     // After 60% of the moves have been made, increase R by 1
-                    if (movePicker.movesSearched() > std::ceil(moves->size * 0.6)) {
-                        R += 1;
+                    if (movePicker.movesSearched() > std::ceil(
+                            moves->size * LMR_MOVE_COUNT_THRESHOLD)) {
+                        R += std::floor(depth * LMR_DEPTH_MULTIPLIER - 1);
                     }
 
                     score = -search<OPPOSITE_COLOR, NO_PV>(
@@ -371,7 +409,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         }
 
         if (board.getAmountOfMinorOrMajorPieces<color>() >= 2 && board.getAmountOfMinorOrMajorPieces
-            <OPPOSITE_COLOR>() >= 2  && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns<OPPOSITE_COLOR>() > 0) {
+            <OPPOSITE_COLOR>() >= 2 && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns
+            <OPPOSITE_COLOR>() > 0) {
             int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
                                       getEvalValue(MIDGAME_QUEEN_MATERIAL));
             int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL),
@@ -421,7 +460,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
 
         legalMoveCount += 1;
 
-        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context, searchStats);
+        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context,
+                                                       searchStats);
         board.unmakeMove(move);
 
         if (score > bestScore) {
