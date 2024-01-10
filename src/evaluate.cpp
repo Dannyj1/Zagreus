@@ -756,6 +756,7 @@ void Evaluation::evaluatePst() {
 
 template <PieceColor color>
 void Evaluation::space() {
+    constexpr uint64_t OPPONENT_COLOR = color == WHITE ? BLACK : WHITE;
     constexpr uint64_t OPPONENT_HALF = color == WHITE
                                            ? RANK_5 | RANK_6 | RANK_7 | RANK_8
                                            : RANK_1 | RANK_2 | RANK_3 | RANK_4;
@@ -765,12 +766,27 @@ void Evaluation::space() {
     uint64_t weakSquares = color == WHITE
                                ? attackedBy2[BLACK] & ~attackedBy2[WHITE]
                                : attackedBy2[WHITE] & ~attackedBy2[BLACK];
-    uint64_t squaresControlled = attacksByColor[color] & (
-                                     EXTENDED_CENTER_FILES & (OPPONENT_HALF | CENTER_SQUARES));
     uint64_t opponentPawnAttacks = bitboard.getPieceBoard(color == WHITE ? BLACK_PAWN : WHITE_PAWN);
-    uint64_t kingBB = bitboard.getPieceBoard(color == WHITE ? WHITE_KING : BLACK_KING);
-    squaresControlled |= bitboard.getColorBoard<color>() & ~kingBB;
-    squaresControlled &= ~(weakSquares | opponentPawnAttacks);
+    uint64_t squaresControlled = 0;
+
+    uint64_t pawnAttacks = attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
+    uint64_t knightAttacks = attacksByPiece[color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT];
+    uint64_t opponentKnightAttacks = attacksByPiece[color == WHITE ? BLACK_KNIGHT : WHITE_KNIGHT];
+    uint64_t bishopAttacks = attacksByPiece[color == WHITE ? WHITE_BISHOP : BLACK_BISHOP];
+    uint64_t opponentBishopAttacks = attacksByPiece[color == WHITE ? BLACK_BISHOP : WHITE_BISHOP];
+    uint64_t rookAttacks = attacksByPiece[color == WHITE ? WHITE_ROOK : BLACK_ROOK];
+    uint64_t opponentRookAttacks = attacksByPiece[color == WHITE ? BLACK_ROOK : WHITE_ROOK];
+    uint64_t queenAttacks = attacksByPiece[color == WHITE ? WHITE_QUEEN : BLACK_QUEEN];
+
+    squaresControlled |= knightAttacks | bishopAttacks;
+    squaresControlled |= rookAttacks & ~opponentKnightAttacks & ~opponentBishopAttacks;
+    squaresControlled |= queenAttacks & ~opponentKnightAttacks & ~opponentBishopAttacks & ~
+        opponentRookAttacks;
+    squaresControlled &= ~opponentPawnAttacks;
+    squaresControlled |= pawnAttacks;
+    squaresControlled &= ~weakSquares;
+    squaresControlled &= EXTENDED_CENTER_FILES & (OPPONENT_HALF | CENTER_SQUARES);
+    squaresControlled &= ~attacksByColor[OPPONENT_COLOR];
 
     int squareControlCount = popcnt(squaresControlled);
     int strongSquaresCount = popcnt(strongSquares & squaresControlled);
