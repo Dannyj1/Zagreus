@@ -165,9 +165,11 @@ int main(int argc, char* argv[]) {
         ZagreusEngine engine;
         senjo::UCIAdapter adapter(engine);
 
-        if (strcmp(argv[1], "spsa") == 0) {
-            engine.printSPSAParameters();
-            return 0;
+        if (argc >= 2) {
+            if (strcmp(argv[1], "spsa") == 0) {
+                engine.printSPSAParameters();
+                return 0;
+            }
         }
 
         std::string line;
