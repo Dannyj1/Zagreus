@@ -47,6 +47,8 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
     constexpr float SUDDEN_SCORE_SWING_MULTIPLIER = 1.5;
     constexpr float SUDDEN_SCORE_DROP_MULTIPLIER = 1.5;
     constexpr int PV_CHANGE_MAX = 5;
+    constexpr float LMR_RE_SEARCH_MULTIPLIER = 0.33;
+    constexpr int LMR_MAX_RE_SEARCHES = 5;
 #else
     float PV_CHANGE_MULTIPLIER = std::stof(engine.getOption("SPSA_PVChangeMultiplier").getValue());
     float SUDDEN_SCORE_SWING_MULTIPLIER = std::stof(
@@ -54,6 +56,9 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
     float SUDDEN_SCORE_DROP_MULTIPLIER = std::stof(
         engine.getOption("SPSA_SuddenScoreDropMultiplier").getValue());
     int PV_CHANGE_MAX = engine.getOption("SPSA_PVChangeMax").getIntValue();
+    float LMR_RE_SEARCH_MULTIPLIER =
+        std::stof(engine.getOption("SPSA_LMRReSearchMultiplier").getValue());
+    int LMR_MAX_RE_SEARCHES = engine.getOption("SPSA_LMRMaxReSearches").getIntValue();
 #endif
 
     int movesToGo = params.movestogo ? params.movestogo : 50ULL;
@@ -96,6 +101,11 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
                                           context.pvChanges, PV_CHANGE_MAX));
     }
 
+    if (context.lmrReSearches > 0) {
+        timePerMove += timePerMove * (LMR_RE_SEARCH_MULTIPLIER * std::min<float>(
+                                          context.lmrReSearches, LMR_MAX_RE_SEARCHES));
+    }
+
     // if the score suddenly went from positive to negative or vice versa, increase timePerMove by 50%
     if (context.suddenScoreSwing) {
         timePerMove = timePerMove * SUDDEN_SCORE_SWING_MULTIPLIER;
@@ -110,7 +120,7 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
         timePerMove = maxTime;
     }
 
-    timePerMove = std::max((uint64_t)timePerMove, (uint64_t)1ULL);
+    timePerMove = std::max<uint64_t>(timePerMove, 1ULL);
     return context.startTime + std::chrono::milliseconds(timePerMove);
 }
 } // namespace Zagreus

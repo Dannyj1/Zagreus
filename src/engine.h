@@ -64,7 +64,11 @@ private:
                             senjo::EngineOption::OptionType::String),
         senjo::EngineOption("SPSA_SuddenScoreDropMultiplier", "1.5",
                             senjo::EngineOption::OptionType::String),
-        senjo::EngineOption("SPSA_PVChangeMax", "5", senjo::EngineOption::OptionType::Spin, 1, 10),
+        senjo::EngineOption("SPSA_PVChangeMax", "5", senjo::EngineOption::OptionType::Spin, 1, 20),
+        senjo::EngineOption("SPSA_LMRReSearchMultiplier", "0.33",
+                            senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SPSA_LMRMaxReSearches", "5", senjo::EngineOption::OptionType::Spin, 1,
+                            20),
 #endif
     };
 

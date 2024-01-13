@@ -294,6 +294,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
                     if (score > alpha) {
                         shouldFullSearch = true;
+                        context.lmrReSearches += 1;
                     }
                 }
             }
