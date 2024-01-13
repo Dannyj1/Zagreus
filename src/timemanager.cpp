@@ -42,8 +42,19 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
                                          engine.getOption("MoveOverhead").getIntValue());
     }
 
-    int movesToGo = params.movestogo ? params.movestogo : 50ULL;
+#ifndef SPSA_TUNE
+    constexpr float PV_CHANGE_MULTIPLIER = 0.3;
+    constexpr float SUDDEN_SCORE_SWING_MULTIPLIER = 1.5;
+    constexpr float SUDDEN_SCORE_DROP_MULTIPLIER = 1.5;
+    constexpr int PV_CHANGE_MAX = 5;
+#else
+    float PV_CHANGE_MULTIPLIER = std::stof(engine.getOption("SPSA_PVChangeMultiplier").getValue());
+    float SUDDEN_SCORE_SWING_MULTIPLIER = std::stof(engine.getOption("SPSA_SuddenScoreSwingMultiplier").getValue());
+    float SUDDEN_SCORE_DROP_MULTIPLIER = std::stof(engine.getOption("SPSA_SuddenScoreDropMultiplier").getValue());
+    int PV_CHANGE_MAX = engine.getOption("SPSA_PVChangeMax").getIntValue();
+#endif
 
+    int movesToGo = params.movestogo ? params.movestogo : 50ULL;
     uint64_t timeLeft = 0;
 
     if (movingColor == WHITE) {
@@ -57,7 +68,7 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
     uint64_t moveOverhead = engine.getOption("MoveOverhead").getIntValue();
     timeLeft -= moveOverhead * movesToGo;
 
-    timeLeft = std::max((uint64_t)timeLeft, (uint64_t)1ULL);
+    timeLeft = std::max<uint64_t>(timeLeft, 1ULL);
     uint64_t maxTime;
 
     if (movingColor == WHITE) {
@@ -79,18 +90,17 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
     // Based on context.pvChanges, scale timePerMove between 1.0 and 1.5. After 5 or more move
     // changes, timePerMove will be 1.5 times as long.
     if (context.pvChanges > 0) {
-        timePerMove =
-            timePerMove * (1.0 + std::min(static_cast<double>(context.pvChanges), 5.0) / 10.0);
+        timePerMove += timePerMove * (PV_CHANGE_MULTIPLIER * std::min<float>(context.pvChanges, PV_CHANGE_MAX));
     }
 
     // if the score suddenly went from positive to negative or vice versa, increase timePerMove by 50%
     if (context.suddenScoreSwing) {
-        timePerMove = timePerMove * 1.5;
+        timePerMove = timePerMove * SUDDEN_SCORE_SWING_MULTIPLIER;
     }
 
     // if the score suddenly dropped by 100cp or more, increase timePerMove by 50%
     if (context.suddenScoreDrop) {
-        timePerMove = timePerMove * 1.5;
+        timePerMove = timePerMove * SUDDEN_SCORE_DROP_MULTIPLIER;
     }
 
     if (timePerMove > maxTime) {

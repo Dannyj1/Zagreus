@@ -56,6 +56,15 @@ private:
         senjo::EngineOption("SPSA_LMRMinMovesSearched", "5", senjo::EngineOption::OptionType::Spin,
                             1, 10),
         senjo::EngineOption("SPSA_LMRMinDepth", "3", senjo::EngineOption::OptionType::Spin, 2, 6),
+        senjo::EngineOption("SPSA_SuddenScoreDropThreshold", "-150",
+                            senjo::EngineOption::OptionType::Spin, -1000, 1000),
+        senjo::EngineOption("SPSA_PVChangeMultiplier", "0.3",
+                            senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SPSA_SuddenScoreSwingMultiplier", "1.5",
+                            senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SPSA_SuddenScoreDropMultiplier", "1.5",
+                            senjo::EngineOption::OptionType::String),
+        senjo::EngineOption("SPSA_PVChangeMax", "5", senjo::EngineOption::OptionType::Spin, 1, 10),
 #endif
     };
 

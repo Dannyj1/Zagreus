@@ -263,8 +263,17 @@ void ZagreusEngine::printSPSAParameters() {
                     getDefaultIntValue() << ", " << option.getMinValue() << ", " << option.
                     getMaxValue() << ", 1, 0.002";
             } else {
-                senjo::Output(senjo::Output::NoPrefix) << option.getName() << ", float, " << option.
-                    getDefaultValue() << ", 0.01, 1.00, 0.01, 0.002";
+                float defaultValue = std::stof(option.getDefaultValue());
+
+                if (defaultValue < 1.0f) {
+                    senjo::Output(senjo::Output::NoPrefix) << option.getName() << ", float, " <<
+                        option.
+                        getDefaultValue() << ", 0.01, 1.00, 0.01, 0.002";
+                } else {
+                    senjo::Output(senjo::Output::NoPrefix) << option.getName() << ", float, " <<
+                        option.
+                        getDefaultValue() << ", 0.01, 10.00, 0.01, 0.002";
+                }
             }
         }
     }

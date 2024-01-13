@@ -44,6 +44,7 @@ constexpr float LMR_MOVE_COUNT_THRESHOLD = 0.6;
 constexpr float LMR_DEPTH_MULTIPLIER = 0.33;
 constexpr int LMR_MIN_MOVES_SEARCHED = 5;
 constexpr int LMR_MIN_DEPTH = 3;
+constexpr int SUDDEN_SCORE_DROP_THRESHOLD = -150;
 #else
 int NMP_BASE_R = 3;
 int NMP_MIN_DEPTH = 3;
@@ -53,6 +54,7 @@ float LMR_MOVE_COUNT_THRESHOLD = 0.6;
 float LMR_DEPTH_MULTIPLIER = 0.33;
 int LMR_MIN_MOVES_SEARCHED = 5;
 int LMR_MIN_DEPTH = 3;
+int SUDDEN_SCORE_DROP_THRESHOLD = -150;
 #endif
 
 #ifdef SPSA_TUNE
@@ -65,6 +67,7 @@ void setSearchParamsFromUCI(ZagreusEngine& engine) {
     LMR_DEPTH_MULTIPLIER = std::stof(engine.getOption("SPSA_LMRDepthMultiplier").getValue());
     LMR_MIN_MOVES_SEARCHED = engine.getOption("SPSA_LMRMinMovesSearched").getIntValue();
     LMR_MIN_DEPTH = engine.getOption("SPSA_LMRMinDepth").getIntValue();
+    SUDDEN_SCORE_DROP_THRESHOLD = engine.getOption("SPSA_SuddenScoreDropThreshold").getIntValue();
 }
 #endif
 
@@ -127,7 +130,7 @@ Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
         }
 
         // If the iterationScore suddenly dropped by 150 or more from bestScore, set suddenScoreDrop to true
-        if (depth > 1 && score - bestScore <= -150) {
+        if (depth > 1 && score - bestScore <= SUDDEN_SCORE_DROP_THRESHOLD) {
             searchContext.suddenScoreDrop = true;
         }
 
