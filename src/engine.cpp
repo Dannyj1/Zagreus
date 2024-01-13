@@ -272,7 +272,7 @@ void ZagreusEngine::printSPSAParameters() {
                 } else {
                     senjo::Output(senjo::Output::NoPrefix) << option.getName() << ", float, " <<
                         option.
-                        getDefaultValue() << ", 0.01, 10.00, 0.01, 0.002";
+                        getDefaultValue() << ", 0.01, 10.00, 0.1, 0.002";
                 }
             }
         }

@@ -49,8 +49,10 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
     constexpr int PV_CHANGE_MAX = 5;
 #else
     float PV_CHANGE_MULTIPLIER = std::stof(engine.getOption("SPSA_PVChangeMultiplier").getValue());
-    float SUDDEN_SCORE_SWING_MULTIPLIER = std::stof(engine.getOption("SPSA_SuddenScoreSwingMultiplier").getValue());
-    float SUDDEN_SCORE_DROP_MULTIPLIER = std::stof(engine.getOption("SPSA_SuddenScoreDropMultiplier").getValue());
+    float SUDDEN_SCORE_SWING_MULTIPLIER = std::stof(
+        engine.getOption("SPSA_SuddenScoreSwingMultiplier").getValue());
+    float SUDDEN_SCORE_DROP_MULTIPLIER = std::stof(
+        engine.getOption("SPSA_SuddenScoreDropMultiplier").getValue());
     int PV_CHANGE_MAX = engine.getOption("SPSA_PVChangeMax").getIntValue();
 #endif
 
@@ -90,7 +92,8 @@ std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& con
     // Based on context.pvChanges, scale timePerMove between 1.0 and 1.5. After 5 or more move
     // changes, timePerMove will be 1.5 times as long.
     if (context.pvChanges > 0) {
-        timePerMove += timePerMove * (PV_CHANGE_MULTIPLIER * std::min<float>(context.pvChanges, PV_CHANGE_MAX));
+        timePerMove += timePerMove * (PV_CHANGE_MULTIPLIER * std::min<float>(
+                                          context.pvChanges, PV_CHANGE_MAX));
     }
 
     // if the score suddenly went from positive to negative or vice versa, increase timePerMove by 50%
