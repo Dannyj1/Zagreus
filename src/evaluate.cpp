@@ -270,6 +270,7 @@ void Evaluation::evaluatePieces() {
 
     while (colorBoard) {
         uint8_t index = popLsb(colorBoard);
+        uint64_t square = 1ULL << index;
         PieceType pieceType = bitboard.getPieceOnSquare(index);
 
         // Mobility
@@ -346,6 +347,27 @@ void Evaluation::evaluatePieces() {
                 whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
+                // Penalty for king next to (semi-)open files
+                /*if (index % 8 != 0) {
+                    if (bitboard.isSemiOpenFileLenient<color>(index - 1)) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                    }
+                }
+
+                if (index % 8 != 7) {
+                    if (bitboard.isSemiOpenFileLenient<color>(index + 1)) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                    }
+                }
+
+                // Penalty for king on (semi-)open file
+                if (bitboard.isSemiOpenFileLenient<color>(index)) {
+                    whiteMidgameScore += getEvalValue(MIDGAME_KING_OPEN_FILE_PENALTY);
+                    whiteEndgameScore += getEvalValue(ENDGAME_KING_OPEN_FILE_PENALTY);
+                }*/
+
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
                 uint64_t virtualMobilitySquares =
@@ -369,6 +391,27 @@ void Evaluation::evaluatePieces() {
                 blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
+                // Penalty for king next to (semi-)open files
+                /*if (index % 8 != 0) {
+                    if (bitboard.isSemiOpenFileLenient<color>(index - 1)) {
+                        blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                    }
+                }
+
+                if (index % 8 != 7) {
+                    if (bitboard.isSemiOpenFileLenient<color>(index + 1)) {
+                        blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                    }
+                }
+
+                // Penalty for king on (semi-)open file
+                if (bitboard.isSemiOpenFileLenient<color>(index)) {
+                    blackMidgameScore += getEvalValue(MIDGAME_KING_OPEN_FILE_PENALTY);
+                    blackEndgameScore += getEvalValue(ENDGAME_KING_OPEN_FILE_PENALTY);
+                }*/
+
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
                 uint64_t virtualMobilitySquares =
@@ -383,7 +426,6 @@ void Evaluation::evaluatePieces() {
             }
         }
 
-        uint64_t square = 1ULL << index;
         // Per piece evaluation
         if (isPawn(pieceType)) {
             // Doubled pawn

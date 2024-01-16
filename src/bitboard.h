@@ -262,7 +262,8 @@ public:
         }
     }
 
-    // Also returns true when it is an open file
+    // A semi-open file is a file that is not occupied by the color's pawns, but is occupied by the opponent's pawns.
+    // The lenient function also returns true when it is an open file
     template <PieceColor color>
     bool isSemiOpenFileLenient(int8_t square) {
         uint64_t fileMask = getFile(square);
@@ -438,8 +439,9 @@ public:
 
     template <PieceColor color>
     int getAmountOfPawns() {
-        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE ? WHITE_PAWN
-                                                                            : BLACK_PAWN));
+        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE
+                                                                 ? WHITE_PAWN
+                                                                 : BLACK_PAWN));
     }
 
     template <PieceColor color>
