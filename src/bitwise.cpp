@@ -73,6 +73,22 @@ uint64_t blackRearSpans(uint64_t pawns) { return nortOne(nortFill(pawns)); }
 
 uint64_t blackFrontSpans(uint64_t pawns) { return soutOne(soutFill(pawns)); }
 
+uint64_t whiteStopSquares(uint64_t pawns) {
+    return nortOne(pawns);
+}
+
+uint64_t blackStopSquares(uint64_t pawns) {
+    return soutOne(pawns);
+}
+
+uint64_t whiteAttackSpans(uint64_t pawns) {
+    return nortFill(noEaOne(pawns) | noWeOne(pawns));
+}
+
+uint64_t blackAttackSpans(uint64_t pawns) {
+    return soutFill(soEaOne(pawns) | soWeOne(pawns));
+}
+
 uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {
     pieceBB |= empty & pieceBB >> 8ULL;
     empty &= empty >> 8ULL;

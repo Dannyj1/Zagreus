@@ -268,6 +268,25 @@ void Evaluation::evaluatePieces() {
     uint64_t blackKingAttacks = attacksFrom[blackKingSquare];
     uint64_t whiteKingAttacks = attacksFrom[whiteKingSquare];
 
+    // Backward pawn
+    // A backward pawn is a pawn no longer defensible by own pawns and whose stop square lacks pawn protection but is controlled by a sentry. Thus, don't considering piece tactics, the backward pawn is not able to push forward without being lost, even establishing an opponent passer. If two opposing pawns on adjacent files in knight distance are mutually backward, the more advanced is not considered backward.
+    uint64_t pawnBB = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
+    uint64_t stopSquares = color == WHITE ? whiteStopSquares(pawnBB) : blackStopSquares(pawnBB);
+    uint64_t ownFrontSpans = color == WHITE ? whiteAttackSpans(pawnBB) : blackAttackSpans(pawnBB);
+    uint64_t unprotectableStopSquares = stopSquares & ~ownFrontSpans;
+    uint64_t attackedStopSquares = unprotectableStopSquares & attacksByPiece[color == WHITE
+                                           ? BLACK_PAWN
+                                           : WHITE_PAWN];
+    int backwardPawnCount = popcnt(attackedStopSquares);
+
+    if (color == WHITE) {
+        whiteMidgameScore += backwardPawnCount * getEvalValue(MIDGAME_BACKWARD_PAWN_PENALTY);
+        whiteEndgameScore += backwardPawnCount * getEvalValue(ENDGAME_BACKWARD_PAWN_PENALTY);
+    } else {
+        blackMidgameScore += backwardPawnCount * getEvalValue(MIDGAME_BACKWARD_PAWN_PENALTY);
+        blackEndgameScore += backwardPawnCount * getEvalValue(ENDGAME_BACKWARD_PAWN_PENALTY);
+    }
+
     while (colorBoard) {
         uint8_t index = popLsb(colorBoard);
         uint64_t square = 1ULL << index;
@@ -347,8 +366,8 @@ void Evaluation::evaluatePieces() {
                 whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
-                // Penalty for king next to (semi-)open files
-                /*if (index % 8 != 0) {
+                /*// Penalty for king next to (semi-)open files
+                if (index % 8 != 0) {
                     if (bitboard.isSemiOpenFileLenient<color>(index - 1)) {
                         whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                         whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
@@ -391,8 +410,8 @@ void Evaluation::evaluatePieces() {
                 blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
-                // Penalty for king next to (semi-)open files
-                /*if (index % 8 != 0) {
+                /*// Penalty for king next to (semi-)open files
+                if (index % 8 != 0) {
                     if (bitboard.isSemiOpenFileLenient<color>(index - 1)) {
                         blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                         blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
@@ -457,10 +476,10 @@ void Evaluation::evaluatePieces() {
                 }
 
                 // Bonus for close to promotion
-                constexpr uint64_t CLOSE_PROMO_RANKS = color == WHITE
-                                                           ? RANK_6 | RANK_7
-                                                           : RANK_3 | RANK_2;
-                uint64_t closeToPromotion = square & CLOSE_PROMO_RANKS;
+                constexpr uint64_t OPPONENT_HALF = color == WHITE
+                                                       ? RANK_5 | RANK_6 | RANK_7
+                                                       : RANK_2 | RANK_3 | RANK_4;
+                uint64_t closeToPromotion = square & OPPONENT_HALF;
 
                 if (closeToPromotion) {
                     if (color == WHITE) {
@@ -485,6 +504,8 @@ void Evaluation::evaluatePieces() {
                         blackEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN_DEFENDED);
                     }
                 }
+
+                // Penalty for weak pawns
 
                 // Tarrasch rule
                 if (color == WHITE) {
@@ -524,6 +545,29 @@ void Evaluation::evaluatePieces() {
                         blackEndgameScore += getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
                     }
                 }
+            }
+
+            // Connected pawns
+            int midgameScore = 0;
+            int endgameScore = 0;
+
+            uint64_t possibleDefenders = color == WHITE
+                                             ? soEaOne(square) | soWeOne(square)
+                                             : noEaOne(square) | noWeOne(square);
+            uint64_t connected = pawnBB & possibleDefenders;
+            int defenderCount = popcnt(connected);
+
+            if (defenderCount) {
+                midgameScore += defenderCount * getEvalValue(MIDGAME_PAWN_CONNECTED);
+                endgameScore += defenderCount * getEvalValue(ENDGAME_PAWN_CONNECTED);
+            }
+
+            if (color == WHITE) {
+                whiteMidgameScore += midgameScore;
+                whiteEndgameScore += endgameScore;
+            } else {
+                blackMidgameScore += midgameScore;
+                blackEndgameScore += endgameScore;
             }
 
             // Isolated pawn

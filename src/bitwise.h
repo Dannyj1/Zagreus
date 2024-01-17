@@ -85,6 +85,14 @@ uint64_t blackRearSpans(uint64_t pawns);
 
 uint64_t blackFrontSpans(uint64_t pawns);
 
+uint64_t whiteStopSquares(uint64_t pawns);
+
+uint64_t blackStopSquares(uint64_t pawns);
+
+uint64_t whiteAttackSpans(uint64_t pawns);
+
+uint64_t blackAttackSpans(uint64_t pawns);
+
 template <PieceColor color>
 uint64_t calculatePawnEastAttacks(uint64_t pawns);
 

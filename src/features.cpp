@@ -25,17 +25,13 @@
 #include "pst.h"
 
 namespace Zagreus {
-/*int evalValues[76] = {98, 100, 359, 344, 385, 359, 544, 525, 1018, 1003, 8, 4, 7, 3, 0, 7, 2, 17,
-                      21, -1, -7, 0, 0, 8, 8, -3, -14, 0, -14, 3, -9, -21, -11, -12, -4, 9, -3, -6,
-                      -9, -7, -17, -13, -2, -10, 6, -3, -9, -7, -4, -14, -30, -21, 19, 7, 6, 7, 27,
-                      21, 14, 0, -5, 3, 4, -2, 7, 12, 0, -9, 10, 0, -19, -13, 6, 19, 12, 16, /*-5, 0, -20, 0#1#};*/
-int evalValues[76] = {101, 110, 381, 354, 414, 365, 554, 556, 1049, 1024, 9, 8, 6, 4, 1, 7, 0, 23,
-                      25, -4, -6, 0, -8, 12, 6, -5, -14, 3, -20, 9, -9, -32, -10, -12, -8, 14, -3,
-                      -6, -10, -9, -18, -11, -5, -6, 5, -8, -7, -12, -7, -14, -28, -20, 19, 6, 7, 8,
-                      30, 19, 20, 2, -17, 6, 14, 3, 12, 21, 0, -10, 13, -16, -28, -22, 10, 20, 20,
-                      23,};
+int evalValues[80] = {97, 98, 375, 351, 399, 372, 545, 539, 1034, 1018, 8, 6, 6, 4, 0, 9, 0, 20, 22,
+                      3, -6, 0, -4, 13, 4, 0, -14, -2, -22, 8, -7, -25, -6, -11, -10, 12, -3, -6,
+                      -5, 0, -13, -6, -5, -5, 6, 0, -6, -7, -6, -20, -30, -18, 14, 0, 8, 7, 34, 14,
+                      17, 0, -10, 0, 3, 4, 7, 20, 0, -13, 9, -8, -26, -12, 10, 24, 9, 17, -12, -19,
+                      7, 22,};
 
-int baseEvalValues[76] = {
+int baseEvalValues[80] = {
     100,  // MIDGAME_PAWN_MATERIAL
     100,  // ENDGAME_PAWN_MATERIAL
     350,  // MIDGAME_KNIGHT_MATERIAL
@@ -112,6 +108,10 @@ int baseEvalValues[76] = {
     15,   // ENDGAME_PASSED_PAWN_CLOSE_TO_PROMOTION
     2,    // MIDGAME_PASSED_PAWN_DEFENDED
     5,    // ENDGAME_PASSED_PAWN_DEFENDED
+    -10,  // MIDGAME_BACKWARD_PAWN_PENALTY
+    -20,  // ENDGAME_BACKWARD_PAWN_PENALTY
+    3,    // MIDGAME_PAWN_CONNECTED
+    3,    // ENDGAME_PAWN_CONNECTED
     /*-5,   // MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY
     0,    // ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY
     -20,  // MIDGAME_KING_OPEN_FILE_PENALTY
