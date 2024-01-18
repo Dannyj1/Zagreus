@@ -25,13 +25,13 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[84] = {93, 102, 363, 347, 384, 370, 536, 542, 1023, 1008, 7, 5, 7, 3, 0, 6, 0, 19,
+int evalValues[80] = {93, 102, 363, 347, 384, 370, 536, 542, 1023, 1008, 7, 5, 7, 3, 0, 6, 0, 19,
                       10, 1, -5, -2, -8, 8, 7, 0, -12, 0, -15, 6, -5, -26, -4, -9, 0, 10, -3, -6,
                       -6, -3, -13, -12, -4, -8, 6, -3, -5, -11, -3, -15, -30, -19, 15, 2, 7, 14, 28,
                       20, 14, 5, -6, -1, 2, -6, 3, 21, -2, -13, 11, -2, -20, -19, 14, 25, 11, 20,
-                      -12, -15, 6, 20, -15, 1, -14, 0,};
+                      -12, -15, 6, 20};
 
-int baseEvalValues[84] = {
+int baseEvalValues[80] = {
     100,  // MIDGAME_PAWN_MATERIAL
     100,  // ENDGAME_PAWN_MATERIAL
     350,  // MIDGAME_KNIGHT_MATERIAL
@@ -112,10 +112,6 @@ int baseEvalValues[84] = {
     -20,  // ENDGAME_BACKWARD_PAWN_PENALTY
     3,    // MIDGAME_PAWN_CONNECTED
     3,    // ENDGAME_PAWN_CONNECTED
-    -5,   // MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY
-    0,    // ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY
-    -20,  // MIDGAME_KING_OPEN_FILE_PENALTY
-    0,    // ENDGAME_KING_OPEN_FILE_PENALTY
 };
 
 void printEvalValues() {
