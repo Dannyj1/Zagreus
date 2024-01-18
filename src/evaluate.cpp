@@ -275,8 +275,8 @@ void Evaluation::evaluatePieces() {
     uint64_t ownFrontSpans = color == WHITE ? whiteAttackSpans(pawnBB) : blackAttackSpans(pawnBB);
     uint64_t unprotectableStopSquares = stopSquares & ~ownFrontSpans;
     uint64_t attackedStopSquares = unprotectableStopSquares & attacksByPiece[color == WHITE
-                                           ? BLACK_PAWN
-                                           : WHITE_PAWN];
+                                       ? BLACK_PAWN
+                                       : WHITE_PAWN];
     int backwardPawnCount = popcnt(attackedStopSquares);
 
     if (color == WHITE) {
@@ -366,26 +366,29 @@ void Evaluation::evaluatePieces() {
                 whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
-                /*// Penalty for king next to (semi-)open files
+                // Penalty for king next to (semi-)open files
                 if (index % 8 != 0) {
                     if (bitboard.isSemiOpenFileLenient<color>(index - 1)) {
                         whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore += std::min<int>(
+                            getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY), 0ULL);
                     }
                 }
 
                 if (index % 8 != 7) {
                     if (bitboard.isSemiOpenFileLenient<color>(index + 1)) {
                         whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore += std::min<int>(
+                            getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY), 0);
                     }
                 }
 
                 // Penalty for king on (semi-)open file
                 if (bitboard.isSemiOpenFileLenient<color>(index)) {
                     whiteMidgameScore += getEvalValue(MIDGAME_KING_OPEN_FILE_PENALTY);
-                    whiteEndgameScore += getEvalValue(ENDGAME_KING_OPEN_FILE_PENALTY);
-                }*/
+                    whiteEndgameScore += std::min<int>(getEvalValue(ENDGAME_KING_OPEN_FILE_PENALTY),
+                                                       0);
+                }
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
@@ -410,26 +413,29 @@ void Evaluation::evaluatePieces() {
                 blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
-                /*// Penalty for king next to (semi-)open files
+                // Penalty for king next to (semi-)open files
                 if (index % 8 != 0) {
                     if (bitboard.isSemiOpenFileLenient<color>(index - 1)) {
                         blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore += std::min<int>(
+                            getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY), 0ULL);
                     }
                 }
 
                 if (index % 8 != 7) {
                     if (bitboard.isSemiOpenFileLenient<color>(index + 1)) {
                         blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore += std::min<int>(
+                            getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY), 0ULL);
                     }
                 }
 
                 // Penalty for king on (semi-)open file
                 if (bitboard.isSemiOpenFileLenient<color>(index)) {
                     blackMidgameScore += getEvalValue(MIDGAME_KING_OPEN_FILE_PENALTY);
-                    blackEndgameScore += getEvalValue(ENDGAME_KING_OPEN_FILE_PENALTY);
-                }*/
+                    blackEndgameScore += std::min<int>(getEvalValue(ENDGAME_KING_OPEN_FILE_PENALTY),
+                                                       0ULL);
+                }
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.

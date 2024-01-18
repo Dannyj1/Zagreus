@@ -25,13 +25,13 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[80] = {97, 98, 375, 351, 399, 372, 545, 539, 1034, 1018, 8, 6, 6, 4, 0, 9, 0, 20, 22,
-                      3, -6, 0, -4, 13, 4, 0, -14, -2, -22, 8, -7, -25, -6, -11, -10, 12, -3, -6,
-                      -5, 0, -13, -6, -5, -5, 6, 0, -6, -7, -6, -20, -30, -18, 14, 0, 8, 7, 34, 14,
-                      17, 0, -10, 0, 3, 4, 7, 20, 0, -13, 9, -8, -26, -12, 10, 24, 9, 17, -12, -19,
-                      7, 22,};
+int evalValues[84] = {93, 102, 363, 347, 384, 370, 536, 542, 1023, 1008, 7, 5, 7, 3, 0, 6, 0, 19,
+                      10, 1, -5, -2, -8, 8, 7, 0, -12, 0, -15, 6, -5, -26, -4, -9, 0, 10, -3, -6,
+                      -6, -3, -13, -12, -4, -8, 6, -3, -5, -11, -3, -15, -30, -19, 15, 2, 7, 14, 28,
+                      20, 14, 5, -6, -1, 2, -6, 3, 21, -2, -13, 11, -2, -20, -19, 14, 25, 11, 20,
+                      -12, -15, 6, 20, -15, 1, -14, 0,};
 
-int baseEvalValues[80] = {
+int baseEvalValues[84] = {
     100,  // MIDGAME_PAWN_MATERIAL
     100,  // ENDGAME_PAWN_MATERIAL
     350,  // MIDGAME_KNIGHT_MATERIAL
@@ -112,10 +112,10 @@ int baseEvalValues[80] = {
     -20,  // ENDGAME_BACKWARD_PAWN_PENALTY
     3,    // MIDGAME_PAWN_CONNECTED
     3,    // ENDGAME_PAWN_CONNECTED
-    /*-5,   // MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY
+    -5,   // MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY
     0,    // ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY
     -20,  // MIDGAME_KING_OPEN_FILE_PENALTY
-    0,    // ENDGAME_KING_OPEN_FILE_PENALTY*/
+    0,    // ENDGAME_KING_OPEN_FILE_PENALTY
 };
 
 void printEvalValues() {
