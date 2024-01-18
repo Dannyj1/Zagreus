@@ -25,13 +25,14 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[80] = {93, 102, 363, 347, 384, 370, 536, 542, 1023, 1008, 7, 5, 7, 3, 0, 6, 0, 19,
-                      10, 1, -5, -2, -8, 8, 7, 0, -12, 0, -15, 6, -5, -26, -4, -9, 0, 10, -3, -6,
-                      -6, -3, -13, -12, -4, -8, 6, -3, -5, -11, -3, -15, -30, -19, 15, 2, 7, 14, 28,
-                      20, 14, 5, -6, -1, 2, -6, 3, 21, -2, -13, 11, -2, -20, -19, 14, 25, 11, 20,
-                      -12, -15, 6, 20};
+int evalValues[96] = {95, 103, 366, 357, 390, 361, 543, 529, 1022, 1016, 8, 4, 7, 3, 1, 6, 0, 19,
+                      17, -4, -6, -2, -8, 10, 4, 0, -15, 1, -15, 6, -10, -21, -6, -8, -7, 10, -3,
+                      -6, -5, -3, -16, -6, -4, -6, 4, -4, -4, -14, -29, -19, 15, 3, 7, 9, 28, 23,
+                      16, 7, -10, 0, 4, -1, 10, 17, -1, -11, 11, 0, 13, 29, 9, 19, -13, -9, 6, 15,
+                      -7, -5, -16, 0, -7, -8, 0, 1, -12, -1, 0, -2, -23, -17, -19, -19, -5, -3, -5,
+                      -2,};
 
-int baseEvalValues[80] = {
+int baseEvalValues[96] = {
     100,  // MIDGAME_PAWN_MATERIAL
     100,  // ENDGAME_PAWN_MATERIAL
     350,  // MIDGAME_KNIGHT_MATERIAL
@@ -78,8 +79,6 @@ int baseEvalValues[80] = {
     -3,   // ENDGAME_KNIGHT_MISSING_PAWN_PENALTY
     2,    // MIDGAME_KNIGHT_DEFENDED_BY_PAWN
     2,    // ENDGAME_KNIGHT_DEFENDED_BY_PAWN
-    -5,   // MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
-    -5,   // ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY
     -10,  // MIDGAME_BAD_BISHOP_PENALTY
     -15,  // ENDGAME_BAD_BISHOP_PENALTY
     -50,  // MIDGAME_MISSING_BISHOP_PAIR_PENALTY
@@ -102,8 +101,6 @@ int baseEvalValues[80] = {
     -10,  // ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY
     4,    // MIDGAME_ROOK_ON_QUEEN_FILE
     4,    // ENDGAME_ROOK_ON_QUEEN_FILE
-    -4,   // MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY
-    -4,   // ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY
     5,    // MIDGAME_PASSED_PAWN_CLOSE_TO_PROMOTION
     15,   // ENDGAME_PASSED_PAWN_CLOSE_TO_PROMOTION
     2,    // MIDGAME_PASSED_PAWN_DEFENDED
@@ -112,6 +109,26 @@ int baseEvalValues[80] = {
     -20,  // ENDGAME_BACKWARD_PAWN_PENALTY
     3,    // MIDGAME_PAWN_CONNECTED
     3,    // ENDGAME_PAWN_CONNECTED
+    -10,  // MIDGAME_PAWN_NOT_DEFENDED_PENALTY
+    -10,  // ENDGAME_PAWN_NOT_DEFENDED_PENALTY
+    -8,   // MIDGAME_KNIGHT_NOT_DEFENDED_PENALTY
+    -8,   // ENDGAME_KNIGHT_NOT_DEFENDED_PENALTY
+    -8,   // MIDGAME_BISHOP_NOT_DEFENDED_PENALTY
+    -8,   // ENDGAME_BISHOP_NOT_DEFENDED_PENALTY
+    -6,   // MIDGAME_ROOK_NOT_DEFENDED_PENALTY
+    -6,   // ENDGAME_ROOK_NOT_DEFENDED_PENALTY
+    -4,   // MIDGAME_QUEEN_NOT_DEFENDED_PENALTY
+    -4,   // ENDGAME_QUEEN_NOT_DEFENDED_PENALTY
+    -5,   // MIDGAME_PAWN_WEAK_SQUARE_PENALTY
+    -5,   // ENDGAME_PAWN_WEAK_SQUARE_PENALTY
+    -4,   // MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY
+    -4,   // ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY
+    -4,   // MIDGAME_BISHOP_WEAK_SQUARE_PENALTY
+    -4,   // ENDGAME_BISHOP_WEAK_SQUARE_PENALTY
+    -3,   // MIDGAME_ROOK_WEAK_SQUARE_PENALTY
+    -3,   // ENDGAME_ROOK_WEAK_SQUARE_PENALTY
+    -2,   // MIDGAME_QUEEN_WEAK_SQUARE_PENALTY
+    -2,   // ENDGAME_QUEEN_WEAK_SQUARE_PENALTY
 };
 
 void printEvalValues() {
