@@ -729,7 +729,7 @@ void Evaluation::evaluatePieces() {
             }
         }
 
-        /*// Undefended minor pieces
+        // Undefended minor pieces
         if (isKnight(pieceType) || isBishop(pieceType)) {
             if (!(square & attacksByColor[color])) {
                 // Penalize a minor piece for not being defended
@@ -742,7 +742,7 @@ void Evaluation::evaluatePieces() {
                 }
             }
 
-            uint64_t weakSquares;
+            /*uint64_t weakSquares;
 
             if (color == WHITE) {
                 weakSquares = attackedBy2[BLACK] & ~attackedBy2[WHITE];
@@ -758,65 +758,27 @@ void Evaluation::evaluatePieces() {
                     blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
                     blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
                 }
-            }
-        }*/
+            }*/
+        }
 
         uint64_t weakSquares = color == WHITE
                                    ? attackedBy2[BLACK] & ~attackedBy2[WHITE]
                                    : attackedBy2[WHITE] & ~attackedBy2[BLACK];
         int midgameScore = 0;
         int endgameScore = 0;
-        if (!(square & attacksByColor[color])) {
-            if (isPawn(pieceType)) {
-                midgameScore += std::min<
-                    int>(getEvalValue(MIDGAME_PAWN_NOT_DEFENDED_PENALTY), 0ULL);
-                endgameScore += std::min<
-                    int>(getEvalValue(ENDGAME_PAWN_NOT_DEFENDED_PENALTY), 0ULL);
-            } else if (isKnight(pieceType)) {
-                midgameScore += std::min<int>(getEvalValue(MIDGAME_KNIGHT_NOT_DEFENDED_PENALTY),
-                                              0ULL);
-                endgameScore += std::min<int>(getEvalValue(ENDGAME_KNIGHT_NOT_DEFENDED_PENALTY),
-                                              0ULL);
-            } else if (isBishop(pieceType)) {
-                midgameScore += std::min<int>(getEvalValue(MIDGAME_BISHOP_NOT_DEFENDED_PENALTY),
-                                              0ULL);
-                endgameScore += std::min<int>(getEvalValue(ENDGAME_BISHOP_NOT_DEFENDED_PENALTY),
-                                              0ULL);
-            } else if (isRook(pieceType)) {
-                midgameScore += std::min<
-                    int>(getEvalValue(MIDGAME_ROOK_NOT_DEFENDED_PENALTY), 0ULL);
-                endgameScore += std::min<
-                    int>(getEvalValue(ENDGAME_ROOK_NOT_DEFENDED_PENALTY), 0ULL);
-            } else if (isQueen(pieceType)) {
-                midgameScore += std::min<int>(getEvalValue(MIDGAME_QUEEN_NOT_DEFENDED_PENALTY),
-                                              0ULL);
-                endgameScore += std::min<int>(getEvalValue(ENDGAME_QUEEN_NOT_DEFENDED_PENALTY),
-                                              0ULL);
-            }
-        }
-
         if (square & weakSquares) {
-            if (isPawn(pieceType)) {
-                midgameScore += std::min<int>(getEvalValue(MIDGAME_PAWN_WEAK_SQUARE_PENALTY), 0ULL);
-                endgameScore += std::min<int>(getEvalValue(ENDGAME_PAWN_WEAK_SQUARE_PENALTY), 0ULL);
-            } else if (isKnight(pieceType)) {
-                midgameScore += std::min<int>(getEvalValue(MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY),
-                                              0ULL);
-                endgameScore += std::min<int>(getEvalValue(ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY),
-                                              0ULL);
+            if (isKnight(pieceType)) {
+                midgameScore += getEvalValue(MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
+                endgameScore += getEvalValue(ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
             } else if (isBishop(pieceType)) {
-                midgameScore += std::min<int>(getEvalValue(MIDGAME_BISHOP_WEAK_SQUARE_PENALTY),
-                                              0ULL);
-                endgameScore += std::min<int>(getEvalValue(ENDGAME_BISHOP_WEAK_SQUARE_PENALTY),
-                                              0ULL);
+                midgameScore += getEvalValue(MIDGAME_BISHOP_WEAK_SQUARE_PENALTY);
+                endgameScore += getEvalValue(ENDGAME_BISHOP_WEAK_SQUARE_PENALTY);
             } else if (isRook(pieceType)) {
-                midgameScore += std::min<int>(getEvalValue(MIDGAME_ROOK_WEAK_SQUARE_PENALTY), 0ULL);
-                endgameScore += std::min<int>(getEvalValue(ENDGAME_ROOK_WEAK_SQUARE_PENALTY), 0ULL);
+                midgameScore += getEvalValue(MIDGAME_ROOK_WEAK_SQUARE_PENALTY);
+                endgameScore += getEvalValue(ENDGAME_ROOK_WEAK_SQUARE_PENALTY);
             } else if (isQueen(pieceType)) {
-                midgameScore += std::min<
-                    int>(getEvalValue(MIDGAME_QUEEN_WEAK_SQUARE_PENALTY), 0ULL);
-                endgameScore += std::min<
-                    int>(getEvalValue(ENDGAME_QUEEN_WEAK_SQUARE_PENALTY), 0ULL);
+                midgameScore += getEvalValue(MIDGAME_QUEEN_WEAK_SQUARE_PENALTY);
+                endgameScore += getEvalValue(ENDGAME_QUEEN_WEAK_SQUARE_PENALTY);
             }
         }
 
