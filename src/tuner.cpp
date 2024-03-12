@@ -30,7 +30,6 @@
 #include "bitboard.h"
 #include "evaluate.h"
 #include "features.h"
-#include "movegen.h"
 #include "pst.h"
 #include "search.h"
 
@@ -41,15 +40,15 @@ int stopCounter = 0;
 int iteration = 0;
 double K = 0.0;
 
-int batchSize = 512;
-double learningRate = 0.25;
+int batchSize = 256;
+double learningRate = 0.1;
 double delta = 1.0;
 double optimizerEpsilon = 1e-6;
 double epsilonDecay = 0.98;
 double beta1 = 0.9;
 double beta2 = 0.999;
 // 0 = random seed
-long seed = 0;
+long seed = 12032024;
 int epsilonWarmupIterations = 0;
 int patience = 20;
 
@@ -78,7 +77,7 @@ double evaluationLoss(std::vector<TunePosition>& positions, int amountOfPosition
 
     for (TunePosition& pos : positions) {
         tunerBoard.setFromFenTuner(pos.fen);
-        int evalScore = Evaluation(tunerBoard).evaluate();;
+        int evalScore = Evaluation(tunerBoard).evaluate();
 
         double loss = std::pow(pos.result - sigmoid(evalScore), 2);
         totalLoss += loss;
@@ -362,19 +361,30 @@ void startTuning(char* filePath) {
 
         for (TunePosition& pos : batch) {
             std::vector<TunePosition> position{pos};
-            double loss = evaluationLoss(position, 1, maxEndTime, engine);
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                 double oldParam = bestParameters[paramIndex];
+
                 bestParameters[paramIndex] = oldParam + delta;
                 updateEvalValues(bestParameters);
-                double lossPlus = evaluationLoss(position, 1, maxEndTime, engine);
+                double fPlusDelta = evaluationLoss(position, 1, maxEndTime, engine);
 
                 bestParameters[paramIndex] = oldParam - delta;
                 updateEvalValues(bestParameters);
-                double lossMinus = evaluationLoss(position, 1, maxEndTime, engine);
+                double fMinusDelta = evaluationLoss(position, 1, maxEndTime, engine);
 
-                gradients[paramIndex] += (lossPlus - lossMinus) / (2 * delta);
+                bestParameters[paramIndex] = oldParam + 2 * delta;
+                updateEvalValues(bestParameters);
+                double fPlus2Delta = evaluationLoss(position, 1, maxEndTime, engine);
+
+                bestParameters[paramIndex] = oldParam - 2 * delta;
+                updateEvalValues(bestParameters);
+                double fMinus2Delta = evaluationLoss(position, 1, maxEndTime, engine);
+
+                double diffDelta = (fPlusDelta - fMinusDelta) / (2.0 * delta);
+                double diff2Delta = (fPlus2Delta - fMinus2Delta) / (4.0 * delta);
+
+                gradients[paramIndex] += (4.0 * diffDelta - diff2Delta) / 3.0;
 
                 // reset
                 bestParameters[paramIndex] = oldParam;
