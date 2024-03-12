@@ -40,7 +40,8 @@ int stopCounter = 0;
 int iteration = 0;
 double K = 0.0;
 
-int batchSize = 256;
+// Around 0.86 with 2 steps
+int batchSize = 128;
 double learningRate = 0.1;
 double delta = 1.0;
 double optimizerEpsilon = 1e-6;
@@ -381,10 +382,19 @@ void startTuning(char* filePath) {
                 updateEvalValues(bestParameters);
                 double fMinus2Delta = evaluationLoss(position, 1, maxEndTime, engine);
 
+                bestParameters[paramIndex] = oldParam + 4 * delta;
+                updateEvalValues(bestParameters);
+                double fPlus4Delta = evaluationLoss(position, 1, maxEndTime, engine);
+
+                bestParameters[paramIndex] = oldParam - 4 * delta;
+                updateEvalValues(bestParameters);
+                double fMinus4Delta = evaluationLoss(position, 1, maxEndTime, engine);
+
                 double diffDelta = (fPlusDelta - fMinusDelta) / (2.0 * delta);
                 double diff2Delta = (fPlus2Delta - fMinus2Delta) / (4.0 * delta);
+                double diff4Delta = (fPlus4Delta - fMinus4Delta) / (8.0 * delta);
 
-                gradients[paramIndex] += (4.0 * diffDelta - diff2Delta) / 3.0;
+                gradients[paramIndex] += (16.0 * diffDelta - 8.0 * diff2Delta + diff4Delta) / 15.0;
 
                 // reset
                 bestParameters[paramIndex] = oldParam;
