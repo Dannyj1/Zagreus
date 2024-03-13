@@ -51,7 +51,7 @@ double beta2 = 0.999;
 // 0 = random seed
 long seed = 12032024;
 int epsilonWarmupIterations = 0;
-int patience = 20;
+int patience = 50;
 
 std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& positions) {
     // Create random batches of batchSize positions
@@ -71,9 +71,7 @@ std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& 
 
 double sigmoid(double x) { return 1.0 / (1.0 + pow(10.0, -K * x / 400.0)); }
 
-double evaluationLoss(std::vector<TunePosition>& positions, int amountOfPositions,
-                      std::chrono::time_point<std::chrono::steady_clock>& maxEndTime,
-                      ZagreusEngine& engine) {
+double evaluationLoss(std::vector<TunePosition>& positions, int amountOfPositions) {
     double totalLoss = 0.0;
 
     for (TunePosition& pos : positions) {
@@ -87,55 +85,44 @@ double evaluationLoss(std::vector<TunePosition>& positions, int amountOfPosition
     return (1.0 / amountOfPositions) * totalLoss;
 }
 
-double findOptimalK(std::vector<TunePosition>& positions,
-                    std::chrono::time_point<std::chrono::steady_clock>& maxEndTime,
-                    ZagreusEngine& engine) {
-    std::vector<int> evalScores(positions.size());
+double goldenSectionSearch(std::vector<TunePosition>& positions) {
+    const double phi = (1.0 + sqrt(5.0)) / 2.0;
+    const double tolerance = 1e-6;
 
-    for (TunePosition& pos : positions) {
-        tunerBoard.setFromFenTuner(pos.fen);
-        Move rootMove{};
-        SearchContext context{};
-        context.endTime = maxEndTime;
-        senjo::SearchStats stats{};
+    double a = 0.0;
+    double b = 2.0;
 
-        /*if (tunerBoard.getMovingColor() == WHITE) {
-            int qScore = qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
-                                                           rootMove, context, stats);
+    double x1 = b - (b - a) / phi;
+    double x2 = a + (b - a) / phi;
+
+    K = x1;
+    double f1 = evaluationLoss(positions, positions.size());
+    K = x2;
+    double f2 = evaluationLoss(positions, positions.size());
+
+    while (std::abs(b - a) > tolerance) {
+        if (f1 < f2) {
+            b = x2;
+            x2 = x1;
+            x1 = b - (b - a) / phi;
+            f2 = f1;
+            K = x1;
+            f1 = evaluationLoss(positions, positions.size());
         } else {
-            int qScore = qScore = qsearch<BLACK, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0,
-                                                           rootMove, context, stats);
-        }*/
-
-        int evalScore = Evaluation(tunerBoard).evaluate();
-
-        pos.score = evalScore;
-    }
-
-    // Find optimal K
-    double bestK = 0.0;
-    double bestLoss = 9999999.0;
-    double oldK = K;
-
-    for (double k = 0.0; k <= 2.0; k += 0.001) {
-        K = k;
-        double totalLoss = 0.0;
-
-        for (TunePosition& pos : positions) {
-            double loss = pos.result - sigmoid((double)pos.score);
-            totalLoss += loss * loss;
-        }
-
-        double loss = totalLoss / static_cast<double>(positions.size());
-
-        if (loss < bestLoss) {
-            bestLoss = loss;
-            bestK = k;
+            a = x1;
+            x1 = x2;
+            x2 = a + (b - a) / phi;
+            f1 = f2;
+            K = x2;
+            f2 = evaluationLoss(positions, positions.size());
         }
     }
 
-    K = oldK;
-    return bestK;
+    return (a + b) / 2.0;
+}
+
+double findOptimalK(std::vector<TunePosition>& positions) {
+    return goldenSectionSearch(positions);
 }
 
 std::vector<TunePosition> loadPositions(
@@ -326,7 +313,7 @@ void startTuning(char* filePath) {
     exportNewEvalValues(bestParameters);
 
     std::cout << "Finding the optimal K value..." << std::endl;
-    K = findOptimalK(positions, maxEndTime, engine);
+    K = findOptimalK(positions);
     std::cout << "Optimal K value: " << K << std::endl;
 
     std::shuffle(positions.begin(), positions.end(), gen);
@@ -341,7 +328,7 @@ void startTuning(char* filePath) {
 
     std::cout << "Calculating the initial loss..." << std::endl;
     double bestLoss =
-        evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
+        evaluationLoss(validationPositions, validationPositions.size());
     double bestAverageLoss = bestLoss;
 
     std::cout << "Initial loss: " << bestLoss << std::endl;
@@ -368,33 +355,24 @@ void startTuning(char* filePath) {
 
                 bestParameters[paramIndex] = oldParam + delta;
                 updateEvalValues(bestParameters);
-                double fPlusDelta = evaluationLoss(position, 1, maxEndTime, engine);
+                double fPlusDelta = evaluationLoss(position, 1);
 
                 bestParameters[paramIndex] = oldParam - delta;
                 updateEvalValues(bestParameters);
-                double fMinusDelta = evaluationLoss(position, 1, maxEndTime, engine);
+                double fMinusDelta = evaluationLoss(position, 1);
 
                 bestParameters[paramIndex] = oldParam + 2 * delta;
                 updateEvalValues(bestParameters);
-                double fPlus2Delta = evaluationLoss(position, 1, maxEndTime, engine);
+                double fPlus2Delta = evaluationLoss(position, 1);
 
                 bestParameters[paramIndex] = oldParam - 2 * delta;
                 updateEvalValues(bestParameters);
-                double fMinus2Delta = evaluationLoss(position, 1, maxEndTime, engine);
-
-                bestParameters[paramIndex] = oldParam + 4 * delta;
-                updateEvalValues(bestParameters);
-                double fPlus4Delta = evaluationLoss(position, 1, maxEndTime, engine);
-
-                bestParameters[paramIndex] = oldParam - 4 * delta;
-                updateEvalValues(bestParameters);
-                double fMinus4Delta = evaluationLoss(position, 1, maxEndTime, engine);
+                double fMinus2Delta = evaluationLoss(position, 1);
 
                 double diffDelta = (fPlusDelta - fMinusDelta) / (2.0 * delta);
                 double diff2Delta = (fPlus2Delta - fMinus2Delta) / (4.0 * delta);
-                double diff4Delta = (fPlus4Delta - fMinus4Delta) / (8.0 * delta);
 
-                gradients[paramIndex] += (16.0 * diffDelta - 8.0 * diff2Delta + diff4Delta) / 15.0;
+                gradients[paramIndex] += (4.0 * diffDelta - diff2Delta) / 3.0;
 
                 // reset
                 bestParameters[paramIndex] = oldParam;
@@ -413,7 +391,7 @@ void startTuning(char* filePath) {
 
         updateEvalValues(bestParameters);
         double validationLoss =
-            evaluationLoss(validationPositions, validationPositions.size(), maxEndTime, engine);
+            evaluationLoss(validationPositions, validationPositions.size());
         smoothedValidationLoss.add(validationLoss);
         double averageValidationLoss = smoothedValidationLoss.getMA();
 
