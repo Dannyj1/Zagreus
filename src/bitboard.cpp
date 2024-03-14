@@ -40,10 +40,6 @@ Bitboard::Bitboard() {
         zobristConstant = dis(gen);
     }
 
-    for (PieceType& type : pieceSquareMapping) {
-        type = EMPTY;
-    }
-
     uint64_t sqBB = 1ULL;
     for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
         kingAttacks[sq] = calculateKingAttacks(sqBB) & ~sqBB;
@@ -380,7 +376,7 @@ void Bitboard::makeNullMove() {
 void Bitboard::unmakeNullMove() {
     ply -= 1;
     UndoData undoData = undoStack[ply];
-    
+
     enPassantSquare = undoData.enPassantSquare;
     castlingRights = undoData.castlingRights;
     movingColor = getOppositeColor(movingColor);
@@ -587,8 +583,7 @@ bool Bitboard::setFromFen(const std::string& fen) {
     return true;
 }
 
-// Faster setFromFen version without validity checks and some features the tuner doesn't need
-bool Bitboard::setFromFenTuner(std::string& fen) {
+bool Bitboard::setFromFenTuner(const std::string& fen) {
     int index = A8;
     int spaces = 0;
 
@@ -604,20 +599,32 @@ bool Bitboard::setFromFenTuner(std::string& fen) {
         bb = 0;
     }
 
+    for (uint64_t& hash : moveHistory) {
+        hash = 0;
+    }
+
+    for (UndoData& undo : undoStack) {
+        undo = {};
+    }
+
     for (int& count : materialCount) {
         count = 0;
     }
 
     occupiedBB = 0;
+    movingColor = NONE;
+    ply = 0;
+    halfMoveClock = 0;
+    fullmoveClock = 1;
     enPassantSquare = NO_SQUARE;
-    movingColor = WHITE;
     castlingRights = 0;
+    zobristHash = 0;
     pstValues[0] = 0;
     pstValues[1] = 0;
     pstValues[2] = 0;
     pstValues[3] = 0;
 
-    for (char& character : fen) {
+    for (char character : fen) {
         if (character == ' ') {
             spaces++;
             continue;
@@ -638,12 +645,24 @@ bool Bitboard::setFromFenTuner(std::string& fen) {
                 continue;
             }
 
-            setPieceFromFENChar(character, index);
-            index++;
+            if (character >= 'A' && character <= 'z') {
+                setPieceFromFENChar(character, index);
+                index++;
+            } else {
+                senjo::Output(senjo::Output::InfoPrefix) << "Invalid piece character!";
+                return false;
+            }
         }
 
         if (spaces == 1) {
-            continue;
+            if (tolower(character) == 'w') {
+                movingColor = WHITE;
+            } else if (tolower(character) == 'b') {
+                movingColor = BLACK;
+            } else {
+                senjo::Output(senjo::Output::InfoPrefix) << "Invalid color to move!";
+                return false;
+            }
         }
 
         if (spaces == 2) {
@@ -661,9 +680,10 @@ bool Bitboard::setFromFenTuner(std::string& fen) {
             } else if (character == 'q') {
                 castlingRights |= BLACK_QUEENSIDE;
                 continue;
-            } else {
-                continue;
             }
+
+            senjo::Output(senjo::Output::InfoPrefix) << "Invalid castling rights!";
+            return false;
         }
 
         if (spaces == 3) {
@@ -678,6 +698,11 @@ bool Bitboard::setFromFenTuner(std::string& fen) {
             int8_t file = tolower(character) - 'a';
             // NOLINT(cppcoreguidelines-narrowing-conversions)
             int8_t rank = getOppositeColor(movingColor) == WHITE ? 2 : 5;
+
+            if (file < 0 || file > 7) {
+                senjo::Output(senjo::Output::InfoPrefix) << "Invalid en passant file!";
+                return false;
+            }
 
             enPassantSquare = rank * 8 + file;
             index += 2;
@@ -760,11 +785,11 @@ void Bitboard::initializeBetweenLookup() {
             btwn = m1 << from ^ m1 << to;
             file = (to & 7) - (from & 7);
             rank = (to | 7) - from >> 3;
-            line = (file & 7) - 1 & a2a7;          /* a2a7 if same file */
-            line += 2 * ((rank & 7) - 1 >> 58);    /* b1g1 if same rank */
+            line = (file & 7) - 1 & a2a7; /* a2a7 if same file */
+            line += 2 * ((rank & 7) - 1 >> 58); /* b1g1 if same rank */
             line += (rank - file & 15) - 1 & b2g7; /* b2g7 if same diagonal */
             line += (rank + file & 15) - 1 & h1b7; /* h1b7 if same antidiag */
-            line *= btwn & -btwn;                  /* mul acts like shift by smaller square */
+            line *= btwn & -btwn; /* mul acts like shift by smaller square */
 
             betweenTable[from][to] = line & btwn; /* return the bits on that line in-between */
         }
@@ -917,6 +942,7 @@ bool Bitboard::isWinner() {
         }
     }
 
+    MoveListPool* moveListPool = MoveListPool::getInstance();
     MoveList* moveList = moveListPool->getMoveList();
     generateMoves<color == WHITE ? BLACK : WHITE, NORMAL>(*this, moveList);
 

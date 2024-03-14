@@ -41,6 +41,13 @@ private:
     uint64_t colorBB[2]{0ULL};
     uint64_t occupiedBB{0ULL};
 
+    uint64_t kingAttacks[64]{};
+    uint64_t knightAttacks[64]{};
+    uint64_t pawnAttacks[2][64]{};
+    uint64_t rayAttacks[8][64]{};
+    uint64_t betweenTable[64][64]{};
+    uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
+
     PieceColor movingColor = NONE;
     uint16_t ply = 0;
     uint8_t halfMoveClock = 0;
@@ -49,12 +56,6 @@ private:
     uint8_t castlingRights = 0b00001111;
 
     uint64_t zobristHash = 0ULL;
-
-    uint64_t kingAttacks[64]{};
-    uint64_t knightAttacks[64]{};
-    uint64_t pawnAttacks[2][64]{};
-    uint64_t rayAttacks[8][64]{};
-    uint64_t betweenTable[64][64]{};
 
     UndoData undoStack[MAX_PLY]{};
     uint64_t moveHistory[MAX_PLY]{};
@@ -65,12 +66,12 @@ private:
     Move previousMove{};
     int materialCount[12]{};
 
-    MoveListPool* moveListPool = MoveListPool::getInstance();
-
 public:
-    uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
-
     Bitboard();
+
+    void initializeBetweenLookup();
+
+    void initializeRayAttacks();
 
     uint64_t getPieceBoard(PieceType pieceType);
 
@@ -154,14 +155,12 @@ public:
 
     bool setFromFen(const std::string& fen);
 
-    bool setFromFenTuner(std::string& fen);
+    bool setFromFenTuner(const std::string& fen);
 
     bool isDraw();
 
     template <PieceColor color>
     bool isWinner();
-
-    void initializeBetweenLookup();
 
     void setPieceFromFENChar(char character, int index);
 
@@ -275,8 +274,6 @@ public:
             return fileMask == (fileMask & ~ownOccupied);
         }
     }
-
-    void initializeRayAttacks();
 
     uint64_t getRayAttack(int8_t square, Direction direction);
 
@@ -438,8 +435,9 @@ public:
 
     template <PieceColor color>
     int getAmountOfPawns() {
-        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE ? WHITE_PAWN
-                                                                            : BLACK_PAWN));
+        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE
+                                                                 ? WHITE_PAWN
+                                                                 : BLACK_PAWN));
     }
 
     template <PieceColor color>

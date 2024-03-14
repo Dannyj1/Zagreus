@@ -34,8 +34,6 @@
 #include "search.h"
 
 namespace Zagreus {
-Bitboard tunerBoard{};
-
 int stopCounter = 0;
 int iteration = 0;
 double K = 0.0;
@@ -45,13 +43,13 @@ int batchSize = 128;
 double learningRate = 0.1;
 double delta = 1.0;
 double optimizerEpsilon = 1e-6;
-double epsilonDecay = 0.98;
 double beta1 = 0.9;
 double beta2 = 0.999;
 // 0 = random seed
 long seed = 12032024;
-int epsilonWarmupIterations = 0;
 int patience = 50;
+
+Bitboard tunerBoard{};
 
 std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& positions) {
     // Create random batches of batchSize positions
@@ -78,6 +76,11 @@ double evaluationLoss(std::vector<TunePosition>& positions, int amountOfPosition
         tunerBoard.setFromFenTuner(pos.fen);
         int evalScore = Evaluation(tunerBoard).evaluate();
 
+        // All scores are from white's perspective
+        if (tunerBoard.getMovingColor() == BLACK) {
+            evalScore *= -1;
+        }
+
         double loss = std::pow(pos.result - sigmoid(evalScore), 2);
         totalLoss += loss;
     }
@@ -85,7 +88,7 @@ double evaluationLoss(std::vector<TunePosition>& positions, int amountOfPosition
     return (1.0 / amountOfPositions) * totalLoss;
 }
 
-double goldenSectionSearch(std::vector<TunePosition>& positions) {
+double findOptimalK(std::vector<TunePosition>& positions) {
     const double phi = (1.0 + sqrt(5.0)) / 2.0;
     const double tolerance = 1e-6;
 
@@ -121,10 +124,6 @@ double goldenSectionSearch(std::vector<TunePosition>& positions) {
     return (a + b) / 2.0;
 }
 
-double findOptimalK(std::vector<TunePosition>& positions) {
-    return goldenSectionSearch(positions);
-}
-
 std::vector<TunePosition> loadPositions(
     char* filePath, std::chrono::time_point<std::chrono::steady_clock>& maxEndTime,
     ZagreusEngine& engine, std::mt19937_64 gen) {
@@ -152,11 +151,11 @@ std::vector<TunePosition> loadPositions(
         std::string resultStr = posLine.substr(posLine.find(" c9 ") + 4, posLine.find(" c9 ") + 4);
         std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
-        Move rootMove{};
         SearchContext context{};
         senjo::SearchStats stats{};
         context.endTime = maxEndTime;
         int qScore;
+        Bitboard tunerBoard{};
 
         if (tunerBoard.getMovingColor() == WHITE) {
             qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0, context, stats);
@@ -192,7 +191,14 @@ std::vector<TunePosition> loadPositions(
         }
 
         int evalScore = Evaluation(tunerBoard).evaluate();
-        positions.emplace_back(TunePosition{fen, result, evalScore});
+
+        // All scores are from white's perspective
+        if (tunerBoard.getMovingColor() == BLACK) {
+            evalScore *= -1;
+        }
+
+        TunePosition tunePos{fen, result, evalScore};
+        positions.emplace_back(tunePos);
     }
 
     // Reduce the biggest two classes to the size of the smallest class
@@ -295,10 +301,11 @@ void startTuning(char* filePath) {
     ExponentialMovingAverage smoothedValidationLoss(10);
 
     if (seed == 0) {
-        gen = std::mt19937_64(rd());
-    } else {
-        gen = std::mt19937_64(seed);
+        seed = rd();
     }
+
+    gen = std::mt19937_64(seed);
+    std::cout << "Using seed: " << seed << std::endl;
 
     ZagreusEngine engine;
     senjo::UCIAdapter adapter(engine);
@@ -369,10 +376,8 @@ void startTuning(char* filePath) {
                 updateEvalValues(bestParameters);
                 double fMinus2Delta = evaluationLoss(position, 1);
 
-                double diffDelta = (fPlusDelta - fMinusDelta) / (2.0 * delta);
-                double diff2Delta = (fPlus2Delta - fMinus2Delta) / (4.0 * delta);
-
-                gradients[paramIndex] += (4.0 * diffDelta - diff2Delta) / 3.0;
+                gradients[paramIndex] += (
+                    -fPlus2Delta + 8 * fPlusDelta - 8 * fMinusDelta + fMinus2Delta) / (12 * delta);
 
                 // reset
                 bestParameters[paramIndex] = oldParam;
@@ -384,9 +389,10 @@ void startTuning(char* filePath) {
             m[paramIndex] = beta1 * m[paramIndex] + (1.0 - beta1) * gradients[paramIndex];
             v[paramIndex] = beta2 * v[paramIndex] + (1.0 - beta2) * std::pow(
                                 gradients[paramIndex], 2.0);
-            double m_hat = m[paramIndex] / (1.0 - pow(beta1, iteration));
-            double v_hat = v[paramIndex] / (1.0 - pow(beta2, iteration));
-            bestParameters[paramIndex] -= learningRate * (m_hat / (sqrt(v_hat) + optimizerEpsilon));
+            double mCorrected = m[paramIndex] / (1.0 - std::pow(beta1, iteration));
+            double vCorrected = v[paramIndex] / (1.0 - std::pow(beta2, iteration));
+            bestParameters[paramIndex] -= learningRate * mCorrected / (
+                sqrt(vCorrected) + optimizerEpsilon);
         }
 
         updateEvalValues(bestParameters);
@@ -394,12 +400,6 @@ void startTuning(char* filePath) {
             evaluationLoss(validationPositions, validationPositions.size());
         smoothedValidationLoss.add(validationLoss);
         double averageValidationLoss = smoothedValidationLoss.getMA();
-
-        if (iteration > epsilonWarmupIterations) {
-            // Decay epsilon
-            delta *= epsilonDecay;
-            delta = std::max(delta, 1.0);
-        }
 
         if (validationLoss < bestLoss) {
             bestLoss = validationLoss;
@@ -415,7 +415,7 @@ void startTuning(char* filePath) {
 
         std::cout << "Iteration: " << iteration << ", Val Loss: " << validationLoss
             << ", Best Loss: " << bestLoss << ", Avg Val Loss: " << averageValidationLoss
-            << ", Lr: " << learningRate << ", Epsilon: " << delta << std::endl;
+            << ", Lr: " << learningRate << std::endl;
     }
 
     std::cout << "Best loss: " << bestLoss << std::endl;
