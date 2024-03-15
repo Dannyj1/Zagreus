@@ -29,7 +29,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t whitePawns = bitboard.getPieceBoard(WHITE_PAWN);
     while (whitePawns) {
         uint8_t square = popLsb(whitePawns);
-        uint64_t attacks = bitboard.getPawnAttacks<WHITE>(square);
+        uint64_t attacks = getPawnAttacks<WHITE>(square);
 
         attacksByPiece[WHITE_PAWN] |= attacks;
         attackedBy2[WHITE] |= (attacks & attacksByColor[WHITE]);
@@ -40,7 +40,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t whiteKnights = bitboard.getPieceBoard(WHITE_KNIGHT);
     while (whiteKnights) {
         uint8_t square = popLsb(whiteKnights);
-        uint64_t attacks = bitboard.getKnightAttacks(square);
+        uint64_t attacks = getKnightAttacks(square);
 
         attacksByPiece[WHITE_KNIGHT] |= attacks;
         attackedBy2[WHITE] |= (attacks & attacksByColor[WHITE]);
@@ -84,7 +84,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     {
         uint64_t whiteKing = bitboard.getPieceBoard(WHITE_KING);
         uint8_t square = popLsb(whiteKing);
-        uint64_t attacks = bitboard.getKingAttacks(square);
+        uint64_t attacks = getKingAttacks(square);
 
         attacksByPiece[WHITE_KING] |= attacks;
         attacksByColor[WHITE] |= attacks;
@@ -94,7 +94,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t blackPawns = bitboard.getPieceBoard(BLACK_PAWN);
     while (blackPawns) {
         uint8_t square = popLsb(blackPawns);
-        uint64_t attacks = bitboard.getPawnAttacks<BLACK>(square);
+        uint64_t attacks = getPawnAttacks<BLACK>(square);
 
         attacksByPiece[BLACK_PAWN] |= attacks;
         attackedBy2[BLACK] |= (attacks & attacksByColor[BLACK]);
@@ -105,7 +105,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     uint64_t blackKnights = bitboard.getPieceBoard(BLACK_KNIGHT);
     while (blackKnights) {
         uint8_t square = popLsb(blackKnights);
-        uint64_t attacks = bitboard.getKnightAttacks(square);
+        uint64_t attacks = getKnightAttacks(square);
 
         attacksByPiece[BLACK_KNIGHT] |= attacks;
         attackedBy2[BLACK] |= (attacks & attacksByColor[BLACK]);
@@ -149,7 +149,7 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
     {
         uint64_t blackKing = bitboard.getPieceBoard(BLACK_KING);
         uint8_t square = popLsb(blackKing);
-        uint64_t attacks = bitboard.getKingAttacks(square);
+        uint64_t attacks = getKingAttacks(square);
 
         attacksByPiece[BLACK_KING] |= attacks;
         attacksByColor[BLACK] |= attacks;
@@ -389,8 +389,8 @@ void Evaluation::evaluatePieces() {
             uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
             Direction direction = color == WHITE ? NORTH : SOUTH;
             Direction oppositeDirection = color == WHITE ? SOUTH : NORTH;
-            uint64_t frontMask = bitboard.getRayAttack(index, direction);
-            uint64_t behindMask = bitboard.getRayAttack(index, oppositeDirection);
+            uint64_t frontMask = getRayAttack(index, direction);
+            uint64_t behindMask = getRayAttack(index, oppositeDirection);
             uint64_t doubledPawns = pawnBB & frontMask;
 
             if (doubledPawns) {
@@ -525,13 +525,9 @@ void Evaluation::evaluatePieces() {
             uint64_t forwardMobility;
 
             if (color == WHITE) {
-                forwardMobility =
-                    bitboard.getRayAttack(index, NORTH_WEST) | bitboard.getRayAttack(
-                        index, NORTH_EAST);
+                forwardMobility = getRayAttack(index, NORTH_WEST) | getRayAttack(index, NORTH_EAST);
             } else {
-                forwardMobility =
-                    bitboard.getRayAttack(index, SOUTH_WEST) | bitboard.getRayAttack(
-                        index, SOUTH_EAST);
+                forwardMobility = getRayAttack(index, SOUTH_WEST) | getRayAttack(index, SOUTH_EAST);
             }
 
             bishopAttacks &= forwardMobility;

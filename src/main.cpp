@@ -91,6 +91,7 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"};
 
 int main(int argc, char* argv[]) {
+    initializeBitboardConstants();
     initializeMagicBitboards();
     initializePst();
 
@@ -179,12 +180,12 @@ void benchmark() {
     senjo::UCIAdapter adapter(engine);
     uint64_t nodes = 0;
     double totalMs = 0;
+    Bitboard bb{};
 
     engine.initialize();
 
     for (const std::string& position : BENCHMARK_POSITIONS) {
         for (int i = 0; i < 2; i++) {
-            Bitboard bb;
             PieceColor color = i == 0 ? WHITE : BLACK;
 
             bb.setFromFen(position);

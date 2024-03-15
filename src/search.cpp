@@ -465,6 +465,13 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
     return alpha;
 }
 
+template int qsearch<WHITE, PV>(Bitboard& board, int alpha, int beta,
+                                                      int16_t depth, SearchContext& context,
+                                                      senjo::SearchStats& searchStats);
+template int qsearch<BLACK, PV>(Bitboard& board, int alpha, int beta,
+                                                      int16_t depth, SearchContext& context,
+                                                      senjo::SearchStats& searchStats);
+
 void printPv(senjo::SearchStats& searchStats, std::chrono::steady_clock::time_point& startTime,
              Line& pvLine) {
     searchStats.pv = "";

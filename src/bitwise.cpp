@@ -20,7 +20,17 @@
 
 #include "bitwise.h"
 
+#include <iostream>
+#include <random>
+
 namespace Zagreus {
+static uint64_t kingAttacks[64]{};
+static uint64_t knightAttacks[64]{};
+static uint64_t pawnAttacks[2][64]{};
+static uint64_t rayAttacks[8][64]{};
+static uint64_t betweenTable[64][64]{};
+static uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
+
 uint64_t soutOne(uint64_t b) { return b >> 8ULL; }
 
 uint64_t nortOne(uint64_t b) { return b << 8ULL; }
@@ -185,6 +195,100 @@ uint64_t calculateKingAttacks(uint64_t kingSet) {
     return attacks;
 }
 
+void initializeBitboardConstants() {
+    std::mt19937_64 gen(0x6C7CCC580A348E7BULL);
+    std::uniform_int_distribution<uint64_t> dis(1ULL, UINT64_MAX);
+    std::vector<uint64_t> generatedZobristConstants(ZOBRIST_CONSTANT_SIZE);
+
+    for (uint64_t& zobristConstant : zobristConstants) {
+        zobristConstant = dis(gen);
+
+        // if constant already generated, generate a new one
+        if (std::find(generatedZobristConstants.begin(), generatedZobristConstants.end(), zobristConstant) != generatedZobristConstants.end()) {
+            zobristConstant = dis(gen);
+        }
+
+        generatedZobristConstants.push_back(zobristConstant);
+    }
+
+    uint64_t sqBB = 1ULL;
+    for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+        kingAttacks[sq] = calculateKingAttacks(sqBB) & ~sqBB;
+    }
+
+    sqBB = 1ULL;
+    for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+        knightAttacks[sq] = calculateKnightAttacks(sqBB) & ~sqBB;
+    }
+
+    sqBB = 1ULL;
+    for (int8_t sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+        pawnAttacks[WHITE][sq] = calculatePawnAttacks<WHITE>(sqBB) & ~sqBB;
+        pawnAttacks[BLACK][sq] = calculatePawnAttacks<BLACK>(sqBB) & ~sqBB;
+    }
+
+    initializeBetweenLookup();
+    initializeRayAttacks();
+}
+
+void initializeBetweenLookup() {
+    for (int from = 0; from < 64; from++) {
+        for (int to = 0; to < 64; to++) {
+            uint64_t m1 = -1ULL;
+            uint64_t a2a7 = 0x0001010101010100ULL;
+            uint64_t b2g7 = 0x0040201008040200ULL;
+            uint64_t h1b7 = 0x0002040810204080ULL;
+            uint64_t btwn, line, rank, file;
+
+            btwn = m1 << from ^ m1 << to;
+            file = (to & 7) - (from & 7);
+            rank = (to | 7) - from >> 3;
+            line = (file & 7) - 1 & a2a7; /* a2a7 if same file */
+            line += 2 * ((rank & 7) - 1 >> 58); /* b1g1 if same rank */
+            line += (rank - file & 15) - 1 & b2g7; /* b2g7 if same diagonal */
+            line += (rank + file & 15) - 1 & h1b7; /* h1b7 if same antidiag */
+            line *= btwn & -btwn; /* mul acts like shift by smaller square */
+
+            betweenTable[from][to] = line & btwn; /* return the bits on that line in-between */
+        }
+    }
+}
+
+void initializeRayAttacks() {
+    uint64_t sqBB = 1ULL;
+
+    for (int sq = 0; sq < 64; sq++, sqBB <<= 1ULL) {
+        rayAttacks[NORTH][sq] = nortOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[SOUTH][sq] = soutOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[EAST][sq] = eastOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[WEST][sq] = westOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[NORTH_EAST][sq] = noEaOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[NORTH_WEST][sq] = noWeOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[SOUTH_EAST][sq] = soEaOccl(sqBB, ~0ULL) & ~sqBB;
+        rayAttacks[SOUTH_WEST][sq] = soWeOccl(sqBB, ~0ULL) & ~sqBB;
+    }
+}
+
+uint64_t getRayAttack(int8_t square, Direction direction) {
+    return rayAttacks[direction][square];
+}
+
+uint64_t getKingAttacks(int8_t square) {
+    return kingAttacks[square];
+}
+
+uint64_t getKnightAttacks(int8_t square) {
+    return knightAttacks[square];
+}
+
+uint64_t getBetweenSquares(int8_t from, int8_t to) {
+    return betweenTable[from][to];
+}
+
+uint64_t getZobristConstant(int index) {
+    return zobristConstants[index];
+}
+
 template <PieceColor color>
 uint64_t calculatePawnAttacks(uint64_t bb) {
     return calculatePawnEastAttacks<color>(bb) | calculatePawnWestAttacks<color>(bb);
@@ -192,4 +296,12 @@ uint64_t calculatePawnAttacks(uint64_t bb) {
 
 template uint64_t calculatePawnAttacks<WHITE>(uint64_t);
 template uint64_t calculatePawnAttacks<BLACK>(uint64_t);
+
+template <PieceColor color>
+uint64_t getPawnAttacks(int8_t square) {
+    return pawnAttacks[color][square];
+}
+
+template uint64_t getPawnAttacks<WHITE>(int8_t square);
+template uint64_t getPawnAttacks<BLACK>(int8_t square);
 } // namespace Zagreus
