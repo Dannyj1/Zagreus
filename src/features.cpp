@@ -25,10 +25,10 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[72] = {96, 99, 356, 349, 376, 354, 538, 523, 1009, 1003, 8, 1, 6, 3, 1, 7, 1, 13, 15,
-                      3, -6, 0, -4, 1, 3, -3, -8, -3, -10, 0, -9, -17, -9, -12, 0, 10, -3, -6, -6,
-                      -11, -15, -12, -3, -7, 4, -2, -5, -7, -4, -12, -31, -28, 18, 7, 9, 4, 23, 21,
-                      12, 0, -3, 6, 3, -3, 0, 12, 0, -10, 9, 0, -19, -17,};
+int evalValues[72] = {104, 112, 408, 362, 437, 374, 592, 550, 1092, 1064, 8, 8, 6, 3, 2, 8, 2, 18,
+                      24, -4, -6, 0, -17, 11, 3, -2, -16, 3, -20, 13, -7, -38, -12, -5, -3, 27, 1,
+                      -1, -16, -11, -10, -16, -5, -8, 9, -4, -7, -6, -8, -20, -29, -16, 14, 11, 4,
+                      14, 35, 19, 19, 1, -25, 12, 9, 20, 14, 34, 3, -19, 14, -15, -27, -37,};
 
 int baseEvalValues[72] = {
     100, // MIDGAME_PAWN_MATERIAL
@@ -63,8 +63,8 @@ int baseEvalValues[72] = {
     -8, // ENDGAME_KING_ATTACK_ROOK_PENALTY
     -10, // MIDGAME_KING_ATTACK_QUEEN_PENALTY
     -13, // ENDGAME_KING_ATTACK_QUEEN_PENALTY
-    -4, // MIDGAME_DOUBLED_PAWN_PENALTY
-    -8, // ENDGAME_DOUBLED_PAWN_PENALTY
+    -4, // MIDGAME_floatD_PAWN_PENALTY
+    -8, // ENDGAME_floatD_PAWN_PENALTY
     5, // MIDGAME_PASSED_PAWN
     10, // ENDGAME_PASSED_PAWN
     -3, // MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY
@@ -116,8 +116,8 @@ int getEvalValue(EvalFeature feature) { return evalValues[feature]; }
 int getEvalFeatureSize() { return sizeof(evalValues) / sizeof(evalValues[0]); }
 
 // Some sane default values for tuning
-std::vector<double> getBaseEvalValues() {
-    std::vector<double> values;
+std::vector<float> getBaseEvalValues() {
+    std::vector<float> values;
 
     values.reserve(getEvalFeatureSize());
     for (int i = 0; i < getEvalFeatureSize(); i++) {
@@ -135,8 +135,8 @@ std::vector<double> getBaseEvalValues() {
     return values;
 }
 
-std::vector<double> getEvalValues() {
-    std::vector<double> values;
+std::vector<float> getEvalValues() {
+    std::vector<float> values;
 
     values.reserve(getEvalFeatureSize());
     for (int i = 0; i < getEvalFeatureSize(); i++) {
@@ -154,7 +154,7 @@ std::vector<double> getEvalValues() {
     return values;
 }
 
-void updateEvalValues(std::vector<double>& newValues) {
+void updateEvalValues(std::vector<float>& newValues) {
     int evalFeatureSize = getEvalFeatureSize();
     size_t pstSize = getMidgameValues().size();
 
