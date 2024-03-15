@@ -64,10 +64,12 @@ std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& 
     return batches;
 }
 
-float sigmoid(float x) { return 1.0 / (1.0 + pow(10.0, -K * x / 400.0)); }
+float sigmoid(float x) {
+    return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
+}
 
-float evaluationLoss(std::vector<TunePosition>& positions, int amountOfPositions) {
-    float totalLoss = 0.0;
+float evaluationLoss(std::vector<TunePosition>& positions) {
+    float totalLoss = 0.0f;
 
     for (TunePosition& pos : positions) {
         tunerBoard.setFromFenTuner(pos.fen);
@@ -78,27 +80,27 @@ float evaluationLoss(std::vector<TunePosition>& positions, int amountOfPositions
             evalScore *= -1;
         }
 
-        float loss = std::pow(pos.result - sigmoid(evalScore), 2);
+        float loss = std::pow(pos.result - sigmoid(evalScore), 2.0f);
         totalLoss += loss;
     }
 
-    return (1.0 / amountOfPositions) * totalLoss;
+    return (1.0f / static_cast<float>(positions.size())) * totalLoss;
 }
 
 float findOptimalK(std::vector<TunePosition>& positions) {
-    const float phi = (1.0 + sqrt(5.0)) / 2.0;
-    const float tolerance = 1e-6;
+    const float phi = (1.0f + sqrt(5.0f)) / 2.0f;
+    const float tolerance = 1e-6f;
 
-    float a = 0.0;
-    float b = 2.0;
+    float a = 0.0f;
+    float b = 2.0f;
 
     float x1 = b - (b - a) / phi;
     float x2 = a + (b - a) / phi;
 
     K = x1;
-    float f1 = evaluationLoss(positions, positions.size());
+    float f1 = evaluationLoss(positions);
     K = x2;
-    float f2 = evaluationLoss(positions, positions.size());
+    float f2 = evaluationLoss(positions);
 
     while (std::abs(b - a) > tolerance) {
         if (f1 < f2) {
@@ -107,23 +109,23 @@ float findOptimalK(std::vector<TunePosition>& positions) {
             x1 = b - (b - a) / phi;
             f2 = f1;
             K = x1;
-            f1 = evaluationLoss(positions, positions.size());
+            f1 = evaluationLoss(positions);
         } else {
             a = x1;
             x1 = x2;
             x2 = a + (b - a) / phi;
             f1 = f2;
             K = x2;
-            f2 = evaluationLoss(positions, positions.size());
+            f2 = evaluationLoss(positions);
         }
     }
 
-    return (a + b) / 2.0;
+    return (a + b) / 2.0f;
 }
 
 std::vector<TunePosition> loadPositions(
     char* filePath, std::chrono::time_point<std::chrono::steady_clock>& maxEndTime,
-    ZagreusEngine& engine, std::mt19937_64 gen) {
+    std::mt19937_64 gen) {
     std::cout << "Loading positions..." << std::endl;
     std::vector<TunePosition> positions;
     std::vector<std::string> lines;
@@ -248,8 +250,10 @@ std::vector<TunePosition> loadPositions(
     return positions;
 }
 
-void exportNewEvalValues(std::vector<float>& bestParams) {
-    std::ofstream fout("tuned_params.txt");
+void exportNewEvalValues(std::vector<float>& bestParams, int epoch, float validationLoss) {
+    std::ofstream fout("tuned_params_epoch_" + std::to_string(epoch) + ".txt");
+
+    fout << "Epoch: " << epoch << ", Val Loss: " << validationLoss << std::endl << std::endl;
 
     // Declare pieceNames
     std::string pieceNames[6] = {"Pawn", "Knight", "Bishop", "Rook", "Queen", "King"};
@@ -304,15 +308,13 @@ void startTuning(char* filePath) {
 
     ZagreusEngine engine;
     senjo::UCIAdapter adapter(engine);
-    std::chrono::time_point<std::chrono::steady_clock> maxEndTime =
-        std::chrono::time_point<std::chrono::steady_clock>::max();
-    std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, engine, gen);
+    auto maxEndTime = std::chrono::time_point<std::chrono::steady_clock>::max();
+    std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, gen);
 
     engine.setTuning(false);
 
     std::vector<float> bestParameters = getBaseEvalValues();
     updateEvalValues(bestParameters);
-    exportNewEvalValues(bestParameters);
 
     std::cout << "Finding the optimal K value..." << std::endl;
     K = findOptimalK(positions);
@@ -323,14 +325,14 @@ void startTuning(char* filePath) {
     std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.9,
                                                   positions.end());
     positions.erase(positions.begin() + positions.size() * 0.9, positions.end());
+    exportNewEvalValues(bestParameters, 0, evaluationLoss(positions));
 
     std::cout << "Starting tuning..." << std::endl;
     std::vector<float> m(bestParameters.size(), 0.0);
     std::vector<float> v(bestParameters.size(), 0.0);
 
     std::cout << "Calculating the initial loss..." << std::endl;
-    float bestLoss =
-        evaluationLoss(validationPositions, validationPositions.size());
+    float bestLoss = evaluationLoss(validationPositions);
 
     std::cout << "Initial loss: " << bestLoss << std::endl;
     std::cout << "Finding the best parameters. This may take a while..." << std::endl;
@@ -342,59 +344,58 @@ void startTuning(char* filePath) {
         std::shuffle(positions.begin(), positions.end(), gen);
         batches = createBatches(positions);
         int totalIterations = batches.size();
+        std::vector<float> gradients(bestParameters.size(), 0.0f);
 
-        while (batches.size() > 0) {
+        for (std::vector<TunePosition>& batch : batches) {
             iteration++;
             int percentDone = static_cast<int>(
                 (iteration / static_cast<float>(totalIterations)) * 100);
             std::cout << "Epoch: " << epoch << ", Iteration: " << iteration << "/" <<
                 totalIterations << " (" << percentDone << "%)" << std::endl;
-            std::vector<TunePosition> batch = batches.back();
-            batches.pop_back();
-            std::vector<float> gradients(bestParameters.size(), 0.0);
+            std::ranges::fill(gradients, 0.0f);
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
                 float oldParam = bestParameters[paramIndex];
 
                 bestParameters[paramIndex] = oldParam + delta;
                 updateEvalValues(bestParameters);
-                float fPlusDelta = evaluationLoss(batch, 1);
+                float fPlusDelta = evaluationLoss(batch);
 
                 bestParameters[paramIndex] = oldParam - delta;
                 updateEvalValues(bestParameters);
-                float fMinusDelta = evaluationLoss(batch, 1);
+                float fMinusDelta = evaluationLoss(batch);
 
                 bestParameters[paramIndex] = oldParam + 2 * delta;
                 updateEvalValues(bestParameters);
-                float fPlus2Delta = evaluationLoss(batch, 1);
+                float fPlus2Delta = evaluationLoss(batch);
 
                 bestParameters[paramIndex] = oldParam - 2 * delta;
                 updateEvalValues(bestParameters);
-                float fMinus2Delta = evaluationLoss(batch, 1);
+                float fMinus2Delta = evaluationLoss(batch);
 
                 gradients[paramIndex] += (
-                    -fPlus2Delta + 8 * fPlusDelta - 8 * fMinusDelta + fMinus2Delta) / (12 * delta);
+                    -fPlus2Delta + 8.0f * fPlusDelta - 8.0f * fMinusDelta + fMinus2Delta) / (
+                    12.0f * delta);
 
                 // reset
                 bestParameters[paramIndex] = oldParam;
             }
 
             for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                m[paramIndex] = beta1 * m[paramIndex] + (1.0 - beta1) * gradients[paramIndex];
-                v[paramIndex] = beta2 * v[paramIndex] + (1.0 - beta2) * std::pow(
-                                    gradients[paramIndex], 2.0);
-                float mCorrected = m[paramIndex] / (1.0 - std::pow(beta1, iteration));
-                float vCorrected = v[paramIndex] / (1.0 - std::pow(beta2, iteration));
+                m[paramIndex] = beta1 * m[paramIndex] + (1.0f - beta1) * gradients[paramIndex];
+                v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * std::pow(
+                                    gradients[paramIndex], 2.0f);
+                float mCorrected = m[paramIndex] / (1.0f - std::pow<float>(beta1, iteration));
+                float vCorrected = v[paramIndex] / (1.0f - std::pow<float>(beta2, iteration));
                 bestParameters[paramIndex] -= learningRate * mCorrected / (
                     sqrt(vCorrected) + optimizerEpsilon);
             }
         }
 
         updateEvalValues(bestParameters);
-        float validationLoss =
-            evaluationLoss(validationPositions, validationPositions.size());
+        float validationLoss = evaluationLoss(validationPositions);
 
-        exportNewEvalValues(bestParameters);
+        exportNewEvalValues(bestParameters, epoch, validationLoss);
 
         std::cout << "======== Epoch " << epoch << " Done ========" << std::endl;
         std::cout << "Epoch: " << epoch << ", Val Loss: " << validationLoss << std::endl;
