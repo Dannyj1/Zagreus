@@ -65,7 +65,9 @@ std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& 
 }
 
 float sigmoid(float x) {
-    return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
+    // return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
+    return 1.0f / (1.0f + std::exp(-K * x / 400.0f));
+    // TODO: test the normal sigmoid function instead of the one above
 }
 
 float evaluationLoss(std::vector<TunePosition>& positions) {
@@ -150,7 +152,7 @@ std::vector<TunePosition> loadPositions(
         std::string resultStr = posLine.substr(posLine.find(" c9 ") + 4, posLine.find(" c9 ") + 4);
         std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
-        SearchContext context{};
+        /*SearchContext context{};
         senjo::SearchStats stats{};
         context.endTime = maxEndTime;
         int qScore;
@@ -171,11 +173,16 @@ std::vector<TunePosition> loadPositions(
                 MATE_SCORE - MAX_PLY) ||
             qScore >= (MATE_SCORE - MAX_PLY)) {
             continue;
+        }*/
+
+        if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>()
+            || tunerBoard.isWinner<BLACK>()) {
+            continue;
         }
 
         // Remove " and ; from result
-        resultStr.erase(std::remove(resultStr.begin(), resultStr.end(), '"'), resultStr.end());
-        resultStr.erase(std::remove(resultStr.begin(), resultStr.end(), ';'), resultStr.end());
+        std::erase(resultStr, '"');
+        std::erase(resultStr, ';');
 
         if (resultStr == "1" || resultStr == "1-0") {
             result = 1.0;
@@ -338,19 +345,31 @@ void startTuning(char* filePath) {
     std::cout << "Finding the best parameters. This may take a while..." << std::endl;
     std::vector<std::vector<TunePosition>> batches = createBatches(positions);
     int epoch = 1;
+    int iteration = 0;
 
     while (epoch <= epochs) {
-        int iteration = 0;
         std::shuffle(positions.begin(), positions.end(), gen);
         batches = createBatches(positions);
         int totalIterations = batches.size();
         std::vector<float> gradients(bestParameters.size(), 0.0f);
+        float beta1Corrected = 0;
+        float beta2Corrected = 0;
 
         for (std::vector<TunePosition>& batch : batches) {
             iteration++;
+
+            if (iteration == 1) {
+                beta1Corrected = beta1;
+                beta2Corrected = beta2;
+            } else {
+                beta1Corrected *= beta1;
+                beta2Corrected *= beta2;
+            }
+
             int percentDone = static_cast<int>(
-                (iteration / static_cast<float>(totalIterations)) * 100);
-            std::cout << "Epoch: " << epoch << ", Iteration: " << iteration << "/" <<
+                ((iteration % batches.size()) / static_cast<float>(totalIterations)) * 100);
+            std::cout << "Epoch: " << epoch << ", Iteration: " << (iteration % batches.size() + 1)
+                << "/" <<
                 totalIterations << " (" << percentDone << "%)" << std::endl;
             std::ranges::fill(gradients, 0.0f);
 
@@ -385,8 +404,8 @@ void startTuning(char* filePath) {
                 m[paramIndex] = beta1 * m[paramIndex] + (1.0f - beta1) * gradients[paramIndex];
                 v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * std::pow(
                                     gradients[paramIndex], 2.0f);
-                float mCorrected = m[paramIndex] / (1.0f - std::pow<float>(beta1, iteration));
-                float vCorrected = v[paramIndex] / (1.0f - std::pow<float>(beta2, iteration));
+                float mCorrected = m[paramIndex] / (1.0f - beta1Corrected);
+                float vCorrected = v[paramIndex] / (1.0f - beta2Corrected);
                 bestParameters[paramIndex] -= learningRate * mCorrected / (
                     sqrt(vCorrected) + optimizerEpsilon);
             }
