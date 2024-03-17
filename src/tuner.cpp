@@ -65,9 +65,7 @@ std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& 
 }
 
 float sigmoid(float x) {
-    // return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
-    return 1.0f / (1.0f + std::exp(-K * x / 400.0f));
-    // TODO: test the normal sigmoid function instead of the one above
+    return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
 }
 
 float evaluationLoss(std::vector<TunePosition>& positions) {
