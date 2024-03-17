@@ -28,7 +28,7 @@
 namespace Zagreus {
 struct TunePosition {
     std::string fen;
-    double result = 0.0f;
+    float result = 0.0f;
     int score = 0;
 };
 

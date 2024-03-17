@@ -36,9 +36,9 @@
 namespace Zagreus {
 class Bitboard {
 private:
-    uint64_t pieceBB[12]{0ULL};
-    PieceType pieceSquareMapping[64]{EMPTY};
-    uint64_t colorBB[2]{0ULL};
+    uint64_t pieceBB[12]{};
+    PieceType pieceSquareMapping[64]{};
+    uint64_t colorBB[2]{};
     uint64_t occupiedBB{0ULL};
 
     PieceColor movingColor = NONE;
@@ -50,12 +50,6 @@ private:
 
     uint64_t zobristHash = 0ULL;
 
-    uint64_t kingAttacks[64]{};
-    uint64_t knightAttacks[64]{};
-    uint64_t pawnAttacks[2][64]{};
-    uint64_t rayAttacks[8][64]{};
-    uint64_t betweenTable[64][64]{};
-
     UndoData undoStack[MAX_PLY]{};
     uint64_t moveHistory[MAX_PLY]{};
     Line pvLine{};
@@ -65,13 +59,7 @@ private:
     Move previousMove{};
     int materialCount[12]{};
 
-    MoveListPool* moveListPool = MoveListPool::getInstance();
-
 public:
-    uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
-
-    Bitboard();
-
     uint64_t getPieceBoard(PieceType pieceType);
 
     template <PieceColor color>
@@ -95,11 +83,6 @@ public:
     }
 
     template <PieceColor color>
-    uint64_t getPawnAttacks(int8_t square) const {
-        return pawnAttacks[color][square];
-    }
-
-    template <PieceColor color>
     uint64_t getPawnSinglePush(uint64_t pawns) {
         if (color == WHITE) {
             return nortOne(pawns) & getEmptyBoard();
@@ -117,10 +100,6 @@ public:
     uint64_t getEmptyBoard() const;
 
     PieceType getPieceOnSquare(int8_t square);
-
-    uint64_t getKingAttacks(int8_t square);
-
-    uint64_t getKnightAttacks(int8_t square);
 
     uint64_t getQueenAttacks(int8_t square);
 
@@ -154,14 +133,12 @@ public:
 
     bool setFromFen(const std::string& fen);
 
-    bool setFromFenTuner(std::string& fen);
+    bool setFromFenTuner(const std::string& fen);
 
     bool isDraw();
 
     template <PieceColor color>
     bool isWinner();
-
-    void initializeBetweenLookup();
 
     void setPieceFromFENChar(char character, int index);
 
@@ -276,10 +253,6 @@ public:
         }
     }
 
-    void initializeRayAttacks();
-
-    uint64_t getRayAttack(int8_t square, Direction direction);
-
     template <PieceColor attackingColor>
     int seeCapture(int8_t fromSquare, int8_t toSquare) {
         constexpr PieceColor OPPOSITE_COLOR = attackingColor == WHITE ? BLACK : WHITE;
@@ -356,8 +329,6 @@ public:
         return score;
     }
 
-    uint64_t getBetweenSquares(int8_t from, int8_t to);
-
     [[nodiscard]] const Move& getPreviousMove() const;
 
     uint64_t getFile(int8_t square);
@@ -389,7 +360,7 @@ public:
     template <PieceColor color>
     bool isPassedPawn(int8_t square) {
         Direction direction = color == WHITE ? NORTH : SOUTH;
-        uint64_t neighborMask = rayAttacks[direction][square];
+        uint64_t neighborMask = getRayAttack(square, direction);
         uint64_t pawnBB = getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
 
         if (neighborMask & pawnBB) {
@@ -398,11 +369,11 @@ public:
 
         if (square % 8 != 0) {
             // neighboring file
-            neighborMask |= rayAttacks[direction][square - 1];
+            neighborMask |= getRayAttack(square - 1, direction);
         }
 
         if (square % 8 != 7) {
-            neighborMask |= rayAttacks[direction][square + 1];
+            neighborMask |= getRayAttack(square + 1, direction);
         }
 
         if (color == WHITE) {
@@ -438,8 +409,9 @@ public:
 
     template <PieceColor color>
     int getAmountOfPawns() {
-        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE ? WHITE_PAWN
-                                                                            : BLACK_PAWN));
+        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE
+                                                                 ? WHITE_PAWN
+                                                                 : BLACK_PAWN));
     }
 
     template <PieceColor color>

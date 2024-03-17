@@ -95,6 +95,25 @@ uint64_t calculateKnightAttacks(uint64_t knights);
 
 uint64_t calculateKingAttacks(uint64_t kingSet);
 
+void initializeBetweenLookup();
+
+void initializeRayAttacks();
+
+void initializeBitboardConstants();
+
+uint64_t getKingAttacks(int8_t square);
+
+uint64_t getKnightAttacks(int8_t square);
+
+uint64_t getRayAttack(int8_t square, Direction direction);
+
+uint64_t getBetweenSquares(int8_t from, int8_t to);
+
+uint64_t getZobristConstant(int index);
+
+template <PieceColor color>
+uint64_t getPawnAttacks(int8_t square);
+
 template <PieceColor color>
 uint64_t calculatePawnAttacks(uint64_t bb);
 } // namespace Zagreus
