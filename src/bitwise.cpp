@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <random>
+#include <algorithm>
 
 namespace Zagreus {
 static uint64_t kingAttacks[64]{};
@@ -204,7 +205,7 @@ void initializeBitboardConstants() {
         zobristConstant = dis(gen);
 
         // if constant already generated, generate a new one
-        if (std::find(generatedZobristConstants.begin(), generatedZobristConstants.end(), zobristConstant) != generatedZobristConstants.end()) {
+        if (std::ranges::find(generatedZobristConstants, zobristConstant) != generatedZobristConstants.end()) {
             zobristConstant = dis(gen);
         }
 
