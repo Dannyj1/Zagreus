@@ -94,7 +94,7 @@ float findOptimalK(std::vector<TunePosition>& positions) {
     const float tolerance = 1e-6f;
 
     float a = 0.0f;
-    float b = 2.0f;
+    float b = 5.0f;
 
     float x1 = b - (b - a) / phi;
     float x2 = a + (b - a) / phi;
@@ -368,7 +368,7 @@ void startTuning(char* filePath) {
 
             int percentDone = static_cast<int>(
                 ((iteration % batches.size()) / static_cast<float>(totalIterations)) * 100);
-            std::cout << "Epoch: " << epoch << ", Iteration: " << (iteration % batches.size() + 1)
+            std::cout << "Epoch: " << epoch << ", Iteration: " << (iteration % (batches.size() + 1))
                 << "/" <<
                 totalIterations << " (" << percentDone << "%)" << std::endl;
             std::ranges::fill(gradients, 0.0f);
