@@ -32,12 +32,12 @@
 #include "tt.h"
 
 namespace Zagreus {
-MoveListPool* moveListPool = MoveListPool::getInstance();
 TranspositionTable* tt = TranspositionTable::getTT();
 
 template <PieceColor color>
 Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
                  senjo::SearchStats& searchStats) {
+    MoveListPool* moveListPool = MoveListPool::getInstance();
     auto startTime = std::chrono::steady_clock::now();
     SearchContext searchContext{};
     searchContext.startTime = startTime;
@@ -190,7 +190,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             nullContext.endTime = context.endTime;
             board.makeNullMove();
             int nullScore = -search<OPPOSITE_COLOR, NULL_MOVE>(board, -beta, -beta + 1, depth - r,
-                                                           nullContext, searchStats, nullLine);
+                                                               nullContext, searchStats, nullLine);
             board.unmakeNullMove();
             int mateScores = MATE_SCORE - MAX_PLY;
 
@@ -201,6 +201,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     }
 
     bool doPvSearch = true;
+    MoveListPool* moveListPool = MoveListPool::getInstance();
     MoveList* moves = moveListPool->getMoveList();
 
     if (ownKingInCheck) {
@@ -371,7 +372,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         }
 
         if (board.getAmountOfMinorOrMajorPieces<color>() >= 2 && board.getAmountOfMinorOrMajorPieces
-            <OPPOSITE_COLOR>() >= 2  && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns<OPPOSITE_COLOR>() > 0) {
+            <OPPOSITE_COLOR>() >= 2 && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns
+            <OPPOSITE_COLOR>() > 0) {
             int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
                                       getEvalValue(MIDGAME_QUEEN_MATERIAL));
             int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL),
@@ -391,6 +393,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         }
     }
 
+    MoveListPool* moveListPool = MoveListPool::getInstance();
     MoveList* moves = moveListPool->getMoveList();
 
     if (inCheck) {
@@ -421,7 +424,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
 
         legalMoveCount += 1;
 
-        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context, searchStats);
+        int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context,
+                                                       searchStats);
         board.unmakeMove(move);
 
         if (score > bestScore) {
@@ -460,6 +464,13 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
                     context);
     return alpha;
 }
+
+template int qsearch<WHITE, PV>(Bitboard& board, int alpha, int beta,
+                                                      int16_t depth, SearchContext& context,
+                                                      senjo::SearchStats& searchStats);
+template int qsearch<BLACK, PV>(Bitboard& board, int alpha, int beta,
+                                                      int16_t depth, SearchContext& context,
+                                                      senjo::SearchStats& searchStats);
 
 void printPv(senjo::SearchStats& searchStats, std::chrono::steady_clock::time_point& startTime,
              Line& pvLine) {

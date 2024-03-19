@@ -98,7 +98,7 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
             PieceType attackerPiece = bitboard.getPieceOnSquare(attackerSquare);
 
             if (isSlidingPiece(attackerPiece)) {
-                evasionSquaresBB |= bitboard.getBetweenSquares(attackerSquare, kingSquare);
+                evasionSquaresBB |= getBetweenSquares(attackerSquare, kingSquare);
             }
 
             evasionSquaresBB |= 1ULL << attackerSquare;
@@ -154,7 +154,7 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
             attackableSquares |= 1ULL << bitboard.getEnPassantSquare();
         }
 
-        genBB |= bitboard.getPawnAttacks<color>(from) & attackableSquares;
+        genBB |= getPawnAttacks<color>(from) & attackableSquares;
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
 
@@ -229,7 +229,7 @@ void generateKnightMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasio
 
     while (knightBB) {
         int8_t from = popLsb(knightBB);
-        uint64_t genBB = bitboard.getKnightAttacks(from);
+        uint64_t genBB = getKnightAttacks(from);
 
         genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getPieceBoard(WHITE_KING) |
                    bitboard.getPieceBoard(BLACK_KING));
@@ -439,10 +439,10 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList) {
     }
 
     int8_t from = bitscanForward(kingBB);
-    uint64_t genBB = bitboard.getKingAttacks(from);
+    uint64_t genBB = getKingAttacks(from);
     int8_t opponentKingSquare = bitscanForward(opponentKingBB);
 
-    genBB &= ~(bitboard.getColorBoard<color>() | bitboard.getKingAttacks(opponentKingSquare));
+    genBB &= ~(bitboard.getColorBoard<color>() | getKingAttacks(opponentKingSquare));
 
     if (type == QSEARCH) {
         genBB &= bitboard.getColorBoard<OPPOSITE_COLOR>();

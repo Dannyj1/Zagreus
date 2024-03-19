@@ -42,6 +42,7 @@ uint64_t ZagreusEngine::doPerft(Bitboard& perftBoard, PieceColor color, int16_t 
         return 1ULL;
     }
 
+    MoveListPool* moveListPool = MoveListPool::getInstance();
     MoveList* moves = moveListPool->getMoveList();
 
     if (color == WHITE) {
