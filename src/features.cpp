@@ -115,11 +115,11 @@ int evalValues[86] = {
 };
 
 int baseEvalValues[86] = {
-    100,  // MIDGAME_PAWN_MATERIAL
-    100,  // ENDGAME_PAWN_MATERIAL
-    350,  // MIDGAME_KNIGHT_MATERIAL
-    350,  // ENDGAME_KNIGHT_MATERIAL
-    350,  // MIDGAME_BISHOP_MATERIAL
+    100, // MIDGAME_PAWN_MATERIAL
+    100, // ENDGAME_PAWN_MATERIAL
+    350, // MIDGAME_KNIGHT_MATERIAL
+    350, // ENDGAME_KNIGHT_MATERIAL
+    350, // MIDGAME_BISHOP_MATERIAL
     350, // ENDGAME_BISHOP_MATERIAL
     525, // MIDGAME_ROOK_MATERIAL
     525, // ENDGAME_ROOK_MATERIAL
@@ -128,9 +128,9 @@ int baseEvalValues[86] = {
     4, // MIDGAME_KNIGHT_MOBILITY
     2, // ENDGAME_KNIGHT_MOBILITY
     6, // MIDGAME_BISHOP_MOBILITY
-    3,    // ENDGAME_BISHOP_MOBILITY
-    2,    // MIDGAME_ROOK_MOBILITY
-    5,    // ENDGAME_ROOK_MOBILITY
+    3, // ENDGAME_BISHOP_MOBILITY
+    2, // MIDGAME_ROOK_MOBILITY
+    5, // ENDGAME_ROOK_MOBILITY
     4, // MIDGAME_QUEEN_MOBILITY
     6, // ENDGAME_QUEEN_MOBILITY
     5, // MIDGAME_PAWN_SHIELD
@@ -209,9 +209,13 @@ void printEvalValues() {
     }
 }
 
-int getEvalValue(EvalFeature feature) { return evalValues[feature]; }
+int getEvalValue(EvalFeature feature) {
+    return evalValues[feature];
+}
 
-int getEvalFeatureSize() { return sizeof(evalValues) / sizeof(evalValues[0]); }
+int getEvalFeatureSize() {
+    return std::size(evalValues);
+}
 
 // Some sane default values for tuning
 std::vector<float> getBaseEvalValues() {
