@@ -361,7 +361,7 @@ void Evaluation::evaluatePieces() {
         if (!isKing(pieceType)) {
             uint64_t attackSquares = attacksFrom[index];
             uint64_t opponentKingAttacks = color == WHITE ? blackKingAttacks : whiteKingAttacks;
-            uint64_t attacksAroundKing = attackSquares & opponentKingAttacks & ~weakSquares;
+            uint64_t attacksAroundKing = attackSquares & opponentKingAttacks;
             uint8_t attackCount = popcnt(attacksAroundKing);
 
             addKingAttackScore(pieceType, attackCount);
@@ -754,10 +754,26 @@ void Evaluation::evaluatePieces() {
             }
         }
 
+        // Penalty for undefended pawns
+        if (isPawn(pieceType)) {
+            if (!(square & attacksByColor[color])) {
+                if (color == WHITE) {
+                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_NOT_DEFENDED_PENALTY);
+                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_NOT_DEFENDED_PENALTY);
+                } else {
+                    blackMidgameScore += getEvalValue(MIDGAME_PAWN_NOT_DEFENDED_PENALTY);
+                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_NOT_DEFENDED_PENALTY);
+                }
+            }
+        }
+
         int midgameScore = 0;
         int endgameScore = 0;
         if (square & weakSquares) {
-            if (isKnight(pieceType)) {
+            if (isPawn(pieceType)) {
+                midgameScore += getEvalValue(MIDGAME_PAWN_WEAK_SQUARE_PENALTY);
+                endgameScore += getEvalValue(ENDGAME_PAWN_WEAK_SQUARE_PENALTY);
+            } else if (isKnight(pieceType)) {
                 midgameScore += getEvalValue(MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
                 endgameScore += getEvalValue(ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
             } else if (isBishop(pieceType)) {
