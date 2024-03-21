@@ -278,7 +278,7 @@ void Evaluation::evaluatePieces() {
 
     // 3. Attacked by both colors, but our attack is not a pawn and the opponent's is.
     weakSquares |= (attacksByColor[color] & attacksByColor[opponentColor]
-            & ~attackedBy2[color] & ~attackedBy2[opponentColor])
+                    & ~attackedBy2[color] & ~attackedBy2[opponentColor])
         & ~attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
         & attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
 
@@ -361,7 +361,7 @@ void Evaluation::evaluatePieces() {
         if (!isKing(pieceType)) {
             uint64_t attackSquares = attacksFrom[index];
             uint64_t opponentKingAttacks = color == WHITE ? blackKingAttacks : whiteKingAttacks;
-            uint64_t attacksAroundKing = attackSquares & opponentKingAttacks;
+            uint64_t attacksAroundKing = attackSquares & opponentKingAttacks & ~weakSquares;
             uint8_t attackCount = popcnt(attacksAroundKing);
 
             addKingAttackScore(pieceType, attackCount);
