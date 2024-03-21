@@ -386,11 +386,11 @@ void Evaluation::evaluatePieces() {
                 uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
                 if (square % 8 != 0) {
-                    pawnStormMask |= bitboard.getFile(square - 1);
+                    pawnStormMask |= bitboard.getFile(squareIndex - 1);
                 }
 
                 if (square % 8 != 7) {
-                    pawnStormMask |= bitboard.getFile(square + 1);
+                    pawnStormMask |= bitboard.getFile(squareIndex + 1);
                 }
 
                 uint64_t opponentPawnStormBB =
@@ -440,11 +440,11 @@ void Evaluation::evaluatePieces() {
                 uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
                 if (square % 8 != 0) {
-                    pawnStormMask |= bitboard.getFile(square - 1);
+                    pawnStormMask |= bitboard.getFile(squareIndex - 1);
                 }
 
                 if (square % 8 != 7) {
-                    pawnStormMask |= bitboard.getFile(square + 1);
+                    pawnStormMask |= bitboard.getFile(squareIndex + 1);
                 }
 
                 uint64_t opponentPawnStormBB =
