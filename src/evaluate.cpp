@@ -385,16 +385,15 @@ void Evaluation::evaluatePieces() {
                 // Pawn Storm
                 uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
-                if (square % 8 != 0) {
+                if (squareIndex % 8 != 0) {
                     pawnStormMask |= bitboard.getFile(squareIndex - 1);
                 }
 
-                if (square % 8 != 7) {
+                if (squareIndex % 8 != 7) {
                     pawnStormMask |= bitboard.getFile(squareIndex + 1);
                 }
 
-                uint64_t opponentPawnStormBB =
-                    bitboard.getPieceBoard(BLACK_PAWN) & pawnStormMask;
+                uint64_t opponentPawnStormBB = bitboard.getPieceBoard(BLACK_PAWN) & pawnStormMask;
                 int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
                 int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
                 int pawnsOnRank3Count = popcnt(opponentPawnStormBB & RANK_3);
@@ -439,11 +438,11 @@ void Evaluation::evaluatePieces() {
                 // Pawn Storm
                 uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
-                if (square % 8 != 0) {
+                if (squareIndex % 8 != 0) {
                     pawnStormMask |= bitboard.getFile(squareIndex - 1);
                 }
 
-                if (square % 8 != 7) {
+                if (squareIndex % 8 != 7) {
                     pawnStormMask |= bitboard.getFile(squareIndex + 1);
                 }
 
