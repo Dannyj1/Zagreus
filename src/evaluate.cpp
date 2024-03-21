@@ -262,18 +262,30 @@ void Evaluation::addKingAttackScore(PieceType pieceType, int attackCount) {
 
 template <PieceColor color>
 void Evaluation::evaluatePieces() {
+    constexpr PieceColor opponentColor = color == WHITE ? BLACK : WHITE;
     uint64_t colorBoard = bitboard.getColorBoard<color>();
     int8_t blackKingSquare = bitscanForward(bitboard.getPieceBoard(BLACK_KING));
     int8_t whiteKingSquare = bitscanForward(bitboard.getPieceBoard(WHITE_KING));
     uint64_t blackKingAttacks = attacksFrom[blackKingSquare];
     uint64_t whiteKingAttacks = attacksFrom[whiteKingSquare];
 
-    // A weak square is either attacked by the opponent and not by us or attacked twice by the opponent and once/not by us.
-    uint64_t weakSquares = color == WHITE
-                               ? (attackedBy2[BLACK] & ~attackedBy2[WHITE])
-                                 | (attacksByColor[BLACK] & ~attacksByColor[WHITE])
-                               : (attackedBy2[WHITE] & ~attackedBy2[BLACK])
-                                 | (attacksByColor[WHITE] & ~attacksByColor[BLACK]);
+    // A weak square is either:
+    // 1. Attacked by the opponent and not by us
+    uint64_t weakSquares = attacksByColor[opponentColor] & ~attacksByColor[color];
+
+    // 2. Attacked twice by the opponent and once/not by us.
+    weakSquares |= attackedBy2[opponentColor] & ~attackedBy2[color];
+
+    // 3. Attacked by both colors, but our attack is not a pawn and the opponent's is.
+    weakSquares |= (attacksByColor[color] & attacksByColor[opponentColor]
+            & ~attackedBy2[color] & ~attackedBy2[opponentColor])
+        & ~attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
+        & attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
+
+    // 4. Attacked twice by both colors, but our attack has no pawns and the opponent's has at least one.
+    weakSquares |= (attackedBy2[color] & attackedBy2[opponentColor])
+        & ~attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
+        & attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
 
     // Backward pawn
     // A backward pawn is a pawn no longer defensible by own pawns and whose stop square lacks pawn protection but is controlled by a sentry. Thus, don't considering piece tactics, the backward pawn is not able to push forward without being lost, even establishing an opponent passer. If two opposing pawns on adjacent files in knight distance are mutually backward, the more advanced is not considered backward.
