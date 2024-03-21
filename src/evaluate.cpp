@@ -370,8 +370,22 @@ void Evaluation::evaluatePieces() {
         // Other King safety
         if (isKing(pieceType)) {
             if (color == WHITE) {
-                // Pawn Shield
                 uint64_t kingBB = bitboard.getPieceBoard(WHITE_KING);
+
+                // Assume king castled kingside
+                uint64_t kingHalf = E_FILE | F_FILE | G_FILE | H_FILE;
+
+                // King is still in the middle, so we only consider DEF
+                if (kingBB & E_FILE) {
+                    kingHalf = D_FILE | E_FILE | F_FILE;
+                }
+
+                // King castled queenside
+                if (!(kingBB & kingHalf)) {
+                    kingHalf = A_FILE | B_FILE | C_FILE | D_FILE;
+                }
+
+                // Pawn Shield
                 uint64_t pawnBB = bitboard.getPieceBoard(WHITE_PAWN);
                 uint64_t pawnShieldMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
                 pawnShieldMask |= nortOne(pawnShieldMask);
@@ -380,6 +394,25 @@ void Evaluation::evaluatePieces() {
 
                 whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
+
+                // Pawn Storm
+                uint64_t opponentPawnStormBB = bitboard.getPieceBoard(BLACK_PAWN) & kingHalf;
+                int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
+                int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
+                int pawnsOnRank3Count = popcnt(opponentPawnStormBB & RANK_3);
+
+                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank5Count;
+                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank5Count;
+                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank4Count;
+                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank4Count;
+                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
+                    pawnsOnRank3Count;
+                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
+                    pawnsOnRank3Count;
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
@@ -393,8 +426,22 @@ void Evaluation::evaluatePieces() {
                     popcnt(virtualMobilitySquares) * getEvalValue(
                         ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
             } else {
+                uint64_t kingBB = bitboard.getPieceBoard(WHITE_KING);
+
+                // Assume king castled kingside
+                uint64_t kingHalf = E_FILE | F_FILE | G_FILE | H_FILE;
+
+                // King is still in the middle, so we only consider DEF
+                if (kingBB & E_FILE) {
+                    kingHalf = D_FILE | E_FILE | F_FILE;
+                }
+
+                // King castled queenside
+                if (!(kingBB & kingHalf)) {
+                    kingHalf = A_FILE | B_FILE | C_FILE | D_FILE;
+                }
+
                 // Pawn Shield
-                uint64_t kingBB = bitboard.getPieceBoard(BLACK_KING);
                 uint64_t pawnBB = bitboard.getPieceBoard(BLACK_PAWN);
                 uint64_t pawnShieldMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
                 pawnShieldMask |= soutOne(pawnShieldMask);
@@ -403,6 +450,24 @@ void Evaluation::evaluatePieces() {
 
                 blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
+
+                // Pawn Storm
+                uint64_t opponentPawnStormBB = bitboard.getPieceBoard(WHITE_PAWN) & kingHalf;
+                int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
+                int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
+                int pawnsOnRank6Count = popcnt(opponentPawnStormBB & RANK_6);
+
+                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank4Count;
+                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank4Count;
+                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank5Count;
+                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank5Count;
+                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
+                    pawnsOnRank6Count;
+                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) * pawnsOnRank6Count;
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
@@ -754,26 +819,10 @@ void Evaluation::evaluatePieces() {
             }
         }
 
-        // Penalty for undefended pawns
-        if (isPawn(pieceType)) {
-            if (!(square & attacksByColor[color])) {
-                if (color == WHITE) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_NOT_DEFENDED_PENALTY);
-                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_NOT_DEFENDED_PENALTY);
-                } else {
-                    blackMidgameScore += getEvalValue(MIDGAME_PAWN_NOT_DEFENDED_PENALTY);
-                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_NOT_DEFENDED_PENALTY);
-                }
-            }
-        }
-
         int midgameScore = 0;
         int endgameScore = 0;
         if (square & weakSquares) {
-            if (isPawn(pieceType)) {
-                midgameScore += getEvalValue(MIDGAME_PAWN_WEAK_SQUARE_PENALTY);
-                endgameScore += getEvalValue(ENDGAME_PAWN_WEAK_SQUARE_PENALTY);
-            } else if (isKnight(pieceType)) {
+            if (isKnight(pieceType)) {
                 midgameScore += getEvalValue(MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
                 endgameScore += getEvalValue(ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
             } else if (isBishop(pieceType)) {
