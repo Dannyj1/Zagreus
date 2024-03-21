@@ -383,36 +383,34 @@ void Evaluation::evaluatePieces() {
                 whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
                 // Pawn Storm
-                if (pawnShield) {
-                    uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+                uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
-                    if (square % 8 != 0) {
-                        pawnStormMask |= bitboard.getFile(square - 1);
-                    }
-
-                    if (square % 8 != 7) {
-                        pawnStormMask |= bitboard.getFile(square + 1);
-                    }
-
-                    uint64_t opponentPawnStormBB =
-                        bitboard.getPieceBoard(BLACK_PAWN) & pawnStormMask;
-                    int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
-                    int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
-                    int pawnsOnRank3Count = popcnt(opponentPawnStormBB & RANK_3);
-
-                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
-                        pawnsOnRank5Count;
-                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
-                        pawnsOnRank5Count;
-                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
-                        pawnsOnRank4Count;
-                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
-                        pawnsOnRank4Count;
-                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
-                        pawnsOnRank3Count;
-                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
-                        pawnsOnRank3Count;
+                if (square % 8 != 0) {
+                    pawnStormMask |= bitboard.getFile(square - 1);
                 }
+
+                if (square % 8 != 7) {
+                    pawnStormMask |= bitboard.getFile(square + 1);
+                }
+
+                uint64_t opponentPawnStormBB =
+                    bitboard.getPieceBoard(BLACK_PAWN) & pawnStormMask;
+                int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
+                int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
+                int pawnsOnRank3Count = popcnt(opponentPawnStormBB & RANK_3);
+
+                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank5Count;
+                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank5Count;
+                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank4Count;
+                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank4Count;
+                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
+                    pawnsOnRank3Count;
+                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
+                    pawnsOnRank3Count;
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
@@ -439,35 +437,34 @@ void Evaluation::evaluatePieces() {
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
                 // Pawn Storm
-                if (pawnShield) {
-                    uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+                uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
-                    if (square % 8 != 0) {
-                        pawnStormMask |= bitboard.getFile(square - 1);
-                    }
-
-                    if (square % 8 != 7) {
-                        pawnStormMask |= bitboard.getFile(square + 1);
-                    }
-
-                    uint64_t opponentPawnStormBB = bitboard.getPieceBoard(WHITE_PAWN) & pawnStormMask;
-                    int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
-                    int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
-                    int pawnsOnRank6Count = popcnt(opponentPawnStormBB & RANK_6);
-
-                    blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
-                        pawnsOnRank4Count;
-                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
-                        pawnsOnRank4Count;
-                    blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
-                        pawnsOnRank5Count;
-                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
-                        pawnsOnRank5Count;
-                    blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
-                        pawnsOnRank6Count;
-                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
-                        pawnsOnRank6Count;
+                if (square % 8 != 0) {
+                    pawnStormMask |= bitboard.getFile(square - 1);
                 }
+
+                if (square % 8 != 7) {
+                    pawnStormMask |= bitboard.getFile(square + 1);
+                }
+
+                uint64_t opponentPawnStormBB =
+                    bitboard.getPieceBoard(WHITE_PAWN) & pawnStormMask;
+                int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
+                int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
+                int pawnsOnRank6Count = popcnt(opponentPawnStormBB & RANK_6);
+
+                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank4Count;
+                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
+                    pawnsOnRank4Count;
+                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank5Count;
+                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
+                    pawnsOnRank5Count;
+                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
+                    pawnsOnRank6Count;
+                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
+                    pawnsOnRank6Count;
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
@@ -680,7 +677,8 @@ void Evaluation::evaluatePieces() {
             uint64_t forwardMobility;
 
             if (color == WHITE) {
-                forwardMobility = getRayAttack(squareIndex, NORTH_WEST) | getRayAttack(squareIndex, NORTH_EAST);
+                forwardMobility = getRayAttack(squareIndex, NORTH_WEST) | getRayAttack(
+                                      squareIndex, NORTH_EAST);
             } else {
                 forwardMobility = getRayAttack(squareIndex, SOUTH_WEST) | getRayAttack(squareIndex, SOUTH_EAST);
             }
