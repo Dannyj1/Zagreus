@@ -307,13 +307,13 @@ void Evaluation::evaluatePieces() {
     }
 
     while (colorBoard) {
-        uint8_t index = popLsb(colorBoard);
-        uint64_t square = 1ULL << index;
-        PieceType pieceType = bitboard.getPieceOnSquare(index);
+        uint8_t squareIndex = popLsb(colorBoard);
+        uint64_t square = 1ULL << squareIndex;
+        PieceType pieceType = bitboard.getPieceOnSquare(squareIndex);
 
         // Mobility
         if (isNotPawnOrKing(pieceType)) {
-            uint64_t mobilitySquares = attacksFrom[index];
+            uint64_t mobilitySquares = attacksFrom[squareIndex];
 
             if (color == WHITE) {
                 // Exclude own pieces and attacks by opponent pawns
@@ -359,7 +359,7 @@ void Evaluation::evaluatePieces() {
 
         // King safety - Attacks around king
         if (!isKing(pieceType)) {
-            uint64_t attackSquares = attacksFrom[index];
+            uint64_t attackSquares = attacksFrom[squareIndex];
             uint64_t opponentKingAttacks = color == WHITE ? blackKingAttacks : whiteKingAttacks;
             uint64_t attacksAroundKing = attackSquares & opponentKingAttacks;
             uint8_t attackCount = popcnt(attacksAroundKing);
@@ -371,19 +371,6 @@ void Evaluation::evaluatePieces() {
         if (isKing(pieceType)) {
             if (color == WHITE) {
                 uint64_t kingBB = bitboard.getPieceBoard(WHITE_KING);
-
-                // Assume king castled kingside
-                uint64_t kingHalf = E_FILE | F_FILE | G_FILE | H_FILE;
-
-                // King is still in the middle, so we only consider DEF
-                if (kingBB & E_FILE) {
-                    kingHalf = D_FILE | E_FILE | F_FILE;
-                }
-
-                // King castled queenside
-                if (!(kingBB & kingHalf)) {
-                    kingHalf = A_FILE | B_FILE | C_FILE | D_FILE;
-                }
 
                 // Pawn Shield
                 uint64_t pawnBB = bitboard.getPieceBoard(WHITE_PAWN);
@@ -397,7 +384,18 @@ void Evaluation::evaluatePieces() {
 
                 // Pawn Storm
                 if (pawnShield) {
-                    uint64_t opponentPawnStormBB = bitboard.getPieceBoard(BLACK_PAWN) & kingHalf;
+                    uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+
+                    if (square % 8 != 0) {
+                        pawnStormMask |= bitboard.getFile(square - 1);
+                    }
+
+                    if (square % 8 != 7) {
+                        pawnStormMask |= bitboard.getFile(square + 1);
+                    }
+
+                    uint64_t opponentPawnStormBB =
+                        bitboard.getPieceBoard(BLACK_PAWN) & pawnStormMask;
                     int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
                     int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
                     int pawnsOnRank3Count = popcnt(opponentPawnStormBB & RANK_3);
@@ -419,8 +417,8 @@ void Evaluation::evaluatePieces() {
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
                 uint64_t virtualMobilitySquares =
-                    bitboard.getQueenAttacks(index, bitboard.getColorBoard<WHITE>()) &
-                    ~(attacksFrom[index] | bitboard.getColorBoard<WHITE>());
+                    bitboard.getQueenAttacks(squareIndex, bitboard.getColorBoard<WHITE>()) &
+                    ~(attacksFrom[squareIndex] | bitboard.getColorBoard<WHITE>());
                 whiteMidgameScore +=
                     popcnt(virtualMobilitySquares) * getEvalValue(
                         MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
@@ -429,19 +427,6 @@ void Evaluation::evaluatePieces() {
                         ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
             } else {
                 uint64_t kingBB = bitboard.getPieceBoard(WHITE_KING);
-
-                // Assume king castled kingside
-                uint64_t kingHalf = E_FILE | F_FILE | G_FILE | H_FILE;
-
-                // King is still in the middle, so we only consider DEF
-                if (kingBB & E_FILE) {
-                    kingHalf = D_FILE | E_FILE | F_FILE;
-                }
-
-                // King castled queenside
-                if (!(kingBB & kingHalf)) {
-                    kingHalf = A_FILE | B_FILE | C_FILE | D_FILE;
-                }
 
                 // Pawn Shield
                 uint64_t pawnBB = bitboard.getPieceBoard(BLACK_PAWN);
@@ -455,7 +440,17 @@ void Evaluation::evaluatePieces() {
 
                 // Pawn Storm
                 if (pawnShield) {
-                    uint64_t opponentPawnStormBB = bitboard.getPieceBoard(WHITE_PAWN) & kingHalf;
+                    uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+
+                    if (square % 8 != 0) {
+                        pawnStormMask |= bitboard.getFile(square - 1);
+                    }
+
+                    if (square % 8 != 7) {
+                        pawnStormMask |= bitboard.getFile(square + 1);
+                    }
+
+                    uint64_t opponentPawnStormBB = bitboard.getPieceBoard(WHITE_PAWN) & pawnStormMask;
                     int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
                     int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
                     int pawnsOnRank6Count = popcnt(opponentPawnStormBB & RANK_6);
@@ -470,14 +465,15 @@ void Evaluation::evaluatePieces() {
                         pawnsOnRank5Count;
                     blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
                         pawnsOnRank6Count;
-                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) * pawnsOnRank6Count;
+                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
+                        pawnsOnRank6Count;
                 }
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
                 uint64_t virtualMobilitySquares =
-                    bitboard.getQueenAttacks(index, bitboard.getColorBoard<BLACK>()) &
-                    ~(attacksFrom[index] | bitboard.getColorBoard<BLACK>());
+                    bitboard.getQueenAttacks(squareIndex, bitboard.getColorBoard<BLACK>()) &
+                    ~(attacksFrom[squareIndex] | bitboard.getColorBoard<BLACK>());
                 blackMidgameScore +=
                     popcnt(virtualMobilitySquares) * getEvalValue(
                         MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
@@ -493,8 +489,8 @@ void Evaluation::evaluatePieces() {
             uint64_t pawnBB = bitboard.getPieceBoard(pieceType);
             Direction direction = color == WHITE ? NORTH : SOUTH;
             Direction oppositeDirection = color == WHITE ? SOUTH : NORTH;
-            uint64_t frontMask = getRayAttack(index, direction);
-            uint64_t behindMask = getRayAttack(index, oppositeDirection);
+            uint64_t frontMask = getRayAttack(squareIndex, direction);
+            uint64_t behindMask = getRayAttack(squareIndex, oppositeDirection);
             uint64_t doubledPawns = pawnBB & frontMask;
 
             if (doubledPawns) {
@@ -508,7 +504,7 @@ void Evaluation::evaluatePieces() {
             }
 
             // Passed pawn
-            if (bitboard.isPassedPawn<color>(index)) {
+            if (bitboard.isPassedPawn<color>(squareIndex)) {
                 if (color == WHITE) {
                     whiteMidgameScore += getEvalValue(MIDGAME_PASSED_PAWN);
                     whiteEndgameScore += getEvalValue(ENDGAME_PASSED_PAWN);
@@ -613,7 +609,7 @@ void Evaluation::evaluatePieces() {
             }
 
             // Isolated pawn
-            if (bitboard.isIsolatedPawn<color>(index)) {
+            if (bitboard.isIsolatedPawn<color>(squareIndex)) {
                 if (color == WHITE) {
                     whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN_PENALTY);
                     whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN_PENALTY);
@@ -622,7 +618,7 @@ void Evaluation::evaluatePieces() {
                     blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN_PENALTY);
                 }
 
-                if (bitboard.isSemiOpenFile<color>(index)) {
+                if (bitboard.isSemiOpenFile<color>(squareIndex)) {
                     if (color == WHITE) {
                         whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
                         whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
@@ -679,14 +675,14 @@ void Evaluation::evaluatePieces() {
         // Bishop eval
         if (isBishop(pieceType)) {
             // Bad bishop
-            uint64_t bishopAttacks = attacksFrom[index];
+            uint64_t bishopAttacks = attacksFrom[squareIndex];
             uint64_t pawnBB = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
             uint64_t forwardMobility;
 
             if (color == WHITE) {
-                forwardMobility = getRayAttack(index, NORTH_WEST) | getRayAttack(index, NORTH_EAST);
+                forwardMobility = getRayAttack(squareIndex, NORTH_WEST) | getRayAttack(squareIndex, NORTH_EAST);
             } else {
-                forwardMobility = getRayAttack(index, SOUTH_WEST) | getRayAttack(index, SOUTH_EAST);
+                forwardMobility = getRayAttack(squareIndex, SOUTH_WEST) | getRayAttack(squareIndex, SOUTH_EAST);
             }
 
             bishopAttacks &= forwardMobility;
@@ -723,7 +719,7 @@ void Evaluation::evaluatePieces() {
 
             // Fianchetto
             if (color == WHITE) {
-                if (index == G2 || index == B2) {
+                if (squareIndex == G2 || squareIndex == B2) {
                     uint64_t fianchettoPattern =
                         nortOne(square) | westOne(square) | eastOne(square);
                     uint64_t antiPattern = noWeOne(square) | noEaOne(square);
@@ -734,7 +730,7 @@ void Evaluation::evaluatePieces() {
                     }
                 }
             } else {
-                if (index == G7 || index == B7) {
+                if (squareIndex == G7 || squareIndex == B7) {
                     uint64_t fianchettoPattern =
                         soutOne(square) | westOne(square) | eastOne(square);
                     uint64_t antiPattern = soWeOne(square) | soEaOne(square);
@@ -762,7 +758,7 @@ void Evaluation::evaluatePieces() {
             }
 
             // Rook on open file
-            if (bitboard.isOpenFile(index)) {
+            if (bitboard.isOpenFile(squareIndex)) {
                 if (color == WHITE) {
                     whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_OPEN_FILE);
                     whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_OPEN_FILE);
@@ -770,7 +766,7 @@ void Evaluation::evaluatePieces() {
                     blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_OPEN_FILE);
                     blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_OPEN_FILE);
                 }
-            } else if (bitboard.isSemiOpenFile<color>(index)) {
+            } else if (bitboard.isSemiOpenFile<color>(squareIndex)) {
                 if (color == WHITE) {
                     whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_SEMI_OPEN_FILE);
                     whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_SEMI_OPEN_FILE);
@@ -793,7 +789,7 @@ void Evaluation::evaluatePieces() {
                 }
             }
 
-            uint64_t file = bitboard.getFile(index);
+            uint64_t file = bitboard.getFile(squareIndex);
             uint64_t opponentQueens = bitboard.getPieceBoard(
                 color == WHITE ? BLACK_QUEEN : WHITE_QUEEN);
 
