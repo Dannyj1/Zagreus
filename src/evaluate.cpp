@@ -287,6 +287,24 @@ void Evaluation::evaluatePieces() {
         & ~attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
         & attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
 
+    // A strong square is either:
+    // 1. Attacked by us and not by the opponent
+    uint64_t strongSquares = attacksByColor[color] & ~attacksByColor[opponentColor];
+
+    // 2. Attacked twice by us and once/not by the opponent.
+    strongSquares |= attackedBy2[color] & ~attackedBy2[opponentColor];
+
+    // 3. Attacked by both colors, but the opponent's attack is not a pawn and ours is.
+    strongSquares |= (attacksByColor[color] & attacksByColor[opponentColor]
+                      & ~attackedBy2[color] & ~attackedBy2[opponentColor])
+            & attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
+            & ~attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
+
+    // 4. Attacked twice by both colors, but the opponent's attack has no pawns and ours has at least one.
+    strongSquares |= (attackedBy2[color] & attackedBy2[opponentColor])
+            & attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
+            & ~attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
+
     // Backward pawn
     // A backward pawn is a pawn no longer defensible by own pawns and whose stop square lacks pawn protection but is controlled by a sentry. Thus, don't considering piece tactics, the backward pawn is not able to push forward without being lost, even establishing an opponent passer. If two opposing pawns on adjacent files in knight distance are mutually backward, the more advanced is not considered backward.
     uint64_t pawnBB = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
@@ -321,19 +339,19 @@ void Evaluation::evaluatePieces() {
 
                 // If pieceType == queen, exclude tiles attacked by opponent bishop, knight and rook
                 if (pieceType == WHITE_QUEEN) {
-                    mobilitySquares &= ~(
-                        attacksByPiece[BLACK_BISHOP] | attacksByPiece[BLACK_KNIGHT] |
-                        attacksByPiece[BLACK_ROOK]);
+                    mobilitySquares &= ~((attacksByPiece[BLACK_BISHOP] | attacksByPiece[BLACK_KNIGHT] |
+                        attacksByPiece[BLACK_ROOK]) & ~strongSquares);
                 }
 
                 // If pieceType == rook, exclude tiles attacked by opponent bishop and knight
                 if (pieceType == WHITE_ROOK) {
-                    mobilitySquares &= ~(
-                        attacksByPiece[BLACK_BISHOP] | attacksByPiece[BLACK_KNIGHT]);
+                    mobilitySquares &= ~((attacksByPiece[BLACK_BISHOP] | attacksByPiece[BLACK_KNIGHT]) & ~strongSquares);
                 }
 
                 // Squares that are attacked by the current piece and no other pieces of the same color, while also being attacked by the opponent are also considered weak.
-                uint64_t badMobilitySquares = weakSquares | (attacksFrom[squareIndex] & attacksByColor[BLACK] & ~attackedBy2[WHITE]);
+                uint64_t badMobilitySquares =
+                    weakSquares | (attacksFrom[squareIndex] & attacksByColor[BLACK] & ~attackedBy2[
+                                       WHITE]);
                 mobilitySquares &= ~badMobilitySquares;
             } else {
                 // Exclude own pieces and attacks by opponent pawns
@@ -341,19 +359,19 @@ void Evaluation::evaluatePieces() {
 
                 // If pieceType == queen, exclude tiles attacked by opponent bishop, knight and rook
                 if (pieceType == BLACK_QUEEN) {
-                    mobilitySquares &= ~(
-                        attacksByPiece[WHITE_BISHOP] | attacksByPiece[WHITE_KNIGHT] |
-                        attacksByPiece[WHITE_ROOK]);
+                    mobilitySquares &= ~((attacksByPiece[WHITE_BISHOP] | attacksByPiece[WHITE_KNIGHT] |
+                        attacksByPiece[WHITE_ROOK]) & ~strongSquares);
                 }
 
                 // If pieceType == rook, exclude tiles attacked by opponent bishop and knight
                 if (pieceType == BLACK_ROOK) {
-                    mobilitySquares &= ~(
-                        attacksByPiece[WHITE_BISHOP] | attacksByPiece[WHITE_KNIGHT]);
+                    mobilitySquares &= ~((attacksByPiece[WHITE_BISHOP] | attacksByPiece[WHITE_KNIGHT]) & ~strongSquares);
                 }
 
                 // Squares that are attacked by the current piece and no other pieces of the same color, while also being attacked by the opponent are also considered weak.
-                uint64_t badMobilitySquares = weakSquares | (attacksFrom[squareIndex] & attacksByColor[WHITE] & ~attackedBy2[BLACK]);
+                uint64_t badMobilitySquares =
+                    weakSquares | (attacksFrom[squareIndex] & attacksByColor[WHITE] & ~attackedBy2[
+                                       BLACK]);
                 mobilitySquares &= ~badMobilitySquares;
             }
 
