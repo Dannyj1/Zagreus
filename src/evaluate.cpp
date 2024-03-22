@@ -460,7 +460,7 @@ void Evaluation::evaluatePieces() {
                         blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
 
                         // If the king is also on a semi-open or open file, apply penalty
-                        if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex)) {
+                        if (bitboard.isSemiOpenOrOpenFile<BLACK>(squareIndex)) {
                             blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
                             blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
                         }
