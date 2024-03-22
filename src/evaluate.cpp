@@ -451,18 +451,18 @@ void Evaluation::evaluatePieces() {
                     uint8_t pawnShieldCount = std::min<uint64_t>(popcnt(pawnShield), 3ULL);
                     uint64_t kingFile = bitboard.getFile(squareIndex);
 
-                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
-                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
+                    blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
+                    blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
                     // If there is no pawn in front of the king in the pawn shield, apply penalty
                     if (!(pawnBB & kingFile & pawnShield)) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN);
-                        whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
+                        blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN);
+                        blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
 
                         // If the king is also on a semi-open or open file, apply penalty
                         if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex)) {
-                            whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
-                            whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
+                            blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
+                            blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
                         }
                     }
                 }
