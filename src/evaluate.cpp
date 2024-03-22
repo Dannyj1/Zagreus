@@ -399,7 +399,7 @@ void Evaluation::evaluatePieces() {
                 }
 
                 // Pawn Storm
-                /*uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+                uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
                 if (squareIndex % 8 != 0) {
                     pawnStormMask |= bitboard.getFile(squareIndex - 1);
@@ -425,7 +425,7 @@ void Evaluation::evaluatePieces() {
                 whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank3Count;
                 whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
-                    pawnsOnRank3Count;*/
+                    pawnsOnRank3Count;
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
@@ -468,7 +468,7 @@ void Evaluation::evaluatePieces() {
                 }
 
                 // Pawn Storm
-                /*uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+                uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
                 if (squareIndex % 8 != 0) {
                     pawnStormMask |= bitboard.getFile(squareIndex - 1);
@@ -495,7 +495,7 @@ void Evaluation::evaluatePieces() {
                 blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank6Count;
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
-                    pawnsOnRank6Count;*/
+                    pawnsOnRank6Count;
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
