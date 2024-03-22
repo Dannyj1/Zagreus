@@ -374,16 +374,32 @@ void Evaluation::evaluatePieces() {
 
                 // Pawn Shield
                 uint64_t pawnBB = bitboard.getPieceBoard(WHITE_PAWN);
-                uint64_t pawnShieldMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
-                pawnShieldMask |= nortOne(pawnShieldMask);
-                uint64_t pawnShield = pawnBB & pawnShieldMask;
-                uint8_t pawnShieldCount = std::min<uint64_t>(popcnt(pawnShield), 3ULL);
 
-                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
-                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
+                if (!(kingBB & DE_FILE)) {
+                    uint64_t pawnShieldMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
+                    pawnShieldMask |= nortOne(pawnShieldMask);
+                    uint64_t pawnShield = pawnBB & pawnShieldMask;
+                    uint8_t pawnShieldCount = std::min<uint64_t>(popcnt(pawnShield), 3ULL);
+                    uint64_t kingFile = bitboard.getFile(squareIndex);
+
+                    whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD) * pawnShieldCount;
+                    whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
+
+                    // If there is no pawn in front of the king in the pawn shield, apply penalty
+                    if (!(pawnBB & kingFile & pawnShield)) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN);
+                        whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
+
+                        // If the king is also on a semi-open or open file, apply penalty
+                        if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex)) {
+                            whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
+                            whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
+                        }
+                    }
+                }
 
                 // Pawn Storm
-                uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+                /*uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
                 if (squareIndex % 8 != 0) {
                     pawnStormMask |= bitboard.getFile(squareIndex - 1);
@@ -409,7 +425,7 @@ void Evaluation::evaluatePieces() {
                 whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank3Count;
                 whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
-                    pawnsOnRank3Count;
+                    pawnsOnRank3Count;*/
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
@@ -436,7 +452,7 @@ void Evaluation::evaluatePieces() {
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD) * pawnShieldCount;
 
                 // Pawn Storm
-                uint64_t pawnStormMask = bitboard.getFile(squareIndex);
+                /*uint64_t pawnStormMask = bitboard.getFile(squareIndex);
 
                 if (squareIndex % 8 != 0) {
                     pawnStormMask |= bitboard.getFile(squareIndex - 1);
@@ -463,7 +479,7 @@ void Evaluation::evaluatePieces() {
                 blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank6Count;
                 blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
-                    pawnsOnRank6Count;
+                    pawnsOnRank6Count;*/
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
                 // own pieces. We also ignore the squares around the king.
