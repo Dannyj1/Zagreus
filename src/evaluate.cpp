@@ -684,17 +684,34 @@ void Evaluation::evaluatePieces() {
     }
 }
 
-int Evaluation::evaluate() {
+static int margin = 500;
+
+template <NodeType nodeType>
+int Evaluation::evaluate(int alpha, int beta) {
     int phase = getPhase();
     int modifier = bitboard.getMovingColor() == WHITE ? 1 : -1;
-
-    initEvalContext(bitboard);
 
     evaluateMaterial<WHITE>();
     evaluateMaterial<BLACK>();
 
     evaluatePst<WHITE>();
     evaluatePst<BLACK>();
+
+    if (nodeType != PV && nodeType != ROOT) {
+        int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
+        int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
+        int eval = (whiteScore - blackScore) * modifier;
+
+        if (eval + margin <= alpha) {
+            return eval;
+        }
+
+        if (eval - margin >= beta) {
+            return eval;
+        }
+    }
+
+    initEvalContext(bitboard);
 
     evaluatePieces<WHITE>();
     evaluatePieces<BLACK>();
@@ -704,6 +721,11 @@ int Evaluation::evaluate() {
 
     return (whiteScore - blackScore) * modifier;
 }
+
+template int Evaluation::evaluate<ROOT>(int alpha, int beta);
+template int Evaluation::evaluate<PV>(int alpha, int beta);
+template int Evaluation::evaluate<NO_PV>(int alpha, int beta);
+template int Evaluation::evaluate<NULL_MOVE>(int alpha, int beta);
 
 template <PieceColor color>
 void Evaluation::evaluateMaterial() {

@@ -73,7 +73,7 @@ float evaluationLoss(std::vector<TunePosition>& positions) {
 
     for (TunePosition& pos : positions) {
         tunerBoard.setFromFenTuner(pos.fen);
-        int evalScore = Evaluation(tunerBoard).evaluate();
+        int evalScore = Evaluation(tunerBoard).evaluate<PV>(MAX_NEGATIVE, MAX_POSITIVE);
 
         // All scores are from white's perspective
         if (tunerBoard.getMovingColor() == BLACK) {
@@ -193,7 +193,7 @@ std::vector<TunePosition> loadPositions(
             draw++;
         }
 
-        int evalScore = Evaluation(tunerBoard).evaluate();
+        int evalScore = Evaluation(tunerBoard).evaluate<PV>(MAX_NEGATIVE, MAX_POSITIVE);
 
         // All scores are from white's perspective
         if (tunerBoard.getMovingColor() == BLACK) {

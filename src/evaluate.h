@@ -47,7 +47,8 @@ public:
         : bitboard(bitboard) {
     }
 
-    int evaluate();
+    template<NodeType nodeType>
+    int evaluate(int alpha, int beta);
 
 private:
     Bitboard& bitboard;
