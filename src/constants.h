@@ -81,6 +81,7 @@ static constexpr uint64_t BLACK_QUEEN_SIDE_BETWEEN = 0xE00000000000000ULL;
 static constexpr int NO_CAPTURE_SCORE = -1;
 
 static constexpr int COLORS = 2;
+static constexpr int GAME_PHASES = 2;
 static constexpr int PIECE_TYPES = 12;
 static constexpr int8_t SQUARES = 64;
 

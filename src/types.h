@@ -48,6 +48,8 @@ enum PieceType {
 
 enum PieceColor { NONE = -1, WHITE = 0, BLACK = 1 };
 
+enum GamePhase {MIDGAME = 0, ENDGAME = 1};
+
 // clang-format off
 enum Square {
     A1,

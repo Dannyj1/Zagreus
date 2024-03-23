@@ -155,6 +155,33 @@ void Evaluation::initEvalContext(Bitboard& bitboard) {
         attacksByColor[BLACK] |= attacks;
         attacksFrom[square] |= attacks;
     }
+
+    // A weak square is either:
+    // 1. Attacked by the opponent and not by us
+    weakSquares[WHITE] = attacksByColor[BLACK] & ~attacksByColor[WHITE];
+    weakSquares[BLACK] = attacksByColor[WHITE] & ~attacksByColor[BLACK];
+
+    // 2. Attacked twice by the opponent and once/not by us.
+    weakSquares[WHITE] |= attackedBy2[BLACK] & ~attackedBy2[WHITE];
+    weakSquares[BLACK] |= attackedBy2[WHITE] & ~attackedBy2[BLACK];
+
+    // 3. Attacked by both colors, but our attack is not a pawn and the opponent's is.
+    weakSquares[WHITE] |= (attacksByColor[WHITE] & attacksByColor[BLACK]
+                           & ~attackedBy2[WHITE] & ~attackedBy2[BLACK]) & ~attacksByPiece[
+            WHITE_PAWN]
+        & attacksByPiece[BLACK_PAWN];
+    weakSquares[BLACK] |= (attacksByColor[WHITE] & attacksByColor[BLACK]
+                           & ~attackedBy2[WHITE] & ~attackedBy2[BLACK]) & ~attacksByPiece[
+            BLACK_PAWN]
+        & attacksByPiece[WHITE_PAWN];
+
+    // 4. Attacked twice by both colors, but our attack has no pawns and the opponent's has at least one.
+    weakSquares[WHITE] |= (attackedBy2[WHITE] & attackedBy2[BLACK])
+        & ~attacksByPiece[WHITE_PAWN]
+        & attacksByPiece[BLACK_PAWN];
+    weakSquares[BLACK] |= (attackedBy2[WHITE] & attackedBy2[BLACK])
+        & ~attacksByPiece[BLACK_PAWN]
+        & attacksByPiece[WHITE_PAWN];
 }
 
 constexpr int knightPhase = 1;
@@ -269,24 +296,6 @@ void Evaluation::evaluatePieces() {
     uint64_t blackKingAttacks = attacksFrom[blackKingSquare];
     uint64_t whiteKingAttacks = attacksFrom[whiteKingSquare];
 
-    // A weak square is either:
-    // 1. Attacked by the opponent and not by us
-    uint64_t weakSquares = attacksByColor[opponentColor] & ~attacksByColor[color];
-
-    // 2. Attacked twice by the opponent and once/not by us.
-    weakSquares |= attackedBy2[opponentColor] & ~attackedBy2[color];
-
-    // 3. Attacked by both colors, but our attack is not a pawn and the opponent's is.
-    weakSquares |= (attacksByColor[color] & attacksByColor[opponentColor]
-                    & ~attackedBy2[color] & ~attackedBy2[opponentColor])
-        & ~attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
-        & attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
-
-    // 4. Attacked twice by both colors, but our attack has no pawns and the opponent's has at least one.
-    weakSquares |= (attackedBy2[color] & attackedBy2[opponentColor])
-        & ~attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN]
-        & attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
-
     // A strong square is either:
     // 1. Attacked by us and not by the opponent
     uint64_t strongSquares = attacksByColor[color] & ~attacksByColor[opponentColor];
@@ -350,8 +359,9 @@ void Evaluation::evaluatePieces() {
 
                 // Squares that are attacked by the current piece and no other pieces of the same color, while also being attacked by the opponent are also considered weak.
                 uint64_t badMobilitySquares =
-                    weakSquares | (attacksFrom[squareIndex] & attacksByColor[BLACK] & ~attackedBy2[
-                                       WHITE]);
+                    weakSquares[color] | (
+                        attacksFrom[squareIndex] & attacksByColor[BLACK] & ~attackedBy2[
+                            WHITE]);
                 mobilitySquares &= ~badMobilitySquares;
             } else {
                 // Exclude own pieces and attacks by opponent pawns
@@ -370,8 +380,9 @@ void Evaluation::evaluatePieces() {
 
                 // Squares that are attacked by the current piece and no other pieces of the same color, while also being attacked by the opponent are also considered weak.
                 uint64_t badMobilitySquares =
-                    weakSquares | (attacksFrom[squareIndex] & attacksByColor[WHITE] & ~attackedBy2[
-                                       BLACK]);
+                    weakSquares[color] | (
+                        attacksFrom[squareIndex] & attacksByColor[WHITE] & ~attackedBy2[
+                            BLACK]);
                 mobilitySquares &= ~badMobilitySquares;
             }
 
@@ -856,23 +867,9 @@ void Evaluation::evaluatePieces() {
             }
         }
 
-        // Undefended minor pieces
-        if (isKnight(pieceType) || isBishop(pieceType)) {
-            if (!(square & attacksByColor[color])) {
-                // Penalize a minor piece for not being defended
-                if (color == WHITE) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                    whiteEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                } else {
-                    blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                    blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-                }
-            }
-        }
-
         int midgameScore = 0;
         int endgameScore = 0;
-        if (square & weakSquares) {
+        if (square & weakSquares[color]) {
             if (isKnight(pieceType)) {
                 midgameScore += getEvalValue(MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
                 endgameScore += getEvalValue(ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
@@ -912,6 +909,9 @@ int Evaluation::evaluate() {
 
     evaluatePieces<WHITE>();
     evaluatePieces<BLACK>();
+
+    evaluateThreats<WHITE>();
+    evaluateThreats<BLACK>();
 
     int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
     int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
@@ -982,6 +982,84 @@ void Evaluation::evaluatePst() {
     } else {
         blackMidgameScore += bitboard.getBlackMidgamePst();
         blackEndgameScore += bitboard.getBlackEndgamePst();
+    }
+}
+
+template <PieceColor color>
+void Evaluation::evaluateThreats() {
+    // Will be here until I finally clean up this mess of a class/file
+    int evalScores[COLORS][GAME_PHASES]{};
+
+    constexpr PieceColor opponentColor = color == WHITE ? BLACK : WHITE;
+    constexpr PieceType opponentPawnType = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
+    constexpr PieceType opponentBishopType = color == WHITE ? BLACK_BISHOP : WHITE_BISHOP;
+    constexpr PieceType opponentKnightType = color == WHITE ? BLACK_KNIGHT : WHITE_KNIGHT;
+    constexpr PieceType opponentRookType = color == WHITE ? BLACK_ROOK : WHITE_ROOK;
+    uint64_t ownPawns = bitboard.getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
+    uint64_t opponentPawns = bitboard.getPieceBoard(opponentPawnType);
+    uint64_t ownBishops = bitboard.getPieceBoard(color == WHITE ? WHITE_BISHOP : BLACK_BISHOP);
+    uint64_t ownKnights = bitboard.getPieceBoard(color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT);
+    uint64_t ownRooks = bitboard.getPieceBoard(color == WHITE ? WHITE_ROOK : BLACK_ROOK);
+    uint64_t ownQueens = bitboard.getPieceBoard(color == WHITE ? WHITE_QUEEN : BLACK_QUEEN);
+    uint64_t minorPieces = ownBishops | ownKnights;
+    uint64_t majorPieces = ownRooks | ownQueens;
+
+    uint64_t undefendedPawns = ownPawns & ~attacksByColor[color];
+    uint64_t hangingPawns = undefendedPawns & attacksByPiece[opponentColor];
+
+    evalScores[color][MIDGAME] += popcnt(undefendedPawns) * getEvalValue(
+        MIDGAME_UNDEFENDED_PAWN_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(undefendedPawns) * getEvalValue(
+        ENDGAME_UNDEFENDED_PAWN_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(hangingPawns) * getEvalValue(MIDGAME_HANGING_PAWN_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(hangingPawns) * getEvalValue(ENDGAME_HANGING_PAWN_PENALTY);
+
+    uint64_t opponentPawnPushes = bitboard.getPawnDoublePush<opponentColor>(opponentPawns);
+    uint64_t undefendedMinorPieces = minorPieces & ~attacksByColor[color];
+    uint64_t hangingMinorPieces = undefendedMinorPieces & attacksByColor[opponentColor];
+    uint64_t minorPiecesAttackedByPawns = minorPieces & attacksByPiece[opponentPawnType];
+    uint64_t opponentPawnPushAttacks = calculatePawnAttacks<opponentColor>(opponentPawnPushes);
+    uint64_t minorPiecesThreatenedByPawn = opponentPawnPushAttacks & minorPieces;
+
+    evalScores[color][MIDGAME] += popcnt(undefendedMinorPieces) * getEvalValue(
+        MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(undefendedMinorPieces) * getEvalValue(
+        ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(hangingMinorPieces) * getEvalValue(
+        MIDGAME_HANGING_MINOR_PIECE_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(hangingMinorPieces) * getEvalValue(
+        ENDGAME_HANGING_MINOR_PIECE_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(minorPiecesAttackedByPawns) * getEvalValue(
+        MIDGAME_MINOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(minorPiecesAttackedByPawns) * getEvalValue(
+        ENDGAME_MINOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(minorPiecesThreatenedByPawn) * getEvalValue(
+        MIDGAME_MINOR_PIECE_PAWN_THREAT_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(minorPiecesThreatenedByPawn) * getEvalValue(
+        ENDGAME_MINOR_PIECE_PAWN_THREAT_PENALTY);
+
+    // uint64_t attacksByMinorPieces = attacksByPiece[opponentBishopType] | attacksByPiece[opponentKnightType];
+    // uint64_t undefendedMajorPieces = majorPieces & ~attacksByColor[color];
+    // uint64_t hangingMajorPieces = (undefendedMajorPieces & attacksByColor[opponentColor]) | (majorPieces & attacksByMinorPieces) | (ownQueens & attacksByPiece[opponentRookType]);
+    // uint64_t majorPiecesAttackedByPawns = majorPieces & attacksByPiece[opponentPawnType];
+    // uint64_t majorPiecesThreatenedByPawns = opponentPawnPushAttacks & majorPieces;
+
+    // evalScores[color][MIDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(MIDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
+    // evalScores[color][ENDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(ENDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
+    // evalScores[color][MIDGAME] += popcnt(hangingMajorPieces) * getEvalValue(MIDGAME_HANGING_MAJOR_PIECE_PENALTY);
+    // evalScores[color][ENDGAME] += popcnt(hangingMajorPieces) * getEvalValue(ENDGAME_HANGING_MAJOR_PIECE_PENALTY);
+    // evalScores[color][MIDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(MIDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
+    // evalScores[color][ENDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(ENDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
+    // evalScores[color][MIDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(MIDGAME_MAJOR_PIECE_THREATED_PENALTY);
+    // evalScores[color][ENDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(ENDGAME_MAJOR_PIECE_THREATED_PENALTY);
+
+    // Will be here until I finally clean up this mess of a class/file
+    if (color == WHITE) {
+        whiteMidgameScore += evalScores[WHITE][MIDGAME];
+        whiteEndgameScore += evalScores[WHITE][ENDGAME];
+    } else {
+        blackMidgameScore += evalScores[BLACK][MIDGAME];
+        blackEndgameScore += evalScores[BLACK][ENDGAME];
     }
 }
 } // namespace Zagreus
