@@ -1039,20 +1039,20 @@ void Evaluation::evaluateThreats() {
     evalScores[color][ENDGAME] += popcnt(minorPiecesThreatenedByPawn) * getEvalValue(
         ENDGAME_MINOR_PIECE_PAWN_THREAT_PENALTY);
 
-    // uint64_t attacksByMinorPieces = attacksByPiece[opponentBishopType] | attacksByPiece[opponentKnightType];
-    // uint64_t undefendedMajorPieces = majorPieces & ~attacksByColor[color];
-    // uint64_t hangingMajorPieces = (undefendedMajorPieces & attacksByColor[opponentColor]) | (majorPieces & attacksByMinorPieces) | (ownQueens & attacksByPiece[opponentRookType]);
-    // uint64_t majorPiecesAttackedByPawns = majorPieces & attacksByPiece[opponentPawnType];
-    // uint64_t majorPiecesThreatenedByPawns = opponentPawnPushAttacks & majorPieces;
+    uint64_t attacksByMinorPieces = attacksByPiece[opponentBishopType] | attacksByPiece[opponentKnightType];
+    uint64_t undefendedMajorPieces = majorPieces & ~attacksByColor[color];
+    uint64_t hangingMajorPieces = (undefendedMajorPieces & attacksByColor[opponentColor]) | (majorPieces & attacksByMinorPieces) | (ownQueens & attacksByPiece[opponentRookType]);
+    uint64_t majorPiecesAttackedByPawns = majorPieces & attacksByPiece[opponentPawnType];
+    uint64_t majorPiecesThreatenedByPawns = opponentPawnPushAttacks & majorPieces;
 
-    // evalScores[color][MIDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(MIDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
-    // evalScores[color][ENDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(ENDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
-    // evalScores[color][MIDGAME] += popcnt(hangingMajorPieces) * getEvalValue(MIDGAME_HANGING_MAJOR_PIECE_PENALTY);
-    // evalScores[color][ENDGAME] += popcnt(hangingMajorPieces) * getEvalValue(ENDGAME_HANGING_MAJOR_PIECE_PENALTY);
-    // evalScores[color][MIDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(MIDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
-    // evalScores[color][ENDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(ENDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
-    // evalScores[color][MIDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(MIDGAME_MAJOR_PIECE_THREATED_PENALTY);
-    // evalScores[color][ENDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(ENDGAME_MAJOR_PIECE_THREATED_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(MIDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(ENDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(hangingMajorPieces) * getEvalValue(MIDGAME_HANGING_MAJOR_PIECE_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(hangingMajorPieces) * getEvalValue(ENDGAME_HANGING_MAJOR_PIECE_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(MIDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(ENDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
+    evalScores[color][MIDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(MIDGAME_MAJOR_PIECE_THREATED_PENALTY);
+    evalScores[color][ENDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(ENDGAME_MAJOR_PIECE_THREATED_PENALTY);
 
     // Will be here until I finally clean up this mess of a class/file
     if (color == WHITE) {
