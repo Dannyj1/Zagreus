@@ -48,6 +48,7 @@ public:
     }
 
     int evaluate();
+
 private:
     Bitboard& bitboard;
     std::map<TraceMetric, int> traceMetrics{};
@@ -57,6 +58,7 @@ private:
     uint64_t attackedBy2[COLORS]{};
     uint64_t attacksFrom[SQUARES]{};
     uint64_t weakSquares[COLORS]{};
+    uint64_t strongSquares[COLORS]{};
 
     int whiteMidgameScore = 0;
     int whiteEndgameScore = 0;
@@ -76,6 +78,9 @@ private:
 
     template <PieceColor color>
     void evaluateThreats();
+
+    template <PieceColor color>
+    void evaluateSpace();
 
     inline void addMobilityScoreForPiece(PieceType pieceType, int mobility);
 
