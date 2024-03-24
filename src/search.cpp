@@ -237,13 +237,15 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             bool didLmr = false;
             bool shouldFullSearch = false;
 
-            // LMR (Not in PV/Root nodes)
-            if (depth >= 3 && !extension && move.captureScore == NO_CAPTURE_SCORE && move.
-                promotionPiece == EMPTY && movePicker.movesSearched() >= 5) {
-                int R = 1;
+            // Late Move Reduction (LMR)
+            int minMovesSearched = IS_PV_NODE ? 6 : 3;
+            if (depth >= 3 && move.captureScore == NO_CAPTURE_SCORE && move.promotionPiece == EMPTY
+                && movePicker.movesSearched() >= minMovesSearched) {
+                int R = depth <= 6 ? 1 : 2;
+                int movesBeforeIncrease = IS_PV_NODE ? 12 : 8;
 
                 // After 60% of the moves have been made, increase R by 1
-                if (movePicker.movesSearched() > std::ceil(moves->size * 0.6)) {
+                if (movePicker.movesSearched() >= movesBeforeIncrease) {
                     R += 1;
                 }
 
