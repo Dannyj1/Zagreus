@@ -985,6 +985,7 @@ void Evaluation::evaluatePst() {
     }
 }
 
+// TODO: fix, negative elo :(
 template <PieceColor color>
 void Evaluation::evaluateThreats() {
     // Will be here until I finally clean up this mess of a class/file
@@ -1005,7 +1006,7 @@ void Evaluation::evaluateThreats() {
     uint64_t majorPieces = ownRooks | ownQueens;
 
     uint64_t undefendedPawns = ownPawns & ~attacksByColor[color];
-    uint64_t hangingPawns = undefendedPawns & attacksByPiece[opponentColor];
+    uint64_t hangingPawns = undefendedPawns & attacksByColor[opponentColor];
 
     evalScores[color][MIDGAME] += popcnt(undefendedPawns) * getEvalValue(
         MIDGAME_UNDEFENDED_PAWN_PENALTY);
