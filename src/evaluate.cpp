@@ -437,12 +437,27 @@ void Evaluation::evaluatePieces() {
                     if (!(pawnBB & kingFile & pawnShield)) {
                         whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN);
                         whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
+                    }
+                }
 
-                        // If the king is also on a semi-open or open file, apply penalty
-                        if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex)) {
-                            whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
-                            whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
-                        }
+                // If the king is also on a semi-open or open file, apply penalty
+                if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex)) {
+                    whiteMidgameScore += getEvalValue(MIDGAME_KING_ON_SEMI_OPEN_FILE);
+                    whiteEndgameScore += getEvalValue(ENDGAME_KING_ON_SEMI_OPEN_FILE);
+                }
+
+                // Penalty for king being next to a (semi-)open file
+                if (squareIndex % 8 != 0) {
+                    if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex - 1)) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                    }
+                }
+
+                if (squareIndex % 8 != 7) {
+                    if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex + 1)) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                     }
                 }
 
@@ -506,12 +521,27 @@ void Evaluation::evaluatePieces() {
                     if (!(pawnBB & kingFile & pawnShield)) {
                         blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN);
                         blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
+                    }
+                }
 
-                        // If the king is also on a semi-open or open file, apply penalty
-                        if (bitboard.isSemiOpenOrOpenFile<BLACK>(squareIndex)) {
-                            blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
-                            blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_SEMI_OPEN_FILE);
-                        }
+                // If the king is also on a semi-open or open file, apply penalty
+                if (bitboard.isSemiOpenOrOpenFile<BLACK>(squareIndex)) {
+                    blackMidgameScore += getEvalValue(MIDGAME_KING_ON_SEMI_OPEN_FILE);
+                    blackEndgameScore += getEvalValue(ENDGAME_KING_ON_SEMI_OPEN_FILE);
+                }
+
+                // Penalty for king being next to a (semi-)open file
+                if (squareIndex % 8 != 0) {
+                    if (bitboard.isSemiOpenOrOpenFile<BLACK>(squareIndex - 1)) {
+                        blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                    }
+                }
+
+                if (squareIndex % 8 != 7) {
+                    if (bitboard.isSemiOpenOrOpenFile<BLACK>(squareIndex + 1)) {
+                        blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                     }
                 }
 
@@ -929,8 +959,8 @@ int Evaluation::evaluate() {
     evaluateThreats<WHITE>();
     evaluateThreats<BLACK>();
 
-    evaluateSpace<WHITE>();
-    evaluateSpace<BLACK>();
+    /*evaluateSpace<WHITE>();
+    evaluateSpace<BLACK>();*/
 
     int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
     int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
@@ -1011,6 +1041,7 @@ void Evaluation::evaluateSpace() {
 
     constexpr PieceType ownPawnType = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     uint64_t pawnBB = bitboard.getPieceBoard(ownPawnType);
+    uint64_t defendedPawns = pawnBB & attacksByPiece[ownPawnType];
     uint64_t pawnAttacks = attacksByPiece[ownPawnType];
     uint64_t pawnSpace = EXTENDED_CENTER_SQUARES & pawnAttacks;
     uint64_t strongCenter = EXTENDED_CENTER_SQUARES & strongSquares[color];
@@ -1019,12 +1050,14 @@ void Evaluation::evaluateSpace() {
     uint64_t extendedCenterFiles = C_FILE | D_FILE | E_FILE | F_FILE;
 
     if (color == WHITE) {
-        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_2 & extendedCenterFiles)) &
+        pawnSpace |= (EXTENDED_CENTER_SQUARES | (RANK_2 & extendedCenterFiles)) &
                           whiteRearSpans(pawnBB);
     } else {
-        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_7 & extendedCenterFiles)) &
+        pawnSpace |= (EXTENDED_CENTER_SQUARES | (RANK_7 & extendedCenterFiles)) &
                           blackRearSpans(pawnBB);
     }
+
+    pawnSpace |= defendedPawns;
 
     evalScores[color][MIDGAME] += popcnt(pawnSpace) * getEvalValue(MIDGAME_PAWN_SPACE);
     evalScores[color][ENDGAME] += popcnt(pawnSpace) * getEvalValue(ENDGAME_PAWN_SPACE);
@@ -1034,8 +1067,8 @@ void Evaluation::evaluateSpace() {
         MIDGAME_WEAK_SPACE_SQUARES_PENALTY);
     evalScores[color][ENDGAME] += popcnt(weakCenter) * getEvalValue(
         ENDGAME_WEAK_SPACE_SQUARES_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(behindPawnSpace) * getEvalValue(MIDGAME_BEHIND_PAWN_SPACE);
-    evalScores[color][ENDGAME] += popcnt(behindPawnSpace) * getEvalValue(ENDGAME_BEHIND_PAWN_SPACE);
+    // evalScores[color][MIDGAME] += popcnt(behindPawnSpace) * getEvalValue(MIDGAME_BEHIND_PAWN_SPACE);
+    // evalScores[color][ENDGAME] += popcnt(behindPawnSpace) * getEvalValue(ENDGAME_BEHIND_PAWN_SPACE);
 
     // Will be here until I finally clean up this mess of a class/file
     if (color == WHITE) {
