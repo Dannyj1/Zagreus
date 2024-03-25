@@ -426,6 +426,7 @@ void Evaluation::evaluatePieces() {
                 if (!(kingBB & DE_FILE)) {
                     uint64_t pawnShieldMask = nortOne(kingBB) | noEaOne(kingBB) | noWeOne(kingBB);
                     pawnShieldMask |= nortOne(pawnShieldMask);
+                    pawnShieldMask &= RANK_2 | RANK_3;
                     uint64_t pawnShield = pawnBB & pawnShieldMask;
                     uint8_t pawnShieldCount = std::min<uint64_t>(popcnt(pawnShield), 3ULL);
                     uint64_t kingFile = bitboard.getFile(squareIndex);
@@ -510,6 +511,7 @@ void Evaluation::evaluatePieces() {
                 if (!(kingBB & DE_FILE)) {
                     uint64_t pawnShieldMask = soutOne(kingBB) | soEaOne(kingBB) | soWeOne(kingBB);
                     pawnShieldMask |= soutOne(pawnShieldMask);
+                    pawnShieldMask &= RANK_6 | RANK_7;
                     uint64_t pawnShield = pawnBB & pawnShieldMask;
                     uint8_t pawnShieldCount = std::min<uint64_t>(popcnt(pawnShield), 3ULL);
                     uint64_t kingFile = bitboard.getFile(squareIndex);
@@ -1041,34 +1043,31 @@ void Evaluation::evaluateSpace() {
 
     constexpr PieceType ownPawnType = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     uint64_t pawnBB = bitboard.getPieceBoard(ownPawnType);
-    uint64_t defendedPawns = pawnBB & attacksByPiece[ownPawnType];
     uint64_t pawnAttacks = attacksByPiece[ownPawnType];
-    uint64_t pawnSpace = EXTENDED_CENTER_SQUARES & pawnAttacks;
+    // uint64_t pawnSpace = EXTENDED_CENTER_SQUARES & pawnAttacks;
     uint64_t strongCenter = EXTENDED_CENTER_SQUARES & strongSquares[color];
     uint64_t weakCenter = EXTENDED_CENTER_SQUARES & weakSquares[color];
     uint64_t behindPawnSpace;
     uint64_t extendedCenterFiles = C_FILE | D_FILE | E_FILE | F_FILE;
 
     if (color == WHITE) {
-        pawnSpace |= (EXTENDED_CENTER_SQUARES | (RANK_2 & extendedCenterFiles)) &
+        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_2 & extendedCenterFiles)) &
                           whiteRearSpans(pawnBB);
     } else {
-        pawnSpace |= (EXTENDED_CENTER_SQUARES | (RANK_7 & extendedCenterFiles)) &
+        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_7 & extendedCenterFiles)) &
                           blackRearSpans(pawnBB);
     }
 
-    pawnSpace |= defendedPawns;
-
-    evalScores[color][MIDGAME] += popcnt(pawnSpace) * getEvalValue(MIDGAME_PAWN_SPACE);
-    evalScores[color][ENDGAME] += popcnt(pawnSpace) * getEvalValue(ENDGAME_PAWN_SPACE);
+    // evalScores[color][MIDGAME] += popcnt(pawnSpace) * getEvalValue(MIDGAME_PAWN_SPACE);
+    // evalScores[color][ENDGAME] += popcnt(pawnSpace) * getEvalValue(ENDGAME_PAWN_SPACE);
     evalScores[color][MIDGAME] += popcnt(strongCenter) * getEvalValue(MIDGAME_STRONG_SPACE_SQUARES);
     evalScores[color][ENDGAME] += popcnt(strongCenter) * getEvalValue(ENDGAME_STRONG_SPACE_SQUARES);
     evalScores[color][MIDGAME] += popcnt(weakCenter) * getEvalValue(
         MIDGAME_WEAK_SPACE_SQUARES_PENALTY);
     evalScores[color][ENDGAME] += popcnt(weakCenter) * getEvalValue(
         ENDGAME_WEAK_SPACE_SQUARES_PENALTY);
-    // evalScores[color][MIDGAME] += popcnt(behindPawnSpace) * getEvalValue(MIDGAME_BEHIND_PAWN_SPACE);
-    // evalScores[color][ENDGAME] += popcnt(behindPawnSpace) * getEvalValue(ENDGAME_BEHIND_PAWN_SPACE);
+    evalScores[color][MIDGAME] += popcnt(behindPawnSpace) * getEvalValue(MIDGAME_BEHIND_PAWN_SPACE);
+    evalScores[color][ENDGAME] += popcnt(behindPawnSpace) * getEvalValue(ENDGAME_BEHIND_PAWN_SPACE);
 
     // Will be here until I finally clean up this mess of a class/file
     if (color == WHITE) {
