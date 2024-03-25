@@ -1010,18 +1010,20 @@ void Evaluation::evaluateSpace() {
     int evalScores[COLORS][GAME_PHASES]{};
 
     constexpr PieceType ownPawnType = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    uint64_t space = (EXTENDED_CENTER_SQUARES | RANK_7 | RANK_2) & (
-                         C_FILE | D_FILE | E_FILE | F_FILE);
+    uint64_t pawnBB = bitboard.getPieceBoard(ownPawnType);
     uint64_t pawnAttacks = attacksByPiece[ownPawnType];
-    uint64_t pawnSpace = space & pawnAttacks;
-    uint64_t strongCenter = space & strongSquares[color];
-    uint64_t weakCenter = space & weakSquares[color];
+    uint64_t pawnSpace = EXTENDED_CENTER_SQUARES & pawnAttacks;
+    uint64_t strongCenter = EXTENDED_CENTER_SQUARES & strongSquares[color];
+    uint64_t weakCenter = EXTENDED_CENTER_SQUARES & weakSquares[color];
     uint64_t behindPawnSpace;
+    uint64_t extendedCenterFiles = C_FILE | D_FILE | E_FILE | F_FILE;
 
     if (color == WHITE) {
-        behindPawnSpace = space & whiteRearSpans(pawnSpace);
+        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_2 & extendedCenterFiles)) &
+                          whiteRearSpans(pawnBB);
     } else {
-        behindPawnSpace = space & blackRearSpans(pawnSpace);
+        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_7 & extendedCenterFiles)) &
+                          blackRearSpans(pawnBB);
     }
 
     evalScores[color][MIDGAME] += popcnt(pawnSpace) * getEvalValue(MIDGAME_PAWN_SPACE);
