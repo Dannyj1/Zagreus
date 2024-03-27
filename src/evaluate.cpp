@@ -961,9 +961,6 @@ int Evaluation::evaluate() {
     evaluateThreats<WHITE>();
     evaluateThreats<BLACK>();
 
-    /*evaluateSpace<WHITE>();
-    evaluateSpace<BLACK>();*/
-
     int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
     int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
 
@@ -1033,49 +1030,6 @@ void Evaluation::evaluatePst() {
     } else {
         blackMidgameScore += bitboard.getBlackMidgamePst();
         blackEndgameScore += bitboard.getBlackEndgamePst();
-    }
-}
-
-template <PieceColor color>
-void Evaluation::evaluateSpace() {
-    // Will be here until I finally clean up this mess of a class/file
-    int evalScores[COLORS][GAME_PHASES]{};
-
-    constexpr PieceType ownPawnType = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    uint64_t pawnBB = bitboard.getPieceBoard(ownPawnType);
-    uint64_t pawnAttacks = attacksByPiece[ownPawnType];
-    // uint64_t pawnSpace = EXTENDED_CENTER_SQUARES & pawnAttacks;
-    uint64_t strongCenter = EXTENDED_CENTER_SQUARES & strongSquares[color];
-    uint64_t weakCenter = EXTENDED_CENTER_SQUARES & weakSquares[color];
-    uint64_t behindPawnSpace;
-    uint64_t extendedCenterFiles = C_FILE | D_FILE | E_FILE | F_FILE;
-
-    if (color == WHITE) {
-        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_2 & extendedCenterFiles)) &
-                          whiteRearSpans(pawnBB);
-    } else {
-        behindPawnSpace = (EXTENDED_CENTER_SQUARES | (RANK_7 & extendedCenterFiles)) &
-                          blackRearSpans(pawnBB);
-    }
-
-    // evalScores[color][MIDGAME] += popcnt(pawnSpace) * getEvalValue(MIDGAME_PAWN_SPACE);
-    // evalScores[color][ENDGAME] += popcnt(pawnSpace) * getEvalValue(ENDGAME_PAWN_SPACE);
-    evalScores[color][MIDGAME] += popcnt(strongCenter) * getEvalValue(MIDGAME_STRONG_SPACE_SQUARES);
-    evalScores[color][ENDGAME] += popcnt(strongCenter) * getEvalValue(ENDGAME_STRONG_SPACE_SQUARES);
-    evalScores[color][MIDGAME] += popcnt(weakCenter) * getEvalValue(
-        MIDGAME_WEAK_SPACE_SQUARES_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(weakCenter) * getEvalValue(
-        ENDGAME_WEAK_SPACE_SQUARES_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(behindPawnSpace) * getEvalValue(MIDGAME_BEHIND_PAWN_SPACE);
-    evalScores[color][ENDGAME] += popcnt(behindPawnSpace) * getEvalValue(ENDGAME_BEHIND_PAWN_SPACE);
-
-    // Will be here until I finally clean up this mess of a class/file
-    if (color == WHITE) {
-        whiteMidgameScore += evalScores[WHITE][MIDGAME];
-        whiteEndgameScore += evalScores[WHITE][ENDGAME];
-    } else {
-        blackMidgameScore += evalScores[BLACK][MIDGAME];
-        blackEndgameScore += evalScores[BLACK][ENDGAME];
     }
 }
 
