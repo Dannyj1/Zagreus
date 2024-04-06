@@ -406,6 +406,9 @@ void startTuning(char* filePath) {
                 float vCorrected = v[paramIndex] / (1.0f - beta2Corrected);
                 bestParameters[paramIndex] -= learningRate * mCorrected / (
                     sqrt(vCorrected) + optimizerEpsilon);
+
+                // Make sure bestParameters is always positive
+                bestParameters[paramIndex] = std::max(0.0f, bestParameters[paramIndex]);
             }
         }
 

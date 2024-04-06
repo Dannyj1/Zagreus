@@ -272,44 +272,44 @@ void Evaluation::addMobilityScoreForPiece(PieceType pieceType, int mobility) {
 void Evaluation::addKingAttackScore(PieceType pieceType, int attackCount) {
     switch (pieceType) {
         case WHITE_PAWN:
-            blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
-            blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
+            blackMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
+            blackEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
             break;
         case BLACK_PAWN:
-            whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
-            whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
+            whiteMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_PAWN_PENALTY);
+            whiteEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_PAWN_PENALTY);
             break;
         case WHITE_KNIGHT:
-            blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
-            blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
+            blackMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
+            blackEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
             break;
         case BLACK_KNIGHT:
-            whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
-            whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
+            whiteMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_KNIGHT_PENALTY);
+            whiteEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_KNIGHT_PENALTY);
             break;
         case WHITE_BISHOP:
-            blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
-            blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
+            blackMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
+            blackEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
             break;
         case BLACK_BISHOP:
-            whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
-            whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
+            whiteMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_BISHOP_PENALTY);
+            whiteEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_BISHOP_PENALTY);
             break;
         case WHITE_ROOK:
-            blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
-            blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
+            blackMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
+            blackEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
             break;
         case BLACK_ROOK:
-            whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
-            whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
+            whiteMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_ROOK_PENALTY);
+            whiteEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_ROOK_PENALTY);
             break;
         case WHITE_QUEEN:
-            blackMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
-            blackEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
+            blackMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
+            blackEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
             break;
         case BLACK_QUEEN:
-            whiteMidgameScore += attackCount * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
-            whiteEndgameScore += attackCount * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
+            whiteMidgameScore -= attackCount * getEvalValue(MIDGAME_KING_ATTACK_QUEEN_PENALTY);
+            whiteEndgameScore -= attackCount * getEvalValue(ENDGAME_KING_ATTACK_QUEEN_PENALTY);
             break;
     }
 }
@@ -335,11 +335,11 @@ void Evaluation::evaluatePieces() {
     int backwardPawnCount = popcnt(attackedStopSquares);
 
     if (color == WHITE) {
-        whiteMidgameScore += backwardPawnCount * getEvalValue(MIDGAME_BACKWARD_PAWN_PENALTY);
-        whiteEndgameScore += backwardPawnCount * getEvalValue(ENDGAME_BACKWARD_PAWN_PENALTY);
+        whiteMidgameScore -= backwardPawnCount * getEvalValue(MIDGAME_BACKWARD_PAWN_PENALTY);
+        whiteEndgameScore -= backwardPawnCount * getEvalValue(ENDGAME_BACKWARD_PAWN_PENALTY);
     } else {
-        blackMidgameScore += backwardPawnCount * getEvalValue(MIDGAME_BACKWARD_PAWN_PENALTY);
-        blackEndgameScore += backwardPawnCount * getEvalValue(ENDGAME_BACKWARD_PAWN_PENALTY);
+        blackMidgameScore -= backwardPawnCount * getEvalValue(MIDGAME_BACKWARD_PAWN_PENALTY);
+        blackEndgameScore -= backwardPawnCount * getEvalValue(ENDGAME_BACKWARD_PAWN_PENALTY);
     }
 
     while (colorBoard) {
@@ -436,8 +436,8 @@ void Evaluation::evaluatePieces() {
 
                     // If there is no pawn in front of the king in the pawn shield, apply penalty
                     if (!(pawnBB & kingFile & pawnShield)) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN);
-                        whiteEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN_PENALTY);
                     }
                 }
 
@@ -450,15 +450,15 @@ void Evaluation::evaluatePieces() {
                 // Penalty for king being next to a (semi-)open file
                 if (squareIndex % 8 != 0) {
                     if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex - 1)) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                     }
                 }
 
                 if (squareIndex % 8 != 7) {
                     if (bitboard.isSemiOpenOrOpenFile<WHITE>(squareIndex + 1)) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                     }
                 }
 
@@ -478,17 +478,17 @@ void Evaluation::evaluatePieces() {
                 int pawnsOnRank4Count = popcnt(opponentPawnStormBB & RANK_4);
                 int pawnsOnRank3Count = popcnt(opponentPawnStormBB & RANK_3);
 
-                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
+                whiteMidgameScore -= getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
                     pawnsOnRank5Count;
-                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
+                whiteEndgameScore -= getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
                     pawnsOnRank5Count;
-                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
+                whiteMidgameScore -= getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
                     pawnsOnRank4Count;
-                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
+                whiteEndgameScore -= getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
                     pawnsOnRank4Count;
-                whiteMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
+                whiteMidgameScore -= getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank3Count;
-                whiteEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
+                whiteEndgameScore -= getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank3Count;*/
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
@@ -496,10 +496,10 @@ void Evaluation::evaluatePieces() {
                 uint64_t virtualMobilitySquares =
                     bitboard.getQueenAttacks(squareIndex, bitboard.getColorBoard<WHITE>()) &
                     ~(attacksFrom[squareIndex] | bitboard.getColorBoard<WHITE>());
-                whiteMidgameScore +=
+                whiteMidgameScore -=
                     popcnt(virtualMobilitySquares) * getEvalValue(
                         MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
-                whiteEndgameScore +=
+                whiteEndgameScore -=
                     popcnt(virtualMobilitySquares) * getEvalValue(
                         ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
             } else {
@@ -521,8 +521,8 @@ void Evaluation::evaluatePieces() {
 
                     // If there is no pawn in front of the king in the pawn shield, apply penalty
                     if (!(pawnBB & kingFile & pawnShield)) {
-                        blackMidgameScore += getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN);
-                        blackEndgameScore += getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN);
+                        blackMidgameScore -= getEvalValue(MIDGAME_PAWN_SHIELD_NO_KING_PAWN_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_PAWN_SHIELD_NO_KING_PAWN_PENALTY);
                     }
                 }
 
@@ -535,15 +535,15 @@ void Evaluation::evaluatePieces() {
                 // Penalty for king being next to a (semi-)open file
                 if (squareIndex % 8 != 0) {
                     if (bitboard.isSemiOpenOrOpenFile<BLACK>(squareIndex - 1)) {
-                        blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackMidgameScore -= getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                     }
                 }
 
                 if (squareIndex % 8 != 7) {
                     if (bitboard.isSemiOpenOrOpenFile<BLACK>(squareIndex + 1)) {
-                        blackMidgameScore += getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackMidgameScore -= getEvalValue(MIDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_KING_NEXT_TO_OPEN_FILE_PENALTY);
                     }
                 }
 
@@ -564,17 +564,17 @@ void Evaluation::evaluatePieces() {
                 int pawnsOnRank5Count = popcnt(opponentPawnStormBB & RANK_5);
                 int pawnsOnRank6Count = popcnt(opponentPawnStormBB & RANK_6);
 
-                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
+                blackMidgameScore -= getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_3) *
                     pawnsOnRank4Count;
-                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
+                blackEndgameScore -= getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_3) *
                     pawnsOnRank4Count;
-                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
+                blackMidgameScore -= getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_2) *
                     pawnsOnRank5Count;
-                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
+                blackEndgameScore -= getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_2) *
                     pawnsOnRank5Count;
-                blackMidgameScore += getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
+                blackMidgameScore -= getEvalValue(MIDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank6Count;
-                blackEndgameScore += getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
+                blackEndgameScore -= getEvalValue(ENDGAME_PAWN_STORM_DISTANCE_1) *
                     pawnsOnRank6Count;*/
 
                 // Virtual mobility - Get queen attacks from king position, with only occupied squares by
@@ -582,10 +582,10 @@ void Evaluation::evaluatePieces() {
                 uint64_t virtualMobilitySquares =
                     bitboard.getQueenAttacks(squareIndex, bitboard.getColorBoard<BLACK>()) &
                     ~(attacksFrom[squareIndex] | bitboard.getColorBoard<BLACK>());
-                blackMidgameScore +=
+                blackMidgameScore -=
                     popcnt(virtualMobilitySquares) * getEvalValue(
                         MIDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
-                blackEndgameScore +=
+                blackEndgameScore -=
                     popcnt(virtualMobilitySquares) * getEvalValue(
                         ENDGAME_KING_VIRTUAL_MOBILITY_PENALTY);
             }
@@ -603,11 +603,11 @@ void Evaluation::evaluatePieces() {
 
             if (doubledPawns) {
                 if (color == WHITE) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
-                    whiteEndgameScore += getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                    whiteMidgameScore -= getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
+                    whiteEndgameScore -= getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
                 } else {
-                    blackMidgameScore += getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
-                    blackEndgameScore += getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
+                    blackMidgameScore -= getEvalValue(MIDGAME_DOUBLED_PAWN_PENALTY);
+                    blackEndgameScore -= getEvalValue(ENDGAME_DOUBLED_PAWN_PENALTY);
                 }
             }
 
@@ -657,8 +657,8 @@ void Evaluation::evaluatePieces() {
                 if (color == WHITE) {
                     // Rook in front of own passed pawn penalty
                     if (frontMask & bitboard.getPieceBoard(WHITE_ROOK)) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_PENALTY);
                     }
 
                     // Rook behind own passed pawn bonus
@@ -669,14 +669,14 @@ void Evaluation::evaluatePieces() {
 
                     // Opponent rook behind own passed pawn penalty
                     if (behindMask & bitboard.getPieceBoard(BLACK_ROOK)) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
                     }
                 } else {
                     // Rook in front of own passed pawn penalty
                     if (frontMask & bitboard.getPieceBoard(BLACK_ROOK)) {
-                        blackMidgameScore += getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                        blackMidgameScore -= getEvalValue(MIDGAME_TARRASCH_OWN_ROOK_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_TARRASCH_OWN_ROOK_PENALTY);
                     }
 
                     // Rook behind own passed pawn bonus
@@ -687,8 +687,8 @@ void Evaluation::evaluatePieces() {
 
                     // Opponent rook behind own passed pawn penalty
                     if (behindMask & bitboard.getPieceBoard(WHITE_ROOK)) {
-                        blackMidgameScore += getEvalValue(MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                        blackMidgameScore -= getEvalValue(MIDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_TARRASCH_OPPONENT_ROOK_PENALTY);
                     }
                 }
             }
@@ -719,30 +719,30 @@ void Evaluation::evaluatePieces() {
             // Isolated pawn
             if (bitboard.isIsolatedPawn<color>(squareIndex)) {
                 if (color == WHITE) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN_PENALTY);
-                    whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN_PENALTY);
+                    whiteMidgameScore -= getEvalValue(MIDGAME_ISOLATED_PAWN_PENALTY);
+                    whiteEndgameScore -= getEvalValue(ENDGAME_ISOLATED_PAWN_PENALTY);
                 } else {
-                    blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_PAWN_PENALTY);
-                    blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_PAWN_PENALTY);
+                    blackMidgameScore -= getEvalValue(MIDGAME_ISOLATED_PAWN_PENALTY);
+                    blackEndgameScore -= getEvalValue(ENDGAME_ISOLATED_PAWN_PENALTY);
                 }
 
                 if (bitboard.isSemiOpenFile<color>(squareIndex)) {
                     if (color == WHITE) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
                     } else {
-                        blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
+                        blackMidgameScore -= getEvalValue(MIDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_ISOLATED_SEMI_OPEN_PAWN_PENALTY);
                     }
                 }
 
                 if (square & DE_FILE) {
                     if (color == WHITE) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
                     } else {
-                        blackMidgameScore += getEvalValue(MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
+                        blackMidgameScore -= getEvalValue(MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
                     }
                 }
             }
@@ -755,14 +755,14 @@ void Evaluation::evaluatePieces() {
             uint8_t pawnCount = popcnt(pawnBB);
 
             if (color == WHITE) {
-                whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
+                whiteMidgameScore -= getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
                     8 - pawnCount);
-                whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
+                whiteEndgameScore -= getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
                     8 - pawnCount);
             } else {
-                blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
+                blackMidgameScore -= getEvalValue(MIDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
                     8 - pawnCount);
-                blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
+                blackEndgameScore -= getEvalValue(ENDGAME_KNIGHT_MISSING_PAWN_PENALTY) * (
                     8 - pawnCount);
             }
 
@@ -805,11 +805,11 @@ void Evaluation::evaluatePieces() {
 
                 if (attackCount <= 3) {
                     if (color == WHITE) {
-                        whiteMidgameScore += getEvalValue(MIDGAME_BAD_BISHOP_PENALTY);
-                        whiteEndgameScore += getEvalValue(ENDGAME_BAD_BISHOP_PENALTY);
+                        whiteMidgameScore -= getEvalValue(MIDGAME_BAD_BISHOP_PENALTY);
+                        whiteEndgameScore -= getEvalValue(ENDGAME_BAD_BISHOP_PENALTY);
                     } else {
-                        blackMidgameScore += getEvalValue(MIDGAME_BAD_BISHOP_PENALTY);
-                        blackEndgameScore += getEvalValue(ENDGAME_BAD_BISHOP_PENALTY);
+                        blackMidgameScore -= getEvalValue(MIDGAME_BAD_BISHOP_PENALTY);
+                        blackEndgameScore -= getEvalValue(ENDGAME_BAD_BISHOP_PENALTY);
                     }
                 }
             }
@@ -817,13 +817,13 @@ void Evaluation::evaluatePieces() {
             // Only one bishop (no bishop pair)
             if (color == WHITE) {
                 if (bitboard.getMaterialCount<WHITE_BISHOP>() == 1) {
-                    whiteMidgameScore += getEvalValue(MIDGAME_MISSING_BISHOP_PAIR_PENALTY);
-                    whiteEndgameScore += getEvalValue(ENDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                    whiteMidgameScore -= getEvalValue(MIDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                    whiteEndgameScore -= getEvalValue(ENDGAME_MISSING_BISHOP_PAIR_PENALTY);
                 }
             } else {
                 if (bitboard.getMaterialCount<BLACK_BISHOP>() == 1) {
-                    blackMidgameScore += getEvalValue(MIDGAME_MISSING_BISHOP_PAIR_PENALTY);
-                    blackEndgameScore += getEvalValue(ENDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                    blackMidgameScore -= getEvalValue(MIDGAME_MISSING_BISHOP_PAIR_PENALTY);
+                    blackEndgameScore -= getEvalValue(ENDGAME_MISSING_BISHOP_PAIR_PENALTY);
                 }
             }
 
@@ -919,17 +919,17 @@ void Evaluation::evaluatePieces() {
         int endgameScore = 0;
         if (square & weakSquares[color]) {
             if (isKnight(pieceType)) {
-                midgameScore += getEvalValue(MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
-                endgameScore += getEvalValue(ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
+                midgameScore -= getEvalValue(MIDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
+                endgameScore -= getEvalValue(ENDGAME_KNIGHT_WEAK_SQUARE_PENALTY);
             } else if (isBishop(pieceType)) {
-                midgameScore += getEvalValue(MIDGAME_BISHOP_WEAK_SQUARE_PENALTY);
-                endgameScore += getEvalValue(ENDGAME_BISHOP_WEAK_SQUARE_PENALTY);
+                midgameScore -= getEvalValue(MIDGAME_BISHOP_WEAK_SQUARE_PENALTY);
+                endgameScore -= getEvalValue(ENDGAME_BISHOP_WEAK_SQUARE_PENALTY);
             } else if (isRook(pieceType)) {
-                midgameScore += getEvalValue(MIDGAME_ROOK_WEAK_SQUARE_PENALTY);
-                endgameScore += getEvalValue(ENDGAME_ROOK_WEAK_SQUARE_PENALTY);
+                midgameScore -= getEvalValue(MIDGAME_ROOK_WEAK_SQUARE_PENALTY);
+                endgameScore -= getEvalValue(ENDGAME_ROOK_WEAK_SQUARE_PENALTY);
             } else if (isQueen(pieceType)) {
-                midgameScore += getEvalValue(MIDGAME_QUEEN_WEAK_SQUARE_PENALTY);
-                endgameScore += getEvalValue(ENDGAME_QUEEN_WEAK_SQUARE_PENALTY);
+                midgameScore -= getEvalValue(MIDGAME_QUEEN_WEAK_SQUARE_PENALTY);
+                endgameScore -= getEvalValue(ENDGAME_QUEEN_WEAK_SQUARE_PENALTY);
             }
         }
 
@@ -1055,12 +1055,12 @@ void Evaluation::evaluateThreats() {
     uint64_t undefendedPawns = ownPawns & ~attacksByColor[color];
     uint64_t hangingPawns = undefendedPawns & attacksByColor[opponentColor];
 
-    evalScores[color][MIDGAME] += popcnt(undefendedPawns) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(undefendedPawns) * getEvalValue(
         MIDGAME_UNDEFENDED_PAWN_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(undefendedPawns) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(undefendedPawns) * getEvalValue(
         ENDGAME_UNDEFENDED_PAWN_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(hangingPawns) * getEvalValue(MIDGAME_HANGING_PAWN_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(hangingPawns) * getEvalValue(ENDGAME_HANGING_PAWN_PENALTY);
+    evalScores[color][MIDGAME] -= popcnt(hangingPawns) * getEvalValue(MIDGAME_HANGING_PAWN_PENALTY);
+    evalScores[color][ENDGAME] -= popcnt(hangingPawns) * getEvalValue(ENDGAME_HANGING_PAWN_PENALTY);
 
     uint64_t opponentPawnPushes = bitboard.getPawnDoublePush<opponentColor>(opponentPawns);
     uint64_t undefendedMinorPieces = minorPieces & ~attacksByColor[color];
@@ -1069,21 +1069,21 @@ void Evaluation::evaluateThreats() {
     uint64_t opponentPawnPushAttacks = calculatePawnAttacks<opponentColor>(opponentPawnPushes);
     uint64_t minorPiecesThreatenedByPawn = opponentPawnPushAttacks & minorPieces;
 
-    evalScores[color][MIDGAME] += popcnt(undefendedMinorPieces) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(undefendedMinorPieces) * getEvalValue(
         MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(undefendedMinorPieces) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(undefendedMinorPieces) * getEvalValue(
         ENDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(hangingMinorPieces) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(hangingMinorPieces) * getEvalValue(
         MIDGAME_HANGING_MINOR_PIECE_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(hangingMinorPieces) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(hangingMinorPieces) * getEvalValue(
         ENDGAME_HANGING_MINOR_PIECE_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(minorPiecesAttackedByPawns) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(minorPiecesAttackedByPawns) * getEvalValue(
         MIDGAME_MINOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(minorPiecesAttackedByPawns) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(minorPiecesAttackedByPawns) * getEvalValue(
         ENDGAME_MINOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(minorPiecesThreatenedByPawn) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(minorPiecesThreatenedByPawn) * getEvalValue(
         MIDGAME_MINOR_PIECE_PAWN_THREAT_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(minorPiecesThreatenedByPawn) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(minorPiecesThreatenedByPawn) * getEvalValue(
         ENDGAME_MINOR_PIECE_PAWN_THREAT_PENALTY);
 
     uint64_t attacksByMinorPieces = attacksByPiece[opponentBishopType] | attacksByPiece[
@@ -1095,21 +1095,21 @@ void Evaluation::evaluateThreats() {
     uint64_t majorPiecesAttackedByPawns = majorPieces & attacksByPiece[opponentPawnType];
     uint64_t majorPiecesThreatenedByPawns = opponentPawnPushAttacks & majorPieces;
 
-    evalScores[color][MIDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(undefendedMajorPieces) * getEvalValue(
         MIDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(undefendedMajorPieces) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(undefendedMajorPieces) * getEvalValue(
         ENDGAME_MAJOR_PIECE_NOT_DEFENDED_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(hangingMajorPieces) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(hangingMajorPieces) * getEvalValue(
         MIDGAME_HANGING_MAJOR_PIECE_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(hangingMajorPieces) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(hangingMajorPieces) * getEvalValue(
         ENDGAME_HANGING_MAJOR_PIECE_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(majorPiecesAttackedByPawns) * getEvalValue(
         MIDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(majorPiecesAttackedByPawns) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(majorPiecesAttackedByPawns) * getEvalValue(
         ENDGAME_MAJOR_PIECE_ATTACKED_BY_PAWN_PENALTY);
-    evalScores[color][MIDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(
+    evalScores[color][MIDGAME] -= popcnt(majorPiecesThreatenedByPawns) * getEvalValue(
         MIDGAME_MAJOR_PIECE_THREATED_PENALTY);
-    evalScores[color][ENDGAME] += popcnt(majorPiecesThreatenedByPawns) * getEvalValue(
+    evalScores[color][ENDGAME] -= popcnt(majorPiecesThreatenedByPawns) * getEvalValue(
         ENDGAME_MAJOR_PIECE_THREATED_PENALTY);
 
     // Will be here until I finally clean up this mess of a class/file
