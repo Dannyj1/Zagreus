@@ -2,7 +2,7 @@ name: Valgrind Check
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, valgrind ]
   pull_request:
     branches: [ master ]
   workflow_dispatch:
