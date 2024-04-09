@@ -39,9 +39,10 @@ jobs:
 
       - name: Setup Clang (Linux)
         if: runner.os == 'Linux'
-        uses: KyleMayes/install-llvm-action@v1
+        uses: KyleMayes/install-llvm-action@v2
         with:
-          version: "16"
+          version: "18"
+          arch: "x64"
 
       - name: Setup msys and install required packages
         if: runner.os == 'Windows'
