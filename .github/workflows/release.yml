@@ -41,7 +41,7 @@ jobs:
         if: runner.os == 'Linux'
         uses: KyleMayes/install-llvm-action@v2
         with:
-          version: "18"
+          version: "17"
           arch: "x64"
 
       - name: Setup msys and install required packages

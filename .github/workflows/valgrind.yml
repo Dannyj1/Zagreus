@@ -15,13 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup CMake (Linux)
+      - name: Setup CMake
         uses: lukka/get-cmake@latest
 
-      - name: Setup Clang (Linux)
+      - name: Setup Clang
         uses: KyleMayes/install-llvm-action@v2
         with:
-          version: "18"
+          version: "17"
           arch: "x64"
 
       - name: Install valgrind
