@@ -26,13 +26,10 @@ static constexpr uint16_t MAX_PLY = 500;
 static constexpr uint8_t MAX_MOVES = 255;
 static constexpr int ZOBRIST_CONSTANT_SIZE = 781;
 
-static constexpr int ZOBRIST_PIECE_END = 768;
-static constexpr int ZOBRIST_COLOR_INDEX = ZOBRIST_PIECE_END;
-static constexpr int ZOBRIST_WHITE_KINGSIDE_INDEX = ZOBRIST_COLOR_INDEX + 1;
-static constexpr int ZOBRIST_WHITE_QUEENSIDE_INDEX = ZOBRIST_WHITE_KINGSIDE_INDEX + 1;
-static constexpr int ZOBRIST_BLACK_KINGSIDE_INDEX = ZOBRIST_WHITE_QUEENSIDE_INDEX + 1;
-static constexpr int ZOBRIST_BLACK_QUEENSIDE_INDEX = ZOBRIST_BLACK_KINGSIDE_INDEX + 1;
-static constexpr int ZOBRIST_EN_PASSANT_INDEX = ZOBRIST_BLACK_QUEENSIDE_INDEX + 1;
+static constexpr int ZOBRIST_WHITE_KINGSIDE_INDEX = 0;
+static constexpr int ZOBRIST_WHITE_QUEENSIDE_INDEX = 1;
+static constexpr int ZOBRIST_BLACK_KINGSIDE_INDEX = 2;
+static constexpr int ZOBRIST_BLACK_QUEENSIDE_INDEX = 3;
 
 static constexpr int MATE_SCORE = 20000;
 static constexpr int MAX_POSITIVE = 1000000;
@@ -64,14 +61,9 @@ static constexpr uint64_t A1_H8_DIAG = 0x8040201008040201ULL;
 static constexpr uint64_t H1_A8_DIAG = 0x0102040810204080ULL;
 static constexpr uint64_t LIGHT_SQUARES = 0x55AA55AA55AA55AAULL;
 static constexpr uint64_t DARK_SQUARES = 0xAA55AA55AA55AA55ULL;
-static constexpr uint64_t CENTER_SQUARES = 0x0000001818000000;
-static constexpr uint64_t EXTENDED_CENTER_SQUARES = 0x00003C3C3C3C0000;
+static constexpr uint64_t CENTER_SQUARES = 0x0000001818000000ULL;
+static constexpr uint64_t EXTENDED_CENTER_SQUARES = 0x00003C3C3C3C0000ULL;
 static constexpr uint64_t PROMOTION_SQUARES = 0xFF000000000000FFULL;
-
-static constexpr uint8_t WHITE_KING_CHECK_BIT = 1 << 0;
-static constexpr uint8_t BLACK_KING_CHECK_BIT = 1 << 1;
-static constexpr uint8_t WHITE_KING_CHECK_RESET_BIT = 1 << 2;
-static constexpr uint8_t BLACK_KING_CHECK_RESET_BIT = 1 << 3;
 
 static constexpr uint64_t WHITE_KING_SIDE_BETWEEN = 0x60ULL;
 static constexpr uint64_t WHITE_QUEEN_SIDE_BETWEEN = 0xEULL;
@@ -82,7 +74,7 @@ static constexpr int NO_CAPTURE_SCORE = -1;
 
 static constexpr int COLORS = 2;
 static constexpr int PIECE_TYPES = 12;
-static constexpr int8_t SQUARES = 64;
+static constexpr int SQUARES = 64;
 
 static constexpr int MVVLVA_TABLE[12][12] = {
     {105, 105, 205, 205, 305, 305, 405, 405, 505, 505, 605, 605},

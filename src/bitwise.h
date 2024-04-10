@@ -109,7 +109,13 @@ uint64_t getRayAttack(int8_t square, Direction direction);
 
 uint64_t getBetweenSquares(int8_t from, int8_t to);
 
-uint64_t getZobristConstant(int index);
+uint64_t getPieceZobristConstant(PieceColor color, PieceType pieceType, int8_t square);
+
+uint64_t getMovingColorZobristConstant();
+
+uint64_t getCastleZobristConstant(uint8_t index);
+
+uint64_t getEnPassantZobristConstant(uint8_t file);
 
 template <PieceColor color>
 uint64_t getPawnAttacks(int8_t square);
