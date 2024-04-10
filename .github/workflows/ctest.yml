@@ -1,0 +1,33 @@
+name: CTest w/ CMake
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup Clang
+        uses: KyleMayes/install-llvm-action@v2
+        with:
+          version: "17"
+          arch: "x64"
+
+      - name: Configure CMake & Build
+        run: |
+          cmake -DCMAKE_BUILD_TYPE=Release -DAPPEND_VERSION=OFF -DENABLE_WARNINGS=ON -DENABLE_SANITIZER=OFF .
+          cmake --build .
+
+      - name: Run CTest
+        run: ctest --extra-verbose

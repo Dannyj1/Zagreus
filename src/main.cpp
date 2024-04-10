@@ -36,7 +36,7 @@
 
 using namespace Zagreus;
 
-void benchmark();
+void benchmark(bool fast);
 
 // Some of these benchmark positions are taken from Stockfish's benchmark.cpp:
 // https://github.com/official-stockfish/Stockfish/blob/master/src/benchmark.cpp
@@ -88,7 +88,25 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
     "8/8/1P6/5pr1/8/4R3/7k/2K5 w - - 0 1",
     "8/8/3P3k/8/1p6/8/1P6/1K3n2 b - - 0 1",
-    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"};
+    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"
+};
+
+// So valgrind doesn't take ages...
+const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
+    "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
+    "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
+    "rn3bnr/pBp1pk1p/5p2/1p4p1/6b1/N3Q3/PP1P1PPP/R1B1K1NR b - -",
+    "8/7b/p1P1Pn2/P1k3N1/7p/K1p5/4B1P1/3N2R1 w - -",
+    "r1bn1r2/2k3p1/6p1/pP3p2/4P2P/1P1P3R/2P1NB2/Q3K1n1 b - -",
+    "1n6/8/2k3K1/2p5/2PpP1nb/3P4/8/1b6 w - -",
+    "rnbqkbnr/1p2pp1p/3p4/6p1/P1p2PP1/1p1P4/2P1P2P/RNBQKBNR w Kkq -",
+    "1rb1kbnr/p1q1pppp/np4B1/2pp4/P1PP4/2N1P3/1P3PPP/R1BQK1NR w Kk",
+    "r1bbk1nr/pp3p1p/2n5/1N4p1/2Np1B2/8/PPP2PPP/2KR1B1R w kq - 0 13",
+    "8/2R5/8/k7/N5PP/2K5/8/5b2 w - -",
+    "7k/7P/6K1/8/3B4/8/8/8 b - -",
+    "rnbqk2r/1p1p1pbp/4p2n/p1p3p1/2PPP1P1/5P1N/PP1K2BP/RNBQR3 w kq -",
+    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"
+};
 
 int main(int argc, char* argv[]) {
     initializeBitboardConstants();
@@ -134,7 +152,12 @@ int main(int argc, char* argv[]) {
         if (strcmp(argv[1], "bench") == 0) {
             senjo::Output(senjo::Output::NoPrefix) << "Starting benchmark...";
 
-            benchmark();
+            benchmark(false);
+            return 0;
+        } else if (strcmp(argv[1], "fastbench") == 0) {
+            senjo::Output(senjo::Output::NoPrefix) << "Starting fast benchmark...";
+
+            benchmark(true);
             return 0;
         } else if (strcmp(argv[1], "tune") == 0) {
             startTuning(argv[2]);
@@ -175,7 +198,7 @@ int main(int argc, char* argv[]) {
     }
 }
 
-void benchmark() {
+void benchmark(bool fast) {
     ZagreusEngine engine;
     senjo::UCIAdapter adapter(engine);
     uint64_t nodes = 0;
@@ -183,8 +206,9 @@ void benchmark() {
     Bitboard bb{};
 
     engine.initialize();
+    std::vector<std::string> positions = fast ? FAST_BENCHMARK_POSITIONS : BENCHMARK_POSITIONS;
 
-    for (const std::string& position : BENCHMARK_POSITIONS) {
+    for (const std::string& position : positions) {
         for (int i = 0; i < 2; i++) {
             PieceColor color = i == 0 ? WHITE : BLACK;
 

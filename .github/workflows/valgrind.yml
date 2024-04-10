@@ -1,8 +1,8 @@
-name: Valgrind Check
+name: Valgrind Check & Clang Sanitizers
 
 on:
   push:
-    branches: [ master, valgrind ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
   workflow_dispatch:
@@ -29,13 +29,26 @@ jobs:
           sudo apt update
           sudo apt install -y valgrind
 
-      - name: Configure CMake
+      - name: Configure CMake & Build
         run: |
           cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_OPTIMIZATION_FAST_MATH=OFF -DENABLE_OPTIMIZATION=OFF -DAPPEND_VERSION=OFF -DENABLE_LTO=OFF -DENABLE_WARNINGS=ON -DENABLE_SANITIZER=OFF .
-
-      - name: Build
-        run: cmake --build .
+          cmake --build .
 
       - name: Run Valgrind
         run: |
-          valgrind --error-exitcode=1 --leak-check=full ./Zagreus bench
+          valgrind --error-exitcode=1 --errors-for-leak-kinds=all --leak-check=full ./Zagreus fastbench
+
+      - name: Delete CMake cache
+        run: rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
+
+      - name: Delete build directory
+        run: rm -rf build
+
+      - name: Build w/ sanitizers
+        run: |
+          cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_OPTIMIZATION_FAST_MATH=OFF -DENABLE_OPTIMIZATION=OFF -DAPPEND_VERSION=OFF -DENABLE_LTO=OFF -DENABLE_WARNINGS=ON -DENABLE_SANITIZER=ON .
+          cmake --build .
+
+      - name: Run w/ sanitizers
+        run: |
+          ./Zagreus fastbench
