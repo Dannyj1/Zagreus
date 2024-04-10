@@ -27,6 +27,7 @@
 #include "../senjo/UCIAdapter.h"
 #include "bitboard.h"
 #include "engine.h"
+#include "evaluate.h"
 #include "features.h"
 #include "magics.h"
 #include "pst.h"
