@@ -19,55 +19,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
 
-#####################################################################
-# Toggleable Flags
-#####################################################################
-# Toggleable flags allow you to enable or disable specific compiler
-# flags based on your requirements. These flags can be individually
-# enabled or disabled by setting the corresponding options.
-
-# Option: ENABLE_OPTIMIZATION
-# Description: Enables optimization flags (-O3).
-# Default: OFF (Debug), ON (Release)
-
-# Option: ENABLE_OPTIMIZATION_FAST_MATH
-# Description: Enables fast math optimization flags (-Ofast).
-# This option overrides ENABLE_OPTIMIZATION if enabled.
-# Default: OFF (Debug), ON (Release)
-
-# Option: ENABLE_LTO
-# Description: Enables Link Time Optimization (LTO).
-# Default: OFF (Debug), ON (Release)
-
-# Option: ENABLE_WARNINGS
-# Description: Enables all compiler warnings.
-# Default: ON (Debug), OFF (Release)
-
-# Option: ENABLE_MARCH
-# Description: Enables the -march flag.
-# Default: OFF (Debug), ON (Release)
-
-# Option: MARCH_VALUE
-# Description: Sets the value for the -march flag if ENABLE_MARCH is enabled.
-# Default: native
-
-# Option: ENABLE_MTUNE
-# Description: Enables the -mtune flag.
-# Default: OFF (Debug), ON (Release)
-
-# Option: MTUNE_VALUE
-# Description: Sets the value for the -mtune flag if ENABLE_MTUNE is enabled.
-# Default: native
-
-# Option: ENABLE_SANITIZER
-# Description: Enables undefined behavior sanitizer flags (-fsanitize=undefined -fsanitize-trap=all).
-# Default: OFF
-
-# Option: APPEND_VERSION
-# Description: Appends the version number to the executable filename.
-# Default: OFF
-
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.25)
 set(CMAKE_CXX_STANDARD 20)
 project(Zagreus)
 set(ZAGREUS_VERSION_MAJOR "5")
@@ -88,18 +40,36 @@ if (WIN32)
 endif ()
 
 # Define toggleable flags
-option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)
-option(ENABLE_OPTIMIZATION_FAST_MATH "Enable fast math optimization flags (-Ofast)" ON)
-option(ENABLE_LTO "Enable Link Time Optimization (LTO)" ON)
-option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
-option(ENABLE_MARCH "Enable -march flag" ON)
-option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags" OFF)
-set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag")
-option(ENABLE_MTUNE "Enable -mtune flag" ON)
-set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
-option(APPEND_VERSION "Append version to filename" OFF)
-option(APPEND_VERSION_USE_GIT "Append version or branch to filename using git, when off it always uses just the version" ON)
-option(ENABLE_CLANG_TIDY "Enable the use of clang-tidy (slows down compiling a lot)" OFF)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" OFF)
+    option(ENABLE_OPTIMIZATION_FAST_MATH "Enable fast math optimization flags (-Ofast)" OFF)
+    option(ENABLE_LTO "Enable Link Time Optimization (LTO)" OFF)
+    option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
+    option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags (-fsanitize=undefined -fsanitize-trap=all)" OFF)
+    option(ENABLE_MARCH "Enable -march flag" ON)
+    set(MARCH_VALUE "native" CACHE STRING "Value for -march flag")
+    option(ENABLE_MTUNE "Enable -mtune flag" OFF)
+    set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
+    option(APPEND_VERSION "Append version to filename" ON)
+    option(APPEND_VERSION_USE_GIT "Append version or branch to filename using git, when off it always uses just the version" ON)
+    option(ENABLE_CLANG_TIDY "Enable the use of clang-tidy (slows down compiling a lot)" OFF)
+    option(ENABLE_TESTS "Enable the compilation and execution of tests" ON)
+else ()
+    option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)
+    option(ENABLE_OPTIMIZATION_FAST_MATH "Enable fast math optimization flags (-Ofast)" ON)
+    option(ENABLE_LTO "Enable Link Time Optimization (LTO)" ON)
+    option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
+    option(ENABLE_SANITIZER "Enable undefined behavior sanitizer flags" OFF)
+    option(ENABLE_MARCH "Enable -march flag" ON)
+    set(MARCH_VALUE "x86-64-v3" CACHE STRING "Value for -march flag")
+    option(ENABLE_MTUNE "Enable -mtune flag" ON)
+    set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag")
+    option(APPEND_VERSION "Append version to filename" ON)
+    option(APPEND_VERSION_USE_GIT "Append version or branch to filename using git, when off it always uses just the version" ON)
+    option(ENABLE_CLANG_TIDY "Enable the use of clang-tidy (slows down compiling a lot)" OFF)
+    option(ENABLE_TESTS "Enable the compilation and execution of tests" OFF)
+endif ()
+
 
 if (ENABLE_CLANG_TIDY)
     # if clang-tidy is available, enable it
@@ -109,96 +79,19 @@ if (ENABLE_CLANG_TIDY)
     endif ()
 endif ()
 
-# Profile defaults
-# If debug build type and ENABLE_OPTIMIZATION is not defined, set optimization to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION)
-    set(ENABLE_OPTIMIZATION OFF CACHE BOOL "Enable optimization flags (-O3)" FORCE)
-    set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif ()
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
-    set(ENABLE_OPTIMIZATION_FAST_MATH OFF CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif ()
-
-# If debug build type and ENABLE_LTO is not defined, set LTO to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_LTO)
-    set(ENABLE_LTO OFF CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
-endif ()
-
-# If debug build type and ENABLE_WARNINGS is not defined, set warnings to ON
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_WARNINGS)
-    set(ENABLE_WARNINGS ON CACHE BOOL "Enable all compiler warnings" FORCE)
-endif ()
-
-# If debug build type and ENABLE_MARCH is not defined, set march to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MARCH)
-    set(ENABLE_MARCH OFF CACHE BOOL "Enable -march flag" FORCE)
-endif ()
-
-# If debug build type and MARCH_VALUE is not defined, set march value to an empty string
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MARCH_VALUE)
-    set(MARCH_VALUE "" CACHE STRING "Value for -march flag" FORCE)
-endif ()
-
-# If debug build type and ENABLE_MTUNE is not defined, set mtune to OFF
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ENABLE_MTUNE)
-    set(ENABLE_MTUNE OFF CACHE BOOL "Enable -mtune flag" FORCE)
-endif ()
-
-# If debug build type and MTUNE_VALUE is not defined, set mtune value to an empty string
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED MTUNE_VALUE)
-    set(MTUNE_VALUE "" CACHE STRING "Value for -mtune flag" FORCE)
-endif ()
-
-# If release build type and ENABLE_OPTIMIZATION is not defined, set optimization to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION)
-    set(ENABLE_OPTIMIZATION ON CACHE BOOL "Enable optimization flags (-O3)" FORCE)
-endif ()
-
-# If release build type and ENABLE_OPTIMIZATION_FAST_MATH is not defined, set optimization to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_OPTIMIZATION_FAST_MATH)
-    set(ENABLE_OPTIMIZATION_FAST_MATH ON CACHE BOOL "Enable fast math optimization flags (-Ofast)" FORCE)
-endif ()
-
-# If release build type and ENABLE_LTO is not defined, set LTO to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_LTO)
-    set(ENABLE_LTO ON CACHE BOOL "Enable Link Time Optimization (LTO)" FORCE)
-endif ()
-
-# If release build type and ENABLE_WARNINGS is not defined, set warnings to OFF
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_WARNINGS)
-    set(ENABLE_WARNINGS OFF CACHE BOOL "Enable all compiler warnings" FORCE)
-endif ()
-
-# If release build type and ENABLE_MARCH is not defined, set march to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MARCH)
-    set(ENABLE_MARCH ON CACHE BOOL "Enable -march flag" FORCE)
-endif ()
-
-# If release build type and MARCH_VALUE is not defined, set march value to "x86-64"
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MARCH_VALUE)
-    set(MARCH_VALUE "x86-64" CACHE STRING "Value for -march flag" FORCE)
-endif ()
-
-# If release build type and ENABLE_MTUNE is not defined, set mtune to ON
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED ENABLE_MTUNE)
-    set(ENABLE_MTUNE ON CACHE BOOL "Enable -mtune flag" FORCE)
-endif ()
-
-# If release build type and MTUNE_VALUE is not defined, set mtune value to "native"
-if ((CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT DEFINED MTUNE_VALUE)
-    set(MTUNE_VALUE "native" CACHE STRING "Value for -mtune flag" FORCE)
-endif ()
-
 message("ENABLE_OPTIMIZATION: ${ENABLE_OPTIMIZATION}")
 message("ENABLE_OPTIMIZATION_FAST_MATH: ${ENABLE_OPTIMIZATION_FAST_MATH}")
 message("ENABLE_LTO: ${ENABLE_LTO}")
 message("ENABLE_WARNINGS: ${ENABLE_WARNINGS}")
-message("ENABLE_MARCH: ${ENABLE_MARCH}")
 message("ENABLE_SANITIZER: ${ENABLE_SANITIZER}")
+message("ENABLE_MARCH: ${ENABLE_MARCH}")
 message("MARCH_VALUE: ${MARCH_VALUE}")
 message("ENABLE_MTUNE: ${ENABLE_MTUNE}")
 message("MTUNE_VALUE: ${MTUNE_VALUE}")
+message("APPEND_VERSION: ${APPEND_VERSION}")
+message("APPEND_VERSION_USE_GIT: ${APPEND_VERSION_USE_GIT}")
+message("ENABLE_CLANG_TIDY: ${ENABLE_CLANG_TIDY}")
+message("ENABLE_TESTS: ${ENABLE_TESTS}")
 
 if (APPEND_VERSION)
     execute_process(COMMAND git rev-parse --abbrev-ref HEAD
