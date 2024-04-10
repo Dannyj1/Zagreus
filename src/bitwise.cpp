@@ -243,9 +243,9 @@ void initializeBetweenLookup() {
 
             btwn = m1 << from ^ m1 << to;
             file = (to & 7) - (from & 7);
-            rank = (to | 7) - from >> 3;
+            rank = ((to | 7) - from) >> 3;
             line = (file & 7) - 1 & a2a7; /* a2a7 if same file */
-            line += 2 * ((rank & 7) - 1 >> 58); /* b1g1 if same rank */
+            line += 2 * (((rank & 7) - 1) >> 58); /* b1g1 if same rank */
             line += (rank - file & 15) - 1 & b2g7; /* b2g7 if same diagonal */
             line += (rank + file & 15) - 1 & h1b7; /* h1b7 if same antidiag */
             line *= btwn & -btwn; /* mul acts like shift by smaller square */
