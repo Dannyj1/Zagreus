@@ -90,6 +90,7 @@ endif ()
 # Define toggleable flags
 option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)
 option(ENABLE_OPTIMIZATION_FAST_MATH "Enable fast math optimization flags (-Ofast)" ON)
+option(ENABLE_TUNER_SAFE_FAST_MATH "Enable fast math optimization flags that are safe for use with the tuner" OFF)
 option(ENABLE_LTO "Enable Link Time Optimization (LTO)" ON)
 option(ENABLE_WARNINGS "Enable all compiler warnings" ON)
 option(ENABLE_MARCH "Enable -march flag" ON)
