@@ -70,6 +70,17 @@ else ()
     option(ENABLE_TESTS "Enable the compilation and execution of tests" OFF)
 endif ()
 
+if (ENABLE_TESTS)
+    Include(FetchContent)
+
+    FetchContent_Declare(
+            Catch2
+            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+            GIT_TAG v3.5.4
+    )
+
+    FetchContent_MakeAvailable(Catch2)
+endif ()
 
 if (ENABLE_CLANG_TIDY)
     # if clang-tidy is available, enable it
@@ -189,3 +200,21 @@ add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_zagreus})
 
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")
+
+if (ENABLE_TESTS)
+    file(GLOB tests_folder "tests/*.h" "tests/*.cpp")
+
+    # Remove main from inc_zagreus
+    list(REMOVE_ITEM inc_zagreus "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+
+    add_executable(tests ${tests_folder} ${inc_senjo} ${inc_zagreus})
+    target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+
+    target_compile_definitions(tests PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
+    target_compile_definitions(tests PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")
+
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+    include(CTest)
+    include(Catch)
+    catch_discover_tests(tests)
+endif ()
