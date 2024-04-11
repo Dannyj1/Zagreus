@@ -88,8 +88,8 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
 
     if (type == EVASIONS) {
         int8_t kingSquare = bitscanForward(bitboard.getPieceBoard(color == WHITE
-            ? WHITE_KING
-            : BLACK_KING));
+                ? WHITE_KING
+                : BLACK_KING));
         uint64_t kingAttackers = bitboard.getSquareAttackersByColor<OPPOSITE_COLOR>(kingSquare);
 
         // Only generate king moves if there is more than one attacker

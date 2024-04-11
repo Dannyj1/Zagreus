@@ -89,3 +89,21 @@ TEST_CASE(
     uint64_t perft = engine.doPerft(bb, bb.getMovingColor(), 4, 4);
     REQUIRE(perft == 3894594);
 }
+
+TEST_CASE("'4k2r/8/8/8/8/8/8/4K3 w k - 0 1' at depth 6 == 899442", "[perft]") {
+    Zagreus::ZagreusEngine engine{};
+    Zagreus::Bitboard bb{};
+
+    bb.setFromFen("4k2r/8/8/8/8/8/8/4K3 w k - 0 1");
+    uint64_t perft = engine.doPerft(bb, bb.getMovingColor(), 6, 6);
+    REQUIRE(perft == 899442);
+}
+
+TEST_CASE("'rnbqkb1r/ppppp1pp/7n/4Pp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3' at depth 5 == 11139762", "[perft]") {
+    Zagreus::ZagreusEngine engine{};
+    Zagreus::Bitboard bb{};
+
+    bb.setFromFen("rnbqkb1r/ppppp1pp/7n/4Pp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3");
+    uint64_t perft = engine.doPerft(bb, bb.getMovingColor(), 5, 5);
+    REQUIRE(perft == 11139762);
+}
