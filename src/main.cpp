@@ -126,7 +126,6 @@ int main(int argc, char* argv[]) {
     senjo::Output(senjo::Output::NoPrefix)
         << "along with this program. If not, see <https://www.gnu.org/licenses/>.";
     senjo::Output(senjo::Output::NoPrefix) << "";
-
     senjo::Output(senjo::Output::NoPrefix) << " ______ ";
     senjo::Output(senjo::Output::NoPrefix) << " |___  / ";
     senjo::Output(senjo::Output::NoPrefix) << "    / /  __ _   __ _  _ __  ___  _   _  ___ ";
@@ -137,7 +136,6 @@ int main(int argc, char* argv[]) {
     senjo::Output(senjo::Output::NoPrefix) << "               |___/ ";
     senjo::Output(senjo::Output::NoPrefix) << "";
 
-    // ZAGREUS_VERSION preprocessor macro for version number
     std::string majorVersion = ZAGREUS_VERSION_MAJOR;
     std::string minorVersion = ZAGREUS_VERSION_MINOR;
     std::string versionString = "v" + majorVersion + "." + minorVersion;
@@ -171,8 +169,6 @@ int main(int argc, char* argv[]) {
         senjo::Output(senjo::Output::NoPrefix) << "Unknown argument!";
         return 0;
     }
-
-    // 8/8/4b3/5k2/1K6/8/N7/8 b - - 0 57
 
     try {
         ZagreusEngine engine;

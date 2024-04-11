@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <string>
 
 #include "types.h"
@@ -45,7 +46,10 @@ inline int8_t popLsb(uint64_t& b) {
 }
 
 inline uint32_t encodeMove(Move* move) {
-    return move->promotionPiece << 20 | move->piece << 15 | move->to << 7 | move->from;
+    return static_cast<uint32_t>(move->promotionPiece << 24)
+            | static_cast<uint32_t>(move->piece << 16)
+            | static_cast<uint32_t>(move->to << 8)
+            | static_cast<uint32_t>(move->from);
 }
 
 inline uint16_t getPieceWeight(PieceType type) { return pieceWeights[type]; }

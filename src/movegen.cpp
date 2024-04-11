@@ -115,10 +115,10 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     TranspositionTable* tt = TranspositionTable::getTT();
     Line previousPv = bitboard.getPvLine();
     uint32_t bestMoveCode = 0;
+    uint64_t zobristHash = bitboard.getZobristHash();
     TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
-    uint32_t validationHash = bitboard.getZobristHash() >> 32;
 
-    if (ttEntry->validationHash == validationHash) {
+    if (ttEntry->zobristHash == zobristHash) {
         bestMoveCode = ttEntry->bestMoveCode;
     }
 
