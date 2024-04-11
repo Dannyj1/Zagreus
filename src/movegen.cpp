@@ -116,8 +116,9 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     Line previousPv = bitboard.getPvLine();
     uint32_t bestMoveCode = 0;
     TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
+    uint32_t validationHash = bitboard.getZobristHash() >> 32;
 
-    if (ttEntry->zobristHash == bitboard.getZobristHash()) {
+    if (ttEntry->validationHash == validationHash) {
         bestMoveCode = ttEntry->bestMoveCode;
     }
 

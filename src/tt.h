@@ -27,19 +27,17 @@
 #include "types.h"
 
 namespace Zagreus {
-enum TTNodeType {
-    EXACT_NODE,
-    // Not a PV node
-    FAIL_LOW_NODE,
-    // Alpha score
+enum TTNodeType : uint8_t {
+    EXACT_NODE, // Not a PV node
+    FAIL_LOW_NODE, // Alpha score
     FAIL_HIGH_NODE // Beta score
 };
 
 struct TTEntry {
     int score = 0;
-    int16_t depth = INT16_MIN;
     uint32_t bestMoveCode = 0;
-    uint64_t zobristHash = 0;
+    uint32_t validationHash = 0;
+    int8_t depth = INT8_MIN;
     TTNodeType nodeType = EXACT_NODE;
 };
 

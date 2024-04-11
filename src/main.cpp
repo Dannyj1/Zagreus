@@ -207,6 +207,7 @@ void benchmark(bool fast) {
     Bitboard bb{};
 
     engine.initialize();
+    TranspositionTable::getTT()->setTableSize(512);
     std::vector<std::string> positions = fast ? FAST_BENCHMARK_POSITIONS : BENCHMARK_POSITIONS;
 
     for (const std::string& position : positions) {
