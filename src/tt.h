@@ -36,7 +36,7 @@ enum TTNodeType : uint8_t {
 struct TTEntry {
     int score = 0;
     uint32_t bestMoveCode = 0;
-    uint64_t zobristHash = 0;
+    uint32_t validationHash = 0;
     int8_t depth = INT8_MIN;
     TTNodeType nodeType = EXACT_NODE;
 };

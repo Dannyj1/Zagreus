@@ -116,15 +116,16 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     Line previousPv = bitboard.getPvLine();
     uint32_t bestMoveCode = 0;
     uint64_t zobristHash = bitboard.getZobristHash();
+    uint32_t validationHash = bitboard.getZobristHash() >> 32;
     TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
 
-    if (ttEntry->zobristHash == zobristHash) {
+    if (ttEntry->validationHash == validationHash) {
         bestMoveCode = ttEntry->bestMoveCode;
     }
 
     int ply = bitboard.getPly();
-    int pvfrom = ply - previousPv.startPly;
-    Move pvMove = previousPv.moves[pvfrom];
+    int pvFrom = ply - previousPv.startPly;
+    Move pvMove = previousPv.moves[pvFrom];
     uint32_t pvMoveCode = encodeMove(&pvMove);
     Move previousMove = bitboard.getPreviousMove();
 
