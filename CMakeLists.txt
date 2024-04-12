@@ -70,6 +70,17 @@ else ()
     option(ENABLE_TESTS "Enable the compilation and execution of tests" OFF)
 endif ()
 
+if (ENABLE_TESTS)
+    Include(FetchContent)
+
+    FetchContent_Declare(
+            Catch2
+            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+            GIT_TAG v3.5.4
+    )
+
+    FetchContent_MakeAvailable(Catch2)
+endif ()
 
 if (ENABLE_CLANG_TIDY)
     # if clang-tidy is available, enable it
@@ -132,9 +143,9 @@ if (ENABLE_OPTIMIZATION)
         set(PROFILING_FLAGS "${PROFILING_FLAGS} -O3")
     endif ()
 else ()
-    set(RELEASE_FLAGS "${RELEASE_FLAGS} -O0")
-    set(DEBUG_FLAGS "${DEBUG_FLAGS} -O0")
-    set(PROFILING_FLAGS "${PROFILING_FLAGS} -O0")
+    set(RELEASE_FLAGS "${RELEASE_FLAGS} -O1 -fno-inline")
+    set(DEBUG_FLAGS "${DEBUG_FLAGS} -O1 -fno-inline")
+    set(PROFILING_FLAGS "${PROFILING_FLAGS} -O1 -fno-inline")
 endif ()
 
 if (ENABLE_LTO)
@@ -156,9 +167,15 @@ if (ENABLE_MTUNE)
 endif ()
 
 if (ENABLE_SANITIZER)
-    set(DEBUG_FLAGS "${DEBUG_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
-    set(PROFILING_FLAGS "${PROFILING_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
-    set(RELEASE_FLAGS "${RELEASE_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
+    if (WIN32)
+        set(DEBUG_FLAGS "${DEBUG_FLAGS} -fsanitize=address,undefined -fsanitize-trap=all")
+        set(PROFILING_FLAGS "${PROFILING_FLAGS} -fsanitize=address,undefined -fsanitize-trap=all")
+        set(RELEASE_FLAGS "${RELEASE_FLAGS} -fsanitize=address,undefined -fsanitize-trap=all")
+    else ()
+        set(DEBUG_FLAGS "${DEBUG_FLAGS} -fsanitize=address,undefined,leak")
+        set(PROFILING_FLAGS "${PROFILING_FLAGS} -fsanitize=address,undefined,leak")
+        set(RELEASE_FLAGS "${RELEASE_FLAGS} -fsanitize=address,undefined,leak")
+    endif ()
 endif ()
 
 # Construct the final flags based on the selected profile and toggleable flags
@@ -189,3 +206,21 @@ add_executable(Zagreus src/main.cpp ${inc_senjo} ${inc_zagreus})
 
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
 target_compile_definitions(Zagreus PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")
+
+if (ENABLE_TESTS)
+    file(GLOB tests_folder "tests/*.h" "tests/*.cpp")
+
+    # Remove main from inc_zagreus
+    list(REMOVE_ITEM inc_zagreus "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+
+    add_executable(zagreus-tests ${tests_folder} ${inc_senjo} ${inc_zagreus})
+    target_link_libraries(zagreus-tests PRIVATE Catch2::Catch2WithMain)
+
+    target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
+    target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")
+
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+    include(CTest)
+    include(Catch)
+    catch_discover_tests(zagreus-tests)
+endif ()

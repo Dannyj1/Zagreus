@@ -150,29 +150,6 @@ std::vector<TunePosition> loadPositions(
         std::string resultStr = posLine.substr(posLine.find(" c9 ") + 4, posLine.find(" c9 ") + 4);
         std::string fen = posLine.substr(0, posLine.find(" c9 "));
 
-        /*SearchContext context{};
-        senjo::SearchStats stats{};
-        context.endTime = maxEndTime;
-        int qScore;
-
-        if (tunerBoard.getMovingColor() == WHITE) {
-            qScore = qsearch<WHITE, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0, context, stats);
-        } else {
-            qScore = qsearch<BLACK, PV>(tunerBoard, MAX_NEGATIVE, MAX_POSITIVE, 0, context, stats);
-        }
-
-        if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>() ||
-            tunerBoard.isWinner<BLACK>() || tunerBoard.isKingInCheck<WHITE>() ||
-            tunerBoard.isKingInCheck<BLACK>() || popcnt(tunerBoard.getColorBoard<WHITE>()) <= 4 ||
-            popcnt(tunerBoard.getColorBoard<BLACK>()) <= 4 ||
-            tunerBoard.getAmountOfMinorOrMajorPieces() < 4 ||
-            tunerBoard.getAmountOfMinorOrMajorPieces<WHITE>() <= 2 ||
-            tunerBoard.getAmountOfMinorOrMajorPieces<BLACK>() <= 2 || qScore <= -(
-                MATE_SCORE - MAX_PLY) ||
-            qScore >= (MATE_SCORE - MAX_PLY)) {
-            continue;
-        }*/
-
         if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>()
             || tunerBoard.isWinner<BLACK>()) {
             continue;

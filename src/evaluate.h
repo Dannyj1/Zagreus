@@ -24,21 +24,10 @@
 
 #include "bitboard.h"
 #include "constants.h"
+#include "features.h"
 
 namespace Zagreus {
 enum TraceMetric {
-    WHITE_MIDGAME_MATERIAL,
-    WHITE_ENDGAME_MATERIAL,
-    BLACK_MIDGAME_MATERIAL,
-    BLACK_ENDGAME_MATERIAL,
-    WHITE_MIDGAME_PST,
-    WHITE_ENDGAME_PST,
-    BLACK_MIDGAME_PST,
-    BLACK_ENDGAME_PST,
-    WHITE_MIDGAME_MOBILITY,
-    WHITE_ENDGAME_MOBILITY,
-    BLACK_MIDGAME_MOBILITY,
-    BLACK_ENDGAME_MOBILITY,
 };
 
 class Evaluation {
@@ -51,7 +40,7 @@ public:
 
 private:
     Bitboard& bitboard;
-    std::map<TraceMetric, int> traceMetrics{};
+    std::map<EvalFeature, int> traceMetrics{};
 
     uint64_t attacksByPiece[PIECE_TYPES]{};
     uint64_t attacksByColor[COLORS]{};

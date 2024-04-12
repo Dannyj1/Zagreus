@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2024  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -18,16 +18,18 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <catch2/catch_session.hpp>
 
-#include "../senjo/GoParams.h"
-#include "engine.h"
-#include "search.h"
-#include "types.h"
+#include "../src/bitboard.h"
+#include "../src/magics.h"
+#include "../src/pst.h"
 
-namespace Zagreus {
-std::chrono::time_point<std::chrono::steady_clock> getEndTime(SearchContext& context,
-                                                              senjo::GoParams& params,
-                                                              ZagreusEngine& engine,
-                                                              PieceColor movingColor);
-} // namespace Zagreus
+int main(int argc, char* argv[]) {
+    Zagreus::initializeBitboardConstants();
+    Zagreus::initializeMagicBitboards();
+    Zagreus::initializePst();
+
+    int result = Catch::Session().run(argc, argv);
+
+    return result;
+}

@@ -88,8 +88,8 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
 
     if (type == EVASIONS) {
         int8_t kingSquare = bitscanForward(bitboard.getPieceBoard(color == WHITE
-            ? WHITE_KING
-            : BLACK_KING));
+                ? WHITE_KING
+                : BLACK_KING));
         uint64_t kingAttackers = bitboard.getSquareAttackersByColor<OPPOSITE_COLOR>(kingSquare);
 
         // Only generate king moves if there is more than one attacker
@@ -115,15 +115,17 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
     TranspositionTable* tt = TranspositionTable::getTT();
     Line previousPv = bitboard.getPvLine();
     uint32_t bestMoveCode = 0;
+    uint64_t zobristHash = bitboard.getZobristHash();
+    uint32_t validationHash = bitboard.getZobristHash() >> 32;
     TTEntry* ttEntry = tt->getEntry(bitboard.getZobristHash());
 
-    if (ttEntry->zobristHash == bitboard.getZobristHash()) {
+    if (ttEntry->validationHash == validationHash) {
         bestMoveCode = ttEntry->bestMoveCode;
     }
 
     int ply = bitboard.getPly();
-    int pvfrom = ply - previousPv.startPly;
-    Move pvMove = previousPv.moves[pvfrom];
+    int pvFrom = ply - previousPv.startPly;
+    Move pvMove = previousPv.moves[pvFrom];
     uint32_t pvMoveCode = encodeMove(&pvMove);
     Move previousMove = bitboard.getPreviousMove();
 
@@ -481,7 +483,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList) {
     if (color == WHITE) {
         if (bitboard.getCastlingRights() & WHITE_KINGSIDE &&
             (occupiedBB & WHITE_KING_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(H1) == WHITE_ROOK) {
+            bitboard.getPieceOnSquare(H1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
             uint64_t tilesToCheck = WHITE_KING_SIDE_BETWEEN;
             bool canCastle = true;
 
@@ -501,7 +503,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList) {
 
         if (bitboard.getCastlingRights() & WHITE_QUEENSIDE &&
             (occupiedBB & WHITE_QUEEN_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(A1) == WHITE_ROOK) {
+            bitboard.getPieceOnSquare(A1) == WHITE_ROOK && !bitboard.isKingInCheck<WHITE>()) {
             uint64_t tilesToCheck = WHITE_QUEEN_SIDE_BETWEEN & ~(1ULL << B1);
             bool canCastle = true;
 
@@ -521,7 +523,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList) {
     } else {
         if (bitboard.getCastlingRights() & BLACK_KINGSIDE &&
             (occupiedBB & BLACK_KING_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(H8) == BLACK_ROOK) {
+            bitboard.getPieceOnSquare(H8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
             uint64_t tilesToCheck = BLACK_KING_SIDE_BETWEEN;
             bool canCastle = true;
 
@@ -541,7 +543,7 @@ void generateKingMoves(Bitboard& bitboard, MoveList* moveList) {
 
         if (bitboard.getCastlingRights() & BLACK_QUEENSIDE &&
             (occupiedBB & BLACK_QUEEN_SIDE_BETWEEN) == 0 &&
-            bitboard.getPieceOnSquare(A8) == BLACK_ROOK) {
+            bitboard.getPieceOnSquare(A8) == BLACK_ROOK && !bitboard.isKingInCheck<BLACK>()) {
             uint64_t tilesToCheck = BLACK_QUEEN_SIDE_BETWEEN & ~(1ULL << B8);
             bool canCastle = true;
 

@@ -35,6 +35,10 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int sc
         return;
     }
 
+    if (depth < INT8_MIN || depth > INT8_MAX) {
+        return;
+    }
+
     uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
@@ -47,8 +51,8 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int sc
             adjustedScore -= ply;
         }
 
-        entry->zobristHash = zobristHash;
-        entry->depth = depth;
+        entry->validationHash = zobristHash >> 32;
+        entry->depth = static_cast<int8_t>(depth);
         entry->bestMoveCode = bestMoveCode;
         entry->score = adjustedScore;
         entry->nodeType = nodeType;
@@ -57,10 +61,15 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int sc
 
 int TranspositionTable::getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta,
                                  int ply) {
-    uint64_t index = (zobristHash & hashSize);
+    if (depth < INT8_MIN || depth > INT8_MAX) {
+        return INT32_MIN;
+    }
+
+    uint64_t index = zobristHash & hashSize;
+    uint32_t validationHash = zobristHash >> 32;
     TTEntry* entry = &transpositionTable[index];
 
-    if (entry->zobristHash == zobristHash && entry->depth >= depth) {
+    if (entry->validationHash == validationHash && entry->depth >= depth) {
         bool returnScore = false;
 
         if (entry->nodeType == EXACT_NODE) {

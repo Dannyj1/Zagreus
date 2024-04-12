@@ -30,7 +30,11 @@ static uint64_t knightAttacks[64]{};
 static uint64_t pawnAttacks[2][64]{};
 static uint64_t rayAttacks[8][64]{};
 static uint64_t betweenTable[64][64]{};
-static uint64_t zobristConstants[ZOBRIST_CONSTANT_SIZE]{};
+
+static uint64_t zobristPieceConstants[COLORS][PIECE_TYPES][SQUARES]{};
+static uint64_t zobristMovingColorConstant{};
+static uint64_t zobristCastleConstants[4]{};
+static uint64_t zobristEnPassantConstants[8]{};
 
 uint64_t soutOne(uint64_t b) { return b >> 8ULL; }
 
@@ -201,15 +205,31 @@ void initializeBitboardConstants() {
     std::uniform_int_distribution<uint64_t> dis(1ULL, UINT64_MAX);
     std::vector<uint64_t> generatedZobristConstants(ZOBRIST_CONSTANT_SIZE);
 
-    for (uint64_t& zobristConstant : zobristConstants) {
-        zobristConstant = dis(gen);
+    for (int color = 0; color < COLORS; color++) {
+        for (int pieceType = 0; pieceType < PIECE_TYPES; pieceType++) {
+            for (int square = 0; square < SQUARES; square++) {
+                uint64_t zobristConstant = dis(gen);
+                zobristPieceConstants[color][pieceType][square] = zobristConstant;
 
-        // if constant already generated, generate a new one
-        if (std::ranges::find(generatedZobristConstants, zobristConstant) != generatedZobristConstants.end()) {
-            zobristConstant = dis(gen);
+                // if constant already generated, generate a new one
+                if (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+                    generatedZobristConstants.end()) {
+                    zobristConstant = dis(gen);
+                }
+
+                generatedZobristConstants.push_back(zobristConstant);
+            }
         }
+    }
 
-        generatedZobristConstants.push_back(zobristConstant);
+    zobristMovingColorConstant = dis(gen);
+
+    for (int i = 0; i < 4; i++) {
+        zobristCastleConstants[i] = dis(gen);
+    }
+
+    for (int i = 0; i < 8; i++) {
+        zobristEnPassantConstants[i] = dis(gen);
     }
 
     uint64_t sqBB = 1ULL;
@@ -243,9 +263,9 @@ void initializeBetweenLookup() {
 
             btwn = m1 << from ^ m1 << to;
             file = (to & 7) - (from & 7);
-            rank = (to | 7) - from >> 3;
+            rank = ((to | 7) - from) >> 3;
             line = (file & 7) - 1 & a2a7; /* a2a7 if same file */
-            line += 2 * ((rank & 7) - 1 >> 58); /* b1g1 if same rank */
+            line += 2 * (((rank & 7) - 1) >> 58); /* b1g1 if same rank */
             line += (rank - file & 15) - 1 & b2g7; /* b2g7 if same diagonal */
             line += (rank + file & 15) - 1 & h1b7; /* h1b7 if same antidiag */
             line *= btwn & -btwn; /* mul acts like shift by smaller square */
@@ -286,8 +306,20 @@ uint64_t getBetweenSquares(int8_t from, int8_t to) {
     return betweenTable[from][to];
 }
 
-uint64_t getZobristConstant(int index) {
-    return zobristConstants[index];
+uint64_t getPieceZobristConstant(PieceColor color, PieceType pieceType, int8_t square) {
+    return zobristPieceConstants[color][pieceType][square];
+}
+
+uint64_t getMovingColorZobristConstant() {
+    return zobristMovingColorConstant;
+}
+
+uint64_t getCastleZobristConstant(uint8_t index) {
+    return zobristCastleConstants[index];
+}
+
+uint64_t getEnPassantZobristConstant(uint8_t file) {
+    return zobristEnPassantConstants[file];
 }
 
 template <PieceColor color>

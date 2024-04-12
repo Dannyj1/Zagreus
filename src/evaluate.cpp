@@ -166,13 +166,13 @@ constexpr int totalPhase = knightPhase * 4 + bishopPhase * 4 + rookPhase * 4 + q
 int Evaluation::getPhase() {
     int phase = totalPhase;
 
-    phase -= popcnt(bitboard.getPieceBoard(WHITE_KNIGHT) | bitboard.getPieceBoard(BLACK_KNIGHT)) *
-        knightPhase;
-    phase -= popcnt(bitboard.getPieceBoard(WHITE_BISHOP) | bitboard.getPieceBoard(BLACK_BISHOP)) *
-        bishopPhase;
-    phase -=
-        popcnt(bitboard.getPieceBoard(WHITE_ROOK) | bitboard.getPieceBoard(BLACK_ROOK)) * rookPhase;
-    phase -= popcnt(bitboard.getPieceBoard(WHITE_QUEEN) | bitboard.getPieceBoard(BLACK_QUEEN)) *
+    phase -= (bitboard.getMaterialCount<WHITE_KNIGHT>() + bitboard.getMaterialCount<BLACK_KNIGHT>())
+        * knightPhase;
+    phase -= (bitboard.getMaterialCount<WHITE_BISHOP>() + bitboard.getMaterialCount<BLACK_BISHOP>())
+        * bishopPhase;
+    phase -= (bitboard.getMaterialCount<WHITE_ROOK>() + bitboard.getMaterialCount<BLACK_ROOK>()) *
+        rookPhase;
+    phase -= (bitboard.getMaterialCount<WHITE_QUEEN>() + bitboard.getMaterialCount<BLACK_QUEEN>()) *
         queenPhase;
 
     return (phase * 256 + (totalPhase / 2)) / totalPhase;
