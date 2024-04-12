@@ -28,19 +28,36 @@
 
 namespace Zagreus {
 enum TraceMetric {
+    WHITE_MATERIAL,
+    BLACK_MATERIAL,
+    WHITE_PST,
+    BLACK_PST,
+    WHITE_MOBILITY,
+    BLACK_MOBILITY,
+    WHITE_KING_SAFETY_ATTACKS,
+    BLACK_KING_SAFETY_ATTACKS,
+    WHITE_KING_SAFETY,
+    BLACK_KING_SAFETY,
+    WHITE_PAWN_EVAL,
+    BLACK_PAWN_EVAL,
+    WHITE_KNIGHT_EVAL,
+    BLACK_KNIGHT_EVAL,
+    WHITE_BISHOP_EVAL,
+    BLACK_BISHOP_EVAL,
+    WHITE_ROOK_EVAL,
+    BLACK_ROOK_EVAL,
+    WHITE_QUEEN_EVAL,
+    BLACK_QUEEN_EVAL,
+    WHITE_UNDEFENDED_PIECES,
+    BLACK_UNDEFENDED_PIECES,
 };
 
 class Evaluation {
-public:
-    Evaluation(Bitboard& bitboard)
-        : bitboard(bitboard) {
-    }
-
-    int evaluate();
-
 private:
     Bitboard& bitboard;
-    std::map<EvalFeature, int> traceMetrics{};
+    std::map<TraceMetric, int> midgameTraceMetrics{};
+    std::map<TraceMetric, int> endgameTraceMetrics{};
+    std::map<TraceMetric, int> taperedTraceMetrics{};
 
     uint64_t attacksByPiece[PIECE_TYPES]{};
     uint64_t attacksByColor[COLORS]{};
@@ -54,19 +71,29 @@ private:
 
     int getPhase();
 
-    template <PieceColor color>
+    template <PieceColor color, bool trace>
     void evaluateMaterial();
 
-    template <PieceColor color>
+    template <PieceColor color, bool trace>
     void evaluatePst();
 
-    template <PieceColor color>
+    template <PieceColor color, bool trace>
     void evaluatePieces();
 
-    inline void addMobilityScoreForPiece(PieceType pieceType, int mobility);
-
-    inline void addKingAttackScore(PieceType pieceType, int attackCount);
-
     void initEvalContext(Bitboard& bitboard);
+
+public:
+    Evaluation(Bitboard& bitboard)
+        : bitboard(bitboard) {
+    }
+
+    template <bool trace>
+    int evaluate();
+
+    std::map<TraceMetric, int> getMidgameTraceMetrics();
+
+    std::map<TraceMetric, int> getEndgameTraceMetrics();
+
+    std::map<TraceMetric, int> getTaperedTraceMetrics();
 };
 } // namespace Zagreus

@@ -21,12 +21,14 @@
 #include "engine.h"
 
 #include <algorithm>
+#include <iomanip>
 
 #include "../senjo/ChessEngine.h"
 #include "../senjo/Output.h"
 #include "../senjo/GoParams.h"
 #include "../senjo/SearchStats.h"
 #include "bitboard.h"
+#include "evaluate.h"
 #include "movegen.h"
 #include "search.h"
 #include "tt.h"
@@ -253,4 +255,99 @@ void ZagreusEngine::showEngineStats() {
 bool ZagreusEngine::isTuning() const { return tuning; }
 
 void ZagreusEngine::setTuning(bool tuning) { ZagreusEngine::tuning = tuning; }
+
+std::string padNumber(int number) {
+    std::ostringstream oss;
+    oss << std::setw(4) << std::setfill(' ') << number;
+    return oss.str();
+}
+
+// clang-format off
+void ZagreusEngine::printTraceEval() {
+    Evaluation eval = Evaluation(board);
+    int score = eval.evaluate<true>();
+    std::map<TraceMetric, int> midgameTrace = eval.getMidgameTraceMetrics();
+    std::map<TraceMetric, int> endgameTrace = eval.getEndgameTraceMetrics();
+    std::map<TraceMetric, int> taperedTrace = eval.getTaperedTraceMetrics();
+
+    std::cout << "==============================================================" << std::endl;
+    std::cout << "| Evaluation Score: " << padNumber(score) <<
+        "        po                             |" << std::endl;
+    std::cout << "==============================================================" << std::endl;
+    std::cout << "| Metric                    | Midgame  | Endgame  | Tapered  |" << std::endl;
+    std::cout << "==============================================================" << std::endl;
+    std::cout << "| WHITE_MATERIAL            |   " << padNumber(midgameTrace[WHITE_MATERIAL]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_MATERIAL]) << "   |   " << padNumber(
+            taperedTrace[WHITE_MATERIAL]) << "   |" << std::endl;
+    std::cout << "| BLACK_MATERIAL            |   " << padNumber(midgameTrace[BLACK_MATERIAL]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_MATERIAL]) << "   |   " << padNumber(
+            taperedTrace[BLACK_MATERIAL]) << "   |" << std::endl;
+    std::cout << "| WHITE_PST                 |   " << padNumber(midgameTrace[WHITE_PST]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_PST]) << "   |   " << padNumber(
+            taperedTrace[WHITE_PST]) << "   |" << std::endl;
+    std::cout << "| BLACK_PST                 |   " << padNumber(midgameTrace[BLACK_PST]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_PST]) << "   |   " << padNumber(
+            taperedTrace[BLACK_PST]) << "   |" << std::endl;
+    std::cout << "| WHITE_MOBILITY            |   " << padNumber(midgameTrace[WHITE_MOBILITY]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_MOBILITY]) << "   |   " << padNumber(
+            taperedTrace[WHITE_MOBILITY]) << "   |" << std::endl;
+    std::cout << "| BLACK_MOBILITY            |   " << padNumber(midgameTrace[BLACK_MOBILITY]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_MOBILITY]) << "   |   " << padNumber(
+            taperedTrace[BLACK_MOBILITY]) << "   |" << std::endl;
+    std::cout << "| WHITE_KING_SAFETY_ATTACKS |   " <<
+        padNumber(midgameTrace[WHITE_KING_SAFETY_ATTACKS]) << "   |   " <<
+        padNumber(endgameTrace[WHITE_KING_SAFETY_ATTACKS]) << "   |   " << padNumber(
+            taperedTrace[WHITE_KING_SAFETY_ATTACKS]) << "   |" << std::endl;
+    std::cout << "| BLACK_KING_SAFETY_ATTACKS |   " <<
+        padNumber(midgameTrace[BLACK_KING_SAFETY_ATTACKS]) << "   |   " <<
+        padNumber(endgameTrace[BLACK_KING_SAFETY_ATTACKS]) << "   |   " << padNumber(
+            taperedTrace[BLACK_KING_SAFETY_ATTACKS]) << "   |" << std::endl;
+    std::cout << "| WHITE_KING_SAFETY         |   " << padNumber(midgameTrace[WHITE_KING_SAFETY]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_KING_SAFETY]) << "   |   " << padNumber(
+            taperedTrace[WHITE_KING_SAFETY]) << "   |" << std::endl;
+    std::cout << "| BLACK_KING_SAFETY         |   " << padNumber(midgameTrace[BLACK_KING_SAFETY]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_KING_SAFETY]) << "   |   " << padNumber(
+            taperedTrace[BLACK_KING_SAFETY]) << "   |" << std::endl;
+    std::cout << "| WHITE_PAWN_EVAL           |   " << padNumber(midgameTrace[WHITE_PAWN_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_PAWN_EVAL]) << "   |   " << padNumber(
+            taperedTrace[WHITE_PAWN_EVAL]) << "   |" << std::endl;
+    std::cout << "| BLACK_PAWN_EVAL           |   " << padNumber(midgameTrace[BLACK_PAWN_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_PAWN_EVAL]) << "   |   " << padNumber(
+            taperedTrace[BLACK_PAWN_EVAL]) << "   |" << std::endl;
+    std::cout << "| WHITE_KNIGHT_EVAL         |   " << padNumber(midgameTrace[WHITE_KNIGHT_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_KNIGHT_EVAL]) << "   |   " << padNumber(
+            taperedTrace[WHITE_KNIGHT_EVAL]) << "   |" << std::endl;
+    std::cout << "| BLACK_KNIGHT_EVAL         |   " << padNumber(midgameTrace[BLACK_KNIGHT_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_KNIGHT_EVAL]) << "   |   " << padNumber(
+            taperedTrace[BLACK_KNIGHT_EVAL]) << "   |" << std::endl;
+    std::cout << "| WHITE_BISHOP_EVAL         |   " << padNumber(midgameTrace[WHITE_BISHOP_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_BISHOP_EVAL]) << "   |   " << padNumber(
+            taperedTrace[WHITE_BISHOP_EVAL]) << "   |" << std::endl;
+    std::cout << "| BLACK_BISHOP_EVAL         |   " << padNumber(midgameTrace[BLACK_BISHOP_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_BISHOP_EVAL]) << "   |   " << padNumber(
+            taperedTrace[BLACK_BISHOP_EVAL]) << "   |" << std::endl;
+    std::cout << "| WHITE_ROOK_EVAL           |   " << padNumber(midgameTrace[WHITE_ROOK_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_ROOK_EVAL]) << "   |   " << padNumber(
+            taperedTrace[WHITE_ROOK_EVAL]) << "   |" << std::endl;
+    std::cout << "| BLACK_ROOK_EVAL           |   " << padNumber(midgameTrace[BLACK_ROOK_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_ROOK_EVAL]) << "   |   " << padNumber(
+            taperedTrace[BLACK_ROOK_EVAL]) << "   |" << std::endl;
+    std::cout << "| WHITE_QUEEN_EVAL          |   " << padNumber(midgameTrace[WHITE_QUEEN_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[WHITE_QUEEN_EVAL]) << "   |   " << padNumber(
+            taperedTrace[WHITE_QUEEN_EVAL]) << "   |" << std::endl;
+    std::cout << "| BLACK_QUEEN_EVAL          |   " << padNumber(midgameTrace[BLACK_QUEEN_EVAL]) <<
+        "   |   " << padNumber(endgameTrace[BLACK_QUEEN_EVAL]) << "   |   " << padNumber(
+            taperedTrace[BLACK_QUEEN_EVAL]) << "   |" << std::endl;
+    std::cout << "| WHITE_UNDEFENDED_PIECES   |   " <<
+        padNumber(midgameTrace[WHITE_UNDEFENDED_PIECES]) << "   |   " <<
+        padNumber(endgameTrace[WHITE_UNDEFENDED_PIECES]) << "   |   " << padNumber(
+            taperedTrace[WHITE_UNDEFENDED_PIECES]) << "   |" << std::endl;
+    std::cout << "| BLACK_UNDEFENDED_PIECES   |   " <<
+        padNumber(midgameTrace[BLACK_UNDEFENDED_PIECES]) << "   |   " <<
+        padNumber(endgameTrace[BLACK_UNDEFENDED_PIECES]) << "   |   " << padNumber(
+            taperedTrace[BLACK_UNDEFENDED_PIECES]) << "   |" << std::endl;
+    std::cout << "==============================================================" << std::endl;
+}
+
+// clang-format on
 } // namespace Zagreus

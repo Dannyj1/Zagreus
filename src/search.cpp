@@ -181,7 +181,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.
         getAmountOfMinorOrMajorPieces<
             color>() > 0) {
-        if (!ownKingInCheck && Evaluation(board).evaluate() >= beta) {
+        if (!ownKingInCheck && Evaluation(board).evaluate<false>() >= beta) {
             int r = 3 + (depth >= 6) + (depth >= 12);
 
             Line nullLine{};
@@ -363,7 +363,7 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
     Move previousMove = board.getPreviousMove();
 
     if (!inCheck) {
-        int standPat = Evaluation(board).evaluate();
+        int standPat = Evaluation(board).evaluate<false>();
 
         if (standPat >= beta) {
             tt->addPosition(board.getZobristHash(), depth, standPat, FAIL_HIGH_NODE, 0,

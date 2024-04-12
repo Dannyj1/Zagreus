@@ -119,5 +119,7 @@ public:
     bool isTuning() const;
 
     void setTuning(bool tuning);
+
+    void printTraceEval() override;
 };
 } // namespace Zagreus

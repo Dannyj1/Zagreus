@@ -272,6 +272,8 @@ namespace senjo {
         //!         the "test" command is run.
         //--------------------------------------------------------------------------
         virtual void showEngineStats() = 0;
+
+        virtual void printTraceEval() = 0;
     };
 
 } // namespace senjo

@@ -50,6 +50,7 @@ namespace senjo {
         static const std::string Uci("uci");
         static const std::string UciNewGame("ucinewgame");
         static const std::string Value("value");
+        static const std::string Trace("trace");
     }
 
 //-----------------------------------------------------------------------------
@@ -113,6 +114,8 @@ namespace senjo {
             doOptsCommand(params);
         } else if (iEqual(token::Help, command)) {
             doHelpCommand(params);
+        } else if (iEqual(token::Trace, command)) {
+            doTraceCommand(params);
         } else if (iEqual(token::Exit, command) ||
                    iEqual(token::Quit, command)) {
             if (doQuitCommand(params)) {
@@ -122,6 +125,8 @@ namespace senjo {
             doStopCommand();
             params.push_front(command);
             doMoveCommand(params);
+        } else if (iEqual(token::Trace, command)) {
+
         } else {
             Output() << "Unknown command: '" << command << "'";
             Output() << "Enter 'help' for a list of commands";
@@ -220,6 +225,14 @@ namespace senjo {
         }
 
         engine.printBoard();
+    }
+
+void UCIAdapter::doTraceCommand(Parameters &params) {
+        if (!engine.isInitialized()) {
+            engine.initialize();
+        }
+
+        engine.printTraceEval();
     }
 
 //-----------------------------------------------------------------------------
