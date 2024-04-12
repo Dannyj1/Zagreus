@@ -104,7 +104,6 @@ const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "1rb1kbnr/p1q1pppp/np4B1/2pp4/P1PP4/2N1P3/1P3PPP/R1BQK1NR w Kk",
     "r1bbk1nr/pp3p1p/2n5/1N4p1/2Np1B2/8/PPP2PPP/2KR1B1R w kq - 0 13",
     "8/2R5/8/k7/N5PP/2K5/8/5b2 w - -",
-    "7k/7P/6K1/8/3B4/8/8/8 b - -",
     "rnbqk2r/1p1p1pbp/4p2n/p1p3p1/2PPP1P1/5P1N/PP1K2BP/RNBQR3 w kq -",
     "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"
 };
@@ -215,7 +214,7 @@ void benchmark(bool fast) {
 
             senjo::GoParams params{};
             senjo::SearchStats searchStats{};
-            params.depth = 6;
+            params.depth = fast ? 5 : 6;
 
             auto start = std::chrono::steady_clock::now();
 
