@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Valgrind
         run: |
-          valgrind -s --error-exitcode=1 --errors-for-leak-kinds=all --leak-check=full ./Zagreus fastbench
+          valgrind -s --error-exitcode=1 --errors-for-leak-kinds=all --leak-check=full --show-leak-kinds=all ./Zagreus fastbench
 
       - name: Delete CMake cache
         run: rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
