@@ -88,6 +88,22 @@ uint64_t blackRearSpans(uint64_t pawns) { return nortOne(nortFill(pawns)); }
 
 uint64_t blackFrontSpans(uint64_t pawns) { return soutOne(soutFill(pawns)); }
 
+uint64_t whiteStopSquares(uint64_t pawns) {
+    return nortOne(pawns);
+}
+
+uint64_t blackStopSquares(uint64_t pawns) {
+    return soutOne(pawns);
+}
+
+uint64_t whiteAttackSpans(uint64_t pawns) {
+    return nortFill(noEaOne(pawns) | noWeOne(pawns));
+}
+
+uint64_t blackAttackSpans(uint64_t pawns) {
+    return soutFill(soEaOne(pawns) | soWeOne(pawns));
+}
+
 uint64_t soutOccl(uint64_t pieceBB, uint64_t empty) {
     pieceBB |= empty & pieceBB >> 8ULL;
     empty &= empty >> 8ULL;
@@ -215,7 +231,7 @@ void initializeBitboardConstants() {
                 if (std::ranges::find(generatedZobristConstants, zobristConstant) !=
                     generatedZobristConstants.end()) {
                     zobristConstant = dis(gen);
-                }
+                    }
 
                 generatedZobristConstants.push_back(zobristConstant);
             }
@@ -263,9 +279,9 @@ void initializeBetweenLookup() {
 
             btwn = m1 << from ^ m1 << to;
             file = (to & 7) - (from & 7);
-            rank = ((to | 7) - from) >> 3;
+            rank = (to | 7) - from >> 3;
             line = (file & 7) - 1 & a2a7; /* a2a7 if same file */
-            line += 2 * (((rank & 7) - 1) >> 58); /* b1g1 if same rank */
+            line += 2 * ((rank & 7) - 1 >> 58); /* b1g1 if same rank */
             line += (rank - file & 15) - 1 & b2g7; /* b2g7 if same diagonal */
             line += (rank + file & 15) - 1 & h1b7; /* h1b7 if same antidiag */
             line *= btwn & -btwn; /* mul acts like shift by smaller square */

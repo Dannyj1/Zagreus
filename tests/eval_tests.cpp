@@ -171,4 +171,13 @@ TEST_CASE("Evaluation is symmetric (on mirrored positions)", "[eval_symmetry]") 
 
         REQUIRE(eval1 == eval2);
     }
+
+    SECTION("6k1/2p1b1pp/1pnrpr2/p6q/3PbP2/P1R1PN1P/1P1BQPB1/2R3K1 w - - 3 21") {
+        bb.setFromFen("6k1/2p1b1pp/1pnrpr2/p6q/3PbP2/P1R1PN1P/1P1BQPB1/2R3K1 w - - 3 21");
+        int eval1 = Zagreus::Evaluation(bb).evaluate();
+        bb.setFromFen("2r3k1/1p1bqpb1/p1r1pn1p/3pBp2/P6Q/1PNRPR2/2P1B1PP/6K1 b - - 3 21");
+        int eval2 = Zagreus::Evaluation(bb).evaluate();
+
+        REQUIRE(eval1 == eval2);
+    }
 }

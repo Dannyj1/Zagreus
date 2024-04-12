@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
     initializeMagicBitboards();
     initializePst();
 
-    senjo::Output(senjo::Output::NoPrefix) << "Zagreus  Copyright (C) 2023  Danny Jelsma";
+    senjo::Output(senjo::Output::NoPrefix) << "Zagreus  Copyright (C) 2023-2024  Danny Jelsma";
     senjo::Output(senjo::Output::NoPrefix) << "";
     senjo::Output(senjo::Output::NoPrefix) << "This program comes with ABSOLUTELY NO WARRANTY.";
     senjo::Output(senjo::Output::NoPrefix)

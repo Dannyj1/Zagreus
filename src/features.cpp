@@ -25,13 +25,13 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[72] = {83, 96, 398, 349, 429, 356, 574, 561, 1063, 1054, 8, 2, 5, 1, 2, 4, 4, 5, 24,
+int evalValues[76] = {83, 96, 398, 349, 429, 356, 574, 561, 1063, 1054, 8, 2, 5, 1, 2, 4, 4, 5, 24,
                       -5, -6, 0, -19, 26, 4, 4, -15, 6, -24, 6, -15, -6, -8, -15, -16, 41, -3, -6,
                       -15, -4, -15, -7, -5, -11, 7, 2, -8, -1, -3, -29, -23, -27, 15, 8, -4, -5, 44,
                       2, 15, 15, -28, 3, -2, 2, 19, 17, -9, -31, 13, -17, -29, -31,};
 
 
-int baseEvalValues[72] = {
+int baseEvalValues[76] = {
     100, // MIDGAME_PAWN_MATERIAL
     100, // ENDGAME_PAWN_MATERIAL
     350, // MIDGAME_KNIGHT_MATERIAL
@@ -104,6 +104,10 @@ int baseEvalValues[72] = {
     4, // ENDGAME_ROOK_ON_QUEEN_FILE
     -4, // MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY
     -4, // ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY
+    10, // MIDGAME_KNIGHT_OUTPOST
+    6, // ENDGAME_KNIGHT_OUTPOST
+    5, // MIDGAME_KNIGHT_REACHABLE_OUTPOST
+    2, // ENDGAME_KNIGHT_REACHABLE_OUTPOST
 };
 
 void printEvalValues() {

@@ -267,9 +267,14 @@ void Evaluation::evaluatePieces() {
     int8_t whiteKingSquare = bitscanForward(bitboard.getPieceBoard(WHITE_KING));
     uint64_t blackKingAttacks = attacksFrom[blackKingSquare];
     uint64_t whiteKingAttacks = attacksFrom[whiteKingSquare];
+    uint64_t opponentPawnBB = bitboard.getPieceBoard(color == WHITE ? BLACK_PAWN : WHITE_PAWN);
+    uint64_t opponentAttackSpans = color == WHITE ? blackAttackSpans(opponentPawnBB) : whiteAttackSpans(opponentPawnBB);
+    uint64_t opponentHalf = color == WHITE ? RANK_5 | RANK_6 | RANK_7 : RANK_2 | RANK_3 | RANK_4;
+    uint64_t eligibleOutpostSquares = (CENTER_SQUARES | opponentHalf) & ~opponentAttackSpans;
 
     while (colorBoard) {
         uint8_t index = popLsb(colorBoard);
+        uint64_t square = 1ULL << index;
         PieceType pieceType = bitboard.getPieceOnSquare(index);
 
         // Mobility
@@ -473,7 +478,7 @@ void Evaluation::evaluatePieces() {
                     }
                 }
 
-                if ((1ULL << index) & DE_FILE) {
+                if (square & DE_FILE) {
                     if (color == WHITE) {
                         whiteMidgameScore += getEvalValue(MIDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
                         whiteEndgameScore += getEvalValue(ENDGAME_ISOLATED_CENTRAL_PAWN_PENALTY);
@@ -506,7 +511,7 @@ void Evaluation::evaluatePieces() {
             // Slight bonus for knights defended by a pawn
             uint64_t pawnAttacks = attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
 
-            if ((1ULL << index) & pawnAttacks) {
+            if (square & pawnAttacks) {
                 if (color == WHITE) {
                     whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN);
                     whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN);
@@ -514,6 +519,27 @@ void Evaluation::evaluatePieces() {
                     blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_BY_PAWN);
                     blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_BY_PAWN);
                 }
+            }
+
+            // Outposts
+            if (square & eligibleOutpostSquares) {
+                if (color == WHITE) {
+                    whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_OUTPOST);
+                    whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_OUTPOST);
+                } else {
+                    blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_OUTPOST);
+                    blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_OUTPOST);
+                }
+            }
+
+            int reachableOutposts = popcnt(attacksFrom[index] & eligibleOutpostSquares);
+
+            if (color == WHITE) {
+                whiteMidgameScore += reachableOutposts * getEvalValue(MIDGAME_KNIGHT_REACHABLE_OUTPOST);
+                whiteEndgameScore += reachableOutposts * getEvalValue(ENDGAME_KNIGHT_REACHABLE_OUTPOST);
+            } else {
+                blackMidgameScore += reachableOutposts * getEvalValue(MIDGAME_KNIGHT_REACHABLE_OUTPOST);
+                blackEndgameScore += reachableOutposts * getEvalValue(ENDGAME_KNIGHT_REACHABLE_OUTPOST);
             }
         }
 
@@ -566,8 +592,8 @@ void Evaluation::evaluatePieces() {
             if (color == WHITE) {
                 if (index == G2 || index == B2) {
                     uint64_t fianchettoPattern =
-                        nortOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
-                    uint64_t antiPattern = noWeOne(1ULL << index) | noEaOne(1ULL << index);
+                        nortOne(square) | westOne(square) | eastOne(square);
+                    uint64_t antiPattern = noWeOne(square) | noEaOne(square);
 
                     if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
                         whiteMidgameScore += getEvalValue(MIDGAME_BISHOP_FIANCHETTO);
@@ -577,8 +603,8 @@ void Evaluation::evaluatePieces() {
             } else {
                 if (index == G7 || index == B7) {
                     uint64_t fianchettoPattern =
-                        soutOne(1ULL << index) | westOne(1ULL << index) | eastOne(1ULL << index);
-                    uint64_t antiPattern = soWeOne(1ULL << index) | soEaOne(1ULL << index);
+                        soutOne(square) | westOne(square) | eastOne(square);
+                    uint64_t antiPattern = soWeOne(square) | soEaOne(square);
 
                     if (popcnt(pawnBB & fianchettoPattern) == 3 && !(pawnBB & antiPattern)) {
                         blackMidgameScore += getEvalValue(MIDGAME_BISHOP_FIANCHETTO);
@@ -623,12 +649,12 @@ void Evaluation::evaluatePieces() {
 
             // Rook on 7th or 8th rank (or 2nd or 1st rank for black)
             if (color == WHITE) {
-                if ((1ULL << index) & (RANK_8 | RANK_7)) {
+                if (square & (RANK_8 | RANK_7)) {
                     whiteMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
                     whiteEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
                 }
             } else {
-                if ((1ULL << index) & (RANK_1 | RANK_2)) {
+                if (square & (RANK_1 | RANK_2)) {
                     blackMidgameScore += getEvalValue(MIDGAME_ROOK_ON_7TH_RANK);
                     blackEndgameScore += getEvalValue(ENDGAME_ROOK_ON_7TH_RANK);
                 }
@@ -652,7 +678,7 @@ void Evaluation::evaluatePieces() {
 
         // Undefended minor pieces
         if (isKnight(pieceType) || isBishop(pieceType)) {
-            if (!((1ULL << index) & attacksByColor[color])) {
+            if (!(square & attacksByColor[color])) {
                 // Penalize a minor piece for not being defended
                 if (color == WHITE) {
                     whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_NOT_DEFENDED_PENALTY);
@@ -668,14 +694,14 @@ void Evaluation::evaluatePieces() {
             if (color == WHITE) {
                 weakSquares = attackedBy2[BLACK] & ~attackedBy2[WHITE];
 
-                if ((1ULL << index) & weakSquares) {
+                if (square & weakSquares) {
                     whiteMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
                     whiteEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
                 }
             } else {
                 weakSquares = attackedBy2[WHITE] & ~attackedBy2[BLACK];
 
-                if ((1ULL << index) & weakSquares) {
+                if (square & weakSquares) {
                     blackMidgameScore += getEvalValue(MIDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
                     blackEndgameScore += getEvalValue(ENDGAME_MINOR_PIECE_ON_WEAK_SQUARE_PENALTY);
                 }
