@@ -26,7 +26,7 @@ jobs:
 
       - name: Configure CMake & Build
         run: |
-          cmake -DCMAKE_BUILD_TYPE=Release -DAPPEND_VERSION=OFF -DENABLE_WARNINGS=ON -DENABLE_SANITIZER=OFF .
+          cmake -DCMAKE_BUILD_TYPE=Release -DAPPEND_VERSION=OFF -DENABLE_WARNINGS=ON -DENABLE_SANITIZER=OFF -DENABLE_TESTS=ON .
           cmake --build .
 
       - name: Run CTest

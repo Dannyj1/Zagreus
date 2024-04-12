@@ -167,9 +167,9 @@ if (ENABLE_MTUNE)
 endif ()
 
 if (ENABLE_SANITIZER)
-    set(DEBUG_FLAGS "${DEBUG_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
-    set(PROFILING_FLAGS "${PROFILING_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
-    set(RELEASE_FLAGS "${RELEASE_FLAGS} -fsanitize=undefined -fsanitize-trap=all")
+    set(DEBUG_FLAGS "${DEBUG_FLAGS} -fsanitize=address,undefined,leak -fsanitize-trap=all")
+    set(PROFILING_FLAGS "${PROFILING_FLAGS} -fsanitize=address,undefined,leak -fsanitize-trap=all")
+    set(RELEASE_FLAGS "${RELEASE_FLAGS} -fsanitize=address,undefined,leak -fsanitize-trap=all")
 endif ()
 
 # Construct the final flags based on the selected profile and toggleable flags
