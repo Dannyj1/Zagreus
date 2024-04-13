@@ -530,16 +530,35 @@ void Evaluation::evaluatePieces() {
                     blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_OUTPOST);
                     blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_OUTPOST);
                 }
-            }
 
-            int reachableOutposts = popcnt(attacksFrom[index] & eligibleOutpostSquares);
+                uint64_t ownPawnAttacks = attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
+                if (square & ownPawnAttacks) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_OUTPOST_BONUS);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_OUTPOST_BONUS);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_DEFENDED_OUTPOST_BONUS);
+                        blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_DEFENDED_OUTPOST_BONUS);
+                    }
+                }
 
-            if (color == WHITE) {
-                whiteMidgameScore += reachableOutposts * getEvalValue(MIDGAME_KNIGHT_REACHABLE_OUTPOST);
-                whiteEndgameScore += reachableOutposts * getEvalValue(ENDGAME_KNIGHT_REACHABLE_OUTPOST);
-            } else {
-                blackMidgameScore += reachableOutposts * getEvalValue(MIDGAME_KNIGHT_REACHABLE_OUTPOST);
-                blackEndgameScore += reachableOutposts * getEvalValue(ENDGAME_KNIGHT_REACHABLE_OUTPOST);
+                if (square & (A_FILE | H_FILE)) {
+                    if (color == WHITE) {
+                        whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_OUTPOST_EDGE_PENALTY);
+                        whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_OUTPOST_EDGE_PENALTY);
+                    } else {
+                        blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_OUTPOST_EDGE_PENALTY);
+                        blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_OUTPOST_EDGE_PENALTY);
+                    }
+                }
+            } else if (attacksFrom[index] & eligibleOutpostSquares) {
+                if (color == WHITE) {
+                    whiteMidgameScore += getEvalValue(MIDGAME_KNIGHT_REACHABLE_OUTPOST);
+                    whiteEndgameScore += getEvalValue(ENDGAME_KNIGHT_REACHABLE_OUTPOST);
+                } else {
+                    blackMidgameScore += getEvalValue(MIDGAME_KNIGHT_REACHABLE_OUTPOST);
+                    blackEndgameScore += getEvalValue(ENDGAME_KNIGHT_REACHABLE_OUTPOST);
+                }
             }
         }
 

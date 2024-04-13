@@ -25,13 +25,13 @@
 #include "pst.h"
 
 namespace Zagreus {
-int evalValues[76] = {83, 96, 398, 349, 429, 356, 574, 561, 1063, 1054, 8, 2, 5, 1, 2, 4, 4, 5, 24,
-                      -5, -6, 0, -19, 26, 4, 4, -15, 6, -24, 6, -15, -6, -8, -15, -16, 41, -3, -6,
-                      -15, -4, -15, -7, -5, -11, 7, 2, -8, -1, -3, -29, -23, -27, 15, 8, -4, -5, 44,
-                      2, 15, 15, -28, 3, -2, 2, 19, 17, -9, -31, 13, -17, -29, -31,};
+int evalValues[78] = {81, 99, 404, 355, 444, 354, 588, 578, 1097, 1076, 9, 0, 6, 0, 5, 3, 4, 7, 25,
+                      -4, -6, 0, -17, 24, 1, 4, -16, 7, -23, 7, -15, -9, -8, -17, -11, 41, -3, -6,
+                      -17, -4, -9, -11, -8, -11, 8, 5, -6, -1, -6, -29, -19, -32, 14, 10, -2, -7,
+                      47, 2, 18, 10, -28, 5, -5, 6, 26, 11, 7, -36, 17, -24, -32, -30, 24, -5, 12,
+                      4,};
 
-
-int baseEvalValues[76] = {
+int baseEvalValues[80] = {
     100, // MIDGAME_PAWN_MATERIAL
     100, // ENDGAME_PAWN_MATERIAL
     350, // MIDGAME_KNIGHT_MATERIAL
@@ -108,6 +108,10 @@ int baseEvalValues[76] = {
     6, // ENDGAME_KNIGHT_OUTPOST
     5, // MIDGAME_KNIGHT_REACHABLE_OUTPOST
     2, // ENDGAME_KNIGHT_REACHABLE_OUTPOST
+    6, // MIDGAME_KNIGHT_DEFENDED_OUTPOST_BONUS
+    2, // ENDGAME_KNIGHT_DEFENDED_OUTPOST_BONUS
+    -5, // MIDGAME_KNIGHT_OUTPOST_EDGE_PENALTY
+    -2, // ENDGAME_KNIGHT_OUTPOST_EDGE_PENALTY
 };
 
 void printEvalValues() {
