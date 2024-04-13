@@ -52,33 +52,39 @@ int scoreMove(int ply, uint32_t pvMoveCode, Move* move,
         return 250000;
     }
 
-    if (move->captureScore >= 0) {
-        return 100000 + move->captureScore;
+    int score = tt->historyMoves[move->piece][move->to];
+
+    if (move->captureScore > 0) {
+        score += 150000 + move->captureScore;
+    }
+
+    if (move->captureScore == 0) {
+        score += 100000;
     }
 
     if (tt->killerMoves[0][ply] == moveCode) {
-        return 50000;
+        score += 50000;
     }
 
     if (tt->killerMoves[1][ply] == moveCode) {
-        return 40000;
+        score += 40000;
     }
 
     if (tt->killerMoves[2][ply] == moveCode) {
-        return 30000;
+        score += 30000;
     }
 
     if (previousMove.piece != EMPTY && previousMove.to != NO_SQUARE
         && tt->counterMoves[previousMove.piece][previousMove.to] == moveCode) {
-        return 20000;
+        score += 20000;
     }
 
     // No capture score is -1, so we need to use < -1
     if (move->captureScore < -1) {
-        return move->captureScore - 5000;
+        score += move->captureScore - 10000;
     }
 
-    return tt->historyMoves[move->piece][move->to];
+    return score;
 }
 
 template <PieceColor color, GenerationType type>

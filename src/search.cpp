@@ -289,11 +289,13 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                     }
 
                     moveListPool->releaseMoveList(moves);
+
                     if (!IS_ROOT_NODE) {
                         uint32_t bestMoveCode = encodeMove(&bestMove);
                         tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE,
                                         bestMoveCode, board.getPly(), context);
                     }
+
                     return score;
                 }
 
