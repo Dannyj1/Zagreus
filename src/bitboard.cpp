@@ -463,19 +463,19 @@ bool Bitboard::setFromFen(const std::string& fen) {
                 continue;
             } else if (character == 'K') {
                 castlingRights |= WHITE_KINGSIDE;
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_WHITE_KINGSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_WHITE_KINGSIDE_INDEX);
                 continue;
             } else if (character == 'Q') {
                 castlingRights |= WHITE_QUEENSIDE;
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_WHITE_QUEENSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_WHITE_QUEENSIDE_INDEX);
                 continue;
             } else if (character == 'k') {
                 castlingRights |= BLACK_KINGSIDE;
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_BLACK_KINGSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_BLACK_KINGSIDE_INDEX);
                 continue;
             } else if (character == 'q') {
                 castlingRights |= BLACK_QUEENSIDE;
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_BLACK_QUEENSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_BLACK_QUEENSIDE_INDEX);
                 continue;
             }
 
