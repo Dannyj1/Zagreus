@@ -163,19 +163,15 @@ void Bitboard::makeMove(Move& move) {
             if (move.to == G1) {
                 removePiece(H1, WHITE_ROOK);
                 setPiece(F1, WHITE_ROOK);
-                castlingRights |= HAS_WHITE_CASTLED;
             } else if (move.to == C1) {
                 removePiece(A1, WHITE_ROOK);
                 setPiece(D1, WHITE_ROOK);
-                castlingRights |= HAS_WHITE_CASTLED;
             } else if (move.to == G8) {
                 removePiece(H8, BLACK_ROOK);
                 setPiece(F8, BLACK_ROOK);
-                castlingRights |= HAS_BLACK_CASTLED;
             } else if (move.to == C8) {
                 removePiece(A8, BLACK_ROOK);
                 setPiece(D8, BLACK_ROOK);
-                castlingRights |= HAS_BLACK_CASTLED;
             }
 
             undoStack[ply].moveType = CASTLING;
@@ -183,22 +179,22 @@ void Bitboard::makeMove(Move& move) {
 
         if (move.piece == WHITE_KING) {
             if (castlingRights & WHITE_KINGSIDE) {
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_WHITE_KINGSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_WHITE_KINGSIDE_INDEX);
                 castlingRights &= ~WHITE_KINGSIDE;
             }
 
             if (castlingRights & WHITE_QUEENSIDE) {
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_WHITE_QUEENSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_WHITE_QUEENSIDE_INDEX);
                 castlingRights &= ~WHITE_QUEENSIDE;
             }
         } else {
             if (castlingRights & BLACK_KINGSIDE) {
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_BLACK_KINGSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_BLACK_KINGSIDE_INDEX);
                 castlingRights &= ~BLACK_KINGSIDE;
             }
 
             if (castlingRights & BLACK_QUEENSIDE) {
-                zobristHash ^= getEnPassantZobristConstant(ZOBRIST_BLACK_QUEENSIDE_INDEX);
+                zobristHash ^= getCastleZobristConstant(ZOBRIST_BLACK_QUEENSIDE_INDEX);
                 castlingRights &= ~BLACK_QUEENSIDE;
             }
         }
@@ -206,18 +202,18 @@ void Bitboard::makeMove(Move& move) {
 
     if (move.piece == WHITE_ROOK) {
         if (move.from == A1 && (castlingRights & WHITE_QUEENSIDE)) {
-            zobristHash ^= getEnPassantZobristConstant(ZOBRIST_WHITE_QUEENSIDE_INDEX);
+            zobristHash ^= getCastleZobristConstant(ZOBRIST_WHITE_QUEENSIDE_INDEX);
             castlingRights &= ~WHITE_QUEENSIDE;
         } else if (move.from == H1 && (castlingRights & WHITE_KINGSIDE)) {
-            zobristHash ^= getEnPassantZobristConstant(ZOBRIST_WHITE_KINGSIDE_INDEX);
+            zobristHash ^= getCastleZobristConstant(ZOBRIST_WHITE_KINGSIDE_INDEX);
             castlingRights &= ~WHITE_KINGSIDE;
         }
     } else if (move.piece == BLACK_ROOK) {
         if (move.from == A8 && (castlingRights & BLACK_QUEENSIDE)) {
-            zobristHash ^= getEnPassantZobristConstant(ZOBRIST_BLACK_QUEENSIDE_INDEX);
+            zobristHash ^= getCastleZobristConstant(ZOBRIST_BLACK_QUEENSIDE_INDEX);
             castlingRights &= ~BLACK_QUEENSIDE;
         } else if (move.from == H8 && (castlingRights & BLACK_KINGSIDE)) {
-            zobristHash ^= getEnPassantZobristConstant(ZOBRIST_BLACK_KINGSIDE_INDEX);
+            zobristHash ^= getCastleZobristConstant(ZOBRIST_BLACK_KINGSIDE_INDEX);
             castlingRights &= ~BLACK_KINGSIDE;
         }
     }
