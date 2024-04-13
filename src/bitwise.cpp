@@ -31,7 +31,7 @@ static uint64_t pawnAttacks[2][64]{};
 static uint64_t rayAttacks[8][64]{};
 static uint64_t betweenTable[64][64]{};
 
-static uint64_t zobristPieceConstants[COLORS][PIECE_TYPES][SQUARES]{};
+static uint64_t zobristPieceConstants[PIECE_TYPES][SQUARES]{};
 static uint64_t zobristMovingColorConstant{};
 static uint64_t zobristCastleConstants[4]{};
 static uint64_t zobristEnPassantConstants[8]{};
@@ -205,20 +205,18 @@ void initializeBitboardConstants() {
     std::uniform_int_distribution<uint64_t> dis(1ULL, UINT64_MAX);
     std::vector<uint64_t> generatedZobristConstants(ZOBRIST_CONSTANT_SIZE);
 
-    for (int color = 0; color < COLORS; color++) {
-        for (int pieceType = 0; pieceType < PIECE_TYPES; pieceType++) {
-            for (int square = 0; square < SQUARES; square++) {
-                uint64_t zobristConstant = dis(gen);
-                zobristPieceConstants[color][pieceType][square] = zobristConstant;
+    for (int pieceType = 0; pieceType < PIECE_TYPES; pieceType++) {
+        for (int square = 0; square < SQUARES; square++) {
+            uint64_t zobristConstant = dis(gen);
+            zobristPieceConstants[pieceType][square] = zobristConstant;
 
-                // if constant already generated, generate a new one
-                if (std::ranges::find(generatedZobristConstants, zobristConstant) !=
-                    generatedZobristConstants.end()) {
-                    zobristConstant = dis(gen);
-                }
-
-                generatedZobristConstants.push_back(zobristConstant);
+            // if constant already generated, generate a new one
+            if (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+                generatedZobristConstants.end()) {
+                zobristConstant = dis(gen);
             }
+
+            generatedZobristConstants.push_back(zobristConstant);
         }
     }
 
@@ -306,8 +304,8 @@ uint64_t getBetweenSquares(int8_t from, int8_t to) {
     return betweenTable[from][to];
 }
 
-uint64_t getPieceZobristConstant(PieceColor color, PieceType pieceType, int8_t square) {
-    return zobristPieceConstants[color][pieceType][square];
+uint64_t getPieceZobristConstant(PieceType pieceType, int8_t square) {
+    return zobristPieceConstants[pieceType][square];
 }
 
 uint64_t getMovingColorZobristConstant() {

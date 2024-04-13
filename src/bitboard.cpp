@@ -89,8 +89,7 @@ void Bitboard::setPiece(int8_t square, PieceType piece) {
     occupiedBB |= 1ULL << square;
     colorBB[piece % 2] |= 1ULL << square;
     pieceSquareMapping[square] = piece;
-    PieceColor color = static_cast<PieceColor>(piece % 2);
-    zobristHash ^= getPieceZobristConstant(color, piece, square);
+    zobristHash ^= getPieceZobristConstant(piece, square);
     materialCount[piece] += 1;
     pstValues[piece % 2] += getMidgamePstValue(piece, square);
     pstValues[piece % 2 + 2] += getEndgamePstValue(piece, square);
@@ -101,8 +100,7 @@ void Bitboard::removePiece(int8_t square, PieceType piece) {
     occupiedBB &= ~(1ULL << square);
     colorBB[piece % 2] &= ~(1ULL << square);
     pieceSquareMapping[square] = EMPTY;
-    PieceColor color = static_cast<PieceColor>(piece % 2);
-    zobristHash ^= getPieceZobristConstant(color, piece, square);
+    zobristHash ^= getPieceZobristConstant(piece, square);
     materialCount[piece] -= 1;
     pstValues[piece % 2] -= getMidgamePstValue(piece, square);
     pstValues[piece % 2 + 2] -= getEndgamePstValue(piece, square);
