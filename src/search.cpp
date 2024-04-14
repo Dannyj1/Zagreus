@@ -337,7 +337,8 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
             SearchContext& context,
             senjo::SearchStats& searchStats) {
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
-    constexpr TTNodeType IS_PV_NODE = nodeType == PV ? EXACT_NODE : FAIL_LOW_NODE;
+    constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
+    constexpr bool IS_ROOT_NODE = nodeType == ROOT;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -453,15 +454,18 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         return -MATE_SCORE + board.getPly();
     }
 
-    TTNodeType ttNodeType = FAIL_LOW_NODE;
+    if (!IS_ROOT_NODE) {
+        TTNodeType ttNodeType = FAIL_LOW_NODE;
 
-    if (IS_PV_NODE && (bestMove.from != NO_SQUARE && bestMove.to != NO_SQUARE)) {
-        ttNodeType = EXACT_NODE;
+        if (IS_PV_NODE && (bestMove.from != NO_SQUARE && bestMove.to != NO_SQUARE)) {
+            ttNodeType = EXACT_NODE;
+        }
+
+        uint32_t bestMoveCode = encodeMove(&bestMove);
+        tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode, board.getPly(),
+                        context);
     }
 
-    uint32_t bestMoveCode = encodeMove(&bestMove);
-    tt->addPosition(board.getZobristHash(), depth, alpha, ttNodeType, bestMoveCode, board.getPly(),
-                    context);
     return alpha;
 }
 
