@@ -52,6 +52,14 @@ int scoreMove(int ply, uint32_t pvMoveCode, Move* move,
         return 250000;
     }
 
+    if (isRook(move->promotionPiece)) {
+        return -12000;
+    }
+
+    if (isBishop(move->promotionPiece)) {
+        return -10000;
+    }
+
     if (move->captureScore >= 0) {
         return 100000 + move->captureScore;
     }
@@ -187,13 +195,12 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
 
                 if (to >= A8) {
                     addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_QUEEN);
+                    addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_KNIGHT);
 
                     if (type != QSEARCH) {
                         addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_ROOK);
                         addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
                                       WHITE_BISHOP);
-                        addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
-                                      WHITE_KNIGHT);
                     }
                 } else {
                     addMoveToList(moveList, from, to, WHITE_PAWN, captureScore);
