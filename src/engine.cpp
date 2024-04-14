@@ -46,9 +46,21 @@ uint64_t ZagreusEngine::doPerft(Bitboard& perftBoard, PieceColor color, int16_t 
     MoveList* moves = moveListPool->getMoveList();
 
     if (color == WHITE) {
-        generateMoves<WHITE, NORMAL>(perftBoard, moves);
+        bool ownKingInCheck = perftBoard.isKingInCheck<WHITE>();
+
+        if (ownKingInCheck) {
+            generateMoves<WHITE, EVASIONS>(perftBoard, moves);
+        } else {
+            generateMoves<WHITE, NORMAL>(perftBoard, moves);
+        }
     } else if (color == BLACK) {
-        generateMoves<BLACK, NORMAL>(perftBoard, moves);
+        bool ownKingInCheck = perftBoard.isKingInCheck<BLACK>();
+
+        if (ownKingInCheck) {
+            generateMoves<BLACK, EVASIONS>(perftBoard, moves);
+        } else {
+            generateMoves<BLACK, NORMAL>(perftBoard, moves);
+        }
     } else {
         moveListPool->releaseMoveList(moves);
         return 0;

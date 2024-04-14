@@ -91,10 +91,11 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
                 ? WHITE_KING
                 : BLACK_KING));
         uint64_t kingAttackers = bitboard.getSquareAttackersByColor<OPPOSITE_COLOR>(kingSquare);
+        int kingAttackerCount = popcnt(kingAttackers);
 
         // Only generate king moves if there is more than one attacker
-        if (popcnt(kingAttackers) == 1) {
-            int8_t attackerSquare = popLsb(kingAttackers);
+        if (kingAttackerCount == 1) {
+            int8_t attackerSquare = bitscanForward(kingAttackers);
             PieceType attackerPiece = bitboard.getPieceOnSquare(attackerSquare);
 
             if (isSlidingPiece(attackerPiece)) {
@@ -102,10 +103,14 @@ void generateMoves(Bitboard& bitboard, MoveList* moveList) {
             }
 
             evasionSquaresBB |= 1ULL << attackerSquare;
+            evasionSquaresBB &= ~(1ULL << kingSquare);
+        } else {
+            evasionSquaresBB = 0;
         }
     }
 
-    generatePawnMoves<color, type>(bitboard, moveList, evasionSquaresBB);
+    generatePawnMoves<color, type>(bitboard, moveList,
+                                   (evasionSquaresBB | (1ULL << bitboard.getEnPassantSquare())));
     generateKnightMoves<color, type>(bitboard, moveList, evasionSquaresBB);
     generateBishopMoves<color, type>(bitboard, moveList, evasionSquaresBB);
     generateRookMoves<color, type>(bitboard, moveList, evasionSquaresBB);
@@ -183,7 +188,7 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
                 if (to >= A8) {
                     addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_QUEEN);
 
-                    if (type == NORMAL) {
+                    if (type != QSEARCH) {
                         addMoveToList(moveList, from, to, WHITE_PAWN, captureScore, WHITE_ROOK);
                         addMoveToList(moveList, from, to, WHITE_PAWN, captureScore,
                                       WHITE_BISHOP);
@@ -203,7 +208,7 @@ void generatePawnMoves(Bitboard& bitboard, MoveList* moveList, uint64_t evasionS
                 if (to <= H1) {
                     addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_QUEEN);
 
-                    if (type == NORMAL) {
+                    if (type != QSEARCH) {
                         addMoveToList(moveList, from, to, BLACK_PAWN, captureScore, BLACK_ROOK);
                         addMoveToList(moveList, from, to, BLACK_PAWN, captureScore,
                                       BLACK_BISHOP);
