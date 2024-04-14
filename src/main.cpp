@@ -39,6 +39,8 @@ using namespace Zagreus;
 
 void benchmark(bool fast);
 
+void findOptimalSeed();
+
 // Some of these benchmark positions are taken from Stockfish's benchmark.cpp:
 // https://github.com/official-stockfish/Stockfish/blob/master/src/benchmark.cpp
 const std::vector<std::string> BENCHMARK_POSITIONS = {
@@ -163,6 +165,9 @@ int main(int argc, char* argv[]) {
         } else if (strcmp(argv[1], "printeval") == 0) {
             printEvalValues();
             return 0;
+        } else if (strcmp(argv[1], "findoptimalseed") == 0) {
+            findOptimalSeed();
+            return 0;
         }
 
         senjo::Output(senjo::Output::NoPrefix) << "Unknown argument!";
@@ -241,4 +246,90 @@ void benchmark(bool fast) {
     auto nodesPerSecond = static_cast<uint64_t>(static_cast<double>(nodes) / secondsSpent);
 
     senjo::Output(senjo::Output::NoPrefix) << nodes << " nodes " << nodesPerSecond << " nps";
+}
+
+uint64_t hammingDistance(uint64_t x, uint64_t y) {
+    return popcnt(x ^ y);
+}
+
+void findOptimalSeed() {
+    std::uniform_int_distribution<uint64_t> dis(1ULL, UINT64_MAX);
+    std::random_device rd;
+    uint64_t currentSeed = 0xc929d48a2f4e3420ULL;
+    uint64_t bestSeed = 0;
+    double highestAverageDistance = 0;
+
+    std::cout << "Finding optimal seed..." << std::endl;
+
+    while (true) {
+        std::mt19937_64 gen(currentSeed);
+        std::vector<uint64_t> generatedZobristConstants(ZOBRIST_CONSTANT_SIZE);
+
+        for (int pieceType = 0; pieceType < PIECE_TYPES; pieceType++) {
+            for (int square = 0; square < SQUARES; square++) {
+                uint64_t zobristConstant = dis(gen);
+
+                // if constant already generated, generate a new one
+                while (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+                       generatedZobristConstants.end() || zobristConstant == 0ULL) {
+                    zobristConstant = dis(gen);
+                }
+
+                generatedZobristConstants.push_back(zobristConstant);
+            }
+        }
+
+        uint64_t zobristMovingColorConstant = dis(gen);
+
+        while (std::ranges::find(generatedZobristConstants, zobristMovingColorConstant) !=
+               generatedZobristConstants.end() || zobristMovingColorConstant == 0ULL) {
+            zobristMovingColorConstant = dis(gen);
+        }
+
+        generatedZobristConstants.push_back(zobristMovingColorConstant);
+
+        for (int i = 0; i < 4; i++) {
+            uint64_t zobristConstant = dis(gen);
+
+            while (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+                   generatedZobristConstants.end() || zobristConstant == 0ULL) {
+                zobristConstant = dis(gen);
+            }
+
+            generatedZobristConstants.push_back(zobristConstant);
+        }
+
+        for (int i = 0; i < 8; i++) {
+            uint64_t zobristConstant = dis(gen);
+
+            while (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+                   generatedZobristConstants.end() || zobristConstant == 0ULL) {
+                zobristConstant = dis(gen);
+            }
+
+            generatedZobristConstants.push_back(zobristConstant);
+        }
+
+        double totalDistance = 0;
+        int count = 0;
+        for (size_t i = 0; i < generatedZobristConstants.size(); ++i) {
+            for (size_t j = i + 1; j < generatedZobristConstants.size(); ++j) {
+                totalDistance += hammingDistance(generatedZobristConstants[i],
+                                                 generatedZobristConstants[j]);
+                count++;
+            }
+        }
+
+        double averageDistance = totalDistance / count;
+
+        if (averageDistance > highestAverageDistance) {
+            highestAverageDistance = averageDistance;
+            bestSeed = currentSeed;
+            std::cout << "New best seed: 0x" << std::hex << bestSeed <<
+                " with average Hamming distance: " << std::dec << highestAverageDistance <<
+                std::endl;
+        }
+
+        currentSeed = dis(rd);
+    }
 }

@@ -201,7 +201,7 @@ uint64_t calculateKingAttacks(uint64_t kingSet) {
 }
 
 void initializeBitboardConstants() {
-    std::mt19937_64 gen(0x6C7CCC580A348E7BULL);
+    std::mt19937_64 gen(0xc929d48a2f4e3420ULL);
     std::uniform_int_distribution<uint64_t> dis(1ULL, UINT64_MAX);
     std::vector<uint64_t> generatedZobristConstants(ZOBRIST_CONSTANT_SIZE);
 
@@ -211,8 +211,8 @@ void initializeBitboardConstants() {
             zobristPieceConstants[pieceType][square] = zobristConstant;
 
             // if constant already generated, generate a new one
-            if (std::ranges::find(generatedZobristConstants, zobristConstant) !=
-                generatedZobristConstants.end()) {
+            while (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+                   generatedZobristConstants.end() || zobristConstant == 0ULL) {
                 zobristConstant = dis(gen);
             }
 
@@ -222,12 +222,35 @@ void initializeBitboardConstants() {
 
     zobristMovingColorConstant = dis(gen);
 
-    for (int i = 0; i < 4; i++) {
-        zobristCastleConstants[i] = dis(gen);
+    while (std::ranges::find(generatedZobristConstants, zobristMovingColorConstant) !=
+           generatedZobristConstants.end() || zobristMovingColorConstant == 0ULL) {
+        zobristMovingColorConstant = dis(gen);
     }
 
-    for (int i = 0; i < 8; i++) {
-        zobristEnPassantConstants[i] = dis(gen);
+    generatedZobristConstants.push_back(zobristMovingColorConstant);
+
+    for (uint64_t& zobristCastleConstant : zobristCastleConstants) {
+        uint64_t zobristConstant = dis(gen);
+
+        while (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+               generatedZobristConstants.end() || zobristConstant == 0ULL) {
+            zobristConstant = dis(gen);
+        }
+
+        zobristCastleConstant = zobristConstant;
+        generatedZobristConstants.push_back(zobristConstant);
+    }
+
+    for (uint64_t& zobristEnPassantConstant : zobristEnPassantConstants) {
+        uint64_t zobristConstant = dis(gen);
+
+        while (std::ranges::find(generatedZobristConstants, zobristConstant) !=
+               generatedZobristConstants.end() || zobristConstant == 0ULL) {
+            zobristConstant = dis(gen);
+        }
+
+        zobristEnPassantConstant = zobristConstant;
+        generatedZobristConstants.push_back(zobristConstant);
     }
 
     uint64_t sqBB = 1ULL;
