@@ -76,6 +76,8 @@ namespace senjo {
 
         void doPositionCommand(const std::string &line, Parameters &params);
 
+        void doTraceCommand(Parameters &params);
+
         void execute(std::shared_ptr<BackgroundCommand> command, Parameters &params);
 
         ChessEngine &engine;

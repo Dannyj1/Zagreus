@@ -207,7 +207,6 @@ namespace senjo {
         //! \param[in] values The set of legal values
         //--------------------------------------------------------------------------
         virtual void setComboValues(const std::set<int64_t> &values);
-
     private:
         OptionType optType;
         std::string optName;
