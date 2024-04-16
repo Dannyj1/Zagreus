@@ -38,6 +38,8 @@ struct SearchContext {
     bool suddenScoreDrop = false;
 };
 
+void initializeSearch();
+
 template <PieceColor color>
 Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
                  senjo::SearchStats& searchStats);
