@@ -135,4 +135,22 @@ void TranspositionTable::ageHistoryTable() {
         }
     }
 }
+
+void TranspositionTable::reset() {
+    for (uint64_t i = 0; i < hashSize; i++) {
+        transpositionTable[i] = {};
+    }
+
+    for (int i = 0; i < 3; i++) {
+        killerMoves[i] = new uint32_t[MAX_PLY]{};
+    }
+
+    for (int i = 0; i < PIECE_TYPES; i++) {
+        historyMoves[i] = new uint32_t[64]{};
+    }
+
+    for (int i = 0; i < PIECE_TYPES; i++) {
+        counterMoves[i] = new uint32_t[64]{};
+    }
+}
 } // namespace Zagreus
