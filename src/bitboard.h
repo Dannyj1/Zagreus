@@ -341,12 +341,13 @@ public:
     template <PieceColor color>
     bool isIsolatedPawn(int8_t square) {
         uint64_t neighborMask = 0;
+        uint64_t squareBB = 1ULL << square;
 
-        if (square % 8 != 0) {
+        if (!(squareBB & A_FILE)) {
             neighborMask |= getFile(square - 1);
         }
 
-        if (square % 8 != 7) {
+        if (!(squareBB & H_FILE)) {
             neighborMask |= getFile(square + 1);
         }
 
@@ -362,17 +363,18 @@ public:
         Direction direction = color == WHITE ? NORTH : SOUTH;
         uint64_t neighborMask = getRayAttack(square, direction);
         uint64_t pawnBB = getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN);
+        uint64_t squareBB = 1ULL << square;
 
         if (neighborMask & pawnBB) {
             return false;
         }
 
-        if (square % 8 != 0) {
+        if (!(squareBB & A_FILE)) {
             // neighboring file
             neighborMask |= getRayAttack(square - 1, direction);
         }
 
-        if (square % 8 != 7) {
+        if (!(squareBB & H_FILE)) {
             neighborMask |= getRayAttack(square + 1, direction);
         }
 
@@ -409,9 +411,7 @@ public:
 
     template <PieceColor color>
     int getAmountOfPawns() {
-        return popcnt(getColorBoard<color>() & getPieceBoard(color == WHITE
-                                                                 ? WHITE_PAWN
-                                                                 : BLACK_PAWN));
+        return popcnt(getPieceBoard(color == WHITE ? WHITE_PAWN : BLACK_PAWN));
     }
 
     template <PieceColor color>
