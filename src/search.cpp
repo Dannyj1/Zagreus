@@ -381,9 +381,9 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
             <OPPOSITE_COLOR>() > 0) {
             int maxQueenValue = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
                                          getEvalValue(MIDGAME_QUEEN_MATERIAL));
-            int delta = maxQueenValue;
             int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL),
                                         getEvalValue(MIDGAME_PAWN_MATERIAL));
+            int delta = maxQueenValue + 100;
 
             if (previousMove.promotionPiece != EMPTY) {
                 delta += maxQueenValue - minPawnValue;
