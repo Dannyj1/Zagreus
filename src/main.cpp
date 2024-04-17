@@ -208,6 +208,7 @@ void benchmark(bool fast) {
 
     for (const std::string& position : positions) {
         for (int i = 0; i < 2; i++) {
+            TranspositionTable::getTT()->reset();
             PieceColor color = i == 0 ? WHITE : BLACK;
 
             bb.setFromFen(position);

@@ -100,5 +100,7 @@ public:
     TTEntry* getEntry(uint64_t zobristHash);
 
     void ageHistoryTable();
+
+    void reset();
 };
 } // namespace Zagreus
