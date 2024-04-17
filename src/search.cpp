@@ -281,11 +281,16 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
                 if (score >= beta) {
                     if (move.captureScore == NO_CAPTURE_SCORE && move.promotionPiece == EMPTY) {
+                        uint64_t moveCode = encodeMove(&move);
                         tt->killerMoves[2][board.getPly()] = tt->killerMoves[1][board.getPly()];
                         tt->killerMoves[1][board.getPly()] = tt->killerMoves[0][board.getPly()];
-                        tt->killerMoves[0][board.getPly()] = encodeMove(&move);
+                        tt->killerMoves[0][board.getPly()] = moveCode;
                         tt->historyMoves[move.piece][move.to] += depth * depth;
-                        tt->counterMoves[move.piece][move.to] = encodeMove(&move);
+
+                        if (!isPreviousMoveNull) {
+                            tt->counterMoves[board.getPreviousMove().piece][board.getPreviousMove().
+                                to] = moveCode;
+                        }
                     }
 
                     moveListPool->releaseMoveList(moves);
