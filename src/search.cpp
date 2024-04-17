@@ -40,7 +40,7 @@ void initializeSearch() {
         for (int movesPlayed = 0; movesPlayed < MAX_MOVES; movesPlayed++) {
             // Formula from ethereal: https://github.com/AndyGrant/Ethereal/blob/a7a7a8ed69cbbb4e9a3b02fc5d3d0d9facfa1526/src/search.c#L155C13-L155C21
             // Will probably tune the constants using SPSA at some point
-            lmrReductions[depth][movesPlayed] = static_cast<int>(0.7844 + std::log(depth) * log(movesPlayed) / 2.4696);
+            lmrReductions[depth][movesPlayed] = static_cast<int>(0.78 + std::log(depth) * log(movesPlayed) / 2.47);
         }
     }
 }
@@ -244,7 +244,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         // Late Move Reduction (LMR, not in Root nodes)
         if (!IS_ROOT_NODE && depth >= 3 && move.captureScore == NO_CAPTURE_SCORE && move.
-            promotionPiece == EMPTY && movePicker.movesSearched() > 2) {
+            promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
             int R = std::max(0, lmrReductions[depth][movePicker.movesSearched()]);
 
             // Increase reduction for non-PV nodes
@@ -269,12 +269,16 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
             // Don't drop into qsearch
             R = std::min(depth - 1, std::max(1, R));
 
-            score = -search<OPPOSITE_COLOR, NO_PV>(
-                board, -alpha - 1, -alpha, depth - R, context, searchStats, nodeLine);
-            didLmr = true;
+            // Depth - 1 (R = 1) is the "default" search, so skip LMR
+            if (R > 1) {
+                score = -search<OPPOSITE_COLOR, NO_PV>(
+                    board, -alpha - 1, -alpha, depth - R, context, searchStats, nodeLine);
 
-            if (score > alpha && R != 1) {
-                shouldFullSearch = true;
+                didLmr = true;
+
+                if (score > alpha) {
+                    shouldFullSearch = true;
+                }
             }
         }
 
