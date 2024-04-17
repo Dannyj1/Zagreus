@@ -73,8 +73,7 @@ int scoreMove(int ply, uint32_t pvMoveCode, Move* move,
         return 20000;
     }
 
-    // No capture score is -1, so we need to use < -1
-    if (move->captureScore < -1) {
+    if (move->captureScore < NO_CAPTURE_SCORE) {
         return move->captureScore - 5000;
     }
 

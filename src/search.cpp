@@ -178,9 +178,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     constexpr bool isPreviousMoveNull = nodeType == NULL_MOVE;
 
     // Null move pruning
-    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull && board.
-        getAmountOfMinorOrMajorPieces<
-            color>() > 0) {
+    if (!IS_PV_NODE && depth >= 3 && !isPreviousMoveNull
+        && board.getAmountOfMinorOrMajorPieces<color>() > 0) {
         if (!ownKingInCheck && Evaluation(board).evaluate<false>() >= beta) {
             int r = 3 + (depth >= 6) + (depth >= 12);
 
@@ -294,6 +293,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                     }
 
                     moveListPool->releaseMoveList(moves);
+
                     if (!IS_ROOT_NODE) {
                         uint32_t bestMoveCode = encodeMove(&bestMove);
                         tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE,
@@ -379,16 +379,17 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         if (board.getAmountOfMinorOrMajorPieces<color>() >= 2 && board.getAmountOfMinorOrMajorPieces
             <OPPOSITE_COLOR>() >= 2 && board.getAmountOfPawns<color>() > 0 && board.getAmountOfPawns
             <OPPOSITE_COLOR>() > 0) {
-            int queenDelta = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
-                                      getEvalValue(MIDGAME_QUEEN_MATERIAL));
+            int maxQueenValue = std::max(getEvalValue(ENDGAME_QUEEN_MATERIAL),
+                                         getEvalValue(MIDGAME_QUEEN_MATERIAL));
+            int delta = maxQueenValue;
             int minPawnValue = std::min(getEvalValue(ENDGAME_PAWN_MATERIAL),
                                         getEvalValue(MIDGAME_PAWN_MATERIAL));
 
             if (previousMove.promotionPiece != EMPTY) {
-                queenDelta += getPieceWeight(previousMove.promotionPiece) - minPawnValue;
+                delta += maxQueenValue - minPawnValue;
             }
 
-            if (standPat < alpha - queenDelta) {
+            if (standPat < alpha - delta) {
                 return alpha;
             }
         }
