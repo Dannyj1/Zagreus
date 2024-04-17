@@ -137,6 +137,18 @@ void TranspositionTable::ageHistoryTable() {
 }
 
 void TranspositionTable::reset() {
+    for (int i = 0; i < 3; i++) {
+        delete[] killerMoves[i];
+    }
+
+    for (int i = 0; i < 12; i++) {
+        delete[] historyMoves[i];
+    }
+
+    for (int i = 0; i < PIECE_TYPES; i++) {
+        delete[] counterMoves[i];
+    }
+
     for (uint64_t i = 0; i < hashSize; i++) {
         transpositionTable[i] = {};
     }
