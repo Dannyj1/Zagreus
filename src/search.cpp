@@ -244,8 +244,8 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         // Late Move Reduction (LMR, not in Root nodes)
         if (!IS_ROOT_NODE && depth >= 3 && move.captureScore == NO_CAPTURE_SCORE && move.
-            promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
-            int R = std::max(0, lmrReductions[depth][movePicker.movesSearched()]);
+            promotionPiece == EMPTY && legalMoveCount > 1) {
+            int R = std::max(0, lmrReductions[depth][legalMoveCount]);
 
             // Increase reduction for non-PV nodes
             R += !IS_PV_NODE;
