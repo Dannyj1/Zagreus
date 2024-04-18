@@ -110,6 +110,7 @@ const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
 
 int main(int argc, char* argv[]) {
     initializeBitboardConstants();
+    initializeSearch();
     initializeMagicBitboards();
     initializePst();
 

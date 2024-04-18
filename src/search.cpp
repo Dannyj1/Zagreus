@@ -33,6 +33,17 @@
 
 namespace Zagreus {
 TranspositionTable* tt = TranspositionTable::getTT();
+static int lmrReductions[MAX_PLY][MAX_MOVES]{};
+
+void initializeSearch() {
+    for (int depth = 0; depth < MAX_PLY; depth++) {
+        for (int movesPlayed = 0; movesPlayed < MAX_MOVES; movesPlayed++) {
+            // Formula from ethereal: https://github.com/AndyGrant/Ethereal/blob/a7a7a8ed69cbbb4e9a3b02fc5d3d0d9facfa1526/src/search.c#L155C13-L155C21
+            // Will probably tune the constants using SPSA at some point
+            lmrReductions[depth][movesPlayed] = static_cast<int>(0.78 + std::log(depth) * log(movesPlayed) / 2.47);
+        }
+    }
+}
 
 template <PieceColor color>
 Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
@@ -138,7 +149,6 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
     constexpr bool IS_ROOT_NODE = nodeType == ROOT;
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
-    int extension = 0;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -157,7 +167,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         int see = board.seeOpponent<OPPOSITE_COLOR>(board.getPreviousMove().to);
 
         if (see >= NO_CAPTURE_SCORE) {
-            extension += 1;
+            depth += 1;
         }
     }
 
@@ -229,43 +239,62 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
         legalMoveCount += 1;
 
         int score = 0;
-        if (IS_PV_NODE && doPvSearch) {
-            score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1 + extension,
-                                                context,
-                                                searchStats, nodeLine);
-        } else {
-            bool didLmr = false;
-            bool shouldFullSearch = false;
+        bool didLmr = false;
+        bool shouldFullSearch = false;
 
-            // LMR (Not in PV/Root nodes)
-            if (depth >= 3 && !extension && move.captureScore == NO_CAPTURE_SCORE && move.
-                promotionPiece == EMPTY && movePicker.movesSearched() > 4) {
-                if (!board.isKingInCheck<color>() && !board.isKingInCheck<OPPOSITE_COLOR>()) {
-                    int R = 1;
+        // Late Move Reduction (LMR, not in Root nodes)
+        if (!IS_ROOT_NODE && depth >= 3 && move.captureScore == NO_CAPTURE_SCORE && move.
+            promotionPiece == EMPTY && legalMoveCount > 1) {
+            int R = std::max(0, lmrReductions[depth][legalMoveCount]);
 
-                    // After 60% of the moves have been made, increase R by 1
-                    if (movePicker.movesSearched() > std::ceil(moves->size * 0.6)) {
-                        R += 1;
-                    }
+            // Increase reduction for non-PV nodes
+            R += !IS_PV_NODE;
 
-                    score = -search<OPPOSITE_COLOR, NO_PV>(
-                        board, -alpha - 1, -alpha, depth - 1 - R, context, searchStats, nodeLine);
-                    didLmr = true;
+            // Decrease reduction when in check
+            R -= ownKingInCheck;
 
-                    if (score > alpha) {
-                        shouldFullSearch = true;
-                    }
-                }
+            // Decrease reduction for killer moves
+            uint64_t moveCode = encodeMove(&move);
+            if (tt->killerMoves[0][board.getPly()] == moveCode
+                || tt->killerMoves[1][board.getPly()] == moveCode
+                || tt->killerMoves[2][board.getPly()] == moveCode) {
+                R -= 1;
             }
 
-            if (!didLmr || shouldFullSearch) {
+            // Decrease for counter moves
+            if (tt->counterMoves[move.piece][move.to] == moveCode) {
+                R -= 1;
+            }
+
+            // Don't drop into qsearch
+            R = std::min(depth - 1, std::max(1, R));
+
+            // Depth - 1 (R = 1) is the "default" search, so skip LMR
+            if (R > 1) {
+                score = -search<OPPOSITE_COLOR, NO_PV>(
+                    board, -alpha - 1, -alpha, depth - R, context, searchStats, nodeLine);
+
+                didLmr = true;
+
+                if (score > alpha) {
+                    shouldFullSearch = true;
+                }
+            }
+        }
+
+        if (!didLmr || shouldFullSearch) {
+            if (IS_PV_NODE && doPvSearch) {
+                score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha, depth - 1,
+                                                    context,
+                                                    searchStats, nodeLine);
+            } else {
                 score = -search<OPPOSITE_COLOR, NO_PV>(board, -alpha - 1, -alpha,
-                                                       depth - 1 + extension, context,
+                                                       depth - 1, context,
                                                        searchStats, nodeLine);
 
                 if (score > alpha && score < beta) {
                     score = -search<OPPOSITE_COLOR, PV>(board, -beta, -alpha,
-                                                        depth - 1 + extension, context,
+                                                        depth - 1, context,
                                                         searchStats, nodeLine);
                 }
             }
