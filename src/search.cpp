@@ -40,7 +40,8 @@ void initializeSearch() {
         for (int movesPlayed = 0; movesPlayed < MAX_MOVES; movesPlayed++) {
             // Formula from ethereal: https://github.com/AndyGrant/Ethereal/blob/a7a7a8ed69cbbb4e9a3b02fc5d3d0d9facfa1526/src/search.c#L155C13-L155C21
             // Will probably tune the constants using SPSA at some point
-            lmrReductions[depth][movesPlayed] = static_cast<int>(0.78 + std::log(depth) * log(movesPlayed) / 2.47);
+            lmrReductions[depth][movesPlayed] = static_cast<int>(
+                0.78 + std::log(depth) * log(movesPlayed) / 2.47);
         }
     }
 }
