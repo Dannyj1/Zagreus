@@ -149,6 +149,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     constexpr bool IS_ROOT_NODE = nodeType == ROOT;
     constexpr bool IS_PV_NODE = nodeType == PV || IS_ROOT_NODE;
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
+    int extension = 0;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -168,6 +169,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
 
         if (see >= NO_CAPTURE_SCORE) {
             depth += 1;
+            extension += 1;
         }
     }
 
@@ -177,7 +179,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
     }
 
     if (!IS_PV_NODE && board.getHalfMoveClock() < 80) {
-        int ttScore = tt->getScore(board.getZobristHash(), depth, alpha,
+        int ttScore = tt->getScore(board.getZobristHash(), depth - extension, alpha,
                                    beta, board.getPly());
 
         if (ttScore != INT32_MIN) {
