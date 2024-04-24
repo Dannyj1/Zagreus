@@ -18,6 +18,8 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <fstream>
+
 #include "catch2/catch_test_macros.hpp"
 
 #include "../src/bitboard.h"
@@ -282,6 +284,54 @@ TEST_CASE("Pawn Evaluation Symmetry", "[eval_symmetry]") {
     }
 }
 
-TEST_CASE("Knight Evaluation Symmetry", "[eval_symmetry]") {
+// Tests from: https://github.com/TerjeKir/EngineTests/tree/master/testfiles
+TEST_CASE("General epd positions symmetry test", "[eval_symmetry][epd]") {
+    Zagreus::Bitboard bb{};
+    // Load all lines from all.epd, if it exists, otherwise skip test
+    std::ifstream epdFile("tests/all.epd");
 
+    if (!epdFile.is_open()) {
+        // try ../tests/all.epd
+        epdFile.open("../tests/all.epd");
+
+        if (!epdFile.is_open()) {
+            std::cout << "all.epd not found, skipping test" << std::endl;
+            return;
+        }
+    }
+
+    std::vector<std::string> positions;
+
+    // Read all lines from the file
+    std::string line;
+    while (std::getline(epdFile, line)) {
+        // Skip empty lines or lines starting with a #
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+
+        // If the line has a ;, remove it and everything after it
+        size_t commentPos = line.find(';');
+
+        if (commentPos != std::string::npos) {
+            line = line.substr(0, commentPos);
+        }
+
+        positions.push_back(line);
+    }
+
+    // Close the file
+    epdFile.close();
+
+    for (std::string& position : positions) {
+        std::cout << "Position: " << position << std::endl;
+        bb.setFromFen(position);
+        int eval1 = Zagreus::Evaluation(bb).evaluate<false>();
+
+        std::string mirroredFen = Zagreus::mirrorFen(position);
+        bb.setFromFen(mirroredFen);
+        int eval2 = Zagreus::Evaluation(bb).evaluate<false>();
+
+        REQUIRE(eval1 == eval2);
+    }
 }

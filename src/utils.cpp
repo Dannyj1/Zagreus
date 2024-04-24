@@ -22,6 +22,8 @@
 
 #include <x86intrin.h>
 
+#include <sstream>
+
 namespace Zagreus {
 std::string getNotation(int8_t square) {
     std::string notation = "";
@@ -68,5 +70,69 @@ char getCharacterForPieceType(PieceType pieceType) {
         case EMPTY:
             return ' ';
     }
+}
+
+std::string mirrorFen(std::string& fen) {
+    // Split the input FEN string into main parts
+    std::istringstream iss(fen);
+    std::vector<std::string> parts;
+    std::string part;
+    while (getline(iss, part, ' ')) {
+        parts.push_back(part);
+    }
+
+    // Split the board configuration into rows
+    std::vector<std::string> rows;
+    std::istringstream rowStream(parts[0]);
+    std::string row;
+    while (getline(rowStream, row, '/')) {
+        rows.push_back(row);
+    }
+
+    // Reverse the order of rows and swap the case of each character
+    std::reverse(rows.begin(), rows.end());
+    for (auto& r : rows) {
+        for (char& ch : r) {
+            if (std::islower(ch)) {
+                ch = std::toupper(ch);
+            } else if (std::isupper(ch)) {
+                ch = std::tolower(ch);
+            }
+        }
+    }
+
+    // Join the reversed rows back into a single string
+    std::ostringstream mirroredStream;
+    for (size_t i = 0; i < rows.size(); i++) {
+        mirroredStream << rows[i];
+        if (i != rows.size() - 1) {
+            mirroredStream << '/';
+        }
+    }
+    std::string mirrored = mirroredStream.str();
+
+    // Swap the moving color
+    if (parts[1] == "b") {
+        parts[1] = "w";
+    } else {
+        parts[1] = "b";
+    }
+
+    // Swap the case of the castling rights
+    for (char& ch : parts[2]) {
+        if (std::islower(ch)) {
+            ch = std::toupper(ch);
+        } else if (std::isupper(ch)) {
+            ch = std::tolower(ch);
+        }
+    }
+
+    // Combine the modified parts back into the final FEN string
+    std::ostringstream resultStream;
+    resultStream << mirrored << ' ' << parts[1] << ' ' << parts[2];
+    for (size_t i = 3; i < parts.size(); i++) {
+        resultStream << ' ' << parts[i];
+    }
+    return resultStream.str();
 }
 } // namespace Zagreus

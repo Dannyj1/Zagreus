@@ -146,8 +146,8 @@ template <PieceColor color, NodeType nodeType>
 int search(Bitboard& board, int alpha, int beta, int16_t depth,
            SearchContext& context,
            senjo::SearchStats& searchStats, Line& pvLine) {
-    constexpr bool IS_PV_NODE = nodeType == PV || nodeType == ROOT;
     constexpr bool IS_ROOT_NODE = nodeType == ROOT;
+    constexpr bool IS_PV_NODE = nodeType == PV || IS_ROOT_NODE;
     constexpr PieceColor OPPOSITE_COLOR = color == WHITE ? BLACK : WHITE;
 
     if (board.isDraw()) {

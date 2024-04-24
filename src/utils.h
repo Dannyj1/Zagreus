@@ -94,4 +94,7 @@ inline bool isKing(PieceType pieceType) {
 inline bool isSlidingPiece(PieceType pieceType) {
     return isBishop(pieceType) || isRook(pieceType) || isQueen(pieceType);
 }
+
+std::string mirrorFen(std::string& fen);
+
 } // namespace Zagreus
