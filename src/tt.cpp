@@ -31,7 +31,8 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int sc
                                      SearchContext& context) {
     // current time
     auto currentTime = std::chrono::steady_clock::now();
-    if (score > MAX_POSITIVE || score < MAX_NEGATIVE || currentTime > context.endTime) {
+    if (score > (MATE_SCORE + MAX_PLY) || score < -(MATE_SCORE + MAX_PLY) || currentTime > context.
+        endTime) {
         return;
     }
 
@@ -43,18 +44,16 @@ void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int sc
     TTEntry* entry = &transpositionTable[index];
 
     if (depth > entry->depth) {
-        int adjustedScore = score;
-
-        if (adjustedScore >= (MATE_SCORE - MAX_PLY)) {
-            adjustedScore += ply;
-        } else if (adjustedScore <= (-MATE_SCORE + MAX_PLY)) {
-            adjustedScore -= ply;
+        if (score >= (MATE_SCORE - MAX_PLY)) {
+            score += ply;
+        } else if (score <= -(MATE_SCORE - MAX_PLY)) {
+            score -= ply;
         }
 
         entry->validationHash = zobristHash >> 32;
         entry->depth = static_cast<int8_t>(depth);
         entry->bestMoveCode = bestMoveCode;
-        entry->score = adjustedScore;
+        entry->score = score;
         entry->nodeType = nodeType;
     }
 }
@@ -120,6 +119,8 @@ void TranspositionTable::setTableSize(int megaBytes) {
 
     for (uint64_t i = 0; i < entryCount; i++) {
         transpositionTable[i] = {};
+        transpositionTable[i].depth = INT8_MIN;
+        transpositionTable[i].score = 0;
     }
 }
 
