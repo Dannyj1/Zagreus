@@ -330,6 +330,7 @@ int search(Bitboard& board, int alpha, int beta, int16_t depth,
                         tt->addPosition(board.getZobristHash(), depth, score, FAIL_HIGH_NODE,
                                         bestMoveCode, board.getPly(), context);
                     }
+
                     return score;
                 }
 
@@ -448,10 +449,6 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
     while (movePicker.hasNext()) {
         Move move = movePicker.getNextMove();
 
-        if (!inCheck && move.captureScore < NO_CAPTURE_SCORE) {
-            continue;
-        }
-
         board.makeMove(move);
 
         if (board.isKingInCheck<color>()) {
@@ -460,6 +457,11 @@ int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
         }
 
         legalMoveCount += 1;
+
+        if (!inCheck && move.captureScore < NO_CAPTURE_SCORE) {
+            board.unmakeMove(move);
+            continue;
+        }
 
         int score = -qsearch<OPPOSITE_COLOR, nodeType>(board, -beta, -alpha, depth - 1, context,
                                                        searchStats);
