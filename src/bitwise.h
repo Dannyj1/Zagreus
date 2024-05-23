@@ -1,3 +1,4 @@
+
 /*
  This file is part of Zagreus.
 
@@ -18,11 +19,15 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "uci.h"
+#pragma once
+#include <cstdint>
 
-int main(int argc, char *argv[]) {
-    Zagreus::Engine engine;
+namespace Zagreus::Bitwise {
+inline uint64_t popcnt(uint64_t bb);
 
-    engine.startUci();
-    return 0;
-}
+inline int bitscanForward(uint64_t bb);
+
+inline int bitscanReverse(uint64_t bb);
+
+inline uint64_t popLsb(uint64_t& bb);
+} // namespace Zagreus::Bitwise

@@ -10,7 +10,7 @@
  (at your option) any later version.
 
  Zagreus is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
+ but WITHOUstd::string ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
 
@@ -18,4 +18,404 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// ReSharper disable CppRedundantControlFlowJump
+#include "uci.h"
 
+#include <iostream>
+#include <sstream>
+#include <string>
+
+namespace Zagreus {
+void Engine::doSetup() {
+    // According to the UCI specification, bitboard, magic bitboards and other stuff should be done only when "isready" or "setoption" is called
+    if (didSetup) {
+        return;
+    }
+
+    // TODO: setup here
+
+    didSetup = true;
+}
+
+void Engine::printStartupMessage() {
+    sendMessage("Zagreus  Copyright (C) 2023-2024  Danny Jelsma");
+    sendMessage("");
+    sendMessage("This program comes with ABSOLUTELY NO WARRANTY.");
+    sendMessage("This is free software, and you are welcome to redistribute it");
+    sendMessage("under the conditions of the GNU Affero General Public License v3.0 or later.");
+    sendMessage("You should have received a copy of the GNU Affero General Public License");
+    sendMessage("along with this program. If not, see <https://www.gnu.org/licenses/>.");
+    sendMessage("");
+    sendMessage(" ______ ");
+    sendMessage(" |___  / ");
+    sendMessage("    / /  __ _   __ _  _ __  ___  _   _  ___ ");
+    sendMessage("   / /  / _` | / _` || '__|/ _ \\| | | |/ __|");
+    sendMessage("  / /__| (_| || (_| || |  |  __/| |_| |\\__ \\");
+    sendMessage(R"( /_____|\__,_| \__, ||_|   \___| \__,_||___/)");
+    sendMessage("                __/ | ");
+    sendMessage("               |___/ ");
+    sendMessage("");
+
+    std::string majorVersion = ZAGREUS_VERSION_MAJOR;
+    std::string minorVersion = ZAGREUS_VERSION_MINOR;
+    std::string versionString = "v" + majorVersion + "." + minorVersion;
+
+    if (majorVersion == "dev") {
+        versionString = majorVersion + "-" + minorVersion;
+    }
+
+    sendMessage("Zagreus UCI chess engine " + versionString + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
+}
+
+void Engine::handleUciCommand() {
+    std::string majorVersion = ZAGREUS_VERSION_MAJOR;
+    std::string minorVersion = ZAGREUS_VERSION_MINOR;
+    std::string versionString = "v" + majorVersion + "." + minorVersion;
+
+    if (majorVersion == "dev") {
+        versionString = majorVersion + "-" + minorVersion;
+    }
+
+    sendMessage("id name Zagreus " + versionString);
+    sendMessage("id author Danny Jelsma");
+
+    if (!this->options.empty()) {
+        for (auto& [name, option] : this->options) {
+            sendMessage(option.toString());
+        }
+    }
+
+    sendMessage("uciok");
+}
+
+void Engine::handleDebugCommand(const std::string& args) {
+    sendMessage("Debug mode is currently not implemented.");
+}
+
+void Engine::handleIsReadyCommand(const std::string& args) {
+    if (!didSetup) {
+        doSetup();
+    }
+
+    sendMessage("readyok");
+}
+
+void Engine::handleSetOptionCommand(const std::string& args) {
+    if (!didSetup) {
+        doSetup();
+    }
+
+    std::istringstream iss(args);
+    std::string word;
+    std::string section = "";
+    std::string name;
+    std::string value;
+
+    while (iss >> word) {
+        std::string lowercaseWord = word;
+        std::ranges::transform(lowercaseWord, lowercaseWord.begin(), tolower);
+
+        if (lowercaseWord == "name") {
+            section = word;
+            continue;
+        }
+
+        if (lowercaseWord == "value") {
+            section = word;
+            continue;
+        }
+
+        if (section == "name") {
+            if (name.empty()) {
+                name = word;
+            } else {
+                name += " " + word;
+            }
+        }
+
+        if (section == "value") {
+            if (value.empty()) {
+                value = word;
+            } else {
+                value += " " + word;
+            }
+        }
+    }
+
+    if (name.empty()) {
+        sendMessage("ERROR: No option name provided.");
+        return;
+    }
+
+    if (!hasOption(name)) {
+        sendMessage("ERROR: Option " + name + " does not exist.");
+        return;
+    }
+
+    UCIOption& option = this->getOption(name);
+
+    if (value.empty()) {
+        if (option.getOptionType() == Button) {
+            if (option.getValue() == "true") {
+                value = "false";
+            } else {
+                value = "true";
+            }
+        } else {
+            sendMessage("ERROR: No option value provided.");
+            return;
+        }
+    }
+
+    option.setValue(value);
+}
+
+void Engine::handleUciNewGameCommand(const std::string& args) {
+
+}
+
+void Engine::handlePositionCommand(const std::string& args) {
+
+}
+
+void Engine::handleGoCommand(const std::string& args) {
+
+}
+
+void Engine::handleStopCommand(const std::string& args) {
+
+}
+
+void Engine::handlePonderHitCommand(const std::string& args) {
+
+}
+
+void Engine::handleQuitCommand(const std::string& args) {
+
+}
+
+void Engine::processCommand(const std::string& command, const std::string& args) {
+    if (command == "uci") {
+        handleUciCommand();
+    } else if (command == "debug") {
+        handleDebugCommand(args);
+    } else if (command == "isready") {
+        handleIsReadyCommand(args);
+    } else if (command == "setoption") {
+        handleSetOptionCommand(args);
+    } else if (command == "register") {
+        // Not relevant for our engine
+        return;
+    } else if (command == "ucinewgame") {
+        handleUciNewGameCommand(args);
+    } else if (command == "position") {
+        handlePositionCommand(args);
+    } else if (command == "go") {
+        handleGoCommand(args);
+    } else if (command == "stop") {
+        handleStopCommand(args);
+    } else if (command == "ponderhit") {
+        handlePonderHitCommand(args);
+    } else if (command == "quit") {
+        handleQuitCommand(args);
+    } else {
+        // If unknown, we must skip it and process the rest.
+        if (args.empty() || args == " " || args == "\n") {
+            std::cout << "Unknown command: " << command << std::endl;
+            return;
+        }
+
+        std::string newCommand;
+        std::string newArgs;
+
+        if (args.find(' ') != std::string::npos) {
+            newCommand = args.substr(0, args.find(' '));
+            newArgs = args.substr(args.find(' ') + 1);
+        } else {
+            newCommand = args;
+        }
+
+        processCommand(newCommand, newArgs);
+    }
+}
+
+void Engine::addOption(UCIOption& option) {
+    this->options[option.getName()] = option;
+}
+
+UCIOption& Engine::getOption(const std::string& name) {
+    return this->options[name];
+}
+
+bool Engine::hasOption(const std::string& name) {
+    return this->options.contains(name);
+}
+
+void Engine::startUci() {
+    printStartupMessage();
+
+    // TODO: make sure that anything that is not related to UCI input reading is done in a separate thread, as "the engine must be able to read input even when thinking"
+    std::string line;
+
+    while (std::getline(std::cin, line)) {
+        line = removeRedundantSpaces(line);
+        std::string command = line.substr(0, line.find(' '));
+        std::string args = line.substr(line.find(' ') + 1);
+
+        if (args == "\n" || args == " ") {
+            args = "";
+        }
+
+        processCommand(command, args);
+    }
+}
+
+void Engine::sendInfoMessage(const std::string& message) {
+    std::cout << "info " << message << std::endl;
+}
+
+void Engine::sendMessage(const std::string& message) {
+    std::cout << message << std::endl;
+}
+
+std::string removeRedundantSpaces(const std::string& input) {
+    std::string result;
+    bool inSpace = false;  // Track if we are in a sequence of spaces/tabs
+
+    for (size_t i = 0; i < input.length(); ++i) {
+        char current = input[i];
+
+        if (current == '\r' || current == '\t') {
+            current = ' ';
+        }
+
+        if (std::isspace(current)) {
+            if (current == '\n') {
+                // Add newline and reset inSpace
+                result += '\n';
+                inSpace = false;
+            } else if (!inSpace) {
+                // Only add space if it's the first whitespace in a sequence
+                if (!result.empty() && result.back() != '\n' && result.back() != ' ') {
+                    result += ' ';
+                }
+                inSpace = true;
+            }
+        } else {
+            // Add non-space character and reset inSpace
+            result += current;
+            inSpace = false;
+        }
+    }
+
+    // Trim trailing space if any
+    if (!result.empty() && result.back() == ' ') {
+        result.pop_back();
+    }
+
+    return result;
+}
+
+UCIOptionType UCIOption::getOptionType() {
+    return this->optionType;
+}
+
+std::string UCIOption::getName() {
+    return this->name;
+}
+
+std::string UCIOption::getValue() {
+    return this->value;
+}
+
+void UCIOption::setValue(std::string value) {
+    this->value = value;
+}
+
+std::string UCIOption::getDefaultValue() {
+    return this->defaultValue;
+}
+
+void UCIOption::setDefaultValue(std::string value) {
+    this->defaultValue = value;
+}
+
+std::string UCIOption::getMinValue() {
+    return this->minValue;
+}
+
+void UCIOption::setMinValue(std::string value) {
+    this->minValue = value;
+}
+
+std::string UCIOption::getMaxValue() {
+    return this->maxValue;
+}
+
+void UCIOption::setMaxValue(std::string value) {
+    this->maxValue = value;
+}
+
+std::string getUciOptionTypeAsString(UCIOptionType type) {
+    switch (type) {
+        case Check:
+            return "check";
+        case Spin:
+            return "spin";
+        case Combo:
+            return "combo";
+        case Button:
+            return "button";
+        case String:
+            return "string";
+    }
+}
+
+std::string UCIOption::toString() {
+    std::string result = "option name " + this->name + " type " + getUciOptionTypeAsString(this->optionType);
+
+    if (!this->defaultValue.empty()) {
+        result += " default " + this->defaultValue;
+    }
+
+    if (!this->minValue.empty()) {
+        result += " min " + this->minValue;
+    }
+
+    if (!this->maxValue.empty()) {
+        result += " max " + this->maxValue;
+    }
+
+    if (!this->var.empty()) {
+        for (const std::string& value : this->var) {
+            result += " var " + value;
+        }
+    }
+
+    return result;
+}
+
+void UCIOption::addVar(std::string value) {
+    this->var.push_back(value);
+}
+
+void UCIOption::setVar(std::vector<std::string> values) {
+    this->var = values;
+}
+
+void UCIOption::removeVar(std::string value) {
+    this->var.erase(std::remove(this->var.begin(), this->var.end(), value), this->var.end());
+}
+
+void UCIOption::clearVar() {
+    this->var.clear();
+}
+
+std::string UCIOption::getVar(int index) {
+    return this->var.at(index);
+}
+
+std::vector<std::string> UCIOption::getVar() {
+    return this->var;
+}
+} // namespace Zagreus

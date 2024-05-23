@@ -1,3 +1,4 @@
+
 /*
  This file is part of Zagreus.
 
@@ -18,11 +19,15 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "uci.h"
+#pragma once
 
-int main(int argc, char *argv[]) {
-    Zagreus::Engine engine;
-
-    engine.startUci();
-    return 0;
-}
+enum Direction {
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST,
+    NORTH_EAST,
+    NORTH_WEST,
+    SOUTH_EAST,
+    SOUTH_WEST
+};

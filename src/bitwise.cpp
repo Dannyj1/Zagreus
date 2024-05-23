@@ -18,11 +18,44 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "uci.h"
+#include "bitwise.h"
 
-int main(int argc, char *argv[]) {
-    Zagreus::Engine engine;
+#include <intrin.h>
 
-    engine.startUci();
-    return 0;
+namespace Zagreus::Bitwise {
+uint64_t popcnt(uint64_t bb) {
+#ifdef _MSC_VER
+    return __popcnt64(bb);
+#else
+    return __builtin_popcountll(bb);
+#endif
 }
+
+int bitscanForward(uint64_t bb) {
+#ifdef _MSC_VER
+    unsigned long index;
+    _BitScanForward64(&index, bb);
+    return (int) index;
+#else
+    return __builtin_ctzll(bb);
+#endif
+}
+
+int bitscanReverse(uint64_t bb) {
+#ifdef _MSC_VER
+    unsigned long index;
+    _BitScanReverse64(&index, bb);
+    return (int) index;
+#else
+    return 63 ^ __builtin_clzll(bb);
+#endif
+}
+
+uint64_t popLsb(uint64_t& bb) {
+    int lsb = bitscanForward(bb);
+
+    bb &= bb - 1;
+    return lsb;
+}
+} // namespace Zagreus::Bitwise
+
