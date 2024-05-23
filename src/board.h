@@ -1,3 +1,4 @@
+
 /*
  This file is part of Zagreus.
 
@@ -18,11 +19,8 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "uci.h"
+#pragma once
 
-int main(int argc, char *argv[]) {
-    Zagreus::Engine engine;
+namespace Zagreus {
 
-    engine.startUci();
-    return 0;
-}
+} // namespace Zagreus
