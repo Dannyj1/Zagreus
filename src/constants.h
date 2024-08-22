@@ -20,30 +20,6 @@
  */
 
 #pragma once
-#include <cstdint>
 
-namespace Zagreus::Bitwise {
-inline uint64_t popcnt(uint64_t bb);
-
-inline int bitscanForward(uint64_t bb);
-
-inline int bitscanReverse(uint64_t bb);
-
-inline uint64_t popLsb(uint64_t& bb);
-
-inline uint64_t shiftNorth(uint64_t bb);
-
-inline uint64_t shiftSouth(uint64_t bb);
-
-inline uint64_t shiftEast(uint64_t bb);
-
-inline uint64_t shiftWest(uint64_t bb);
-
-inline uint64_t shiftNorthEast(uint64_t bb);
-
-inline uint64_t shiftNorthWest(uint64_t bb);
-
-inline uint64_t shiftSouthEast(uint64_t bb);
-
-inline uint64_t shiftSouthWest(uint64_t bb);
-} // namespace Zagreus::Bitwise
+constexpr uint64_t NOT_A_FILE = 0xfefefefefefefefe;
+constexpr uint64_t NOT_H_FILE = 0x7f7f7f7f7f7f7f7f;

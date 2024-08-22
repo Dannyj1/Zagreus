@@ -19,6 +19,7 @@
  */
 
 #include "bitwise.h"
+#include "constants.h"
 
 #include <intrin.h>
 
@@ -56,6 +57,38 @@ uint64_t popLsb(uint64_t& bb) {
 
     bb &= bb - 1;
     return lsb;
+}
+
+uint64_t shiftNorth(uint64_t bb) {
+    return bb << 8;
+}
+
+uint64_t shiftSouth(uint64_t bb) {
+    return bb >> 8;
+}
+
+uint64_t shiftEast(uint64_t bb) {
+    return (bb << 1) & NOT_A_FILE;
+}
+
+uint64_t shiftWest(uint64_t bb) {
+    return (bb >> 1) & NOT_H_FILE;
+}
+
+uint64_t shiftNorthEast(uint64_t bb) {
+    return (bb << 9) & NOT_A_FILE;
+}
+
+uint64_t shiftNorthWest(uint64_t bb) {
+    return (bb << 7) & NOT_H_FILE;
+}
+
+uint64_t shiftSouthEast(uint64_t bb) {
+    return (bb >> 7) & NOT_A_FILE;
+}
+
+uint64_t shiftSouthWest(uint64_t bb) {
+    return (bb >> 9) & NOT_H_FILE;
 }
 } // namespace Zagreus::Bitwise
 
