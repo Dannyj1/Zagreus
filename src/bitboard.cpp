@@ -48,8 +48,35 @@ int Bitboard::bitscanReverse() {
 }
 
 template <Direction direction>
-Bitboard shift() {
+Bitboard Bitboard::shift() {
     Bitboard result{};
+
+    switch (direction) {
+        case NORTH:
+            result.setValue(Bitwise::shiftNorth(this->bitboard));
+            break;
+        case SOUTH:
+            result.setValue(Bitwise::shiftSouth(this->bitboard));
+            break;
+        case EAST:
+            result.setValue(Bitwise::shiftEast(this->bitboard));
+            break;
+        case WEST:
+            result.setValue(Bitwise::shiftWest(this->bitboard));
+            break;
+        case NORTH_EAST:
+            result.setValue(Bitwise::shiftNorthEast(this->bitboard));
+            break;
+        case NORTH_WEST:
+            result.setValue(Bitwise::shiftNorthWest(this->bitboard));
+            break;
+        case SOUTH_EAST:
+            result.setValue(Bitwise::shiftSouthEast(this->bitboard));
+            break;
+        case SOUTH_WEST:
+            result.setValue(Bitwise::shiftSouthWest(this->bitboard));
+            break;
+    }
 
     return result;
 }
