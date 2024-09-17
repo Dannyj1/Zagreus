@@ -20,36 +20,18 @@
  */
 
 #pragma once
+
 #include <cstdint>
 
+#include "constants.h"
 #include "types.h"
 
 namespace Zagreus {
-class Bitboard {
-private:
-    uint64_t bitboard = 0ULL;
-public:
-    uint64_t getValue() const;
-    void setValue(uint64_t value);
-
-    inline uint64_t popcnt();
-    inline uint64_t popLsb();
-    inline int bitscanForward();
-    inline int bitscanReverse();
+    inline uint64_t popcnt(uint64_t bitboard);
+    inline uint64_t popLsb(uint64_t bitboard);
+    inline int bitscanForward(uint64_t bitboard);
+    inline int bitscanReverse(uint64_t bitboard);
 
     template <Direction direction>
-    Bitboard shift();
-
-    inline Bitboard operator&(const Bitboard& other);
-    inline Bitboard operator|(const Bitboard& other);
-    inline Bitboard operator^(const Bitboard& other);
-    inline Bitboard operator~();
-    inline Bitboard operator<<(int shift);
-    inline Bitboard operator>>(int shift);
-    inline Bitboard& operator&=(const Bitboard& other);
-    inline Bitboard& operator|=(const Bitboard& other);
-    inline Bitboard& operator^=(const Bitboard& other);
-};
-
-Bitboard squareToBitboard(int index);
+    uint64_t shift(uint64_t bitboard);
 } // namespace Zagreus

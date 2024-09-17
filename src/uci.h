@@ -33,7 +33,7 @@ private:
     std::map<std::string, UCIOption> options;
 
     void handleUciCommand();
-    void handleDebugCommand(const std::string& args);
+    void handleDebugCommand(std::string_view args);
     void handleIsReadyCommand(const std::string& args);
     void handleSetOptionCommand(const std::string& args);
     void handleUciNewGameCommand(const std::string& args);
@@ -74,7 +74,7 @@ private:
 public:
     UCIOption() = default;
 
-    UCIOption(std::string name, UCIOptionType optionType) : name(std::move(name)), optionType(optionType) {}
+    UCIOption(std::string name, const UCIOptionType optionType) : name(std::move(name)), optionType(optionType) {}
 
     UCIOptionType getOptionType();
 

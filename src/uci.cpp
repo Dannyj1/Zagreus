@@ -21,6 +21,7 @@
 // ReSharper disable CppRedundantControlFlowJump
 #include "uci.h"
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -88,7 +89,7 @@ void Engine::handleUciCommand() {
     sendMessage("uciok");
 }
 
-void Engine::handleDebugCommand(const std::string& args) {
+void Engine::handleDebugCommand(std::string_view args) {
     sendMessage("Debug mode is currently not implemented.");
 }
 
@@ -228,7 +229,7 @@ void Engine::processCommand(const std::string& command, const std::string& args)
         std::string newCommand;
         std::string newArgs;
 
-        if (args.find(' ') != std::string::npos) {
+        if (args.contains(' ')) {
             newCommand = args.substr(0, args.find(' '));
             newArgs = args.substr(args.find(' ') + 1);
         } else {
@@ -356,7 +357,7 @@ void UCIOption::setMaxValue(std::string value) {
     this->maxValue = value;
 }
 
-std::string getUciOptionTypeAsString(UCIOptionType type) {
+std::string getUciOptionTypeAsString(const UCIOptionType type) {
     switch (type) {
         case Check:
             return "check";
@@ -411,7 +412,7 @@ void UCIOption::clearVar() {
     this->var.clear();
 }
 
-std::string UCIOption::getVar(int index) {
+std::string UCIOption::getVar(const int index) {
     return this->var.at(index);
 }
 
