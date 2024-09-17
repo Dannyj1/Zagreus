@@ -46,4 +46,16 @@ inline uint64_t shiftNorthWest(uint64_t bb);
 inline uint64_t shiftSouthEast(uint64_t bb);
 
 inline uint64_t shiftSouthWest(uint64_t bb);
+
+inline uint64_t whitePawnSinglePush(uint64_t bb, uint64_t empty);
+
+inline uint64_t whitePawnDoublePush(uint64_t bb, uint64_t empty);
+
+inline uint64_t whitePawnAttack(uint64_t bb);
+
+inline uint64_t blackPawnSinglePush(uint64_t bb, uint64_t empty);
+
+inline uint64_t blackPawnDoublePush(uint64_t bb, uint64_t empty);
+
+inline uint64_t blackPawnAttack(uint64_t bb);
 } // namespace Zagreus::Bitwise

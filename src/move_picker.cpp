@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -19,42 +18,10 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "move_picker.h"
 
-enum class Direction {
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST,
-    NORTH_EAST,
-    NORTH_WEST,
-    SOUTH_EAST,
-    SOUTH_WEST
-};
-
-enum class PieceType { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY = -1 };
-
-enum class PieceColor { WHITE, BLACK, EMPTY = -1 };
-
-enum class Piece {
-    WHITE_PAWN,
-    WHITE_KNIGHT,
-    WHITE_BISHOP,
-    WHITE_ROOK,
-    WHITE_QUEEN,
-    WHITE_KING,
-    BLACK_PAWN,
-    BLACK_KNIGHT,
-    BLACK_BISHOP,
-    BLACK_ROOK,
-    BLACK_QUEEN,
-    BLACK_KING,
-    EMPTY = -1
-};
-
-using Move = uint16_t;
-
-struct MoveList {
-    std::array<Move, MAX_MOVES> moveList{};
-    int moveCount = 0;
-};
+namespace Zagreus {
+MoveList& MovePicker::getMoveList() {
+    return this->moveList;
+}
+} // namespace Zagreus

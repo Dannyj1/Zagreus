@@ -23,3 +23,8 @@
 
 constexpr uint64_t NOT_A_FILE = 0xfefefefefefefefe;
 constexpr uint64_t NOT_H_FILE = 0x7f7f7f7f7f7f7f7f;
+
+constexpr int SQUARES = 64;
+constexpr int PIECES = 12;
+
+constexpr int MAX_MOVES = 256;

@@ -21,40 +21,10 @@
 
 #pragma once
 
-enum class Direction {
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST,
-    NORTH_EAST,
-    NORTH_WEST,
-    SOUTH_EAST,
-    SOUTH_WEST
-};
+#include "board.h"
+#include "types.h"
 
-enum class PieceType { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY = -1 };
-
-enum class PieceColor { WHITE, BLACK, EMPTY = -1 };
-
-enum class Piece {
-    WHITE_PAWN,
-    WHITE_KNIGHT,
-    WHITE_BISHOP,
-    WHITE_ROOK,
-    WHITE_QUEEN,
-    WHITE_KING,
-    BLACK_PAWN,
-    BLACK_KNIGHT,
-    BLACK_BISHOP,
-    BLACK_ROOK,
-    BLACK_QUEEN,
-    BLACK_KING,
-    EMPTY = -1
-};
-
-using Move = uint16_t;
-
-struct MoveList {
-    std::array<Move, MAX_MOVES> moveList{};
-    int moveCount = 0;
-};
+namespace Zagreus {
+template<PieceColor color>
+void generatePawnMoves(const Board& board, MoveList moves);
+} // namespace Zagreus

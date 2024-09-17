@@ -20,7 +20,14 @@
 
 #include "board.h"
 
+#include <utility>
+
 namespace Zagreus {
+uint64_t Board::getBitboard(Piece piece) const {
+    return bitboards[std::to_underlying(piece)];
+}
 
+Piece Board::getPieceOnSquare(int square) const {
+    return board[square];
+}
 } // namespace Zagreus
-

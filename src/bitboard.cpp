@@ -23,128 +23,44 @@
 #include "types.h"
 
 namespace Zagreus {
-uint64_t Bitboard::getValue() const {
-    return this->bitboard;
+uint64_t popcnt(const uint64_t bitboard) {
+    return Bitwise::popcnt(bitboard);
 }
 
-void Bitboard::setValue(uint64_t value) {
-    this->bitboard = value;
+uint64_t popLsb(uint64_t bitboard) {
+    return Bitwise::popLsb(bitboard);
 }
 
-uint64_t Bitboard::popcnt() {
-    return Bitwise::popcnt(this->bitboard);
+int bitscanForward(const uint64_t bitboard) {
+    return Bitwise::bitscanForward(bitboard);
 }
 
-uint64_t Bitboard::popLsb() {
-    return Bitwise::popLsb(this->bitboard);
-}
-
-int Bitboard::bitscanForward() {
-    return Bitwise::bitscanForward(this->bitboard);
-}
-
-int Bitboard::bitscanReverse() {
-    return Bitwise::bitscanReverse(this->bitboard);
+int bitscanReverse(const uint64_t bitboard) {
+    return Bitwise::bitscanReverse(bitboard);
 }
 
 template <Direction direction>
-Bitboard Bitboard::shift() {
-    Bitboard result{};
-
+uint64_t shift(const uint64_t bitboard) {
     switch (direction) {
+        using enum Direction;
         case NORTH:
-            result.setValue(Bitwise::shiftNorth(this->bitboard));
-            break;
+            return Bitwise::shiftNorth(bitboard);
         case SOUTH:
-            result.setValue(Bitwise::shiftSouth(this->bitboard));
-            break;
+            return Bitwise::shiftSouth(bitboard);
         case EAST:
-            result.setValue(Bitwise::shiftEast(this->bitboard));
-            break;
+            return Bitwise::shiftEast(bitboard);
         case WEST:
-            result.setValue(Bitwise::shiftWest(this->bitboard));
-            break;
+            return Bitwise::shiftWest(bitboard);
         case NORTH_EAST:
-            result.setValue(Bitwise::shiftNorthEast(this->bitboard));
-            break;
+            return Bitwise::shiftNorthEast(bitboard);
         case NORTH_WEST:
-            result.setValue(Bitwise::shiftNorthWest(this->bitboard));
-            break;
+            return Bitwise::shiftNorthWest(bitboard);
         case SOUTH_EAST:
-            result.setValue(Bitwise::shiftSouthEast(this->bitboard));
-            break;
+            return Bitwise::shiftSouthEast(bitboard);
         case SOUTH_WEST:
-            result.setValue(Bitwise::shiftSouthWest(this->bitboard));
-            break;
+            return Bitwise::shiftSouthWest(bitboard);
     }
 
-    return result;
-}
-
-Bitboard Bitboard::operator&(const Bitboard& other) {
-    Bitboard result{};
-
-    result.setValue(this->getValue() & other.getValue());
-    return result;
-}
-
-Bitboard Bitboard::operator|(const Bitboard& other) {
-    Bitboard result{};
-
-    result.setValue(this->getValue() | other.getValue());
-    return result;
-}
-
-Bitboard Bitboard::operator^(const Bitboard& other) {
-    Bitboard result{};
-
-    result.setValue(this->getValue() ^ other.getValue());
-    return result;
-}
-
-Bitboard Bitboard::operator~() {
-    Bitboard result{};
-
-    result.setValue(~this->getValue());
-    return result;
-}
-
-Bitboard Bitboard::operator<<(int shift) {
-    Bitboard result{};
-
-    result.setValue(this->getValue() << shift);
-    return result;
-}
-
-Bitboard Bitboard::operator>>(int shift) {
-    Bitboard result{};
-
-    result.setValue(this->getValue() >> shift);
-    return result;
-}
-
-Bitboard& Bitboard::operator&=(const Bitboard& other) {
-    this->setValue(this->getValue() & other.getValue());
-
-    return *this;
-}
-
-Bitboard& Bitboard::operator|=(const Bitboard& other) {
-    this->setValue(this->getValue() | other.getValue());
-
-    return *this;
-}
-
-Bitboard& Bitboard::operator^=(const Bitboard& other) {
-    this->setValue(this->getValue() ^ other.getValue());
-
-    return *this;
-}
-
-Bitboard squareToBitboard(int index) {
-    Bitboard result{};
-
-    result.setValue(1ULL << index);
-    return result;
+    return bitboard;
 }
 } // namespace Zagreus

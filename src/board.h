@@ -21,6 +21,17 @@
 
 #pragma once
 
-namespace Zagreus {
+#include <array>
 
+#include "bitboard.h"
+
+namespace Zagreus {
+class Board {
+private:
+    std::array<Piece, SQUARES> board{};
+    std::array<uint64_t, PIECES> bitboards{};
+public:
+    [[nodiscard]] uint64_t getBitboard(Piece piece) const;
+    [[nodiscard]] Piece getPieceOnSquare(int square) const;
+};
 } // namespace Zagreus
