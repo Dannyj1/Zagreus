@@ -23,12 +23,14 @@
 #include <array>
 
 #include "constants.h"
+#include "move.h"
 #include "types.h"
 
 namespace Zagreus {
 class MovePicker {
 private:
     MoveList moveList{};
+
 public:
     MoveList& getMoveList();
 };

@@ -42,7 +42,7 @@ int bitscanReverse(const uint64_t bitboard) {
 template <Direction direction>
 uint64_t shift(const uint64_t bitboard) {
     switch (direction) {
-        using enum Direction;
+            using enum Direction;
         case NORTH:
             return Bitwise::shiftNorth(bitboard);
         case SOUTH:

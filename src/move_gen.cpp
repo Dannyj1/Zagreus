@@ -19,12 +19,91 @@
  */
 
 #include "move_gen.h"
+
+#include <__utility/to_underlying.h>
+
+#include "bitwise.h"
 #include "board.h"
 #include "types.h"
 
 namespace Zagreus {
-template <PieceColor color>
-void generatePawnMoves(const Board& board, const MoveList& moves) {
+template <PieceColor color, GenerationType type>
+void generatePawnMoves(const Board& board, MoveList& moves) {
+    // TODO: Implement en passant
+    // TODO: Handle promotions
+    // TODO: Move attacks to table lookup
+    // TODO: Implement GenerationType logic using a mask that is computed based on type
+    constexpr Piece pawn = color == PieceColor::WHITE ? Piece::WHITE_PAWN : Piece::BLACK_PAWN;
+    constexpr PieceColor opponentColor = color == PieceColor::WHITE
+                                             ? PieceColor::BLACK
+                                             : PieceColor::WHITE;
 
+    const uint64_t pawnBB = board.getBitboard<pawn>();
+    const uint64_t emptyBB = board.getEmptyBitboard();
+    const uint64_t opponentPieces = board.getColorBitboard<opponentColor>();
+    uint64_t pawnSinglePushes;
+    uint64_t pawnDoublePushes;
+    uint64_t pawnWestAttacks;
+    uint64_t pawnEastAttacks;
+
+    if constexpr (color == PieceColor::WHITE) {
+        pawnSinglePushes = Bitwise::whitePawnSinglePush(pawnBB, emptyBB);
+        pawnDoublePushes = Bitwise::whitePawnDoublePush(pawnBB, emptyBB);
+        pawnWestAttacks = Bitwise::whitePawnWestAttacks(pawnBB);
+        pawnEastAttacks = Bitwise::whitePawnEastAttacks(pawnBB);
+    } else {
+        pawnSinglePushes = Bitwise::blackPawnSinglePush(pawnBB, emptyBB);
+        pawnDoublePushes = Bitwise::blackPawnDoublePush(pawnBB, emptyBB);
+        pawnWestAttacks = Bitwise::blackPawnWestAttacks(pawnBB);
+        pawnEastAttacks = Bitwise::blackPawnEastAttacks(pawnBB);
+    }
+
+    pawnWestAttacks &= opponentPieces;
+    pawnEastAttacks &= opponentPieces;
+    constexpr Direction fromPushDirection = color == PieceColor::WHITE
+                                                ? Direction::SOUTH
+                                                : Direction::NORTH;
+    constexpr Direction fromSqWestAttackDirection = color == PieceColor::WHITE
+                                                        ? Direction::SOUTH_WEST
+                                                        : Direction::NORTH_WEST;
+    constexpr Direction fromSqEastAttackDirection = color == PieceColor::WHITE
+                                                        ? Direction::SOUTH_EAST
+                                                        : Direction::NORTH_EAST;
+
+    while (pawnSinglePushes) {
+        const uint64_t squareTo = Bitwise::popLsb(pawnSinglePushes);
+        const uint64_t squareFrom = Bitwise::shift<fromPushDirection>(squareTo);
+        const Move move = encodeMove(squareFrom, squareTo);
+
+        moves.list[moves.size] = move;
+        moves.size++;
+    }
+
+    while (pawnDoublePushes) {
+        const uint64_t squareTo = Bitwise::popLsb(pawnDoublePushes);
+        const uint64_t squareFrom = Bitwise::shift<fromPushDirection>(squareTo);
+        const Move move = encodeMove(squareFrom, squareTo);
+
+        moves.list[moves.size] = move;
+        moves.size++;
+    }
+
+    while (pawnWestAttacks) {
+        const uint64_t squareTo = Bitwise::popLsb(pawnWestAttacks);
+        const uint64_t squareFrom = Bitwise::shift<fromSqWestAttackDirection>(squareTo);
+        const Move move = encodeMove(squareFrom, squareTo);
+
+        moves.list[moves.size] = move;
+        moves.size++;
+    }
+
+    while (pawnEastAttacks) {
+        const uint64_t squareTo = Bitwise::popLsb(pawnEastAttacks);
+        const uint64_t squareFrom = Bitwise::shift<fromSqEastAttackDirection>(squareTo);
+        const Move move = encodeMove(squareFrom, squareTo);
+
+        moves.list[moves.size] = move;
+        moves.size++;
+    }
 }
 } // namespace Zagreus

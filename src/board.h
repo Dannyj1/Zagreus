@@ -30,8 +30,20 @@ class Board {
 private:
     std::array<Piece, SQUARES> board{};
     std::array<uint64_t, PIECES> bitboards{};
+    uint64_t occupied = 0;
+    std::array<uint64_t, COLORS> colorBoards{};
+
 public:
-    [[nodiscard]] uint64_t getBitboard(Piece piece) const;
+    template <Piece piece>
+    [[nodiscard]] uint64_t getBitboard() const;
+
     [[nodiscard]] Piece getPieceOnSquare(int square) const;
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t getColorBitboard() const;
+
+    [[nodiscard]] uint64_t getOccupiedBitboard() const;
+
+    [[nodiscard]] uint64_t getEmptyBitboard() const;
 };
 } // namespace Zagreus
