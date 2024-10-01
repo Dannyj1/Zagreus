@@ -22,6 +22,8 @@
 #pragma once
 #include <cstdint>
 
+#include "types.h"
+
 namespace Zagreus::Bitwise {
 inline uint64_t popcnt(uint64_t bb);
 
@@ -47,15 +49,34 @@ inline uint64_t shiftSouthEast(uint64_t bb);
 
 inline uint64_t shiftSouthWest(uint64_t bb);
 
+template <Direction direction>
+inline uint64_t shift(uint64_t bb);
+
 inline uint64_t whitePawnSinglePush(uint64_t bb, uint64_t empty);
 
 inline uint64_t whitePawnDoublePush(uint64_t bb, uint64_t empty);
 
-inline uint64_t whitePawnAttack(uint64_t bb);
+inline uint64_t whitePawnWestAttacks(uint64_t bb);
+
+inline uint64_t whitePawnEastAttacks(uint64_t bb);
+
+inline uint64_t whitePawnAttacks(uint64_t bb);
+
+inline uint64_t whitePushablePawns(uint64_t bb, uint64_t empty);
+
+inline uint64_t whiteDoublePushablePawns(uint64_t bb, uint64_t empty);
 
 inline uint64_t blackPawnSinglePush(uint64_t bb, uint64_t empty);
 
 inline uint64_t blackPawnDoublePush(uint64_t bb, uint64_t empty);
 
-inline uint64_t blackPawnAttack(uint64_t bb);
+inline uint64_t blackPawnWestAttacks(uint64_t bb);
+
+inline uint64_t blackPawnEastAttacks(uint64_t bb);
+
+inline uint64_t blackPawnAttacks(uint64_t bb);
+
+inline uint64_t blackPushablePawns(uint64_t bb, uint64_t empty);
+
+inline uint64_t blackDoublePushablePawns(uint64_t bb, uint64_t empty);
 } // namespace Zagreus::Bitwise

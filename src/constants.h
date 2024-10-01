@@ -21,10 +21,14 @@
 
 #pragma once
 
-constexpr uint64_t NOT_A_FILE = 0xfefefefefefefefe;
-constexpr uint64_t NOT_H_FILE = 0x7f7f7f7f7f7f7f7f;
+constexpr uint64_t NOT_A_FILE = 0xFEFEFEFEFEFEFEFEULL;
+constexpr uint64_t NOT_H_FILE = 0x7F7F7F7F7F7F7F7FULL;
 
-constexpr int SQUARES = 64;
-constexpr int PIECES = 12;
+constexpr uint64_t RANK_4 = 0x00000000FF000000ULL;
+constexpr uint64_t RANK_5 = 0x000000FF00000000ULL;
 
-constexpr int MAX_MOVES = 256;
+constexpr uint8_t SQUARES = 64;
+constexpr uint8_t PIECES = 12;
+constexpr uint8_t COLORS = 2;
+
+constexpr uint8_t MAX_MOVES = 255;

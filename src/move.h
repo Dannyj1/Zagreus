@@ -20,19 +20,20 @@
  */
 
 #pragma once
+#include "constants.h"
 
-#include "board.h"
-#include "move.h"
-#include "types.h"
 
 namespace Zagreus {
-enum class GenerationType {
-    All,
-    Quiet,
-    Capture,
-    Evasions
+using Move = uint16_t;
+
+struct MoveList {
+    std::array<Move, MAX_MOVES> list{};
+    int size = 0;
 };
 
-template<PieceColor color, GenerationType type>
-void generatePawnMoves(const Board& board, const MoveList& moves);
+// bits 0-5: from square (0-63)
+// bits 6-11: to square (0-63)
+inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare) {
+    return (fromSquare << 6) | toSquare;
+}
 } // namespace Zagreus

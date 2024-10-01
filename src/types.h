@@ -33,11 +33,11 @@ enum class Direction {
     SOUTH_WEST
 };
 
-enum class PieceType { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY = -1 };
+enum class PieceType : int8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY = -1 };
 
-enum class PieceColor { WHITE, BLACK, EMPTY = -1 };
+enum class PieceColor : int8_t { WHITE, BLACK, EMPTY = -1 };
 
-enum class Piece {
+enum class Piece : int8_t {
     WHITE_PAWN,
     WHITE_KNIGHT,
     WHITE_BISHOP,
@@ -51,11 +51,4 @@ enum class Piece {
     BLACK_QUEEN,
     BLACK_KING,
     EMPTY = -1
-};
-
-using Move = uint16_t;
-
-struct MoveList {
-    std::array<Move, MAX_MOVES> moveList{};
-    int moveCount = 0;
 };
