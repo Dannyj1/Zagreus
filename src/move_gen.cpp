@@ -24,7 +24,7 @@
 
 namespace Zagreus {
 template <PieceColor color>
-void generatePawnMoves(const Board& board, const MoveList moves) {
+void generatePawnMoves(const Board& board, const MoveList& moves) {
 
 }
 } // namespace Zagreus
