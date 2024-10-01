@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -20,6 +19,8 @@
  */
 
 #pragma once
+
+#include <array>
 
 enum class Direction {
     NORTH,
