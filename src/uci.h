@@ -82,7 +82,7 @@ public:
 
     std::string getValue();
 
-    void setValue(std::string value);
+    void setValue(std::string& value);
 
     std::string getDefaultValue();
 

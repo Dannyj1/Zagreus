@@ -19,12 +19,13 @@
  */
 
 // ReSharper disable CppRedundantControlFlowJump
-#include "uci.h"
-
 #include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include "magics.h"
+#include "uci.h"
 
 namespace Zagreus {
 void Engine::doSetup() {
@@ -34,19 +35,12 @@ void Engine::doSetup() {
     }
 
     // TODO: setup here
+    initializeMagicBitboards();
 
     didSetup = true;
 }
 
 void Engine::printStartupMessage() {
-    sendMessage("Zagreus  Copyright (C) 2023-2024  Danny Jelsma");
-    sendMessage("");
-    sendMessage("This program comes with ABSOLUTELY NO WARRANTY.");
-    sendMessage("This is free software, and you are welcome to redistribute it");
-    sendMessage("under the conditions of the GNU Affero General Public License v3.0 or later.");
-    sendMessage("You should have received a copy of the GNU Affero General Public License");
-    sendMessage("along with this program. If not, see <https://www.gnu.org/licenses/>.");
-    sendMessage("");
     sendMessage(" ______ ");
     sendMessage(" |___  / ");
     sendMessage("    / /  __ _   __ _  _ __  ___  _   _  ___ ");
@@ -56,9 +50,17 @@ void Engine::printStartupMessage() {
     sendMessage("                __/ | ");
     sendMessage("               |___/ ");
     sendMessage("");
+    sendMessage("Zagreus  Copyright (C) 2023-2024  Danny Jelsma");
+    sendMessage("");
+    sendMessage("This program comes with ABSOLUTELY NO WARRANTY.");
+    sendMessage("This is free software, and you are welcome to redistribute it");
+    sendMessage("under the conditions of the GNU Affero General Public License v3.0 or later.");
+    sendMessage("You should have received a copy of the GNU Affero General Public License");
+    sendMessage("along with this program. If not, see <https://www.gnu.org/licenses/>.");
+    sendMessage("");
 
-    std::string majorVersion = ZAGREUS_VERSION_MAJOR;
-    std::string minorVersion = ZAGREUS_VERSION_MINOR;
+    const std::string majorVersion = ZAGREUS_VERSION_MAJOR;
+    const std::string minorVersion = ZAGREUS_VERSION_MINOR;
     std::string versionString = "v" + majorVersion + "." + minorVersion;
 
     if (majorVersion == "dev") {
@@ -66,11 +68,12 @@ void Engine::printStartupMessage() {
     }
 
     sendMessage("Zagreus UCI chess engine " + versionString + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
+    sendMessage("");
 }
 
 void Engine::handleUciCommand() {
-    std::string majorVersion = ZAGREUS_VERSION_MAJOR;
-    std::string minorVersion = ZAGREUS_VERSION_MINOR;
+    const std::string majorVersion = ZAGREUS_VERSION_MAJOR;
+    const std::string minorVersion = ZAGREUS_VERSION_MINOR;
     std::string versionString = "v" + majorVersion + "." + minorVersion;
 
     if (majorVersion == "dev") {
@@ -329,7 +332,7 @@ std::string UCIOption::getValue() {
     return this->value;
 }
 
-void UCIOption::setValue(std::string value) {
+void UCIOption::setValue(std::string& value) {
     this->value = value;
 }
 

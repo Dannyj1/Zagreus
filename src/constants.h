@@ -22,6 +22,8 @@
 #pragma once
 
 constexpr uint64_t NOT_A_FILE = 0xFEFEFEFEFEFEFEFEULL;
+constexpr uint64_t NOT_AB_FILE = 0xFCFCFCFCFCFCFCFCULL;
+constexpr uint64_t NOT_GH_FILE = 0x3F3F3F3F3F3F3F3FULL;
 constexpr uint64_t NOT_H_FILE = 0x7F7F7F7F7F7F7F7FULL;
 
 constexpr uint64_t RANK_4 = 0x00000000FF000000ULL;

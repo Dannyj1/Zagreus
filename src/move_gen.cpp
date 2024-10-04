@@ -20,8 +20,6 @@
 
 #include "move_gen.h"
 
-#include <__utility/to_underlying.h>
-
 #include "bitwise.h"
 #include "board.h"
 #include "types.h"
@@ -104,6 +102,27 @@ void generatePawnMoves(const Board& board, MoveList& moves) {
 
         moves.list[moves.size] = move;
         moves.size++;
+    }
+}
+
+template <PieceColor color, GenerationType type>
+void generateKnightMoves(const Board& board, MoveList& moves) {
+    // TODO: Move to table calculations
+    constexpr Piece knight = color == PieceColor::WHITE ? Piece::WHITE_KNIGHT : Piece::BLACK_KNIGHT;
+    const uint64_t ownPieces = board.getColorBitboard<color>();
+    uint64_t knightBB = board.getBitboard<knight>();
+
+    while (knightBB) {
+        const uint64_t fromSquare = Bitwise::popLsb(knightBB);
+        uint64_t genBB = Bitwise::knightAttacks(fromSquare) & ~ownPieces;
+
+        while (genBB) {
+            const uint64_t toSquare = Bitwise::popLsb(genBB);
+            const Move move = encodeMove(fromSquare, toSquare);
+
+            moves.list[moves.size] = move;
+            moves.size++;
+        }
     }
 }
 } // namespace Zagreus

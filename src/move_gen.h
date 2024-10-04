@@ -33,6 +33,9 @@ enum class GenerationType {
     Evasions
 };
 
-template<PieceColor color, GenerationType type>
-void generatePawnMoves(const Board& board, const MoveList& moves);
+template <PieceColor color, GenerationType type>
+void generatePawnMoves(const Board& board, MoveList& moves);
+
+template <PieceColor color, GenerationType type>
+void generateKnightMoves(const Board& board, MoveList& moves);
 } // namespace Zagreus
