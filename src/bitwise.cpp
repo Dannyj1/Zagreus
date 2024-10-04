@@ -21,7 +21,9 @@
 #include "bitwise.h"
 #include "constants.h"
 
+#ifdef _MSC_VER
 #include <intrin.h>
+#endif
 
 namespace Zagreus::Bitwise {
 uint64_t popcnt(uint64_t bb) {
@@ -91,6 +93,38 @@ uint64_t shiftSouthWest(const uint64_t bb) {
     return (bb >> 9) & NOT_H_FILE;
 }
 
+uint64_t shiftNorthNorthEast(const uint64_t bb) {
+    return (bb << 17) & NOT_A_FILE;
+}
+
+uint64_t shiftNorthEastEast(const uint64_t bb) {
+    return (bb << 10) & NOT_AB_FILE;
+}
+
+uint64_t shiftSouthEastEast(const uint64_t bb) {
+    return (bb >> 6) & NOT_AB_FILE;
+}
+
+uint64_t shiftSouthSouthEast(const uint64_t bb) {
+    return (bb >> 15) & NOT_A_FILE;
+}
+
+uint64_t shiftNorthNorthWest(const uint64_t bb) {
+    return (bb << 15) & NOT_H_FILE;
+}
+
+uint64_t shiftNorthWestWest(const uint64_t bb) {
+    return (bb << 6) & NOT_GH_FILE;
+}
+
+uint64_t shiftSouthWestWest(const uint64_t bb) {
+    return (bb >> 10) & NOT_GH_FILE;
+}
+
+uint64_t shiftSouthSouthWest(const uint64_t bb) {
+    return (bb >> 17) & NOT_H_FILE;
+}
+
 template <Direction direction>
 uint64_t shift(const uint64_t bb) {
     switch (direction) {
@@ -125,11 +159,11 @@ uint64_t whitePawnDoublePush(const uint64_t bb, const uint64_t empty) {
     return shiftNorth(singlePush) & empty & RANK_4;
 }
 
-uint64_t whitePawnWestAttacks(uint64_t bb) {
+uint64_t whitePawnWestAttacks(const uint64_t bb) {
     return shiftNorthWest(bb);
 }
 
-uint64_t whitePawnEastAttacks(uint64_t bb) {
+uint64_t whitePawnEastAttacks(const uint64_t bb) {
     return shiftNorthEast(bb);
 }
 
@@ -177,6 +211,13 @@ uint64_t blackDoublePushablePawns(const uint64_t bb, const uint64_t empty) {
     const uint64_t emptyRank6 = shiftNorth(empty & RANK_5) & empty;
 
     return blackPushablePawns(bb, emptyRank6);
+}
+
+uint64_t knightAttacks(uint64_t bb) {
+    return shiftNorthNorthEast(bb) | shiftNorthEastEast(bb) | shiftSouthEastEast(bb) |
+           shiftSouthSouthEast(bb)
+           | shiftSouthSouthWest(bb) | shiftSouthWestWest(bb) | shiftNorthWestWest(bb) |
+           shiftNorthNorthWest(bb);
 }
 } // namespace Zagreus::Bitwise
 

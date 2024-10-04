@@ -49,8 +49,24 @@ inline uint64_t shiftSouthEast(uint64_t bb);
 
 inline uint64_t shiftSouthWest(uint64_t bb);
 
+inline uint64_t shiftNorthNorthEast(uint64_t bb);
+
+inline uint64_t shiftNorthEastEast(uint64_t bb);
+
+inline uint64_t shiftSouthEastEast(uint64_t bb);
+
+inline uint64_t shiftSouthSouthEast(uint64_t bb);
+
+inline uint64_t shiftNorthNorthWest(uint64_t bb);
+
+inline uint64_t shiftNorthWestWest(uint64_t bb);
+
+inline uint64_t shiftSouthWestWest(uint64_t bb);
+
+inline uint64_t shiftSouthSouthWest(uint64_t bb);
+
 template <Direction direction>
-inline uint64_t shift(uint64_t bb);
+uint64_t shift(uint64_t bb);
 
 inline uint64_t whitePawnSinglePush(uint64_t bb, uint64_t empty);
 
@@ -79,4 +95,6 @@ inline uint64_t blackPawnAttacks(uint64_t bb);
 inline uint64_t blackPushablePawns(uint64_t bb, uint64_t empty);
 
 inline uint64_t blackDoublePushablePawns(uint64_t bb, uint64_t empty);
+
+inline uint64_t knightAttacks(uint64_t bb);
 } // namespace Zagreus::Bitwise
