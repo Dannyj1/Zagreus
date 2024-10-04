@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 constexpr uint64_t NOT_A_FILE = 0xFEFEFEFEFEFEFEFEULL;
 constexpr uint64_t NOT_AB_FILE = 0xFCFCFCFCFCFCFCFCULL;
 constexpr uint64_t NOT_GH_FILE = 0x3F3F3F3F3F3F3F3FULL;
