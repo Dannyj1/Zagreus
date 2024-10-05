@@ -21,10 +21,9 @@
 
 #pragma once
 
-#include <__utility/to_underlying.h>
-
 #include <array>
 #include <cassert>
+#include <utility>
 
 #include "bitboard.h"
 
