@@ -24,6 +24,7 @@
 #include <cstdint>
 
 #include "constants.h"
+#include "magics.h"
 #include "types.h"
 
 namespace Zagreus {
@@ -185,4 +186,6 @@ inline uint64_t knightAttacks(const uint64_t bb) {
         shiftSouthSouthEast(bb) | shiftSouthSouthWest(bb) | shiftSouthWestWest(bb) |
         shiftNorthWestWest(bb) |shiftNorthNorthWest(bb);
 }
+
+uint64_t bishopAttacks(uint8_t square, uint64_t occupied);
 } // namespace Zagreus
