@@ -52,7 +52,7 @@ inline int bitscanReverse(const uint64_t bb) {
     _BitScanReverse64(&index, bb);
     return (int) index;
 #else
-    return 63 ^ __builtin_clzll(bb);
+    return 63 - __builtin_clzll(bb);
 #endif
 }
 
