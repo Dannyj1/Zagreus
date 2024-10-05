@@ -31,8 +31,8 @@ struct MoveList {
     int size = 0;
 };
 
-// bits 0-5: from square (0-63)
-// bits 6-11: to square (0-63)
+// bits 0-5: to square (0-63)
+// bits 6-11: from square (0-63)
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare) {
     return (fromSquare << 6) | toSquare;
 }

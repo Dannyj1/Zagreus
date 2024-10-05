@@ -21,7 +21,7 @@
 #include "move_picker.h"
 
 namespace Zagreus {
-MoveList& MovePicker::getMoveList() {
+const MoveList& MovePicker::getMoveList() const {
     return this->moveList;
 }
 } // namespace Zagreus
