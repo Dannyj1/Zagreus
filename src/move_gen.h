@@ -26,7 +26,7 @@
 #include "types.h"
 
 namespace Zagreus {
-enum class GenerationType {
+enum class GenerationType : uint8_t {
     All,
     Quiet,
     Capture,

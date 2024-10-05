@@ -33,11 +33,11 @@ enum class Direction {
     SOUTH_WEST
 };
 
-enum class PieceType : int8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY = -1 };
+enum class PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY = 255 };
 
-enum class PieceColor : int8_t { WHITE, BLACK, EMPTY = -1 };
+enum class PieceColor : uint8_t { WHITE, BLACK, EMPTY = 255 };
 
-enum class Piece : int8_t {
+enum class Piece : uint8_t {
     WHITE_PAWN,
     WHITE_KNIGHT,
     WHITE_BISHOP,
@@ -50,5 +50,5 @@ enum class Piece : int8_t {
     BLACK_ROOK,
     BLACK_QUEEN,
     BLACK_KING,
-    EMPTY = -1
+    EMPTY = 255
 };

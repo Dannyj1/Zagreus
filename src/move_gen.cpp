@@ -45,15 +45,15 @@ void generatePawnMoves(const Board& board, MoveList& moves) {
     uint64_t pawnEastAttacks;
 
     if constexpr (color == PieceColor::WHITE) {
-        pawnSinglePushes = Bitwise::whitePawnSinglePush(pawnBB, emptyBB);
-        pawnDoublePushes = Bitwise::whitePawnDoublePush(pawnBB, emptyBB);
-        pawnWestAttacks = Bitwise::whitePawnWestAttacks(pawnBB);
-        pawnEastAttacks = Bitwise::whitePawnEastAttacks(pawnBB);
+        pawnSinglePushes = whitePawnSinglePush(pawnBB, emptyBB);
+        pawnDoublePushes = whitePawnDoublePush(pawnBB, emptyBB);
+        pawnWestAttacks = whitePawnWestAttacks(pawnBB);
+        pawnEastAttacks = whitePawnEastAttacks(pawnBB);
     } else {
-        pawnSinglePushes = Bitwise::blackPawnSinglePush(pawnBB, emptyBB);
-        pawnDoublePushes = Bitwise::blackPawnDoublePush(pawnBB, emptyBB);
-        pawnWestAttacks = Bitwise::blackPawnWestAttacks(pawnBB);
-        pawnEastAttacks = Bitwise::blackPawnEastAttacks(pawnBB);
+        pawnSinglePushes = blackPawnSinglePush(pawnBB, emptyBB);
+        pawnDoublePushes = blackPawnDoublePush(pawnBB, emptyBB);
+        pawnWestAttacks = blackPawnWestAttacks(pawnBB);
+        pawnEastAttacks = blackPawnEastAttacks(pawnBB);
     }
 
     pawnWestAttacks &= opponentPieces;
@@ -69,8 +69,8 @@ void generatePawnMoves(const Board& board, MoveList& moves) {
                                                         : Direction::NORTH_EAST;
 
     while (pawnSinglePushes) {
-        const uint64_t squareTo = Bitwise::popLsb(pawnSinglePushes);
-        const uint64_t squareFrom = Bitwise::shift<fromPushDirection>(squareTo);
+        const uint64_t squareTo = popLsb(pawnSinglePushes);
+        const uint64_t squareFrom = shift<fromPushDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.list[moves.size] = move;
@@ -78,8 +78,8 @@ void generatePawnMoves(const Board& board, MoveList& moves) {
     }
 
     while (pawnDoublePushes) {
-        const uint64_t squareTo = Bitwise::popLsb(pawnDoublePushes);
-        const uint64_t squareFrom = Bitwise::shift<fromPushDirection>(squareTo);
+        const uint64_t squareTo = popLsb(pawnDoublePushes);
+        const uint64_t squareFrom = shift<fromPushDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.list[moves.size] = move;
@@ -87,8 +87,8 @@ void generatePawnMoves(const Board& board, MoveList& moves) {
     }
 
     while (pawnWestAttacks) {
-        const uint64_t squareTo = Bitwise::popLsb(pawnWestAttacks);
-        const uint64_t squareFrom = Bitwise::shift<fromSqWestAttackDirection>(squareTo);
+        const uint64_t squareTo = popLsb(pawnWestAttacks);
+        const uint64_t squareFrom = shift<fromSqWestAttackDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.list[moves.size] = move;
@@ -96,8 +96,8 @@ void generatePawnMoves(const Board& board, MoveList& moves) {
     }
 
     while (pawnEastAttacks) {
-        const uint64_t squareTo = Bitwise::popLsb(pawnEastAttacks);
-        const uint64_t squareFrom = Bitwise::shift<fromSqEastAttackDirection>(squareTo);
+        const uint64_t squareTo = popLsb(pawnEastAttacks);
+        const uint64_t squareFrom = shift<fromSqEastAttackDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.list[moves.size] = move;
@@ -113,11 +113,11 @@ void generateKnightMoves(const Board& board, MoveList& moves) {
     uint64_t knightBB = board.getBitboard<knight>();
 
     while (knightBB) {
-        const uint64_t fromSquare = Bitwise::popLsb(knightBB);
-        uint64_t genBB = Bitwise::knightAttacks(fromSquare) & ~ownPieces;
+        const uint64_t fromSquare = popLsb(knightBB);
+        uint64_t genBB = knightAttacks(fromSquare) & ~ownPieces;
 
         while (genBB) {
-            const uint64_t toSquare = Bitwise::popLsb(genBB);
+            const uint64_t toSquare = popLsb(genBB);
             const Move move = encodeMove(fromSquare, toSquare);
 
             moves.list[moves.size] = move;
