@@ -78,9 +78,6 @@ cmake --build .
 
 # Credits
 Thanks to:
-
-- [zd3nik](https://github.com/zd3nik) for the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter), which I
-  slightly modified
 - [AndyGrant](https://github.com/AndyGrant) for the easy to use and open
   source [OpenBench Testing Framework](https://github.com/AndyGrant/OpenBench), making testing my engine SO much easier
   and allowing you to distribute test over multiple devices (I use a private instance of OpenBench)
@@ -107,6 +104,3 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with Zagreus. If not, see <https://www.gnu.org/licenses/>.
-
-This project uses the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter) by zd3nik which is licensed under
-the MIT license. All files from the Senjo UCI Adapter retain their original copyright and license notices.

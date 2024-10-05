@@ -18,11 +18,19 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+
 #include "uci.h"
 
 int main(int argc, char *argv[]) {
-    Zagreus::Engine engine;
+    try {
+        Zagreus::Engine engine;
+        engine.startUci();
+    } catch (const std::exception& e) {
+        // Handle the exception or log the error
+        std::cerr << "An error occurred: " << e.what() << std::endl;
+        return 1;
+    }
 
-    engine.startUci();
     return 0;
 }

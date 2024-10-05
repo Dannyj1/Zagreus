@@ -28,7 +28,7 @@ using Move = uint16_t;
 
 struct MoveList {
     std::array<Move, MAX_MOVES> list{};
-    int size = 0;
+    uint8_t size = 0;
 };
 
 // bits 0-5: to square (0-63)

@@ -32,6 +32,8 @@ private:
     MoveList moveList{};
 
 public:
-    MoveList& getMoveList();
+    [[nodiscard]] MoveList& getMoveList() {
+        return this->moveList;
+    }
 };
 } // namespace Zagreus

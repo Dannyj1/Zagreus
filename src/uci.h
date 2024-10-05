@@ -34,24 +34,25 @@ private:
 
     void handleUciCommand();
     void handleDebugCommand(std::string_view args);
-    void handleIsReadyCommand(const std::string& args);
+    void handleIsReadyCommand(std::string_view args);
     void handleSetOptionCommand(const std::string& args);
-    void handleUciNewGameCommand(const std::string& args);
-    void handlePositionCommand(const std::string& args);
-    void handleGoCommand(const std::string& args);
-    void handleStopCommand(const std::string& args);
-    void handlePonderHitCommand(const std::string& args);
-    void handleQuitCommand(const std::string& args);
-    void processCommand(const std::string& string, const std::string& args);
+    void handleUciNewGameCommand(std::string_view args);
+    void handlePositionCommand(std::string_view args);
+    void handleGoCommand(std::string_view args);
+    void handleStopCommand(std::string_view args);
+    void handlePonderHitCommand(std::string_view args);
+    void handleQuitCommand(std::string_view args);
+    void processCommand(std::string_view command, const std::string& args);
+
 public:
     void startUci();
-    void sendInfoMessage(const std::string& message);
-    void sendMessage(const std::string& message);
+    void sendInfoMessage(std::string_view message);
+    void sendMessage(std::string_view message);
     void doSetup();
     void printStartupMessage();
     void addOption(UCIOption& option);
     UCIOption& getOption(const std::string& name);
-    bool hasOption(const std::string& name);
+    bool hasOption(const std::string& name) const;
 };
 
 enum UCIOptionType {
@@ -82,11 +83,11 @@ public:
 
     std::string getValue();
 
-    void setValue(std::string& value);
+    void setValue(const std::string& value);
 
     std::string getDefaultValue();
 
-    void setDefaultValue(std::string value);
+    void setDefaultValue(const std::string& value);
 
     std::string getMinValue();
 
@@ -111,5 +112,5 @@ public:
     std::vector<std::string> getVar();
 };
 
-std::string removeRedundantSpaces(const std::string& input);
+std::string removeRedundantSpaces(std::string_view input);
 } // namespace Zagreus

@@ -10,7 +10,7 @@
  (at your option) any later version.
 
  Zagreus is distributed in the hope that it will be useful,
- but WITHOUstd::string ANY WARRANTY; without even the implied warranty of
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
 
@@ -23,6 +23,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cctype>
 
 #include "magics.h"
 #include "uci.h"
@@ -96,7 +97,7 @@ void Engine::handleDebugCommand(std::string_view args) {
     sendMessage("Debug mode is currently not implemented.");
 }
 
-void Engine::handleIsReadyCommand(const std::string& args) {
+void Engine::handleIsReadyCommand(std::string_view args) {
     if (!didSetup) {
         doSetup();
     }
@@ -117,7 +118,7 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 
     while (iss >> word) {
         std::string lowercaseWord = word;
-        std::ranges::transform(lowercaseWord, lowercaseWord.begin(), tolower);
+        std::ranges::transform(lowercaseWord, lowercaseWord.begin(), [](const unsigned char c) { return std::tolower(c); });
 
         if (lowercaseWord == "name") {
             section = word;
@@ -174,31 +175,31 @@ void Engine::handleSetOptionCommand(const std::string& args) {
     option.setValue(value);
 }
 
-void Engine::handleUciNewGameCommand(const std::string& args) {
+void Engine::handleUciNewGameCommand(std::string_view args) {
 
 }
 
-void Engine::handlePositionCommand(const std::string& args) {
+void Engine::handlePositionCommand(std::string_view args) {
 
 }
 
-void Engine::handleGoCommand(const std::string& args) {
+void Engine::handleGoCommand(std::string_view args) {
 
 }
 
-void Engine::handleStopCommand(const std::string& args) {
+void Engine::handleStopCommand(std::string_view args) {
 
 }
 
-void Engine::handlePonderHitCommand(const std::string& args) {
+void Engine::handlePonderHitCommand(std::string_view args) {
 
 }
 
-void Engine::handleQuitCommand(const std::string& args) {
+void Engine::handleQuitCommand(std::string_view args) {
 
 }
 
-void Engine::processCommand(const std::string& command, const std::string& args) {
+void Engine::processCommand(const std::string_view command, const std::string& args) {
     if (command == "uci") {
         handleUciCommand();
     } else if (command == "debug") {
@@ -251,7 +252,7 @@ UCIOption& Engine::getOption(const std::string& name) {
     return this->options[name];
 }
 
-bool Engine::hasOption(const std::string& name) {
+bool Engine::hasOption(const std::string& name) const {
     return this->options.contains(name);
 }
 
@@ -263,8 +264,17 @@ void Engine::startUci() {
 
     while (std::getline(std::cin, line)) {
         line = removeRedundantSpaces(line);
-        std::string command = line.substr(0, line.find(' '));
-        std::string args = line.substr(line.find(' ') + 1);
+        std::string command;
+        std::string args;
+
+        if (size_t space_pos = line.find(' '); space_pos != std::string::npos) {
+            command = line.substr(0, space_pos);
+            args = line.substr(space_pos + 1);
+        } else {
+            command = line;
+            args = "";
+        }
+
 
         if (args == "\n" || args == " ") {
             args = "";
@@ -274,15 +284,15 @@ void Engine::startUci() {
     }
 }
 
-void Engine::sendInfoMessage(const std::string& message) {
+void Engine::sendInfoMessage(std::string_view message) {
     std::cout << "info " << message << std::endl;
 }
 
-void Engine::sendMessage(const std::string& message) {
+void Engine::sendMessage(std::string_view message) {
     std::cout << message << std::endl;
 }
 
-std::string removeRedundantSpaces(const std::string& input) {
+std::string removeRedundantSpaces(std::string_view input) {
     std::string result;
     bool inSpace = false;  // Track if we are in a sequence of spaces/tabs
 
@@ -332,7 +342,7 @@ std::string UCIOption::getValue() {
     return this->value;
 }
 
-void UCIOption::setValue(std::string& value) {
+void UCIOption::setValue(const std::string& value) {
     this->value = value;
 }
 
@@ -340,7 +350,7 @@ std::string UCIOption::getDefaultValue() {
     return this->defaultValue;
 }
 
-void UCIOption::setDefaultValue(std::string value) {
+void UCIOption::setDefaultValue(const std::string& value) {
     this->defaultValue = value;
 }
 
@@ -372,6 +382,8 @@ std::string getUciOptionTypeAsString(const UCIOptionType type) {
             return "button";
         case String:
             return "string";
+        default:
+            return "unknown";
     }
 }
 
@@ -391,8 +403,8 @@ std::string UCIOption::toString() {
     }
 
     if (!this->var.empty()) {
-        for (const std::string& value : this->var) {
-            result += " var " + value;
+        for (const auto& optionValue : this->var) {
+            result += " var " + optionValue;
         }
     }
 

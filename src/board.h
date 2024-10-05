@@ -21,7 +21,10 @@
 
 #pragma once
 
+#include <__utility/to_underlying.h>
+
 #include <array>
+#include <cassert>
 
 #include "bitboard.h"
 
@@ -35,15 +38,26 @@ private:
 
 public:
     template <Piece piece>
-    [[nodiscard]] uint64_t getBitboard() const;
-
-    [[nodiscard]] Piece getPieceOnSquare(int square) const;
+    [[nodiscard]] uint64_t getBitboard() const {
+        return bitboards[std::to_underlying(piece)];
+    }
 
     template <PieceColor color>
-    [[nodiscard]] uint64_t getColorBitboard() const;
+    [[nodiscard]] uint64_t getColorBitboard() const {
+        return colorBoards[std::to_underlying(color)];
+    }
 
-    [[nodiscard]] uint64_t getOccupiedBitboard() const;
+    [[nodiscard]] Piece getPieceOnSquare(const int square) const {
+        assert(square >= 0 && square < 64);
+        return board[square];
+    }
 
-    [[nodiscard]] uint64_t getEmptyBitboard() const;
+    [[nodiscard]] uint64_t getOccupiedBitboard() const {
+        return occupied;
+    }
+
+    [[nodiscard]] uint64_t getEmptyBitboard() const {
+        return ~occupied;
+    }
 };
 } // namespace Zagreus

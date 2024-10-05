@@ -23,25 +23,5 @@
 #include <utility>
 
 namespace Zagreus {
-template <Piece piece>
-uint64_t Board::getBitboard() const {
-    return bitboards[std::to_underlying(piece)];
-}
 
-template <PieceColor color>
-uint64_t Board::getColorBitboard() const {
-    return colorBoards[std::to_underlying(color)];
-}
-
-Piece Board::getPieceOnSquare(const int square) const {
-    return board[square];
-}
-
-uint64_t Board::getOccupiedBitboard() const {
-    return occupied;
-}
-
-uint64_t Board::getEmptyBitboard() const {
-    return ~occupied;
-}
 } // namespace Zagreus
