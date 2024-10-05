@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -19,26 +18,15 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include "board.h"
-#include "move.h"
-#include "types.h"
+#include "bitboard.h"
 
 namespace Zagreus {
-enum class GenerationType : uint8_t {
-    All,
-    Quiet,
-    Capture,
-    Evasions
-};
+uint64_t bishopAttacks(const uint8_t square, const uint64_t occupied) {
+    uint64_t occupancy = occupied;
+    occupancy &= getBishopMask(square);
+    occupancy *= getBishopMagic(square);
+    occupancy >>= 64 - BBits[square];
 
-template <PieceColor color, GenerationType type>
-void generatePawnMoves(const Board& board, MoveList& moves);
-
-template <PieceColor color, GenerationType type>
-void generateKnightMoves(const Board& board, MoveList& moves);
-
-template <PieceColor color, GenerationType type>
-void generateBishopMoves(const Board& board, MoveList& moves);
+    return getBishopMagicAttacks(square, occupancy);
+}
 } // namespace Zagreus
