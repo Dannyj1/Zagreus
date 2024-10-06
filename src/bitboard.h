@@ -188,4 +188,15 @@ inline uint64_t knightAttacks(const uint64_t bb) {
 }
 
 uint64_t bishopAttacks(uint8_t square, uint64_t occupied);
+
+uint64_t rookAttacks(uint8_t square, uint64_t occupied);
+
+uint64_t queenAttacks(uint8_t square, uint64_t occupied);
+
+inline uint64_t kingAttacks(uint64_t bb) {
+    const uint64_t attacks = shiftEast(bb) | shiftWest(bb);
+    bb |= attacks;
+
+    return attacks | shiftNorth(bb) | shiftSouth(bb);
+}
 } // namespace Zagreus

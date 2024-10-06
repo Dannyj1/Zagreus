@@ -26,6 +26,7 @@
 #include <utility>
 
 #include "bitboard.h"
+#include "move.h"
 
 namespace Zagreus {
 class Board {
@@ -58,5 +59,7 @@ public:
     [[nodiscard]] uint64_t getEmptyBitboard() const {
         return ~occupied;
     }
+
+    bool isMoveLegal(Move move);
 };
 } // namespace Zagreus

@@ -1,5 +1,5 @@
 /*
- This file is part of Zagreus.
+This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
  Copyright (C) 2023-2024  Danny Jelsma
@@ -21,12 +21,23 @@
 #include "bitboard.h"
 
 namespace Zagreus {
-uint64_t bishopAttacks(const uint8_t square, const uint64_t occupied) {
-    uint64_t occupancy = occupied;
-    occupancy &= getBishopMask(square);
-    occupancy *= getBishopMagic(square);
-    occupancy >>= 64 - BBits[square];
+uint64_t bishopAttacks(const uint8_t square, uint64_t occupied) {
+    occupied &= getBishopMask(square);
+    occupied *= getBishopMagic(square);
+    occupied >>= 64 - BBits[square];
 
-    return getBishopMagicAttacks(square, occupancy);
+    return getBishopMagicAttacks(square, occupied);
+}
+
+uint64_t rookAttacks(const uint8_t square, uint64_t occupied) {
+    occupied &= getRookMask(square);
+    occupied *= getRookMagic(square);
+    occupied >>= 64 - RBits[square];
+
+    return getRookMagicAttacks(square, occupied);
+}
+
+uint64_t queenAttacks(const uint8_t square, uint64_t occupied) {
+    return bishopAttacks(square, occupied) | rookAttacks(square, occupied);
 }
 } // namespace Zagreus

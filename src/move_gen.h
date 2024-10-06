@@ -34,11 +34,23 @@ enum class GenerationType : uint8_t {
 };
 
 template <PieceColor color, GenerationType type>
-void generatePawnMoves(const Board& board, MoveList& moves);
+void generateMoves(const Board& board, MoveList& moves);
 
 template <PieceColor color, GenerationType type>
-void generateKnightMoves(const Board& board, MoveList& moves);
+void generatePawnMoves(const Board& board, MoveList& moves, uint64_t genMask);
 
 template <PieceColor color, GenerationType type>
-void generateBishopMoves(const Board& board, MoveList& moves);
+void generateKnightMoves(const Board& board, MoveList& moves, uint64_t genMask);
+
+template <PieceColor color, GenerationType type>
+void generateBishopMoves(const Board& board, MoveList& moves, uint64_t genMask);
+
+template <PieceColor color, GenerationType type>
+void generateRookMoves(const Board& board, MoveList& moves, uint64_t genMask);
+
+template <PieceColor color, GenerationType type>
+void generateQueenMoves(const Board& board, MoveList& moves, uint64_t genMask);
+
+template <PieceColor color, GenerationType type>
+void generateKingMoves(const Board& board, MoveList& moves, uint64_t genMask);
 } // namespace Zagreus
