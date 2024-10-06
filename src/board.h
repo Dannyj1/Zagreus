@@ -30,8 +30,6 @@
 #include "move.h"
 #include "constants.h"
 
-enum class Piece : uint8_t;
-
 namespace Zagreus {
 class Board {
 private:
@@ -64,6 +62,13 @@ public:
         return ~occupied;
     }
 
-    bool isMoveLegal(Move move);
+    [[nodiscard]] bool isMoveLegal(Move move) const;
+
+    [[nodiscard]] uint64_t getSquareAttackers(uint8_t square) const;
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t getSquareAttackersByColor(const uint8_t square) const {
+        return getSquareAttackers(square) & getColorBitboard<color>();
+    }
 };
 } // namespace Zagreus
