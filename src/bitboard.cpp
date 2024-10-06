@@ -20,13 +20,14 @@ This file is part of Zagreus.
 
 #include "bitboard.h"
 
+#include "macros.h"
 #include "magics.h"
 
 namespace Zagreus {
 void initializeAttackLookupTables() {
     for (uint8_t square = 0; square < SQUARES; ++square) {
-        pawnAttacksTable[std::to_underlying(PieceColor::WHITE)][square] = calculateWhitePawnAttacks(square);
-        pawnAttacksTable[std::to_underlying(PieceColor::BLACK)][square] = calculateBlackPawnAttacks(square);
+        pawnAttacksTable[IDX(PieceColor::WHITE)][square] = calculateWhitePawnAttacks(square);
+        pawnAttacksTable[IDX(PieceColor::BLACK)][square] = calculateBlackPawnAttacks(square);
         knightAttacksTable[square] = calculateKnightAttacks(square);
         kingAttacksTable[square] = calculateKingAttacks(square);
     }

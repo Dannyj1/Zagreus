@@ -21,12 +21,12 @@
 
 #pragma once
 
-#include <__utility/to_underlying.h>
+#include <utility>
 
 #include <cstdint>
 
 #include "constants.h"
-#include "magics.h"
+#include "macros.h"
 #include "types.h"
 
 namespace Zagreus {
@@ -103,7 +103,7 @@ inline uint64_t shiftSouthSouthWest(const uint64_t bb) {
 template <Direction direction>
 constexpr uint64_t shift(const uint64_t bb) {
     switch (direction) {
-        using enum Direction;
+            using enum Direction;
         case NORTH:
             return shiftNorth(bb);
         case SOUTH:
@@ -149,7 +149,7 @@ inline uint64_t calculateWhitePawnAttacks(const uint64_t bb) {
 
 template <PieceColor color>
 uint64_t pawnAttacks(const uint8_t square) {
-    return pawnAttacksTable[std::to_underlying(color)][square];
+    return pawnAttacksTable[IDX(color)][square];
 }
 
 inline uint64_t whitePushablePawns(const uint64_t bb, const uint64_t empty) {
@@ -196,8 +196,8 @@ inline uint64_t blackDoublePushablePawns(const uint64_t bb, const uint64_t empty
 
 inline uint64_t calculateKnightAttacks(const uint64_t bb) {
     return shiftNorthNorthEast(bb) | shiftNorthEastEast(bb) | shiftSouthEastEast(bb) |
-        shiftSouthSouthEast(bb) | shiftSouthSouthWest(bb) | shiftSouthWestWest(bb) |
-        shiftNorthWestWest(bb) |shiftNorthNorthWest(bb);
+           shiftSouthSouthEast(bb) | shiftSouthSouthWest(bb) | shiftSouthWestWest(bb) |
+           shiftNorthWestWest(bb) | shiftNorthNorthWest(bb);
 }
 
 inline uint64_t knightAttacks(uint8_t square) {
