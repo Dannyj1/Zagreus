@@ -32,14 +32,14 @@ uint64_t Board::getSquareAttackers(const uint8_t square) const {
     const uint64_t kings = getBitboard<WHITE_KING>() | getBitboard<BLACK_KING>();
     uint64_t bishopsQueens = getBitboard<WHITE_QUEEN>() | getBitboard<BLACK_QUEEN>();
     uint64_t rooksQueens = getBitboard<WHITE_QUEEN>() | getBitboard<BLACK_QUEEN>();
-    rooksQueens   |= getBitboard<WHITE_ROOK>() | getBitboard<BLACK_ROOK>();
+    rooksQueens |= getBitboard<WHITE_ROOK>() | getBitboard<BLACK_ROOK>();
     bishopsQueens |= getBitboard<WHITE_BISHOP>() | getBitboard<BLACK_BISHOP>();
 
     return (pawnAttacks<PieceColor::WHITE>(square) & getBitboard<BLACK_PAWN>())
-         | (pawnAttacks<PieceColor::BLACK>(square) & getBitboard<WHITE_PAWN>())
-         | (knightAttacks(square) & knights)
-         | (kingAttacks(square) & kings)
-         | (bishopAttacks(square, occupied) & bishopsQueens)
-         | (rookAttacks  (square, occupied) & rooksQueens);
+           | (pawnAttacks<PieceColor::BLACK>(square) & getBitboard<WHITE_PAWN>())
+           | (knightAttacks(square) & knights)
+           | (kingAttacks(square) & kings)
+           | (bishopAttacks(square, occupied) & bishopsQueens)
+           | (rookAttacks(square, occupied) & rooksQueens);
 }
 } // namespace Zagreus

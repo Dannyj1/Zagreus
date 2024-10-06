@@ -121,7 +121,8 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 
     while (iss >> word) {
         std::string lowercaseWord = word;
-        std::ranges::transform(lowercaseWord, lowercaseWord.begin(), [](const unsigned char c) { return std::tolower(c); });
+        std::ranges::transform(lowercaseWord, lowercaseWord.begin(),
+                               [](const unsigned char c) { return std::tolower(c); });
 
         if (lowercaseWord == "name") {
             section = word;
@@ -179,27 +180,21 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 }
 
 void Engine::handleUciNewGameCommand(std::string_view args) {
-
 }
 
 void Engine::handlePositionCommand(std::string_view args) {
-
 }
 
 void Engine::handleGoCommand(std::string_view args) {
-
 }
 
 void Engine::handleStopCommand(std::string_view args) {
-
 }
 
 void Engine::handlePonderHitCommand(std::string_view args) {
-
 }
 
 void Engine::handleQuitCommand(std::string_view args) {
-
 }
 
 void Engine::processCommand(const std::string_view command, const std::string& args) {
@@ -278,7 +273,6 @@ void Engine::startUci() {
             args = "";
         }
 
-
         if (args == "\n" || args == " ") {
             args = "";
         }
@@ -297,7 +291,7 @@ void Engine::sendMessage(std::string_view message) {
 
 std::string removeRedundantSpaces(std::string_view input) {
     std::string result;
-    bool inSpace = false;  // Track if we are in a sequence of spaces/tabs
+    bool inSpace = false; // Track if we are in a sequence of spaces/tabs
 
     for (size_t i = 0; i < input.length(); ++i) {
         char current = input[i];

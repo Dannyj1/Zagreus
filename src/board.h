@@ -29,6 +29,7 @@
 #include "bitboard.h"
 #include "move.h"
 #include "constants.h"
+#include "macros.h"
 
 namespace Zagreus {
 class Board {
@@ -41,12 +42,12 @@ private:
 public:
     template <Piece piece>
     [[nodiscard]] uint64_t getBitboard() const {
-        return bitboards[std::to_underlying(piece)];
+        return bitboards[IDX(piece)];
     }
 
     template <PieceColor color>
     [[nodiscard]] uint64_t getColorBitboard() const {
-        return colorBoards[std::to_underlying(color)];
+        return colorBoards[IDX(color)];
     }
 
     [[nodiscard]] Piece getPieceOnSquare(const int square) const {
