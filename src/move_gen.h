@@ -21,11 +21,18 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #include "board.h"
 #include "move.h"
 #include "types.h"
 
+enum class PieceColor : uint8_t;
+
 namespace Zagreus {
+class Board;
+struct MoveList;
+
 enum class GenerationType : uint8_t {
     All,
     Quiet,

@@ -20,10 +20,12 @@
 
 #include "magics.h"
 
+#include <stdio.h>
 #include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <random>
+#include <limits>
 
 // Code for magic generation https://www.chessprogramming.org/Looking_for_Magics
 namespace Zagreus {

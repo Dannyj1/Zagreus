@@ -19,6 +19,7 @@
  */
 
 // ReSharper disable CppRedundantControlFlowJump
+#include <stddef.h>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
