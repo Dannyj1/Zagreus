@@ -20,6 +20,8 @@ This file is part of Zagreus.
 
 #include "bitboard.h"
 
+#include "magics.h"
+
 namespace Zagreus {
 uint64_t bishopAttacks(const uint8_t square, uint64_t occupied) {
     occupied &= getBishopMask(square);

@@ -18,11 +18,15 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "move_gen.h"
+#include <limits>
+#include <array>
 
+#include "move_gen.h"
 #include "bitwise.h"
 #include "board.h"
 #include "types.h"
+#include "bitboard.h"
+#include "move.h"
 
 namespace Zagreus {
 template <PieceColor color, GenerationType type>

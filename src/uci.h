@@ -23,6 +23,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <string_view>
+#include <utility>
 
 namespace Zagreus {
 class UCIOption;

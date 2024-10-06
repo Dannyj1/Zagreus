@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include <exception>
 
 #include "uci.h"
 

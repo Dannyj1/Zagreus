@@ -20,8 +20,6 @@
 
 #include "board.h"
 
-#include <utility>
-
 namespace Zagreus {
 bool Board::isMoveLegal(Move move) {
     // TODO: Implement

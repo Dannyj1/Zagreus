@@ -21,12 +21,16 @@
 
 #pragma once
 
+#include <stdint.h>
 #include <array>
 #include <cassert>
 #include <utility>
 
 #include "bitboard.h"
 #include "move.h"
+#include "constants.h"
+
+enum class Piece : uint8_t;
 
 namespace Zagreus {
 class Board {
