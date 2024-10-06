@@ -29,6 +29,8 @@
 #include "magics.h"
 #include "uci.h"
 
+#include "bitboard.h"
+
 namespace Zagreus {
 void Engine::doSetup() {
     // According to the UCI specification, bitboard, magic bitboards and other stuff should be done only when "isready" or "setoption" is called
@@ -36,8 +38,8 @@ void Engine::doSetup() {
         return;
     }
 
-    // TODO: setup here
     initializeMagicBitboards();
+    initializeAttackLookupTables();
 
     didSetup = true;
 }

@@ -23,6 +23,15 @@ This file is part of Zagreus.
 #include "magics.h"
 
 namespace Zagreus {
+void initializeAttackLookupTables() {
+    for (uint8_t square = 0; square < SQUARES; ++square) {
+        pawnAttacksTable[std::to_underlying(PieceColor::WHITE)][square] = calculateWhitePawnAttacks(square);
+        pawnAttacksTable[std::to_underlying(PieceColor::BLACK)][square] = calculateBlackPawnAttacks(square);
+        knightAttacksTable[square] = calculateKnightAttacks(square);
+        kingAttacksTable[square] = calculateKingAttacks(square);
+    }
+}
+
 uint64_t bishopAttacks(const uint8_t square, uint64_t occupied) {
     occupied &= getBishopMask(square);
     occupied *= getBishopMagic(square);
