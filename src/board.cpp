@@ -20,10 +20,21 @@
 
 #include "board.h"
 
+#include "bitwise.h"
+
 namespace Zagreus {
-bool Board::isMoveLegal(Move move) const {
-    // TODO: Implement
+template <PieceColor movedColor>
+bool Board::isPositionLegal() const {
+    constexpr PieceColor opponentColor = !movedColor;
+    constexpr Piece king = movedColor == PieceColor::WHITE ? Piece::WHITE_KING : Piece::BLACK_KING;
+    const uint64_t kingBB = getBitboard<king>();
+    const uint8_t kingSquare = bitscanForward(kingBB);
+
+    return !getSquareAttackersByColor<opponentColor>(kingSquare);
 }
+
+template bool Board::isPositionLegal<PieceColor::WHITE>() const;
+template bool Board::isPositionLegal<PieceColor::BLACK>() const;
 
 uint64_t Board::getSquareAttackers(const uint8_t square) const {
     using enum Piece;
@@ -42,4 +53,6 @@ uint64_t Board::getSquareAttackers(const uint8_t square) const {
            | (bishopAttacks(square, occupied) & bishopsQueens)
            | (rookAttacks(square, occupied) & rooksQueens);
 }
+
+void Board::makeMove(const Move& move) {}
 } // namespace Zagreus

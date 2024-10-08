@@ -53,7 +53,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     // TODO: Handle promotions
     // TODO: Move attacks to table lookup
     constexpr Piece pawn = color == PieceColor::WHITE ? Piece::WHITE_PAWN : Piece::BLACK_PAWN;
-    constexpr PieceColor opponentColor = color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE;
+    constexpr PieceColor opponentColor = !color;
 
     const uint64_t pawnBB = board.getBitboard<pawn>();
     const uint64_t emptyBB = board.getEmptyBitboard();

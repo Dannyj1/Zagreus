@@ -39,16 +39,28 @@ enum class PieceColor : uint8_t { WHITE, BLACK, EMPTY = 255 };
 
 enum class Piece : uint8_t {
     WHITE_PAWN,
-    WHITE_KNIGHT,
-    WHITE_BISHOP,
-    WHITE_ROOK,
-    WHITE_QUEEN,
-    WHITE_KING,
     BLACK_PAWN,
+    WHITE_KNIGHT,
     BLACK_KNIGHT,
+    WHITE_BISHOP,
     BLACK_BISHOP,
+    WHITE_ROOK,
     BLACK_ROOK,
+    WHITE_QUEEN,
     BLACK_QUEEN,
+    WHITE_KING,
     BLACK_KING,
     EMPTY = 255
 };
+
+inline constexpr PieceColor operator!(const PieceColor color) {
+    return color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE;
+}
+
+inline constexpr PieceColor pieceColor(const Piece piece) {
+    return static_cast<PieceColor>(static_cast<uint8_t>(piece) / 2);
+}
+
+inline constexpr PieceType pieceType(const Piece piece) {
+    return static_cast<PieceType>(static_cast<uint8_t>(piece) % 2);
+}

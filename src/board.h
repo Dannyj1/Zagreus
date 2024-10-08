@@ -63,7 +63,40 @@ public:
         return ~occupied;
     }
 
-    [[nodiscard]] bool isMoveLegal(Move move) const;
+    template <Piece piece>
+    void setPiece(uint8_t square) {
+        const uint64_t squareBB = squareToBitboard(square);
+
+        board[square] = piece;
+        bitboards[IDX(piece)] |= squareBB;
+        occupied |= squareBB;
+        colorBoards[IDX(pieceColor(piece))] |= squareBB;
+    }
+
+    void removePiece(uint8_t square) {
+        const uint64_t squareBB = squareToBitboard(square);
+        const Piece piece = board[square];
+
+        board[square] = Piece::EMPTY;
+        bitboards[IDX(piece)] &= ~squareBB;
+        occupied &= ~squareBB;
+        colorBoards[IDX(pieceColor(piece))] &= ~squareBB;
+    }
+
+    template <Piece piece>
+    void removePiece(uint8_t square) {
+        const uint64_t squareBB = squareToBitboard(square);
+
+        board[square] = Piece::EMPTY;
+        bitboards[IDX(piece)] &= ~squareBB;
+        occupied &= ~squareBB;
+        colorBoards[IDX(pieceColor(piece))] &= ~squareBB;
+    }
+
+    void makeMove(const Move& move);
+
+    template <PieceColor movedColor>
+    [[nodiscard]] bool isPositionLegal() const;
 
     [[nodiscard]] uint64_t getSquareAttackers(uint8_t square) const;
 
