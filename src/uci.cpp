@@ -41,6 +41,7 @@ void Engine::doSetup() {
     initializeMagicBitboards();
     initializeAttackLookupTables();
 
+    board = Board();
     didSetup = true;
 }
 
@@ -195,6 +196,15 @@ void Engine::handlePonderHitCommand(std::string_view args) {
 }
 
 void Engine::handleQuitCommand(std::string_view args) {
+
+}
+
+void Engine::handlePerftCommand(std::string_view args) {
+    if (!didSetup) {
+        doSetup();
+    }
+
+    // TODO: Need to add FEN processing before we can add this
 }
 
 void Engine::processCommand(const std::string_view command, const std::string& args) {
@@ -221,6 +231,8 @@ void Engine::processCommand(const std::string_view command, const std::string& a
         handlePonderHitCommand(args);
     } else if (command == "quit") {
         handleQuitCommand(args);
+    } else if (command == "perft") {
+        handlePerftCommand(args);
     } else {
         // If unknown, we must skip it and process the rest.
         if (args.empty() || args == " " || args == "\n") {

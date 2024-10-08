@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -23,18 +22,9 @@
 
 #include <cstdint>
 
-static constexpr uint16_t MAX_PLY = 750;
+#include "board.h"
+#include "types.h"
 
-constexpr uint64_t NOT_A_FILE = 0xFEFEFEFEFEFEFEFEULL;
-constexpr uint64_t NOT_AB_FILE = 0xFCFCFCFCFCFCFCFCULL;
-constexpr uint64_t NOT_GH_FILE = 0x3F3F3F3F3F3F3F3FULL;
-constexpr uint64_t NOT_H_FILE = 0x7F7F7F7F7F7F7F7FULL;
-
-constexpr uint64_t RANK_4 = 0x00000000FF000000ULL;
-constexpr uint64_t RANK_5 = 0x000000FF00000000ULL;
-
-constexpr uint8_t SQUARES = 64;
-constexpr uint8_t PIECES = 12;
-constexpr uint8_t COLORS = 2;
-
-constexpr uint8_t MAX_MOVES = 255;
+namespace Zagreus {
+uint64_t perft(const Board &board, int depth);
+} // namespace Zagreus

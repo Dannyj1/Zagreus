@@ -93,7 +93,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = shift<fromPushDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
-        moves.list[moves.size] = move;
+        moves.moves[moves.size] = move;
         moves.size++;
     }
 
@@ -102,7 +102,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = shift<fromPushDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
-        moves.list[moves.size] = move;
+        moves.moves[moves.size] = move;
         moves.size++;
     }
 
@@ -111,7 +111,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = shift<fromSqWestAttackDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
-        moves.list[moves.size] = move;
+        moves.moves[moves.size] = move;
         moves.size++;
     }
 
@@ -120,7 +120,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = shift<fromSqEastAttackDirection>(squareTo);
         const Move move = encodeMove(squareFrom, squareTo);
 
-        moves.list[moves.size] = move;
+        moves.moves[moves.size] = move;
         moves.size++;
     }
 }
@@ -139,7 +139,7 @@ void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t gen
             const uint8_t toSquare = popLsb(genBB);
             const Move move = encodeMove(fromSquare, toSquare);
 
-            moves.list[moves.size] = move;
+            moves.moves[moves.size] = move;
             moves.size++;
         }
     }
@@ -160,7 +160,7 @@ void generateBishopMoves(const Board& board, MoveList& moves, const uint64_t gen
             const uint8_t toSquare = popLsb(genBB);
             const Move move = encodeMove(fromSquare, toSquare);
 
-            moves.list[moves.size] = move;
+            moves.moves[moves.size] = move;
             moves.size++;
         }
     }
@@ -181,7 +181,7 @@ void generateRookMoves(const Board& board, MoveList& moves, const uint64_t genMa
             const uint8_t toSquare = popLsb(genBB);
             const Move move = encodeMove(fromSquare, toSquare);
 
-            moves.list[moves.size] = move;
+            moves.moves[moves.size] = move;
             moves.size++;
         }
     }
@@ -202,7 +202,7 @@ void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genM
             const uint8_t toSquare = popLsb(genBB);
             const Move move = encodeMove(fromSquare, toSquare);
 
-            moves.list[moves.size] = move;
+            moves.moves[moves.size] = move;
             moves.size++;
         }
     }
@@ -224,7 +224,7 @@ void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMa
             const uint8_t toSquare = popLsb(genBB);
             const Move move = encodeMove(fromSquare, toSquare);
 
-            moves.list[moves.size] = move;
+            moves.moves[moves.size] = move;
             moves.size++;
         }
     }

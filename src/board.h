@@ -32,12 +32,20 @@
 #include "macros.h"
 
 namespace Zagreus {
+struct BoardState {
+    Move move = 0;
+    Piece capturedPiece = Piece::EMPTY;
+};
+
 class Board {
 private:
     std::array<Piece, SQUARES> board{};
     std::array<uint64_t, PIECES> bitboards{};
     uint64_t occupied = 0;
     std::array<uint64_t, COLORS> colorBoards{};
+    PieceColor sideToMove = PieceColor::EMPTY;
+    std::array<BoardState, MAX_PLY> history{};
+    int ply = 0;
 
 public:
     template <Piece piece>
@@ -55,6 +63,10 @@ public:
         return board[square];
     }
 
+    [[nodiscard]] bool isPieceOnSquare(const int square) const {
+        return board[square] != Piece::EMPTY;
+    }
+
     [[nodiscard]] uint64_t getOccupiedBitboard() const {
         return occupied;
     }
@@ -63,8 +75,25 @@ public:
         return ~occupied;
     }
 
+    [[nodiscard]] PieceColor getSideToMove() const {
+        return sideToMove;
+    }
+
+    [[nodiscard]] int getPly() const {
+        return ply;
+    }
+
     template <Piece piece>
     void setPiece(uint8_t square) {
+        const uint64_t squareBB = squareToBitboard(square);
+
+        board[square] = piece;
+        bitboards[IDX(piece)] |= squareBB;
+        occupied |= squareBB;
+        colorBoards[IDX(pieceColor(piece))] |= squareBB;
+    }
+
+    void setPiece(Piece piece, uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
@@ -94,6 +123,8 @@ public:
     }
 
     void makeMove(const Move& move);
+
+    void unmakeMove();
 
     template <PieceColor movedColor>
     [[nodiscard]] bool isPositionLegal() const;
