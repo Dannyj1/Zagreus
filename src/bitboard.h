@@ -21,10 +21,10 @@
 
 #pragma once
 
+#include <cstdint>
 #include <utility>
 
-#include <cstdint>
-
+#include "bitwise.h"
 #include "constants.h"
 #include "macros.h"
 #include "types.h"
@@ -220,4 +220,8 @@ inline uint64_t calculateKingAttacks(uint64_t bb) {
 inline uint64_t kingAttacks(const uint8_t square) {
     return kingAttacksTable[square];
 }
+
+inline uint64_t squareToBitboard(const uint8_t square) { return 1ULL << square; }
+
+inline uint8_t bitboardToSquare(const uint64_t bb) { return bitscanForward(bb); }
 } // namespace Zagreus
