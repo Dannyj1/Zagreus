@@ -54,5 +54,39 @@ uint64_t Board::getSquareAttackers(const uint8_t square) const {
            | (rookAttacks(square, occupied) & rooksQueens);
 }
 
-void Board::makeMove(const Move& move) {}
+void Board::makeMove(const Move& move) {
+    const uint8_t fromSquare = getFromSquare(move);
+    const uint8_t toSquare = getToSquare(move);
+    const Piece movedPiece = getPieceOnSquare(fromSquare);
+
+    if (isPieceOnSquare(toSquare)) {
+        removePiece(toSquare);
+    }
+
+    removePiece(fromSquare);
+    setPiece(movedPiece, toSquare);
+
+    sideToMove = !sideToMove;
+    history[ply].move = move;
+    history[ply].capturedPiece = getPieceOnSquare(toSquare);
+    ply++;
+}
+
+void Board::unmakeMove() {
+    const auto [move, capturedPiece] = history[ply - 1];
+    const uint8_t fromSquare = getFromSquare(move);
+    const uint8_t toSquare = getToSquare(move);
+    const Piece movedPiece = getPieceOnSquare(toSquare);
+
+    removePiece(toSquare);
+    setPiece(movedPiece, fromSquare);
+
+    if (capturedPiece != Piece::EMPTY) {
+        setPiece(capturedPiece, toSquare);
+    }
+
+    // TODO: Restore state once more things are added to it
+    sideToMove = !sideToMove;
+    ply--;
+}
 } // namespace Zagreus

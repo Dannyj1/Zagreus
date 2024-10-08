@@ -22,9 +22,11 @@
 
 #include <map>
 #include <string>
-#include <vector>
 #include <string_view>
 #include <utility>
+#include <vector>
+
+#include "board.h"
 
 namespace Zagreus {
 class UCIOption;
@@ -32,7 +34,8 @@ class UCIOption;
 class Engine {
 private:
     bool didSetup = false;
-    std::map<std::string, UCIOption> options;
+    std::map<std::string, UCIOption> options{};
+    Board board;
 
     void handleUciCommand();
     void handleDebugCommand(std::string_view args);
@@ -44,6 +47,7 @@ private:
     void handleStopCommand(std::string_view args);
     void handlePonderHitCommand(std::string_view args);
     void handleQuitCommand(std::string_view args);
+    void handlePerftCommand(std::string_view args);
     void processCommand(std::string_view command, const std::string& args);
 
 public:
