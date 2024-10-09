@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include <stdint.h>
-#include <__fwd/string_view.h>
+#include <cstdint>
+#include <string_view>
 
 #include <algorithm>
 #include <array>
@@ -60,12 +60,12 @@ public:
 
     template <Piece piece>
     [[nodiscard]] uint64_t getBitboard() const {
-        return bitboards[IDX(piece)];
+        return bitboards[TO_INT(piece)];
     }
 
     template <PieceColor color>
     [[nodiscard]] uint64_t getColorBitboard() const {
-        return colorBoards[IDX(color)];
+        return colorBoards[TO_INT(color)];
     }
 
     [[nodiscard]] Piece getPieceOnSquare(const int square) const {
@@ -98,18 +98,18 @@ public:
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
-        bitboards[IDX(piece)] |= squareBB;
+        bitboards[TO_INT(piece)] |= squareBB;
         occupied |= squareBB;
-        colorBoards[IDX(pieceColor(piece))] |= squareBB;
+        colorBoards[TO_INT(pieceColor(piece))] |= squareBB;
     }
 
     void setPiece(const Piece piece, const uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
-        bitboards[IDX(piece)] |= squareBB;
+        bitboards[TO_INT(piece)] |= squareBB;
         occupied |= squareBB;
-        colorBoards[IDX(pieceColor(piece))] |= squareBB;
+        colorBoards[TO_INT(pieceColor(piece))] |= squareBB;
     }
 
     void removePiece(const uint8_t square) {
@@ -117,9 +117,9 @@ public:
         const Piece piece = board[square];
 
         board[square] = Piece::EMPTY;
-        bitboards[IDX(piece)] &= ~squareBB;
+        bitboards[TO_INT(piece)] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[IDX(pieceColor(piece))] &= ~squareBB;
+        colorBoards[TO_INT(pieceColor(piece))] &= ~squareBB;
     }
 
     template <Piece piece>
@@ -127,24 +127,24 @@ public:
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = Piece::EMPTY;
-        bitboards[IDX(piece)] &= ~squareBB;
+        bitboards[TO_INT(piece)] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[IDX(pieceColor(piece))] &= ~squareBB;
+        colorBoards[TO_INT(pieceColor(piece))] &= ~squareBB;
     }
 
     void removePiece(const Piece piece, const uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = Piece::EMPTY;
-        bitboards[IDX(piece)] &= ~squareBB;
+        bitboards[TO_INT(piece)] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[IDX(pieceColor(piece))] &= ~squareBB;
+        colorBoards[TO_INT(pieceColor(piece))] &= ~squareBB;
     }
 
     void makeMove(const Move& move);
 
     void unmakeMove();
-    void setPieceFromFENChar(char character, uint8_t index);
+    void setPieceFromFENChar(char character, uint8_t square);
 
     template <PieceColor movedColor>
     [[nodiscard]] bool isPositionLegal() const;

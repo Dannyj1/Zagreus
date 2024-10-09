@@ -21,20 +21,27 @@
 #pragma once
 
 #include <array>
-#include <utility>
-#include <utility>
+#include <cassert>
 
 #include "macros.h"
 
 enum class Direction {
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST,
-    NORTH_EAST,
-    NORTH_WEST,
-    SOUTH_EAST,
-    SOUTH_WEST
+    NORTH = 8,
+    SOUTH = -8,
+    EAST = 1,
+    WEST = -1,
+    NORTH_EAST = 9,
+    NORTH_WEST = 7,
+    SOUTH_EAST = -7,
+    SOUTH_WEST = -9,
+    NORTH_NORTH_EAST = 17,
+    NORTH_EAST_EAST = 10,
+    SOUTH_EAST_EAST = -6,
+    SOUTH_SOUTH_EAST = -15,
+    SOUTH_SOUTH_WEST = -17,
+    SOUTH_WEST_WEST = -10,
+    NORTH_WEST_WEST = -17,
+    NORTH_NORTH_WEST = -15
 };
 
 // clang-format off
@@ -56,6 +63,7 @@ enum class PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY 
 enum class PieceColor : uint8_t { WHITE, BLACK, EMPTY = 255 };
 
 constexpr PieceColor operator!(const PieceColor color) {
+    assert(color != PieceColor::EMPTY);
     return color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE;
 }
 
@@ -76,9 +84,11 @@ enum class Piece : uint8_t {
 };
 
 constexpr PieceColor pieceColor(const Piece piece) {
-    return static_cast<PieceColor>(IDX(piece) % 2);
+    assert(piece != Piece::EMPTY);
+    return static_cast<PieceColor>(TO_INT(piece) % 2);
 }
 
 constexpr PieceType pieceType(const Piece piece) {
-    return static_cast<PieceType>(IDX(piece) / 2);
+    assert(piece != Piece::EMPTY);
+    return static_cast<PieceType>(TO_INT(piece) / 2);
 }

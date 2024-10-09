@@ -20,6 +20,10 @@
  */
 
 #pragma once
+
+#include <array>
+#include <string>
+
 #include "constants.h"
 
 
@@ -31,30 +35,32 @@ struct MoveList {
     uint8_t size = 0;
 };
 
+std::string getMoveNotation(uint8_t square);
+
 // bits 0-5: from square (0-63)
 // bits 6-11: to square (0-63)
 // bits 12-13: move type (00 = normal, 01 = promotion, 10 = en passant, 11 = castling)
 // bits 14-15: promotion piece (00 = queen, 01 = rook, 10 = bishop, 11 = knight)
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare) {
-    // Assume normal move, so 12-13 are 00
-    return static_cast<uint16_t>(toSquare << 6) | static_cast<uint16_t>(fromSquare);
+    // Assume normal move, so bits 12-13 are 00 and bits 14-15 are 00
+    return static_cast<Move>(fromSquare | (toSquare << 6));
 }
 
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const uint8_t moveType) {
-    return static_cast<uint16_t>(toSquare << 6) | static_cast<uint16_t>(fromSquare)
-           | static_cast<uint16_t>(moveType << 12);
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (moveType << 12));
 }
 
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const uint8_t moveType, const uint8_t promotionPiece) {
-    return static_cast<uint16_t>(toSquare << 6) | static_cast<uint16_t>(fromSquare)
-           | static_cast<uint16_t>(moveType << 12) | static_cast<uint16_t>(promotionPiece << 14);
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (moveType << 12) | (promotionPiece << 14));
 }
 
 inline uint8_t getFromSquare(const Move move) {
-    return move & 0b111111;
+    // Extract bits 0-5
+    return static_cast<uint8_t>(move & 0x3F);
 }
 
 inline uint8_t getToSquare(const Move move) {
-    return (move >> 6) & 0b111111;
+    // Extract bits 6-11
+    return static_cast<uint8_t>((move >> 6) & 0x3F);
 }
 } // namespace Zagreus

@@ -27,6 +27,7 @@
 
 namespace Zagreus {
 uint64_t perft(Board &board, const int depth, bool printNodes) {
+    assert(depth >= 0);
     using enum PieceColor;
     using enum GenerationType;
 
@@ -62,11 +63,11 @@ uint64_t perft(Board &board, const int depth, bool printNodes) {
         uint64_t perftNodes = perft(board, depth - 1, false);
 
         if (printNodes) {
-            // TODO: Implement proper move notation, now it's just ints
-            std::string fromToNotation = std::to_string(getFromSquare(moveList.moves[i])) + std::to_string(getToSquare(moveList.moves[i]));
-        }
+            std::string fromNotation = getMoveNotation(getFromSquare(moveList.moves[i]));
+            std::string toNotation = getMoveNotation(getToSquare(moveList.moves[i]));
 
-        std::cout << moveList.moves[i] << ": " << perftNodes << std::endl;
+            std::cout << fromNotation << toNotation << ": " << perftNodes << std::endl;
+        }
 
         nodes += perftNodes;
         board.unmakeMove();

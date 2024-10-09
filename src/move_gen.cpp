@@ -30,6 +30,9 @@
 namespace Zagreus {
 template <PieceColor color, GenerationType type>
 void generateMoves(const Board& board, MoveList& moves) {
+    assert(color != PieceColor::EMPTY);
+    assert(moves.size == 0);
+
     // TODO: Implement GenerationType logic using a mask that is computed based on type
     constexpr Piece opponentKing = color == PieceColor::WHITE ? Piece::BLACK_KING : Piece::WHITE_KING;
 
@@ -78,17 +81,13 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     pawnWestAttacks &= opponentPieces & genMask;
     pawnEastAttacks &= opponentPieces & genMask;
 
-    constexpr Direction fromPushDirection = color == PieceColor::WHITE ? Direction::SOUTH : Direction::NORTH;
-    constexpr Direction fromSqWestAttackDirection = color == PieceColor::WHITE
-                                                        ? Direction::SOUTH_WEST
-                                                        : Direction::NORTH_WEST;
-    constexpr Direction fromSqEastAttackDirection = color == PieceColor::WHITE
-                                                        ? Direction::SOUTH_EAST
-                                                        : Direction::NORTH_EAST;
+    constexpr Direction fromPushDirection = color == PieceColor::WHITE ? Direction::NORTH : Direction::SOUTH;
+    constexpr Direction fromSqWestAttackDirection = color == PieceColor::WHITE ? Direction::NORTH_WEST : Direction::SOUTH_WEST;
+    constexpr Direction fromSqEastAttackDirection = color == PieceColor::WHITE ? Direction::NORTH_EAST : Direction::SOUTH_EAST;
 
     while (pawnSinglePushes) {
         const uint8_t squareTo = popLsb(pawnSinglePushes);
-        const uint8_t squareFrom = shift<fromPushDirection>(squareTo);
+        const uint8_t squareFrom = squareTo - TO_INT(fromPushDirection);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.moves[moves.size] = move;
@@ -97,7 +96,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (pawnDoublePushes) {
         const uint8_t squareTo = popLsb(pawnDoublePushes);
-        const uint8_t squareFrom = shift<fromPushDirection>(squareTo);
+        const uint8_t squareFrom = squareTo - TO_INT(fromPushDirection) - TO_INT(fromPushDirection);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.moves[moves.size] = move;
@@ -106,7 +105,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (pawnWestAttacks) {
         const uint8_t squareTo = popLsb(pawnWestAttacks);
-        const uint8_t squareFrom = shift<fromSqWestAttackDirection>(squareTo);
+        const uint8_t squareFrom = squareTo - TO_INT(fromSqWestAttackDirection);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.moves[moves.size] = move;
@@ -115,7 +114,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (pawnEastAttacks) {
         const uint8_t squareTo = popLsb(pawnEastAttacks);
-        const uint8_t squareFrom = shift<fromSqEastAttackDirection>(squareTo);
+        const uint8_t squareFrom = squareTo - TO_INT(fromSqEastAttackDirection);
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.moves[moves.size] = move;
@@ -131,7 +130,8 @@ void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t gen
 
     while (knightBB) {
         const uint8_t fromSquare = popLsb(knightBB);
-        uint64_t genBB = knightAttacks(fromSquare) & genMask;
+        uint64_t attacks = knightAttacks(fromSquare);
+        uint64_t genBB = attacks & genMask;
 
         while (genBB) {
             const uint8_t toSquare = popLsb(genBB);

@@ -30,10 +30,6 @@
 #include "types.h"
 
 namespace Zagreus {
-static std::array<std::array<uint64_t, SQUARES>, COLORS> pawnAttacksTable{};
-static std::array<uint64_t, SQUARES> knightAttacksTable{};
-static std::array<uint64_t, SQUARES> kingAttacksTable{};
-
 void initializeAttackLookupTables();
 
 inline uint64_t shiftNorth(const uint64_t bb) {
@@ -120,7 +116,20 @@ constexpr uint64_t shift(const uint64_t bb) {
             return shiftSouthEast(bb);
         case SOUTH_WEST:
             return shiftSouthWest(bb);
+        case NORTH_NORTH_EAST:
+            return shiftNorthNorthEast(bb);
+        case NORTH_EAST_EAST:
+            return shiftNorthEastEast(bb);
+        case SOUTH_EAST_EAST:
+            return shiftSouthEastEast(bb);
+        case SOUTH_SOUTH_EAST:
+            return shiftSouthSouthEast(bb);
+        case SOUTH_SOUTH_WEST:
+            return shiftSouthSouthWest(bb);
+        case SOUTH_WEST_WEST:
+            return shiftSouthWestWest(bb);
         default:
+            assert(false);
             return bb;
     }
 }
@@ -145,11 +154,6 @@ inline uint64_t whitePawnEastAttacks(const uint64_t bb) {
 
 inline uint64_t calculateWhitePawnAttacks(const uint64_t bb) {
     return whitePawnWestAttacks(bb) | whitePawnEastAttacks(bb);
-}
-
-template <PieceColor color>
-uint64_t pawnAttacks(const uint8_t square) {
-    return pawnAttacksTable[IDX(color)][square];
 }
 
 inline uint64_t whitePushablePawns(const uint64_t bb, const uint64_t empty) {
@@ -200,9 +204,12 @@ inline uint64_t calculateKnightAttacks(const uint64_t bb) {
            shiftNorthWestWest(bb) | shiftNorthNorthWest(bb);
 }
 
-inline uint64_t knightAttacks(const uint8_t square) {
-    return knightAttacksTable[square];
-}
+template <PieceColor color>
+uint64_t pawnAttacks(uint8_t square);
+
+uint64_t knightAttacks(uint8_t square);
+
+uint64_t kingAttacks(uint8_t square);
 
 uint64_t bishopAttacks(uint8_t square, uint64_t occupied);
 
@@ -217,11 +224,11 @@ inline uint64_t calculateKingAttacks(uint64_t bb) {
     return attacks | shiftNorth(bb) | shiftSouth(bb);
 }
 
-inline uint64_t kingAttacks(const uint8_t square) {
-    return kingAttacksTable[square];
+inline uint64_t squareToBitboard(const uint8_t square) {
+    return 1ULL << square;
 }
 
-inline uint64_t squareToBitboard(const uint8_t square) { return 1ULL << square; }
-
-inline uint8_t bitboardToSquare(const uint64_t bb) { return bitscanForward(bb); }
+inline uint8_t bitboardToSquare(const uint64_t bb) {
+    return bitscanForward(bb);
+}
 } // namespace Zagreus
