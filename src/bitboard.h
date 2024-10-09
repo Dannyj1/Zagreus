@@ -200,7 +200,7 @@ inline uint64_t calculateKnightAttacks(const uint64_t bb) {
            shiftNorthWestWest(bb) | shiftNorthNorthWest(bb);
 }
 
-inline uint64_t knightAttacks(uint8_t square) {
+inline uint64_t knightAttacks(const uint8_t square) {
     return knightAttacksTable[square];
 }
 

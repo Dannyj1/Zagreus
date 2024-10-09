@@ -26,5 +26,5 @@
 #include "types.h"
 
 namespace Zagreus {
-uint64_t perft(const Board &board, int depth);
+uint64_t perft(Board &board, int depth, bool printNodes = true);
 } // namespace Zagreus

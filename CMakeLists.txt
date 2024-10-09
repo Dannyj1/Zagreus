@@ -146,9 +146,9 @@ if (ENABLE_OPTIMIZATION)
         set(PROFILING_FLAGS "${PROFILING_FLAGS} -O3")
     endif ()
 else ()
-    set(RELEASE_FLAGS "${RELEASE_FLAGS} -O1 -fno-inline")
-    set(DEBUG_FLAGS "${DEBUG_FLAGS} -O1 -fno-inline")
-    set(PROFILING_FLAGS "${PROFILING_FLAGS} -O1 -fno-inline")
+    set(RELEASE_FLAGS "${RELEASE_FLAGS} -O0 -fno-inline")
+    set(DEBUG_FLAGS "${DEBUG_FLAGS} -O0 -fno-inline")
+    set(PROFILING_FLAGS "${PROFILING_FLAGS} -O0 -fno-inline")
 endif ()
 
 if (ENABLE_LTO)
@@ -221,21 +221,20 @@ if (ENABLE_IWYU)
     endif ()
 endif ()
 
-# TODO: re-enable
-#if (ENABLE_TESTS)
-#    file(GLOB tests_folder "tests/*.h" "tests/*.cpp")
-#
-#    # Remove main from inc_zagreus
-#    list(REMOVE_ITEM inc_zagreus "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
-#
-#    add_executable(zagreus-tests ${tests_folder} ${inc_zagreus})
-#    target_link_libraries(zagreus-tests PRIVATE Catch2::Catch2WithMain)
-#
-#    target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
-#    target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")
-#
-#    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-#    include(CTest)
-#    include(Catch)
-#    catch_discover_tests(zagreus-tests)
-#endif ()
+if (ENABLE_TESTS)
+    file(GLOB tests_folder "tests/*.h" "tests/*.cpp")
+
+    # Remove main from inc_zagreus
+    list(REMOVE_ITEM inc_zagreus "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+
+    add_executable(zagreus-tests ${tests_folder} ${inc_zagreus})
+    target_link_libraries(zagreus-tests PRIVATE Catch2::Catch2WithMain)
+
+    target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
+    target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")
+
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+    include(CTest)
+    include(Catch)
+    catch_discover_tests(zagreus-tests)
+endif ()

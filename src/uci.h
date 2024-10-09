@@ -47,7 +47,7 @@ private:
     void handleStopCommand(std::string_view args);
     void handlePonderHitCommand(std::string_view args);
     void handleQuitCommand(std::string_view args);
-    void handlePerftCommand(std::string_view args);
+    void handlePerftCommand(const std::string& args);
     void processCommand(std::string_view command, const std::string& args);
 
 public:
@@ -55,6 +55,7 @@ public:
     void sendInfoMessage(std::string_view message);
     void sendMessage(std::string_view message);
     void doSetup();
+    [[nodiscard]] static std::string getVersionString() ;
     void printStartupMessage();
     void addOption(UCIOption& option);
     UCIOption& getOption(const std::string& name);

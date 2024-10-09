@@ -30,8 +30,11 @@
 #include "uci.h"
 
 #include "bitboard.h"
+#include "perft.h"
 
 namespace Zagreus {
+constexpr std::string_view startPosFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 void Engine::doSetup() {
     // According to the UCI specification, bitboard, magic bitboards and other stuff should be done only when "isready" or "setoption" is called
     if (didSetup) {
@@ -43,6 +46,18 @@ void Engine::doSetup() {
 
     board = Board();
     didSetup = true;
+}
+
+std::string Engine::getVersionString() {
+    const std::string majorVersion = ZAGREUS_VERSION_MAJOR;
+    const std::string minorVersion = ZAGREUS_VERSION_MINOR;
+    std::string versionString = "v" + majorVersion + "." + minorVersion;
+
+    if (majorVersion == "dev") {
+        versionString = majorVersion + "-" + minorVersion;
+    }
+
+    return versionString;
 }
 
 void Engine::printStartupMessage() {
@@ -64,28 +79,12 @@ void Engine::printStartupMessage() {
     sendMessage("along with this program. If not, see <https://www.gnu.org/licenses/>.");
     sendMessage("");
 
-    const std::string majorVersion = ZAGREUS_VERSION_MAJOR;
-    const std::string minorVersion = ZAGREUS_VERSION_MINOR;
-    std::string versionString = "v" + majorVersion + "." + minorVersion;
-
-    if (majorVersion == "dev") {
-        versionString = majorVersion + "-" + minorVersion;
-    }
-
-    sendMessage("Zagreus UCI chess engine " + versionString + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
+    sendMessage("Zagreus UCI chess engine " + getVersionString() + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
     sendMessage("");
 }
 
 void Engine::handleUciCommand() {
-    const std::string majorVersion = ZAGREUS_VERSION_MAJOR;
-    const std::string minorVersion = ZAGREUS_VERSION_MINOR;
-    std::string versionString = "v" + majorVersion + "." + minorVersion;
-
-    if (majorVersion == "dev") {
-        versionString = majorVersion + "-" + minorVersion;
-    }
-
-    sendMessage("id name Zagreus " + versionString);
+    sendMessage("id name Zagreus " + getVersionString());
     sendMessage("id author Danny Jelsma");
 
     if (!this->options.empty()) {
@@ -199,12 +198,42 @@ void Engine::handleQuitCommand(std::string_view args) {
 
 }
 
-void Engine::handlePerftCommand(std::string_view args) {
+void Engine::handlePerftCommand(const std::string& args) {
     if (!didSetup) {
         doSetup();
     }
 
-    // TODO: Need to add FEN processing before we can add this
+    if (args.empty() || args == " " || args == "\n") {
+        sendMessage("ERROR: No depth provided.");
+        return;
+    }
+
+    if (args.find(' ') != std::string::npos) {
+        sendMessage("ERROR: Too many arguments provided.");
+        return;
+    }
+
+    int depth = 0;
+
+    try {
+        depth = std::stoi(args);
+    } catch (const std::invalid_argument& e) {
+        sendMessage("ERROR: Depth must be an integer.");
+        return;
+    }
+
+    if (depth <= 0) {
+        sendMessage("ERROR: Depth must be at least 1.");
+        return;
+    }
+
+    if (board.getOccupiedBitboard() == 0ULL) {
+        board.setFromFEN(startPosFEN);
+    }
+
+    const uint64_t nodes = perft(board, depth);
+
+    sendInfoMessage("nodes " + std::to_string(nodes));
 }
 
 void Engine::processCommand(const std::string_view command, const std::string& args) {
@@ -293,15 +322,15 @@ void Engine::startUci() {
     }
 }
 
-void Engine::sendInfoMessage(std::string_view message) {
+void Engine::sendInfoMessage(const std::string_view message) {
     std::cout << "info " << message << std::endl;
 }
 
-void Engine::sendMessage(std::string_view message) {
+void Engine::sendMessage(const std::string_view message) {
     std::cout << message << std::endl;
 }
 
-std::string removeRedundantSpaces(std::string_view input) {
+std::string removeRedundantSpaces(const std::string_view input) {
     std::string result;
     bool inSpace = false; // Track if we are in a sequence of spaces/tabs
 

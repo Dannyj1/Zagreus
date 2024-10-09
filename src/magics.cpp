@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a chess engine that supports the UCI protocol
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2024  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -20,12 +20,10 @@
 
 #include "magics.h"
 
-#include <stdio.h>
 #include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <random>
-#include <limits>
 
 // Code for magic generation https://www.chessprogramming.org/Looking_for_Magics
 namespace Zagreus {
@@ -351,7 +349,7 @@ uint64_t rook_attacks_on_the_fly(int8_t square, uint64_t block) {
     return attacks;
 }
 
-void init_sliders_attacks(bool is_bishop) {
+void init_sliders_attacks(int is_bishop) {
     // loop over 64 board squares
     for (int8_t square = 0; square < 64; square++) {
         // init bishop & rook masks
@@ -392,9 +390,9 @@ void initializeMagicBitboards() {
     generateMagics();
 
     // init bishop attacks
-    init_sliders_attacks(true);
+    init_sliders_attacks(1);
     // init rook attacks
-    init_sliders_attacks(false);
+    init_sliders_attacks(0);
 }
 
 void generateMagics() {
