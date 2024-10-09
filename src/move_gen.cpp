@@ -18,7 +18,6 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <limits>
 #include <array>
 
 #include "move_gen.h"
@@ -34,10 +33,9 @@ void generateMoves(const Board& board, MoveList& moves) {
     // TODO: Implement GenerationType logic using a mask that is computed based on type
     constexpr Piece opponentKing = color == PieceColor::WHITE ? Piece::BLACK_KING : Piece::WHITE_KING;
 
-    uint64_t ownPieces = board.getColorBitboard<color>();
-    uint64_t opponentKingBB = board.getBitboard<opponentKing>();
-    uint64_t genMask = std::numeric_limits<uint64_t>::max();
-    genMask &= ~ownPieces & ~opponentKingBB;
+    const uint64_t ownPieces = board.getColorBitboard<color>();
+    const uint64_t opponentKingBB = board.getBitboard<opponentKing>();
+    const uint64_t genMask = ~(ownPieces | opponentKingBB);
 
     generatePawnMoves<color, type>(board, moves, genMask);
     generateKnightMoves<color, type>(board, moves, genMask);
@@ -231,12 +229,12 @@ void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMa
 }
 
 // explicit instantiation of generateMoves
-template void generateMoves<PieceColor::WHITE, GenerationType::All>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::WHITE, GenerationType::Quiet>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::WHITE, GenerationType::Capture>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::WHITE, GenerationType::Evasions>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::All>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::Quiet>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::Capture>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::Evasions>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::WHITE, GenerationType::ALL>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::WHITE, GenerationType::QUIET>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::WHITE, GenerationType::CAPTURES>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::WHITE, GenerationType::EVASIONS>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::BLACK, GenerationType::ALL>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::BLACK, GenerationType::QUIET>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::BLACK, GenerationType::CAPTURES>(const Board& board, MoveList& moves);
+template void generateMoves<PieceColor::BLACK, GenerationType::EVASIONS>(const Board& board, MoveList& moves);
 } // namespace Zagreus

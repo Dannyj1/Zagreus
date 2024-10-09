@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "board.h"
 #include "move.h"
@@ -34,10 +34,10 @@ class Board;
 struct MoveList;
 
 enum class GenerationType : uint8_t {
-    All,
-    Quiet,
-    Capture,
-    Evasions
+    ALL,
+    QUIET,
+    CAPTURES,
+    EVASIONS
 };
 
 template <PieceColor color, GenerationType type>

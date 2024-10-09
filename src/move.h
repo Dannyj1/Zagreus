@@ -51,10 +51,10 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const u
 }
 
 inline uint8_t getFromSquare(const Move move) {
-    return (move >> 6) & 0b111111;
+    return move & 0b111111;
 }
 
 inline uint8_t getToSquare(const Move move) {
-    return move & 0b111111;
+    return (move >> 6) & 0b111111;
 }
 } // namespace Zagreus

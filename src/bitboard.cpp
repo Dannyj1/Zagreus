@@ -49,7 +49,7 @@ uint64_t rookAttacks(const uint8_t square, uint64_t occupied) {
     return getRookMagicAttacks(square, occupied);
 }
 
-uint64_t queenAttacks(const uint8_t square, uint64_t occupied) {
+uint64_t queenAttacks(const uint8_t square, const uint64_t occupied) {
     return bishopAttacks(square, occupied) | rookAttacks(square, occupied);
 }
 } // namespace Zagreus

@@ -22,6 +22,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <__fwd/string_view.h>
+
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <utility>
@@ -48,6 +51,13 @@ private:
     int ply = 0;
 
 public:
+    Board() {
+        std::ranges::fill(board, Piece::EMPTY);
+        std::ranges::fill(bitboards, 0);
+        std::ranges::fill(colorBoards, 0);
+        std::ranges::fill(history, BoardState{});
+    }
+
     template <Piece piece>
     [[nodiscard]] uint64_t getBitboard() const {
         return bitboards[IDX(piece)];
@@ -84,7 +94,7 @@ public:
     }
 
     template <Piece piece>
-    void setPiece(uint8_t square) {
+    void setPiece(const uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
@@ -93,7 +103,7 @@ public:
         colorBoards[IDX(pieceColor(piece))] |= squareBB;
     }
 
-    void setPiece(Piece piece, uint8_t square) {
+    void setPiece(const Piece piece, const uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
@@ -102,7 +112,7 @@ public:
         colorBoards[IDX(pieceColor(piece))] |= squareBB;
     }
 
-    void removePiece(uint8_t square) {
+    void removePiece(const uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
         const Piece piece = board[square];
 
@@ -113,7 +123,16 @@ public:
     }
 
     template <Piece piece>
-    void removePiece(uint8_t square) {
+    void removePiece(const uint8_t square) {
+        const uint64_t squareBB = squareToBitboard(square);
+
+        board[square] = Piece::EMPTY;
+        bitboards[IDX(piece)] &= ~squareBB;
+        occupied &= ~squareBB;
+        colorBoards[IDX(pieceColor(piece))] &= ~squareBB;
+    }
+
+    void removePiece(const Piece piece, const uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = Piece::EMPTY;
@@ -125,6 +144,7 @@ public:
     void makeMove(const Move& move);
 
     void unmakeMove();
+    void setPieceFromFENChar(char character, uint8_t index);
 
     template <PieceColor movedColor>
     [[nodiscard]] bool isPositionLegal() const;
@@ -135,5 +155,9 @@ public:
     [[nodiscard]] uint64_t getSquareAttackersByColor(const uint8_t square) const {
         return getSquareAttackers(square) & getColorBitboard<color>();
     }
+
+    bool setFromFEN(std::string_view fen);
+
+    void reset();
 };
 } // namespace Zagreus

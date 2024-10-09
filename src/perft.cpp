@@ -20,11 +20,13 @@
 
 #include "perft.h"
 
+#include <iostream>
+
 #include "move.h"
 #include "move_gen.h"
 
 namespace Zagreus {
-uint64_t perft(Board &board, int depth) {
+uint64_t perft(Board &board, const int depth, bool printNodes) {
     using enum PieceColor;
     using enum GenerationType;
 
@@ -34,12 +36,12 @@ uint64_t perft(Board &board, int depth) {
 
     uint64_t nodes = 0;
     MoveList moveList{};
-    PieceColor sideToMove = board.getSideToMove() == WHITE ? WHITE : BLACK
+    const PieceColor sideToMove = board.getSideToMove();
 
     if (sideToMove == WHITE) {
-        generateMoves<WHITE, All>(board, moveList);
+        generateMoves<WHITE, ALL>(board, moveList);
     } else {
-        generateMoves<BLACK, All>(board, moveList);
+        generateMoves<BLACK, ALL>(board, moveList);
     }
 
     for (int i = 0; i < moveList.size; i++) {
@@ -57,7 +59,16 @@ uint64_t perft(Board &board, int depth) {
             }
         }
 
-        nodes += perft(board, depth - 1);
+        uint64_t perftNodes = perft(board, depth - 1, false);
+
+        if (printNodes) {
+            // TODO: Implement proper move notation, now it's just ints
+            std::string fromToNotation = std::to_string(getFromSquare(moveList.moves[i])) + std::to_string(getToSquare(moveList.moves[i]));
+        }
+
+        std::cout << moveList.moves[i] << ": " << perftNodes << std::endl;
+
+        nodes += perftNodes;
         board.unmakeMove();
     }
 
