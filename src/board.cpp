@@ -39,6 +39,7 @@ template bool Board::isPositionLegal<PieceColor::WHITE>() const;
 template bool Board::isPositionLegal<PieceColor::BLACK>() const;
 
 uint64_t Board::getSquareAttackers(const uint8_t square) const {
+    assert(square < SQUARES);
     using enum Piece;
 
     const uint64_t knights = getBitboard<WHITE_KNIGHT>() | getBitboard<BLACK_KNIGHT>();
@@ -85,13 +86,16 @@ void Board::makeMove(const Move& move) {
     setPiece(movedPiece, toSquare);
 
     sideToMove = !sideToMove;
+    assert(ply >= 0 && ply < MAX_PLY);
     history[ply].move = move;
     history[ply].capturedPiece = capturedPiece;
     ply++;
+    assert(ply >= 0 && ply < MAX_PLY);
 }
 
 void Board::unmakeMove() {
     ply--;
+    assert(ply >= 0 && ply < MAX_PLY);
     const auto [move, capturedPiece] = history[ply];
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
@@ -108,46 +112,47 @@ void Board::unmakeMove() {
 }
 
 
-void Board::setPieceFromFENChar(const char character, const uint8_t index) {
+void Board::setPieceFromFENChar(const char character, const uint8_t square) {
+    assert(square < SQUARES);
     using enum Piece;
 
     // Uppercase char = white, lowercase = black
     switch (character) {
         case 'P':
-            setPiece(WHITE_PAWN, index);
+            setPiece(WHITE_PAWN, square);
             break;
         case 'p':
-            setPiece(BLACK_PAWN, index);
+            setPiece(BLACK_PAWN, square);
             break;
         case 'N':
-            setPiece(WHITE_KNIGHT, index);
+            setPiece(WHITE_KNIGHT, square);
             break;
         case 'n':
-            setPiece(BLACK_KNIGHT, index);
+            setPiece(BLACK_KNIGHT, square);
             break;
         case 'B':
-            setPiece(WHITE_BISHOP, index);
+            setPiece(WHITE_BISHOP, square);
             break;
         case 'b':
-            setPiece(BLACK_BISHOP, index);
+            setPiece(BLACK_BISHOP, square);
             break;
         case 'R':
-            setPiece(WHITE_ROOK, index);
+            setPiece(WHITE_ROOK, square);
             break;
         case 'r':
-            setPiece(BLACK_ROOK, index);
+            setPiece(BLACK_ROOK, square);
             break;
         case 'Q':
-            setPiece(WHITE_QUEEN, index);
+            setPiece(WHITE_QUEEN, square);
             break;
         case 'q':
-            setPiece(BLACK_QUEEN, index);
+            setPiece(BLACK_QUEEN, square);
             break;
         case 'K':
-            setPiece(WHITE_KING, index);
+            setPiece(WHITE_KING, square);
             break;
         case 'k':
-            setPiece(BLACK_KING, index);
+            setPiece(BLACK_KING, square);
             break;
         default:
             break;
@@ -156,7 +161,7 @@ void Board::setPieceFromFENChar(const char character, const uint8_t index) {
 
 bool Board::setFromFEN(const std::string_view fen) {
     // TODO: Update zobrist hash once that is implemented
-    uint8_t index = IDX(Square::A8);
+    uint8_t index = TO_INT(Square::A8);
     int spaces = 0;
 
     reset();

@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -19,9 +18,18 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "move.h"
 
-#include <utility>
+#include <cassert>
 
-// Converts an enum class to its underlying type, usually an int.
-#define TO_INT(x) std::to_underlying(x)
+namespace Zagreus {
+std::string getMoveNotation(const uint8_t square) {
+    assert(square < SQUARES);
+    std::string notation;
+
+    notation += static_cast<char>(square % 8 + 'a');
+    notation += static_cast<char>(square / 8 + '1');
+
+    return notation;
+}
+} // namespace Zagreus

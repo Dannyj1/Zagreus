@@ -24,16 +24,44 @@ This file is part of Zagreus.
 #include "magics.h"
 
 namespace Zagreus {
+static std::array<std::array<uint64_t, SQUARES>, COLORS> pawnAttacksTable{};
+static std::array<uint64_t, SQUARES> knightAttacksTable{};
+static std::array<uint64_t, SQUARES> kingAttacksTable{};
+
 void initializeAttackLookupTables() {
     for (uint8_t square = 0; square < SQUARES; ++square) {
-        pawnAttacksTable[IDX(PieceColor::WHITE)][square] = calculateWhitePawnAttacks(square);
-        pawnAttacksTable[IDX(PieceColor::BLACK)][square] = calculateBlackPawnAttacks(square);
-        knightAttacksTable[square] = calculateKnightAttacks(square);
-        kingAttacksTable[square] = calculateKingAttacks(square);
+        const uint64_t bb = squareToBitboard(square);
+
+        pawnAttacksTable[TO_INT(PieceColor::WHITE)][square] = calculateWhitePawnAttacks(bb);
+        pawnAttacksTable[TO_INT(PieceColor::BLACK)][square] = calculateBlackPawnAttacks(bb);
+        knightAttacksTable[square] = calculateKnightAttacks(bb);
+        kingAttacksTable[square] = calculateKingAttacks(bb);
     }
 }
 
+template <PieceColor color>
+uint64_t pawnAttacks(const uint8_t square) {
+    assert(color != PieceColor::EMPTY);
+    assert(square < SQUARES);
+
+    return pawnAttacksTable[TO_INT(color)][square];
+}
+
+template uint64_t pawnAttacks<PieceColor::WHITE>(uint8_t square);
+template uint64_t pawnAttacks<PieceColor::BLACK>(uint8_t square);
+
+uint64_t knightAttacks(const uint8_t square) {
+    assert(square < SQUARES);
+    return knightAttacksTable[square];
+}
+
+uint64_t kingAttacks(const uint8_t square) {
+    assert(square < SQUARES);
+    return kingAttacksTable[square];
+}
+
 uint64_t bishopAttacks(const uint8_t square, uint64_t occupied) {
+    assert(square < SQUARES);
     occupied &= getBishopMask(square);
     occupied *= getBishopMagic(square);
     occupied >>= 64 - BBits[square];
@@ -42,6 +70,7 @@ uint64_t bishopAttacks(const uint8_t square, uint64_t occupied) {
 }
 
 uint64_t rookAttacks(const uint8_t square, uint64_t occupied) {
+    assert(square < SQUARES);
     occupied &= getRookMask(square);
     occupied *= getRookMagic(square);
     occupied >>= 64 - RBits[square];
@@ -50,6 +79,7 @@ uint64_t rookAttacks(const uint8_t square, uint64_t occupied) {
 }
 
 uint64_t queenAttacks(const uint8_t square, const uint64_t occupied) {
+    assert(square < SQUARES);
     return bishopAttacks(square, occupied) | rookAttacks(square, occupied);
 }
 } // namespace Zagreus

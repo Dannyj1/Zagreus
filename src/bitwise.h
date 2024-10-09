@@ -57,6 +57,7 @@ inline int bitscanReverse(const uint64_t bb) {
 }
 
 inline int popLsb(uint64_t& bb) {
+    assert(bb != 0);
     const int lsb = bitscanForward(bb);
 
     bb &= bb - 1;

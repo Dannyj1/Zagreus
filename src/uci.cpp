@@ -208,7 +208,7 @@ void Engine::handlePerftCommand(const std::string& args) {
         return;
     }
 
-    if (args.find(' ') != std::string::npos) {
+    if (args.contains(' ')) {
         sendMessage("ERROR: Too many arguments provided.");
         return;
     }

@@ -30,9 +30,6 @@
 enum class PieceColor : uint8_t;
 
 namespace Zagreus {
-class Board;
-struct MoveList;
-
 enum class GenerationType : uint8_t {
     ALL,
     QUIET,
