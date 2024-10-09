@@ -49,9 +49,7 @@ void generateMoves(const Board& board, MoveList& moves) {
 
 template <PieceColor color, GenerationType type>
 void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    // TODO: Implement en passant
     // TODO: Handle promotions
-    // TODO: Move attacks to table lookup
     constexpr Piece pawn = color == PieceColor::WHITE ? Piece::WHITE_PAWN : Piece::BLACK_PAWN;
     constexpr PieceColor opponentColor = !color;
 
@@ -131,7 +129,6 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
 template <PieceColor color, GenerationType type>
 void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    // TODO: Implement table lookup
     constexpr Piece knight = color == PieceColor::WHITE ? Piece::WHITE_KNIGHT : Piece::BLACK_KNIGHT;
     uint64_t knightBB = board.getBitboard<knight>();
 
@@ -215,7 +212,6 @@ void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genM
 
 template <PieceColor color, GenerationType type>
 void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    // TODO: Implement table lookup
     // TODO: Implement castling
     using enum Piece;
     constexpr Piece king = color == PieceColor::WHITE ? WHITE_KING : BLACK_KING;
