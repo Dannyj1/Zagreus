@@ -20,6 +20,8 @@
 
 #include "board.h"
 
+#include <iostream>
+#include <ostream>
 #include <string_view>
 
 #include "bitwise.h"
@@ -76,6 +78,7 @@ void Board::makeMove(const Move& move) {
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
     const Piece movedPiece = getPieceOnSquare(fromSquare);
+    const PieceType movedPieceType = pieceType(movedPiece);
     const Piece capturedPiece = getPieceOnSquare(toSquare);
 
     if (capturedPiece != Piece::EMPTY) {
@@ -85,10 +88,36 @@ void Board::makeMove(const Move& move) {
     removePiece(movedPiece, fromSquare);
     setPiece(movedPiece, toSquare);
 
+    if (movedPieceType == PieceType::PAWN) {
+        // if destination is enPassant square and the move is diagonal, remove the captured pawn
+        if (toSquare == enPassantSquare && (toSquare - fromSquare) % 8 != 0) {
+            if (sideToMove == PieceColor::WHITE) {
+                removePiece(Piece::BLACK_PAWN, toSquare + TO_INT(Direction::SOUTH));
+            } else {
+                removePiece(Piece::WHITE_PAWN, toSquare + TO_INT(Direction::NORTH));
+            }
+        }
+
+        const uint8_t moveDistance = std::abs(toSquare - fromSquare);
+
+        if (moveDistance == 16) {
+            if (sideToMove == PieceColor::WHITE) {
+                enPassantSquare = fromSquare + TO_INT(Direction::NORTH);
+            } else {
+                enPassantSquare = fromSquare + TO_INT(Direction::SOUTH);
+            }
+        } else {
+            enPassantSquare = 0;
+        }
+    } else {
+        enPassantSquare = 0;
+    }
+
     sideToMove = !sideToMove;
     assert(ply >= 0 && ply < MAX_PLY);
     history[ply].move = move;
     history[ply].capturedPiece = capturedPiece;
+    history[ply].enPassantSquare = enPassantSquare;
     ply++;
     assert(ply >= 0 && ply < MAX_PLY);
 }
@@ -96,7 +125,7 @@ void Board::makeMove(const Move& move) {
 void Board::unmakeMove() {
     ply--;
     assert(ply >= 0 && ply < MAX_PLY);
-    const auto [move, capturedPiece] = history[ply];
+    const auto& [move, capturedPiece, enPassantSquare] = history[ply];
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
     const Piece movedPiece = getPieceOnSquare(toSquare);
@@ -108,7 +137,8 @@ void Board::unmakeMove() {
         setPiece(capturedPiece, toSquare);
     }
 
-    sideToMove = !sideToMove;
+    this->sideToMove = !sideToMove;
+    this->enPassantSquare = enPassantSquare;
 }
 
 

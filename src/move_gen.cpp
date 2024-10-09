@@ -35,7 +35,6 @@ void generateMoves(const Board& board, MoveList& moves) {
 
     // TODO: Implement GenerationType logic using a mask that is computed based on type
     constexpr Piece opponentKing = color == PieceColor::WHITE ? Piece::BLACK_KING : Piece::WHITE_KING;
-
     const uint64_t ownPieces = board.getColorBitboard<color>();
     const uint64_t opponentKingBB = board.getBitboard<opponentKing>();
     const uint64_t genMask = ~(ownPieces | opponentKingBB);
@@ -76,10 +75,18 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         pawnEastAttacks = blackPawnEastAttacks(pawnBB);
     }
 
+    uint64_t enPassantMask = squareToBitboard(board.getEnPassantSquare());
+
+    if constexpr (color == PieceColor::WHITE) {
+        enPassantMask &= RANK_6;
+    } else {
+        enPassantMask &= RANK_3;
+    }
+
     pawnSinglePushes &= genMask;
     pawnDoublePushes &= genMask;
-    pawnWestAttacks &= opponentPieces & genMask;
-    pawnEastAttacks &= opponentPieces & genMask;
+    pawnWestAttacks &= (opponentPieces | enPassantMask) & genMask;
+    pawnEastAttacks &= (opponentPieces | enPassantMask) & genMask;
 
     constexpr Direction fromPushDirection = color == PieceColor::WHITE ? Direction::NORTH : Direction::SOUTH;
     constexpr Direction fromSqWestAttackDirection = color == PieceColor::WHITE ? Direction::NORTH_WEST : Direction::SOUTH_WEST;
@@ -130,7 +137,7 @@ void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t gen
 
     while (knightBB) {
         const uint8_t fromSquare = popLsb(knightBB);
-        uint64_t attacks = knightAttacks(fromSquare);
+        const uint64_t attacks = knightAttacks(fromSquare);
         uint64_t genBB = attacks & genMask;
 
         while (genBB) {
