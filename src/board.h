@@ -38,6 +38,7 @@ namespace Zagreus {
 struct BoardState {
     Move move = 0;
     Piece capturedPiece = Piece::EMPTY;
+    uint8_t enPassantSquare = 0;
 };
 
 class Board {
@@ -49,6 +50,7 @@ private:
     PieceColor sideToMove = PieceColor::EMPTY;
     std::array<BoardState, MAX_PLY> history{};
     int ply = 0;
+    uint8_t enPassantSquare = 0;
 
 public:
     Board() {
@@ -154,6 +156,10 @@ public:
     template <PieceColor color>
     [[nodiscard]] uint64_t getSquareAttackersByColor(const uint8_t square) const {
         return getSquareAttackers(square) & getColorBitboard<color>();
+    }
+
+    [[nodiscard]] uint8_t getEnPassantSquare() const {
+        return enPassantSquare;
     }
 
     bool setFromFEN(std::string_view fen);
