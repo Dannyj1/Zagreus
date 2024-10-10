@@ -22,8 +22,6 @@
 
 #include <cassert>
 
-#include "macros.h"
-
 namespace Zagreus {
 std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare) {
     // TODO: Support promotions
@@ -42,14 +40,14 @@ std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare) {
 std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare, const PromotionPiece promotionPiece) {
     assert(fromSquare < SQUARES);
     assert(toSquare < SQUARES);
-    assert(TO_INT(promotionPiece) < 4);
+    assert(promotionPiece < 4);
     std::string notation;
 
     notation += static_cast<char>(fromSquare % 8 + 'a');
     notation += static_cast<char>(fromSquare / 8 + '1');
     notation += static_cast<char>(toSquare % 8 + 'a');
     notation += static_cast<char>(toSquare / 8 + '1');
-    notation += "qrbn"[TO_INT(promotionPiece)];
+    notation += "qrbn"[promotionPiece];
 
     return notation;
 }
@@ -78,7 +76,6 @@ Move fromMoveNotation(const std::string_view notation) {
         PromotionPiece promotionPiece;
 
         switch (promotionPieceChar) {
-                using enum PromotionPiece;
             case 'q':
                 promotionPiece = QUEEN;
                 break;
@@ -96,18 +93,18 @@ Move fromMoveNotation(const std::string_view notation) {
                 return 0;
         }
 
-        return encodeMove(TO_INT(fromSquare), TO_INT(toSquare), promotionPiece);
+        return encodeMove(fromSquare, toSquare, promotionPiece);
     }
 
-    return encodeMove(TO_INT(fromSquare), TO_INT(toSquare));
+    return encodeMove(fromSquare, toSquare);
 }
 
 std::string getSquareNotation(const Square square) {
-    assert(TO_INT(square) < SQUARES);
+    assert(square < SQUARES);
     std::string notation;
 
-    notation += static_cast<char>(TO_INT(square) % 8 + 'a');
-    notation += static_cast<char>(TO_INT(square) / 8 + '1');
+    notation += static_cast<char>(square % 8 + 'a');
+    notation += static_cast<char>(square / 8 + '1');
 
     return notation;
 }

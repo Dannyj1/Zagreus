@@ -26,7 +26,6 @@
 
 #include "bitwise.h"
 #include "constants.h"
-#include "macros.h"
 #include "types.h"
 
 namespace Zagreus {
@@ -99,7 +98,6 @@ inline uint64_t shiftSouthSouthWest(const uint64_t bb) {
 template <Direction direction>
 constexpr uint64_t shift(const uint64_t bb) {
     switch (direction) {
-            using enum Direction;
         case NORTH:
             return shiftNorth(bb);
         case SOUTH:

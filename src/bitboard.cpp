@@ -20,7 +20,6 @@ This file is part of Zagreus.
 
 #include "bitboard.h"
 
-#include "macros.h"
 #include "magics.h"
 
 namespace Zagreus {
@@ -32,8 +31,8 @@ void initializeAttackLookupTables() {
     for (uint8_t square = 0; square < SQUARES; ++square) {
         const uint64_t bb = squareToBitboard(square);
 
-        pawnAttacksTable[TO_INT(PieceColor::WHITE)][square] = calculateWhitePawnAttacks(bb);
-        pawnAttacksTable[TO_INT(PieceColor::BLACK)][square] = calculateBlackPawnAttacks(bb);
+        pawnAttacksTable[PieceColor::WHITE][square] = calculateWhitePawnAttacks(bb);
+        pawnAttacksTable[PieceColor::BLACK][square] = calculateBlackPawnAttacks(bb);
         knightAttacksTable[square] = calculateKnightAttacks(bb);
         kingAttacksTable[square] = calculateKingAttacks(bb);
     }
@@ -41,14 +40,13 @@ void initializeAttackLookupTables() {
 
 template <PieceColor color>
 uint64_t pawnAttacks(const uint8_t square) {
-    assert(color != PieceColor::EMPTY);
     assert(square < SQUARES);
 
-    return pawnAttacksTable[TO_INT(color)][square];
+    return pawnAttacksTable[color][square];
 }
 
-template uint64_t pawnAttacks<PieceColor::WHITE>(uint8_t square);
-template uint64_t pawnAttacks<PieceColor::BLACK>(uint8_t square);
+template uint64_t pawnAttacks<WHITE>(uint8_t square);
+template uint64_t pawnAttacks<BLACK>(uint8_t square);
 
 uint64_t knightAttacks(const uint8_t square) {
     assert(square < SQUARES);

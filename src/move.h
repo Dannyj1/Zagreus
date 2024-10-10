@@ -37,14 +37,14 @@ struct MoveList {
     uint8_t size = 0;
 };
 
-enum class MoveType : uint8_t {
+enum MoveType : uint8_t {
     NORMAL = 0b00,
     PROMOTION = 0b01,
     EN_PASSANT = 0b10,
     CASTLING = 0b11
 };
 
-enum class PromotionPiece : uint8_t {
+enum PromotionPiece : uint8_t {
     QUEEN = 0b00,
     ROOK = 0b01,
     BISHOP = 0b10,
@@ -73,11 +73,11 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare) {
 }
 
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const MoveType moveType) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (TO_INT(moveType) << 12));
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (moveType << 12));
 }
 
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const PromotionPiece promotionPiece) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (0b01 << 12) | (TO_INT(promotionPiece) << 14));
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (0b01 << 12) | (promotionPiece << 14));
 }
 
 inline uint8_t getFromSquare(const Move move) {

@@ -23,9 +23,7 @@
 #include <array>
 #include <cassert>
 
-#include "macros.h"
-
-enum class Direction {
+enum Direction {
     NORTH = 8,
     SOUTH = -8,
     EAST = 1,
@@ -45,7 +43,7 @@ enum class Direction {
 };
 
 // clang-format off
-enum class Square: uint8_t {
+enum Square: uint8_t {
     A1, B1, C1, D1, E1, F1, G1, H1,
     A2, B2, C2, D2, E2, F2, G2, H2,
     A3, B3, C3, D3, E3, F3, G3, H3,
@@ -56,18 +54,18 @@ enum class Square: uint8_t {
     A8, B8, C8, D8, E8, F8, G8, H8,
     NONE = 255
 };
+
 // clang-format on
 
-enum class PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, EMPTY = 255 };
+enum PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 
-enum class PieceColor : uint8_t { WHITE, BLACK, EMPTY = 255 };
+enum PieceColor : uint8_t { WHITE, BLACK };
 
 constexpr PieceColor operator!(const PieceColor color) {
-    assert(color != PieceColor::EMPTY);
-    return color == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE;
+    return color == WHITE ? BLACK : WHITE;
 }
 
-enum class Piece : uint8_t {
+enum Piece : uint8_t {
     WHITE_PAWN,
     BLACK_PAWN,
     WHITE_KNIGHT,
@@ -85,17 +83,15 @@ enum class Piece : uint8_t {
 
 constexpr PieceColor pieceColor(const Piece piece) {
     assert(piece != Piece::EMPTY);
-    return static_cast<PieceColor>(TO_INT(piece) % 2);
+    return static_cast<PieceColor>(piece % 2);
 }
 
 constexpr PieceType pieceType(const Piece piece) {
     assert(piece != Piece::EMPTY);
-    return static_cast<PieceType>(TO_INT(piece) / 2);
+    return static_cast<PieceType>(piece / 2);
 }
 
 constexpr char getCharacterForPieceType(const Piece piece) {
-    using enum Piece;
-
     switch (piece) {
         case WHITE_PAWN:
             return 'P';

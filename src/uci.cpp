@@ -282,9 +282,13 @@ void Engine::handlePerftCommand(const std::string& args) {
         board.setFromFEN(startPosFEN);
     }
 
+    const auto start = std::chrono::high_resolution_clock::now();
     const uint64_t nodes = perft(board, depth);
+    const auto end = std::chrono::high_resolution_clock::now();
+    const std::string tookSeconds = std::to_string(std::chrono::duration<double>(end - start).count());
 
-    sendInfoMessage("nodes " + std::to_string(nodes));
+    sendInfoMessage(
+        "Depth: " + std::to_string(depth) + ", Nodes: " + std::to_string(nodes) + ", Time: " + tookSeconds + "s");
 }
 
 void Engine::handlePrintCommand() {
