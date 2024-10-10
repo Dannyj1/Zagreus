@@ -23,7 +23,6 @@
 #include <cstdint>
 
 #include "board.h"
-#include "types.h"
 
 namespace Zagreus {
 uint64_t perft(Board &board, int depth, bool printNodes = true);

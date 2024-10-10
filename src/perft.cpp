@@ -63,10 +63,9 @@ uint64_t perft(Board &board, const int depth, bool printNodes) {
         uint64_t perftNodes = perft(board, depth - 1, false);
 
         if (printNodes) {
-            std::string fromNotation = getMoveNotation(getFromSquare(moveList.moves[i]));
-            std::string toNotation = getMoveNotation(getToSquare(moveList.moves[i]));
+            std::string moveNotation = getMoveNotation(moveList.moves[i]);
 
-            std::cout << fromNotation << toNotation << ": " << perftNodes << std::endl;
+            std::cout << moveNotation << ": " << perftNodes << std::endl;
         }
 
         nodes += perftNodes;

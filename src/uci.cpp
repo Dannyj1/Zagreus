@@ -44,7 +44,6 @@ void Engine::doSetup() {
     initializeMagicBitboards();
     initializeAttackLookupTables();
 
-    board = Board();
     didSetup = true;
 }
 
@@ -114,39 +113,39 @@ void Engine::handleSetOptionCommand(const std::string& args) {
     }
 
     std::istringstream iss(args);
-    std::string word;
-    std::string section = "";
+    std::string arg;
+    std::string section;
     std::string name;
     std::string value;
 
-    while (iss >> word) {
-        std::string lowercaseWord = word;
+    while (iss >> arg) {
+        std::string lowercaseWord = arg;
         std::ranges::transform(lowercaseWord, lowercaseWord.begin(),
                                [](const unsigned char c) { return std::tolower(c); });
 
         if (lowercaseWord == "name") {
-            section = word;
+            section = arg;
             continue;
         }
 
         if (lowercaseWord == "value") {
-            section = word;
+            section = arg;
             continue;
         }
 
         if (section == "name") {
             if (name.empty()) {
-                name = word;
+                name = arg;
             } else {
-                name += " " + word;
+                name += " " + arg;
             }
         }
 
         if (section == "value") {
             if (value.empty()) {
-                value = word;
+                value = arg;
             } else {
-                value += " " + word;
+                value += " " + arg;
             }
         }
     }
@@ -182,7 +181,59 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 void Engine::handleUciNewGameCommand(std::string_view args) {
 }
 
-void Engine::handlePositionCommand(std::string_view args) {
+void Engine::handlePositionCommand(const std::string_view args) {
+    // If the first arg is not "startpos" or "fen", report invalid usage
+    if (!args.starts_with("startpos") && !args.starts_with("fen")) {
+        sendMessage("ERROR: Invalid usage of position command.");
+        return;
+    }
+
+    // Go through each argument one by one
+    std::istringstream iss((args.data()));
+    std::string arg;
+
+    // If the first argument is "startpos", set the board to the starting position
+    iss >> arg;
+    board = Board();
+
+    if (arg == "startpos") {
+        board.setFromFEN(startPosFEN);
+    } else if (arg == "fen") {
+        std::string fen;
+
+        // Append args to the fen string until we reach the "moves" keyword or the end of the string
+        while (iss >> arg && arg != "moves") {
+            if (fen.empty()) {
+                fen = arg;
+            } else {
+                fen += " " + arg;
+            }
+        }
+
+        if (fen.empty()) {
+            sendMessage("ERROR: No FEN string provided.");
+            return;
+        }
+
+        if (!board.setFromFEN(fen)) {
+            sendMessage("ERROR: Invalid FEN string provided.");
+            return;
+        }
+    }
+
+    while (iss >> arg) {
+        if (arg == "moves") {
+            continue;
+        }
+
+        if (arg.size() != 4 && arg.size() != 5) {
+            sendMessage("ERROR: Invalid move notation provided.");
+            return;
+        }
+
+        const Move move = fromMoveNotation(arg);
+        board.makeMove(move);
+    }
 }
 
 void Engine::handleGoCommand(std::string_view args) {
@@ -236,6 +287,10 @@ void Engine::handlePerftCommand(const std::string& args) {
     sendInfoMessage("nodes " + std::to_string(nodes));
 }
 
+void Engine::handlePrintCommand() {
+    board.print();
+}
+
 void Engine::processCommand(const std::string_view command, const std::string& args) {
     if (command == "uci") {
         handleUciCommand();
@@ -262,6 +317,8 @@ void Engine::processCommand(const std::string_view command, const std::string& a
         handleQuitCommand(args);
     } else if (command == "perft") {
         handlePerftCommand(args);
+    } else if (command == "print") {
+        handlePrintCommand();
     } else {
         // If unknown, we must skip it and process the rest.
         if (args.empty() || args == " " || args == "\n") {
