@@ -22,6 +22,7 @@
 #pragma once
 
 #include <array>
+#include <iostream>
 #include <string>
 
 #include "constants.h"
@@ -75,9 +76,8 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const M
     return static_cast<Move>(fromSquare | (toSquare << 6) | (TO_INT(moveType) << 12));
 }
 
-inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const MoveType moveType,
-                       const PromotionPiece promotionPiece) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (TO_INT(moveType) << 12) | (TO_INT(promotionPiece) << 14));
+inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const PromotionPiece promotionPiece) {
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (0b01 << 12) | (TO_INT(promotionPiece) << 14));
 }
 
 inline uint8_t getFromSquare(const Move move) {

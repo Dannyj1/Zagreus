@@ -96,7 +96,7 @@ Move fromMoveNotation(const std::string_view notation) {
                 return 0;
         }
 
-        return encodeMove(TO_INT(fromSquare), TO_INT(toSquare), MoveType::PROMOTION, promotionPiece);
+        return encodeMove(TO_INT(fromSquare), TO_INT(toSquare), promotionPiece);
     }
 
     return encodeMove(TO_INT(fromSquare), TO_INT(toSquare));

@@ -113,7 +113,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = squareTo - TO_INT(fromSqWestAttackDirection);
         MoveType moveType = MoveType::NORMAL;
 
-        if (squareTo == board.getEnPassantSquare() && squareTo & enPassantMask) {
+        if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
             moveType = MoveType::EN_PASSANT;
         }
 
@@ -127,7 +127,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = squareTo - TO_INT(fromSqEastAttackDirection);
         MoveType moveType = MoveType::NORMAL;
 
-        if (squareTo == board.getEnPassantSquare() && squareTo & enPassantMask) {
+        if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
             moveType = MoveType::EN_PASSANT;
         }
 
