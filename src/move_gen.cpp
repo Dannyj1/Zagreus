@@ -111,8 +111,13 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     while (pawnWestAttacks) {
         const uint8_t squareTo = popLsb(pawnWestAttacks);
         const uint8_t squareFrom = squareTo - TO_INT(fromSqWestAttackDirection);
-        const Move move = encodeMove(squareFrom, squareTo);
+        MoveType moveType = MoveType::NORMAL;
 
+        if (squareTo == board.getEnPassantSquare() && squareTo & enPassantMask) {
+            moveType = MoveType::EN_PASSANT;
+        }
+
+        const Move move = encodeMove(squareFrom, squareTo, moveType);
         moves.moves[moves.size] = move;
         moves.size++;
     }
@@ -120,8 +125,13 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     while (pawnEastAttacks) {
         const uint8_t squareTo = popLsb(pawnEastAttacks);
         const uint8_t squareFrom = squareTo - TO_INT(fromSqEastAttackDirection);
-        const Move move = encodeMove(squareFrom, squareTo);
+        MoveType moveType = MoveType::NORMAL;
 
+        if (squareTo == board.getEnPassantSquare() && squareTo & enPassantMask) {
+            moveType = MoveType::EN_PASSANT;
+        }
+
+        const Move move = encodeMove(squareFrom, squareTo, moveType);
         moves.moves[moves.size] = move;
         moves.size++;
     }

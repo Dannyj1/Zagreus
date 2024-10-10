@@ -74,9 +74,25 @@ void Board::reset() {
     std::ranges::fill(history, BoardState{});
 }
 
+void Board::print() const {
+    std::cout << "  ---------------------------------";
+
+    for (int index = 0; index < 64; index++) {
+        if (index % 8 == 0) {
+            std::cout << std::endl << index / 8 + 1 << " | ";
+        }
+
+        std::cout << getCharacterForPieceType(board[index]) << " | ";
+    }
+
+    std::cout << std::endl << "  ---------------------------------" << std::endl;
+    std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
+}
+
 void Board::makeMove(const Move& move) {
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
+    const MoveType moveType = getMoveType(move);
     const Piece movedPiece = getPieceOnSquare(fromSquare);
     const PieceType movedPieceType = pieceType(movedPiece);
     const Piece capturedPiece = getPieceOnSquare(toSquare);
@@ -89,8 +105,7 @@ void Board::makeMove(const Move& move) {
     setPiece(movedPiece, toSquare);
 
     if (movedPieceType == PieceType::PAWN) {
-        // if destination is enPassant square and the move is diagonal, remove the captured pawn
-        if (toSquare == enPassantSquare && (toSquare - fromSquare) % 8 != 0) {
+        if (moveType == MoveType::EN_PASSANT) {
             if (sideToMove == PieceColor::WHITE) {
                 removePiece(Piece::BLACK_PAWN, toSquare + TO_INT(Direction::SOUTH));
             } else {
@@ -98,13 +113,11 @@ void Board::makeMove(const Move& move) {
             }
         }
 
-        const uint8_t moveDistance = std::abs(toSquare - fromSquare);
-
-        if (moveDistance == 16) {
+        if ((fromSquare ^ toSquare) == 16) {
             if (sideToMove == PieceColor::WHITE) {
-                enPassantSquare = fromSquare + TO_INT(Direction::NORTH);
+                enPassantSquare = toSquare + TO_INT(Direction::SOUTH);
             } else {
-                enPassantSquare = fromSquare + TO_INT(Direction::SOUTH);
+                enPassantSquare = toSquare + TO_INT(Direction::NORTH);
             }
         } else {
             enPassantSquare = 0;
@@ -128,6 +141,7 @@ void Board::unmakeMove() {
     const auto& [move, capturedPiece, enPassantSquare] = history[ply];
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
+    const MoveType moveType = getMoveType(move);
     const Piece movedPiece = getPieceOnSquare(toSquare);
 
     removePiece(movedPiece, toSquare);
@@ -137,10 +151,19 @@ void Board::unmakeMove() {
         setPiece(capturedPiece, toSquare);
     }
 
+    if (moveType == MoveType::EN_PASSANT) {
+        const PieceColor movedPieceColor = pieceColor(movedPiece);
+
+        if (movedPieceColor == PieceColor::WHITE) {
+            setPiece(Piece::BLACK_PAWN, toSquare + TO_INT(Direction::SOUTH));
+        } else {
+            setPiece(Piece::WHITE_PAWN, toSquare + TO_INT(Direction::NORTH));
+        }
+    }
+
     this->sideToMove = !sideToMove;
     this->enPassantSquare = enPassantSquare;
 }
-
 
 void Board::setPieceFromFENChar(const char character, const uint8_t square) {
     assert(square < SQUARES);
@@ -266,14 +289,14 @@ bool Board::setFromFEN(const std::string_view fen) {
             }
 
             const int8_t file = tolower(character) - 'a';
-            // const int8_t rank = (!sideToMove) == PieceColor::WHITE ? 2 : 5;
+            const int8_t rank = (!sideToMove) == PieceColor::WHITE ? 2 : 5;
 
             if (file < 0 || file > 7) {
                 return false;
             }
 
-            // TODO: Uncomment and add zobrist once en-passant is implemented
-            // enPassantSquare = rank * 8 + file;
+            // TODO: Add enPassant zobrist
+            enPassantSquare = rank * 8 + file;
             index += 2;
         }
 

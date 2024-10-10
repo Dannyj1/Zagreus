@@ -25,6 +25,7 @@
 #include <string>
 
 #include "constants.h"
+#include "types.h"
 
 
 namespace Zagreus {
@@ -35,7 +36,31 @@ struct MoveList {
     uint8_t size = 0;
 };
 
-std::string getMoveNotation(uint8_t square);
+enum class MoveType : uint8_t {
+    NORMAL = 0b00,
+    PROMOTION = 0b01,
+    EN_PASSANT = 0b10,
+    CASTLING = 0b11
+};
+
+enum class PromotionPiece : uint8_t {
+    QUEEN = 0b00,
+    ROOK = 0b01,
+    BISHOP = 0b10,
+    KNIGHT = 0b11
+};
+
+std::string getMoveNotation(uint8_t fromSquare, uint8_t toSquare);
+
+std::string getMoveNotation(uint8_t fromSquare, uint8_t toSquare, PromotionPiece promotionPiece);
+
+std::string getMoveNotation(Move move);
+
+Move fromMoveNotation(std::string_view notation);
+
+std::string getSquareNotation(Square square);
+
+Square fromSquareNotation(std::string_view notation);
 
 // bits 0-5: from square (0-63)
 // bits 6-11: to square (0-63)
@@ -46,21 +71,28 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare) {
     return static_cast<Move>(fromSquare | (toSquare << 6));
 }
 
-inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const uint8_t moveType) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (moveType << 12));
+inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const MoveType moveType) {
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (TO_INT(moveType) << 12));
 }
 
-inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const uint8_t moveType, const uint8_t promotionPiece) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (moveType << 12) | (promotionPiece << 14));
+inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const MoveType moveType,
+                       const PromotionPiece promotionPiece) {
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (TO_INT(moveType) << 12) | (TO_INT(promotionPiece) << 14));
 }
 
 inline uint8_t getFromSquare(const Move move) {
-    // Extract bits 0-5
     return static_cast<uint8_t>(move & 0x3F);
 }
 
 inline uint8_t getToSquare(const Move move) {
-    // Extract bits 6-11
     return static_cast<uint8_t>((move >> 6) & 0x3F);
+}
+
+inline MoveType getMoveType(const Move move) {
+    return static_cast<MoveType>((move >> 12) & 0x3);
+}
+
+inline PromotionPiece getPromotionPiece(const Move move) {
+    return static_cast<PromotionPiece>((move >> 14) & 0x3);
 }
 } // namespace Zagreus

@@ -35,7 +35,7 @@ class Engine {
 private:
     bool didSetup = false;
     std::map<std::string, UCIOption> options{};
-    Board board;
+    Board board{};
 
     void handleUciCommand();
     void handleDebugCommand(std::string_view args);
@@ -48,6 +48,7 @@ private:
     void handlePonderHitCommand(std::string_view args);
     void handleQuitCommand(std::string_view args);
     void handlePerftCommand(const std::string& args);
+    void handlePrintCommand();
     void processCommand(std::string_view command, const std::string& args);
 
 public:

@@ -97,6 +97,8 @@ public:
 
     template <Piece piece>
     void setPiece(const uint8_t square) {
+        assert(piece != Piece::EMPTY);
+        assert(board[square] == Piece::EMPTY);
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
@@ -106,6 +108,8 @@ public:
     }
 
     void setPiece(const Piece piece, const uint8_t square) {
+        assert(piece != Piece::EMPTY);
+        assert(board[square] == Piece::EMPTY);
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
@@ -117,6 +121,7 @@ public:
     void removePiece(const uint8_t square) {
         const uint64_t squareBB = squareToBitboard(square);
         const Piece piece = board[square];
+        assert(piece != Piece::EMPTY);
 
         board[square] = Piece::EMPTY;
         bitboards[TO_INT(piece)] &= ~squareBB;
@@ -126,6 +131,8 @@ public:
 
     template <Piece piece>
     void removePiece(const uint8_t square) {
+        assert(piece != Piece::EMPTY);
+        assert(board[square] == piece);
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = Piece::EMPTY;
@@ -135,6 +142,8 @@ public:
     }
 
     void removePiece(const Piece piece, const uint8_t square) {
+        assert(piece != Piece::EMPTY);
+        assert(board[square] == piece);
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = Piece::EMPTY;
@@ -165,5 +174,7 @@ public:
     bool setFromFEN(std::string_view fen);
 
     void reset();
+
+    void print() const;
 };
 } // namespace Zagreus
