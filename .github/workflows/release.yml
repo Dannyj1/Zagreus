@@ -74,12 +74,6 @@ jobs:
           mkdir rel
           cp "$executable_name" rel/
           cp LICENSE README.md rel/
-          mkdir "rel/source-code"
-          cp -r src "rel/source-code"
-          cp -r senjo "rel/source-code"
-          cp LICENSE "rel/source-code"
-          cp README.md "rel/source-code"
-          cp CMakeLists.txt "rel/source-code"
           cd rel
           ${{ matrix.archive-command }} "../$executable_name${{ matrix.artifact-extension }}" *
 

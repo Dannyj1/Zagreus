@@ -27,10 +27,10 @@
 #include "move.h"
 #include "types.h"
 
-enum class PieceColor : uint8_t;
+enum PieceColor : uint8_t;
 
 namespace Zagreus {
-enum class GenerationType : uint8_t {
+enum GenerationType : uint8_t {
     ALL,
     QUIET,
     CAPTURES,

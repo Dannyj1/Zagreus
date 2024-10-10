@@ -30,20 +30,18 @@ namespace Zagreus {
 template <PieceColor movedColor>
 bool Board::isPositionLegal() const {
     constexpr PieceColor opponentColor = !movedColor;
-    constexpr Piece king = movedColor == PieceColor::WHITE ? Piece::WHITE_KING : Piece::BLACK_KING;
+    constexpr Piece king = movedColor == WHITE ? WHITE_KING : BLACK_KING;
     const uint64_t kingBB = getBitboard<king>();
     const uint8_t kingSquare = bitscanForward(kingBB);
 
     return !getSquareAttackersByColor<opponentColor>(kingSquare);
 }
 
-template bool Board::isPositionLegal<PieceColor::WHITE>() const;
-template bool Board::isPositionLegal<PieceColor::BLACK>() const;
+template bool Board::isPositionLegal<WHITE>() const;
+template bool Board::isPositionLegal<BLACK>() const;
 
 uint64_t Board::getSquareAttackers(const uint8_t square) const {
     assert(square < SQUARES);
-    using enum Piece;
-
     const uint64_t knights = getBitboard<WHITE_KNIGHT>() | getBitboard<BLACK_KNIGHT>();
     const uint64_t kings = getBitboard<WHITE_KING>() | getBitboard<BLACK_KING>();
     uint64_t bishopsQueens = getBitboard<WHITE_QUEEN>() | getBitboard<BLACK_QUEEN>();
@@ -51,8 +49,8 @@ uint64_t Board::getSquareAttackers(const uint8_t square) const {
     rooksQueens |= getBitboard<WHITE_ROOK>() | getBitboard<BLACK_ROOK>();
     bishopsQueens |= getBitboard<WHITE_BISHOP>() | getBitboard<BLACK_BISHOP>();
 
-    return (pawnAttacks<PieceColor::WHITE>(square) & getBitboard<BLACK_PAWN>())
-           | (pawnAttacks<PieceColor::BLACK>(square) & getBitboard<WHITE_PAWN>())
+    return (pawnAttacks<WHITE>(square) & getBitboard<BLACK_PAWN>())
+           | (pawnAttacks<BLACK>(square) & getBitboard<WHITE_PAWN>())
            | (knightAttacks(square) & knights)
            | (kingAttacks(square) & kings)
            | (bishopAttacks(square, occupied) & bishopsQueens)
@@ -64,7 +62,7 @@ void Board::reset() {
     this->bitboards = {};
     this->occupied = 0;
     this->colorBoards = {};
-    this->sideToMove = PieceColor::EMPTY;
+    this->sideToMove = WHITE;
     this->history = {};
     this->ply = 0;
 
@@ -104,20 +102,20 @@ void Board::makeMove(const Move& move) {
     removePiece(movedPiece, fromSquare);
     setPiece(movedPiece, toSquare);
 
-    if (movedPieceType == PieceType::PAWN) {
-        if (moveType == MoveType::EN_PASSANT) {
-            if (sideToMove == PieceColor::WHITE) {
-                removePiece(Piece::BLACK_PAWN, toSquare + TO_INT(Direction::SOUTH));
+    if (movedPieceType == PAWN) {
+        if (moveType == EN_PASSANT) {
+            if (sideToMove == WHITE) {
+                removePiece(BLACK_PAWN, toSquare + SOUTH);
             } else {
-                removePiece(Piece::WHITE_PAWN, toSquare + TO_INT(Direction::NORTH));
+                removePiece(WHITE_PAWN, toSquare + NORTH);
             }
         }
 
         if ((fromSquare ^ toSquare) == 16) {
-            if (sideToMove == PieceColor::WHITE) {
-                enPassantSquare = toSquare + TO_INT(Direction::SOUTH);
+            if (sideToMove == WHITE) {
+                enPassantSquare = toSquare + SOUTH;
             } else {
-                enPassantSquare = toSquare + TO_INT(Direction::NORTH);
+                enPassantSquare = toSquare + NORTH;
             }
         } else {
             enPassantSquare = 0;
@@ -151,13 +149,13 @@ void Board::unmakeMove() {
         setPiece(capturedPiece, toSquare);
     }
 
-    if (moveType == MoveType::EN_PASSANT) {
+    if (moveType == EN_PASSANT) {
         const PieceColor movedPieceColor = pieceColor(movedPiece);
 
-        if (movedPieceColor == PieceColor::WHITE) {
-            setPiece(Piece::BLACK_PAWN, toSquare + TO_INT(Direction::SOUTH));
+        if (movedPieceColor == WHITE) {
+            setPiece(BLACK_PAWN, toSquare + SOUTH);
         } else {
-            setPiece(Piece::WHITE_PAWN, toSquare + TO_INT(Direction::NORTH));
+            setPiece(WHITE_PAWN, toSquare + NORTH);
         }
     }
 
@@ -167,8 +165,6 @@ void Board::unmakeMove() {
 
 void Board::setPieceFromFENChar(const char character, const uint8_t square) {
     assert(square < SQUARES);
-    using enum Piece;
-
     // Uppercase char = white, lowercase = black
     switch (character) {
         case 'P':
@@ -214,7 +210,7 @@ void Board::setPieceFromFENChar(const char character, const uint8_t square) {
 
 bool Board::setFromFEN(const std::string_view fen) {
     // TODO: Update zobrist hash once that is implemented
-    uint8_t index = TO_INT(Square::A8);
+    uint8_t index = A8;
     int spaces = 0;
 
     reset();
@@ -250,9 +246,9 @@ bool Board::setFromFEN(const std::string_view fen) {
 
         if (spaces == 1) {
             if (tolower(character) == 'w') {
-                sideToMove = PieceColor::WHITE;
+                sideToMove = WHITE;
             } else if (tolower(character) == 'b') {
-                sideToMove = PieceColor::BLACK;
+                sideToMove = BLACK;
             } else {
                 return false;
             }
@@ -289,7 +285,7 @@ bool Board::setFromFEN(const std::string_view fen) {
             }
 
             const int8_t file = tolower(character) - 'a';
-            const int8_t rank = (!sideToMove) == PieceColor::WHITE ? 2 : 5;
+            const int8_t rank = (!sideToMove) == WHITE ? 2 : 5;
 
             if (file < 0 || file > 7) {
                 return false;

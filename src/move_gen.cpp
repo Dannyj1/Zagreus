@@ -30,11 +30,10 @@
 namespace Zagreus {
 template <PieceColor color, GenerationType type>
 void generateMoves(const Board& board, MoveList& moves) {
-    assert(color != PieceColor::EMPTY);
     assert(moves.size == 0);
 
     // TODO: Implement GenerationType logic using a mask that is computed based on type
-    constexpr Piece opponentKing = color == PieceColor::WHITE ? Piece::BLACK_KING : Piece::WHITE_KING;
+    constexpr Piece opponentKing = color == WHITE ? BLACK_KING : WHITE_KING;
     const uint64_t ownPieces = board.getColorBitboard<color>();
     const uint64_t opponentKingBB = board.getBitboard<opponentKing>();
     const uint64_t genMask = ~(ownPieces | opponentKingBB);
@@ -50,7 +49,7 @@ void generateMoves(const Board& board, MoveList& moves) {
 template <PieceColor color, GenerationType type>
 void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     // TODO: Handle promotions
-    constexpr Piece pawn = color == PieceColor::WHITE ? Piece::WHITE_PAWN : Piece::BLACK_PAWN;
+    constexpr Piece pawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     constexpr PieceColor opponentColor = !color;
 
     const uint64_t pawnBB = board.getBitboard<pawn>();
@@ -61,7 +60,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     uint64_t pawnWestAttacks;
     uint64_t pawnEastAttacks;
 
-    if constexpr (color == PieceColor::WHITE) {
+    if constexpr (color == WHITE) {
         pawnSinglePushes = whitePawnSinglePush(pawnBB, emptyBB);
         pawnDoublePushes = whitePawnDoublePush(pawnBB, emptyBB);
         pawnWestAttacks = whitePawnWestAttacks(pawnBB);
@@ -75,7 +74,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     uint64_t enPassantMask = squareToBitboard(board.getEnPassantSquare());
 
-    if constexpr (color == PieceColor::WHITE) {
+    if constexpr (color == WHITE) {
         enPassantMask &= RANK_6;
     } else {
         enPassantMask &= RANK_3;
@@ -86,13 +85,13 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     pawnWestAttacks &= (opponentPieces | enPassantMask) & genMask;
     pawnEastAttacks &= (opponentPieces | enPassantMask) & genMask;
 
-    constexpr Direction fromPushDirection = color == PieceColor::WHITE ? Direction::NORTH : Direction::SOUTH;
-    constexpr Direction fromSqWestAttackDirection = color == PieceColor::WHITE ? Direction::NORTH_WEST : Direction::SOUTH_WEST;
-    constexpr Direction fromSqEastAttackDirection = color == PieceColor::WHITE ? Direction::NORTH_EAST : Direction::SOUTH_EAST;
+    constexpr Direction fromPushDirection = color == WHITE ? NORTH : SOUTH;
+    constexpr Direction fromSqWestAttackDirection = color == WHITE ? NORTH_WEST : SOUTH_WEST;
+    constexpr Direction fromSqEastAttackDirection = color == WHITE ? NORTH_EAST : SOUTH_EAST;
 
     while (pawnSinglePushes) {
         const uint8_t squareTo = popLsb(pawnSinglePushes);
-        const uint8_t squareFrom = squareTo - TO_INT(fromPushDirection);
+        const uint8_t squareFrom = squareTo - fromPushDirection;
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.moves[moves.size] = move;
@@ -101,7 +100,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (pawnDoublePushes) {
         const uint8_t squareTo = popLsb(pawnDoublePushes);
-        const uint8_t squareFrom = squareTo - TO_INT(fromPushDirection) - TO_INT(fromPushDirection);
+        const uint8_t squareFrom = squareTo - fromPushDirection - fromPushDirection;
         const Move move = encodeMove(squareFrom, squareTo);
 
         moves.moves[moves.size] = move;
@@ -110,11 +109,11 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (pawnWestAttacks) {
         const uint8_t squareTo = popLsb(pawnWestAttacks);
-        const uint8_t squareFrom = squareTo - TO_INT(fromSqWestAttackDirection);
-        MoveType moveType = MoveType::NORMAL;
+        const uint8_t squareFrom = squareTo - fromSqWestAttackDirection;
+        MoveType moveType = NORMAL;
 
         if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
-            moveType = MoveType::EN_PASSANT;
+            moveType = EN_PASSANT;
         }
 
         const Move move = encodeMove(squareFrom, squareTo, moveType);
@@ -124,11 +123,11 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (pawnEastAttacks) {
         const uint8_t squareTo = popLsb(pawnEastAttacks);
-        const uint8_t squareFrom = squareTo - TO_INT(fromSqEastAttackDirection);
-        MoveType moveType = MoveType::NORMAL;
+        const uint8_t squareFrom = squareTo - fromSqEastAttackDirection;
+        MoveType moveType = NORMAL;
 
         if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
-            moveType = MoveType::EN_PASSANT;
+            moveType = EN_PASSANT;
         }
 
         const Move move = encodeMove(squareFrom, squareTo, moveType);
@@ -139,7 +138,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
 template <PieceColor color, GenerationType type>
 void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    constexpr Piece knight = color == PieceColor::WHITE ? Piece::WHITE_KNIGHT : Piece::BLACK_KNIGHT;
+    constexpr Piece knight = color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
     uint64_t knightBB = board.getBitboard<knight>();
 
     while (knightBB) {
@@ -159,8 +158,7 @@ void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t gen
 
 template <PieceColor color, GenerationType type>
 void generateBishopMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    using enum Piece;
-    constexpr Piece bishop = color == PieceColor::WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+    constexpr Piece bishop = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     const uint64_t occupied = board.getOccupiedBitboard();
     uint64_t bishopBB = board.getBitboard<bishop>();
 
@@ -180,8 +178,7 @@ void generateBishopMoves(const Board& board, MoveList& moves, const uint64_t gen
 
 template <PieceColor color, GenerationType type>
 void generateRookMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    using enum Piece;
-    constexpr Piece rook = color == PieceColor::WHITE ? WHITE_ROOK : BLACK_ROOK;
+    constexpr Piece rook = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
     const uint64_t occupied = board.getOccupiedBitboard();
     uint64_t rookBB = board.getBitboard<rook>();
 
@@ -201,8 +198,7 @@ void generateRookMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
 template <PieceColor color, GenerationType type>
 void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    using enum Piece;
-    constexpr Piece queen = color == PieceColor::WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+    constexpr Piece queen = color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
     const uint64_t occupied = board.getOccupiedBitboard();
     uint64_t queenBB = board.getBitboard<queen>();
 
@@ -223,8 +219,7 @@ void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genM
 template <PieceColor color, GenerationType type>
 void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     // TODO: Implement castling
-    using enum Piece;
-    constexpr Piece king = color == PieceColor::WHITE ? WHITE_KING : BLACK_KING;
+    constexpr Piece king = color == WHITE ? WHITE_KING : BLACK_KING;
     uint64_t kingBB = board.getBitboard<king>();
 
     while (kingBB) {
@@ -242,12 +237,12 @@ void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMa
 }
 
 // explicit instantiation of generateMoves
-template void generateMoves<PieceColor::WHITE, GenerationType::ALL>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::WHITE, GenerationType::QUIET>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::WHITE, GenerationType::CAPTURES>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::WHITE, GenerationType::EVASIONS>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::ALL>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::QUIET>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::CAPTURES>(const Board& board, MoveList& moves);
-template void generateMoves<PieceColor::BLACK, GenerationType::EVASIONS>(const Board& board, MoveList& moves);
+template void generateMoves<WHITE, ALL>(const Board& board, MoveList& moves);
+template void generateMoves<WHITE, QUIET>(const Board& board, MoveList& moves);
+template void generateMoves<WHITE, CAPTURES>(const Board& board, MoveList& moves);
+template void generateMoves<WHITE, EVASIONS>(const Board& board, MoveList& moves);
+template void generateMoves<BLACK, ALL>(const Board& board, MoveList& moves);
+template void generateMoves<BLACK, QUIET>(const Board& board, MoveList& moves);
+template void generateMoves<BLACK, CAPTURES>(const Board& board, MoveList& moves);
+template void generateMoves<BLACK, EVASIONS>(const Board& board, MoveList& moves);
 } // namespace Zagreus

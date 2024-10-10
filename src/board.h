@@ -32,7 +32,6 @@
 #include "bitboard.h"
 #include "move.h"
 #include "constants.h"
-#include "macros.h"
 
 namespace Zagreus {
 struct BoardState {
@@ -47,7 +46,7 @@ private:
     std::array<uint64_t, PIECES> bitboards{};
     uint64_t occupied = 0;
     std::array<uint64_t, COLORS> colorBoards{};
-    PieceColor sideToMove = PieceColor::EMPTY;
+    PieceColor sideToMove = PieceColor::WHITE;
     std::array<BoardState, MAX_PLY> history{};
     int ply = 0;
     uint8_t enPassantSquare = 0;
@@ -62,12 +61,12 @@ public:
 
     template <Piece piece>
     [[nodiscard]] uint64_t getBitboard() const {
-        return bitboards[TO_INT(piece)];
+        return bitboards[piece];
     }
 
     template <PieceColor color>
     [[nodiscard]] uint64_t getColorBitboard() const {
-        return colorBoards[TO_INT(color)];
+        return colorBoards[color];
     }
 
     [[nodiscard]] Piece getPieceOnSquare(const int square) const {
@@ -102,9 +101,9 @@ public:
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
-        bitboards[TO_INT(piece)] |= squareBB;
+        bitboards[piece] |= squareBB;
         occupied |= squareBB;
-        colorBoards[TO_INT(pieceColor(piece))] |= squareBB;
+        colorBoards[pieceColor(piece)] |= squareBB;
     }
 
     void setPiece(const Piece piece, const uint8_t square) {
@@ -113,9 +112,9 @@ public:
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = piece;
-        bitboards[TO_INT(piece)] |= squareBB;
+        bitboards[piece] |= squareBB;
         occupied |= squareBB;
-        colorBoards[TO_INT(pieceColor(piece))] |= squareBB;
+        colorBoards[pieceColor(piece)] |= squareBB;
     }
 
     void removePiece(const uint8_t square) {
@@ -124,9 +123,9 @@ public:
         assert(piece != Piece::EMPTY);
 
         board[square] = Piece::EMPTY;
-        bitboards[TO_INT(piece)] &= ~squareBB;
+        bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[TO_INT(pieceColor(piece))] &= ~squareBB;
+        colorBoards[pieceColor(piece)] &= ~squareBB;
     }
 
     template <Piece piece>
@@ -136,9 +135,9 @@ public:
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = Piece::EMPTY;
-        bitboards[TO_INT(piece)] &= ~squareBB;
+        bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[TO_INT(pieceColor(piece))] &= ~squareBB;
+        colorBoards[pieceColor(piece)] &= ~squareBB;
     }
 
     void removePiece(const Piece piece, const uint8_t square) {
@@ -147,9 +146,9 @@ public:
         const uint64_t squareBB = squareToBitboard(square);
 
         board[square] = Piece::EMPTY;
-        bitboards[TO_INT(piece)] &= ~squareBB;
+        bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[TO_INT(pieceColor(piece))] &= ~squareBB;
+        colorBoards[pieceColor(piece)] &= ~squareBB;
     }
 
     void makeMove(const Move& move);

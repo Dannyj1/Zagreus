@@ -28,8 +28,6 @@
 namespace Zagreus {
 uint64_t perft(Board &board, const int depth, bool printNodes) {
     assert(depth >= 0);
-    using enum PieceColor;
-    using enum GenerationType;
 
     if (depth == 0) {
         return 1;
