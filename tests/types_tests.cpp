@@ -24,18 +24,18 @@
 
 // Test all pieces at once for correct identification of piece type
 TEST_CASE("test_pieceType", "[types]") {
-    REQUIRE(pieceType(Piece::WHITE_PAWN) == PieceType::PAWN);
-    REQUIRE(pieceType(Piece::BLACK_PAWN) == PieceType::PAWN);
-    REQUIRE(pieceType(Piece::WHITE_KNIGHT) == PieceType::KNIGHT);
-    REQUIRE(pieceType(Piece::BLACK_KNIGHT) == PieceType::KNIGHT);
-    REQUIRE(pieceType(Piece::WHITE_BISHOP) == PieceType::BISHOP);
-    REQUIRE(pieceType(Piece::BLACK_BISHOP) == PieceType::BISHOP);
-    REQUIRE(pieceType(Piece::WHITE_ROOK) == PieceType::ROOK);
-    REQUIRE(pieceType(Piece::BLACK_ROOK) == PieceType::ROOK);
-    REQUIRE(pieceType(Piece::WHITE_QUEEN) == PieceType::QUEEN);
-    REQUIRE(pieceType(Piece::BLACK_QUEEN) == PieceType::QUEEN);
-    REQUIRE(pieceType(Piece::WHITE_KING) == PieceType::KING);
-    REQUIRE(pieceType(Piece::BLACK_KING) == PieceType::KING);
+    REQUIRE(getPieceType(Piece::WHITE_PAWN) == PieceType::PAWN);
+    REQUIRE(getPieceType(Piece::BLACK_PAWN) == PieceType::PAWN);
+    REQUIRE(getPieceType(Piece::WHITE_KNIGHT) == PieceType::KNIGHT);
+    REQUIRE(getPieceType(Piece::BLACK_KNIGHT) == PieceType::KNIGHT);
+    REQUIRE(getPieceType(Piece::WHITE_BISHOP) == PieceType::BISHOP);
+    REQUIRE(getPieceType(Piece::BLACK_BISHOP) == PieceType::BISHOP);
+    REQUIRE(getPieceType(Piece::WHITE_ROOK) == PieceType::ROOK);
+    REQUIRE(getPieceType(Piece::BLACK_ROOK) == PieceType::ROOK);
+    REQUIRE(getPieceType(Piece::WHITE_QUEEN) == PieceType::QUEEN);
+    REQUIRE(getPieceType(Piece::BLACK_QUEEN) == PieceType::QUEEN);
+    REQUIRE(getPieceType(Piece::WHITE_KING) == PieceType::KING);
+    REQUIRE(getPieceType(Piece::BLACK_KING) == PieceType::KING);
 }
 
 // Test the pieceColor function for determining the color of all pieces as white or black

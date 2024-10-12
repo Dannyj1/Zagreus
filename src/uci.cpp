@@ -18,8 +18,7 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// ReSharper disable CppRedundantControlFlowJump
-#include <stddef.h>
+#include <chrono>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -60,22 +59,23 @@ std::string Engine::getVersionString() {
 }
 
 void Engine::printStartupMessage() {
-    sendMessage(" ______ ");
-    sendMessage(" |___  / ");
-    sendMessage("    / /  __ _   __ _  _ __  ___  _   _  ___ ");
-    sendMessage("   / /  / _` | / _` || '__|/ _ \\| | | |/ __|");
-    sendMessage("  / /__| (_| || (_| || |  |  __/| |_| |\\__ \\");
-    sendMessage(R"( /_____|\__,_| \__, ||_|   \___| \__,_||___/)");
-    sendMessage("                __/ | ");
-    sendMessage("               |___/ ");
-    sendMessage("");
-    sendMessage("Zagreus  Copyright (C) 2023-2024  Danny Jelsma");
-    sendMessage("");
-    sendMessage("This program comes with ABSOLUTELY NO WARRANTY.");
-    sendMessage("This is free software, and you are welcome to redistribute it");
-    sendMessage("under the conditions of the GNU Affero General Public License v3.0 or later.");
-    sendMessage("You should have received a copy of the GNU Affero General Public License");
-    sendMessage("along with this program. If not, see <https://www.gnu.org/licenses/>.");
+    sendMessage(R"(
+ ______
+ |___  /
+    / /  __ _   __ _  _ __  ___  _   _  ___
+   / /  / _` | / _` || '__|/ _ \| | | |/ __|
+  / /__| (_| || (_| || |  |  __/| |_| |\__ \
+ /_____|\__,_| \__, ||_|   \___| \__,_||___/
+                __/ |
+               |___/
+
+Zagreus  Copyright (C) 2023-2024  Danny Jelsma
+
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under the conditions of the GNU Affero General Public License v3.0 or later.
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.)");
     sendMessage("");
 
     sendMessage("Zagreus UCI chess engine " + getVersionString() + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
