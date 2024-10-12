@@ -18,9 +18,9 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "move.h"
-
 #include <cassert>
+
+#include "move.h"
 
 namespace Zagreus {
 std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare) {

@@ -218,17 +218,45 @@ void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genM
 
 template <PieceColor color, GenerationType type>
 void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    // TODO: Implement castling
     constexpr Piece king = color == WHITE ? WHITE_KING : BLACK_KING;
     uint64_t kingBB = board.getBitboard<king>();
+    const uint8_t fromSquare = popLsb(kingBB);
+    uint64_t genBB = kingAttacks(fromSquare) & genMask;
 
-    while (kingBB) {
-        const uint8_t fromSquare = popLsb(kingBB);
-        uint64_t genBB = kingAttacks(fromSquare) & genMask;
+    while (genBB) {
+        const uint8_t toSquare = popLsb(genBB);
+        const Move move = encodeMove(fromSquare, toSquare);
 
-        while (genBB) {
-            const uint8_t toSquare = popLsb(genBB);
-            const Move move = encodeMove(fromSquare, toSquare);
+        moves.moves[moves.size] = move;
+        moves.size++;
+    }
+
+    const uint8_t castlingRights = board.getCastlingRights();
+
+    if constexpr (color == WHITE) {
+        if (castlingRights & WHITE_KINGSIDE && board.canCastle<WHITE_KINGSIDE>()) {
+            const Move move = encodeMove(E1, G1, CASTLING);
+
+            moves.moves[moves.size] = move;
+            moves.size++;
+        }
+
+        if (castlingRights & WHITE_QUEENSIDE && board.canCastle<WHITE_QUEENSIDE>()) {
+            const Move move = encodeMove(E1, C1, CASTLING);
+
+            moves.moves[moves.size] = move;
+            moves.size++;
+        }
+    } else if constexpr (color == BLACK) {
+        if (castlingRights & BLACK_KINGSIDE && board.canCastle<BLACK_KINGSIDE>()) {
+            const Move move = encodeMove(E8, G8, CASTLING);
+
+            moves.moves[moves.size] = move;
+            moves.size++;
+        }
+
+        if (castlingRights & BLACK_QUEENSIDE && board.canCastle<BLACK_QUEENSIDE>()) {
+            const Move move = encodeMove(E8, C8, CASTLING);
 
             moves.moves[moves.size] = move;
             moves.size++;

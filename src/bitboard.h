@@ -226,7 +226,7 @@ inline uint64_t squareToBitboard(const uint8_t square) {
     return 1ULL << square;
 }
 
-inline uint8_t bitboardToSquare(const uint64_t bb) {
-    return bitscanForward(bb);
+inline Square bitboardToSquare(const uint64_t bb) {
+    return static_cast<Square>(bitscanForward(bb));
 }
 } // namespace Zagreus

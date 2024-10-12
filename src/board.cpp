@@ -32,13 +32,80 @@ bool Board::isPositionLegal() const {
     constexpr PieceColor opponentColor = !movedColor;
     constexpr Piece king = movedColor == WHITE ? WHITE_KING : BLACK_KING;
     const uint64_t kingBB = getBitboard<king>();
-    const uint8_t kingSquare = bitscanForward(kingBB);
+    const Square kingSquare = bitboardToSquare(kingBB);
+    const Move lastMove = getLastMove();
+    const MoveType lastMoveType = getMoveType(lastMove);
+
+    if (lastMoveType == CASTLING) {
+        const uint8_t fromSquare = getFromSquare(lastMove);
+        const uint8_t toSquare = getToSquare(lastMove);
+        const uint64_t fromSquareAttacks = getSquareAttackersByColor<opponentColor>(fromSquare);
+
+        if (fromSquareAttacks) {
+            // King was in check before castling
+            return false;
+        }
+
+        uint64_t castlingPath = 0;
+
+        if (toSquare == G1) {
+            castlingPath = WHITE_KINGSIDE_CASTLE_PATH;
+        } else if (toSquare == C1) {
+            castlingPath = WHITE_QUEENSIDE_CASTLE_PATH;
+        } else if (toSquare == G8) {
+            castlingPath = BLACK_KINGSIDE_CASTLE_PATH;
+        } else if (toSquare == C8) {
+            castlingPath = BLACK_QUEENSIDE_CASTLE_PATH;
+        }
+
+        while (castlingPath) {
+            const uint8_t square = popLsb(castlingPath);
+            const uint64_t attackers = getSquareAttackersByColor<opponentColor>(square);
+
+            if (attackers) {
+                return false;
+            }
+        }
+    }
 
     return !getSquareAttackersByColor<opponentColor>(kingSquare);
 }
 
 template bool Board::isPositionLegal<WHITE>() const;
 template bool Board::isPositionLegal<BLACK>() const;
+
+// Checks everything except for attacks on the castling path or if the king is in check
+template <CastlingRights side>
+bool Board::canCastle() const {
+    assert(side != WHITE_CASTLING && side != BLACK_CASTLING);
+
+    if (!(castlingRights & side)) {
+        return false;
+    }
+
+    uint64_t castlingPath = 0;
+
+    if constexpr (side == WHITE_KINGSIDE) {
+        castlingPath = WHITE_KINGSIDE_CASTLE_PATH;
+    } else if constexpr (side == WHITE_QUEENSIDE) {
+        castlingPath = WHITE_QUEENSIDE_CASTLE_PATH;
+    } else if constexpr (side == BLACK_KINGSIDE) {
+        castlingPath = BLACK_KINGSIDE_CASTLE_PATH;
+    } else if constexpr (side == BLACK_QUEENSIDE) {
+        castlingPath = BLACK_QUEENSIDE_CASTLE_PATH;
+    }
+
+    if (occupied & castlingPath) {
+        return false;
+    }
+
+    return true;
+}
+
+template bool Board::canCastle<WHITE_KINGSIDE>() const;
+template bool Board::canCastle<WHITE_QUEENSIDE>() const;
+template bool Board::canCastle<BLACK_KINGSIDE>() const;
+template bool Board::canCastle<BLACK_QUEENSIDE>() const;
 
 uint64_t Board::getSquareAttackers(const uint8_t square) const {
     assert(square < SQUARES);
@@ -65,8 +132,9 @@ void Board::reset() {
     this->sideToMove = WHITE;
     this->history = {};
     this->ply = 0;
+    this->castlingRights = 0;
 
-    std::ranges::fill(board, Piece::EMPTY);
+    std::ranges::fill(board, EMPTY);
     std::ranges::fill(bitboards, 0);
     std::ranges::fill(colorBoards, 0);
     std::ranges::fill(history, BoardState{});
@@ -92,25 +160,82 @@ void Board::makeMove(const Move& move) {
     const uint8_t toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
     const Piece movedPiece = getPieceOnSquare(fromSquare);
-    const PieceType movedPieceType = pieceType(movedPiece);
+    const PieceType movedPieceType = getPieceType(movedPiece);
     const Piece capturedPiece = getPieceOnSquare(toSquare);
 
-    if (capturedPiece != Piece::EMPTY) {
+    history[ply].move = move;
+    history[ply].capturedPiece = capturedPiece;
+    history[ply].enPassantSquare = enPassantSquare;
+    history[ply].castlingRights = castlingRights;
+
+    if (capturedPiece != EMPTY) {
         removePiece(capturedPiece, toSquare);
+
+        if (capturedPiece == WHITE_ROOK) {
+            if (toSquare == A8) {
+                castlingRights &= ~BLACK_QUEENSIDE;
+            } else if (toSquare == H8) {
+                castlingRights &= ~BLACK_KINGSIDE;
+            }
+        } else if (capturedPiece == BLACK_ROOK) {
+            if (toSquare == A1) {
+                castlingRights &= ~WHITE_QUEENSIDE;
+            } else if (toSquare == H1) {
+                castlingRights &= ~WHITE_KINGSIDE;
+            }
+        }
     }
 
     removePiece(movedPiece, fromSquare);
     setPiece(movedPiece, toSquare);
 
-    if (movedPieceType == PAWN) {
-        if (moveType == EN_PASSANT) {
-            if (sideToMove == WHITE) {
-                removePiece(BLACK_PAWN, toSquare + SOUTH);
-            } else {
-                removePiece(WHITE_PAWN, toSquare + NORTH);
-            }
+    if (moveType == EN_PASSANT) {
+        if (sideToMove == WHITE) {
+            removePiece(BLACK_PAWN, toSquare + SOUTH);
+        } else {
+            removePiece(WHITE_PAWN, toSquare + NORTH);
+        }
+    } else if (moveType == CASTLING) {
+        if (toSquare == G1) {
+            removePiece(WHITE_ROOK, H1);
+            setPiece(WHITE_ROOK, F1);
+        } else if (toSquare == C1) {
+            removePiece(WHITE_ROOK, A1);
+            setPiece(WHITE_ROOK, D1);
+        } else if (toSquare == G8) {
+            removePiece(BLACK_ROOK, H8);
+            setPiece(BLACK_ROOK, F8);
+        } else if (toSquare == C8) {
+            removePiece(BLACK_ROOK, A8);
+            setPiece(BLACK_ROOK, D8);
         }
 
+        if (sideToMove == WHITE) {
+            castlingRights &= ~WHITE_CASTLING;
+        } else {
+            castlingRights &= ~BLACK_CASTLING;
+        }
+    }
+
+    if (movedPiece == WHITE_KING) {
+        castlingRights &= ~WHITE_CASTLING;
+    } else if (movedPiece == BLACK_KING) {
+        castlingRights &= ~BLACK_CASTLING;
+    } else if (movedPiece == WHITE_ROOK) {
+        if (fromSquare == A1) {
+            castlingRights &= ~WHITE_QUEENSIDE;
+        } else if (fromSquare == H1) {
+            castlingRights &= ~WHITE_KINGSIDE;
+        }
+    } else if (movedPiece == BLACK_ROOK) {
+        if (fromSquare == A8) {
+            castlingRights &= ~BLACK_QUEENSIDE;
+        } else if (fromSquare == H8) {
+            castlingRights &= ~BLACK_KINGSIDE;
+        }
+    }
+
+    if (movedPieceType == PAWN) {
         if ((fromSquare ^ toSquare) == 16) {
             if (sideToMove == WHITE) {
                 enPassantSquare = toSquare + SOUTH;
@@ -126,9 +251,6 @@ void Board::makeMove(const Move& move) {
 
     sideToMove = !sideToMove;
     assert(ply >= 0 && ply < MAX_PLY);
-    history[ply].move = move;
-    history[ply].capturedPiece = capturedPiece;
-    history[ply].enPassantSquare = enPassantSquare;
     ply++;
     assert(ply >= 0 && ply < MAX_PLY);
 }
@@ -136,7 +258,7 @@ void Board::makeMove(const Move& move) {
 void Board::unmakeMove() {
     ply--;
     assert(ply >= 0 && ply < MAX_PLY);
-    const auto& [move, capturedPiece, enPassantSquare] = history[ply];
+    const auto& [move, capturedPiece, enPassantSquare, castlingRights] = history[ply];
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
@@ -145,12 +267,12 @@ void Board::unmakeMove() {
     removePiece(movedPiece, toSquare);
     setPiece(movedPiece, fromSquare);
 
-    if (capturedPiece != Piece::EMPTY) {
+    if (capturedPiece != EMPTY) {
         setPiece(capturedPiece, toSquare);
     }
 
     if (moveType == EN_PASSANT) {
-        const PieceColor movedPieceColor = pieceColor(movedPiece);
+        const PieceColor movedPieceColor = getPieceColor(movedPiece);
 
         if (movedPieceColor == WHITE) {
             setPiece(BLACK_PAWN, toSquare + SOUTH);
@@ -159,8 +281,25 @@ void Board::unmakeMove() {
         }
     }
 
+    if (moveType == CASTLING) {
+        if (toSquare == G1) {
+            removePiece(WHITE_ROOK, F1);
+            setPiece(WHITE_ROOK, H1);
+        } else if (toSquare == C1) {
+            removePiece(WHITE_ROOK, D1);
+            setPiece(WHITE_ROOK, A1);
+        } else if (toSquare == G8) {
+            removePiece(BLACK_ROOK, F8);
+            setPiece(BLACK_ROOK, H8);
+        } else if (toSquare == C8) {
+            removePiece(BLACK_ROOK, D8);
+            setPiece(BLACK_ROOK, A8);
+        }
+    }
+
     this->sideToMove = !sideToMove;
     this->enPassantSquare = enPassantSquare;
+    this->castlingRights = castlingRights;
 }
 
 void Board::setPieceFromFENChar(const char character, const uint8_t square) {
@@ -254,26 +393,32 @@ bool Board::setFromFEN(const std::string_view fen) {
             }
         }
 
-        // TODO: Implement and add zobrist logic once castling is implemented
-        /*if (spaces == 2) {
+        // TODO: Add zobrist hashes
+        if (spaces == 2) {
             if (character == '-') {
                 continue;
             } else if (character == 'K') {
                 castlingRights |= WHITE_KINGSIDE;
                 continue;
-            } else if (character == 'Q') {
+            }
+
+            if (character == 'Q') {
                 castlingRights |= WHITE_QUEENSIDE;
                 continue;
-            } else if (character == 'k') {
+            }
+
+            if (character == 'k') {
                 castlingRights |= BLACK_KINGSIDE;
                 continue;
-            } else if (character == 'q') {
+            }
+
+            if (character == 'q') {
                 castlingRights |= BLACK_QUEENSIDE;
                 continue;
             }
 
             return false;
-        }*/
+        }
 
         if (spaces == 3) {
             if (character == '-') {

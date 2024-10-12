@@ -36,62 +36,76 @@
 namespace Zagreus {
 struct BoardState {
     Move move = 0;
-    Piece capturedPiece = Piece::EMPTY;
+    Piece capturedPiece = EMPTY;
     uint8_t enPassantSquare = 0;
+    uint8_t castlingRights = 0;
 };
 
 class Board {
 private:
     std::array<Piece, SQUARES> board{};
     std::array<uint64_t, PIECES> bitboards{};
-    uint64_t occupied = 0;
     std::array<uint64_t, COLORS> colorBoards{};
-    PieceColor sideToMove = PieceColor::WHITE;
+    PieceColor sideToMove = WHITE;
     std::array<BoardState, MAX_PLY> history{};
-    int ply = 0;
+    uint64_t occupied = 0;
+    uint16_t ply = 0;
+    uint8_t castlingRights = 0;
     uint8_t enPassantSquare = 0;
 
 public:
     Board() {
-        std::ranges::fill(board, Piece::EMPTY);
+        std::ranges::fill(board, EMPTY);
         std::ranges::fill(bitboards, 0);
         std::ranges::fill(colorBoards, 0);
         std::ranges::fill(history, BoardState{});
     }
 
     template <Piece piece>
-    [[nodiscard]] uint64_t getBitboard() const {
+    [[nodiscard]] constexpr uint64_t getBitboard() const {
         return bitboards[piece];
     }
 
     template <PieceColor color>
-    [[nodiscard]] uint64_t getColorBitboard() const {
+    [[nodiscard]] constexpr uint64_t getColorBitboard() const {
         return colorBoards[color];
     }
 
-    [[nodiscard]] Piece getPieceOnSquare(const int square) const {
+    [[nodiscard]] constexpr Piece getPieceOnSquare(const int square) const {
         assert(square >= 0 && square < 64);
         return board[square];
     }
 
-    [[nodiscard]] bool isPieceOnSquare(const int square) const {
+    [[nodiscard]] constexpr bool isPieceOnSquare(const int square) const {
         return board[square] != Piece::EMPTY;
     }
 
-    [[nodiscard]] uint64_t getOccupiedBitboard() const {
+    [[nodiscard]] constexpr uint64_t getOccupiedBitboard() const {
         return occupied;
     }
 
-    [[nodiscard]] uint64_t getEmptyBitboard() const {
+    [[nodiscard]] constexpr uint64_t getEmptyBitboard() const {
         return ~occupied;
     }
 
-    [[nodiscard]] PieceColor getSideToMove() const {
+    [[nodiscard]] constexpr PieceColor getSideToMove() const {
         return sideToMove;
     }
 
-    [[nodiscard]] int getPly() const {
+    [[nodiscard]] constexpr int getPly() const {
         return ply;
+    }
+
+    [[nodiscard]] constexpr uint8_t getCastlingRights() const {
+        return castlingRights;
+    }
+
+    [[nodiscard]] constexpr uint8_t getEnPassantSquare() const {
+        return enPassantSquare;
+    }
+
+    [[nodiscard]] constexpr Move getLastMove() const {
+        return history[ply - 1].move;
     }
 
     template <Piece piece>
@@ -103,7 +117,7 @@ public:
         board[square] = piece;
         bitboards[piece] |= squareBB;
         occupied |= squareBB;
-        colorBoards[pieceColor(piece)] |= squareBB;
+        colorBoards[getPieceColor(piece)] |= squareBB;
     }
 
     void setPiece(const Piece piece, const uint8_t square) {
@@ -114,7 +128,7 @@ public:
         board[square] = piece;
         bitboards[piece] |= squareBB;
         occupied |= squareBB;
-        colorBoards[pieceColor(piece)] |= squareBB;
+        colorBoards[getPieceColor(piece)] |= squareBB;
     }
 
     void removePiece(const uint8_t square) {
@@ -122,10 +136,10 @@ public:
         const Piece piece = board[square];
         assert(piece != Piece::EMPTY);
 
-        board[square] = Piece::EMPTY;
+        board[square] = EMPTY;
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[pieceColor(piece)] &= ~squareBB;
+        colorBoards[getPieceColor(piece)] &= ~squareBB;
     }
 
     template <Piece piece>
@@ -137,7 +151,7 @@ public:
         board[square] = Piece::EMPTY;
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[pieceColor(piece)] &= ~squareBB;
+        colorBoards[getPieceColor(piece)] &= ~squareBB;
     }
 
     void removePiece(const Piece piece, const uint8_t square) {
@@ -148,12 +162,13 @@ public:
         board[square] = Piece::EMPTY;
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
-        colorBoards[pieceColor(piece)] &= ~squareBB;
+        colorBoards[getPieceColor(piece)] &= ~squareBB;
     }
 
     void makeMove(const Move& move);
 
     void unmakeMove();
+
     void setPieceFromFENChar(char character, uint8_t square);
 
     template <PieceColor movedColor>
@@ -166,9 +181,8 @@ public:
         return getSquareAttackers(square) & getColorBitboard<color>();
     }
 
-    [[nodiscard]] uint8_t getEnPassantSquare() const {
-        return enPassantSquare;
-    }
+    template <CastlingRights side>
+    bool canCastle() const;
 
     bool setFromFEN(std::string_view fen);
 

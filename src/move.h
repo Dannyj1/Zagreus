@@ -81,7 +81,7 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const P
 }
 
 inline uint8_t getFromSquare(const Move move) {
-    return static_cast<uint8_t>(move & 0x3F);
+    return move & 0x3F;
 }
 
 inline uint8_t getToSquare(const Move move) {

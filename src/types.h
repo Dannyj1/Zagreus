@@ -81,12 +81,21 @@ enum Piece : uint8_t {
     EMPTY = 255
 };
 
-constexpr PieceColor pieceColor(const Piece piece) {
+enum CastlingRights : uint8_t {
+    WHITE_KINGSIDE = 0b00000001,
+    WHITE_QUEENSIDE = 0b00000010,
+    BLACK_KINGSIDE = 0b00000100,
+    BLACK_QUEENSIDE = 0b00001000,
+    WHITE_CASTLING = 0b00000011,
+    BLACK_CASTLING = 0b00001100,
+};
+
+constexpr PieceColor getPieceColor(const Piece piece) {
     assert(piece != Piece::EMPTY);
     return static_cast<PieceColor>(piece % 2);
 }
 
-constexpr PieceType pieceType(const Piece piece) {
+constexpr PieceType getPieceType(const Piece piece) {
     assert(piece != Piece::EMPTY);
     return static_cast<PieceType>(piece / 2);
 }
