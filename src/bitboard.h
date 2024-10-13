@@ -203,15 +203,15 @@ inline uint64_t calculateKnightAttacks(const uint64_t bb) {
 }
 
 template <PieceColor color>
-uint64_t pawnAttacks(uint8_t square);
+uint64_t getPawnAttacks(uint8_t square);
 
-uint64_t knightAttacks(uint8_t square);
+uint64_t getKnightAttacks(uint8_t square);
 
-uint64_t kingAttacks(uint8_t square);
+uint64_t getKingAttacks(uint8_t square);
 
-uint64_t bishopAttacks(uint8_t square, uint64_t occupied);
+uint64_t getBishopAttacks(uint8_t square, uint64_t occupied);
 
-uint64_t rookAttacks(uint8_t square, uint64_t occupied);
+uint64_t getRookAttacks(uint8_t square, uint64_t occupied);
 
 uint64_t queenAttacks(uint8_t square, uint64_t occupied);
 

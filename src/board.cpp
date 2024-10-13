@@ -116,12 +116,12 @@ uint64_t Board::getSquareAttackers(const uint8_t square) const {
     rooksQueens |= getBitboard<WHITE_ROOK>() | getBitboard<BLACK_ROOK>();
     bishopsQueens |= getBitboard<WHITE_BISHOP>() | getBitboard<BLACK_BISHOP>();
 
-    return (pawnAttacks<WHITE>(square) & getBitboard<BLACK_PAWN>())
-           | (pawnAttacks<BLACK>(square) & getBitboard<WHITE_PAWN>())
-           | (knightAttacks(square) & knights)
-           | (kingAttacks(square) & kings)
-           | (bishopAttacks(square, occupied) & bishopsQueens)
-           | (rookAttacks(square, occupied) & rooksQueens);
+    return (getPawnAttacks<WHITE>(square) & getBitboard<BLACK_PAWN>())
+           | (getPawnAttacks<BLACK>(square) & getBitboard<WHITE_PAWN>())
+           | (getKnightAttacks(square) & knights)
+           | (getKingAttacks(square) & kings)
+           | (getBishopAttacks(square, occupied) & bishopsQueens)
+           | (getRookAttacks(square, occupied) & rooksQueens);
 }
 
 void Board::reset() {
@@ -274,7 +274,7 @@ void Board::unmakeMove() {
 
     if (moveType == PROMOTION) {
         const PieceColor color = getPieceColor(movedPiece);
-        movedPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
+        movedPiece = static_cast<Piece>(WHITE_PAWN + color);
     }
 
     setPiece(movedPiece, fromSquare);

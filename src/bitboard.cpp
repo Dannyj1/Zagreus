@@ -39,26 +39,26 @@ void initializeAttackLookupTables() {
 }
 
 template <PieceColor color>
-uint64_t pawnAttacks(const uint8_t square) {
+uint64_t getPawnAttacks(const uint8_t square) {
     assert(square < SQUARES);
 
     return pawnAttacksTable[color][square];
 }
 
-template uint64_t pawnAttacks<WHITE>(uint8_t square);
-template uint64_t pawnAttacks<BLACK>(uint8_t square);
+template uint64_t getPawnAttacks<WHITE>(uint8_t square);
+template uint64_t getPawnAttacks<BLACK>(uint8_t square);
 
-uint64_t knightAttacks(const uint8_t square) {
+uint64_t getKnightAttacks(const uint8_t square) {
     assert(square < SQUARES);
     return knightAttacksTable[square];
 }
 
-uint64_t kingAttacks(const uint8_t square) {
+uint64_t getKingAttacks(const uint8_t square) {
     assert(square < SQUARES);
     return kingAttacksTable[square];
 }
 
-uint64_t bishopAttacks(const uint8_t square, uint64_t occupied) {
+uint64_t getBishopAttacks(const uint8_t square, uint64_t occupied) {
     assert(square < SQUARES);
     occupied &= getBishopMask(square);
     occupied *= getBishopMagic(square);
@@ -67,7 +67,7 @@ uint64_t bishopAttacks(const uint8_t square, uint64_t occupied) {
     return getBishopMagicAttacks(square, occupied);
 }
 
-uint64_t rookAttacks(const uint8_t square, uint64_t occupied) {
+uint64_t getRookAttacks(const uint8_t square, uint64_t occupied) {
     assert(square < SQUARES);
     occupied &= getRookMask(square);
     occupied *= getRookMagic(square);
@@ -78,6 +78,6 @@ uint64_t rookAttacks(const uint8_t square, uint64_t occupied) {
 
 uint64_t queenAttacks(const uint8_t square, const uint64_t occupied) {
     assert(square < SQUARES);
-    return bishopAttacks(square, occupied) | rookAttacks(square, occupied);
+    return getBishopAttacks(square, occupied) | getRookAttacks(square, occupied);
 }
 } // namespace Zagreus

@@ -26,7 +26,7 @@
 #include "move_gen.h"
 
 namespace Zagreus {
-uint64_t perft(Board &board, const int depth, bool printNodes) {
+uint64_t perft(Board& board, const int depth, bool printNodes) {
     assert(depth >= 0);
 
     if (depth == 0) {
