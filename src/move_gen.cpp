@@ -88,14 +88,25 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     constexpr Direction fromPushDirection = color == WHITE ? NORTH : SOUTH;
     constexpr Direction fromSqWestAttackDirection = color == WHITE ? NORTH_WEST : SOUTH_WEST;
     constexpr Direction fromSqEastAttackDirection = color == WHITE ? NORTH_EAST : SOUTH_EAST;
+    constexpr uint64_t promotionRank = color == WHITE ? RANK_8 : RANK_1;
 
     while (pawnSinglePushes) {
         const uint8_t squareTo = popLsb(pawnSinglePushes);
+        const uint64_t squareToBB = squareToBitboard(squareTo);
         const uint8_t squareFrom = squareTo - fromPushDirection;
-        const Move move = encodeMove(squareFrom, squareTo);
 
-        moves.moves[moves.size] = move;
-        moves.size++;
+        if (squareToBB & promotionRank) {
+            for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
+                const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
+                moves.moves[moves.size] = move;
+                moves.size++;
+            }
+        } else {
+            const Move move = encodeMove(squareFrom, squareTo);
+
+            moves.moves[moves.size] = move;
+            moves.size++;
+        }
     }
 
     while (pawnDoublePushes) {
@@ -109,30 +120,50 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (pawnWestAttacks) {
         const uint8_t squareTo = popLsb(pawnWestAttacks);
+        const uint64_t squareToBB = squareToBitboard(squareTo);
         const uint8_t squareFrom = squareTo - fromSqWestAttackDirection;
-        MoveType moveType = NORMAL;
 
         if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
-            moveType = EN_PASSANT;
+            const Move move = encodeMove(squareFrom, squareTo, EN_PASSANT);
+            moves.moves[moves.size] = move;
+            moves.size++;
+        } else {
+            if (squareToBB & promotionRank) {
+                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
+                    const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
+                    moves.moves[moves.size] = move;
+                    moves.size++;
+                }
+            } else {
+                const Move move = encodeMove(squareFrom, squareTo);
+                moves.moves[moves.size] = move;
+                moves.size++;
+            }
         }
-
-        const Move move = encodeMove(squareFrom, squareTo, moveType);
-        moves.moves[moves.size] = move;
-        moves.size++;
     }
 
     while (pawnEastAttacks) {
         const uint8_t squareTo = popLsb(pawnEastAttacks);
+        const uint64_t squareToBB = squareToBitboard(squareTo);
         const uint8_t squareFrom = squareTo - fromSqEastAttackDirection;
-        MoveType moveType = NORMAL;
 
         if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
-            moveType = EN_PASSANT;
+            const Move move = encodeMove(squareFrom, squareTo, EN_PASSANT);
+            moves.moves[moves.size] = move;
+            moves.size++;
+        } else {
+            if (squareToBB & promotionRank) {
+                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
+                    const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
+                    moves.moves[moves.size] = move;
+                    moves.size++;
+                }
+            } else {
+                const Move move = encodeMove(squareFrom, squareTo);
+                moves.moves[moves.size] = move;
+                moves.size++;
+            }
         }
-
-        const Move move = encodeMove(squareFrom, squareTo, moveType);
-        moves.moves[moves.size] = move;
-        moves.size++;
     }
 }
 

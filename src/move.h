@@ -45,10 +45,10 @@ enum MoveType : uint8_t {
 };
 
 enum PromotionPiece : uint8_t {
-    QUEEN = 0b00,
-    ROOK = 0b01,
-    BISHOP = 0b10,
-    KNIGHT = 0b11
+    QUEEN_PROMOTION = 0b00,
+    ROOK_PROMOTION = 0b01,
+    BISHOP_PROMOTION = 0b10,
+    KNIGHT_PROMOTION = 0b11
 };
 
 std::string getMoveNotation(uint8_t fromSquare, uint8_t toSquare);
@@ -94,5 +94,21 @@ inline MoveType getMoveType(const Move move) {
 
 inline PromotionPiece getPromotionPiece(const Move move) {
     return static_cast<PromotionPiece>((move >> 14) & 0x3);
+}
+
+inline Piece getPieceFromPromotionPiece(const PromotionPiece promotionPiece, const PieceColor color) {
+    switch (promotionPiece) {
+        case QUEEN_PROMOTION:
+            return color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+        case ROOK_PROMOTION:
+            return color == WHITE ? WHITE_ROOK : BLACK_ROOK;
+        case BISHOP_PROMOTION:
+            return color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+        case KNIGHT_PROMOTION:
+            return color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+        default:
+            assert(false);
+        return EMPTY;
+    }
 }
 } // namespace Zagreus

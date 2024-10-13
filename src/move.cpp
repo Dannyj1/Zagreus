@@ -77,16 +77,16 @@ Move fromMoveNotation(const std::string_view notation) {
 
         switch (promotionPieceChar) {
             case 'q':
-                promotionPiece = QUEEN;
+                promotionPiece = QUEEN_PROMOTION;
                 break;
             case 'r':
-                promotionPiece = ROOK;
+                promotionPiece = ROOK_PROMOTION;
                 break;
             case 'b':
-                promotionPiece = BISHOP;
+                promotionPiece = BISHOP_PROMOTION;
                 break;
             case 'n':
-                promotionPiece = KNIGHT;
+                promotionPiece = KNIGHT_PROMOTION;
                 break;
             default:
                 assert(false);

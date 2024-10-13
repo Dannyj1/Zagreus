@@ -23,6 +23,7 @@
 #include <array>
 #include <cassert>
 
+namespace Zagreus {
 enum Direction {
     NORTH = 8,
     SOUTH = -8,
@@ -132,3 +133,4 @@ constexpr char getCharacterForPieceType(const Piece piece) {
 
     return ' ';
 }
+} // namespace Zagreus
