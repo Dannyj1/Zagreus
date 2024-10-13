@@ -159,7 +159,7 @@ void Board::makeMove(const Move& move) {
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
-    const Piece movedPiece = getPieceOnSquare(fromSquare);
+    Piece movedPiece = getPieceOnSquare(fromSquare);
     const PieceType movedPieceType = getPieceType(movedPiece);
     const Piece capturedPiece = getPieceOnSquare(toSquare);
 
@@ -173,22 +173,31 @@ void Board::makeMove(const Move& move) {
         removePiece(capturedPiece, toSquare);
 
         if (capturedPiece == WHITE_ROOK) {
-            if (toSquare == A8) {
-                castlingRights &= ~BLACK_QUEENSIDE;
-            } else if (toSquare == H8) {
-                castlingRights &= ~BLACK_KINGSIDE;
-            }
-        } else if (capturedPiece == BLACK_ROOK) {
             if (toSquare == A1) {
                 castlingRights &= ~WHITE_QUEENSIDE;
             } else if (toSquare == H1) {
                 castlingRights &= ~WHITE_KINGSIDE;
             }
+        } else if (capturedPiece == BLACK_ROOK) {
+            if (toSquare == A8) {
+                castlingRights &= ~BLACK_QUEENSIDE;
+            } else if (toSquare == H8) {
+                castlingRights &= ~BLACK_KINGSIDE;
+            }
         }
     }
 
     removePiece(movedPiece, fromSquare);
-    setPiece(movedPiece, toSquare);
+
+    if (moveType == PROMOTION) {
+        const PieceColor color = getPieceColor(movedPiece);
+        const PromotionPiece promotionPieceType = getPromotionPiece(move);
+        const Piece promotionPiece = getPieceFromPromotionPiece(promotionPieceType, color);
+
+        setPiece(promotionPiece, toSquare);
+    } else {
+        setPiece(movedPiece, toSquare);
+    }
 
     if (moveType == EN_PASSANT) {
         if (sideToMove == WHITE) {
@@ -259,9 +268,15 @@ void Board::unmakeMove() {
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
-    const Piece movedPiece = getPieceOnSquare(toSquare);
+    Piece movedPiece = getPieceOnSquare(toSquare);
 
     removePiece(movedPiece, toSquare);
+
+    if (moveType == PROMOTION) {
+        const PieceColor color = getPieceColor(movedPiece);
+        movedPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
+    }
+
     setPiece(movedPiece, fromSquare);
 
     if (capturedPiece != EMPTY) {
