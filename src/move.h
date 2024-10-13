@@ -99,16 +99,16 @@ inline PromotionPiece getPromotionPiece(const Move move) {
 inline Piece getPieceFromPromotionPiece(const PromotionPiece promotionPiece, const PieceColor color) {
     switch (promotionPiece) {
         case QUEEN_PROMOTION:
-            return color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+            return static_cast<Piece>(WHITE_QUEEN + color);
         case ROOK_PROMOTION:
-            return color == WHITE ? WHITE_ROOK : BLACK_ROOK;
+            return static_cast<Piece>(WHITE_ROOK + color);
         case BISHOP_PROMOTION:
-            return color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+            return static_cast<Piece>(WHITE_BISHOP + color);
         case KNIGHT_PROMOTION:
-            return color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+            return static_cast<Piece>(WHITE_KNIGHT + color);
         default:
             assert(false);
-        return EMPTY;
+            return EMPTY;
     }
 }
 } // namespace Zagreus

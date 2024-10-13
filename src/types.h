@@ -60,10 +60,10 @@ enum Square: uint8_t {
 
 enum PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 
-enum PieceColor : uint8_t { WHITE, BLACK };
+enum PieceColor : uint8_t { WHITE = 0, BLACK = 1 };
 
 constexpr PieceColor operator!(const PieceColor color) {
-    return color == WHITE ? BLACK : WHITE;
+    return static_cast<PieceColor>(color ^ 1);
 }
 
 enum Piece : uint8_t {
@@ -93,12 +93,12 @@ enum CastlingRights : uint8_t {
 
 constexpr PieceColor getPieceColor(const Piece piece) {
     assert(piece != Piece::EMPTY);
-    return static_cast<PieceColor>(piece % 2);
+    return static_cast<PieceColor>(piece & 1);
 }
 
 constexpr PieceType getPieceType(const Piece piece) {
     assert(piece != Piece::EMPTY);
-    return static_cast<PieceType>(piece / 2);
+    return static_cast<PieceType>(piece >> 1);
 }
 
 constexpr char getCharacterForPieceType(const Piece piece) {

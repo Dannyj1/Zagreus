@@ -148,7 +148,7 @@ public:
         assert(board[square] == piece);
         const uint64_t squareBB = squareToBitboard(square);
 
-        board[square] = Piece::EMPTY;
+        board[square] = EMPTY;
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;
@@ -159,7 +159,7 @@ public:
         assert(board[square] == piece);
         const uint64_t squareBB = squareToBitboard(square);
 
-        board[square] = Piece::EMPTY;
+        board[square] = EMPTY;
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;

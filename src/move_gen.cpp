@@ -96,7 +96,8 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = squareTo - fromPushDirection;
 
         if (squareToBB & promotionRank) {
-            for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
+            for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
+                                                        KNIGHT_PROMOTION}) {
                 const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
                 moves.moves[moves.size] = move;
                 moves.size++;
@@ -123,13 +124,14 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint64_t squareToBB = squareToBitboard(squareTo);
         const uint8_t squareFrom = squareTo - fromSqWestAttackDirection;
 
-        if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
+        if (squareTo == board.getEnPassantSquare() && squareToBB & enPassantMask) {
             const Move move = encodeMove(squareFrom, squareTo, EN_PASSANT);
             moves.moves[moves.size] = move;
             moves.size++;
         } else {
             if (squareToBB & promotionRank) {
-                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
+                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
+                                                            KNIGHT_PROMOTION}) {
                     const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
                     moves.moves[moves.size] = move;
                     moves.size++;
@@ -147,13 +149,14 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint64_t squareToBB = squareToBitboard(squareTo);
         const uint8_t squareFrom = squareTo - fromSqEastAttackDirection;
 
-        if (squareTo == board.getEnPassantSquare() && squareToBitboard(squareTo) & enPassantMask) {
+        if (squareTo == board.getEnPassantSquare() && squareToBB & enPassantMask) {
             const Move move = encodeMove(squareFrom, squareTo, EN_PASSANT);
             moves.moves[moves.size] = move;
             moves.size++;
         } else {
             if (squareToBB & promotionRank) {
-                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
+                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
+                                                            KNIGHT_PROMOTION}) {
                     const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
                     moves.moves[moves.size] = move;
                     moves.size++;
@@ -174,7 +177,7 @@ void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t gen
 
     while (knightBB) {
         const uint8_t fromSquare = popLsb(knightBB);
-        const uint64_t attacks = knightAttacks(fromSquare);
+        const uint64_t attacks = getKnightAttacks(fromSquare);
         uint64_t genBB = attacks & genMask;
 
         while (genBB) {
@@ -195,7 +198,7 @@ void generateBishopMoves(const Board& board, MoveList& moves, const uint64_t gen
 
     while (bishopBB) {
         const uint8_t fromSquare = popLsb(bishopBB);
-        uint64_t genBB = bishopAttacks(fromSquare, occupied) & genMask;
+        uint64_t genBB = getBishopAttacks(fromSquare, occupied) & genMask;
 
         while (genBB) {
             const uint8_t toSquare = popLsb(genBB);
@@ -215,7 +218,7 @@ void generateRookMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
     while (rookBB) {
         const uint8_t fromSquare = popLsb(rookBB);
-        uint64_t genBB = rookAttacks(fromSquare, occupied) & genMask;
+        uint64_t genBB = getRookAttacks(fromSquare, occupied) & genMask;
 
         while (genBB) {
             const uint8_t toSquare = popLsb(genBB);
@@ -252,7 +255,7 @@ void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMa
     constexpr Piece king = color == WHITE ? WHITE_KING : BLACK_KING;
     uint64_t kingBB = board.getBitboard<king>();
     const uint8_t fromSquare = popLsb(kingBB);
-    uint64_t genBB = kingAttacks(fromSquare) & genMask;
+    uint64_t genBB = getKingAttacks(fromSquare) & genMask;
 
     while (genBB) {
         const uint8_t toSquare = popLsb(genBB);
