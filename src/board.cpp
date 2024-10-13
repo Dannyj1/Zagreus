@@ -86,13 +86,13 @@ bool Board::canCastle() const {
     uint64_t castlingPath = 0;
 
     if constexpr (side == WHITE_KINGSIDE) {
-        castlingPath = WHITE_KINGSIDE_CASTLE_PATH;
+        castlingPath = WHITE_KINGSIDE_CASTLE_UNOCCUPIED;
     } else if constexpr (side == WHITE_QUEENSIDE) {
-        castlingPath = WHITE_QUEENSIDE_CASTLE_PATH;
+        castlingPath = WHITE_QUEENSIDE_CASTLE_UNOCCUPIED;
     } else if constexpr (side == BLACK_KINGSIDE) {
-        castlingPath = BLACK_KINGSIDE_CASTLE_PATH;
+        castlingPath = BLACK_KINGSIDE_CASTLE_UNOCCUPIED;
     } else if constexpr (side == BLACK_QUEENSIDE) {
-        castlingPath = BLACK_QUEENSIDE_CASTLE_PATH;
+        castlingPath = BLACK_QUEENSIDE_CASTLE_UNOCCUPIED;
     }
 
     if (occupied & castlingPath) {
@@ -166,6 +166,7 @@ void Board::makeMove(const Move& move) {
     history[ply].move = move;
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
+    enPassantSquare = 0;
     history[ply].castlingRights = castlingRights;
 
     if (capturedPiece != EMPTY) {
@@ -242,11 +243,7 @@ void Board::makeMove(const Move& move) {
             } else {
                 enPassantSquare = toSquare + NORTH;
             }
-        } else {
-            enPassantSquare = 0;
         }
-    } else {
-        enPassantSquare = 0;
     }
 
     sideToMove = !sideToMove;
