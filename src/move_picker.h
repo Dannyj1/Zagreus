@@ -18,18 +18,22 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <catch2/catch_session.hpp>
+#pragma once
 
-#include "../src/bitboard.h"
-#include "../src/magics.h"
-#include "../src/pst.h"
+#include <array>
 
-int main(int argc, char* argv[]) {
-    Zagreus::initializeBitboardConstants();
-    Zagreus::initializeMagicBitboards();
-    Zagreus::initializePst();
+#include "constants.h"
+#include "move.h"
+#include "types.h"
 
-    int result = Catch::Session().run(argc, argv);
+namespace Zagreus {
+class MovePicker {
+private:
+    MoveList moveList{};
 
-    return result;
-}
+public:
+    [[nodiscard]] MoveList& getMoveList() {
+        return this->moveList;
+    }
+};
+} // namespace Zagreus
