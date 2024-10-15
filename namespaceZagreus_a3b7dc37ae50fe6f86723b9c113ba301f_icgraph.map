@@ -1,0 +1,32 @@
+<map id="Zagreus::bitscanForward" name="Zagreus::bitscanForward">
+<area shape="rect" id="Node000001" title=" " alt="" coords="757,137,940,163"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#aa2f3cb3e05478be9e11f947ea5cc08da" title=" " alt="" coords="513,71,709,96"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="789,136,657,99,658,94,790,131"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a5b8e7dc1ddf3599e06c25e9e88952fbf" title=" " alt="" coords="547,161,676,187"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="744,163,677,170,676,165,744,158"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a30e87c423701c0fe273a588c8119b4c8" title=" " alt="" coords="255,22,447,62"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="517,71,447,60,448,55,518,66"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="41,29,154,55"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="241,45,154,45,154,39,241,39"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="143,20,140,15,132,12,97,8,70,10,56,15,53,20,60,27,56,31,47,21,52,11,69,5,97,3,133,7,143,11,147,17"/>
+<area shape="poly" id="edge18_Node000005_Node000003" title=" " alt="" coords="579,156,512,109,489,91,464,76,435,65,437,60,467,72,492,87,515,105,582,151"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#aa17c2e6f8c4e9c66ca76f079e0e11f31" title=" " alt="" coords="237,87,465,112"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="564,159,465,126,419,115,420,109,466,121,566,154"/>
+<area shape="rect" id="Node000008" href="$namespaceZagreus.html#a72f99667533b11883e9b3f6a2ca6c8df" title=" " alt="" coords="245,136,458,161"/>
+<area shape="poly" id="edge8_Node000005_Node000008" title=" " alt="" coords="533,169,458,162,458,156,533,164"/>
+<area shape="rect" id="Node000009" href="$namespaceZagreus.html#ae2e02d54638a27ad7b0fdc8a116add18" title=" " alt="" coords="238,185,465,211"/>
+<area shape="poly" id="edge10_Node000005_Node000009" title=" " alt="" coords="533,184,465,190,465,185,533,179"/>
+<area shape="rect" id="Node000010" href="$namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title=" " alt="" coords="242,235,461,260"/>
+<area shape="poly" id="edge12_Node000005_Node000010" title=" " alt="" coords="563,194,466,225,415,237,414,232,465,219,561,189"/>
+<area shape="rect" id="Node000011" href="$namespaceZagreus.html#a85a2dc8e359321dddb9e90a9d5c10f64" title=" " alt="" coords="238,284,465,309"/>
+<area shape="poly" id="edge14_Node000005_Node000011" title=" " alt="" coords="586,198,533,237,466,274,429,286,427,281,464,269,530,232,583,193"/>
+<area shape="rect" id="Node000012" href="$namespaceZagreus.html#a35e152a0c02a5608a31c3c808a742c26" title=" " alt="" coords="243,333,460,359"/>
+<area shape="poly" id="edge16_Node000005_Node000012" title=" " alt="" coords="596,199,544,263,507,296,467,324,440,336,438,331,464,320,504,292,540,259,592,196"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title=" " alt="" coords="5,209,189,235"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="258,118,238,126,201,145,166,169,114,211,111,207,163,164,198,141,236,121,256,113"/>
+<area shape="poly" id="edge9_Node000008_Node000007" title=" " alt="" coords="270,167,238,175,132,212,130,207,237,170,269,162"/>
+<area shape="poly" id="edge11_Node000009_Node000007" title=" " alt="" coords="225,213,190,216,189,211,224,207"/>
+<area shape="poly" id="edge13_Node000010_Node000007" title=" " alt="" coords="228,238,189,234,190,229,229,232"/>
+<area shape="poly" id="edge15_Node000011_Node000007" title=" " alt="" coords="273,283,237,274,130,237,132,232,238,269,275,278"/>
+<area shape="poly" id="edge17_Node000012_Node000007" title=" " alt="" coords="256,332,236,324,198,304,163,280,111,237,114,233,166,276,201,300,238,320,258,327"/>
+</map>

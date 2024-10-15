@@ -1,0 +1,13 @@
+<map id="Zagreus::getMoveNotation" name="Zagreus::getMoveNotation">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,104,201,129"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a5145fe2e6dceea1eb5a27944f3cdbf19" title=" " alt="" coords="261,5,444,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="124,102,179,71,248,40,273,32,274,37,250,44,182,76,127,106"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7" title=" " alt="" coords="255,55,451,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="168,101,274,80,275,85,169,107"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a31c6c0c2eaae076f14a5a3131c81abb1" title=" " alt="" coords="267,104,438,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="201,114,254,114,254,119,201,119"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a6c2e1e6c4abc0bc1ae611cd9a78fca36" title=" " alt="" coords="249,153,456,179"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="169,127,275,148,274,153,168,132"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#adb37f19879f45779690bc5d8ce5526d9" title=" " alt="" coords="271,203,434,228"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="127,127,182,157,250,188,278,197,277,202,248,192,180,162,125,132"/>
+</map>

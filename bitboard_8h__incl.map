@@ -1,0 +1,21 @@
+<map id="src/bitboard.h" name="src/bitboard.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="102,5,212,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="124,152,190,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,29,53,47,31,61,14,80,9,94,11,105,19,116,32,126,70,142,111,153,110,158,68,147,30,131,15,120,6,108,3,93,10,77,28,57,51,42,101,24"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="24,79,84,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="142,33,84,73,81,68,139,28"/>
+<area shape="rect" id="Node000004" href="$bitwise_8h.html" title=" " alt="" coords="230,79,311,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="177,28,242,69,239,74,174,33"/>
+<area shape="rect" id="Node000006" href="$types_8h.html" title=" " alt="" coords="311,152,382,177"/>
+<area shape="poly" id="edge11_Node000001_Node000006" title=" " alt="" coords="214,23,272,41,301,56,326,77,342,107,348,138,343,139,337,108,322,80,298,61,270,46,212,28"/>
+<area shape="rect" id="Node000008" href="$constants_8h.html" title=" " alt="" coords="108,79,206,104"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="160,31,160,65,154,65,154,31"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="254,106,188,147,186,142,251,102"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="236,225,305,251"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="273,104,273,212,268,212,268,104"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="284,102,326,141,322,144,281,106"/>
+<area shape="poly" id="edge8_Node000006_Node000005" title=" " alt="" coords="336,179,295,218,291,214,332,175"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="329,225,385,251"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="351,177,356,211,351,212,346,178"/>
+<area shape="poly" id="edge10_Node000008_Node000002" title=" " alt="" coords="160,104,160,138,154,138,154,104"/>
+</map>

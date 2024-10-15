@@ -1,0 +1,14 @@
+<map id="src/magics.cpp" name="src/magics.cpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="136,5,255,31"/>
+<area shape="rect" id="Node000002" href="$magics_8h.html" title=" " alt="" coords="5,79,87,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,33,84,75,82,70,170,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="51,152,118,177"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="188,33,104,142,100,139,184,29"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="162,79,229,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="198,31,198,65,193,65,193,31"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="253,79,333,104"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="213,29,267,68,264,72,209,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="357,79,429,104"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="228,28,348,71,347,76,226,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="55,103,74,139,70,141,50,106"/>
+</map>

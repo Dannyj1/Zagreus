@@ -1,0 +1,7 @@
+<map id="Zagreus::calculateKnightAttacks" name="Zagreus::calculateKnightAttacks">
+<area shape="rect" id="Node000001" title=" " alt="" coords="471,5,655,45"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#af09541379517ebbc25c28b2070c83221" title=" " alt="" coords="241,5,423,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="457,28,423,28,423,23,457,23"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Engine.html#aa97883c4a13a6a6e8b348589c820aafb" title=" " alt="" coords="5,13,193,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="227,28,193,28,193,23,227,23"/>
+</map>

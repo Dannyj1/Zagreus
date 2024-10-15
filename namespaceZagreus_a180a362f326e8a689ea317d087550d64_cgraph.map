@@ -1,0 +1,26 @@
+<map id="Zagreus::generateMagics" name="Zagreus::generateMagics">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,315,192,340"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a61bf0620553dd24e6a4181fedf8e2718" title=" " alt="" coords="240,211,395,236"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,312,276,239,279,244,128,317"/>
+<area shape="rect" id="Node000009" href="$namespaceZagreus.html#a120f1f5ea0fe8c2bad67ace45b0f9e3f" title=" " alt="" coords="715,313,822,339"/>
+<area shape="poly" id="edge12_Node000001_Node000009" title=" " alt="" coords="131,338,219,370,279,387,346,403,418,414,493,420,568,416,641,402,669,391,696,377,741,345,744,350,699,381,671,396,642,407,569,422,493,425,418,420,345,408,277,392,217,375,129,343"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a46202a8b71d92405e4595c7e8f2baf9e" title=" " alt="" coords="487,5,597,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="321,209,336,175,362,129,397,81,418,59,441,40,473,25,475,30,444,44,421,63,401,84,366,132,341,177,326,211"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#aa5aafe9960d89a779ae88293d6c107c0" title=" " alt="" coords="479,55,605,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="325,209,369,151,403,117,441,89,465,78,467,83,444,94,406,121,373,154,329,212"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#ad12d6d30c4c67b4bae5738e8481399b0" title=" " alt="" coords="471,104,613,129"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="332,208,379,174,442,138,461,131,463,136,444,143,382,178,336,213"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a15a6487ba787f60a788c341846fc3cf2" title=" " alt="" coords="443,153,641,179"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="367,208,478,179,479,185,369,213"/>
+<area shape="rect" id="Node000008" href="$namespaceZagreus.html#a0a33fa1e0411df296f5c3e54bf93c812" title=" " alt="" coords="451,203,633,243"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="395,221,438,221,438,226,395,226"/>
+<area shape="rect" id="Node000010" href="$namespaceZagreus.html#a2401a1e51fd85440ad2797d54429af7a" title=" " alt="" coords="489,268,595,293"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="369,233,479,262,478,267,367,239"/>
+<area shape="rect" id="Node000011" href="$namespaceZagreus.html#a42c73075e25106e677b9ededebd70839" title=" " alt="" coords="480,317,604,343"/>
+<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="336,234,383,268,444,302,468,311,466,316,442,307,380,272,333,238"/>
+<area shape="rect" id="Node000012" href="$namespaceZagreus.html#aeffbcbe2e765a3e2ee2a60c9fee5ef34" title=" " alt="" coords="469,367,615,392"/>
+<area shape="poly" id="edge11_Node000002_Node000012" title=" " alt="" coords="329,235,374,292,407,324,444,352,460,359,457,364,441,356,403,328,370,295,325,238"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#a8946c1992f4f24913bc5396b4a223745" title=" " alt="" coords="689,153,848,179"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="642,163,676,163,676,169,642,169"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="612,241,642,253,693,278,737,304,734,308,690,283,640,258,610,246"/>
+</map>

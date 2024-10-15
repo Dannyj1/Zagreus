@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['b1_0',['B1',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa6d67cae8579a6e7de634bd04c2e2f43c',1,'Zagreus']]],
+  ['b2_1',['B2',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa9cfd79468c3e87860030e1e35e2412d4',1,'Zagreus']]],
+  ['b3_2',['B3',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa25b95657a353990b16d85aadba4d6519',1,'Zagreus']]],
+  ['b4_3',['B4',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918faabd97171a155d63ab47b7ebdf527dc82',1,'Zagreus']]],
+  ['b5_4',['B5',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa90a7ee0526368c16516692e2a8e78799',1,'Zagreus']]],
+  ['b6_5',['B6',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa52d92c70ae91b95f1f21689a32af56a3',1,'Zagreus']]],
+  ['b7_6',['B7',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918faa04208f62ed20d61555fae4ddcb8c8bd',1,'Zagreus']]],
+  ['b8_7',['B8',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa228e9530da2739835576a634bc8a94d4',1,'Zagreus']]],
+  ['bishop_8',['BISHOP',['../namespaceZagreus.html#a6ff930e561c85660192d5277086e9577adaf844db36f5f40671b14dd2d6e3715d',1,'Zagreus']]],
+  ['bishop_5fpromotion_9',['BISHOP_PROMOTION',['../namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacade8e2230e9f70a695af5e6895314f56f',1,'Zagreus']]],
+  ['black_10',['BLACK',['../namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4ab1fb42f15541a4c85d5f0023ebdea8f2',1,'Zagreus']]],
+  ['black_5fbishop_11',['BLACK_BISHOP',['../namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a82a3d303dacf6645ef8c6e1766739733',1,'Zagreus']]],
+  ['black_5fcastling_12',['BLACK_CASTLING',['../namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5ead066e5becfbbab12654262902ffd4243',1,'Zagreus']]],
+  ['black_5fking_13',['BLACK_KING',['../namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a246e7229bb5a2bb421334de50974d5d9',1,'Zagreus']]],
+  ['black_5fkingside_14',['BLACK_KINGSIDE',['../namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5eab57cfa1fc870395611d4a564cb8e1139',1,'Zagreus']]],
+  ['black_5fknight_15',['BLACK_KNIGHT',['../namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a65d0912277a94b22fbcec71e8c49f87d',1,'Zagreus']]],
+  ['black_5fpawn_16',['BLACK_PAWN',['../namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a2a57e9fcdc2a678513fd5fde1f754b32',1,'Zagreus']]],
+  ['black_5fqueen_17',['BLACK_QUEEN',['../namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a30b05263a9c343f6a4cbf3af19559f31',1,'Zagreus']]],
+  ['black_5fqueenside_18',['BLACK_QUEENSIDE',['../namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5ea4440bca379a9b21345e272209f141769',1,'Zagreus']]],
+  ['black_5frook_19',['BLACK_ROOK',['../namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a5712c1f3cee1c5cce594e7a61bd0de8f',1,'Zagreus']]],
+  ['button_20',['Button',['../namespaceZagreus.html#a25277ebd2a95d3a6cec246971a6e41c1ac588a39d24f6fd1dec1bcfca6be2f14d',1,'Zagreus']]]
+];

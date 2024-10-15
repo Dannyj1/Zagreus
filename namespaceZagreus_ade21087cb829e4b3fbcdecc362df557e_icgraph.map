@@ -1,0 +1,16 @@
+<map id="Zagreus::getKnightAttacks" name="Zagreus::getKnightAttacks">
+<area shape="rect" id="Node000001" title=" " alt="" coords="924,35,1119,60"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#ae2e02d54638a27ad7b0fdc8a116add18" title=" " alt="" coords="649,5,876,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="910,37,875,33,875,28,911,32"/>
+<area shape="rect" id="Node000004" href="$classZagreus_1_1Board.html#a7fb1dd02d78c9111d73cb44f100c8997" title=" " alt="" coords="665,55,860,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="911,62,860,67,860,62,910,57"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title=" " alt="" coords="412,5,596,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="636,21,596,21,596,15,636,15"/>
+<area shape="rect" id="Node000005" href="$classZagreus_1_1Board.html#a8210f4772db4ca37dd43ea5358c0b88f" title=" " alt="" coords="407,55,601,95"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="652,78,601,78,601,73,652,73"/>
+<area shape="rect" id="Node000006" href="$classZagreus_1_1Board.html#a30e87c423701c0fe273a588c8119b4c8" title=" " alt="" coords="167,55,359,95"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="393,78,359,78,359,73,393,73"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="5,63,119,88"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="153,78,119,78,119,73,153,73"/>
+<area shape="poly" id="edge7_Node000007_Node000007" title=" " alt="" coords="98,53,88,45,62,41,41,43,30,48,27,54,33,61,29,64,22,54,26,44,39,38,62,36,90,40,101,49"/>
+</map>

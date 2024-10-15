@@ -1,0 +1,19 @@
+<map id="Zagreus::queenAttacks" name="Zagreus::queenAttacks">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,141,177,167"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#adda3e72c179c4e9f1ef1406a61d9fea7" title=" " alt="" coords="225,92,423,117"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,139,249,118,251,123,152,144"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#add77fa8eb55ed30b4214c32fe19535a2" title=" " alt="" coords="231,165,417,191"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="178,160,217,164,216,170,177,166"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#ae3519ba733e472381623f3868513e43f" title=" " alt="" coords="495,5,682,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="349,90,404,64,470,39,500,31,501,36,471,45,406,69,352,94"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#acdb08b76f59773ab8364f87aebecc0ae" title=" " alt="" coords="471,55,707,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="414,89,484,79,485,85,415,95"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#af639a00a96edb3e7b6595d2491a94e68" title=" " alt="" coords="497,104,680,129"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="423,106,484,109,483,115,423,112"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#ad4768ae93bb0dc19ee59941eca3939d4" title=" " alt="" coords="501,153,677,179"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="417,171,487,168,487,173,417,176"/>
+<area shape="rect" id="Node000008" href="$namespaceZagreus.html#a5a1a0242284cacb058524547c81e6155" title=" " alt="" coords="476,203,701,228"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="415,188,485,198,484,203,414,193"/>
+<area shape="rect" id="Node000009" href="$namespaceZagreus.html#aad7a8f657e79fd0f873328e7cdbd5cc7" title=" " alt="" coords="503,252,675,277"/>
+<area shape="poly" id="edge8_Node000006_Node000009" title=" " alt="" coords="353,188,407,213,471,237,506,246,504,251,470,242,405,218,350,193"/>
+</map>

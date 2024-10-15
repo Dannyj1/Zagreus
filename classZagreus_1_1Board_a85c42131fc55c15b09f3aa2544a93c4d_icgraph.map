@@ -1,0 +1,7 @@
+<map id="Zagreus::Board::getEmptyBitboard" name="Zagreus::Board::getEmptyBitboard">
+<area shape="rect" id="Node000001" title=" " alt="" coords="504,5,696,45"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title=" " alt="" coords="237,13,456,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="490,28,456,28,456,23,490,23"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title=" " alt="" coords="5,13,189,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="224,28,189,28,189,23,224,23"/>
+</map>
