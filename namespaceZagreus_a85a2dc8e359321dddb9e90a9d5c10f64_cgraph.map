@@ -1,5 +1,5 @@
 <map id="Zagreus::generateQueenMoves" name="Zagreus::generateQueenMoves">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,112,232,137"/>
+<area shape="rect" id="Node000001" title="Generates all pseudo&#45;legal queen moves for a given color and generation type." alt="" coords="5,112,232,137"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#a899c2b4b2028cb3129c82faa3275e2c3" title=" " alt="" coords="302,5,469,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="139,110,200,75,279,40,303,32,305,37,281,44,203,80,142,114"/>
 <area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#aefa101d59ff5ac5c1db21801f7e1b936" title="Retrieves the bitboard for a given piece type." alt="" coords="283,55,488,80"/>

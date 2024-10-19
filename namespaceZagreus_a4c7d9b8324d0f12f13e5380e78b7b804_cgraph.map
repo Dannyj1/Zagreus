@@ -1,5 +1,5 @@
 <map id="Zagreus::generatePawnMoves" name="Zagreus::generatePawnMoves">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,389,224,415"/>
+<area shape="rect" id="Node000001" title="Generates all pseudo&#45;legal pawn moves for a given color and generation type." alt="" coords="5,389,224,415"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#acef3ff44d80e15c78400d1004a0e8d04" title="Calculates the double push for black pawns." alt="" coords="275,71,504,96"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="116,388,130,335,159,258,180,216,205,175,235,137,270,105,277,101,280,105,274,109,239,141,209,178,184,219,164,260,136,337,121,390"/>
 <area shape="rect" id="Node000003" href="$namespaceZagreus.html#ab92b0596a4e9b3fb90f5d34259a44804" title="Calculates the single push for black pawns." alt="" coords="555,20,778,45"/>

@@ -9,7 +9,5 @@ var searchData=
   ['f7_6',['F7',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa080c6e0113a7e7849127b9794f49c0c5',1,'Zagreus']]],
   ['f8_7',['F8',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa2d55cde46faea08a66574735c53017e8',1,'Zagreus']]],
   ['find_5fmagic_8',['find_magic',['../namespaceZagreus.html#a61bf0620553dd24e6a4181fedf8e2718',1,'Zagreus']]],
-  ['findfastestseed_9',['findFastestSeed',['../namespaceZagreus.html#a8b9de4c6d0212eec3f86b7011ca830aa',1,'Zagreus']]],
-  ['frommovenotation_10',['fromMoveNotation',['../namespaceZagreus.html#abb70fe505fce36c2fb896c26a933fde2',1,'Zagreus']]],
-  ['fromsquarenotation_11',['fromSquareNotation',['../namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d',1,'Zagreus']]]
+  ['findfastestseed_9',['findFastestSeed',['../namespaceZagreus.html#a8b9de4c6d0212eec3f86b7011ca830aa',1,'Zagreus']]]
 ];

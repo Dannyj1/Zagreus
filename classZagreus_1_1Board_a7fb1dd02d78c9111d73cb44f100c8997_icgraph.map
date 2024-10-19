@@ -4,7 +4,7 @@
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="635,45,602,45,602,39,635,39"/>
 <area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a30e87c423701c0fe273a588c8119b4c8" title="Checks if the current position is legal based on the color that just made a move." alt="" coords="167,22,359,62"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="393,45,359,45,359,39,393,39"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="5,29,119,55"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="5,29,119,55"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="153,45,119,45,119,39,153,39"/>
 <area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="98,20,88,11,62,8,41,10,30,15,27,20,33,28,29,31,22,21,26,11,39,5,62,3,90,6,101,16"/>
 </map>

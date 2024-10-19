@@ -6,7 +6,7 @@
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="214,57,248,61,248,66,213,62"/>
 <area shape="rect" id="Node000004" href="$classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba" title="Sets a piece on a given square." alt="" coords="493,63,677,88"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="446,73,479,73,479,78,446,78"/>
-<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a4797edd07c51dd24a1f1239ae3f66d7f" title=" " alt="" coords="737,37,910,63"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a4797edd07c51dd24a1f1239ae3f66d7f" title="Gets the color of a piece." alt="" coords="737,37,910,63"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="677,63,723,58,723,63,678,68"/>
 <area shape="rect" id="Node000006" href="$namespaceZagreus.html#ad1261455060994b4cea7b1eea416e6f6" title="Converts a square index to a bitboard." alt="" coords="725,87,921,112"/>
 <area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="678,82,712,85,711,91,677,87"/>

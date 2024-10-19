@@ -1,5 +1,5 @@
 <map id="Zagreus::getPieceColor" name="Zagreus::getPieceColor">
-<area shape="rect" id="Node000001" title=" " alt="" coords="789,112,963,138"/>
+<area shape="rect" id="Node000001" title="Gets the color of a piece." alt="" coords="789,112,963,138"/>
 <area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#ae70908b24b651bffc106303f3646f2de" title="Makes a move on the board." alt="" coords="269,86,471,111"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="775,123,471,106,471,101,776,117"/>
 <area shape="rect" id="Node000004" href="$classZagreus_1_1Board.html#a0504ef64f76044dd624b451b4c5cf8a2" title="Removes a piece from a given square." alt="" coords="527,187,741,212"/>
@@ -12,7 +12,7 @@
 <area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="853,149,805,190,774,210,742,228,711,239,709,234,740,223,772,206,801,185,850,145"/>
 <area shape="rect" id="Node000008" href="$classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba" title="Sets a piece on a given square." alt="" coords="542,138,726,163"/>
 <area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="776,138,727,143,726,138,775,133"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="53,62,166,87"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="53,62,166,87"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="255,91,166,82,167,77,256,85"/>
 <area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="156,52,153,48,144,44,109,40,82,42,67,47,64,53,71,60,68,64,58,53,63,43,80,37,109,35,146,39,156,44,160,50"/>
 <area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="552,67,439,88,438,83,551,62"/>

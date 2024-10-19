@@ -1,8 +1,8 @@
 <map id="Zagreus::getMoveNotation" name="Zagreus::getMoveNotation">
-<area shape="rect" id="Node000001" title=" " alt="" coords="249,43,445,68"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5" title=" " alt="" coords="5,5,201,31"/>
+<area shape="rect" id="Node000001" title="Converts the from and to squares from the given move to chess notation (e.g. e2e4)." alt="" coords="249,43,445,68"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5" title="Converts a Move object to chess notation (e.g. e2e4)." alt="" coords="5,5,201,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="250,43,186,33,187,28,251,38"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="47,79,160,104"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="47,79,160,104"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="248,73,161,86,160,80,247,67"/>
 <area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="147,69,144,65,136,61,103,57,77,59,63,64,61,70,68,77,64,80,55,70,60,60,76,54,103,52,138,56,147,61,151,66"/>
 </map>

@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title="Sets a piece on the board from a FEN character." alt="" coords="5,23,189,63"/>
 <area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba" title="Sets a piece on a given square." alt="" coords="237,31,421,56"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,41,223,41,223,46,190,46"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a4797edd07c51dd24a1f1239ae3f66d7f" title=" " alt="" coords="481,5,654,31"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a4797edd07c51dd24a1f1239ae3f66d7f" title="Gets the color of a piece." alt="" coords="481,5,654,31"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="421,31,467,26,467,31,422,36"/>
 <area shape="rect" id="Node000004" href="$namespaceZagreus.html#ad1261455060994b4cea7b1eea416e6f6" title="Converts a square index to a bitboard." alt="" coords="469,55,665,80"/>
 <area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="422,50,456,53,455,59,421,55"/>

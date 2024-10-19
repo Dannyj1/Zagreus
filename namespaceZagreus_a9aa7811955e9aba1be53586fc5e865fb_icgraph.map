@@ -1,0 +1,5 @@
+<map id="Zagreus::getSquareFromNotation" name="Zagreus::getSquareFromNotation">
+<area shape="rect" id="Node000001" title="Converts a string in chess notation to a square." alt="" coords="263,13,501,38"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#ac97eb1415a334e7c4b3f229ce893c95c" title="Converts a string in chess notation to a Move object." alt="" coords="5,5,215,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="249,28,215,28,215,23,249,23"/>
+</map>

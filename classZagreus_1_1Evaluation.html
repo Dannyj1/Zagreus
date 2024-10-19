@@ -100,8 +100,10 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae6c3954cd63bcea3be3239a2569bfef7" id="r_ae6c3954cd63bcea3be3239a2569bfef7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6c3954cd63bcea3be3239a2569bfef7">Evaluation</a> (const <a class="el" href="classZagreus_1_1Board.html">Board</a> &amp;board)</td></tr>
+<tr class="memdesc:ae6c3954cd63bcea3be3239a2569bfef7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="classZagreus_1_1Evaluation.html">Evaluation</a> object with the given board.  <br /></td></tr>
 <tr class="separator:ae6c3954cd63bcea3be3239a2569bfef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f4174df46fff74d4c208a04c861622a" id="r_a0f4174df46fff74d4c208a04c861622a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f4174df46fff74d4c208a04c861622a">evaluate</a> ()</td></tr>
+<tr class="memdesc:a0f4174df46fff74d4c208a04c861622a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the current board position.  <br /></td></tr>
 <tr class="separator:a0f4174df46fff74d4c208a04c861622a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -131,7 +133,15 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval_8h_source.html#l00039">39</a> of file <a class="el" href="eval_8h_source.html">eval.h</a>.</p>
+<p>Constructs an <a class="el" href="classZagreus_1_1Evaluation.html">Evaluation</a> object with the given board. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">board</td><td>The current state of the chess board. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="eval_8h_source.html#l00053">53</a> of file <a class="el" href="eval_8h_source.html">eval.h</a>.</p>
 
 </div>
 </div>
@@ -141,6 +151,9 @@ Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">int Zagreus::Evaluation::evaluate </td>
@@ -149,15 +162,25 @@ Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">nodiscard</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00026">26</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
+<p>Evaluates the current board position. </p>
+<dl class="section return"><dt>Returns</dt><dd>The evaluation score of the current board position.</dd></dl>
+<p>This function calculates the evaluation score of the current board position based on material and other features. It considers the phase of the game (midgame or endgame) and adjusts the scores accordingly (tapered eval).</p>
+<dl class="section return"><dt>Returns</dt><dd>The evaluation score of the current board position. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00035">35</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classZagreus_1_1Evaluation_a0f4174df46fff74d4c208a04c861622a_cgraph.png" border="0" usemap="#aclassZagreus_1_1Evaluation_a0f4174df46fff74d4c208a04c861622a_cgraph" alt=""/></div>
 <map name="aclassZagreus_1_1Evaluation_a0f4174df46fff74d4c208a04c861622a_cgraph" id="aclassZagreus_1_1Evaluation_a0f4174df46fff74d4c208a04c861622a_cgraph">
-<area shape="rect" title=" " alt="" coords="5,5,157,45"/>
+<area shape="rect" title="Evaluates the current board position." alt="" coords="5,5,157,45"/>
 <area shape="rect" href="classZagreus_1_1Board.html#afc62efe1e90a8573ffddbb423ec95534" title="Retrieves the color of the side to move." alt="" coords="205,13,433,38"/>
 <area shape="poly" title=" " alt="" coords="158,23,191,23,191,28,158,28"/>
 </map>

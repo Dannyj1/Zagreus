@@ -1,10 +1,10 @@
 <map id="Zagreus::getPromotionPiece" name="Zagreus::getPromotionPiece">
 <area shape="rect" id="Node000001" title=" " alt="" coords="416,31,623,56"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5" title=" " alt="" coords="169,5,365,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5" title="Converts a Move object to chess notation (e.g. e2e4)." alt="" coords="169,5,365,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="402,34,365,30,366,25,403,29"/>
 <area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#ae70908b24b651bffc106303f3646f2de" title="Makes a move on the board." alt="" coords="167,55,368,80"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="403,57,368,60,368,55,402,52"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="5,55,119,80"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="5,55,119,80"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="153,70,119,70,119,65,153,65"/>
 <area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="99,45,88,37,62,33,40,35,29,40,26,46,32,53,28,56,21,46,25,36,39,30,62,28,91,32,102,41"/>
 </map>

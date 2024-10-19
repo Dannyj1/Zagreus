@@ -1,10 +1,10 @@
 <map id="Zagreus::whitePawnSinglePush" name="Zagreus::whitePawnSinglePush">
 <area shape="rect" id="Node000001" title="Calculates the single push for white pawns." alt="" coords="783,5,1007,31"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title=" " alt="" coords="237,5,456,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title="Generates all pseudo&#45;legal pawn moves for a given color and generation type." alt="" coords="237,5,456,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="769,21,456,21,456,15,769,15"/>
 <area shape="rect" id="Node000004" href="$namespaceZagreus.html#a7692fd3583b6b4062e08a14b12db55e8" title="Calculates the double push for white pawns." alt="" coords="504,31,735,56"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="769,32,735,35,735,30,769,27"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title=" " alt="" coords="5,5,189,31"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title="Generates all pseudo&#45;legal moves for all pieces of a certain color for a given color and generation t..." alt="" coords="5,5,189,31"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="224,21,189,21,189,15,224,15"/>
 <area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="490,34,456,31,456,25,491,29"/>
 </map>

@@ -1,6 +1,6 @@
 <map id="Zagreus::getFromSquare" name="Zagreus::getFromSquare">
 <area shape="rect" id="Node000001" title=" " alt="" coords="432,92,615,117"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5" title=" " alt="" coords="177,5,373,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5" title="Converts a Move object to chess notation (e.g. e2e4)." alt="" coords="177,5,373,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="484,88,436,67,383,46,339,33,340,28,385,41,438,62,486,84"/>
 <area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a30e87c423701c0fe273a588c8119b4c8" title="Checks if the current position is legal based on the color that just made a move." alt="" coords="179,55,371,95"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="418,95,371,89,372,84,419,90"/>
@@ -8,7 +8,7 @@
 <area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="419,119,377,124,376,119,418,114"/>
 <area shape="rect" id="Node000006" href="$classZagreus_1_1Board.html#ab040dee99098c5b98a5b1fa7e348b644" title="Unmakes the last move on the board." alt="" coords="167,169,384,195"/>
 <area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="480,125,385,159,337,172,336,167,383,154,478,120"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="5,120,119,145"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="5,120,119,145"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="188,102,111,122,110,117,186,96"/>
 <area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="100,110,90,102,62,99,39,101,27,106,25,111,31,118,27,122,20,112,23,102,38,96,62,93,92,97,103,106"/>
 <area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="160,135,119,135,119,130,160,130"/>

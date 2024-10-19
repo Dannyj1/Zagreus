@@ -1,6 +1,6 @@
 <map id="Zagreus::generateMoves&lt; BLACK, ALL &gt;" name="Zagreus::generateMoves&lt; BLACK, ALL &gt;">
 <area shape="rect" id="Node000001" title=" " alt="" coords="167,22,351,62"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="5,29,119,55"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="5,29,119,55"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,45,119,45,119,39,153,39"/>
 <area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="97,19,87,11,62,8,41,10,30,15,28,20,34,28,30,31,23,21,27,11,40,5,62,3,89,6,100,15"/>
 </map>
