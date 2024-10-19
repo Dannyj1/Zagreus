@@ -1,8 +1,9 @@
+
 /*
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2024  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -20,25 +21,15 @@
 
 #pragma once
 
-#include "types.h"
+// Material
+#define MATERIAL_MIDGAME_PAWN_VALUE 100
+#define MATERIAL_MIDGAME_KNIGHT_VALUE 350
+#define MATERIAL_MIDGAME_BISHOP_VALUE 350
+#define MATERIAL_MIDGAME_ROOK_VALUE 525
+#define MATERIAL_MIDGAME_QUEEN_VALUE 1000
 
-namespace Zagreus {
-// PST tables from https://www.chessprogramming.org/Simplified_Evaluation_Function
-void initializePst();
-
-int getMidgamePstValue(PieceType piece, int8_t square);
-
-int getEndgamePstValue(PieceType piece, int8_t square);
-
-void setMidgamePstValue(PieceType piece, int8_t square, int value);
-
-void setEndgamePstValue(PieceType piece, int8_t square, int value);
-
-std::vector<int> getMidgameValues();
-
-std::vector<int> getEndgameValues();
-
-std::vector<int> getBaseMidgameValues();
-
-std::vector<int> getBaseEndgameValues();
-} // namespace Zagreus
+#define MATERIAL_ENDGAME_PAWN_VALUE 100
+#define MATERIAL_ENDGAME_KNIGHT_VALUE 350
+#define MATERIAL_ENDGAME_BISHOP_VALUE 350
+#define MATERIAL_ENDGAME_ROOK_VALUE 525
+#define MATERIAL_ENDGAME_QUEEN_VALUE 1000

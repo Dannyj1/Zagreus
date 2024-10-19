@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2024  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -20,15 +20,20 @@
 
 #pragma once
 
-#include "bitboard.h"
+#include <array>
+
+#include "constants.h"
+#include "move.h"
+#include "types.h"
 
 namespace Zagreus {
-enum GenerationType {
-    NORMAL,
-    QSEARCH,
-    EVASIONS,
-};
+class MovePicker {
+private:
+    MoveList moveList{};
 
-template <PieceColor color, GenerationType type>
-void generateMoves(Bitboard& bitboard, MoveList* moveList);
+public:
+    [[nodiscard]] MoveList& getMoveList() {
+        return this->moveList;
+    }
+};
 } // namespace Zagreus

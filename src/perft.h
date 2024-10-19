@@ -18,18 +18,22 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <catch2/catch_session.hpp>
+#pragma once
 
-#include "../src/bitboard.h"
-#include "../src/magics.h"
-#include "../src/pst.h"
+#include <cstdint>
 
-int main(int argc, char* argv[]) {
-    Zagreus::initializeBitboardConstants();
-    Zagreus::initializeMagicBitboards();
-    Zagreus::initializePst();
+#include "board.h"
 
-    int result = Catch::Session().run(argc, argv);
-
-    return result;
-}
+namespace Zagreus {
+/**
+ * \brief Performs a perft test on the given board to a specified depth.
+ *
+ * This function recursively generates all possible moves up to a given depth and counts the number of nodes reached.
+ *
+ * \param board The board object on which to perform the perft.
+ * \param depth The depth to which moves should be generated.
+ * \param printNodes If true, prints the number of nodes for each move at the root level.
+ * \return The number of nodes reached.
+ */
+uint64_t perft(Board &board, int depth, bool printNodes = true);
+} // namespace Zagreus

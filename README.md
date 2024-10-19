@@ -5,7 +5,6 @@
 
 ![License](https://img.shields.io/github/license/Dannyj1/Zagreus?style=for-the-badge) ![Downloads](https://img.shields.io/github/downloads/Dannyj1/Zagreus/total?style=for-the-badge) ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/Dannyj1/Zagreus?style=for-the-badge) ![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/Dannyj1/Zagreus/latest?include_prereleases&style=for-the-badge)
 
-
 # Zagreus Chess Engine
 
 Zagreus is a work in progress UCI Chess Engine. You can play against Zagreus on
@@ -28,13 +27,14 @@ stable version for yourself, you can use the tag. You can list all tags and sear
 on GitHub.
 
 # Features
+
 - Bitboard board representation with Plain Magic Bitboards for sliding piece move generation
 - Tapered Evaluation with:
-  - Material
-  - Piece-Square Tables
-  - Several evaluation terms per piece type (e.g. passed pawn, king safety, etc.)
-  - Penalty for undefended minor pieces
-  - And more
+    - Material
+    - Piece-Square Tables
+    - Several evaluation terms per piece type (e.g. passed pawn, king safety, etc.)
+    - Penalty for undefended minor pieces
+    - And more
 - Evaluation values automatically tuned using a gradient descent tuner with the Adam optimizer.
 - Principal Variation Search with Alpha-Beta pruning
 - Quiescence Search with delta pruning and SEE move ordering
@@ -44,6 +44,7 @@ on GitHub.
 - And more! This list is constantly growing and changing, but it is difficult to keep track of all features and changes.
 
 # UCI Options
+
 Zagreus Engine has the following UCI options that can be changed:
 
 - `MoveOverhead` - The amount of time that will be substracted from the internal timer for each move. This helps when
@@ -59,17 +60,21 @@ Zagreus uses CMake to build. On Windows you can use the [CMake-GUI](https://cmak
 following commands:
 
 Clone the repository:
+
 ```bash
 git clone https://github.com/Dannyj1/Zagreus.git
 ```
 
 If you want to use Clang/LLVM, set the compiler to clang++ (not required. If you don't run these commands, your default
 compiler will be used which works fine in most cases):
+
 ```bash
 export CC=/usr/bin/clang-<version here>
 export CXX=/usr/bin/clang++-<version here>
 ```
+
 Build:
+
 ```bash
 cd <directory of Zagreus engine>
 cmake -DCMAKE_BUILD_TYPE=Release .
@@ -77,10 +82,9 @@ cmake --build .
 ```
 
 # Credits
+
 Thanks to:
 
-- [zd3nik](https://github.com/zd3nik) for the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter), which I
-  slightly modified
 - [AndyGrant](https://github.com/AndyGrant) for the easy to use and open
   source [OpenBench Testing Framework](https://github.com/AndyGrant/OpenBench), making testing my engine SO much easier
   and allowing you to distribute test over multiple devices (I use a private instance of OpenBench)
@@ -107,6 +111,3 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with Zagreus. If not, see <https://www.gnu.org/licenses/>.
-
-This project uses the [Senjo UCI Adapter](https://github.com/zd3nik/SenjoUCIAdapter) by zd3nik which is licensed under
-the MIT license. All files from the Senjo UCI Adapter retain their original copyright and license notices.
