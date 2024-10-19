@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title=" " alt="" coords="416,31,623,56"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5" title=" " alt="" coords="169,5,365,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="402,34,365,30,366,25,403,29"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#ae70908b24b651bffc106303f3646f2de" title=" " alt="" coords="167,55,368,80"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#ae70908b24b651bffc106303f3646f2de" title="Makes a move on the board." alt="" coords="167,55,368,80"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="403,57,368,60,368,55,402,52"/>
 <area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="5,55,119,80"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="153,70,119,70,119,65,153,65"/>

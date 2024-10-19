@@ -1,5 +1,5 @@
 <map id="Zagreus::Board::getCastlingRights" name="Zagreus::Board::getCastlingRights">
-<area shape="rect" id="Node000001" title=" " alt="" coords="499,5,701,45"/>
+<area shape="rect" id="Node000001" title="Retrieves the castling rights available." alt="" coords="499,5,701,45"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#a72f99667533b11883e9b3f6a2ca6c8df" title=" " alt="" coords="237,13,451,38"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="485,28,451,28,451,23,485,23"/>
 <area shape="rect" id="Node000003" href="$namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title=" " alt="" coords="5,13,189,38"/>

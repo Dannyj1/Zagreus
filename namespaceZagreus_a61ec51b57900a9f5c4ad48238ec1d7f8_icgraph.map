@@ -1,14 +1,14 @@
 <map id="Zagreus::shiftNorthWest" name="Zagreus::shiftNorthWest">
-<area shape="rect" id="Node000001" title=" " alt="" coords="1023,31,1201,56"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#ad3a75a2c28108cb73195106ce77e24ab" title=" " alt="" coords="802,5,913,31"/>
+<area shape="rect" id="Node000001" title="Shifts the bitboard north&#45;west by one rank and one file." alt="" coords="1023,31,1201,56"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#ad3a75a2c28108cb73195106ce77e24ab" title="Shifts the bitboard in the specified direction." alt="" coords="802,5,913,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1009,36,913,26,913,21,1009,30"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#aacd111e9b3ec452ad93d48144924aa62" title=" " alt="" coords="740,55,975,80"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#aacd111e9b3ec452ad93d48144924aa62" title="Calculates the west attacks for white pawns." alt="" coords="740,55,975,80"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1009,56,975,59,975,54,1009,50"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a3e1df28b0949fb8318662fb95dee298c" title=" " alt="" coords="475,18,690,58"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a3e1df28b0949fb8318662fb95dee298c" title="Calculates the attacks for white pawns." alt="" coords="475,18,690,58"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="726,56,690,52,691,47,727,51"/>
 <area shape="rect" id="Node000007" href="$namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title=" " alt="" coords="473,83,692,108"/>
 <area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="727,83,693,87,692,82,726,78"/>
-<area shape="rect" id="Node000005" href="$namespaceZagreus.html#af09541379517ebbc25c28b2070c83221" title=" " alt="" coords="243,18,424,58"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#af09541379517ebbc25c28b2070c83221" title="Initializes the attack lookup tables for pawns, knights, and kings." alt="" coords="243,18,424,58"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="462,41,424,41,424,35,462,35"/>
 <area shape="rect" id="Node000006" href="$classZagreus_1_1Engine.html#aa97883c4a13a6a6e8b348589c820aafb" title=" " alt="" coords="5,25,193,51"/>
 <area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="229,41,194,41,194,35,229,35"/>

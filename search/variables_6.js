@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['rd_0',['rd',['../namespaceZagreus.html#a6fac5ee53f7209a034032316726a7e81',1,'Zagreus']]],
-  ['rook_5fattacks_1',['rook_attacks',['../namespaceZagreus.html#a9ead2a146f633e0419aaeb5012bc5dad',1,'Zagreus']]],
-  ['rook_5fmasks_2',['rook_masks',['../namespaceZagreus.html#a494c9987accb7a80df270588f5301304',1,'Zagreus']]],
-  ['rookmagics_3',['rookMagics',['../namespaceZagreus.html#a16fd8f2dd6dbaed9f5a2f39d3dcd6b85',1,'Zagreus']]]
+  ['move_0',['move',['../structZagreus_1_1BoardState.html#a50d7d8e634efeb9ba2ea934c948a275b',1,'Zagreus::BoardState']]],
+  ['moves_1',['moves',['../structZagreus_1_1MoveList.html#a19aeee57e25aa2fafd66d4ef4fc0e020',1,'Zagreus::MoveList']]]
 ];

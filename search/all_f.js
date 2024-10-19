@@ -13,5 +13,6 @@ var searchData=
   ['rook_5fattacks_5fon_5fthe_5ffly_10',['rook_attacks_on_the_fly',['../namespaceZagreus.html#a374e7c659346166c04dbd3f9d710a8f9',1,'Zagreus']]],
   ['rook_5fmasks_11',['rook_masks',['../namespaceZagreus.html#a494c9987accb7a80df270588f5301304',1,'Zagreus']]],
   ['rook_5fpromotion_12',['ROOK_PROMOTION',['../namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacaa7aa4c11baa895571e1d0f40b698411a',1,'Zagreus']]],
-  ['rookmagics_13',['rookMagics',['../namespaceZagreus.html#a16fd8f2dd6dbaed9f5a2f39d3dcd6b85',1,'Zagreus']]]
+  ['rookmagics_13',['rookMagics',['../namespaceZagreus.html#a16fd8f2dd6dbaed9f5a2f39d3dcd6b85',1,'Zagreus']]],
+  ['rookphase_14',['rookPhase',['../namespaceZagreus.html#a1f8dcd8ab86439ed34ba94aeed22ef49',1,'Zagreus']]]
 ];

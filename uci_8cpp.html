@@ -101,6 +101,7 @@ $(function(){ initResizable(false); });
 <code>#include &lt;sstream&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;cctype&gt;</code><br />
+<code>#include &lt;thread&gt;</code><br />
 <code>#include &quot;<a class="el" href="magics_8h_source.html">magics.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="uci_8h_source.html">uci.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="bitboard_8h_source.html">bitboard.h</a>&quot;</code><br />
@@ -110,40 +111,42 @@ Include dependency graph for uci.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="uci_8cpp__incl.png" border="0" usemap="#asrc_2uci_8cpp" alt=""/></div>
 <map name="asrc_2uci_8cpp" id="asrc_2uci_8cpp">
-<area shape="rect" title=" " alt="" coords="349,5,440,31"/>
+<area shape="rect" title=" " alt="" coords="385,5,476,31"/>
 <area shape="rect" title=" " alt="" coords="5,79,72,104"/>
-<area shape="poly" title=" " alt="" coords="350,30,91,81,86,82,85,77,90,76,349,25"/>
+<area shape="poly" title=" " alt="" coords="385,29,91,81,86,82,85,77,90,76,384,24"/>
 <area shape="rect" title=" " alt="" coords="248,225,333,251"/>
-<area shape="poly" title=" " alt="" coords="391,32,305,213,300,211,387,30"/>
+<area shape="poly" title=" " alt="" coords="423,32,388,80,341,153,306,215,301,212,337,150,383,77,419,29"/>
 <area shape="rect" title=" " alt="" coords="300,299,380,324"/>
-<area shape="poly" title=" " alt="" coords="350,25,320,31,289,41,261,57,238,80,215,124,208,163,216,204,238,249,260,274,289,291,286,295,257,278,234,252,211,206,203,163,210,122,234,77,258,53,287,37,319,26,349,20"/>
+<area shape="poly" title=" " alt="" coords="385,22,348,25,307,35,269,53,252,65,238,80,214,123,209,143,207,163,216,204,238,249,260,274,289,291,286,295,257,278,234,252,211,205,202,163,203,142,209,121,234,77,248,61,266,48,305,30,347,20,385,16"/>
 <area shape="rect" title=" " alt="" coords="248,79,323,104"/>
-<area shape="poly" title=" " alt="" coords="379,33,316,73,313,69,376,28"/>
+<area shape="poly" title=" " alt="" coords="408,33,322,75,320,70,406,28"/>
 <area shape="rect" title=" " alt="" coords="131,299,189,324"/>
-<area shape="poly" title=" " alt="" coords="350,25,317,31,281,41,247,57,218,81,200,104,187,130,169,187,162,241,161,285,156,285,157,241,164,186,182,128,196,101,214,77,244,53,279,36,315,25,349,20"/>
+<area shape="poly" title=" " alt="" coords="385,22,345,26,300,35,256,53,218,81,200,103,186,129,169,186,162,241,161,285,156,285,156,240,163,185,181,127,195,101,214,77,253,48,298,30,344,20,385,16"/>
 <area shape="rect" title=" " alt="" coords="398,79,463,104"/>
-<area shape="poly" title=" " alt="" coords="403,30,421,65,416,68,398,32"/>
+<area shape="poly" title=" " alt="" coords="433,31,433,65,428,65,428,31"/>
+<area shape="rect" title=" " alt="" coords="488,79,552,104"/>
+<area shape="poly" title=" " alt="" coords="447,29,496,68,493,72,443,33"/>
 <area shape="rect" href="magics_8h.html" title=" " alt="" coords="1210,152,1291,177"/>
-<area shape="poly" title=" " alt="" coords="440,20,640,40,769,56,899,76,1063,111,1198,146,1197,151,1062,116,898,81,768,61,639,45,440,26"/>
-<area shape="rect" href="uci_8h.html" title=" " alt="" coords="488,79,541,104"/>
-<area shape="poly" title=" " alt="" coords="415,28,484,69,482,74,413,33"/>
+<area shape="poly" title=" " alt="" coords="476,21,661,41,899,76,1063,111,1197,146,1196,151,1061,116,898,81,661,46,476,26"/>
+<area shape="rect" href="uci_8h.html" title=" " alt="" coords="576,79,629,104"/>
+<area shape="poly" title=" " alt="" coords="459,28,564,71,562,76,457,33"/>
 <area shape="rect" href="bitboard_8h.html" title=" " alt="" coords="828,225,916,251"/>
-<area shape="poly" title=" " alt="" coords="439,28,586,74,675,108,761,150,810,182,851,214,847,218,807,186,759,154,672,113,584,79,438,33"/>
+<area shape="poly" title=" " alt="" coords="477,26,555,45,642,76,703,109,760,150,848,215,845,219,757,154,701,114,640,81,554,50,476,31"/>
 <area shape="rect" href="perft_8h.html" title=" " alt="" coords="823,79,887,104"/>
-<area shape="poly" title=" " alt="" coords="441,22,602,44,804,76,810,77,809,82,804,81,601,49,440,27"/>
+<area shape="poly" title=" " alt="" coords="477,23,623,45,804,76,810,77,809,82,804,81,622,50,476,28"/>
 <area shape="rect" title=" " alt="" coords="1063,372,1129,397"/>
 <area shape="poly" title=" " alt="" coords="1251,178,1235,245,1217,287,1193,326,1167,350,1138,368,1135,363,1163,346,1189,322,1213,284,1230,243,1246,177"/>
-<area shape="poly" title=" " alt="" coords="489,104,375,149,304,185,238,227,205,258,178,289,174,286,201,254,234,223,302,180,372,144,487,99"/>
-<area shape="rect" title=" " alt="" coords="544,152,595,177"/>
-<area shape="poly" title=" " alt="" coords="526,103,554,140,550,143,522,106"/>
+<area shape="poly" title=" " alt="" coords="576,103,565,107,468,131,392,149,320,176,281,198,238,227,204,258,178,289,174,285,201,254,234,223,279,193,318,171,390,144,467,126,563,101,575,98"/>
+<area shape="rect" title=" " alt="" coords="551,152,601,177"/>
+<area shape="poly" title=" " alt="" coords="601,105,588,140,583,138,596,103"/>
 <area shape="rect" title=" " alt="" coords="358,225,455,251"/>
-<area shape="poly" title=" " alt="" coords="514,105,503,140,482,179,461,201,439,220,435,215,458,197,478,176,498,138,509,104"/>
+<area shape="poly" title=" " alt="" coords="589,106,435,219,432,215,585,102"/>
 <area shape="rect" title=" " alt="" coords="642,299,702,324"/>
-<area shape="poly" title=" " alt="" coords="542,102,576,122,609,150,631,184,649,220,669,284,664,286,644,222,627,186,605,154,573,126,539,106"/>
-<area shape="rect" title=" " alt="" coords="406,152,469,177"/>
-<area shape="poly" title=" " alt="" coords="504,106,462,144,458,141,500,102"/>
+<area shape="poly" title=" " alt="" coords="609,104,667,284,661,286,604,105"/>
+<area shape="rect" title=" " alt="" coords="413,152,475,177"/>
+<area shape="poly" title=" " alt="" coords="578,106,483,149,481,144,576,102"/>
 <area shape="rect" href="board_8h.html" title=" " alt="" coords="677,152,747,177"/>
-<area shape="poly" title=" " alt="" coords="543,100,668,145,666,150,541,105"/>
+<area shape="poly" title=" " alt="" coords="622,102,684,142,681,147,619,106"/>
 <area shape="poly" title=" " alt="" coords="677,174,347,228,346,223,676,169"/>
 <area shape="poly" title=" " alt="" coords="748,165,819,173,909,194,955,211,1000,233,1042,262,1077,297,1092,327,1098,357,1092,358,1087,329,1073,300,1038,266,998,238,953,216,907,199,818,178,747,170"/>
 <area shape="poly" title=" " alt="" coords="677,177,469,225,468,220,676,172"/>

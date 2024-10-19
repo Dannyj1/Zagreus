@@ -2,12 +2,12 @@
 <area shape="rect" id="Node000001" title=" " alt="" coords="5,80,232,105"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#a899c2b4b2028cb3129c82faa3275e2c3" title=" " alt="" coords="299,5,466,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,77,279,39,311,31,312,36,281,45,159,82"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#aefa101d59ff5ac5c1db21801f7e1b936" title=" " alt="" coords="280,55,485,80"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#aefa101d59ff5ac5c1db21801f7e1b936" title="Retrieves the bitboard for a given piece type." alt="" coords="280,55,485,80"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="232,79,266,76,266,81,233,84"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#ade21087cb829e4b3fbcdecc362df557e" title=" " alt="" coords="285,104,480,129"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#ade21087cb829e4b3fbcdecc362df557e" title="Retrieves the knight attacks for a given square." alt="" coords="285,104,480,129"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="233,100,272,104,271,109,232,106"/>
-<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a5b8e7dc1ddf3599e06c25e9e88952fbf" title=" " alt="" coords="318,153,447,179"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a5b8e7dc1ddf3599e06c25e9e88952fbf" title="Pops the least significant set bit (LSB) from a bitboard and returns its index. This modifies the bit..." alt="" coords="318,153,447,179"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="161,103,281,138,316,147,315,153,279,143,160,108"/>
-<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a3b7dc37ae50fe6f86723b9c113ba301f" title=" " alt="" coords="533,153,716,179"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a3b7dc37ae50fe6f86723b9c113ba301f" title="Finds the index of the least significant set bit (LSB) in a bitboard." alt="" coords="533,153,716,179"/>
 <area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="448,163,519,163,519,169,448,169"/>
 </map>

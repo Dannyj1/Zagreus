@@ -1,5 +1,5 @@
 <map id="Zagreus::whitePawnWestAttacks" name="Zagreus::whitePawnWestAttacks">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,240,31"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a61ec51b57900a9f5c4ad48238ec1d7f8" title=" " alt="" coords="288,5,467,31"/>
+<area shape="rect" id="Node000001" title="Calculates the west attacks for white pawns." alt="" coords="5,5,240,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a61ec51b57900a9f5c4ad48238ec1d7f8" title="Shifts the bitboard north&#45;west by one rank and one file." alt="" coords="288,5,467,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="240,15,274,15,274,21,240,21"/>
 </map>

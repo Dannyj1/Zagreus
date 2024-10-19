@@ -1,5 +1,5 @@
 <map id="Zagreus::blackPawnSinglePush" name="Zagreus::blackPawnSinglePush">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,228,31"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a5f01c9bf422a21d35c075ff1befb41d2" title=" " alt="" coords="276,5,424,31"/>
+<area shape="rect" id="Node000001" title="Calculates the single push for black pawns." alt="" coords="5,5,228,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a5f01c9bf422a21d35c075ff1befb41d2" title="Shifts the bitboard south by one rank." alt="" coords="276,5,424,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="228,15,262,15,262,21,228,21"/>
 </map>

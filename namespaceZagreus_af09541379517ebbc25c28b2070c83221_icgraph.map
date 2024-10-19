@@ -1,5 +1,5 @@
 <map id="Zagreus::initializeAttackLookupTables" name="Zagreus::initializeAttackLookupTables">
-<area shape="rect" id="Node000001" title=" " alt="" coords="241,5,423,45"/>
+<area shape="rect" id="Node000001" title="Initializes the attack lookup tables for pawns, knights, and kings." alt="" coords="241,5,423,45"/>
 <area shape="rect" id="Node000002" href="$classZagreus_1_1Engine.html#aa97883c4a13a6a6e8b348589c820aafb" title=" " alt="" coords="5,13,193,38"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,28,193,28,193,23,227,23"/>
 </map>

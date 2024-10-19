@@ -1,11 +1,9 @@
 <map id="Zagreus::Engine::startUci" name="Zagreus::Engine::startUci">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,73,192,98"/>
-<area shape="rect" id="Node000002" href="$classZagreus_1_1Engine.html#a9da44ebb2faa1b76fb8ab5c361c97d8d" title=" " alt="" coords="240,33,452,73"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,71,226,66,227,71,192,76"/>
-<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a03c33f54d5c2acba96ae41492450827d" title=" " alt="" coords="245,97,447,137"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="192,95,231,100,231,105,192,100"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,42,192,67"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Engine.html#a9da44ebb2faa1b76fb8ab5c361c97d8d" title=" " alt="" coords="240,35,452,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,52,226,52,226,57,192,57"/>
 <area shape="rect" id="Node000003" href="$classZagreus_1_1Engine.html#aaa33edf38714c7047ab10208d8ce82a3" title=" " alt="" coords="510,5,714,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="452,40,496,35,497,40,452,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="452,40,496,35,497,41,452,46"/>
 <area shape="rect" id="Node000004" href="$classZagreus_1_1Engine.html#acb5bfe97cb4260ca05ad4007e1f837a3" title=" " alt="" coords="500,70,724,95"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="452,62,487,66,486,71,452,68"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="452,63,487,67,486,72,452,68"/>
 </map>

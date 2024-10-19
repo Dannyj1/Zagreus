@@ -1,19 +1,19 @@
 <map id="Zagreus::calculateKnightAttacks" name="Zagreus::calculateKnightAttacks">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,171,189,211"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#acfcaef5e0e9991c505c4424190ed29db" title=" " alt="" coords="245,5,447,31"/>
+<area shape="rect" id="Node000001" title="Calculates the attacks for knights." alt="" coords="5,171,189,211"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#acfcaef5e0e9991c505c4424190ed29db" title="Shifts the bitboard north&#45;east&#45;east by one rank and two files." alt="" coords="245,5,447,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,170,159,105,195,69,236,40,249,33,251,38,239,44,198,73,163,108,113,173"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a59ebcf1406ccb36e592463e0b61e3628" title=" " alt="" coords="241,55,451,80"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a59ebcf1406ccb36e592463e0b61e3628" title="Shifts the bitboard north&#45;north&#45;east by two ranks and one file." alt="" coords="241,55,451,80"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="119,169,170,128,202,107,236,89,256,81,258,86,238,94,205,112,173,133,122,173"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#ada41ff79435d68bcdac130072f52f953" title=" " alt="" coords="239,104,453,129"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#ada41ff79435d68bcdac130072f52f953" title="Shifts the bitboard north&#45;north&#45;west by two ranks and one file." alt="" coords="239,104,453,129"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="148,169,237,138,268,130,269,135,238,143,150,174"/>
-<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a931ca83682d6f184114e66825735d5c6" title=" " alt="" coords="241,153,451,179"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a931ca83682d6f184114e66825735d5c6" title="Shifts the bitboard north&#45;west&#45;west by one rank and two files." alt="" coords="241,153,451,179"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="189,179,227,175,227,181,190,185"/>
-<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a029a0fea843790003f79c99b2bfa5f79" title=" " alt="" coords="244,203,448,228"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a029a0fea843790003f79c99b2bfa5f79" title="Shifts the bitboard south&#45;east&#45;east by one rank and two files." alt="" coords="244,203,448,228"/>
 <area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="190,198,230,202,230,207,189,203"/>
-<area shape="rect" id="Node000007" href="$namespaceZagreus.html#afe1aa7e482663b98ab068007ba792668" title=" " alt="" coords="239,252,453,277"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#afe1aa7e482663b98ab068007ba792668" title="Shifts the bitboard south&#45;south&#45;east by two ranks and one file." alt="" coords="239,252,453,277"/>
 <area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="154,209,238,237,273,246,272,251,237,242,152,214"/>
-<area shape="rect" id="Node000008" href="$namespaceZagreus.html#afdffaf4b16e7cf341fa10cc086f9405f" title=" " alt="" coords="237,301,455,327"/>
+<area shape="rect" id="Node000008" href="$namespaceZagreus.html#afdffaf4b16e7cf341fa10cc086f9405f" title="Shifts the bitboard south&#45;south&#45;west by two ranks and one file." alt="" coords="237,301,455,327"/>
 <area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="123,209,174,249,238,286,261,295,259,300,236,291,171,253,120,214"/>
-<area shape="rect" id="Node000009" href="$namespaceZagreus.html#a644602d0a1b0d68e7a083982f5fc419f" title=" " alt="" coords="240,351,452,376"/>
+<area shape="rect" id="Node000009" href="$namespaceZagreus.html#a644602d0a1b0d68e7a083982f5fc419f" title="Shifts the bitboard south&#45;west&#45;west by one rank and two files." alt="" coords="240,351,452,376"/>
 <area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="114,210,164,273,199,307,239,336,255,344,253,348,236,340,195,311,160,276,110,213"/>
 </map>

@@ -118,115 +118,114 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceZagreus.html">Zagreus</a> {</div>
 <div class="foldopen" id="foldopen00026" data-start="{" data-end="}">
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">   26</a></span>std::string <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(<span class="keyword">const</span> uint8_t fromSquare, <span class="keyword">const</span> uint8_t toSquare) {</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="comment">// TODO: Support promotions</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    assert(fromSquare &lt; SQUARES);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    assert(toSquare &lt; SQUARES);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    std::string notation;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">return</span> notation;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>}</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    assert(fromSquare &lt; SQUARES);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    assert(toSquare &lt; SQUARES);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    std::string notation;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">return</span> notation;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
 </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#aee2fef53b1ee934c073765dab4d1144f">   40</a></span>std::string <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(<span class="keyword">const</span> uint8_t fromSquare, <span class="keyword">const</span> uint8_t toSquare, <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac">PromotionPiece</a> promotionPiece) {</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    assert(fromSquare &lt; SQUARES);</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    assert(toSquare &lt; SQUARES);</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    assert(promotionPiece &lt; 4);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    std::string notation;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    notation += <span class="stringliteral">&quot;qrbn&quot;</span>[promotionPiece];</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordflow">return</span> notation;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>}</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="foldopen" id="foldopen00039" data-start="{" data-end="}">
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#aee2fef53b1ee934c073765dab4d1144f">   39</a></span>std::string <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(<span class="keyword">const</span> uint8_t fromSquare, <span class="keyword">const</span> uint8_t toSquare, <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac">PromotionPiece</a> promotionPiece) {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    assert(fromSquare &lt; SQUARES);</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    assert(toSquare &lt; SQUARES);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    assert(promotionPiece &lt; 4);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    std::string notation;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(fromSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(toSquare / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    notation += <span class="stringliteral">&quot;qrbn&quot;</span>[promotionPiece];</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">return</span> notation;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
 </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="foldopen" id="foldopen00055" data-start="{" data-end="}">
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5">   55</a></span>std::string <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move) {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keyword">const</span> uint8_t fromSquare = <a class="code hl_function" href="namespaceZagreus.html#a5145fe2e6dceea1eb5a27944f3cdbf19">getFromSquare</a>(move);</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keyword">const</span> uint8_t toSquare = <a class="code hl_function" href="namespaceZagreus.html#adb37f19879f45779690bc5d8ce5526d9">getToSquare</a>(move);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7735714492e635054e84a0cc179e46ba">MoveType</a> moveType = <a class="code hl_function" href="namespaceZagreus.html#a31c6c0c2eaae076f14a5a3131c81abb1">getMoveType</a>(move);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        moveType == <a class="code hl_enumvalue" href="namespaceZagreus.html#a7735714492e635054e84a0cc179e46baa8b18bc5047643a18a4ec27886a319d00">MoveType::PROMOTION</a>) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac">PromotionPiece</a> promotionPiece = <a class="code hl_function" href="namespaceZagreus.html#a6c2e1e6c4abc0bc1ae611cd9a78fca36">getPromotionPiece</a>(move);</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(fromSquare, toSquare, promotionPiece);</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    }</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(fromSquare, toSquare);</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>}</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="foldopen" id="foldopen00054" data-start="{" data-end="}">
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a85d8d693072db5ce97cbc6f013c8dde5">   54</a></span>std::string <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move) {</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keyword">const</span> uint8_t fromSquare = <a class="code hl_function" href="namespaceZagreus.html#a5145fe2e6dceea1eb5a27944f3cdbf19">getFromSquare</a>(move);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keyword">const</span> uint8_t toSquare = <a class="code hl_function" href="namespaceZagreus.html#adb37f19879f45779690bc5d8ce5526d9">getToSquare</a>(move);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7735714492e635054e84a0cc179e46ba">MoveType</a> moveType = <a class="code hl_function" href="namespaceZagreus.html#a31c6c0c2eaae076f14a5a3131c81abb1">getMoveType</a>(move);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        moveType == <a class="code hl_enumvalue" href="namespaceZagreus.html#a7735714492e635054e84a0cc179e46baa8b18bc5047643a18a4ec27886a319d00">PROMOTION</a>) {</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac">PromotionPiece</a> promotionPiece = <a class="code hl_function" href="namespaceZagreus.html#a6c2e1e6c4abc0bc1ae611cd9a78fca36">getPromotionPiece</a>(move);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(fromSquare, toSquare, promotionPiece);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">getMoveNotation</a>(fromSquare, toSquare);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="foldopen" id="foldopen00069" data-start="{" data-end="}">
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#abb70fe505fce36c2fb896c26a933fde2">   69</a></span><a class="code hl_typedef" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> <a class="code hl_function" href="namespaceZagreus.html#abb70fe505fce36c2fb896c26a933fde2">fromMoveNotation</a>(<span class="keyword">const</span> std::string_view notation) {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> fromSquare = <a class="code hl_function" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">fromSquareNotation</a>(notation.substr(0, 2));</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> toSquare = <a class="code hl_function" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">fromSquareNotation</a>(notation.substr(2, 2));</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="comment">// If there is a 5th character, it is a promotion</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">if</span> (notation.size() == 5) {</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keyword">const</span> <span class="keywordtype">char</span> promotionPieceChar = notation[4];</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <a class="code hl_enumeration" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac">PromotionPiece</a> promotionPiece;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">switch</span> (promotionPieceChar) {</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;q&#39;</span>:</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacadeb2464debd979632a8750087418b471">QUEEN_PROMOTION</a>;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;r&#39;</span>:</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacaa7aa4c11baa895571e1d0f40b698411a">ROOK_PROMOTION</a>;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;b&#39;</span>:</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacade8e2230e9f70a695af5e6895314f56f">BISHOP_PROMOTION</a>;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;n&#39;</span>:</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2caca7643de94376457be9c979a70bd0fa704">KNIGHT_PROMOTION</a>;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            <span class="keywordflow">default</span>:</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                assert(<span class="keyword">false</span>);</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        }</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a899c2b4b2028cb3129c82faa3275e2c3">encodeMove</a>(fromSquare, toSquare, promotionPiece);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    }</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a899c2b4b2028cb3129c82faa3275e2c3">encodeMove</a>(fromSquare, toSquare);</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>}</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#abb70fe505fce36c2fb896c26a933fde2">   68</a></span><a class="code hl_typedef" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> <a class="code hl_function" href="namespaceZagreus.html#abb70fe505fce36c2fb896c26a933fde2">fromMoveNotation</a>(<span class="keyword">const</span> std::string_view notation) {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> fromSquare = <a class="code hl_function" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">fromSquareNotation</a>(notation.substr(0, 2));</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> toSquare = <a class="code hl_function" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">fromSquareNotation</a>(notation.substr(2, 2));</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="comment">// If there is a 5th character, it is a promotion</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">if</span> (notation.size() == 5) {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keyword">const</span> <span class="keywordtype">char</span> promotionPieceChar = notation[4];</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <a class="code hl_enumeration" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac">PromotionPiece</a> promotionPiece;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keywordflow">switch</span> (promotionPieceChar) {</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;q&#39;</span>:</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacadeb2464debd979632a8750087418b471">QUEEN_PROMOTION</a>;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;r&#39;</span>:</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacaa7aa4c11baa895571e1d0f40b698411a">ROOK_PROMOTION</a>;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;b&#39;</span>:</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cacade8e2230e9f70a695af5e6895314f56f">BISHOP_PROMOTION</a>;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            <span class="keywordflow">case</span> <span class="charliteral">&#39;n&#39;</span>:</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                promotionPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2caca7643de94376457be9c979a70bd0fa704">KNIGHT_PROMOTION</a>;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                assert(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        }</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a899c2b4b2028cb3129c82faa3275e2c3">encodeMove</a>(fromSquare, toSquare, promotionPiece);</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    }</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespaceZagreus.html#a899c2b4b2028cb3129c82faa3275e2c3">encodeMove</a>(fromSquare, toSquare);</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>}</div>
 </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="foldopen" id="foldopen00102" data-start="{" data-end="}">
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a041ce9eb95139cc823bfc48893542d92">  102</a></span>std::string <a class="code hl_function" href="namespaceZagreus.html#a041ce9eb95139cc823bfc48893542d92">getSquareNotation</a>(<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> square) {</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    assert(square &lt; SQUARES);</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    std::string notation;</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(square % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(square / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordflow">return</span> notation;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>}</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
+<div class="foldopen" id="foldopen00101" data-start="{" data-end="}">
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a041ce9eb95139cc823bfc48893542d92">  101</a></span>std::string <a class="code hl_function" href="namespaceZagreus.html#a041ce9eb95139cc823bfc48893542d92">getSquareNotation</a>(<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> square) {</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    assert(square &lt; SQUARES);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    std::string notation;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(square % 8 + <span class="charliteral">&#39;a&#39;</span>);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    notation += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(square / 8 + <span class="charliteral">&#39;1&#39;</span>);</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordflow">return</span> notation;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>}</div>
 </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="foldopen" id="foldopen00112" data-start="{" data-end="}">
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">  112</a></span><a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> <a class="code hl_function" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">fromSquareNotation</a>(<span class="keyword">const</span> std::string_view notation) {</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">const</span> uint8_t file = notation[0] - <span class="charliteral">&#39;a&#39;</span>;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keyword">const</span> uint8_t rank = notation[1] - <span class="charliteral">&#39;1&#39;</span>;</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a><span class="keyword">&gt;</span>(file + rank * 8);</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>}</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="foldopen" id="foldopen00111" data-start="{" data-end="}">
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">  111</a></span><a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> <a class="code hl_function" href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">fromSquareNotation</a>(<span class="keyword">const</span> std::string_view notation) {</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keyword">const</span> uint8_t file = notation[0] - <span class="charliteral">&#39;a&#39;</span>;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">const</span> uint8_t rank = notation[1] - <span class="charliteral">&#39;1&#39;</span>;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a><span class="keyword">&gt;</span>(file + rank * 8);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>}</div>
 </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>} <span class="comment">// namespace Zagreus</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>} <span class="comment">// namespace Zagreus</span></div>
 <div class="ttc" id="amove_8h_html"><div class="ttname"><a href="move_8h.html">move.h</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html"><div class="ttname"><a href="namespaceZagreus.html">Zagreus</a></div><div class="ttdef"><b>Definition</b> <a href="bitboard_8cpp_source.html#l00025">bitboard.cpp:25</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a041ce9eb95139cc823bfc48893542d92"><div class="ttname"><a href="namespaceZagreus.html#a041ce9eb95139cc823bfc48893542d92">Zagreus::getSquareNotation</a></div><div class="ttdeci">std::string getSquareNotation(const Square square)</div><div class="ttdef"><b>Definition</b> <a href="#l00102">move.cpp:102</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html"><div class="ttname"><a href="namespaceZagreus.html">Zagreus</a></div><div class="ttdef"><b>Definition</b> <a href="bitboard_8cpp_source.html#l00024">bitboard.cpp:24</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a041ce9eb95139cc823bfc48893542d92"><div class="ttname"><a href="namespaceZagreus.html#a041ce9eb95139cc823bfc48893542d92">Zagreus::getSquareNotation</a></div><div class="ttdeci">std::string getSquareNotation(const Square square)</div><div class="ttdef"><b>Definition</b> <a href="#l00101">move.cpp:101</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a0e6527c2c1fdf39a3b8056627edf07f7"><div class="ttname"><a href="namespaceZagreus.html#a0e6527c2c1fdf39a3b8056627edf07f7">Zagreus::getMoveNotation</a></div><div class="ttdeci">std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare)</div><div class="ttdef"><b>Definition</b> <a href="#l00026">move.cpp:26</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a31c6c0c2eaae076f14a5a3131c81abb1"><div class="ttname"><a href="namespaceZagreus.html#a31c6c0c2eaae076f14a5a3131c81abb1">Zagreus::getMoveType</a></div><div class="ttdeci">MoveType getMoveType(const Move move)</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00091">move.h:91</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a34f9ef96af8e62e9021572b94d7d978d"><div class="ttname"><a href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">Zagreus::fromSquareNotation</a></div><div class="ttdeci">Square fromSquareNotation(const std::string_view notation)</div><div class="ttdef"><b>Definition</b> <a href="#l00112">move.cpp:112</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a34f9ef96af8e62e9021572b94d7d978d"><div class="ttname"><a href="namespaceZagreus.html#a34f9ef96af8e62e9021572b94d7d978d">Zagreus::fromSquareNotation</a></div><div class="ttdeci">Square fromSquareNotation(const std::string_view notation)</div><div class="ttdef"><b>Definition</b> <a href="#l00111">move.cpp:111</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a38e749cf22c411cb709a3da939267e6f"><div class="ttname"><a href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Zagreus::Move</a></div><div class="ttdeci">uint16_t Move</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00033">move.h:33</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a5145fe2e6dceea1eb5a27944f3cdbf19"><div class="ttname"><a href="namespaceZagreus.html#a5145fe2e6dceea1eb5a27944f3cdbf19">Zagreus::getFromSquare</a></div><div class="ttdeci">uint8_t getFromSquare(const Move move)</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00083">move.h:83</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a6c2e1e6c4abc0bc1ae611cd9a78fca36"><div class="ttname"><a href="namespaceZagreus.html#a6c2e1e6c4abc0bc1ae611cd9a78fca36">Zagreus::getPromotionPiece</a></div><div class="ttdeci">PromotionPiece getPromotionPiece(const Move move)</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00095">move.h:95</a></div></div>
@@ -234,7 +233,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespaceZagreus_html_a7735714492e635054e84a0cc179e46baa8b18bc5047643a18a4ec27886a319d00"><div class="ttname"><a href="namespaceZagreus.html#a7735714492e635054e84a0cc179e46baa8b18bc5047643a18a4ec27886a319d00">Zagreus::PROMOTION</a></div><div class="ttdeci">@ PROMOTION</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00042">move.h:42</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a7d2e00f0541186be79cce3c9621e918f"><div class="ttname"><a href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Zagreus::Square</a></div><div class="ttdeci">Square</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00047">types.h:47</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a899c2b4b2028cb3129c82faa3275e2c3"><div class="ttname"><a href="namespaceZagreus.html#a899c2b4b2028cb3129c82faa3275e2c3">Zagreus::encodeMove</a></div><div class="ttdeci">Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare)</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00070">move.h:70</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_abb70fe505fce36c2fb896c26a933fde2"><div class="ttname"><a href="namespaceZagreus.html#abb70fe505fce36c2fb896c26a933fde2">Zagreus::fromMoveNotation</a></div><div class="ttdeci">Move fromMoveNotation(const std::string_view notation)</div><div class="ttdef"><b>Definition</b> <a href="#l00069">move.cpp:69</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_abb70fe505fce36c2fb896c26a933fde2"><div class="ttname"><a href="namespaceZagreus.html#abb70fe505fce36c2fb896c26a933fde2">Zagreus::fromMoveNotation</a></div><div class="ttdeci">Move fromMoveNotation(const std::string_view notation)</div><div class="ttdef"><b>Definition</b> <a href="#l00068">move.cpp:68</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_adb37f19879f45779690bc5d8ce5526d9"><div class="ttname"><a href="namespaceZagreus.html#adb37f19879f45779690bc5d8ce5526d9">Zagreus::getToSquare</a></div><div class="ttdeci">uint8_t getToSquare(const Move move)</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00087">move.h:87</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_ae3d5464d72c8b3e99114db86d97e2cac"><div class="ttname"><a href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac">Zagreus::PromotionPiece</a></div><div class="ttdeci">PromotionPiece</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00047">move.h:47</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_ae3d5464d72c8b3e99114db86d97e2caca7643de94376457be9c979a70bd0fa704"><div class="ttname"><a href="namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2caca7643de94376457be9c979a70bd0fa704">Zagreus::KNIGHT_PROMOTION</a></div><div class="ttdeci">@ KNIGHT_PROMOTION</div><div class="ttdef"><b>Definition</b> <a href="move_8h_source.html#l00052">move.h:51</a></div></div>

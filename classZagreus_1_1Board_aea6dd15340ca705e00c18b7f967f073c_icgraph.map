@@ -1,5 +1,5 @@
 <map id="Zagreus::Board::getOccupiedBitboard" name="Zagreus::Board::getOccupiedBitboard">
-<area shape="rect" id="Node000001" title=" " alt="" coords="513,47,724,87"/>
+<area shape="rect" id="Node000001" title="Retrieves the bitboard representing occupied squares." alt="" coords="513,47,724,87"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#aa17c2e6f8c4e9c66ca76f079e0e11f31" title=" " alt="" coords="237,5,465,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="499,48,421,33,421,28,500,43"/>
 <area shape="rect" id="Node000004" href="$namespaceZagreus.html#a85a2dc8e359321dddb9e90a9d5c10f64" title=" " alt="" coords="238,55,465,80"/>

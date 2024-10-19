@@ -1,8 +1,8 @@
 <map id="Zagreus::queenAttacks" name="Zagreus::queenAttacks">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,141,177,167"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#adda3e72c179c4e9f1ef1406a61d9fea7" title=" " alt="" coords="225,92,423,117"/>
+<area shape="rect" id="Node000001" title="Retrieves the queen attacks for a given square and occupied squares." alt="" coords="5,141,177,167"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#adda3e72c179c4e9f1ef1406a61d9fea7" title="Retrieves the bishop attacks for a given square and occupied squares." alt="" coords="225,92,423,117"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,139,249,118,251,123,152,144"/>
-<area shape="rect" id="Node000006" href="$namespaceZagreus.html#add77fa8eb55ed30b4214c32fe19535a2" title=" " alt="" coords="231,165,417,191"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#add77fa8eb55ed30b4214c32fe19535a2" title="Retrieves the rook attacks for a given square and occupied squares." alt="" coords="231,165,417,191"/>
 <area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="178,160,217,164,216,170,177,166"/>
 <area shape="rect" id="Node000003" href="$namespaceZagreus.html#ae3519ba733e472381623f3868513e43f" title=" " alt="" coords="495,5,682,31"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="349,90,404,64,470,39,500,31,501,36,471,45,406,69,352,94"/>

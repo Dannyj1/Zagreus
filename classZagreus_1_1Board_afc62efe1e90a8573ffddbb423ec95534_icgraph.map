@@ -1,6 +1,8 @@
 <map id="Zagreus::Board::getSideToMove" name="Zagreus::Board::getSideToMove">
-<area shape="rect" id="Node000001" title=" " alt="" coords="167,29,395,55"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="5,29,119,55"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,45,119,45,119,39,153,39"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="101,20,90,11,62,8,39,10,26,15,24,20,30,28,26,31,19,21,23,11,37,5,62,3,92,6,104,15"/>
+<area shape="rect" id="Node000001" title="Retrieves the color of the side to move." alt="" coords="205,54,433,79"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Evaluation.html#a0f4174df46fff74d4c208a04c861622a" title=" " alt="" coords="5,5,157,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="232,54,157,41,158,36,233,49"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title=" " alt="" coords="25,94,138,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="230,84,139,100,138,95,229,79"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="124,85,113,76,81,73,56,75,42,80,40,85,47,92,43,96,34,86,39,76,55,70,81,67,115,71,127,81"/>
 </map>
