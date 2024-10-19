@@ -24,6 +24,9 @@
 #include <cassert>
 
 namespace Zagreus {
+/**
+ * \brief Enum representing directions on the chessboard.
+ */
 enum Direction {
     NORTH = 8,
     SOUTH = -8,
@@ -44,6 +47,9 @@ enum Direction {
 };
 
 // clang-format off
+/**
+ * \brief Enum representing squares on the chessboard.
+ */
 enum Square: uint8_t {
     A1, B1, C1, D1, E1, F1, G1, H1,
     A2, B2, C2, D2, E2, F2, G2, H2,
@@ -58,14 +64,28 @@ enum Square: uint8_t {
 
 // clang-format on
 
+/**
+ * \brief Enum representing types of chess pieces.
+ */
 enum PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 
+/**
+ * \brief Enum representing colors of chess pieces.
+ */
 enum PieceColor : uint8_t { WHITE = 0, BLACK = 1 };
 
+/**
+ * \brief Operator to get the opposite color.
+ * \param color The current color.
+ * \return The opposite color.
+ */
 constexpr PieceColor operator!(const PieceColor color) {
     return static_cast<PieceColor>(color ^ 1);
 }
 
+/**
+ * \brief Enum representing chess pieces, separated by color and type.
+ */
 enum Piece : uint8_t {
     WHITE_PAWN,
     BLACK_PAWN,
@@ -82,6 +102,9 @@ enum Piece : uint8_t {
     EMPTY = 255
 };
 
+/**
+ * \brief Enum representing castling rights.
+ */
 enum CastlingRights : uint8_t {
     WHITE_KINGSIDE = 0b00000001,
     WHITE_QUEENSIDE = 0b00000010,
@@ -91,16 +114,31 @@ enum CastlingRights : uint8_t {
     BLACK_CASTLING = 0b00001100,
 };
 
+/**
+ * \brief Gets the color of a piece.
+ * \param piece The piece.
+ * \return The color of the piece.
+ */
 constexpr PieceColor getPieceColor(const Piece piece) {
     assert(piece != Piece::EMPTY);
     return static_cast<PieceColor>(piece & 1);
 }
 
+/**
+ * \brief Gets the type of a piece.
+ * \param piece The piece.
+ * \return The type of the piece.
+ */
 constexpr PieceType getPieceType(const Piece piece) {
     assert(piece != Piece::EMPTY);
     return static_cast<PieceType>(piece >> 1);
 }
 
+/**
+ * \brief Gets the character representation of a piece.
+ * \param piece The piece.
+ * \return The character representing the piece.
+ */
 constexpr char getCharacterForPieceType(const Piece piece) {
     switch (piece) {
         case WHITE_PAWN:

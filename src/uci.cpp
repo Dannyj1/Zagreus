@@ -79,7 +79,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.)");
     sendMessage("");
 
-    sendMessage("Zagreus UCI chess engine " + getVersionString() + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
+    sendMessage(
+        "Zagreus UCI chess engine " + getVersionString() + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
     sendMessage("");
 }
 
@@ -232,7 +233,7 @@ void Engine::handlePositionCommand(const std::string_view args) {
             return;
         }
 
-        const Move move = fromMoveNotation(arg);
+        const Move move = getMoveFromMoveNotation(arg);
         board.makeMove(move);
     }
 }
@@ -247,7 +248,6 @@ void Engine::handlePonderHitCommand(std::string_view args) {
 }
 
 void Engine::handleQuitCommand(std::string_view args) {
-
 }
 
 void Engine::handlePerftCommand(const std::string& args) {
