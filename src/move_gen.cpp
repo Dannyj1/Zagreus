@@ -28,6 +28,14 @@
 #include "move.h"
 
 namespace Zagreus {
+
+/**
+ * \brief Generates all pseudo-legal moves for all pieces of a certain color for a given color and generation type.
+ * \tparam color The color of the pieces to generate moves for.
+ * \tparam type The type of moves to generate (e.g., all moves, captures, quiet moves).
+ * \param board The board object for which to generate moves.
+ * \param[out] moves The list to store the generated moves.
+ */
 template <PieceColor color, GenerationType type>
 void generateMoves(const Board& board, MoveList& moves) {
     assert(moves.size == 0);
@@ -46,6 +54,14 @@ void generateMoves(const Board& board, MoveList& moves) {
     generateKingMoves<color, type>(board, moves, genMask);
 }
 
+/**
+ * \brief Generates all pseudo-legal pawn moves for a given color and generation type.
+ * \tparam color The color of the pawns to generate moves for.
+ * \tparam type The type of moves to generate (e.g., all moves, captures, quiet moves).
+ * \param board The board object for which to generate moves.
+ * \param[out] moves The list to store the generated moves.
+ * \param genMask The mask to filter out invalid moves.
+ */
 template <PieceColor color, GenerationType type>
 void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece pawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
@@ -169,6 +185,14 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     }
 }
 
+/**
+ * \brief Generates all pseudo-legal knight moves for a given color and generation type.
+ * \tparam color The color of the knights to generate moves for.
+ * \tparam type The type of moves to generate (e.g., all moves, captures, quiet moves).
+ * \param board The board object for which to generate moves.
+ * \param[out] moves The list to store the generated moves.
+ * \param genMask The mask to filter out invalid moves.
+ */
 template <PieceColor color, GenerationType type>
 void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece knight = color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
@@ -189,6 +213,14 @@ void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t gen
     }
 }
 
+/**
+ * \brief Generates all pseudo-legal bishop moves for a given color and generation type.
+ * \tparam color The color of the bishops to generate moves for.
+ * \tparam type The type of moves to generate (e.g., all moves, captures, quiet moves).
+ * \param board The board object for which to generate moves.
+ * \param[out] moves The list to store the generated moves.
+ * \param genMask The mask to filter out invalid moves.
+ */
 template <PieceColor color, GenerationType type>
 void generateBishopMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece bishop = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
@@ -209,6 +241,14 @@ void generateBishopMoves(const Board& board, MoveList& moves, const uint64_t gen
     }
 }
 
+/**
+ * \brief Generates all pseudo-legal rook moves for a given color and generation type.
+ * \tparam color The color of the rooks to generate moves for.
+ * \tparam type The type of moves to generate (e.g., all moves, captures, quiet moves).
+ * \param board The board object for which to generate moves.
+ * \param[out] moves The list to store the generated moves.
+ * \param genMask The mask to filter out invalid moves.
+ */
 template <PieceColor color, GenerationType type>
 void generateRookMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece rook = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
@@ -229,6 +269,14 @@ void generateRookMoves(const Board& board, MoveList& moves, const uint64_t genMa
     }
 }
 
+/**
+ * \brief Generates all pseudo-legal queen moves for a given color and generation type.
+ * \tparam color The color of the queens to generate moves for.
+ * \tparam type The type of moves to generate (e.g., all moves, captures, quiet moves).
+ * \param board The board object for which to generate moves.
+ * \param[out] moves The list to store the generated moves.
+ * \param genMask The mask to filter out invalid moves.
+ */
 template <PieceColor color, GenerationType type>
 void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece queen = color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
@@ -249,6 +297,14 @@ void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genM
     }
 }
 
+/**
+ * \brief Generates all pseudo-legal king moves for a given color and generation type.
+ * \tparam color The color of the king to generate moves for.
+ * \tparam type The type of moves to generate (e.g., all moves, captures, quiet moves).
+ * \param board The board object for which to generate moves.
+ * \param[out] moves The list to store the generated moves.
+ * \param genMask The mask to filter out invalid moves.
+ */
 template <PieceColor color, GenerationType type>
 void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece king = color == WHITE ? WHITE_KING : BLACK_KING;

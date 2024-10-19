@@ -23,6 +23,15 @@
 #include "eval_features.h"
 
 namespace Zagreus {
+/**
+ * \brief Evaluates the current board position.
+ *
+ * This function calculates the evaluation score of the current board position
+ * based on material and other features. It considers the phase of the game
+ * (midgame or endgame) and adjusts the scores accordingly (tapered eval).
+ *
+ * \return The evaluation score of the current board position.
+ */
 int Evaluation::evaluate() {
     const int phase = calculatePhase();
     const int modifier = board.getSideToMove() == WHITE ? 1 : -1;
@@ -41,17 +50,32 @@ constexpr int rookPhase = 2;
 constexpr int queenPhase = 4;
 constexpr int totalPhase = knightPhase * 4 + bishopPhase * 4 + rookPhase * 4 + queenPhase * 2;
 
+/**
+ * \brief Calculates the phase of the game.
+ *
+ * This function calculates the phase of the game (midgame or endgame) based on
+ * the remaining pieces on the board. The phase is used to adjust the evaluation
+ * scores accordingly.
+ *
+ * \return The phase of the game as an integer.
+ */
 int Evaluation::calculatePhase() const {
     int phase = totalPhase;
 
     phase -= (board.getPieceCount<WHITE_KNIGHT>() + board.getPieceCount<BLACK_KNIGHT>()) * knightPhase;
     phase -= (board.getPieceCount<WHITE_BISHOP>() + board.getPieceCount<BLACK_BISHOP>()) * bishopPhase;
     phase -= (board.getPieceCount<WHITE_ROOK>() + board.getPieceCount<BLACK_ROOK>()) * rookPhase;
-    phase -= (board.getPieceCount<WHITE_QUEEN>() + board.getPieceCount<BLACK_QUEEN>()) *  queenPhase;
+    phase -= (board.getPieceCount<WHITE_QUEEN>() + board.getPieceCount<BLACK_QUEEN>()) * queenPhase;
 
     return (phase * 256 + (totalPhase / 2)) / totalPhase;
 }
 
+/**
+ * \brief Evaluates the material on the board.
+ *
+ * This function evaluates the material on the board for both sides (white and black)
+ * and updates the midgame and endgame scores accordingly.
+ */
 void Evaluation::evaluateMaterial() {
     for (int pieceIndex = 0; pieceIndex < PIECES; pieceIndex++) {
         const Piece piece = static_cast<Piece>(pieceIndex);

@@ -57,11 +57,11 @@ std::string getMoveNotation(uint8_t fromSquare, uint8_t toSquare, PromotionPiece
 
 std::string getMoveNotation(Move move);
 
-Move fromMoveNotation(std::string_view notation);
+Move getMoveFromMoveNotation(std::string_view notation);
 
 std::string getSquareNotation(Square square);
 
-Square fromSquareNotation(std::string_view notation);
+Square getSquareFromNotation(std::string_view notation);
 
 // bits 0-5: from square (0-63)
 // bits 6-11: to square (0-63)

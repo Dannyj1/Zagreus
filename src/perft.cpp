@@ -26,6 +26,16 @@
 #include "move_gen.h"
 
 namespace Zagreus {
+/**
+ * \brief Performs a perft test on the given board to a specified depth.
+ *
+ * This function recursively generates all possible moves up to a given depth and counts the number of nodes reached.
+ *
+ * \param board The board object on which to perform the perft.
+ * \param depth The depth to which moves should be generated.
+ * \param printNodes If true, prints the number of nodes for each move at the root level.
+ * \return The number of nodes reached.
+ */
 uint64_t perft(Board& board, const int depth, bool printNodes) {
     assert(depth >= 0);
 
