@@ -24,7 +24,6 @@
 
 namespace Zagreus {
 std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare) {
-    // TODO: Support promotions
     assert(fromSquare < SQUARES);
     assert(toSquare < SQUARES);
     std::string notation;
@@ -57,7 +56,7 @@ std::string getMoveNotation(const Move move) {
     const uint8_t toSquare = getToSquare(move);
 
     if (const MoveType moveType = getMoveType(move);
-        moveType == MoveType::PROMOTION) {
+        moveType == PROMOTION) {
         const PromotionPiece promotionPiece = getPromotionPiece(move);
 
         return getMoveNotation(fromSquare, toSquare, promotionPiece);

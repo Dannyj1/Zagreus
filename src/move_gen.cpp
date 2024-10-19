@@ -48,7 +48,6 @@ void generateMoves(const Board& board, MoveList& moves) {
 
 template <PieceColor color, GenerationType type>
 void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
-    // TODO: Handle promotions
     constexpr Piece pawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     constexpr PieceColor opponentColor = !color;
 

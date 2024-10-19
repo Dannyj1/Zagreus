@@ -24,6 +24,7 @@
 #include <sstream>
 #include <string>
 #include <cctype>
+#include <thread>
 
 #include "magics.h"
 #include "uci.h"
@@ -356,30 +357,34 @@ bool Engine::hasOption(const std::string& name) const {
     return this->options.contains(name);
 }
 
+void Engine::processLine(const std::string& inputLine) {
+    std::string line = removeRedundantSpaces(inputLine);
+    std::string command;
+    std::string args;
+
+    if (const size_t space_pos = line.find(' '); space_pos != std::string::npos) {
+        command = line.substr(0, space_pos);
+        args = line.substr(space_pos + 1);
+    } else {
+        command = line;
+        args = "";
+    }
+
+    if (args == "\n" || args == " ") {
+        args = "";
+    }
+
+    processCommand(command, args);
+}
+
 void Engine::startUci() {
     printStartupMessage();
-
-    // TODO: make sure that anything that is not related to UCI input reading is done in a separate thread, as "the engine must be able to read input even when thinking"
     std::string line;
 
     while (std::getline(std::cin, line)) {
-        line = removeRedundantSpaces(line);
-        std::string command;
-        std::string args;
+        std::thread processThread{&Engine::processLine, this, line};
 
-        if (size_t space_pos = line.find(' '); space_pos != std::string::npos) {
-            command = line.substr(0, space_pos);
-            args = line.substr(space_pos + 1);
-        } else {
-            command = line;
-            args = "";
-        }
-
-        if (args == "\n" || args == " ") {
-            args = "";
-        }
-
-        processCommand(command, args);
+        processThread.detach();
     }
 }
 
