@@ -27,6 +27,11 @@
 #include "bitwise.h"
 
 namespace Zagreus {
+/**
+ * \brief Checks if the current position is legal for the given color.
+ * \tparam movedColor The color of the player who just moved.
+ * \return True if the position is legal, false otherwise.
+ */
 template <PieceColor movedColor>
 bool Board::isPositionLegal() const {
     constexpr PieceColor opponentColor = !movedColor;
@@ -74,7 +79,11 @@ bool Board::isPositionLegal() const {
 template bool Board::isPositionLegal<WHITE>() const;
 template bool Board::isPositionLegal<BLACK>() const;
 
-// Checks everything except for attacks on the castling path or if the king is in check
+/**
+ * \brief Checks if castling is possible for the given side. It checks every rule, except for attacks on the castling path or if the king is in check
+ * \tparam side The side to check for castling (WHITE_KINGSIDE, WHITE_QUEENSIDE, BLACK_KINGSIDE, BLACK_QUEENSIDE).
+ * \return True if castling is possible, false otherwise.
+ */
 template <CastlingRights side>
 bool Board::canCastle() const {
     assert(side != WHITE_CASTLING && side != BLACK_CASTLING);
@@ -107,6 +116,11 @@ template bool Board::canCastle<WHITE_QUEENSIDE>() const;
 template bool Board::canCastle<BLACK_KINGSIDE>() const;
 template bool Board::canCastle<BLACK_QUEENSIDE>() const;
 
+/**
+ * \brief Retrieves the attackers of a given square.
+ * \param square The square index (0-63).
+ * \return A bitboard representing the attackers.
+ */
 uint64_t Board::getSquareAttackers(const uint8_t square) const {
     assert(square < SQUARES);
     const uint64_t knights = getBitboard<WHITE_KNIGHT>() | getBitboard<BLACK_KNIGHT>();
@@ -124,6 +138,9 @@ uint64_t Board::getSquareAttackers(const uint8_t square) const {
            | (getRookAttacks(square, occupied) & rooksQueens);
 }
 
+/**
+ * \brief Resets the board to the initial state.
+ */
 void Board::reset() {
     this->board = {};
     this->bitboards = {};
@@ -140,6 +157,9 @@ void Board::reset() {
     std::ranges::fill(history, BoardState{});
 }
 
+/**
+ * \brief Prints the current state of the board to the console.
+ */
 void Board::print() const {
     std::cout << "  ---------------------------------";
 
@@ -155,6 +175,10 @@ void Board::print() const {
     std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
 }
 
+/**
+ * \brief Makes a move on the board.
+ * \param move The move to make.
+ */
 void Board::makeMove(const Move& move) {
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
@@ -261,6 +285,9 @@ void Board::makeMove(const Move& move) {
     assert(ply >= 0 && ply < MAX_PLY);
 }
 
+/**
+ * \brief Unmakes the last move on the board.
+ */
 void Board::unmakeMove() {
     ply--;
     assert(ply >= 0 && ply < MAX_PLY);
@@ -314,6 +341,11 @@ void Board::unmakeMove() {
     this->castlingRights = castlingRights;
 }
 
+/**
+ * \brief Sets a piece on the board from a FEN character.
+ * \param character The FEN character representing the piece.
+ * \param square The square index (0-63).
+ */
 void Board::setPieceFromFENChar(const char character, const uint8_t square) {
     assert(square < SQUARES);
     // Uppercase char = white, lowercase = black
@@ -359,6 +391,11 @@ void Board::setPieceFromFENChar(const char character, const uint8_t square) {
     }
 }
 
+/**
+ * \brief Sets the board state from a FEN string.
+ * \param fen The FEN string representing the board state.
+ * \return True if the FEN string was valid, false otherwise.
+ */
 bool Board::setFromFEN(const std::string_view fen) {
     // TODO: Update zobrist hash once that is implemented
     uint8_t index = A8;

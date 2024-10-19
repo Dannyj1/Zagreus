@@ -50,6 +50,7 @@ private:
     void handlePerftCommand(const std::string& args);
     void handlePrintCommand();
     void processCommand(std::string_view command, const std::string& args);
+    void processLine(const std::string& inputLine);
 
 public:
     void startUci();

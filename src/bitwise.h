@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -26,6 +25,12 @@
 #include "types.h"
 
 namespace Zagreus {
+
+/**
+ * \brief Counts the number of set bits (population count) in a bitboard.
+ * \param bb The bitboard to count the set bits in.
+ * \return The number of set bits.
+ */
 inline uint64_t popcnt(uint64_t bb) {
 #ifdef _MSC_VER
     return __popcnt64(bb);
@@ -34,6 +39,11 @@ inline uint64_t popcnt(uint64_t bb) {
 #endif
 }
 
+/**
+ * \brief Finds the index of the least significant set bit (LSB) in a bitboard.
+ * \param bb The bitboard to scan.
+ * \return The index of the least significant set bit.
+ */
 inline int bitscanForward(uint64_t bb) {
     assert(bb != 0);
 #ifdef _MSC_VER
@@ -45,6 +55,11 @@ inline int bitscanForward(uint64_t bb) {
 #endif
 }
 
+/**
+ * \brief Finds the index of the most significant set bit (MSB) in a bitboard.
+ * \param bb The bitboard to scan.
+ * \return The index of the most significant set bit.
+ */
 inline int bitscanReverse(const uint64_t bb) {
     assert(bb != 0);
 #ifdef _MSC_VER
@@ -56,6 +71,11 @@ inline int bitscanReverse(const uint64_t bb) {
 #endif
 }
 
+/**
+ * \brief Pops the least significant set bit (LSB) from a bitboard and returns its index. This modifies the bitboard.
+ * \param bb The bitboard to modify.
+ * \return The index of the popped least significant set bit.
+ */
 inline int popLsb(uint64_t& bb) {
     assert(bb != 0);
     const int lsb = bitscanForward(bb);
@@ -63,4 +83,5 @@ inline int popLsb(uint64_t& bb) {
     bb &= bb - 1;
     return lsb;
 }
+
 } // namespace Zagreus::Bitwise
