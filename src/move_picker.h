@@ -27,13 +27,36 @@
 #include "types.h"
 
 namespace Zagreus {
+// TODO: Implement efficient sorting by score, after implementing score.
 class MovePicker {
 private:
     MoveList moveList{};
+    int currentIndex = 0;
 
 public:
-    [[nodiscard]] MoveList& getMoveList() {
-        return this->moveList;
+    explicit MovePicker(const MoveList& moveList) : moveList(moveList) {}
+
+    /**
+     * \brief Checks if there is a next move and retrieves it.
+     * \param[out] move The next move if available.
+     * \return True if there is a next move, false otherwise.
+     */
+    [[nodiscard]] bool next(Move& move) {
+        if (currentIndex >= moveList.size) {
+            return false;
+        }
+
+        move = moveList.moves[currentIndex];
+        currentIndex += 1;
+        return true;
+    }
+
+    /**
+     * \brief Gets the current move.
+     * \return The current move.
+     */
+    [[nodiscard]] Move getCurrentMove() const {
+        return moveList.moves[currentIndex - 1];
     }
 };
 } // namespace Zagreus

@@ -175,6 +175,11 @@ void Board::print() const {
     std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
 }
 
+bool Board::isDraw() {
+    // TODO: Implement
+    return false;
+}
+
 /**
  * \brief Makes a move on the board.
  * \param move The move to make.

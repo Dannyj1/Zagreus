@@ -289,6 +289,15 @@ public:
      */
     void setPieceFromFENChar(char character, uint8_t square);
 
+    template <PieceColor color>
+    [[nodiscard]] bool isKingInCheck() const {
+        constexpr PieceColor opponentColor = !color;
+        const uint64_t kingBB = getBitboard<color == WHITE ? WHITE_KING : BLACK_KING>();
+        const uint8_t kingSquare = bitscanForward(kingBB);
+
+        return getSquareAttackersByColor<opponentColor>(kingSquare) != 0;
+    }
+
     /**
      * \brief Checks if the current position is legal based on the color that just made a move.
      * \tparam movedColor The color of the player who just moved.
@@ -339,5 +348,12 @@ public:
      * \brief Prints the current state of the board to the console.
      */
     void print() const;
+
+    /**
+     * \brief Checks if the current position is a draw. Checks everything but a stalemate.
+     *
+     * \return True if the position is a draw, false otherwise.
+     */
+    bool isDraw();
 };
 } // namespace Zagreus

@@ -54,3 +54,7 @@ static constexpr uint8_t PIECES = 12;
 static constexpr uint8_t COLORS = 2;
 
 static constexpr uint8_t MAX_MOVES = 255;
+
+static constexpr int DRAW_SCORE = 0;
+
+static constexpr int MATE_SCORE = 100000;
