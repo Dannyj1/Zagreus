@@ -35,9 +35,20 @@
 
 namespace Zagreus {
 /**
+ * \brief Initializes the Zobrist constants.
+ */
+void initZobristConstants();
+
+/**
+ * \brief Gets the Zobrist constant for a given index.
+ */
+[[nodiscard]] constexpr uint64_t getZobristConstant(int index);
+
+/**
  * \brief Represents the state of the board at a given ply
  */
 struct BoardState {
+    uint64_t zobristHash = 0;
     Move move = 0;
     Piece capturedPiece = EMPTY;
     uint8_t enPassantSquare = 0;
@@ -56,6 +67,7 @@ private:
     std::array<int, PIECES> pieceCounts{};
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;
+    uint64_t zobristHash = 0;
     uint16_t ply = 0;
     uint8_t castlingRights = 0;
     uint8_t enPassantSquare = 0;
@@ -201,6 +213,9 @@ public:
         occupied |= squareBB;
         colorBoards[getPieceColor(piece)] |= squareBB;
         pieceCounts[piece] += 1;
+
+        const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
+        zobristHash ^= getZobristConstant(zobristIndex);
     }
 
     /**
@@ -218,6 +233,9 @@ public:
         occupied |= squareBB;
         colorBoards[getPieceColor(piece)] |= squareBB;
         pieceCounts[piece] += 1;
+
+        const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
+        zobristHash ^= getZobristConstant(zobristIndex);
     }
 
     /**
@@ -234,6 +252,9 @@ public:
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;
         pieceCounts[piece] -= 1;
+
+        const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
+        zobristHash ^= getZobristConstant(zobristIndex);
     }
 
     /**
@@ -252,6 +273,9 @@ public:
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;
         pieceCounts[piece] -= 1;
+
+        const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
+        zobristHash ^= getZobristConstant(zobristIndex);
     }
 
     /**
@@ -269,6 +293,9 @@ public:
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;
         pieceCounts[piece] -= 1;
+
+        const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
+        zobristHash ^= getZobristConstant(zobristIndex);
     }
 
     /**

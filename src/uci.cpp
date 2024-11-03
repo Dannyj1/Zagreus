@@ -29,6 +29,7 @@
 #include "magics.h"
 #include "uci.h"
 
+#include "board.h"
 #include "bitboard.h"
 #include "perft.h"
 
@@ -41,6 +42,7 @@ void Engine::doSetup() {
         return;
     }
 
+    initZobristConstants();
     initializeMagicBitboards();
     initializeAttackLookupTables();
 

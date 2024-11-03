@@ -25,8 +25,31 @@
 #include <string_view>
 
 #include "bitwise.h"
+#include "pcg_random.hpp"
 
 namespace Zagreus {
+static uint64_t zobristConstants[781]{};
+
+/**
+ * \brief Initializes the Zobrist constants.
+ */
+void initZobristConstants() {
+    pcg64_oneseq_once_insecure rng;
+
+    rng.seed(0x661778f67199663dULL);
+
+    for (uint64_t& zobrist : zobristConstants) {
+        zobrist = rng();
+    }
+}
+
+/**
+ * \brief Gets the Zobrist constant for a given index.
+ */
+constexpr uint64_t getZobristConstant(const int index) {
+    return zobristConstants[index];
+}
+
 /**
  * \brief Checks if the current position is legal for the given color.
  * \tparam movedColor The color of the player who just moved.
@@ -150,6 +173,7 @@ void Board::reset() {
     this->history = {};
     this->ply = 0;
     this->castlingRights = 0;
+    this->zobristHash = 0;
 
     std::ranges::fill(board, EMPTY);
     std::ranges::fill(bitboards, 0);
@@ -195,23 +219,37 @@ void Board::makeMove(const Move& move) {
     history[ply].move = move;
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
+    zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
     enPassantSquare = 0;
     history[ply].castlingRights = castlingRights;
+    history[ply].zobristHash = zobristHash;
 
     if (capturedPiece != EMPTY) {
         removePiece(capturedPiece, toSquare);
 
         if (capturedPiece == WHITE_ROOK) {
             if (toSquare == A1) {
-                castlingRights &= ~WHITE_QUEENSIDE;
+                if (castlingRights & WHITE_QUEENSIDE) {
+                    castlingRights &= ~WHITE_QUEENSIDE;
+                    zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX);
+                }
             } else if (toSquare == H1) {
-                castlingRights &= ~WHITE_KINGSIDE;
+                if (castlingRights & WHITE_KINGSIDE) {
+                    castlingRights &= ~WHITE_KINGSIDE;
+                    zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX);
+                }
             }
         } else if (capturedPiece == BLACK_ROOK) {
             if (toSquare == A8) {
-                castlingRights &= ~BLACK_QUEENSIDE;
+                if (castlingRights & BLACK_QUEENSIDE) {
+                    castlingRights &= ~BLACK_QUEENSIDE;
+                    zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX);
+                }
             } else if (toSquare == H8) {
-                castlingRights &= ~BLACK_KINGSIDE;
+                if (castlingRights & BLACK_KINGSIDE) {
+                    castlingRights &= ~BLACK_KINGSIDE;
+                    zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX);
+                }
             }
         }
     }
@@ -250,27 +288,71 @@ void Board::makeMove(const Move& move) {
         }
 
         if (sideToMove == WHITE) {
+            if (castlingRights & WHITE_KINGSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX);
+            }
+
+            if (castlingRights & WHITE_QUEENSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX);
+            }
+
             castlingRights &= ~WHITE_CASTLING;
         } else {
+            if (castlingRights & BLACK_KINGSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX);
+            }
+
+            if (castlingRights & BLACK_QUEENSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX);
+            }
+
             castlingRights &= ~BLACK_CASTLING;
         }
     }
 
     if (movedPiece == WHITE_KING) {
+        if (castlingRights & WHITE_KINGSIDE) {
+            zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX);
+        }
+
+        if (castlingRights & WHITE_QUEENSIDE) {
+            zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX);
+        }
+
         castlingRights &= ~WHITE_CASTLING;
     } else if (movedPiece == BLACK_KING) {
+        if (castlingRights & BLACK_KINGSIDE) {
+            zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX);
+        }
+
+        if (castlingRights & BLACK_QUEENSIDE) {
+            zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX);
+        }
+
         castlingRights &= ~BLACK_CASTLING;
     } else if (movedPiece == WHITE_ROOK) {
         if (fromSquare == A1) {
-            castlingRights &= ~WHITE_QUEENSIDE;
+            if (castlingRights & WHITE_QUEENSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX);
+                castlingRights &= ~WHITE_QUEENSIDE;
+            }
         } else if (fromSquare == H1) {
-            castlingRights &= ~WHITE_KINGSIDE;
+            if (castlingRights & WHITE_KINGSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX);
+                castlingRights &= ~WHITE_KINGSIDE;
+            }
         }
     } else if (movedPiece == BLACK_ROOK) {
         if (fromSquare == A8) {
-            castlingRights &= ~BLACK_QUEENSIDE;
+            if (castlingRights & BLACK_QUEENSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX);
+                castlingRights &= ~BLACK_QUEENSIDE;
+            }
         } else if (fromSquare == H8) {
-            castlingRights &= ~BLACK_KINGSIDE;
+            if (castlingRights & BLACK_KINGSIDE) {
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX);
+                castlingRights &= ~BLACK_KINGSIDE;
+            }
         }
     }
 
@@ -278,13 +360,17 @@ void Board::makeMove(const Move& move) {
         if ((fromSquare ^ toSquare) == 16) {
             if (sideToMove == WHITE) {
                 enPassantSquare = toSquare + SOUTH;
+                zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
             } else {
                 enPassantSquare = toSquare + NORTH;
+                zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
             }
         }
     }
 
     sideToMove = !sideToMove;
+    zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
+
     assert(ply >= 0 && ply < MAX_PLY);
     ply++;
     assert(ply >= 0 && ply < MAX_PLY);
@@ -296,7 +382,7 @@ void Board::makeMove(const Move& move) {
 void Board::unmakeMove() {
     ply--;
     assert(ply >= 0 && ply < MAX_PLY);
-    const auto& [move, capturedPiece, enPassantSquare, castlingRights] = history[ply];
+    const auto& [zobristHash, move, capturedPiece, enPassantSquare, castlingRights] = history[ply];
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
@@ -344,6 +430,7 @@ void Board::unmakeMove() {
     this->sideToMove = !sideToMove;
     this->enPassantSquare = enPassantSquare;
     this->castlingRights = castlingRights;
+    this->zobristHash = zobristHash;
 }
 
 /**
@@ -402,7 +489,6 @@ void Board::setPieceFromFENChar(const char character, const uint8_t square) {
  * \return True if the FEN string was valid, false otherwise.
  */
 bool Board::setFromFEN(const std::string_view fen) {
-    // TODO: Update zobrist hash once that is implemented
     uint8_t index = A8;
     int spaces = 0;
 
@@ -442,32 +528,36 @@ bool Board::setFromFEN(const std::string_view fen) {
                 sideToMove = WHITE;
             } else if (tolower(character) == 'b') {
                 sideToMove = BLACK;
+                zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
             } else {
                 return false;
             }
         }
 
-        // TODO: Add zobrist hashes
         if (spaces == 2) {
             if (character == '-') {
                 continue;
             } else if (character == 'K') {
                 castlingRights |= WHITE_KINGSIDE;
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX);
                 continue;
             }
 
             if (character == 'Q') {
                 castlingRights |= WHITE_QUEENSIDE;
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX);
                 continue;
             }
 
             if (character == 'k') {
                 castlingRights |= BLACK_KINGSIDE;
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX);
                 continue;
             }
 
             if (character == 'q') {
                 castlingRights |= BLACK_QUEENSIDE;
+                zobristHash ^= getZobristConstant(ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX);
                 continue;
             }
 
@@ -490,8 +580,8 @@ bool Board::setFromFEN(const std::string_view fen) {
                 return false;
             }
 
-            // TODO: Add enPassant zobrist
             enPassantSquare = rank * 8 + file;
+            zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
             index += 2;
         }
 
