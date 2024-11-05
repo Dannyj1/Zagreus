@@ -174,6 +174,8 @@ void Board::reset() {
     this->ply = 0;
     this->castlingRights = 0;
     this->zobristHash = 0;
+    this->fullmoveClock = 1;
+    this->halfMoveClock = 0;
 
     std::ranges::fill(board, EMPTY);
     std::ranges::fill(bitboards, 0);
@@ -223,9 +225,13 @@ void Board::makeMove(const Move& move) {
     enPassantSquare = 0;
     history[ply].castlingRights = castlingRights;
     history[ply].zobristHash = zobristHash;
+    history[ply].halfMoveClock = halfMoveClock;
+
+    halfMoveClock += 1;
 
     if (capturedPiece != EMPTY) {
         removePiece(capturedPiece, toSquare);
+        halfMoveClock = 0;
 
         if (capturedPiece == WHITE_ROOK) {
             if (toSquare == A1) {
@@ -357,6 +363,8 @@ void Board::makeMove(const Move& move) {
     }
 
     if (movedPieceType == PAWN) {
+        halfMoveClock = 0;
+
         if ((fromSquare ^ toSquare) == 16) {
             if (sideToMove == WHITE) {
                 enPassantSquare = toSquare + SOUTH;
@@ -366,6 +374,10 @@ void Board::makeMove(const Move& move) {
                 zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
             }
         }
+    }
+
+    if (sideToMove == BLACK) {
+        fullmoveClock += 1;
     }
 
     sideToMove = !sideToMove;
@@ -382,11 +394,12 @@ void Board::makeMove(const Move& move) {
 void Board::unmakeMove() {
     ply--;
     assert(ply >= 0 && ply < MAX_PLY);
-    const auto& [zobristHash, move, capturedPiece, enPassantSquare, castlingRights] = history[ply];
-    const uint8_t fromSquare = getFromSquare(move);
-    const uint8_t toSquare = getToSquare(move);
-    const MoveType moveType = getMoveType(move);
+    const BoardState& state = history[ply];
+    const uint8_t fromSquare = getFromSquare(state.move);
+    const uint8_t toSquare = getToSquare(state.move);
+    const MoveType moveType = getMoveType(state.move);
     Piece movedPiece = getPieceOnSquare(toSquare);
+    PieceColor movedColor = getPieceColor(movedPiece);
 
     removePiece(movedPiece, toSquare);
 
@@ -397,8 +410,8 @@ void Board::unmakeMove() {
 
     setPiece(movedPiece, fromSquare);
 
-    if (capturedPiece != EMPTY) {
-        setPiece(capturedPiece, toSquare);
+    if (state.capturedPiece != EMPTY) {
+        setPiece(state.capturedPiece, toSquare);
     }
 
     if (moveType == EN_PASSANT) {
@@ -427,10 +440,15 @@ void Board::unmakeMove() {
         }
     }
 
+    if (movedColor == BLACK) {
+        fullmoveClock -= 1;
+    }
+
+    this->halfMoveClock = state.halfMoveClock;
     this->sideToMove = !sideToMove;
-    this->enPassantSquare = enPassantSquare;
-    this->castlingRights = castlingRights;
-    this->zobristHash = zobristHash;
+    this->enPassantSquare = state.enPassantSquare;
+    this->castlingRights = state.castlingRights;
+    this->zobristHash = state.zobristHash;
 }
 
 /**
@@ -585,14 +603,13 @@ bool Board::setFromFEN(const std::string_view fen) {
             index += 2;
         }
 
-        // TODO: Implement halfmove and fullmove clock
-        /*if (spaces == 4) {
+        if (spaces == 4) {
             halfMoveClock = character - '0';
         }
 
         if (spaces == 5) {
             fullmoveClock = character - '0';
-        }*/
+        }
     }
 
     return true;

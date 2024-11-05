@@ -53,6 +53,7 @@ struct BoardState {
     Piece capturedPiece = EMPTY;
     uint8_t enPassantSquare = 0;
     uint8_t castlingRights = 0;
+    uint8_t halfMoveClock = 0;
 };
 
 /**
@@ -69,6 +70,8 @@ private:
     uint64_t occupied = 0;
     uint64_t zobristHash = 0;
     uint16_t ply = 0;
+    uint16_t fullmoveClock = 1;
+    uint8_t halfMoveClock = 0;
     uint8_t castlingRights = 0;
     uint8_t enPassantSquare = 0;
 
