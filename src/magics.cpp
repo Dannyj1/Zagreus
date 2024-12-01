@@ -19,10 +19,11 @@
  */
 
 #include "magics.h"
-
-#include <chrono>
+#include <bits/chrono.h>
+#include <stdio.h>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <random>
 
 // Code for magic generation https://www.chessprogramming.org/Looking_for_Magics

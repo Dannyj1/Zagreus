@@ -18,14 +18,16 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <array>
-
 #include "move_gen.h"
+#include <cassert>
+#include <array>
+#include <initializer_list>
+#include "bitboard.h"
 #include "bitwise.h"
 #include "board.h"
-#include "types.h"
-#include "bitboard.h"
+#include "constants.h"
 #include "move.h"
+#include "types.h"
 
 namespace Zagreus {
 

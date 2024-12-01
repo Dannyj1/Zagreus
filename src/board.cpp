@@ -19,11 +19,9 @@
  */
 
 #include "board.h"
-
+#include <ctype.h>
 #include <iostream>
-#include <ostream>
 #include <string_view>
-
 #include "bitwise.h"
 #include "pcg_random.hpp"
 

@@ -18,15 +18,15 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <limits>
-
 #include "search.h"
-
+#include <limits>
 #include "board.h"
+#include "constants.h"
 #include "eval.h"
 #include "move.h"
 #include "move_gen.h"
 #include "move_picker.h"
+#include "types.h"
 
 namespace Zagreus {
 Move search(Board& board) {

@@ -214,7 +214,7 @@ if (ENABLE_IWYU)
 
     if (IWYU_PATH)
         set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_PATH}")
-        set_property(TARGET Zagreus PROPERTY CXX_INCLUDE_WHAT_YOU_USE "${IWYU_PATH}")
+        set_property(TARGET Zagreus PROPERTY CXX_INCLUDE_WHAT_YOU_USE "${IWYU_PATH};-Xiwyu;--error;-Xiwyu;--no_comments;-Xiwyu;--cxx17ns;-Xiwyu;--no_fwd_decls")
         message(STATUS "IWYU found and enabled: ${IWYU_PATH}")
     else ()
         message(WARNING "IWYU requested but not found. Please install IWYU or disable ENABLE_IWYU.")

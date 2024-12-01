@@ -18,19 +18,21 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <chrono>
+#include "uci.h"
+#include <bits/chrono.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
-#include <cctype>
 #include <thread>
-
-#include "magics.h"
-#include "uci.h"
-
-#include "board.h"
 #include "bitboard.h"
+#include "board.h"
+#include "magics.h"
+#include "move.h"
 #include "perft.h"
 
 namespace Zagreus {

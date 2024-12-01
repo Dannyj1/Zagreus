@@ -22,12 +22,9 @@
 #pragma once
 
 #include <cstdint>
-
 #include "board.h"
 #include "move.h"
 #include "types.h"
-
-enum PieceColor : uint8_t;
 
 namespace Zagreus {
 enum GenerationType : uint8_t {

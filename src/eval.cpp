@@ -19,8 +19,9 @@
  */
 
 #include "eval.h"
-
+#include "constants.h"
 #include "eval_features.h"
+#include "types.h"
 
 namespace Zagreus {
 /**

@@ -19,6 +19,7 @@ This file is part of Zagreus.
  */
 
 #include "bitboard.h"
+#include <array>
 #include "magics.h"
 
 namespace Zagreus {

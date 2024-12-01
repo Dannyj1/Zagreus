@@ -21,10 +21,7 @@
 #pragma once
 
 #include <array>
-
-#include "constants.h"
 #include "move.h"
-#include "types.h"
 
 namespace Zagreus {
 // TODO: Implement efficient sorting by score, after implementing score.

@@ -19,11 +19,13 @@
  */
 
 #include "perft.h"
-
+#include <cassert>
+#include <array>
 #include <iostream>
-
+#include <string>
 #include "move.h"
 #include "move_gen.h"
+#include "types.h"
 
 namespace Zagreus {
 /**

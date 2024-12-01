@@ -21,17 +21,16 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string_view>
-
 #include <algorithm>
 #include <array>
 #include <cassert>
-#include <utility>
-
+#include <cstdint>
+#include <string_view>
 #include "bitboard.h"
-#include "move.h"
+#include "bitwise.h"
 #include "constants.h"
+#include "move.h"
+#include "types.h"
 
 namespace Zagreus {
 /**
