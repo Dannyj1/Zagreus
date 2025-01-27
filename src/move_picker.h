@@ -38,22 +38,17 @@ public:
      * \param[out] move The next move if available.
      * \return True if there is a next move, false otherwise.
      */
-    [[nodiscard]] bool next(Move& move) {
-        if (currentIndex >= moveList.size) {
-            return false;
-        }
-
-        move = moveList.moves[currentIndex];
-        currentIndex += 1;
-        return true;
-    }
+    [[nodiscard]] bool next(Move& move);
 
     /**
      * \brief Gets the current move.
      * \return The current move.
      */
-    [[nodiscard]] Move getCurrentMove() const {
-        return moveList.moves[currentIndex - 1];
-    }
+    [[nodiscard]] Move getCurrentMove() const;
+
+    /**
+     *\brief Resets the move picker to the beginning of the move list.
+     */
+    void reset();
 };
 } // namespace Zagreus

@@ -56,7 +56,9 @@ static constexpr uint8_t COLORS = 2;
 static constexpr uint8_t MAX_MOVES = 255;
 
 static constexpr int DRAW_SCORE = 0;
-static constexpr int MATE_SCORE = 100000;
+static constexpr int MATE_SCORE = 25000;
+static constexpr int INITIAL_ALPHA = -32767;
+static constexpr int INITIAL_BETA = 32767;
 
 static constexpr int ZOBRIST_PIECE_START_INDEX = 0;
 static constexpr int ZOBRIST_SIDE_TO_MOVE_INDEX = PIECES * SQUARES;
@@ -65,4 +67,3 @@ static constexpr int ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX = ZOBRIST_CASTLING_W
 static constexpr int ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX = ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX + 1;
 static constexpr int ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX = ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX + 1;
 static constexpr int ZOBRIST_EN_PASSANT_START_INDEX = ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX + 1;
-

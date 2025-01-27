@@ -19,19 +19,88 @@
  */
 
 #include "search.h"
+
+#include <__format/format_functions.h>
+
 #include <limits>
+
+#include "uci.h"
 #include "board.h"
 #include "constants.h"
 #include "eval.h"
 #include "move.h"
 #include "move_gen.h"
 #include "move_picker.h"
+#include "timeman.h"
 #include "types.h"
 
 namespace Zagreus {
-Move search(Board& board) {
-    return Move();
+// TODO: Support more search variables (max nodes, etc.)
+template <PieceColor color>
+Move search(Engine& engine, Board& board, int whiteTime, int blackTime) {
+    constexpr PieceColor opponentColor = !color;
+    int searchTime;
+
+    if (color == WHITE) {
+        searchTime = calculateSearchTime(whiteTime, board.getPly());
+    } else {
+        searchTime = calculateSearchTime(blackTime, board.getPly());
+    }
+
+    const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
+    // Print how long searching for a move will take
+    engine.sendInfoMessage(std::format("time {}", searchTime, board.getPly()));
+
+    int depth = 1;
+    int currentPly = board.getPly();
+    MoveList moves = MoveList{};
+    generateMoves<color, ALL>(board, moves);
+    MovePicker movePicker{moves};
+    Move bestMove = NO_MOVE;
+
+    while (std::chrono::steady_clock::now() < endTime && (currentPly + depth) < MAX_PLY) {
+        if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
+            break;
+        }
+
+        movePicker.reset();
+        Move move;
+        int bestScore = std::numeric_limits<int>::min();
+        Move bestIterationMove{};
+
+        while (movePicker.next(move)) {
+            board.makeMove(movePicker.getCurrentMove());
+
+            if (!board.isPositionLegal<color>()) {
+                board.unmakeMove();
+                continue;
+            }
+
+            const int score = -pvSearch<opponentColor, ROOT>(board, INITIAL_ALPHA, INITIAL_BETA, depth);
+
+            board.unmakeMove();
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestIterationMove = move;
+            }
+        }
+
+        bestMove = bestIterationMove;
+        // TODO: Implement PV and nodes per second
+        engine.sendInfoMessage(std::format("depth {} score cp {}", depth, bestScore));
+        depth += 1;
+    }
+
+    if (bestMove == NO_MOVE) {
+        bestMove = moves.moves[0];
+    }
+
+    return bestMove;
 }
+
+template Move search<WHITE>(Engine& engine, Board& board, int whiteTime, int blackTime);
+template Move search<BLACK>(Engine& engine, Board& board, int whiteTime, int blackTime);
 
 template <PieceColor color, NodeType nodeType>
 int pvSearch(Board& board, int alpha, int beta, int depth) {

@@ -18,10 +18,9 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "uci.h"
-#include <bits/chrono.h>
-#include <stddef.h>
-#include <stdint.h>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -29,11 +28,14 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+
+#include "uci.h"
 #include "bitboard.h"
 #include "board.h"
 #include "magics.h"
 #include "move.h"
 #include "perft.h"
+#include "search.h"
 
 namespace Zagreus {
 constexpr std::string_view startPosFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -243,6 +245,41 @@ void Engine::handlePositionCommand(const std::string_view args) {
 }
 
 void Engine::handleGoCommand(std::string_view args) {
+    if (!didSetup) {
+        doSetup();
+    }
+
+    // If the board is empty, set it to the starting position
+    if (board.getOccupiedBitboard() == 0ULL) {
+        if (!board.setFromFEN(startPosFEN)) {
+            sendMessage("ERROR: Could not initialize default position.");
+            return;
+        }
+    }
+
+    std::istringstream iss(args.data());
+    std::string arg;
+
+    // Parse arguments. Currently, only wtime and btime or supported, just ignore the others.
+    int whiteTime = 0;
+    int blackTime = 0;
+
+    while (iss >> arg) {
+        if (arg == "wtime") {
+            iss >> whiteTime;
+        } else if (arg == "btime") {
+            iss >> blackTime;
+        }
+    }
+
+    if (whiteTime == 0 && blackTime == 0) {
+        // TODO: implement support for other args
+        sendMessage("ERROR: No time control provided.");
+        return;
+    }
+
+    Move bestMove = search<WHITE>(*this, board, whiteTime, blackTime);
+    sendMessage("bestmove " + getMoveNotation(bestMove));
 }
 
 void Engine::handleStopCommand(std::string_view args) {

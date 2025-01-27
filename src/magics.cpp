@@ -19,8 +19,8 @@
  */
 
 #include "magics.h"
-#include <bits/chrono.h>
-#include <stdio.h>
+#include <chrono>
+#include <cstdio>
 #include <cstdint>
 #include <iostream>
 #include <limits>

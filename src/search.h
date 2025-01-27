@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "uci.h"
 #include "move.h"
 #include "board.h"
 
@@ -31,5 +32,9 @@ enum NodeType {
     REGULAR,
 };
 
-Move search(Board& board);
+template <PieceColor color>
+Move search(Engine& engine, Board& board, int whiteTime, int blackTime);
+
+template <PieceColor color, NodeType nodeType>
+int pvSearch(Board& board, int alpha, int beta, int depth);
 } // namespace Zagreus

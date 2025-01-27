@@ -23,7 +23,19 @@
 
 #include "board.h"
 
+#ifdef ZAGREUS_TUNER
+    #include <vector>
+#endif
+
 namespace Zagreus {
+
+#ifdef ZAGREUS_TUNER
+struct FeatureValue {
+    int featureIndex;
+    int value;
+};
+#endif
+
 class Evaluation {
 private:
     Board board;
@@ -31,6 +43,10 @@ private:
     int whiteEndgameScore{};
     int blackMidgameScore{};
     int blackEndgameScore{};
+
+#ifdef ZAGREUS_TUNER
+    std::vector<FeatureValue> featureValues{};
+#endif
 
     /**
      * \brief Evaluates the material on the board.

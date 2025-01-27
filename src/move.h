@@ -33,6 +33,8 @@
 namespace Zagreus {
 using Move = uint16_t;
 
+static constexpr Move NO_MOVE = 0xFFFF;
+
 struct MoveList {
     std::array<Move, MAX_MOVES> moves{};
     uint8_t size = 0;

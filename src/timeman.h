@@ -18,36 +18,10 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "move_picker.h"
+#pragma once
 
 namespace Zagreus {
-/**
- * \brief Checks if there is a next move and retrieves it.
- * \param[out] move The next move if available.
- * \return True if there is a next move, false otherwise.
- */
-bool MovePicker::next(Move& move) {
-    if (currentIndex >= moveList.size) {
-        return false;
-    }
 
-    move = moveList.moves[currentIndex];
-    currentIndex += 1;
-    return true;
-}
+int calculateSearchTime(int msLeft, int movesPlayed);
 
-/**
- * \brief Gets the current move.
- * \return The current move.
- */
-Move MovePicker::getCurrentMove() const {
-    return moveList.moves[currentIndex - 1];
-}
-
-/**
- *\brief Resets the move picker to the beginning of the move list.
- */
-void MovePicker::reset() {
-    currentIndex = 0;
-}
 } // namespace Zagreus
