@@ -36,9 +36,16 @@ struct FeatureValue {
 };
 #endif
 
+struct EvalData {
+    uint64_t attacksFrom[SQUARES];
+    uint64_t attacksByColor[COLORS];
+    uint64_t attacksByPiece[PIECES];
+};
+
 class Evaluation {
 private:
     Board board;
+    EvalData evalData{};
     int whiteMidgameScore{};
     int whiteEndgameScore{};
     int blackMidgameScore{};
@@ -61,6 +68,11 @@ private:
      */
     void evaluateMaterial();
 
+    /**
+     * \brief Evaluates several features related to the pieces on the board.
+     */
+    void evaluatePieces();
+
 public:
     /**
      * \brief Constructs an Evaluation object with the given board.
@@ -69,6 +81,11 @@ public:
     explicit Evaluation(const Board& board) {
         this->board = board;
     }
+
+    /**
+     * \brief Initializes the evaluation data needed to evaluate the board position.
+     */
+    void initializeEvalData();
 
     /**
      * \brief Evaluates the current board position.

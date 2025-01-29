@@ -239,7 +239,29 @@ void Engine::handlePositionCommand(const std::string_view args) {
             return;
         }
 
-        const Move move = getMoveFromMoveNotation(arg);
+        Move move = getMoveFromMoveNotation(arg);
+
+        // TODO: Move this to the getMoveFromMoveNotation function, need to work around circular dependency first
+        Piece movedPiece = board.getPieceOnSquare(getFromSquare(move));
+
+        if (movedPiece == WHITE_KING) {
+            if (getFromSquare(move) == E1 && getToSquare(move) == G1 && board.canCastle<WHITE_KINGSIDE>()) {
+                move = encodeMove(E1, G1, CASTLING);
+            } else if (getFromSquare(move) == E1 && getToSquare(move) == C1 && board.canCastle<WHITE_QUEENSIDE>()) {
+                move = encodeMove(E1, C1, CASTLING);
+            }
+        } else if (movedPiece == BLACK_KING) {
+            if (getFromSquare(move) == E8 && getToSquare(move) == G8 && board.canCastle<BLACK_KINGSIDE>()) {
+                move = encodeMove(E8, G8, CASTLING);
+            } else if (getFromSquare(move) == E8 && getToSquare(move) == C8 && board.canCastle<BLACK_QUEENSIDE>()) {
+                move = encodeMove(E8, C8, CASTLING);
+            }
+        } else if (movedPiece == WHITE_PAWN || movedPiece == BLACK_PAWN) {
+            if (getToSquare(move) == board.getEnPassantSquare()) {
+                    move = encodeMove(getFromSquare(move), getToSquare(move), EN_PASSANT);
+            }
+        }
+
         board.makeMove(move);
     }
 }

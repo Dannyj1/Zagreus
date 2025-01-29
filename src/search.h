@@ -36,5 +36,8 @@ template <PieceColor color>
 Move search(Engine& engine, Board& board, int whiteTime, int blackTime);
 
 template <PieceColor color, NodeType nodeType>
-int pvSearch(Board& board, int alpha, int beta, int depth);
+int pvSearch(Board& board, int alpha, int beta, int depth, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+
+template <PieceColor color>
+int qSearch(Board& board, int alpha, int beta, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
 } // namespace Zagreus

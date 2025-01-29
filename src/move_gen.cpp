@@ -42,11 +42,17 @@ template <PieceColor color, GenerationType type>
 void generateMoves(const Board& board, MoveList& moves) {
     assert(moves.size == 0);
 
-    // TODO: Implement GenerationType logic using a mask that is computed based on type
     constexpr Piece opponentKing = color == WHITE ? BLACK_KING : WHITE_KING;
+    constexpr PieceColor opponentColor = !color;
     const uint64_t ownPieces = board.getColorBitboard<color>();
     const uint64_t opponentKingBB = board.getBitboard<opponentKing>();
-    const uint64_t genMask = ~(ownPieces | opponentKingBB);
+    uint64_t genMask = ~(ownPieces | opponentKingBB);
+
+    if (type == QSEARCH) {
+        const uint64_t opponentPieces = board.getColorBitboard<opponentColor>();
+
+        genMask = opponentPieces;
+    }
 
     generatePawnMoves<color, type>(board, moves, genMask);
     generateKnightMoves<color, type>(board, moves, genMask);
@@ -357,11 +363,10 @@ void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMa
 
 // explicit instantiation of generateMoves
 template void generateMoves<WHITE, ALL>(const Board& board, MoveList& moves);
-template void generateMoves<WHITE, QUIET>(const Board& board, MoveList& moves);
-template void generateMoves<WHITE, CAPTURES>(const Board& board, MoveList& moves);
+template void generateMoves<WHITE, QSEARCH>(const Board& board, MoveList& moves);
 template void generateMoves<WHITE, EVASIONS>(const Board& board, MoveList& moves);
 template void generateMoves<BLACK, ALL>(const Board& board, MoveList& moves);
-template void generateMoves<BLACK, QUIET>(const Board& board, MoveList& moves);
-template void generateMoves<BLACK, CAPTURES>(const Board& board, MoveList& moves);
+template void generateMoves<BLACK, QSEARCH>(const Board& board, MoveList& moves);
 template void generateMoves<BLACK, EVASIONS>(const Board& board, MoveList& moves);
+
 } // namespace Zagreus

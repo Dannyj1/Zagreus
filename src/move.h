@@ -80,7 +80,7 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const M
 }
 
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const PromotionPiece promotionPiece) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (0b01 << 12) | (promotionPiece << 14));
+    return static_cast<Move>(fromSquare | (toSquare << 6) | (PROMOTION << 12) | (promotionPiece << 14));
 }
 
 inline uint8_t getFromSquare(const Move move) {

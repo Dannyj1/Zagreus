@@ -48,8 +48,6 @@ Move search(Engine& engine, Board& board, int whiteTime, int blackTime) {
     }
 
     const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
-    // Print how long searching for a move will take
-    engine.sendInfoMessage(std::format("time {}", searchTime, board.getPly()));
 
     int depth = 1;
     int currentPly = board.getPly();
@@ -76,14 +74,22 @@ Move search(Engine& engine, Board& board, int whiteTime, int blackTime) {
                 continue;
             }
 
-            const int score = -pvSearch<opponentColor, ROOT>(board, INITIAL_ALPHA, INITIAL_BETA, depth);
+            const int score = -pvSearch<opponentColor, ROOT>(board, INITIAL_ALPHA, INITIAL_BETA, depth, endTime);
 
             board.unmakeMove();
+
+            if (std::chrono::steady_clock::now() > endTime) {
+                break;
+            }
 
             if (score > bestScore) {
                 bestScore = score;
                 bestIterationMove = move;
             }
+        }
+
+        if (std::chrono::steady_clock::now() > endTime) {
+            break;
         }
 
         bestMove = bestIterationMove;
@@ -103,13 +109,18 @@ template Move search<WHITE>(Engine& engine, Board& board, int whiteTime, int bla
 template Move search<BLACK>(Engine& engine, Board& board, int whiteTime, int blackTime);
 
 template <PieceColor color, NodeType nodeType>
-int pvSearch(Board& board, int alpha, int beta, int depth) {
+int pvSearch(Board& board, int alpha, int beta, int depth,
+             const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
     if (board.isDraw()) {
         return DRAW_SCORE;
     }
 
+    if (std::chrono::steady_clock::now() > endTime) {
+        return beta;
+    }
+
     if (depth == 0) {
-        return Evaluation(board).evaluate();
+        return qSearch<color>(board, alpha, beta, endTime);
     }
 
     constexpr bool isPV = nodeType == PV || nodeType == ROOT;
@@ -135,13 +146,13 @@ int pvSearch(Board& board, int alpha, int beta, int depth) {
         legalMoves += 1;
 
         if (firstMove) {
-            score = -pvSearch<opponentColor, nodeType>(board, -beta, -alpha, depth - 1);
+            score = -pvSearch<opponentColor, nodeType>(board, -beta, -alpha, depth - 1, endTime);
             firstMove = false;
         } else {
-            score = -pvSearch<opponentColor, REGULAR>(board, -alpha - 1, -alpha, depth - 1);
+            score = -pvSearch<opponentColor, REGULAR>(board, -alpha - 1, -alpha, depth - 1, endTime);
 
             if (score > alpha && isPV) {
-                score = -pvSearch<opponentColor, PV>(board, -beta, -alpha, depth - 1);
+                score = -pvSearch<opponentColor, PV>(board, -beta, -alpha, depth - 1, endTime);
             }
         }
 
@@ -171,5 +182,58 @@ int pvSearch(Board& board, int alpha, int beta, int depth) {
     }
 
     return alpha;
+}
+
+template <PieceColor color>
+int qSearch(Board& board, int alpha, int beta, const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
+    if (board.isDraw()) {
+        return DRAW_SCORE;
+    }
+
+    if (std::chrono::steady_clock::now() > endTime) {
+        return beta;
+    }
+
+    int bestScore = Evaluation(board).evaluate();
+
+    if (bestScore >= beta) {
+        return bestScore;
+    }
+
+    if (bestScore > alpha) {
+        alpha = bestScore;
+    }
+
+    Move move;
+    MoveList moves = MoveList{};
+    generateMoves<color, QSEARCH>(board, moves);
+    MovePicker movePicker{moves};
+
+    while (movePicker.next(move)) {
+        board.makeMove(move);
+
+        if (!board.isPositionLegal<color>()) {
+            board.unmakeMove();
+            continue;
+        }
+
+        const int score = -qSearch<!color>(board, -beta, -alpha, endTime);
+
+        board.unmakeMove();
+
+        if (score >= beta) {
+            return score;
+        }
+
+        if (score > bestScore) {
+            bestScore = score;
+        }
+
+        if (score > alpha) {
+            alpha = score;
+        }
+    }
+
+    return bestScore;
 }
 } // namespace Zagreus
