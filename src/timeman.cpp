@@ -22,22 +22,22 @@
 
 namespace Zagreus {
 template <PieceColor color>
-int calculateSearchTime(SearchParams& params, int movesPlayed) {
-    int msLeft = color == WHITE ? params.whiteTime : params.blackTime;
+int calculateSearchTime(SearchParams& params) {
+    int timeLeft = color == WHITE ? params.whiteTime : params.blackTime;
+    int timeInc = color == WHITE ? params.whiteInc : params.blackInc;
 
-    if (msLeft > 0) {
-        // wtime or btime was set, so we use that
-        if (movesPlayed < 40) {
-            return msLeft / (50 - movesPlayed);
-        } else {
-            return msLeft / 10;
-        }
+    if (timeLeft > 0) {
+        int movesToGo = 50;
+        int searchTime = timeLeft + (timeInc * movesToGo);
+
+        searchTime /= movesToGo;
+        return std::max<int>(searchTime, 1);
     } else {
         return std::numeric_limits<int>::max();
     }
 }
 
-template int calculateSearchTime<WHITE>(SearchParams& params, int movesPlayed);
-template int calculateSearchTime<BLACK>(SearchParams& params, int movesPlayed);
+template int calculateSearchTime<WHITE>(SearchParams& params);
+template int calculateSearchTime<BLACK>(SearchParams& params);
 
 } // namespace Zagreus

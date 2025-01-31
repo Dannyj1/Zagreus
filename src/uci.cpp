@@ -285,6 +285,8 @@ void Engine::handleGoCommand(std::string_view args) {
     // Parse arguments. Currently, only wtime and btime or supported, just ignore the others.
     uint32_t whiteTime = 0;
     uint32_t blackTime = 0;
+    uint32_t whiteInc = 0;
+    uint32_t blackInc = 0;
     uint16_t depth = 0;
 
     while (iss >> arg) {
@@ -294,6 +296,10 @@ void Engine::handleGoCommand(std::string_view args) {
             iss >> blackTime;
         } else if (arg == "depth") {
             iss >> depth;
+        } else if (arg == "winc") {
+            iss >> whiteInc;
+        } else if (arg == "binc") {
+            iss >> blackInc;
         }
     }
 
@@ -309,6 +315,8 @@ void Engine::handleGoCommand(std::string_view args) {
 
     params.whiteTime = whiteTime;
     params.blackTime = blackTime;
+    params.whiteInc = whiteInc;
+    params.blackInc = blackInc;
     params.depth = depth;
 
     Move bestMove = search<WHITE>(*this, board, params, stats);

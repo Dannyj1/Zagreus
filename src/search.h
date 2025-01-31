@@ -35,6 +35,8 @@ enum NodeType {
 struct SearchParams {
     uint32_t whiteTime = 0;
     uint32_t blackTime = 0;
+    uint32_t whiteInc = 0;
+    uint32_t blackInc = 0;
     uint16_t depth = 0;
 };
 

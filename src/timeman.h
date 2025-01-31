@@ -24,5 +24,5 @@
 
 namespace Zagreus {
 template <PieceColor color>
-int calculateSearchTime(SearchParams& params, int movesPlayed);
+int calculateSearchTime(SearchParams& params);
 } // namespace Zagreus

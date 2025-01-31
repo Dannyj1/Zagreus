@@ -47,7 +47,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     MovePicker movePicker{moves};
     Move bestMove = NO_MOVE;
 
-    int searchTime = calculateSearchTime<color>(params, board.getPly());
+    int searchTime = calculateSearchTime<color>(params);
     const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
     const auto startTime = std::chrono::steady_clock::now();
 
