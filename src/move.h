@@ -33,8 +33,6 @@
 namespace Zagreus {
 using Move = uint16_t;
 
-static constexpr Move NO_MOVE = 0xFFFF;
-
 struct MoveList {
     std::array<Move, MAX_MOVES> moves{};
     uint8_t size = 0;
@@ -72,15 +70,15 @@ Square getSquareFromNotation(std::string_view notation);
 // bits 14-15: promotion piece (00 = queen, 01 = rook, 10 = bishop, 11 = knight)
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare) {
     // Assume normal move, so bits 12-13 are 00 and bits 14-15 are 00
-    return static_cast<Move>(fromSquare | (toSquare << 6));
+    return fromSquare | (toSquare << 6);
 }
 
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const MoveType moveType) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (moveType << 12));
+    return fromSquare | (toSquare << 6) | (moveType << 12);
 }
 
 inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const PromotionPiece promotionPiece) {
-    return static_cast<Move>(fromSquare | (toSquare << 6) | (PROMOTION << 12) | (promotionPiece << 14));
+    return fromSquare | (toSquare << 6) | (PROMOTION << 12) | (promotionPiece << 14);
 }
 
 inline uint8_t getFromSquare(const Move move) {
@@ -88,7 +86,7 @@ inline uint8_t getFromSquare(const Move move) {
 }
 
 inline uint8_t getToSquare(const Move move) {
-    return static_cast<uint8_t>((move >> 6) & 0x3F);
+    return (move >> 6) & 0x3F;
 }
 
 inline MoveType getMoveType(const Move move) {

@@ -107,10 +107,11 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
             stats.timeSpentMs = 1;
         }
 
-        uint64_t nps = static_cast<double>(stats.nodesSearched + stats.qNodesSearched) / (
+        uint64_t totalNodesSearch = stats.nodesSearched + stats.qNodesSearched;
+        uint64_t nps = static_cast<double>(totalNodesSearch) / (
                            static_cast<double>(stats.timeSpentMs) / 1000.0);
         engine.sendInfoMessage(std::format("depth {} score cp {} nodes {} time {} nps {}", stats.depth,
-                                           stats.score, stats.nodesSearched, stats.timeSpentMs, nps));
+                                           stats.score, totalNodesSearch, stats.timeSpentMs, nps));
         depth += 1;
     }
 
