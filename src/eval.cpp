@@ -37,10 +37,10 @@ int Evaluation::evaluate() {
     const int phase = calculatePhase();
     const int modifier = board.getSideToMove() == WHITE ? 1 : -1;
 
-    initializeEvalData();
+    // initializeEvalData();
 
     evaluateMaterial();
-    evaluatePieces();
+    // evaluatePieces();
 
     const int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
     const int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;

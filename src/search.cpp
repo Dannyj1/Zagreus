@@ -54,7 +54,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLY) {
         if (params.blackTime > 0 || params.whiteTime > 0) {
             // Don't start the next iteration if we are 10% away from the end time
-            if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
+            if (depth > 1 && std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
                 break;
             }
         }
@@ -90,7 +90,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
             }
         }
 
-        if (std::chrono::steady_clock::now() > endTime) {
+        if (depth > 1 && std::chrono::steady_clock::now() > endTime) {
             break;
         }
 
@@ -116,7 +116,22 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     }
 
     if (bestMove == NO_MOVE) {
-        bestMove = moves.moves[0];
+        // Find the first legal move and play that
+        movePicker.reset();
+        Move move;
+
+        while (movePicker.next(move)) {
+            board.makeMove(movePicker.getCurrentMove());
+
+            if (!board.isPositionLegal<color>()) {
+                board.unmakeMove();
+                continue;
+            }
+
+            bestMove = move;
+            board.unmakeMove();
+            break;
+        }
     }
 
     return bestMove;
