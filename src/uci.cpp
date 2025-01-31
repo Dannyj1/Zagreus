@@ -319,7 +319,14 @@ void Engine::handleGoCommand(std::string_view args) {
     params.blackInc = blackInc;
     params.depth = depth;
 
-    Move bestMove = search<WHITE>(*this, board, params, stats);
+    Move bestMove;
+
+    if (board.getSideToMove() == WHITE) {
+        bestMove = search<WHITE>(*this, board, params, stats);
+    } else {
+        bestMove = search<BLACK>(*this, board, params, stats);
+    }
+
     sendMessage("bestmove " + getMoveNotation(bestMove));
 }
 
