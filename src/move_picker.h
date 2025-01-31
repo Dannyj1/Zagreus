@@ -27,7 +27,7 @@ namespace Zagreus {
 // TODO: Implement efficient sorting by score, after implementing score.
 class MovePicker {
 private:
-    MoveList moveList{};
+    const MoveList& moveList;
     int currentIndex = 0;
 
 public:

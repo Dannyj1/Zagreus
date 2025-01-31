@@ -175,7 +175,8 @@ void Evaluation::evaluatePieces() {
  * \brief Initializes the evaluation data needed to evaluate the board position.
  */
 void Evaluation::initializeEvalData() {
-    uint64_t pieces = board.getOccupiedBitboard();
+    uint64_t occupiedBB = board.getOccupiedBitboard();
+    uint64_t pieces = occupiedBB;
     uint64_t whitePieces = board.getColorBitboard<WHITE>();
     uint64_t blackPieces = board.getColorBitboard<BLACK>();
 
@@ -206,32 +207,32 @@ void Evaluation::initializeEvalData() {
                 evalData.attacksByPiece[BLACK_KNIGHT] |= evalData.attacksFrom[square];
                 break;
             case WHITE_BISHOP:
-                evalData.attacksFrom[square] = getBishopAttacks(square, board.getOccupiedBitboard()) & ~whitePieces;
+                evalData.attacksFrom[square] = getBishopAttacks(square, occupiedBB) & ~whitePieces;
                 evalData.attacksByColor[WHITE] |= evalData.attacksFrom[square];
                 evalData.attacksByPiece[WHITE_BISHOP] |= evalData.attacksFrom[square];
                 break;
             case BLACK_BISHOP:
-                evalData.attacksFrom[square] = getBishopAttacks(square, board.getOccupiedBitboard()) & ~blackPieces;
+                evalData.attacksFrom[square] = getBishopAttacks(square, occupiedBB) & ~blackPieces;
                 evalData.attacksByColor[BLACK] |= evalData.attacksFrom[square];
                 evalData.attacksByPiece[BLACK_BISHOP] |= evalData.attacksFrom[square];
                 break;
             case WHITE_ROOK:
-                evalData.attacksFrom[square] = getRookAttacks(square, board.getOccupiedBitboard()) & ~whitePieces;
+                evalData.attacksFrom[square] = getRookAttacks(square, occupiedBB) & ~whitePieces;
                 evalData.attacksByColor[WHITE] |= evalData.attacksFrom[square];
                 evalData.attacksByPiece[WHITE_ROOK] |= evalData.attacksFrom[square];
                 break;
             case BLACK_ROOK:
-                evalData.attacksFrom[square] = getRookAttacks(square, board.getOccupiedBitboard()) & ~blackPieces;
+                evalData.attacksFrom[square] = getRookAttacks(square, occupiedBB) & ~blackPieces;
                 evalData.attacksByColor[BLACK] |= evalData.attacksFrom[square];
                 evalData.attacksByPiece[BLACK_ROOK] |= evalData.attacksFrom[square];
                 break;
             case WHITE_QUEEN:
-                evalData.attacksFrom[square] = queenAttacks(square, board.getOccupiedBitboard()) & ~whitePieces;
+                evalData.attacksFrom[square] = queenAttacks(square, occupiedBB) & ~whitePieces;
                 evalData.attacksByColor[WHITE] |= evalData.attacksFrom[square];
                 evalData.attacksByPiece[WHITE_QUEEN] |= evalData.attacksFrom[square];
                 break;
             case BLACK_QUEEN:
-                evalData.attacksFrom[square] = queenAttacks(square, board.getOccupiedBitboard()) & ~blackPieces;
+                evalData.attacksFrom[square] = queenAttacks(square, occupiedBB) & ~blackPieces;
                 evalData.attacksByColor[BLACK] |= evalData.attacksFrom[square];
                 evalData.attacksByPiece[BLACK_QUEEN] |= evalData.attacksFrom[square];
                 break;
@@ -250,5 +251,4 @@ void Evaluation::initializeEvalData() {
         }
     }
 }
-
 } // namespace Zagreus
