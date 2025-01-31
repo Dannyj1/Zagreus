@@ -55,10 +55,10 @@ static constexpr uint8_t COLORS = 2;
 
 static constexpr uint8_t MAX_MOVES = 255;
 
-static constexpr int DRAW_SCORE = 0;
-static constexpr int MATE_SCORE = 25000;
-static constexpr int INITIAL_ALPHA = -32767;
-static constexpr int INITIAL_BETA = 32767;
+static constexpr int16_t DRAW_SCORE = 0;
+static constexpr int16_t MATE_SCORE = 25000;
+static constexpr int16_t INITIAL_ALPHA = -32000;
+static constexpr int16_t INITIAL_BETA = 32000;
 
 static constexpr int ZOBRIST_PIECE_START_INDEX = 0;
 static constexpr int ZOBRIST_SIDE_TO_MOVE_INDEX = PIECES * SQUARES;

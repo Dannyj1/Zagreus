@@ -35,29 +35,31 @@
 #include "types.h"
 
 namespace Zagreus {
-// TODO: Support more search variables (max nodes, etc.)
+// TODO: Support more search variables (infinite, max nodes, etc.)
 template <PieceColor color>
-Move search(Engine& engine, Board& board, int whiteTime, int blackTime) {
+Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats) {
     constexpr PieceColor opponentColor = !color;
-    int searchTime;
-
-    if (color == WHITE) {
-        searchTime = calculateSearchTime(whiteTime, board.getPly());
-    } else {
-        searchTime = calculateSearchTime(blackTime, board.getPly());
-    }
-
-    const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
 
     int depth = 1;
-    int currentPly = board.getPly();
+    const int currentPly = board.getPly();
     MoveList moves = MoveList{};
     generateMoves<color, ALL>(board, moves);
     MovePicker movePicker{moves};
     Move bestMove = NO_MOVE;
 
-    while (std::chrono::steady_clock::now() < endTime && (currentPly + depth) < MAX_PLY) {
-        if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
+    int searchTime = calculateSearchTime<color>(params, board.getPly());
+    const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
+    const auto startTime = std::chrono::steady_clock::now();
+
+    while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLY) {
+        if (params.blackTime > 0 || params.whiteTime > 0) {
+            // Don't start the next iteration if we are 10% away from the end time
+            if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
+                break;
+            }
+        }
+
+        if (params.depth > 0 && depth > params.depth) {
             break;
         }
 
@@ -74,7 +76,7 @@ Move search(Engine& engine, Board& board, int whiteTime, int blackTime) {
                 continue;
             }
 
-            const int score = -pvSearch<opponentColor, ROOT>(board, INITIAL_ALPHA, INITIAL_BETA, depth, endTime);
+            const int score = -pvSearch<opponentColor, ROOT>(board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime);
 
             board.unmakeMove();
 
@@ -93,8 +95,22 @@ Move search(Engine& engine, Board& board, int whiteTime, int blackTime) {
         }
 
         bestMove = bestIterationMove;
-        // TODO: Implement PV and nodes per second
-        engine.sendInfoMessage(std::format("depth {} score cp {}", depth, bestScore));
+
+        // TODO: Implement PV
+        stats.timeSpentMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - startTime).count();
+        stats.depth = depth;
+        stats.score = bestScore;
+
+        // Make sure we don't divide by zero
+        if (stats.timeSpentMs == 0) {
+            stats.timeSpentMs = 1;
+        }
+
+        uint64_t nps = static_cast<double>(stats.nodesSearched + stats.qNodesSearched) / (
+                           static_cast<double>(stats.timeSpentMs) / 1000.0);
+        engine.sendInfoMessage(std::format("depth {} score cp {} nodes {} time {} nps {}", stats.depth,
+                                           stats.score, stats.nodesSearched, stats.timeSpentMs, nps));
         depth += 1;
     }
 
@@ -105,23 +121,25 @@ Move search(Engine& engine, Board& board, int whiteTime, int blackTime) {
     return bestMove;
 }
 
-template Move search<WHITE>(Engine& engine, Board& board, int whiteTime, int blackTime);
-template Move search<BLACK>(Engine& engine, Board& board, int whiteTime, int blackTime);
+template Move search<WHITE>(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
+template Move search<BLACK>(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
 
 template <PieceColor color, NodeType nodeType>
-int pvSearch(Board& board, int alpha, int beta, int depth,
+int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
              const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
     if (board.isDraw()) {
         return DRAW_SCORE;
     }
 
-    if (std::chrono::steady_clock::now() > endTime) {
+    if ((stats.nodesSearched + stats.qNodesSearched) % 1024 == 0 && std::chrono::steady_clock::now() > endTime) {
         return beta;
     }
 
     if (depth == 0) {
-        return qSearch<color>(board, alpha, beta, endTime);
+        return qSearch<color>(board, alpha, beta, stats, endTime);
     }
+
+    stats.nodesSearched += 1;
 
     constexpr bool isPV = nodeType == PV || nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
@@ -146,13 +164,13 @@ int pvSearch(Board& board, int alpha, int beta, int depth,
         legalMoves += 1;
 
         if (firstMove) {
-            score = -pvSearch<opponentColor, nodeType>(board, -beta, -alpha, depth - 1, endTime);
+            score = -pvSearch<opponentColor, nodeType>(board, -beta, -alpha, depth - 1, stats, endTime);
             firstMove = false;
         } else {
-            score = -pvSearch<opponentColor, REGULAR>(board, -alpha - 1, -alpha, depth - 1, endTime);
+            score = -pvSearch<opponentColor, REGULAR>(board, -alpha - 1, -alpha, depth - 1, stats, endTime);
 
             if (score > alpha && isPV) {
-                score = -pvSearch<opponentColor, PV>(board, -beta, -alpha, depth - 1, endTime);
+                score = -pvSearch<opponentColor, PV>(board, -beta, -alpha, depth - 1, stats, endTime);
             }
         }
 
@@ -185,14 +203,18 @@ int pvSearch(Board& board, int alpha, int beta, int depth,
 }
 
 template <PieceColor color>
-int qSearch(Board& board, int alpha, int beta, const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
+int qSearch(Board& board, int alpha, int beta, SearchStats& stats,
+            const std::chrono::time_point<std::chrono::steady_clock>
+            & endTime) {
     if (board.isDraw()) {
         return DRAW_SCORE;
     }
 
-    if (std::chrono::steady_clock::now() > endTime) {
+    if ((stats.nodesSearched + stats.qNodesSearched) % 1024 == 0 && std::chrono::steady_clock::now() > endTime) {
         return beta;
     }
+
+    stats.qNodesSearched += 1;
 
     int bestScore = Evaluation(board).evaluate();
 
@@ -217,7 +239,7 @@ int qSearch(Board& board, int alpha, int beta, const std::chrono::time_point<std
             continue;
         }
 
-        const int score = -qSearch<!color>(board, -beta, -alpha, endTime);
+        const int score = -qSearch<!color>(board, -beta, -alpha, stats, endTime);
 
         board.unmakeMove();
 

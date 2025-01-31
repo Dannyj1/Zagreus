@@ -149,6 +149,13 @@ public:
     }
 
     /**
+     * \brief Sets the side to move.
+     */
+    void setSideToMove(const PieceColor color) {
+        sideToMove = color;
+    }
+
+    /**
      * \brief Retrieves the number of plies since the start of the game.
      * \return The number of plies since the start of the game.
      */

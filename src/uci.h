@@ -34,6 +34,7 @@ class UCIOption;
 class Engine {
 private:
     bool didSetup = false;
+    bool searchStopped = false;
     std::map<std::string, UCIOption> options{};
     Board board{};
 
@@ -44,7 +45,7 @@ private:
     void handleUciNewGameCommand(std::string_view args);
     void handlePositionCommand(std::string_view args);
     void handleGoCommand(std::string_view args);
-    void handleStopCommand(std::string_view args);
+    void handleStopCommand();
     void handlePonderHitCommand(std::string_view args);
     void handleQuitCommand(std::string_view args);
     void handlePerftCommand(const std::string& args);
@@ -62,6 +63,7 @@ public:
     void addOption(UCIOption& option);
     UCIOption& getOption(const std::string& name);
     bool hasOption(const std::string& name) const;
+    bool isSearchStopped() const;
 };
 
 enum UCIOptionType {
@@ -86,7 +88,7 @@ public:
 
     UCIOption(std::string name, const UCIOptionType optionType) : name(std::move(name)), optionType(optionType) {}
 
-    UCIOptionType getOptionType();
+    UCIOptionType getOptionType() const;
 
     std::string getName();
 

@@ -443,6 +443,10 @@ inline uint64_t squareToBitboard(const uint8_t square) {
  * \return The square index.
  */
 inline Square bitboardToSquare(const uint64_t bb) {
+    if (bb == 0) {
+        return A1;
+    }
+
     return static_cast<Square>(bitscanForward(bb));
 }
 } // namespace Zagreus

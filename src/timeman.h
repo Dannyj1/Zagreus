@@ -19,9 +19,10 @@
  */
 
 #pragma once
+#include "search.h"
+#include "types.h"
 
 namespace Zagreus {
-
-int calculateSearchTime(int msLeft, int movesPlayed);
-
+template <PieceColor color>
+int calculateSearchTime(SearchParams& params, int movesPlayed);
 } // namespace Zagreus

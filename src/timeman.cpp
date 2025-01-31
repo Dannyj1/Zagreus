@@ -21,11 +21,23 @@
 #include "timeman.h"
 
 namespace Zagreus {
-int calculateSearchTime(int msLeft, int movesPlayed) {
-    if (movesPlayed < 50) {
-        return msLeft / (50 - movesPlayed);
+template <PieceColor color>
+int calculateSearchTime(SearchParams& params, int movesPlayed) {
+    int msLeft = color == WHITE ? params.whiteTime : params.blackTime;
+
+    if (msLeft > 0) {
+        // wtime or btime was set, so we use that
+        if (movesPlayed < 40) {
+            return msLeft / (50 - movesPlayed);
+        } else {
+            return msLeft / 10;
+        }
     } else {
-        return msLeft / 2;
+        return std::numeric_limits<int>::max();
     }
 }
+
+template int calculateSearchTime<WHITE>(SearchParams& params, int movesPlayed);
+template int calculateSearchTime<BLACK>(SearchParams& params, int movesPlayed);
+
 } // namespace Zagreus

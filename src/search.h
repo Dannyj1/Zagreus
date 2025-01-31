@@ -32,12 +32,26 @@ enum NodeType {
     REGULAR,
 };
 
+struct SearchParams {
+    uint32_t whiteTime = 0;
+    uint32_t blackTime = 0;
+    uint16_t depth = 0;
+};
+
+struct SearchStats {
+    uint64_t nodesSearched = 0;
+    uint64_t qNodesSearched = 0;
+    int score = 0;
+    uint16_t depth = 0;
+    uint64_t timeSpentMs = 0;
+};
+
 template <PieceColor color>
-Move search(Engine& engine, Board& board, int whiteTime, int blackTime);
+Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
 
 template <PieceColor color, NodeType nodeType>
-int pvSearch(Board& board, int alpha, int beta, int depth, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
 
 template <PieceColor color>
-int qSearch(Board& board, int alpha, int beta, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+int qSearch(Board& board, int alpha, int beta, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
 } // namespace Zagreus

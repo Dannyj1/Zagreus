@@ -44,7 +44,7 @@ struct EvalData {
 
 class Evaluation {
 private:
-    Board board;
+    const Board& board;
     EvalData evalData{};
     int whiteMidgameScore{};
     int whiteEndgameScore{};
@@ -78,9 +78,7 @@ public:
      * \brief Constructs an Evaluation object with the given board.
      * \param board The current state of the chess board.
      */
-    explicit Evaluation(const Board& board) {
-        this->board = board;
-    }
+    explicit Evaluation(const Board& board) : board(board) {}
 
     /**
      * \brief Initializes the evaluation data needed to evaluate the board position.

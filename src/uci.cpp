@@ -283,28 +283,41 @@ void Engine::handleGoCommand(std::string_view args) {
     std::string arg;
 
     // Parse arguments. Currently, only wtime and btime or supported, just ignore the others.
-    int whiteTime = 0;
-    int blackTime = 0;
+    uint32_t whiteTime = 0;
+    uint32_t blackTime = 0;
+    uint16_t depth = 0;
 
     while (iss >> arg) {
         if (arg == "wtime") {
             iss >> whiteTime;
         } else if (arg == "btime") {
             iss >> blackTime;
+        } else if (arg == "depth") {
+            iss >> depth;
         }
     }
 
-    if (whiteTime == 0 && blackTime == 0) {
+    if (whiteTime == 0 && blackTime == 0 && depth == 0) {
         // TODO: implement support for other args
-        sendMessage("ERROR: No time control provided.");
+        sendMessage("ERROR: No time control or depth limit provided.");
         return;
     }
 
-    Move bestMove = search<WHITE>(*this, board, whiteTime, blackTime);
+    this->searchStopped = false;
+    SearchParams params{};
+    SearchStats stats{};
+
+    params.whiteTime = whiteTime;
+    params.blackTime = blackTime;
+    params.depth = depth;
+
+    Move bestMove = search<WHITE>(*this, board, params, stats);
     sendMessage("bestmove " + getMoveNotation(bestMove));
 }
 
-void Engine::handleStopCommand(std::string_view args) {
+void Engine::handleStopCommand() {
+    this->searchStopped = true;
+    sendInfoMessage("Search stopped.");
 }
 
 void Engine::handlePonderHitCommand(std::string_view args) {
@@ -369,8 +382,7 @@ void Engine::processCommand(const std::string_view command, const std::string& a
     } else if (command == "setoption") {
         handleSetOptionCommand(args);
     } else if (command == "register") {
-        // Not relevant for our engine
-        return;
+        // Ignore this command, not relevant to this engine
     } else if (command == "ucinewgame") {
         handleUciNewGameCommand(args);
     } else if (command == "position") {
@@ -378,7 +390,7 @@ void Engine::processCommand(const std::string_view command, const std::string& a
     } else if (command == "go") {
         handleGoCommand(args);
     } else if (command == "stop") {
-        handleStopCommand(args);
+        handleStopCommand();
     } else if (command == "ponderhit") {
         handlePonderHitCommand(args);
     } else if (command == "quit") {
@@ -418,6 +430,10 @@ UCIOption& Engine::getOption(const std::string& name) {
 
 bool Engine::hasOption(const std::string& name) const {
     return this->options.contains(name);
+}
+
+bool Engine::isSearchStopped() const {
+    return this->searchStopped;
 }
 
 void Engine::processLine(const std::string& inputLine) {
@@ -497,7 +513,7 @@ std::string removeRedundantSpaces(const std::string_view input) {
     return result;
 }
 
-UCIOptionType UCIOption::getOptionType() {
+UCIOptionType UCIOption::getOptionType() const {
     return this->optionType;
 }
 
