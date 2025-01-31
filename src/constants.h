@@ -54,7 +54,7 @@
 #define COLORS 2
 
 #define MAX_MOVES 255
-#define NO_MOVE 0xFFFF
+#define NO_MOVE 0
 
 #define DRAW_SCORE 0
 #define MATE_SCORE 25000

@@ -32,6 +32,11 @@ bool MovePicker::next(Move& move) {
     }
 
     move = moveList.moves[currentIndex];
+
+    if (move == NO_MOVE) {
+        return false;
+    }
+
     currentIndex += 1;
     return true;
 }
