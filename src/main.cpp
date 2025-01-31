@@ -123,8 +123,9 @@ void benchmark(bool fast) {
     double totalMs = 0;
     Board board{};
 
+    engine.registerOptions();
     engine.doSetup();
-    // TranspositionTable::getTT()->setTableSize(512);
+    TranspositionTable::getTT()->setTableSize(128);
     // std::vector<std::string> positions = fast ? FAST_BENCHMARK_POSITIONS : BENCHMARK_POSITIONS;
     // TODO: Switch back to the commented line above when slowness is fixed
     std::vector<std::string> positions = FAST_BENCHMARK_POSITIONS;
@@ -134,7 +135,7 @@ void benchmark(bool fast) {
 
     for (const std::string& position : positions) {
         for (int i = 0; i < 2; i++) {
-            // TranspositionTable::getTT()->reset();
+            TranspositionTable::getTT()->reset();
             const PieceColor color = i == 0 ? WHITE : BLACK;
 
             board.setFromFEN(position);

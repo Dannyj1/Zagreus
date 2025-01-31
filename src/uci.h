@@ -55,6 +55,7 @@ private:
 
 public:
     void startUci();
+    void registerOptions();
     void sendInfoMessage(std::string_view message);
     void sendMessage(std::string_view message);
     void doSetup();
@@ -87,6 +88,9 @@ public:
     UCIOption() = default;
 
     UCIOption(std::string name, const UCIOptionType optionType) : name(std::move(name)), optionType(optionType) {}
+
+    UCIOption(std::string name, const UCIOptionType optionType, std::string defaultValue) : name(std::move(name)), optionType(optionType), defaultValue(std::move(defaultValue)) {
+    }
 
     UCIOptionType getOptionType() const;
 

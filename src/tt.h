@@ -28,7 +28,7 @@
 
 namespace Zagreus {
 enum TTNodeType : uint8_t {
-    EXACT_NODE, // Not a PV node
+    EXACT_NODE, // PV node
     FAIL_LOW_NODE, // Alpha score
     FAIL_HIGH_NODE // Beta score
 };
@@ -50,6 +50,10 @@ public:
         delete[] transpositionTable;
     }
 
+    void reset() {
+        std::fill_n(transpositionTable, hashSize, TTEntry{});
+    }
+
     TranspositionTable(TranspositionTable& other) = delete;
     TranspositionTable() = default;
 
@@ -59,7 +63,7 @@ public:
 
     void setTableSize(int megaBytes);
 
-    void addPosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
+    void storePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
 
     [[nodiscard]] int16_t getScore(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply) const;
 

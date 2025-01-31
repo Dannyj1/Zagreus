@@ -32,9 +32,12 @@
 #include "move_gen.h"
 #include "move_picker.h"
 #include "timeman.h"
+#include "tt.h"
 #include "types.h"
 
 namespace Zagreus {
+static TranspositionTable* tt = TranspositionTable::getTT();
+
 // TODO: Support more search variables (infinite, max nodes, etc.)
 template <PieceColor color>
 Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats) {
@@ -152,13 +155,23 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     }
 
     if (depth == 0) {
-        return qSearch<color>(board, alpha, beta, stats, endTime);
+        return qSearch<color, nodeType>(board, alpha, beta, depth, stats, endTime);
     }
 
     stats.nodesSearched += 1;
 
     constexpr bool isPV = nodeType == PV || nodeType == ROOT;
+    constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
+
+    if (!isPV) {
+        const int16_t score = tt->getScore(board.getZobristHash(), depth, alpha, beta, board.getPly());
+
+        if (score != NO_TT_SCORE) {
+            return score;
+        }
+    }
+
     int bestScore = std::numeric_limits<int>::min();
     bool firstMove = true;
     int legalMoves = 0;
@@ -167,6 +180,7 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     MoveList moves = MoveList{};
     generateMoves<color, ALL>(board, moves);
     MovePicker movePicker{moves};
+    Move bestMove = NO_MOVE;
 
     while (movePicker.next(move)) {
         int score;
@@ -180,7 +194,12 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         legalMoves += 1;
 
         if (firstMove) {
-            score = -pvSearch<opponentColor, nodeType>(board, -beta, -alpha, depth - 1, stats, endTime);
+            if (isRoot) {
+                score = -pvSearch<opponentColor, PV>(board, -beta, -alpha, depth - 1, stats, endTime);
+            } else {
+                score = -pvSearch<opponentColor, nodeType>(board, -beta, -alpha, depth - 1, stats, endTime);
+            }
+
             firstMove = false;
         } else {
             score = -pvSearch<opponentColor, REGULAR>(board, -alpha - 1, -alpha, depth - 1, stats, endTime);
@@ -193,11 +212,13 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         board.unmakeMove();
 
         if (score >= beta) {
+            tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, FAIL_HIGH_NODE);
             return score;
         }
 
         if (score > bestScore) {
             bestScore = score;
+            bestMove = move;
 
             if (score > alpha) {
                 alpha = score;
@@ -215,15 +236,35 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         }
     }
 
+    if (!isRoot) {
+        TTNodeType ttNodeType = FAIL_LOW_NODE;
+
+        if (isPV) {
+            ttNodeType = EXACT_NODE;
+        }
+
+        tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
+    }
+
     return alpha;
 }
 
-template <PieceColor color>
-int qSearch(Board& board, int alpha, int beta, SearchStats& stats,
+template <PieceColor color, NodeType nodeType>
+int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
             const std::chrono::time_point<std::chrono::steady_clock>
             & endTime) {
+    constexpr bool isPV = nodeType == PV;
+
     if (board.isDraw()) {
         return DRAW_SCORE;
+    }
+
+    if (!isPV) {
+        const int16_t score = tt->getScore(board.getZobristHash(), depth, alpha, beta, board.getPly());
+
+        if (score != NO_TT_SCORE) {
+            return score;
+        }
     }
 
     if ((stats.nodesSearched + stats.qNodesSearched) % 1024 == 0 && std::chrono::steady_clock::now() > endTime) {
@@ -235,6 +276,7 @@ int qSearch(Board& board, int alpha, int beta, SearchStats& stats,
     int bestScore = Evaluation(board).evaluate();
 
     if (bestScore >= beta) {
+        tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, FAIL_HIGH_NODE);
         return bestScore;
     }
 
@@ -255,11 +297,12 @@ int qSearch(Board& board, int alpha, int beta, SearchStats& stats,
             continue;
         }
 
-        const int score = -qSearch<!color>(board, -beta, -alpha, stats, endTime);
+        const int score = -qSearch<!color, nodeType>(board, -beta, -alpha, depth - 1, stats, endTime);
 
         board.unmakeMove();
 
         if (score >= beta) {
+            tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, FAIL_HIGH_NODE);
             return score;
         }
 
@@ -271,6 +314,14 @@ int qSearch(Board& board, int alpha, int beta, SearchStats& stats,
             alpha = score;
         }
     }
+
+    TTNodeType ttNodeType = FAIL_LOW_NODE;
+
+    if (isPV) {
+        ttNodeType = EXACT_NODE;
+    }
+
+    tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, ttNodeType);
 
     return bestScore;
 }

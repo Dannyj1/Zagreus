@@ -36,6 +36,7 @@
 #include "move.h"
 #include "perft.h"
 #include "search.h"
+#include "tt.h"
 
 namespace Zagreus {
 constexpr std::string_view startPosFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -49,6 +50,11 @@ void Engine::doSetup() {
     initZobristConstants();
     initializeMagicBitboards();
     initializeAttackLookupTables();
+
+    UCIOption hashOption = getOption("Hash");
+    std::cout << "info string Setting hash table size to " << hashOption.getValue() << " MB" << std::endl;
+    std::cout << "info string Setting hash table size to " << hashOption.getDefaultValue() << " MB" << std::endl;
+    TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
 
     didSetup = true;
 }
@@ -184,6 +190,10 @@ void Engine::handleSetOptionCommand(const std::string& args) {
     }
 
     option.setValue(value);
+
+    if (name == "Hash") {
+        TranspositionTable::getTT()->setTableSize(std::stoi(value));
+    }
 }
 
 void Engine::handleUciNewGameCommand(std::string_view args) {
@@ -440,6 +450,12 @@ void Engine::addOption(UCIOption& option) {
 }
 
 UCIOption& Engine::getOption(const std::string& name) {
+    UCIOption result = this->options[name];
+
+    if (result.getValue().empty() && !result.getDefaultValue().empty()) {
+            result.setValue(result.getDefaultValue());
+    }
+
     return this->options[name];
 }
 
@@ -471,7 +487,13 @@ void Engine::processLine(const std::string& inputLine) {
     processCommand(command, args);
 }
 
+void Engine::registerOptions() {
+    UCIOption hashOption{"Hash", Spin, "16"};
+    addOption(hashOption);
+}
+
 void Engine::startUci() {
+    registerOptions();
     printStartupMessage();
     std::string line;
 
@@ -537,7 +559,13 @@ std::string UCIOption::getName() {
 }
 
 std::string UCIOption::getValue() {
-    return this->value;
+    std::string result = this->value;
+
+    if (result.empty()) {
+        return this->defaultValue;
+    }
+
+    return result;
 }
 
 void UCIOption::setValue(const std::string& value) {

@@ -204,6 +204,10 @@ bool Board::isDraw() {
     return false;
 }
 
+uint64_t Board::getZobristHash() const {
+    return this->zobristHash;
+}
+
 /**
  * \brief Makes a move on the board.
  * \param move The move to make.

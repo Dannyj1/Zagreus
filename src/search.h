@@ -54,6 +54,6 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
 template <PieceColor color, NodeType nodeType>
 int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
 
-template <PieceColor color>
-int qSearch(Board& board, int alpha, int beta, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+template <PieceColor color, NodeType nodeType>
+int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
 } // namespace Zagreus

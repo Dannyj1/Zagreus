@@ -26,7 +26,7 @@
 #include "search.h"
 
 namespace Zagreus {
-void TranspositionTable::addPosition(const uint64_t zobristHash, const int8_t depth, const int ply, int score, const Move bestMove, const TTNodeType nodeType) const {
+void TranspositionTable::storePosition(const uint64_t zobristHash, const int8_t depth, const int ply, int score, const Move bestMove, const TTNodeType nodeType) const {
     const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
@@ -80,7 +80,7 @@ int16_t TranspositionTable::getScore(const uint64_t zobristHash, const int8_t de
         }
     }
 
-    return INT16_MIN;
+    return NO_TT_SCORE;
 }
 
 TTEntry* TranspositionTable::getEntry(const uint64_t zobristHash) const {

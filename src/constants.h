@@ -56,6 +56,8 @@
 #define MAX_MOVES 255
 #define NO_MOVE 0
 
+#define NO_TT_SCORE INT16_MIN
+
 #define DRAW_SCORE 0
 #define MATE_SCORE 25000
 #define INITIAL_ALPHA -32000
