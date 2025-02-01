@@ -19,10 +19,10 @@
  */
 
 #include "search.h"
-
-#include <iostream>
+// ReSharper disable once CppUnusedIncludeDirective
+#include <compare>
 #include <limits>
-
+#include <string>
 #include "board.h"
 #include "constants.h"
 #include "eval.h"
@@ -118,8 +118,9 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         uint64_t totalNodesSearch = stats.nodesSearched + stats.qNodesSearched;
         uint64_t nps = static_cast<double>(totalNodesSearch) / (
                            static_cast<double>(stats.timeSpentMs) / 1000.0);
-        engine.sendInfoMessage(std::format("depth {} score cp {} nodes {} time {} nps {}", stats.depth,
-                                           stats.score, totalNodesSearch, stats.timeSpentMs, nps));
+        engine.sendInfoMessage("depth " + std::to_string(stats.depth) + " score cp " + std::to_string(stats.score) +
+                               " nodes " + std::to_string(totalNodesSearch) + " time " +
+                               std::to_string(stats.timeSpentMs) + " nps " + std::to_string(nps));
         depth += 1;
     }
 

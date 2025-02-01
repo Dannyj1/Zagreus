@@ -21,10 +21,9 @@
 
 #pragma once
 
-#include <chrono>
+#include <algorithm>
 #include <cstdint>
-
-#include "search.h"
+#include "move.h"
 
 namespace Zagreus {
 enum TTNodeType : uint8_t {

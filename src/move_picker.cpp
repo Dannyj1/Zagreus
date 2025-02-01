@@ -19,6 +19,8 @@
  */
 
 #include "move_picker.h"
+#include <array>
+#include "constants.h"
 
 namespace Zagreus {
 /**

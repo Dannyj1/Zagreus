@@ -21,7 +21,9 @@
 
 #pragma once
 
+#include <cstdint>
 #include "board.h"
+#include "constants.h"
 
 #ifdef ZAGREUS_TUNER
     #include <vector>

@@ -18,10 +18,18 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#include <cstdint>
+#include <chrono>
 #include <exception>
+#include <iostream>
+#include <ratio>
+#include <string>
+#include <vector>
 
+#include "board.h"
+#include "search.h"
 #include "tt.h"
+#include "types.h"
 #include "uci.h"
 
 using namespace Zagreus;

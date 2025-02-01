@@ -19,6 +19,8 @@
  */
 
 #include "timeman.h"
+#include <algorithm>
+#include <limits>
 
 namespace Zagreus {
 template <PieceColor color>

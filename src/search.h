@@ -21,9 +21,12 @@
 
 #pragma once
 
-#include "uci.h"
-#include "move.h"
+#include <cstdint>
+#include <chrono>
 #include "board.h"
+#include "move.h"
+#include "types.h"
+#include "uci.h"
 
 namespace Zagreus {
 enum NodeType {

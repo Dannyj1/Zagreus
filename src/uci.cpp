@@ -18,18 +18,18 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "uci.h"
+#include <algorithm>
+#include <cctype>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <algorithm>
-#include <cctype>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <thread>
 
-#include "uci.h"
 #include "bitboard.h"
 #include "board.h"
 #include "magics.h"
@@ -37,6 +37,7 @@
 #include "perft.h"
 #include "search.h"
 #include "tt.h"
+#include "types.h"
 
 namespace Zagreus {
 constexpr std::string_view startPosFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

@@ -19,11 +19,8 @@
  */
 
 #include "tt.h"
-
-#include <chrono>
-#include <iostream>
-
-#include "search.h"
+#include <cmath>
+#include "constants.h"
 
 namespace Zagreus {
 void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t depth, const int ply, int score,

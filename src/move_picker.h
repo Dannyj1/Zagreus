@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <array>
 #include "move.h"
 
 namespace Zagreus {

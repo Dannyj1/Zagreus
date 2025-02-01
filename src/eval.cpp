@@ -19,7 +19,8 @@
  */
 
 #include "eval.h"
-#include "constants.h"
+#include "bitboard.h"
+#include "bitwise.h"
 #include "eval_features.h"
 #include "types.h"
 
