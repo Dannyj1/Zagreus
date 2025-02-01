@@ -85,6 +85,8 @@ public:
         std::ranges::fill(history, BoardState{});
     }
 
+    Board(const Board&) = delete;
+
     /**
      * \brief Retrieves the bitboard for a given piece type.
      * \tparam piece The piece type.

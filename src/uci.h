@@ -54,6 +54,12 @@ private:
     void processLine(const std::string& inputLine);
 
 public:
+    Engine() = default;
+
+    Engine(const Engine&) = delete;
+
+    Engine& operator=(const Engine&) = delete;
+
     void startUci();
     void registerOptions();
     void sendInfoMessage(std::string_view message);

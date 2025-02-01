@@ -210,7 +210,7 @@ void Engine::handlePositionCommand(const std::string_view args) {
 
     // If the first argument is "startpos", set the board to the starting position
     iss >> arg;
-    board = Board();
+    board = Board{};
 
     if (arg == "startpos") {
         board.setFromFEN(startPosFEN);

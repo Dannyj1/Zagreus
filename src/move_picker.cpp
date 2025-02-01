@@ -21,6 +21,7 @@
 #include "move_picker.h"
 #include <array>
 #include "constants.h"
+#include "tt.h"
 
 namespace Zagreus {
 /**
@@ -48,5 +49,26 @@ bool MovePicker::next(Move& move) {
  */
 void MovePicker::reset() {
     currentIndex = 0;
+}
+
+static TranspositionTable* tt = TranspositionTable::getTT();
+
+void MovePicker::sort(const Board& board) const {
+    uint64_t zobristHash = board.getZobristHash();
+    TTEntry* entry = tt->getEntry(zobristHash);
+
+    if (entry != nullptr) {
+        Move bestMove = entry->bestMove;
+
+        if (bestMove != NO_MOVE) {
+            // Find the best move and put it at the front of the list
+            for (int i = 0; i < moveList.size; i++) {
+                if (moveList.moves[i] == bestMove) {
+                    std::swap(moveList.moves[0], moveList.moves[i]);
+                    break;
+                }
+            }
+        }
+    }
 }
 } // namespace Zagreus

@@ -36,6 +36,10 @@ using Move = uint16_t;
 struct MoveList {
     std::array<Move, MAX_MOVES> moves{};
     uint8_t size = 0;
+
+    MoveList() = default;
+    MoveList(const MoveList&) = delete;
+    MoveList& operator=(const MoveList&) = delete;
 };
 
 enum MoveType : uint8_t {

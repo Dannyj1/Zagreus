@@ -87,8 +87,14 @@ int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8
 
 TTEntry* TranspositionTable::getEntry(const uint64_t zobristHash) const {
     const uint64_t index = zobristHash & hashSize;
+    TTEntry* entry = &transpositionTable[index];
 
-    return &transpositionTable[index];
+    // Check validation hash to avoid hash collisions
+    if (entry->validationHash == (zobristHash >> 32)) {
+            return entry;
+    }
+
+    return nullptr;
 }
 
 void TranspositionTable::setTableSize(int megaBytes) {

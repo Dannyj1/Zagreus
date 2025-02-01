@@ -20,17 +20,23 @@
 
 #pragma once
 
+#include "board.h"
 #include "move.h"
 
 namespace Zagreus {
 // TODO: Implement efficient sorting by score, after implementing score.
 class MovePicker {
 private:
-    const MoveList& moveList;
+    MoveList& moveList;
     int currentIndex = 0;
 
 public:
-    explicit MovePicker(const MoveList& moveList) : moveList(moveList) {}
+    explicit MovePicker(MoveList& moveList) : moveList(moveList) {
+    }
+
+    MovePicker(const MovePicker&) = delete;
+
+    MovePicker& operator=(const MovePicker&) = delete;
 
     /**
      * \brief Checks if there is a next move and retrieves it.
@@ -40,8 +46,14 @@ public:
     [[nodiscard]] bool next(Move& move);
 
     /**
-     *\brief Resets the move picker to the beginning of the move list.
+     * \brief Resets the move picker to the beginning of the move list.
      */
     void reset();
+
+    /**
+     * \brief sorts the move list based on certain criteria.
+     * \param board The current board which is used to sort the moves.
+     */
+    void sort(const Board& board) const;
 };
 } // namespace Zagreus

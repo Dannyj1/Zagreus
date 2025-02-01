@@ -53,9 +53,9 @@ public:
         std::fill_n(transpositionTable, hashSize, TTEntry{});
     }
 
-    TranspositionTable(TranspositionTable& other) = delete;
     TranspositionTable() = default;
 
+    TranspositionTable(TranspositionTable& other) = delete;
     void operator=(const TranspositionTable&) = delete;
 
     static TranspositionTable* getTT();

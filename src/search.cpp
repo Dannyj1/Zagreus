@@ -47,6 +47,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     MoveList moves = MoveList{};
     generateMoves<color, ALL>(board, moves);
     MovePicker movePicker{moves};
+    movePicker.sort(board);
     Move bestMove = NO_MOVE;
 
     int searchTime = calculateSearchTime<color>(params);
@@ -58,7 +59,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLY) {
         if (params.blackTime > 0 || params.whiteTime > 0) {
             // Don't start the next iteration if we are 10% away from the end time
-            if (depth > 1 && std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
+            if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
                 engine.setSearchStopped(true);
                 break;
             }
@@ -93,7 +94,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
             }
         }
 
-        if (depth > 1 && std::chrono::steady_clock::now() > endTime) {
+        if (std::chrono::steady_clock::now() > endTime) {
             engine.setSearchStopped(true);
             break;
         }
@@ -187,6 +188,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     MoveList moves = MoveList{};
     generateMoves<color, ALL>(board, moves);
     MovePicker movePicker{moves};
+    movePicker.sort(board);
     Move bestMove = NO_MOVE;
 
     while (movePicker.next(move)) {
@@ -305,6 +307,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     MoveList moves = MoveList{};
     generateMoves<color, QSEARCH>(board, moves);
     MovePicker movePicker{moves};
+    movePicker.sort(board);
 
     while (movePicker.next(move)) {
         board.makeMove(move);

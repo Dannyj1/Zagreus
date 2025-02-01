@@ -82,6 +82,11 @@ public:
      */
     explicit Evaluation(const Board& board) : board(board) {}
 
+    Evaluation(const Evaluation&) = delete;
+
+    Evaluation& operator=(const Evaluation&) = delete;
+
+
     /**
      * \brief Initializes the evaluation data needed to evaluate the board position.
      */
