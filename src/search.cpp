@@ -100,6 +100,10 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
             break;
         }
 
+        if (engine.isSearchStopped()) {
+            break;
+        }
+
         bestMove = bestIterationMove;
 
         // TODO: Implement PV
