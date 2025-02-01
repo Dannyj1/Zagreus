@@ -42,14 +42,6 @@ bool MovePicker::next(Move& move) {
 }
 
 /**
- * \brief Gets the current move.
- * \return The current move.
- */
-Move MovePicker::getCurrentMove() const {
-    return moveList.moves[currentIndex - 1];
-}
-
-/**
  *\brief Resets the move picker to the beginning of the move list.
  */
 void MovePicker::reset() {

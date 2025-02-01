@@ -41,12 +41,6 @@ public:
     [[nodiscard]] bool next(Move& move);
 
     /**
-     * \brief Gets the current move.
-     * \return The current move.
-     */
-    [[nodiscard]] Move getCurrentMove() const;
-
-    /**
      *\brief Resets the move picker to the beginning of the move list.
      */
     void reset();

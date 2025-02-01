@@ -76,7 +76,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         Move bestIterationMove{};
 
         while (movePicker.next(move)) {
-            board.makeMove(movePicker.getCurrentMove());
+            board.makeMove(move);
 
             if (!board.isPositionLegal<color>()) {
                 board.unmakeMove();
