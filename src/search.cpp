@@ -22,6 +22,7 @@
 
 #include <__format/format_functions.h>
 
+#include <iostream>
 #include <limits>
 
 #include "uci.h"
@@ -216,6 +217,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
+                bestMove = move;
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
             }
 
