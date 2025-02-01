@@ -48,7 +48,8 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
     }
 }
 
-int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8_t depth, const int alpha, const int beta, const int ply) const {
+int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8_t depth, const int alpha,
+                                          const int beta, const int ply) const {
     const uint64_t index = zobristHash & hashSize;
     const uint32_t validationHash = zobristHash >> 32;
     const TTEntry* entry = &transpositionTable[index];

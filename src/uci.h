@@ -65,6 +65,7 @@ public:
     UCIOption& getOption(const std::string& name);
     bool hasOption(const std::string& name) const;
     bool isSearchStopped() const;
+    void setSearchStopped(bool value);
 };
 
 enum UCIOptionType {

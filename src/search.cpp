@@ -54,15 +54,19 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
     const auto startTime = std::chrono::steady_clock::now();
 
+    engine.setSearchStopped(false);
+
     while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLY) {
         if (params.blackTime > 0 || params.whiteTime > 0) {
             // Don't start the next iteration if we are 10% away from the end time
             if (depth > 1 && std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
+                engine.setSearchStopped(true);
                 break;
             }
         }
 
         if (params.depth > 0 && depth > params.depth) {
+            engine.setSearchStopped(true);
             break;
         }
 
@@ -79,13 +83,10 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
                 continue;
             }
 
-            const int score = -pvSearch<opponentColor, ROOT>(board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime);
+            const int score = -pvSearch<opponentColor, ROOT>(engine, board, INITIAL_ALPHA, INITIAL_BETA, depth, stats,
+                                                             endTime);
 
             board.unmakeMove();
-
-            if (std::chrono::steady_clock::now() > endTime) {
-                break;
-            }
 
             if (score > bestScore) {
                 bestScore = score;
@@ -94,6 +95,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         }
 
         if (depth > 1 && std::chrono::steady_clock::now() > endTime) {
+            engine.setSearchStopped(true);
             break;
         }
 
@@ -144,18 +146,19 @@ template Move search<WHITE>(Engine& engine, Board& board, SearchParams& params, 
 template Move search<BLACK>(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
 
 template <PieceColor color, NodeType nodeType>
-int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
+int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
              const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
     if (board.isDraw()) {
         return DRAW_SCORE;
     }
 
     if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
+        engine.setSearchStopped(true);
         return beta;
     }
 
     if (depth == 0) {
-        return qSearch<color, nodeType>(board, alpha, beta, depth, stats, endTime);
+        return qSearch<color, nodeType>(engine, board, alpha, beta, depth, stats, endTime);
     }
 
     stats.nodesSearched += 1;
@@ -195,24 +198,27 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
 
         if (firstMove) {
             if (isRoot) {
-                score = -pvSearch<opponentColor, PV>(board, -beta, -alpha, depth - 1, stats, endTime);
+                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
             } else {
-                score = -pvSearch<opponentColor, nodeType>(board, -beta, -alpha, depth - 1, stats, endTime);
+                score = -pvSearch<opponentColor, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
             }
 
             firstMove = false;
         } else {
-            score = -pvSearch<opponentColor, REGULAR>(board, -alpha - 1, -alpha, depth - 1, stats, endTime);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime);
 
             if (score > alpha && isPV) {
-                score = -pvSearch<opponentColor, PV>(board, -beta, -alpha, depth - 1, stats, endTime);
+                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
             }
         }
 
         board.unmakeMove();
 
         if (score >= beta) {
-            tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
+            if (!engine.isSearchStopped()) {
+                tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
+            }
+
             return score;
         }
 
@@ -243,14 +249,16 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
             ttNodeType = EXACT;
         }
 
-        tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
+        if (!engine.isSearchStopped()) {
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
+        }
     }
 
     return alpha;
 }
 
 template <PieceColor color, NodeType nodeType>
-int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
+int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
             const std::chrono::time_point<std::chrono::steady_clock>
             & endTime) {
     constexpr bool isPV = nodeType == PV;
@@ -268,6 +276,7 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     }
 
     if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
+        engine.setSearchStopped(true);
         return beta;
     }
 
@@ -276,7 +285,10 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     int bestScore = Evaluation(board).evaluate();
 
     if (bestScore >= beta) {
-        tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
+        if (!engine.isSearchStopped()) {
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
+        }
+
         return bestScore;
     }
 
@@ -297,12 +309,15 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
             continue;
         }
 
-        const int score = -qSearch<!color, nodeType>(board, -beta, -alpha, depth - 1, stats, endTime);
+        const int score = -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
 
         board.unmakeMove();
 
         if (score >= beta) {
-            tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, NO_MOVE, BETA);
+            if (!engine.isSearchStopped()) {
+                tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, NO_MOVE, BETA);
+            }
+
             return score;
         }
 
@@ -321,7 +336,10 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         ttNodeType = EXACT;
     }
 
-    tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, ttNodeType);
+    if (!engine.isSearchStopped()) {
+        tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, ttNodeType);
+    }
+
     return bestScore;
 }
 } // namespace Zagreus

@@ -64,7 +64,7 @@ public:
     void setTableSize(int megaBytes);
 
     void savePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove,
-                       TTNodeType nodeType) const;
+                      TTNodeType nodeType) const;
 
     [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply) const;
 

@@ -465,6 +465,10 @@ bool Engine::isSearchStopped() const {
     return this->searchStopped;
 }
 
+void Engine::setSearchStopped(bool value) {
+    this->searchStopped = value;
+}
+
 void Engine::processLine(const std::string& inputLine) {
     std::string line = removeRedundantSpaces(inputLine);
     std::string command;
