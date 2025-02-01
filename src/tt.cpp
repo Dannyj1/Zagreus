@@ -26,7 +26,8 @@
 #include "search.h"
 
 namespace Zagreus {
-void TranspositionTable::storePosition(const uint64_t zobristHash, const int8_t depth, const int ply, int score, const Move bestMove, const TTNodeType nodeType) const {
+void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t depth, const int ply, int score,
+                                      const Move bestMove, const TTNodeType nodeType) const {
     const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
@@ -47,7 +48,7 @@ void TranspositionTable::storePosition(const uint64_t zobristHash, const int8_t 
     }
 }
 
-int16_t TranspositionTable::getScore(const uint64_t zobristHash, const int8_t depth, const int alpha, const int beta, const int ply) const {
+int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8_t depth, const int alpha, const int beta, const int ply) const {
     const uint64_t index = zobristHash & hashSize;
     const uint32_t validationHash = zobristHash >> 32;
     const TTEntry* entry = &transpositionTable[index];
@@ -55,13 +56,13 @@ int16_t TranspositionTable::getScore(const uint64_t zobristHash, const int8_t de
     if (entry->validationHash == validationHash && entry->depth >= depth) {
         bool returnScore = false;
 
-        if (entry->nodeType == EXACT_NODE) {
+        if (entry->nodeType == EXACT) {
             returnScore = true;
-        } else if (entry->nodeType == FAIL_LOW_NODE) {
+        } else if (entry->nodeType == ALPHA) {
             if (entry->score <= alpha) {
                 returnScore = true;
             }
-        } else if (entry->nodeType == FAIL_HIGH_NODE) {
+        } else if (entry->nodeType == BETA) {
             if (entry->score >= beta) {
                 returnScore = true;
             }

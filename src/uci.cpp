@@ -52,8 +52,6 @@ void Engine::doSetup() {
     initializeAttackLookupTables();
 
     UCIOption hashOption = getOption("Hash");
-    std::cout << "info string Setting hash table size to " << hashOption.getValue() << " MB" << std::endl;
-    std::cout << "info string Setting hash table size to " << hashOption.getDefaultValue() << " MB" << std::endl;
     TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
 
     didSetup = true;

@@ -150,7 +150,7 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         return DRAW_SCORE;
     }
 
-    if ((stats.nodesSearched + stats.qNodesSearched) % 1024 == 0 && std::chrono::steady_clock::now() > endTime) {
+    if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
         return beta;
     }
 
@@ -165,7 +165,7 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     constexpr PieceColor opponentColor = !color;
 
     if (!isPV) {
-        const int16_t score = tt->getScore(board.getZobristHash(), depth, alpha, beta, board.getPly());
+        const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
             return score;
@@ -212,17 +212,17 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         board.unmakeMove();
 
         if (score >= beta) {
-            tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, FAIL_HIGH_NODE);
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
             return score;
+        }
+
+        if (score > alpha) {
+            alpha = score;
         }
 
         if (score > bestScore) {
             bestScore = score;
             bestMove = move;
-
-            if (score > alpha) {
-                alpha = score;
-            }
         }
     }
 
@@ -237,13 +237,13 @@ int pvSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     }
 
     if (!isRoot) {
-        TTNodeType ttNodeType = FAIL_LOW_NODE;
+        TTNodeType ttNodeType = ALPHA;
 
         if (isPV) {
-            ttNodeType = EXACT_NODE;
+            ttNodeType = EXACT;
         }
 
-        tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
+        tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
     }
 
     return alpha;
@@ -260,14 +260,14 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     }
 
     if (!isPV) {
-        const int16_t score = tt->getScore(board.getZobristHash(), depth, alpha, beta, board.getPly());
+        const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
             return score;
         }
     }
 
-    if ((stats.nodesSearched + stats.qNodesSearched) % 1024 == 0 && std::chrono::steady_clock::now() > endTime) {
+    if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
         return beta;
     }
 
@@ -276,7 +276,7 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
     int bestScore = Evaluation(board).evaluate();
 
     if (bestScore >= beta) {
-        tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, FAIL_HIGH_NODE);
+        tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
         return bestScore;
     }
 
@@ -302,7 +302,7 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         board.unmakeMove();
 
         if (score >= beta) {
-            tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, FAIL_HIGH_NODE);
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, NO_MOVE, BETA);
             return score;
         }
 
@@ -315,14 +315,13 @@ int qSearch(Board& board, int alpha, int beta, int depth, SearchStats& stats,
         }
     }
 
-    TTNodeType ttNodeType = FAIL_LOW_NODE;
+    TTNodeType ttNodeType = ALPHA;
 
     if (isPV) {
-        ttNodeType = EXACT_NODE;
+        ttNodeType = EXACT;
     }
 
-    tt->storePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, ttNodeType);
-
+    tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, ttNodeType);
     return bestScore;
 }
 } // namespace Zagreus

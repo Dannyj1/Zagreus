@@ -28,9 +28,9 @@
 
 namespace Zagreus {
 enum TTNodeType : uint8_t {
-    EXACT_NODE, // PV node
-    FAIL_LOW_NODE, // Alpha score
-    FAIL_HIGH_NODE // Beta score
+    EXACT, // PV
+    ALPHA,
+    BETA
 };
 
 struct TTEntry {
@@ -38,7 +38,7 @@ struct TTEntry {
     int16_t score = 0;
     Move bestMove = 0;
     int8_t depth = INT8_MIN;
-    TTNodeType nodeType = EXACT_NODE;
+    TTNodeType nodeType = EXACT;
 };
 
 class TranspositionTable {
@@ -63,9 +63,10 @@ public:
 
     void setTableSize(int megaBytes);
 
-    void storePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
+    void savePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove,
+                       TTNodeType nodeType) const;
 
-    [[nodiscard]] int16_t getScore(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply) const;
+    [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply) const;
 
     [[nodiscard]] TTEntry* getEntry(uint64_t zobristHash) const;
 };
