@@ -20,12 +20,9 @@
 
 #include "search.h"
 
-#include <__format/format_functions.h>
-
 #include <iostream>
 #include <limits>
 
-#include "uci.h"
 #include "board.h"
 #include "constants.h"
 #include "eval.h"
@@ -35,6 +32,7 @@
 #include "timeman.h"
 #include "tt.h"
 #include "types.h"
+#include "uci.h"
 
 namespace Zagreus {
 static TranspositionTable* tt = TranspositionTable::getTT();
