@@ -42,7 +42,7 @@ private:
     void handleDebugCommand(std::string_view args);
     void handleIsReadyCommand(std::string_view args);
     void handleSetOptionCommand(const std::string& args);
-    void handleUciNewGameCommand(std::string_view args);
+    void handleUciNewGameCommand();
     void handlePositionCommand(std::string_view args);
     void handleGoCommand(std::string_view args);
     void handleStopCommand();
@@ -91,6 +91,9 @@ public:
     UCIOption(std::string name, const UCIOptionType optionType) : name(std::move(name)), optionType(optionType) {}
 
     UCIOption(std::string name, const UCIOptionType optionType, std::string defaultValue) : name(std::move(name)), optionType(optionType), defaultValue(std::move(defaultValue)) {
+    }
+
+    UCIOption(std::string name, const UCIOptionType optionType, std::string defaultValue, std::string minValue, std::string maxValue) : name(std::move(name)), optionType(optionType), defaultValue(std::move(defaultValue)), minValue(std::move(minValue)), maxValue(std::move(maxValue)) {
     }
 
     UCIOptionType getOptionType() const;

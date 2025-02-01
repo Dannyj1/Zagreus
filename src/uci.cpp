@@ -47,14 +47,13 @@ void Engine::doSetup() {
         return;
     }
 
+    didSetup = true;
     initZobristConstants();
     initializeMagicBitboards();
     initializeAttackLookupTables();
 
     UCIOption hashOption = getOption("Hash");
     TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
-
-    didSetup = true;
 }
 
 std::string Engine::getVersionString() {
@@ -120,10 +119,6 @@ void Engine::handleIsReadyCommand(std::string_view args) {
 }
 
 void Engine::handleSetOptionCommand(const std::string& args) {
-    if (!didSetup) {
-        doSetup();
-    }
-
     std::istringstream iss(args);
     std::string arg;
     std::string section;
@@ -189,12 +184,16 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 
     option.setValue(value);
 
-    if (name == "Hash") {
+    if (!didSetup) {
+        doSetup();
+    } else if (name == "Hash") {
         TranspositionTable::getTT()->setTableSize(std::stoi(value));
     }
 }
 
-void Engine::handleUciNewGameCommand(std::string_view args) {
+void Engine::handleUciNewGameCommand() {
+    board = Board{};
+    TranspositionTable::getTT()->reset();
 }
 
 void Engine::handlePositionCommand(const std::string_view args) {
@@ -407,7 +406,7 @@ void Engine::processCommand(const std::string_view command, const std::string& a
     } else if (command == "register") {
         // Ignore this command, not relevant to this engine
     } else if (command == "ucinewgame") {
-        handleUciNewGameCommand(args);
+        handleUciNewGameCommand();
     } else if (command == "position") {
         handlePositionCommand(args);
     } else if (command == "go") {
@@ -490,7 +489,7 @@ void Engine::processLine(const std::string& inputLine) {
 }
 
 void Engine::registerOptions() {
-    UCIOption hashOption{"Hash", Spin, "16"};
+    UCIOption hashOption{"Hash", Spin, "16", "1", "33554432"};
     addOption(hashOption);
 }
 
