@@ -84,7 +84,12 @@ void generateMoves(const Board& board, MoveList& moves) {
         generateQueenMoves<color, type>(board, moves, genMask);
     }
 
-    generateKingMoves<color, type>(board, moves, genMask);
+    if (type == EVASIONS) {
+        // We generate all king moves when in check, so we don't use genMask
+        generateKingMoves<color, type>(board, moves, ~(ownPieces | opponentKingBB));
+    } else {
+        generateKingMoves<color, type>(board, moves, genMask);
+    }
 }
 
 /**
