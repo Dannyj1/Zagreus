@@ -260,7 +260,7 @@ int Board::see(const Square square) {
         const Piece capturedPiece = getPieceOnSquare(square);
 
         makeMove(move);
-        value = getPieceValue(capturedPiece) - see<opponentColor>(square);
+        value = std::max(0, getPieceValue(capturedPiece) - see<opponentColor>(square));
         unmakeMove();
     }
 
@@ -279,12 +279,13 @@ template int Board::see<BLACK>(Square square);
  */
 template <PieceColor color>
 int Board::seeCapture(const Move& move) {
+    constexpr PieceColor opponentColor = !color;
     int value = 0;
     const Square toSquare = getToSquare(move);
     const Piece capturedPiece = getPieceOnSquare(toSquare);
 
     makeMove(move);
-    value = getPieceValue(capturedPiece) - see<!color>(getToSquare(move));
+    value = std::max(0, getPieceValue(capturedPiece) - see<opponentColor>(getToSquare(move)));
     unmakeMove();
 
     return value;

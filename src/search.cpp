@@ -21,6 +21,7 @@
 #include "search.h"
 // ReSharper disable once CppUnusedIncludeDirective
 #include <compare>
+#include <iostream>
 #include <limits>
 #include <string>
 #include "board.h"
