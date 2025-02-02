@@ -51,6 +51,7 @@ void Engine::doSetup() {
     didSetup = true;
     initZobristConstants();
     initializeMagicBitboards();
+    initializeBetweenLookupTable();
     initializeAttackLookupTables();
 
     // UCIOption hashOption = getOption("Hash");
@@ -187,7 +188,7 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 
     if (!didSetup) {
         doSetup();
-    }/* else if (name == "Hash") {
+    } /* else if (name == "Hash") {
         TranspositionTable::getTT()->setTableSize(std::stoi(value));
     }*/
 }

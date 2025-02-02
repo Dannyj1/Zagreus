@@ -29,6 +29,8 @@ static std::array<std::array<uint64_t, SQUARES>, COLORS> pawnAttacksTable{};
 static std::array<uint64_t, SQUARES> knightAttacksTable{};
 static std::array<uint64_t, SQUARES> kingAttacksTable{};
 
+static std::array<std::array<uint64_t, SQUARES>, SQUARES> betweenLookupTable{};
+
 /**
  * \brief Initializes the attack lookup tables for pawns, knights, and kings.
  */
@@ -40,6 +42,29 @@ void initializeAttackLookupTables() {
         pawnAttacksTable[BLACK][square] = calculateBlackPawnAttacks(bb);
         knightAttacksTable[square] = calculateKnightAttacks(bb);
         kingAttacksTable[square] = calculateKingAttacks(bb);
+    }
+}
+
+void initializeBetweenLookupTable() {
+    for (int from = 0; from < 64; from++) {
+        for (int to = 0; to < 64; to++) {
+            uint64_t m1 = -1ULL;
+            uint64_t a2a7 = 0x0001010101010100ULL;
+            uint64_t b2g7 = 0x0040201008040200ULL;
+            uint64_t h1b7 = 0x0002040810204080ULL;
+            uint64_t btwn, line, rank, file;
+
+            btwn = m1 << from ^ m1 << to;
+            file = (to & 7) - (from & 7);
+            rank = ((to | 7) - from) >> 3;
+            line = (file & 7) - 1 & a2a7;
+            line += 2 * (((rank & 7) - 1) >> 58);
+            line += (rank - file & 15) - 1 & b2g7;
+            line += (rank + file & 15) - 1 & h1b7;
+            line *= btwn & -btwn;
+
+            betweenLookupTable[from][to] = line & btwn;
+        }
     }
 }
 
@@ -120,4 +145,14 @@ uint64_t queenAttacks(const uint8_t square, const uint64_t occupied) {
     return getBishopAttacks(square, occupied) | getRookAttacks(square, occupied);
 }
 
+/**
+ * \brief Gets a bitboard of all squares between two squares.
+ * \param fromSquare The starting square.
+ * \param toSquare The ending square.
+ *
+ * \return The bitboard of squares between the two squares.
+ */
+uint64_t getSquaresBetween(const Square fromSquare, const Square toSquare) {
+    return betweenLookupTable[fromSquare][toSquare];
+}
 } // namespace Zagreus

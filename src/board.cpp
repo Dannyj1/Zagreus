@@ -64,8 +64,8 @@ bool Board::isPositionLegal() const {
     const MoveType lastMoveType = getMoveType(lastMove);
 
     if (lastMoveType == CASTLING) {
-        const uint8_t fromSquare = getFromSquare(lastMove);
-        const uint8_t toSquare = getToSquare(lastMove);
+        const Square fromSquare = getFromSquare(lastMove);
+        const Square toSquare = getToSquare(lastMove);
         const uint64_t fromSquareAttacks = getSquareAttackersByColor<opponentColor>(fromSquare);
 
         if (fromSquareAttacks) {
@@ -86,7 +86,7 @@ bool Board::isPositionLegal() const {
         }
 
         while (castlingPath) {
-            const uint8_t square = popLsb(castlingPath);
+            const Square square = static_cast<Square>(popLsb(castlingPath));
             const uint64_t attackers = getSquareAttackersByColor<opponentColor>(square);
 
             if (attackers) {
@@ -143,7 +143,7 @@ template bool Board::canCastle<BLACK_QUEENSIDE>() const;
  * \param square The square index (0-63).
  * \return A bitboard representing the attackers.
  */
-uint64_t Board::getSquareAttackers(const uint8_t square) const {
+uint64_t Board::getSquareAttackers(const Square square) const {
     assert(square < SQUARES);
     const uint64_t knights = getBitboard<WHITE_KNIGHT>() | getBitboard<BLACK_KNIGHT>();
     const uint64_t kings = getBitboard<WHITE_KING>() | getBitboard<BLACK_KING>();

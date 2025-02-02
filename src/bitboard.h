@@ -35,6 +35,11 @@ namespace Zagreus {
 void initializeAttackLookupTables();
 
 /**
+ * \brief Initializes the between lookup table.
+ */
+void initializeBetweenLookupTable();
+
+/**
  * \brief Shifts the bitboard north by one rank.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
@@ -449,4 +454,13 @@ inline Square bitboardToSquare(const uint64_t bb) {
 
     return static_cast<Square>(bitscanForward(bb));
 }
+
+/**
+ * \brief Gets a bitboard of all squares between two squares.
+ * \param fromSquare The starting square.
+ * \param toSquare The ending square.
+ *
+ * \return The bitboard of squares between the two squares.
+ */
+uint64_t getSquaresBetween(Square fromSquare, Square toSquare);
 } // namespace Zagreus

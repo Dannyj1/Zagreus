@@ -270,7 +270,7 @@ template <PieceColor color, NodeType nodeType>
 int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
             const std::chrono::time_point<std::chrono::steady_clock>
             & endTime) {
-    constexpr bool isPV = nodeType == PV;
+    // constexpr bool isPV = nodeType == PV;
 
     if (board.isDraw()) {
         return DRAW_SCORE;
@@ -308,9 +308,17 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     constexpr PieceColor opponentColor = !color;
     int legalMoves = 0;
 
+    bool isInCheck = board.isKingInCheck<color>();
+
     Move move;
     MoveList moves = MoveList{};
-    generateMoves<color, QSEARCH>(board, moves);
+
+    if (isInCheck) {
+        generateMoves<color, EVASIONS>(board, moves);
+    } else {
+        generateMoves<color, QSEARCH>(board, moves);
+    }
+
     MovePicker movePicker{moves};
     movePicker.sort(board);
 
@@ -356,7 +364,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         }
     }
 
-    if (!legalMoves && board.isKingInCheck<color>()) {
+    if (!legalMoves && isInCheck) {
         bestScore = -MATE_SCORE + board.getPly();
     }
 

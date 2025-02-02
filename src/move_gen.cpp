@@ -42,8 +42,10 @@ template <PieceColor color, GenerationType type>
 void generateMoves(const Board& board, MoveList& moves) {
     assert(moves.size == 0);
 
+    constexpr Piece ownKing = color == WHITE ? WHITE_KING : BLACK_KING;
     constexpr Piece opponentKing = color == WHITE ? BLACK_KING : WHITE_KING;
     constexpr PieceColor opponentColor = !color;
+    bool onlyKingMoves = false;
     const uint64_t ownPieces = board.getColorBitboard<color>();
     const uint64_t opponentKingBB = board.getBitboard<opponentKing>();
     uint64_t genMask = ~(ownPieces | opponentKingBB);
@@ -51,14 +53,37 @@ void generateMoves(const Board& board, MoveList& moves) {
     if (type == QSEARCH) {
         const uint64_t opponentPieces = board.getColorBitboard<opponentColor>();
 
-        genMask = opponentPieces;
+        genMask &= opponentPieces;
+    } else if (type == EVASIONS) {
+        const Square kingSquare = bitboardToSquare(board.getBitboard<ownKing>());
+        const uint64_t attackers = board.getSquareAttackersByColor<opponentColor>(kingSquare);
+
+        if (popcnt(attackers) == 1) {
+            const Square attackerSquare = bitboardToSquare(attackers);
+            const PieceType attackerType = getPieceType(board.getPieceOnSquare(attackerSquare));
+            uint64_t evasionsMask = attackers;
+
+            if (isSlidingPiece(attackerType)) {
+                const uint64_t squaresBetween = getSquaresBetween(attackerSquare, kingSquare);
+
+                evasionsMask |= squaresBetween;
+            }
+
+            genMask = evasionsMask;
+        } else {
+            // If the king is in double check, only king moves are legal
+            onlyKingMoves = true;
+        }
     }
 
-    generatePawnMoves<color, type>(board, moves, genMask);
-    generateKnightMoves<color, type>(board, moves, genMask);
-    generateBishopMoves<color, type>(board, moves, genMask);
-    generateRookMoves<color, type>(board, moves, genMask);
-    generateQueenMoves<color, type>(board, moves, genMask);
+    if (!onlyKingMoves) {
+        generatePawnMoves<color, type>(board, moves, genMask);
+        generateKnightMoves<color, type>(board, moves, genMask);
+        generateBishopMoves<color, type>(board, moves, genMask);
+        generateRookMoves<color, type>(board, moves, genMask);
+        generateQueenMoves<color, type>(board, moves, genMask);
+    }
+
     generateKingMoves<color, type>(board, moves, genMask);
 }
 

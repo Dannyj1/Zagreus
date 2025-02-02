@@ -331,7 +331,7 @@ public:
     [[nodiscard]] bool isKingInCheck() const {
         constexpr PieceColor opponentColor = !color;
         const uint64_t kingBB = getBitboard<color == WHITE ? WHITE_KING : BLACK_KING>();
-        const uint8_t kingSquare = bitscanForward(kingBB);
+        const Square kingSquare = bitboardToSquare(kingBB);
 
         return getSquareAttackersByColor<opponentColor>(kingSquare) != 0;
     }
@@ -349,7 +349,7 @@ public:
      * \param square The square index (0-63).
      * \return A bitboard representing the attackers.
      */
-    [[nodiscard]] uint64_t getSquareAttackers(uint8_t square) const;
+    [[nodiscard]] uint64_t getSquareAttackers(Square square) const;
 
     /**
      * \brief Retrieves the attackers of a given square by color.
@@ -358,7 +358,7 @@ public:
      * \return A bitboard representing the attackers of the given color.
      */
     template <PieceColor color>
-    [[nodiscard]] uint64_t getSquareAttackersByColor(const uint8_t square) const {
+    [[nodiscard]] uint64_t getSquareAttackersByColor(const Square square) const {
         return getSquareAttackers(square) & getColorBitboard<color>();
     }
 

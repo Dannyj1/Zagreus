@@ -171,4 +171,15 @@ constexpr char getCharacterForPieceType(const Piece piece) {
 
     return ' ';
 }
+
+/**
+ * \brief Determines if a given piece type is a sliding piece.
+ * \param pieceType The piece type.
+ *
+ * \return True if the piece type is a sliding piece, false otherwise.
+ */
+
+inline bool isSlidingPiece(const PieceType pieceType) {
+    return pieceType == BISHOP || pieceType == ROOK || pieceType == QUEEN;
+}
 } // namespace Zagreus
