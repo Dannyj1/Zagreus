@@ -98,4 +98,12 @@ public:
      */
     [[nodiscard]] int evaluate();
 };
+
+/**
+ * \brief Gets the value of a given piece.
+ *
+ * @param piece The piece to get the value of.
+ * @return The value of the given piece.
+ */
+[[nodiscard]] int getPieceValue(Piece piece);
 } // namespace Zagreus

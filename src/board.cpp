@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string_view>
 #include "bitwise.h"
+#include "eval.h"
 #include "pcg_random.hpp"
 
 namespace Zagreus {
@@ -206,6 +207,87 @@ bool Board::isDraw() {
 
 uint64_t Board::getZobristHash() const {
     return this->zobristHash;
+}
+
+/**
+ * \brief gets the square of the attacker with the lowest value of a given square
+ * \tparam color The color of the attacker.
+ * \param square The square to evaluate.
+ *
+ * \return The square of the attacker with the lowest value.
+ */
+template <PieceColor color>
+Square Board::getSmallestAttacker(Square square) const {
+    const uint64_t attackers = getSquareAttackersByColor<color>(square);
+
+    if (!attackers) {
+        return NONE;
+    }
+
+    constexpr Piece attackerOrder[6] = {
+        color == WHITE ? WHITE_PAWN : BLACK_PAWN,
+        color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT,
+        color == WHITE ? WHITE_BISHOP : BLACK_BISHOP,
+        color == WHITE ? WHITE_ROOK : BLACK_ROOK,
+        color == WHITE ? WHITE_QUEEN : BLACK_QUEEN,
+        color == WHITE ? WHITE_KING : BLACK_KING
+    };
+
+    for (const Piece piece : attackerOrder) {
+        if (const uint64_t candidate = attackers & bitboards[piece]) {
+            return static_cast<Square>(bitscanForward(candidate));
+        }
+    }
+
+    return NONE;
+}
+
+/**
+ * \brief Perform static exchange evaluation on a square for a given color.
+ * \param square The square to evaluate.
+ * \tparam color The color to evaluate for.
+ *
+ * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
+ */
+template <PieceColor color>
+int Board::see(const Square square) {
+    constexpr PieceColor opponentColor = !color;
+    int value = 0;
+    const Square attackerSquare = getSmallestAttacker<color>(square);
+
+    if (attackerSquare != NONE) {
+        const Move move = encodeMove(attackerSquare, square);
+        const Piece capturedPiece = getPieceOnSquare(square);
+
+        makeMove(move);
+        value = getPieceValue(capturedPiece) - see<opponentColor>(square);
+        unmakeMove();
+    }
+
+    return value;
+}
+
+template int Board::see<WHITE>(Square square);
+template int Board::see<BLACK>(Square square);
+
+/**
+ * \brief Calculates the Static Exchange Evaluation (SEE) score for a capture move.
+ * \param move The move to evaluate.
+ * \tparam color The color to evaluate for.
+ *
+ * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
+ */
+template <PieceColor color>
+int Board::seeCapture(const Move& move) {
+    int value = 0;
+    const Square toSquare = getToSquare(move);
+    const Piece capturedPiece = getPieceOnSquare(toSquare);
+
+    makeMove(move);
+    value = getPieceValue(capturedPiece) - see<!color>(getToSquare(move));
+    unmakeMove();
+
+    return value;
 }
 
 /**

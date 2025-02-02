@@ -242,4 +242,35 @@ void Evaluation::initializeEvalData() {
         }
     }
 }
+
+/**
+ * \brief Gets the value of a given piece.
+ *
+ * @param piece The piece to get the value of.
+ * @return The value of the given piece.
+ */
+int getPieceValue(const Piece piece) {
+    switch (piece) {
+        case WHITE_PAWN:
+        case BLACK_PAWN:
+            return MATERIAL_MIDGAME_PAWN_VALUE;
+        case WHITE_KNIGHT:
+        case BLACK_KNIGHT:
+            return MATERIAL_MIDGAME_KNIGHT_VALUE;
+        case WHITE_BISHOP:
+        case BLACK_BISHOP:
+            return MATERIAL_MIDGAME_BISHOP_VALUE;
+        case WHITE_ROOK:
+        case BLACK_ROOK:
+            return MATERIAL_MIDGAME_ROOK_VALUE;
+        case WHITE_QUEEN:
+        case BLACK_QUEEN:
+            return MATERIAL_MIDGAME_QUEEN_VALUE;
+        case WHITE_KING:
+        case BLACK_KING:
+            return 10000;
+        default:
+            return 0;
+    }
+}
 } // namespace Zagreus

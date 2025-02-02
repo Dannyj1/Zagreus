@@ -172,13 +172,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
 
-    if (!isPV) {
+    /*if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
             return score;
         }
-    }
+    }*/
 
     int bestScore = std::numeric_limits<int>::min();
     bool firstMove = true;
@@ -189,10 +189,12 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     generateMoves<color, ALL>(board, moves);
     MovePicker movePicker{moves};
     movePicker.sort(board);
-    Move bestMove = NO_MOVE;
+    // Move bestMove = NO_MOVE;
 
     while (movePicker.next(move)) {
-        int score;
+        const Square toSquare = getToSquare(move);
+        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
         board.makeMove(move);
 
         if (!board.isPositionLegal<color>()) {
@@ -201,6 +203,17 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         legalMoves += 1;
+
+        if (capturedPiece != EMPTY) {
+            int see = getPieceValue(capturedPiece) - board.see<opponentColor>(toSquare);
+
+            if (see < 0) {
+                board.unmakeMove();
+                continue;
+            }
+        }
+
+        int score;
 
         if (firstMove) {
             if (isRoot) {
@@ -221,10 +234,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         board.unmakeMove();
 
         if (score >= beta) {
-            if (!engine.isSearchStopped()) {
+            /*if (!engine.isSearchStopped()) {
                 bestMove = move;
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
-            }
+            }*/
 
             return score;
         }
@@ -235,7 +248,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
         if (score > bestScore) {
             bestScore = score;
-            bestMove = move;
+            // bestMove = move;
         }
     }
 
@@ -249,7 +262,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     }
 
-    if (!isRoot) {
+    /*if (!isRoot) {
         TTNodeType ttNodeType = ALPHA;
 
         if (isPV) {
@@ -259,7 +272,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         if (!engine.isSearchStopped()) {
             tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
         }
-    }
+    }*/
 
     return alpha;
 }
@@ -274,13 +287,13 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         return DRAW_SCORE;
     }
 
-    if (!isPV) {
+    /*if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
             return score;
         }
-    }
+    }*/
 
     if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
         engine.setSearchStopped(true);
@@ -292,9 +305,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     int bestScore = Evaluation(board).evaluate();
 
     if (bestScore >= beta) {
-        if (!engine.isSearchStopped()) {
+        /*if (!engine.isSearchStopped()) {
             tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
-        }
+        }*/
 
         return bestScore;
     }
@@ -322,9 +335,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         board.unmakeMove();
 
         if (score >= beta) {
-            if (!engine.isSearchStopped()) {
+            /*if (!engine.isSearchStopped()) {
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, NO_MOVE, BETA);
-            }
+            }*/
 
             return score;
         }
@@ -338,7 +351,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         }
     }
 
-    TTNodeType ttNodeType = ALPHA;
+    /*TTNodeType ttNodeType = ALPHA;
 
     if (isPV) {
         ttNodeType = EXACT;
@@ -346,7 +359,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     if (!engine.isSearchStopped()) {
         tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, ttNodeType);
-    }
+    }*/
 
     return bestScore;
 }

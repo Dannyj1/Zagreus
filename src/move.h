@@ -85,12 +85,12 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const P
     return fromSquare | (toSquare << 6) | (PROMOTION << 12) | (promotionPiece << 14);
 }
 
-inline uint8_t getFromSquare(const Move move) {
-    return move & 0x3F;
+inline Square getFromSquare(const Move move) {
+    return static_cast<Square>(move & 0x3F);
 }
 
-inline uint8_t getToSquare(const Move move) {
-    return (move >> 6) & 0x3F;
+inline Square getToSquare(const Move move) {
+    return static_cast<Square>((move >> 6) & 0x3F);
 }
 
 inline MoveType getMoveType(const Move move) {

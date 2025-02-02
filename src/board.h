@@ -400,5 +400,35 @@ public:
      * \return The current zobrist hash of the board.
      */
     uint64_t getZobristHash() const;
+
+    /**
+     * \brief gets the square of the attacker with the lowest value of a given square
+     * \tparam color The color of the attacker.
+     * \param square The square to evaluate.
+     *
+     * \return The square of the attacker with the lowest value.
+     */
+    template <PieceColor color>
+    Square getSmallestAttacker(Square square) const;
+
+    /**
+     * \brief Perform Static Exchange Evaluation (SEE) on a square for a given color.
+     * \param square The square to evaluate.
+     * \tparam color The color to evaluate for.
+     *
+     * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
+     */
+    template <PieceColor color>
+    int see(Square square);
+
+    /**
+     * \brief Calculates the Static Exchange Evaluation (SEE) score for a capture move.
+     * \param move The move to evaluate.
+     * \tparam color The color to evaluate for.
+     *
+     * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
+     */
+    template <PieceColor color>
+    int seeCapture(const Move& move);
 };
 } // namespace Zagreus

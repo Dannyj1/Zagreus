@@ -91,7 +91,7 @@ TTEntry* TranspositionTable::getEntry(const uint64_t zobristHash) const {
 
     // Check validation hash to avoid hash collisions
     if (entry->validationHash == (zobristHash >> 32)) {
-            return entry;
+        return entry;
     }
 
     return nullptr;

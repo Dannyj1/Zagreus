@@ -54,7 +54,7 @@ void MovePicker::reset() {
 static TranspositionTable* tt = TranspositionTable::getTT();
 
 void MovePicker::sort(const Board& board) const {
-    uint64_t zobristHash = board.getZobristHash();
+    /*uint64_t zobristHash = board.getZobristHash();
     TTEntry* entry = tt->getEntry(zobristHash);
 
     if (entry != nullptr) {
@@ -69,6 +69,6 @@ void MovePicker::sort(const Board& board) const {
                 }
             }
         }
-    }
+    }*/
 }
 } // namespace Zagreus
