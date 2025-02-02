@@ -307,7 +307,7 @@ void Board::makeMove(const Move& move) {
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
     zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
-    enPassantSquare = 0;
+    enPassantSquare = 255;
     history[ply].castlingRights = castlingRights;
     history[ply].zobristHash = zobristHash;
     history[ply].halfMoveClock = halfMoveClock;

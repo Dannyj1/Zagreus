@@ -72,7 +72,7 @@ private:
     uint16_t fullmoveClock = 1;
     uint8_t halfMoveClock = 0;
     uint8_t castlingRights = 0;
-    uint8_t enPassantSquare = 0;
+    uint8_t enPassantSquare = 255;
 
 public:
     /**
