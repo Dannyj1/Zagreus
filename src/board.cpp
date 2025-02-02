@@ -689,11 +689,15 @@ bool Board::setFromFEN(const std::string_view fen) {
         }
 
         if (spaces == 4) {
-            halfMoveClock = character - '0';
+            if (character >= '0' && character <= '9') {
+                halfMoveClock = halfMoveClock * 10 + (character - '0');
+            }
         }
 
         if (spaces == 5) {
-            fullmoveClock = character - '0';
+            if (character >= '0' && character <= '9') {
+                fullmoveClock = fullmoveClock * 10 + (character - '0');
+            }
         }
     }
 
