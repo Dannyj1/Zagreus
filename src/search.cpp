@@ -193,9 +193,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     // Move bestMove = NO_MOVE;
 
     while (movePicker.next(move)) {
-        const Square toSquare = getToSquare(move);
-        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
-
         board.makeMove(move);
 
         if (!board.isPositionLegal<color>()) {
@@ -204,15 +201,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         legalMoves += 1;
-
-        if (capturedPiece != EMPTY) {
-            int see = getPieceValue(capturedPiece) - board.see<opponentColor>(toSquare);
-
-            if (see < 0) {
-                board.unmakeMove();
-                continue;
-            }
-        }
 
         int score;
 
@@ -317,6 +305,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         alpha = bestScore;
     }
 
+    constexpr PieceColor opponentColor = !color;
+    int legalMoves = 0;
+
     Move move;
     MoveList moves = MoveList{};
     generateMoves<color, QSEARCH>(board, moves);
@@ -325,11 +316,24 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     while (movePicker.next(move)) {
         board.makeMove(move);
+        // const Square toSquare = getToSquare(move);
+        // const Piece capturedPiece = board.getPieceOnSquare(toSquare);
 
         if (!board.isPositionLegal<color>()) {
             board.unmakeMove();
             continue;
         }
+
+        legalMoves += 1;
+
+        /*if (capturedPiece != EMPTY) {
+            int see = getPieceValue(capturedPiece) - board.see<opponentColor>(toSquare);
+
+            if (see < 0) {
+                board.unmakeMove();
+                continue;
+            }
+        }*/
 
         const int score = -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
 
@@ -350,6 +354,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         if (score > alpha) {
             alpha = score;
         }
+    }
+
+    if (!legalMoves && board.isKingInCheck<color>()) {
+        bestScore = -MATE_SCORE + board.getPly();
     }
 
     /*TTNodeType ttNodeType = ALPHA;
