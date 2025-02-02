@@ -53,8 +53,8 @@ void Engine::doSetup() {
     initializeMagicBitboards();
     initializeAttackLookupTables();
 
-    UCIOption hashOption = getOption("Hash");
-    TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
+    // UCIOption hashOption = getOption("Hash");
+    // TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
 }
 
 std::string Engine::getVersionString() {
@@ -187,9 +187,9 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 
     if (!didSetup) {
         doSetup();
-    } else if (name == "Hash") {
+    }/* else if (name == "Hash") {
         TranspositionTable::getTT()->setTableSize(std::stoi(value));
-    }
+    }*/
 }
 
 void Engine::handleUciNewGameCommand() {
@@ -490,8 +490,8 @@ void Engine::processLine(const std::string& inputLine) {
 }
 
 void Engine::registerOptions() {
-    UCIOption hashOption{"Hash", Spin, "16", "1", "33554432"};
-    addOption(hashOption);
+    // UCIOption hashOption{"Hash", Spin, "16", "1", "33554432"};
+    // addOption(hashOption);
 }
 
 void Engine::startUci() {
