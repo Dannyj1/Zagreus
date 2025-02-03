@@ -39,6 +39,10 @@ void initZobristConstants() {
 
     for (uint64_t& zobrist : zobristConstants) {
         zobrist = rng();
+
+        while (zobrist == 0) {
+            zobrist = rng();
+        }
     }
 }
 
@@ -360,7 +364,11 @@ void Board::makeMove(const Move& move) {
     history[ply].move = move;
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
-    zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
+
+    if (enPassantSquare != 255) {
+        zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
+    }
+
     enPassantSquare = 255;
     history[ply].castlingRights = castlingRights;
     history[ply].zobristHash = zobristHash;

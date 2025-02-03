@@ -49,7 +49,6 @@ void Engine::doSetup() {
     }
 
     didSetup = true;
-    initZobristConstants();
     initializeMagicBitboards();
     initializeBetweenLookupTable();
     initializeAttackLookupTables();

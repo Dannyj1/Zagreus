@@ -54,7 +54,10 @@ private:
     void processLine(const std::string& inputLine);
 
 public:
-    Engine() = default;
+    Engine() {
+        // Needs to be here so the position command does not mess with the zobrist hash, while we still do the most expensive setup when the specification allows it
+        initZobristConstants();
+    }
 
     Engine(const Engine&) = delete;
 
