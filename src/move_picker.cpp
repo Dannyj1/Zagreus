@@ -56,16 +56,20 @@ void MovePicker::reset() {
 static TranspositionTable* tt = TranspositionTable::getTT();
 
 void MovePicker::sort(Board& board) const {
+    // TODO: Make better system that supports assigns a score to moves and sorts based on those
     const PvLine& pvLine = board.getPreviousPvLine();
     const int currentPly = board.getPly();
     const int pvMoveIndex = currentPly - pvLine.startPly;
+    Move pvMove = NO_MOVE;
+    bool foundPvMove = false;
 
     if (pvLine.moveCount >= pvMoveIndex) {
-        const Move pvMove = pvLine.moves[pvMoveIndex];
+        pvMove = pvLine.moves[pvMoveIndex];
 
         if (pvMove != NO_MOVE) {
             for (int i = 0; i < moveList.size; i++) {
                 if (moveList.moves[i] == pvMove) {
+                    foundPvMove = true;
                     std::swap(moveList.moves[0], moveList.moves[i]);
                     break;
                 }
@@ -73,21 +77,23 @@ void MovePicker::sort(Board& board) const {
         }
     }
 
-    /*uint64_t zobristHash = board.getZobristHash();
+    uint64_t zobristHash = board.getZobristHash();
     TTEntry* entry = tt->getEntry(zobristHash);
 
     if (entry != nullptr) {
         Move bestMove = entry->bestMove;
 
-        if (bestMove != NO_MOVE) {
+        if (bestMove != NO_MOVE && bestMove != pvMove) {
             // Find the best move and put it at the front of the list
             for (int i = 0; i < moveList.size; i++) {
                 if (moveList.moves[i] == bestMove) {
-                    std::swap(moveList.moves[0], moveList.moves[i]);
+                    int targetIndex = foundPvMove ? 1 : 0;
+
+                    std::swap(moveList.moves[targetIndex], moveList.moves[i]);
                     break;
                 }
             }
         }
-    }*/
+    }
 }
 } // namespace Zagreus

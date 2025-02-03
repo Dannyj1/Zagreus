@@ -53,8 +53,8 @@ void Engine::doSetup() {
     initializeBetweenLookupTable();
     initializeAttackLookupTables();
 
-    // UCIOption hashOption = getOption("Hash");
-    // TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
+    UCIOption hashOption = getOption("Hash");
+    TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
 }
 
 std::string Engine::getVersionString() {
@@ -187,9 +187,9 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 
     if (!didSetup) {
         doSetup();
-    } /* else if (name == "Hash") {
+    } else if (name == "Hash") {
         TranspositionTable::getTT()->setTableSize(std::stoi(value));
-    }*/
+    }
 }
 
 void Engine::handleUciNewGameCommand() {
@@ -410,7 +410,9 @@ void Engine::processCommand(const std::string_view command, const std::string& a
     } else if (command == "position") {
         handlePositionCommand(args);
     } else if (command == "go") {
-        handleGoCommand(args);
+        std::thread searchThread{&Engine::handleGoCommand, this, args};
+
+        searchThread.detach();
     } else if (command == "stop") {
         handleStopCommand();
     } else if (command == "ponderhit") {
@@ -489,8 +491,8 @@ void Engine::processLine(const std::string& inputLine) {
 }
 
 void Engine::registerOptions() {
-    // UCIOption hashOption{"Hash", Spin, "16", "1", "33554432"};
-    // addOption(hashOption);
+    UCIOption hashOption{"Hash", Spin, "16", "1", "33554432"};
+    addOption(hashOption);
 }
 
 void Engine::startUci() {
@@ -499,9 +501,7 @@ void Engine::startUci() {
     std::string line;
 
     while (std::getline(std::cin, line)) {
-        std::thread processThread{&Engine::processLine, this, line};
-
-        processThread.detach();
+        processLine(line);
     }
 }
 

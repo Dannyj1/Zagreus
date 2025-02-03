@@ -28,10 +28,11 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
     const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
-    // Replace entries only when either:
-    // 1. The new entry is at least as deep as the old entry
-    // 2. The new entry is of the same depth but is from a PV node, while the old entry is not
-    if (depth > entry->depth || (depth == entry->depth && entry->nodeType != EXACT && nodeType == EXACT)) {
+    // Only replace the entry if:
+    // 1. Validation hash is 0 (the entry is empty)
+    // 1. Depth > 0 (the new node is a pvSearch node, can replace any node)
+    // 2. The entries' depth < 0 (the entry is a qSearch node, can be replaced by any node)
+    if (entry->validationHash == 0 || depth > 0 || entry->depth < 0) {
         if (score >= (MATE_SCORE - MAX_PLY)) {
             score += ply;
         } else if (score <= (-MATE_SCORE + MAX_PLY)) {

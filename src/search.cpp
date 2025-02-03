@@ -158,13 +158,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     stats.nodesSearched += 1;
 
-    /*if (!isPV) {
+    if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
             return score;
         }
-    }*/
+    }
 
     bool firstMove = true;
     int legalMoves = 0;
@@ -181,7 +181,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     MovePicker movePicker{moves};
     movePicker.sort(board);
-    // Move bestMove = NO_MOVE;
+    Move bestMove = NO_MOVE;
     PvLine nodePvLine = PvLine{board.getPly()};
 
     while (movePicker.next(move)) {
@@ -219,10 +219,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         board.unmakeMove();
 
         if (score >= beta) {
-            /*if (!engine.isSearchStopped()) {
+            if (!engine.isSearchStopped()) {
                 bestMove = move;
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
-            }*/
+            }
 
             return score;
         }
@@ -248,7 +248,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     }
 
-    /*if (!isRoot) {
+    if (!isRoot) {
         TTNodeType ttNodeType = ALPHA;
 
         if (isPV) {
@@ -258,7 +258,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         if (!engine.isSearchStopped()) {
             tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
         }
-    }*/
+    }
 
     assert(alpha != INITIAL_ALPHA);
     return alpha;
@@ -267,16 +267,16 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 template <PieceColor color, NodeType nodeType>
 int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
             const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
-    // constexpr bool isPV = nodeType == PV;
     assert(nodeType != ROOT);
+    constexpr bool isPV = nodeType == PV;
 
-    /*if (!isPV) {
+    if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
             return score;
         }
-    }*/
+    }
 
     if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
         engine.setSearchStopped(true);
@@ -288,9 +288,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     int bestScore = Evaluation(board).evaluate();
 
     if (bestScore >= beta) {
-        /*if (!engine.isSearchStopped()) {
+        if (!engine.isSearchStopped()) {
             tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
-        }*/
+        }
 
         return bestScore;
     }
@@ -342,9 +342,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         board.unmakeMove();
 
         if (score >= beta) {
-            /*if (!engine.isSearchStopped()) {
+            if (!engine.isSearchStopped()) {
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, NO_MOVE, BETA);
-            }*/
+            }
 
             return score;
         }
@@ -366,7 +366,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         }
     }
 
-    /*TTNodeType ttNodeType = ALPHA;
+    TTNodeType ttNodeType = ALPHA;
 
     if (isPV) {
         ttNodeType = EXACT;
@@ -374,7 +374,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     if (!engine.isSearchStopped()) {
         tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, ttNodeType);
-    }*/
+    }
 
     assert(alpha != INITIAL_ALPHA);
     return bestScore;

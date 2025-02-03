@@ -87,6 +87,7 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"
 };
 
+// TODO: Figure out why r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10 takes so long
 const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
     // "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
