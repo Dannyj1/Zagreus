@@ -23,6 +23,7 @@
 #include <compare>
 #include <iostream>
 #include <limits>
+#include <cstring>
 #include <string>
 #include "board.h"
 #include "constants.h"
@@ -81,7 +82,8 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         bestPvLine = pvLine;
 
         stats.score = score;
-        stats.timeSpentMs = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTime).count();
+        stats.timeSpentMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - startTime).count();
         stats.depth = depth;
 
         // Make sure we don't divide by zero
@@ -139,7 +141,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
 
-    if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
+    if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() >
+        endTime) {
         engine.setSearchStopped(true);
         return beta;
     }
@@ -165,7 +168,14 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     Move move;
     MoveList moves = MoveList{};
-    generateMoves<color, ALL>(board, moves);
+    bool isInCheck = board.isKingInCheck<color>();
+
+    if (isInCheck) {
+        generateMoves<color, EVASIONS>(board, moves);
+    } else {
+        generateMoves<color, ALL>(board, moves);
+    }
+
     MovePicker movePicker{moves};
     movePicker.sort(board);
     // Move bestMove = NO_MOVE;
@@ -194,10 +204,12 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
             firstMove = false;
         } else {
-            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime, nodePvLine);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
+                                                      nodePvLine);
 
             if (score > alpha && isPV) {
-                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime, nodePvLine);
+                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
+                                                     nodePvLine);
             }
         }
 
@@ -222,9 +234,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     if (!legalMoves) {
-        bool inCheck = board.isKingInCheck<color>();
-
-        if (inCheck) {
+        if (isInCheck) {
             alpha = -MATE_SCORE + board.getPly();
         } else {
             alpha = DRAW_SCORE;

@@ -451,7 +451,6 @@ public:
     template <PieceColor color>
     int seeCapture(const Move& move);
 
-    // get half move and full move clock
     /**
      * \brief Retrieves the half move clock.
      * \return The half move clock.

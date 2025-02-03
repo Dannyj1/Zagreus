@@ -153,6 +153,7 @@ uint64_t queenAttacks(const uint8_t square, const uint64_t occupied) {
  * \return The bitboard of squares between the two squares.
  */
 uint64_t getSquaresBetween(const Square fromSquare, const Square toSquare) {
+    assert(fromSquare < SQUARES && toSquare < SQUARES);
     return betweenLookupTable[fromSquare][toSquare];
 }
 } // namespace Zagreus

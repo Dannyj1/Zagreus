@@ -90,6 +90,10 @@ void generateMoves(const Board& board, MoveList& moves) {
     } else {
         generateKingMoves<color, type>(board, moves, genMask);
     }
+
+    assert(type == QSEARCH || genMask != 0);
+    assert((genMask & ownPieces) == 0);
+    assert((genMask & opponentKingBB) == 0);
 }
 
 /**

@@ -39,6 +39,7 @@ std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare) {
     notation += static_cast<char>(toSquare % 8 + 'a');
     notation += static_cast<char>(toSquare / 8 + '1');
 
+    assert(notation.size() == 4);
     return notation;
 }
 
@@ -61,6 +62,7 @@ std::string getMoveNotation(const uint8_t fromSquare, const uint8_t toSquare, co
     notation += static_cast<char>(toSquare / 8 + '1');
     notation += "qrbn"[promotionPiece];
 
+    assert(notation.size() == 5);
     return notation;
 }
 
@@ -112,7 +114,6 @@ Move getMoveFromMoveNotation(const std::string_view notation) {
                 break;
             default:
                 assert(false);
-                return 0;
         }
 
         return encodeMove(fromSquare, toSquare, promotionPiece);
@@ -133,6 +134,7 @@ std::string getSquareNotation(const Square square) {
     notation += static_cast<char>(square % 8 + 'a');
     notation += static_cast<char>(square / 8 + '1');
 
+    assert(notation.size() == 2);
     return notation;
 }
 
