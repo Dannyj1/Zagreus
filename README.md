@@ -11,6 +11,8 @@ the performance where it should be and a lot of things are missing. The code rel
 accessed in the [master branch here](https://github.com/Dannyj1/Zagreus/tree/master). No changes will happen to the
 master branch until the rewrite is finished.
 
+Consider the information in this readme outdated for the rewrite.
+
 # Zagreus Chess Engine
 Zagreus is a work in progress UCI Chess Engine. You can play against Zagreus on
 Lichess: https://lichess.org/@/Zagreus_Engine. You will also be able to find it's elo rating on there. At the time of

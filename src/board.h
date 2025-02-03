@@ -412,7 +412,7 @@ public:
      *
      * \return True if the position is a draw, false otherwise.
      */
-    bool isDraw();
+    bool isDraw() const;
 
     /**
      * \brief Gets the current zobrist hash of the board. It is pre-computed and will only be retrieved from memory.

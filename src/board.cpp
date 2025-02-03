@@ -205,8 +205,57 @@ void Board::print() const {
     std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
 }
 
-bool Board::isDraw() {
-    // TODO: Implement
+bool Board::isDraw() const {
+    const uint64_t occupied = getOccupiedBitboard();
+
+    if (halfMoveClock >= 100) {
+        return true;
+    }
+
+    const uint64_t zobristHash = getZobristHash();
+
+    // 3-fold repetition
+    for (int i = ply - 2; i >= 0; i -= 2) {
+        if (history[i].zobristHash == zobristHash) {
+            return true;
+        }
+    }
+
+    const uint64_t sufficientMaterial = getBitboard<WHITE_QUEEN>() | getBitboard<BLACK_QUEEN>()
+                                        | getBitboard<WHITE_ROOK>() | getBitboard<BLACK_ROOK>()
+                                        | getBitboard<WHITE_PAWN>() | getBitboard<BLACK_PAWN>();
+
+    if (sufficientMaterial) {
+        // Can never be a draw with queens, rooks or pawns
+        return false;
+    }
+
+    // Only kings left
+    if (popcnt(occupied) == 2) {
+        return true;
+    }
+
+    // Check for KBvK, KNvK
+    if (popcnt(occupied) == 3) {
+        if (getBitboard<WHITE_BISHOP>() || getBitboard<BLACK_BISHOP>() || getBitboard<WHITE_KNIGHT>() || getBitboard<
+                BLACK_KNIGHT>()) {
+            return true;
+        }
+    }
+
+    // Check for KBvKB where bishops are on the same color
+    if (popcnt(occupied) == 4) {
+        if (getBitboard<WHITE_BISHOP>() && getBitboard<BLACK_BISHOP>()) {
+            if ((getBitboard<WHITE_BISHOP>() & DARK_SQUARES) == (getBitboard<BLACK_BISHOP>() & DARK_SQUARES)) {
+                return true;
+            }
+
+            if ((getBitboard<WHITE_BISHOP>() & LIGHT_SQUARES) == (getBitboard<BLACK_BISHOP>() & LIGHT_SQUARES)) {
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 
