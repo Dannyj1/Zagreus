@@ -20,6 +20,8 @@
 
 #include "move_picker.h"
 #include <array>
+#include <iostream>
+
 #include "constants.h"
 #include "tt.h"
 
@@ -53,7 +55,24 @@ void MovePicker::reset() {
 
 static TranspositionTable* tt = TranspositionTable::getTT();
 
-void MovePicker::sort(const Board& board) const {
+void MovePicker::sort(Board& board) const {
+    const PvLine& pvLine = board.getPreviousPvLine();
+    const int currentPly = board.getPly();
+    const int pvMoveIndex = currentPly - pvLine.startPly;
+
+    if (pvLine.moveCount >= pvMoveIndex) {
+        const Move pvMove = pvLine.moves[pvMoveIndex];
+
+        if (pvMove != NO_MOVE) {
+            for (int i = 0; i < moveList.size; i++) {
+                if (moveList.moves[i] == pvMove) {
+                    std::swap(moveList.moves[0], moveList.moves[i]);
+                    break;
+                }
+            }
+        }
+    }
+
     /*uint64_t zobristHash = board.getZobristHash();
     TTEntry* entry = tt->getEntry(zobristHash);
 

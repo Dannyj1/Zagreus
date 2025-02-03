@@ -63,8 +63,9 @@ enum PromotionPiece : uint8_t {
 struct PvLine {
     Move moves[MAX_MOVES]{};
     int moveCount = 0;
+    int startPly = 0;
 
-    PvLine() {
+    explicit PvLine(int startPly) : startPly(startPly) {
         std::fill_n(moves, MAX_MOVES, NO_MOVE);
     }
 };

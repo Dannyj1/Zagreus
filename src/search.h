@@ -44,7 +44,7 @@ struct SearchParams {
 };
 
 struct SearchStats {
-    PvLine pvLine;
+    PvLine pvLine{0};
     uint64_t nodesSearched = 0;
     uint64_t qNodesSearched = 0;
     int score = 0;

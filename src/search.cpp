@@ -47,7 +47,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     int searchTime = calculateSearchTime<color>(params);
     const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
     const auto startTime = std::chrono::steady_clock::now();
-    PvLine bestPvLine = PvLine{};
+    PvLine bestPvLine = PvLine{board.getPly()};
 
     engine.setSearchStopped(false);
 
@@ -65,10 +65,12 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
             break;
         }
 
-        PvLine pvLine = PvLine{};
+        PvLine pvLine = PvLine{board.getPly()};
 
         const int score = pvSearch<color, ROOT>(engine, board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime,
                                                 pvLine);
+        assert(score != INITIAL_ALPHA && score != INITIAL_BETA);
+        assert(depth > 0);
 
         if (std::chrono::steady_clock::now() > endTime) {
             engine.setSearchStopped(true);
@@ -80,6 +82,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         }
 
         bestPvLine = pvLine;
+        board.setPreviousPvLine(bestPvLine);
 
         stats.score = score;
         stats.timeSpentMs = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -179,7 +182,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     MovePicker movePicker{moves};
     movePicker.sort(board);
     // Move bestMove = NO_MOVE;
-    PvLine nodePvLine = PvLine{};
+    PvLine nodePvLine = PvLine{board.getPly()};
 
     while (movePicker.next(move)) {
         board.makeMove(move);

@@ -183,6 +183,7 @@ void Board::reset() {
     this->halfMoveClock = 0;
     this->castlingRights = 0;
     this->enPassantSquare = 255;
+    this->previousPvLine = PvLine{0};
 
     std::ranges::fill(board, EMPTY);
     std::ranges::fill(bitboards, 0);

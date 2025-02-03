@@ -65,7 +65,7 @@ private:
     std::array<uint64_t, COLORS> colorBoards{};
     std::array<BoardState, MAX_PLY> history{};
     std::array<int, PIECES> pieceCounts{};
-    PvLine previousPvLine{};
+    PvLine previousPvLine{0};
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;
     uint64_t zobristHash = 0;
