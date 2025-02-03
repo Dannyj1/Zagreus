@@ -451,5 +451,21 @@ public:
     template <PieceColor color>
     int seeCapture(const Move& move);
 
+    // get half move and full move clock
+    /**
+     * \brief Retrieves the half move clock.
+     * \return The half move clock.
+     */
+    [[nodiscard]] constexpr uint8_t getHalfMoveClock() const {
+        return halfMoveClock;
+    }
+
+    /**
+     * \brief Retrieves the full move clock.
+     * \return The full move clock.
+     */
+    [[nodiscard]] constexpr uint16_t getFullMoveClock() const {
+        return fullmoveClock;
+    }
 };
 } // namespace Zagreus

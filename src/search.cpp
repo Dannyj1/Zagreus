@@ -139,10 +139,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
 
-    if (!isRoot && board.isDraw()) {
-        return DRAW_SCORE;
-    }
-
     if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
         engine.setSearchStopped(true);
         return beta;
@@ -198,8 +194,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
             firstMove = false;
         } else {
-            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
-                                                      nodePvLine);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime, nodePvLine);
 
             if (score > alpha && isPV) {
                 score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime, nodePvLine);
@@ -234,6 +229,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         } else {
             alpha = DRAW_SCORE;
         }
+    } else {
+        if (!isRoot && board.isDraw()) {
+            return DRAW_SCORE;
+        }
     }
 
     /*if (!isRoot) {
@@ -257,10 +256,6 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
             const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
     // constexpr bool isPV = nodeType == PV;
     assert(nodeType != ROOT);
-
-    if (board.isDraw()) {
-        return DRAW_SCORE;
-    }
 
     /*if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
@@ -352,6 +347,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     if (!legalMoves && isInCheck) {
         bestScore = -MATE_SCORE + board.getPly();
+    } else {
+        if (board.isDraw()) {
+            return DRAW_SCORE;
+        }
     }
 
     /*TTNodeType ttNodeType = ALPHA;

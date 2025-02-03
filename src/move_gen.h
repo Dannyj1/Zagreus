@@ -27,7 +27,6 @@
 #include "types.h"
 
 namespace Zagreus {
-// TODO: Implement qsearch and evasions generation
 enum GenerationType : uint8_t {
     ALL,
     QSEARCH,
