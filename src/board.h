@@ -65,6 +65,7 @@ private:
     std::array<uint64_t, COLORS> colorBoards{};
     std::array<BoardState, MAX_PLY> history{};
     std::array<int, PIECES> pieceCounts{};
+    PvLine previousPvLine{};
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;
     uint64_t zobristHash = 0;
@@ -206,6 +207,22 @@ public:
     template <Piece piece>
     [[nodiscard]] constexpr int getPieceCount() const {
         return pieceCounts[piece];
+    }
+
+    /**
+     * \brief sets the previous PV line.
+     */
+    void setPreviousPvLine(const PvLine& pvLine) {
+        previousPvLine = pvLine;
+    }
+
+    /**
+     * \brief Gets the previous PV line.
+     *
+     * \return The previous PV line.
+     */
+    PvLine& getPreviousPvLine() {
+        return previousPvLine;
     }
 
     /**
@@ -430,5 +447,6 @@ public:
      */
     template <PieceColor color>
     int seeCapture(const Move& move);
+
 };
 } // namespace Zagreus

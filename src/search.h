@@ -44,6 +44,7 @@ struct SearchParams {
 };
 
 struct SearchStats {
+    PvLine pvLine;
     uint64_t nodesSearched = 0;
     uint64_t qNodesSearched = 0;
     int score = 0;
@@ -52,13 +53,11 @@ struct SearchStats {
 };
 
 template <PieceColor color>
-Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
+[[nodiscard]] Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
 
 template <PieceColor color, NodeType nodeType>
-int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-             const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine);
 
 template <PieceColor color, NodeType nodeType>
-int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-            const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+[[nodiscard]] int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
 } // namespace Zagreus

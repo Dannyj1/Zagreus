@@ -56,6 +56,19 @@ enum PromotionPiece : uint8_t {
     KNIGHT_PROMOTION = 0b11
 };
 
+
+/**
+ * \brief Struct representing a PV line.
+ */
+struct PvLine {
+    Move moves[MAX_MOVES]{};
+    int moveCount = 0;
+
+    PvLine() {
+        std::fill_n(moves, MAX_MOVES, NO_MOVE);
+    }
+};
+
 std::string getMoveNotation(uint8_t fromSquare, uint8_t toSquare);
 
 std::string getMoveNotation(uint8_t fromSquare, uint8_t toSquare, PromotionPiece promotionPiece);
@@ -115,5 +128,25 @@ inline Piece getPieceFromPromotionPiece(const PromotionPiece promotionPiece, con
             assert(false);
             return EMPTY;
     }
+}
+
+/**
+ * \brief Parses the given pvLine as a string of moves.
+ *
+ * \return The string representation of the pvLine.
+ */
+inline std::string parsePvLine(const PvLine& pvLine) {
+    std::string result;
+
+    for (int i = 0; i < pvLine.moveCount; ++i) {
+        result += getMoveNotation(pvLine.moves[i]) + " ";
+    }
+
+    // remove trailing space
+    if (!result.empty()) {
+        result.pop_back();
+    }
+
+    return result;
 }
 } // namespace Zagreus

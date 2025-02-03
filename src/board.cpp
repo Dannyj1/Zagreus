@@ -46,6 +46,8 @@ void initZobristConstants() {
  * \brief Gets the Zobrist constant for a given index.
  */
 constexpr uint64_t getZobristConstant(const int index) {
+    assert(index >= 0 && index < 781);
+    assert(zobristConstants[index] != 0);
     return zobristConstants[index];
 }
 
@@ -468,9 +470,11 @@ void Board::makeMove(const Move& move) {
     sideToMove = !sideToMove;
     zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
 
-    assert(ply >= 0 && ply < MAX_PLY);
+    assert(ply < MAX_PLY);
     ply++;
-    assert(ply >= 0 && ply < MAX_PLY);
+    assert(ply < MAX_PLY);
+
+    assert(enPassantSquare == 255 || (enPassantSquare / 8 == 2 || enPassantSquare / 8 == 5));
 }
 
 /**

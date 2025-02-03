@@ -50,7 +50,7 @@ public:
     }
 
     void reset() {
-        std::fill_n(transpositionTable, hashSize, TTEntry{});
+        std::fill_n(transpositionTable, hashSize + 1, TTEntry{});
     }
 
     TranspositionTable() = default;
