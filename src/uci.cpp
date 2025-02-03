@@ -194,7 +194,7 @@ void Engine::handleSetOptionCommand(const std::string& args) {
 }
 
 void Engine::handleUciNewGameCommand() {
-    board = Board{};
+    board.reset();
     TranspositionTable::getTT()->reset();
 }
 
@@ -211,7 +211,6 @@ void Engine::handlePositionCommand(const std::string_view args) {
 
     // If the first argument is "startpos", set the board to the starting position
     iss >> arg;
-    board = Board{};
 
     if (arg == "startpos") {
         board.setFromFEN(startPosFEN);

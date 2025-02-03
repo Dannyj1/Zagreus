@@ -168,20 +168,23 @@ uint64_t Board::getSquareAttackers(const Square square) const {
 void Board::reset() {
     this->board = {};
     this->bitboards = {};
-    this->occupied = 0;
     this->colorBoards = {};
-    this->sideToMove = WHITE;
     this->history = {};
-    this->ply = 0;
-    this->castlingRights = 0;
+    this->pieceCounts = {};
+    this->sideToMove = WHITE;
+    this->occupied = 0;
     this->zobristHash = 0;
+    this->ply = 0;
     this->fullmoveClock = 1;
     this->halfMoveClock = 0;
+    this->castlingRights = 0;
+    this->enPassantSquare = 255;
 
     std::ranges::fill(board, EMPTY);
     std::ranges::fill(bitboards, 0);
     std::ranges::fill(colorBoards, 0);
     std::ranges::fill(history, BoardState{});
+    std::ranges::fill(pieceCounts, 0);
 }
 
 /**

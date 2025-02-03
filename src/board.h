@@ -84,9 +84,12 @@ public:
         std::ranges::fill(bitboards, 0);
         std::ranges::fill(colorBoards, 0);
         std::ranges::fill(history, BoardState{});
+        std::ranges::fill(pieceCounts, 0);
     }
 
     Board(const Board&) = delete;
+
+    Board& operator=(const Board&) = delete;
 
     /**
      * \brief Retrieves the bitboard for a given piece type.
