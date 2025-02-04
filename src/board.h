@@ -466,5 +466,17 @@ public:
     [[nodiscard]] constexpr uint16_t getFullMoveClock() const {
         return fullmoveClock;
     }
+
+    /**
+     * \brief Checks if the given color is close to promoting a pawn.
+     * \return True if the given color is close to promoting a pawn, false otherwise.
+     */
+    template <PieceColor color>
+    [[nodiscard]] bool canPromotePawn() const {
+        const uint64_t promotionRank = color == WHITE ? RANK_7 : RANK_2;
+        const uint64_t pawns = getBitboard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>();
+
+        return pawns & promotionRank;
+    }
 };
 } // namespace Zagreus

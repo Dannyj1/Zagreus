@@ -28,6 +28,7 @@
 #include "board.h"
 #include "constants.h"
 #include "eval.h"
+#include "eval_features.h"
 #include "move.h"
 #include "move_gen.h"
 #include "move_picker.h"
@@ -295,15 +296,22 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         return bestScore;
     }
 
+    int delta = MATERIAL_MIDGAME_QUEEN_VALUE;
+
+    if (board.canPromotePawn<color>()) {
+        delta += MATERIAL_MIDGAME_QUEEN_VALUE - MATERIAL_MIDGAME_PAWN_VALUE;
+    }
+
+    if (bestScore < alpha - delta) {
+        return alpha;
+    }
+
     if (bestScore > alpha) {
         alpha = bestScore;
     }
 
-    constexpr PieceColor opponentColor = !color;
+    const bool isInCheck = board.isKingInCheck<color>();
     int legalMoves = 0;
-
-    bool isInCheck = board.isKingInCheck<color>();
-
     Move move;
     MoveList moves = MoveList{};
 
