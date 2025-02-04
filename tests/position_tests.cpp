@@ -79,6 +79,8 @@ const std::vector<std::string> POSITIONS = {
 
 TEST_CASE("test_PieceBitBoards", "[types]") {
     Board board{};
+    initZobristConstants();
+    initializeAttackLookupTables();
 
     for (const std::string& fen : POSITIONS) {
         board.setFromFEN(fen);

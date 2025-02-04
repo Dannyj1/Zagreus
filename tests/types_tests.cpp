@@ -23,7 +23,6 @@
 #include "../src/types.h"
 
 namespace Zagreus {
-// Test all pieces at once for correct identification of piece type
 TEST_CASE("test_pieceType", "[types]") {
     REQUIRE(getPieceType(Piece::WHITE_PAWN) == PieceType::PAWN);
     REQUIRE(getPieceType(Piece::BLACK_PAWN) == PieceType::PAWN);
@@ -39,10 +38,8 @@ TEST_CASE("test_pieceType", "[types]") {
     REQUIRE(getPieceType(Piece::BLACK_KING) == PieceType::KING);
 }
 
-// Test the pieceColor function for determining the color of all pieces as white or black
 TEST_CASE("test_pieceColor", "[types]") {
-    // Given
-    std::vector pieces = {
+    const std::vector pieces = {
         WHITE_PAWN, BLACK_PAWN,
         WHITE_KNIGHT, BLACK_KNIGHT,
         WHITE_BISHOP, BLACK_BISHOP,
@@ -51,7 +48,6 @@ TEST_CASE("test_pieceColor", "[types]") {
         WHITE_KING, BLACK_KING
     };
 
-    // When & Then
     for (const auto& piece : pieces) {
         PieceColor color = getPieceColor(piece);
         if (piece == WHITE_PAWN || piece == WHITE_KNIGHT || piece == WHITE_BISHOP ||
