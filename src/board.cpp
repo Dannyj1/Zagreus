@@ -302,7 +302,7 @@ Square Board::getSmallestAttacker(Square square) const {
     return NONE;
 }
 
-int estimateMoveValue(const Board& board, const Move& move) {
+int estimateMoveValue(const Board& board, const Move move) {
     const MoveType moveType = getMoveType(move);
     const Piece capturedPiece = board.getPieceOnSquare(getToSquare(move));
     int value = getPieceValue(capturedPiece);
@@ -311,7 +311,7 @@ int estimateMoveValue(const Board& board, const Move& move) {
         value += getPieceValue(getPieceFromPromotionPiece(getPromotionPiece(move), board.getSideToMove())) -
             getPieceValue(WHITE_PAWN);
     } else if (moveType == EN_PASSANT) {
-        value = getPieceValue(BLACK_PAWN);
+        value = getPieceValue(WHITE_PAWN);
     } else if (moveType == CASTLING) {
         value = 0;
     }
@@ -325,7 +325,7 @@ int estimateMoveValue(const Board& board, const Move& move) {
  *
  * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
  */
-bool Board::see(const Move& move, int threshold) {
+bool Board::see(const Move move, int threshold) {
     const Square fromSquare = getFromSquare(move);
     const Square toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
@@ -346,6 +346,10 @@ bool Board::see(const Move& move, int threshold) {
         return true;
     }
 
+    const uint64_t bishops = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<BLACK_BISHOP>() | getPieceBoard<
+                                 WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
+    const uint64_t rooks = getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>() | getPieceBoard<
+                               WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
     const uint64_t oldOccupied = getOccupiedBitboard();
     const PieceColor oldSideToMove = sideToMove;
     occupied = (occupied ^ squareToBitboard(fromSquare)) | squareToBitboard(toSquare);
@@ -375,24 +379,16 @@ bool Board::see(const Move& move, int threshold) {
             bitscanForward(ownAttackers & getPieceBoard(getPieceFromType(nextVictimType, sideToMove))));
 
         if (nextVictimType == PAWN || nextVictimType == BISHOP || nextVictimType == QUEEN) {
-            const uint64_t bishops = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<BLACK_BISHOP>() | getPieceBoard<
-                                         WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
-
             attackers |= getBishopAttacks(toSquare, occupied) & bishops;
         }
 
         if (nextVictimType == ROOK || nextVictimType == QUEEN) {
-            const uint64_t rooks = getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>() | getPieceBoard<
-                                       WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
-
             attackers |= getRookAttacks(toSquare, occupied) & rooks;
         }
 
         attackers &= occupied;
-
-        sideToMove = !sideToMove;
-
         balance = -balance - 1 - getPieceValue(getPieceFromType(nextVictimType, sideToMove));
+        sideToMove = !sideToMove;
 
         if (balance >= 0) {
             if (nextVictimType == KING && (attackers & getColorBitboard(sideToMove))) {
@@ -413,7 +409,7 @@ bool Board::see(const Move& move, int threshold) {
  * \brief Makes a move on the board.
  * \param move The move to make.
  */
-void Board::makeMove(const Move& move) {
+void Board::makeMove(const Move move) {
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);

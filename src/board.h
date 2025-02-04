@@ -351,7 +351,7 @@ public:
      * \brief Makes a move on the board.
      * \param move The move to make.
      */
-    void makeMove(const Move& move);
+    void makeMove(const Move move);
 
     /**
      * \brief Unmakes the last move on the board.
@@ -455,7 +455,7 @@ public:
      *
      * \return True if the move is good for the given color, false otherwise.
      */
-    bool see(const Move& move, int threshold);
+    bool see(const Move move, int threshold);
 
     /**
      * \brief Retrieves the half move clock.
