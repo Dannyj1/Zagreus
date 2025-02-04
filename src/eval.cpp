@@ -44,7 +44,6 @@ int Evaluation::evaluate() {
 
     initializeEvalData();
 
-    evaluateMaterial();
     evaluatePieces();
     evaluateMobility();
 
@@ -72,60 +71,12 @@ constexpr int totalPhase = knightPhase * 4 + bishopPhase * 4 + rookPhase * 4 + q
 int Evaluation::calculatePhase() const {
     int phase = totalPhase;
 
-    phase -= (board.getPieceCount<WHITE_KNIGHT>() + board.getPieceCount<BLACK_KNIGHT>()) * knightPhase;
-    phase -= (board.getPieceCount<WHITE_BISHOP>() + board.getPieceCount<BLACK_BISHOP>()) * bishopPhase;
-    phase -= (board.getPieceCount<WHITE_ROOK>() + board.getPieceCount<BLACK_ROOK>()) * rookPhase;
-    phase -= (board.getPieceCount<WHITE_QUEEN>() + board.getPieceCount<BLACK_QUEEN>()) * queenPhase;
+    phase -= popcnt(board.getPieceBoard<WHITE_KNIGHT>() | board.getPieceBoard<BLACK_KNIGHT>()) * knightPhase;
+    phase -= popcnt(board.getPieceBoard<WHITE_BISHOP>() | board.getPieceBoard<BLACK_BISHOP>()) * bishopPhase;
+    phase -= popcnt(board.getPieceBoard<WHITE_ROOK>() | board.getPieceBoard<BLACK_ROOK>()) * rookPhase;
+    phase -= popcnt(board.getPieceBoard<WHITE_QUEEN>() | board.getPieceBoard<BLACK_QUEEN>()) * queenPhase;
 
     return (phase * 256 + (totalPhase / 2)) / totalPhase;
-}
-
-/**
- * \brief Evaluates the material on the board.
- *
- * This function evaluates the material on the board for both sides (white and black)
- * and updates the midgame and endgame scores accordingly.
- */
-void Evaluation::evaluateMaterial() {
-    const int whitePawnCount = board.getPieceCount<WHITE_PAWN>();
-    whiteMidgameScore += whitePawnCount * MATERIAL_MIDGAME_PAWN_VALUE;
-    whiteEndgameScore += whitePawnCount * MATERIAL_ENDGAME_PAWN_VALUE;
-
-    const int blackPawnCount = board.getPieceCount<BLACK_PAWN>();
-    blackMidgameScore += blackPawnCount * MATERIAL_MIDGAME_PAWN_VALUE;
-    blackEndgameScore += blackPawnCount * MATERIAL_ENDGAME_PAWN_VALUE;
-
-    const int whiteKnightCount = board.getPieceCount<WHITE_KNIGHT>();
-    whiteMidgameScore += whiteKnightCount * MATERIAL_MIDGAME_KNIGHT_VALUE;
-    whiteEndgameScore += whiteKnightCount * MATERIAL_ENDGAME_KNIGHT_VALUE;
-
-    const int blackKnightCount = board.getPieceCount<BLACK_KNIGHT>();
-    blackMidgameScore += blackKnightCount * MATERIAL_MIDGAME_KNIGHT_VALUE;
-    blackEndgameScore += blackKnightCount * MATERIAL_ENDGAME_KNIGHT_VALUE;
-
-    const int whiteBishopCount = board.getPieceCount<WHITE_BISHOP>();
-    whiteMidgameScore += whiteBishopCount * MATERIAL_MIDGAME_BISHOP_VALUE;
-    whiteEndgameScore += whiteBishopCount * MATERIAL_ENDGAME_BISHOP_VALUE;
-
-    const int blackBishopCount = board.getPieceCount<BLACK_BISHOP>();
-    blackMidgameScore += blackBishopCount * MATERIAL_MIDGAME_BISHOP_VALUE;
-    blackEndgameScore += blackBishopCount * MATERIAL_ENDGAME_BISHOP_VALUE;
-
-    const int whiteRookCount = board.getPieceCount<WHITE_ROOK>();
-    whiteMidgameScore += whiteRookCount * MATERIAL_MIDGAME_ROOK_VALUE;
-    whiteEndgameScore += whiteRookCount * MATERIAL_ENDGAME_ROOK_VALUE;
-
-    const int blackRookCount = board.getPieceCount<BLACK_ROOK>();
-    blackMidgameScore += blackRookCount * MATERIAL_MIDGAME_ROOK_VALUE;
-    blackEndgameScore += blackRookCount * MATERIAL_ENDGAME_ROOK_VALUE;
-
-    const int whiteQueenCount = board.getPieceCount<WHITE_QUEEN>();
-    whiteMidgameScore += whiteQueenCount * MATERIAL_MIDGAME_QUEEN_VALUE;
-    whiteEndgameScore += whiteQueenCount * MATERIAL_ENDGAME_QUEEN_VALUE;
-
-    const int blackQueenCount = board.getPieceCount<BLACK_QUEEN>();
-    blackMidgameScore += blackQueenCount * MATERIAL_MIDGAME_QUEEN_VALUE;
-    blackEndgameScore += blackQueenCount * MATERIAL_ENDGAME_QUEEN_VALUE;
 }
 
 void Evaluation::evaluateMobility() {
@@ -296,6 +247,7 @@ int getPieceValue(const Piece piece) {
         case BLACK_KING:
             return 10000;
         default:
+            assert(false);
             return 0;
     }
 }

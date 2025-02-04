@@ -174,7 +174,6 @@ void Board::reset() {
     this->bitboards = {};
     this->colorBoards = {};
     this->history = {};
-    this->pieceCounts = {};
     this->sideToMove = WHITE;
     this->occupied = 0;
     this->zobristHash = 0;
@@ -189,7 +188,6 @@ void Board::reset() {
     std::ranges::fill(bitboards, 0);
     std::ranges::fill(colorBoards, 0);
     std::ranges::fill(history, BoardState{});
-    std::ranges::fill(pieceCounts, 0);
 }
 
 /**

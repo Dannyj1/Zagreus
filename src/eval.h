@@ -66,11 +66,6 @@ private:
     [[nodiscard]] int calculatePhase() const;
 
     /**
-     * \brief Evaluates the material on the board.
-     */
-    void evaluateMaterial();
-
-    /**
      * \brief Evaluates piece mobility.
      */
     void evaluateMobility();

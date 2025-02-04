@@ -64,7 +64,6 @@ private:
     std::array<uint64_t, PIECES> bitboards{};
     std::array<uint64_t, COLORS> colorBoards{};
     std::array<BoardState, MAX_PLY> history{};
-    std::array<int, PIECES> pieceCounts{};
     PvLine previousPvLine{0};
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;
@@ -84,7 +83,6 @@ public:
         std::ranges::fill(bitboards, 0);
         std::ranges::fill(colorBoards, 0);
         std::ranges::fill(history, BoardState{});
-        std::ranges::fill(pieceCounts, 0);
     }
 
     Board(const Board&) = delete;
@@ -212,25 +210,6 @@ public:
     }
 
     /**
-     * \brief Retrieves the count of a specific piece type on the board.
-     * \param piece The piece type.
-     * \return The count of the specified piece type.
-     */
-    [[nodiscard]] constexpr int getPieceCount(const Piece piece) const {
-        return pieceCounts[piece];
-    }
-
-    /**
-     * \brief Retrieves the count of a specific piece type on the board.
-     * \tparam piece The piece type.
-     * \return The count of the specified piece type.
-     */
-    template <Piece piece>
-    [[nodiscard]] constexpr int getPieceCount() const {
-        return pieceCounts[piece];
-    }
-
-    /**
      * \brief sets the previous PV line.
      */
     void setPreviousPvLine(const PvLine& pvLine) {
@@ -261,7 +240,6 @@ public:
         bitboards[piece] |= squareBB;
         occupied |= squareBB;
         colorBoards[getPieceColor(piece)] |= squareBB;
-        pieceCounts[piece] += 1;
 
         const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
         zobristHash ^= getZobristConstant(zobristIndex);
@@ -281,7 +259,6 @@ public:
         bitboards[piece] |= squareBB;
         occupied |= squareBB;
         colorBoards[getPieceColor(piece)] |= squareBB;
-        pieceCounts[piece] += 1;
 
         const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
         zobristHash ^= getZobristConstant(zobristIndex);
@@ -300,7 +277,6 @@ public:
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;
-        pieceCounts[piece] -= 1;
 
         const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
         zobristHash ^= getZobristConstant(zobristIndex);
@@ -321,7 +297,6 @@ public:
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;
-        pieceCounts[piece] -= 1;
 
         const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
         zobristHash ^= getZobristConstant(zobristIndex);
@@ -341,7 +316,6 @@ public:
         bitboards[piece] &= ~squareBB;
         occupied &= ~squareBB;
         colorBoards[getPieceColor(piece)] &= ~squareBB;
-        pieceCounts[piece] -= 1;
 
         const int zobristIndex = ZOBRIST_PIECE_START_INDEX + static_cast<int>(piece) * SQUARES + square;
         zobristHash ^= getZobristConstant(zobristIndex);
