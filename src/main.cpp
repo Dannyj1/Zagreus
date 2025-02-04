@@ -77,7 +77,7 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "r1bbk1nr/pp3p1p/2n5/1N4p1/2Np1B2/8/PPP2PPP/2KR1B1R w kq - 0 13",
     "6k1/3b3r/1p1p4/p1n2p2/1PPNpP1q/P3Q1p1/1R1RB1P1/5K2 b - - 0 1",
     "r2r1n2/pp2bk2/2p1p2p/3q4/3PN1QP/2P3R1/P4PP1/5RK1 w - - 0 1",
-    // "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
+    "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
     "8/8/8/8/8/6k1/6p1/6K1 w - -",
     "7k/7P/6K1/8/3B4/8/8/8 b - -",
     "8/8/8/8/5kp1/P7/8/1K1N4 w - - 0 1",
@@ -87,10 +87,9 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"
 };
 
-// TODO: Figure out why r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10 takes so long
 const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
-    // "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
+    "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
     "rn3bnr/pBp1pk1p/5p2/1p4p1/6b1/N3Q3/PP1P1PPP/R1B1K1NR b - -",
     "8/7b/p1P1Pn2/P1k3N1/7p/K1p5/4B1P1/3N2R1 w - -",
     "r1bn1r2/2k3p1/6p1/pP3p2/4P2P/1P1P3R/2P1NB2/Q3K1n1 b - -",

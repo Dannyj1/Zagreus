@@ -57,6 +57,7 @@
 
 #define SQUARES 64
 #define PIECES 12
+#define PIECE_TYPES 6
 #define COLORS 2
 
 #define MAX_MOVES 255

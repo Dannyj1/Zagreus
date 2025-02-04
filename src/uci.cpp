@@ -35,6 +35,7 @@
 #include "magics.h"
 #include "move.h"
 #include "perft.h"
+#include "pst.h"
 #include "search.h"
 #include "tt.h"
 #include "types.h"
@@ -52,6 +53,7 @@ void Engine::doSetup() {
     initializeMagicBitboards();
     initializeBetweenLookupTable();
     initializeAttackLookupTables();
+    initializePst();
 
     UCIOption hashOption = getOption("Hash");
     TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));

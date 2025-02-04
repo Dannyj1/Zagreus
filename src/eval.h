@@ -71,7 +71,12 @@ private:
     void evaluateMaterial();
 
     /**
-     * \brief Evaluates several features related to the pieces on the board.
+     * \brief Evaluates piece mobility.
+     */
+    void evaluateMobility();
+
+    /**
+     * \brief Evaluates several features related to pieces on the board.
      */
     void evaluatePieces();
 

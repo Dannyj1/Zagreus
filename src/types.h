@@ -21,6 +21,7 @@
 #pragma once
 
 #include <cassert>
+#include <cstdint>
 
 namespace Zagreus {
 /**
@@ -49,7 +50,7 @@ enum Direction {
 /**
  * \brief Enum representing squares on the chessboard.
  */
-enum Square: uint8_t {
+enum Square : uint8_t {
     A1, B1, C1, D1, E1, F1, G1, H1,
     A2, B2, C2, D2, E2, F2, G2, H2,
     A3, B3, C3, D3, E3, F3, G3, H3,
@@ -61,12 +62,40 @@ enum Square: uint8_t {
     NONE = 255
 };
 
+inline Square operator++(Square& piece, int) {
+    const Square old = piece;
+    piece = static_cast<Square>(piece + 1);
+    return old;
+}
+
+inline Square operator--(Square& piece, int) {
+    const Square old = piece;
+    piece = static_cast<Square>(piece - 1);
+    return old;
+}
+
+inline Square operator^(const Square square1, const int num) {
+    return static_cast<Square>(static_cast<int>(square1) ^ num);
+}
+
 // clang-format on
 
 /**
  * \brief Enum representing types of chess pieces.
  */
 enum PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
+
+inline PieceType operator++(PieceType& piece, int) {
+    const PieceType old = piece;
+    piece = static_cast<PieceType>(piece + 1);
+    return old;
+}
+
+inline PieceType operator--(PieceType& piece, int) {
+    const PieceType old = piece;
+    piece = static_cast<PieceType>(piece - 1);
+    return old;
+}
 
 /**
  * \brief Enum representing colors of chess pieces.
@@ -100,6 +129,18 @@ enum Piece : uint8_t {
     BLACK_KING,
     EMPTY = 255
 };
+
+inline Piece operator++(Piece& piece, int) {
+    const Piece old = piece;
+    piece = static_cast<Piece>(piece + 1);
+    return old;
+}
+
+inline Piece operator--(Piece& piece, int) {
+    const Piece old = piece;
+    piece = static_cast<Piece>(piece - 1);
+    return old;
+}
 
 /**
  * \brief Enum representing castling rights.

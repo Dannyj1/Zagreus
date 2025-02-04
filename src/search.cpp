@@ -211,7 +211,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
                                                       nodePvLine);
 
-            if (score > alpha && isPV) {
+            if (isPV && score > alpha) {
                 score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
                                                      nodePvLine);
             }

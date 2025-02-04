@@ -19,9 +19,13 @@
  */
 
 #include "eval.h"
+
+#include <iostream>
+
 #include "bitboard.h"
 #include "bitwise.h"
 #include "eval_features.h"
+#include "pst.h"
 #include "types.h"
 
 namespace Zagreus {
@@ -42,6 +46,7 @@ int Evaluation::evaluate() {
 
     evaluateMaterial();
     evaluatePieces();
+    evaluateMobility();
 
     const int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
     const int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
@@ -123,7 +128,7 @@ void Evaluation::evaluateMaterial() {
     blackEndgameScore += blackQueenCount * MATERIAL_ENDGAME_QUEEN_VALUE;
 }
 
-void Evaluation::evaluatePieces() {
+void Evaluation::evaluateMobility() {
     // Mobility
     uint64_t whiteKnightMobility = evalData.attacksByPiece[WHITE_KNIGHT];
     uint64_t blackKnightMobility = evalData.attacksByPiece[BLACK_KNIGHT];
@@ -160,6 +165,27 @@ void Evaluation::evaluatePieces() {
     blackEndgameScore += blackRookMobilityCount * MOBILITY_ENDGAME_ROOK_VALUE;
     whiteEndgameScore += whiteQueenMobilityCount * MOBILITY_ENDGAME_QUEEN_VALUE;
     blackEndgameScore += blackQueenMobilityCount * MOBILITY_ENDGAME_QUEEN_VALUE;
+}
+
+void Evaluation::evaluatePieces() {
+    uint64_t pieces = board.getOccupiedBitboard();
+
+    while (pieces) {
+        const Square square = static_cast<Square>(popLsb(pieces));
+        const Piece piece = board.getPieceOnSquare(square);
+        const PieceColor color = getPieceColor(piece);
+
+        const int midgamePst = getMidgamePst(piece, square);
+        const int endgamePst = getEndgamePst(piece, square);
+
+        if (color == WHITE) {
+            whiteMidgameScore += midgamePst;
+            whiteEndgameScore += endgamePst;
+        } else {
+            blackMidgameScore += midgamePst;
+            blackEndgameScore += endgamePst;
+        }
+    }
 }
 
 /**
