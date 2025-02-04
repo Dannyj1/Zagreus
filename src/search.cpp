@@ -319,7 +319,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         const Piece capturedPiece = board.getPieceOnSquare(toSquare);
 
         if (!isInCheck && capturedPiece != EMPTY) {
-            const bool see = board.see(toSquare, 0);
+            const bool see = board.see(move, 0);
 
             if (!see) {
                 continue;
