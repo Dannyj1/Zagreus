@@ -134,6 +134,16 @@ constexpr PieceType getPieceType(const Piece piece) {
 }
 
 /**
+ * \brief Gets the piece type from a color and type.
+ * \param type The type of the piece.
+ * \param color The color of the piece.
+ * \return The piece.
+ */
+constexpr Piece getPieceFromType(const PieceType type, const PieceColor color) {
+    return static_cast<Piece>(color | (type << 1));
+}
+
+/**
  * \brief Gets the character representation of a piece.
  * \param piece The piece.
  * \return The character representing the piece.

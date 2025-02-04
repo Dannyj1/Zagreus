@@ -97,7 +97,16 @@ public:
      * \return The bitboard for the given piece type.
      */
     template <Piece piece>
-    [[nodiscard]] constexpr uint64_t getBitboard() const {
+    [[nodiscard]] constexpr uint64_t getPieceBoard() const {
+        return bitboards[piece];
+    }
+
+    /**
+     * \brief Retrieves the bitboard for a given piece type.
+     * \tparam piece The piece type.
+     * \return The bitboard for the given piece type.
+     */
+    [[nodiscard]] constexpr uint64_t getPieceBoard(const Piece piece) const {
         return bitboards[piece];
     }
 
@@ -108,6 +117,15 @@ public:
      */
     template <PieceColor color>
     [[nodiscard]] constexpr uint64_t getColorBitboard() const {
+        return colorBoards[color];
+    }
+
+    /**
+     * \brief Retrieves the bitboard for a given color.
+     * \param color The color.
+     * \return The bitboard for the given color.
+     */
+    [[nodiscard]] constexpr uint64_t getColorBitboard(PieceColor color) const {
         return colorBoards[color];
     }
 
@@ -350,7 +368,7 @@ public:
     template <PieceColor color>
     [[nodiscard]] bool isKingInCheck() const {
         constexpr PieceColor opponentColor = !color;
-        const uint64_t kingBB = getBitboard<color == WHITE ? WHITE_KING : BLACK_KING>();
+        const uint64_t kingBB = getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>();
         const Square kingSquare = bitboardToSquare(kingBB);
 
         return getSquareAttackersByColor<opponentColor>(kingSquare) != 0;
@@ -432,24 +450,12 @@ public:
     Square getSmallestAttacker(Square square) const;
 
     /**
-     * \brief Perform Static Exchange Evaluation (SEE) on a square for a given color.
-     * \param square The square to evaluate.
-     * \tparam color The color to evaluate for.
-     *
-     * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
-     */
-    template <PieceColor color>
-    int see(Square square);
-
-    /**
-     * \brief Calculates the Static Exchange Evaluation (SEE) score for a capture move.
+     * \brief Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color.
      * \param move The move to evaluate.
-     * \tparam color The color to evaluate for.
      *
-     * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
+     * \return True if the move is good for the given color, false otherwise.
      */
-    template <PieceColor color>
-    int seeCapture(const Move& move);
+    bool see(const Move& move, int threshold);
 
     /**
      * \brief Retrieves the half move clock.
@@ -474,7 +480,7 @@ public:
     template <PieceColor color>
     [[nodiscard]] bool canPromotePawn() const {
         const uint64_t promotionRank = color == WHITE ? RANK_7 : RANK_2;
-        const uint64_t pawns = getBitboard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>();
+        const uint64_t pawns = getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>();
 
         return pawns & promotionRank;
     }

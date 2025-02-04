@@ -58,4 +58,24 @@ TEST_CASE("test_pieceColor", "[types]") {
             }
     }
 }
+
+TEST_CASE("test_getPieceFromType", "[types]") {
+    REQUIRE(getPieceFromType(PieceType::PAWN, PieceColor::WHITE) == Piece::WHITE_PAWN);
+    REQUIRE(getPieceFromType(PieceType::PAWN, PieceColor::BLACK) == Piece::BLACK_PAWN);
+
+    REQUIRE(getPieceFromType(PieceType::KNIGHT, PieceColor::WHITE) == Piece::WHITE_KNIGHT);
+    REQUIRE(getPieceFromType(PieceType::KNIGHT, PieceColor::BLACK) == Piece::BLACK_KNIGHT);
+
+    REQUIRE(getPieceFromType(PieceType::BISHOP, PieceColor::WHITE) == Piece::WHITE_BISHOP);
+    REQUIRE(getPieceFromType(PieceType::BISHOP, PieceColor::BLACK) == Piece::BLACK_BISHOP);
+
+    REQUIRE(getPieceFromType(PieceType::ROOK, PieceColor::WHITE) == Piece::WHITE_ROOK);
+    REQUIRE(getPieceFromType(PieceType::ROOK, PieceColor::BLACK) == Piece::BLACK_ROOK);
+
+    REQUIRE(getPieceFromType(PieceType::QUEEN, PieceColor::WHITE) == Piece::WHITE_QUEEN);
+    REQUIRE(getPieceFromType(PieceType::QUEEN, PieceColor::BLACK) == Piece::BLACK_QUEEN);
+
+    REQUIRE(getPieceFromType(PieceType::KING, PieceColor::WHITE) == Piece::WHITE_KING);
+    REQUIRE(getPieceFromType(PieceType::KING, PieceColor::BLACK) == Piece::BLACK_KING);
+}
 } // namespace Zagreus

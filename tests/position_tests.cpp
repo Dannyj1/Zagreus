@@ -104,15 +104,15 @@ TEST_CASE("test_PieceBitBoards", "[types]") {
             uint64_t combinedPieces;
 
             if (board.getSideToMove() == WHITE) {
-                overlappingPieces = board.getBitboard<WHITE_PAWN>() & board.getBitboard<WHITE_KNIGHT>() & board.getBitboard<WHITE_BISHOP>() &
-                                    board.getBitboard<WHITE_ROOK>() & board.getBitboard<WHITE_QUEEN>() & board.getBitboard<WHITE_KING>();
-                combinedPieces = board.getBitboard<WHITE_PAWN>() | board.getBitboard<WHITE_KNIGHT>() | board.getBitboard<WHITE_BISHOP>() |
-                                board.getBitboard<WHITE_ROOK>() | board.getBitboard<WHITE_QUEEN>() | board.getBitboard<WHITE_KING>();
+                overlappingPieces = board.getPieceBoard<WHITE_PAWN>() & board.getPieceBoard<WHITE_KNIGHT>() & board.getPieceBoard<WHITE_BISHOP>() &
+                                    board.getPieceBoard<WHITE_ROOK>() & board.getPieceBoard<WHITE_QUEEN>() & board.getPieceBoard<WHITE_KING>();
+                combinedPieces = board.getPieceBoard<WHITE_PAWN>() | board.getPieceBoard<WHITE_KNIGHT>() | board.getPieceBoard<WHITE_BISHOP>() |
+                                board.getPieceBoard<WHITE_ROOK>() | board.getPieceBoard<WHITE_QUEEN>() | board.getPieceBoard<WHITE_KING>();
             } else {
-                overlappingPieces = board.getBitboard<BLACK_PAWN>() & board.getBitboard<BLACK_KNIGHT>() & board.getBitboard<BLACK_BISHOP>() &
-                                    board.getBitboard<BLACK_ROOK>() & board.getBitboard<BLACK_QUEEN>() & board.getBitboard<BLACK_KING>();
-                combinedPieces = board.getBitboard<BLACK_PAWN>() | board.getBitboard<BLACK_KNIGHT>() | board.getBitboard<BLACK_BISHOP>() |
-                                board.getBitboard<BLACK_ROOK>() | board.getBitboard<BLACK_QUEEN>() | board.getBitboard<BLACK_KING>();
+                overlappingPieces = board.getPieceBoard<BLACK_PAWN>() & board.getPieceBoard<BLACK_KNIGHT>() & board.getPieceBoard<BLACK_BISHOP>() &
+                                    board.getPieceBoard<BLACK_ROOK>() & board.getPieceBoard<BLACK_QUEEN>() & board.getPieceBoard<BLACK_KING>();
+                combinedPieces = board.getPieceBoard<BLACK_PAWN>() | board.getPieceBoard<BLACK_KNIGHT>() | board.getPieceBoard<BLACK_BISHOP>() |
+                                board.getPieceBoard<BLACK_ROOK>() | board.getPieceBoard<BLACK_QUEEN>() | board.getPieceBoard<BLACK_KING>();
             }
 
             REQUIRE(overlappingPieces == 0);

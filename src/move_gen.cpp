@@ -47,7 +47,7 @@ void generateMoves(const Board& board, MoveList& moves) {
     constexpr PieceColor opponentColor = !color;
     bool onlyKingMoves = false;
     const uint64_t ownPieces = board.getColorBitboard<color>();
-    const uint64_t opponentKingBB = board.getBitboard<opponentKing>();
+    const uint64_t opponentKingBB = board.getPieceBoard<opponentKing>();
     uint64_t genMask = ~(ownPieces | opponentKingBB);
 
     if (type == QSEARCH) {
@@ -55,7 +55,7 @@ void generateMoves(const Board& board, MoveList& moves) {
 
         genMask &= opponentPieces;
     } else if (type == EVASIONS) {
-        const Square kingSquare = bitboardToSquare(board.getBitboard<ownKing>());
+        const Square kingSquare = bitboardToSquare(board.getPieceBoard<ownKing>());
         const uint64_t attackers = board.getSquareAttackersByColor<opponentColor>(kingSquare);
 
         if (popcnt(attackers) == 1) {
@@ -109,7 +109,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
     constexpr Piece pawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     constexpr PieceColor opponentColor = !color;
 
-    const uint64_t pawnBB = board.getBitboard<pawn>();
+    const uint64_t pawnBB = board.getPieceBoard<pawn>();
     const uint64_t emptyBB = board.getEmptyBitboard();
     const uint64_t opponentPieces = board.getColorBitboard<opponentColor>();
     uint64_t pawnSinglePushes;
@@ -238,7 +238,7 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
 template <PieceColor color, GenerationType type>
 void generateKnightMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece knight = color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
-    uint64_t knightBB = board.getBitboard<knight>();
+    uint64_t knightBB = board.getPieceBoard<knight>();
 
     while (knightBB) {
         const uint8_t fromSquare = popLsb(knightBB);
@@ -267,7 +267,7 @@ template <PieceColor color, GenerationType type>
 void generateBishopMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece bishop = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     const uint64_t occupied = board.getOccupiedBitboard();
-    uint64_t bishopBB = board.getBitboard<bishop>();
+    uint64_t bishopBB = board.getPieceBoard<bishop>();
 
     while (bishopBB) {
         const uint8_t fromSquare = popLsb(bishopBB);
@@ -295,7 +295,7 @@ template <PieceColor color, GenerationType type>
 void generateRookMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece rook = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
     const uint64_t occupied = board.getOccupiedBitboard();
-    uint64_t rookBB = board.getBitboard<rook>();
+    uint64_t rookBB = board.getPieceBoard<rook>();
 
     while (rookBB) {
         const uint8_t fromSquare = popLsb(rookBB);
@@ -323,7 +323,7 @@ template <PieceColor color, GenerationType type>
 void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece queen = color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
     const uint64_t occupied = board.getOccupiedBitboard();
-    uint64_t queenBB = board.getBitboard<queen>();
+    uint64_t queenBB = board.getPieceBoard<queen>();
 
     while (queenBB) {
         const uint8_t fromSquare = popLsb(queenBB);
@@ -350,7 +350,7 @@ void generateQueenMoves(const Board& board, MoveList& moves, const uint64_t genM
 template <PieceColor color, GenerationType type>
 void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMask) {
     constexpr Piece king = color == WHITE ? WHITE_KING : BLACK_KING;
-    uint64_t kingBB = board.getBitboard<king>();
+    uint64_t kingBB = board.getPieceBoard<king>();
     const uint8_t fromSquare = popLsb(kingBB);
     uint64_t genBB = getKingAttacks(fromSquare) & genMask;
 
