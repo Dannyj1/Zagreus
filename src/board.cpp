@@ -319,7 +319,7 @@ int Board::see(const Square square) {
         const Piece capturedPiece = getPieceOnSquare(square);
 
         makeMove(move);
-        value = std::max(0, getPieceValue(capturedPiece) - see<opponentColor>(square));
+        value = getPieceValue(capturedPiece) - see<opponentColor>(square);
         unmakeMove();
     }
 
@@ -344,11 +344,14 @@ int Board::seeCapture(const Move& move) {
     const Piece capturedPiece = getPieceOnSquare(toSquare);
 
     makeMove(move);
-    value = std::max(0, getPieceValue(capturedPiece) - see<opponentColor>(getToSquare(move)));
+    value = getPieceValue(capturedPiece) - see<opponentColor>(getToSquare(move));
     unmakeMove();
 
     return value;
 }
+
+template int Board::seeCapture<WHITE>(const Move& move);
+template int Board::seeCapture<BLACK>(const Move& move);
 
 /**
  * \brief Makes a move on the board.

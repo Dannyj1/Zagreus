@@ -296,16 +296,6 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         return bestScore;
     }
 
-    int delta = MATERIAL_MIDGAME_QUEEN_VALUE;
-
-    if (board.canPromotePawn<color>()) {
-        delta += MATERIAL_MIDGAME_QUEEN_VALUE - MATERIAL_MIDGAME_PAWN_VALUE;
-    }
-
-    if (bestScore < alpha - delta) {
-        return alpha;
-    }
-
     if (bestScore > alpha) {
         alpha = bestScore;
     }
@@ -326,8 +316,8 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     while (movePicker.next(move)) {
         board.makeMove(move);
-        // const Square toSquare = getToSquare(move);
-        // const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+        const Square toSquare = getToSquare(move);
+        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
 
         if (!board.isPositionLegal<color>()) {
             board.unmakeMove();
@@ -336,14 +326,15 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
         legalMoves += 1;
 
-        /*if (capturedPiece != EMPTY) {
-            int see = getPieceValue(capturedPiece) - board.see<opponentColor>(toSquare);
+        if (capturedPiece != EMPTY) {
+            constexpr PieceColor opponentColor = !color;
+            const int see = getPieceValue(capturedPiece) - board.see<opponentColor>(toSquare);
 
             if (see < 0) {
                 board.unmakeMove();
                 continue;
             }
-        }*/
+        }
 
         const int score = -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
 
