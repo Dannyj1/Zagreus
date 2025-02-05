@@ -185,11 +185,15 @@ void initializePst() {
     for (Piece piece = WHITE_PAWN; piece <= BLACK_KING; piece++) {
         for (Square square = A1; square <= H8; square++) {
             const int pieceValue = getPieceValue(piece);
+            PieceColor color = getPieceColor(piece);
 
-            midgamePst[piece][square] = pieceValue + midgameTableMapping[getPieceType(piece)][square];
-            endgamePst[piece][square] = pieceValue + endgameTableMapping[getPieceType(piece)][square];
-            midgamePst[piece][square] = pieceValue + midgameTableMapping[getPieceType(piece)][square ^ 56];
-            endgamePst[piece][square] = pieceValue + endgameTableMapping[getPieceType(piece)][square ^ 56];
+            if (color == WHITE) {
+                midgamePst[piece][square] = pieceValue + midgameTableMapping[getPieceType(piece)][square];
+                endgamePst[piece][square] = pieceValue + endgameTableMapping[getPieceType(piece)][square];
+            } else {
+                midgamePst[piece][square] = pieceValue + midgameTableMapping[getPieceType(piece)][square ^ 56];
+                endgamePst[piece][square] = pieceValue + endgameTableMapping[getPieceType(piece)][square ^ 56];
+            }
         }
     }
 }
