@@ -83,7 +83,7 @@ inline Square operator^(const Square square1, const int num) {
 /**
  * \brief Enum representing types of chess pieces.
  */
-enum PieceType : uint8_t { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
+enum PieceType : uint8_t { PAWN = 0, KNIGHT = 1, BISHOP = 2, ROOK = 3, QUEEN = 4, KING = 5 };
 
 inline PieceType operator++(PieceType& piece, int) {
     const PieceType old = piece;

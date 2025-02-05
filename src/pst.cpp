@@ -28,6 +28,7 @@
 
 namespace Zagreus {
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
+// For every table: The first square in the table [0] is square A8 and the last square [63] is H1
 int mg_pawn_table[64] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     98, 134, 61, 95, 68, 126, 34, -11,
@@ -160,39 +161,55 @@ int eg_king_table[64] = {
     -53, -34, -21, -11, -28, -14, -24, -43
 };
 
-int* midgameTableMapping[PIECE_TYPES] = {
-    mg_pawn_table,
-    mg_knight_table,
-    mg_bishop_table,
-    mg_rook_table,
-    mg_queen_table,
-    mg_king_table
-};
+static int midgamePst[PIECES][SQUARES]{};
+static int endgamePst[PIECES][SQUARES]{};
 
-int* endgameTableMapping[PIECE_TYPES] = {
-    eg_pawn_table,
-    eg_knight_table,
-    eg_bishop_table,
-    eg_rook_table,
-    eg_queen_table,
-    eg_king_table
-};
+int* getMidgameTable(PieceType pieceType) {
+    switch (pieceType) {
+        case PAWN:
+            return mg_pawn_table;
+        case KNIGHT:
+            return mg_knight_table;
+        case BISHOP:
+            return mg_bishop_table;
+        case ROOK:
+            return mg_rook_table;
+        case QUEEN:
+            return mg_queen_table;
+        case KING:
+            return mg_king_table;
+    }
+}
 
-int midgamePst[PIECES][SQUARES]{};
-int endgamePst[PIECES][SQUARES]{};
+int* getEndgameTable(PieceType pieceType) {
+    switch (pieceType) {
+        case PAWN:
+            return eg_pawn_table;
+        case KNIGHT:
+            return eg_knight_table;
+        case BISHOP:
+            return eg_bishop_table;
+        case ROOK:
+            return eg_rook_table;
+        case QUEEN:
+            return eg_queen_table;
+        case KING:
+            return eg_king_table;
+    }
+}
 
 void initializePst() {
     for (Piece piece = WHITE_PAWN; piece <= BLACK_KING; piece++) {
         for (Square square = A1; square <= H8; square++) {
             const int pieceValue = getPieceValue(piece);
-            PieceColor color = getPieceColor(piece);
+            const PieceColor color = getPieceColor(piece);
 
             if (color == WHITE) {
-                midgamePst[piece][square] = pieceValue + midgameTableMapping[getPieceType(piece)][square];
-                endgamePst[piece][square] = pieceValue + endgameTableMapping[getPieceType(piece)][square];
+                midgamePst[piece][square] = pieceValue + getMidgameTable(getPieceType(piece))[square ^ 56];
+                endgamePst[piece][square] = pieceValue + getEndgameTable(getPieceType(piece))[square ^ 56];
             } else {
-                midgamePst[piece][square] = pieceValue + midgameTableMapping[getPieceType(piece)][square ^ 56];
-                endgamePst[piece][square] = pieceValue + endgameTableMapping[getPieceType(piece)][square ^ 56];
+                midgamePst[piece][square] = pieceValue + getMidgameTable(getPieceType(piece))[square];
+                endgamePst[piece][square] = pieceValue + getEndgameTable(getPieceType(piece))[square];
             }
         }
     }
