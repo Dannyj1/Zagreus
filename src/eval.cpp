@@ -20,12 +20,9 @@
 
 #include "eval.h"
 
-#include <iostream>
-
 #include "bitboard.h"
 #include "bitwise.h"
 #include "eval_features.h"
-#include "pst.h"
 #include "types.h"
 
 namespace Zagreus {
@@ -99,23 +96,23 @@ void Evaluation::evaluateMobility() {
     int whiteQueenMobilityCount = popcnt(whiteQueenMobility);
     int blackQueenMobilityCount = popcnt(blackQueenMobility);
 
-    whiteMidgameScore += whiteKnightMobilityCount * MOBILITY_MIDGAME_KNIGHT_VALUE;
-    blackMidgameScore += blackKnightMobilityCount * MOBILITY_MIDGAME_KNIGHT_VALUE;
-    whiteMidgameScore += whiteBishopMobilityCount * MOBILITY_MIDGAME_BISHOP_VALUE;
-    blackMidgameScore += blackBishopMobilityCount * MOBILITY_MIDGAME_BISHOP_VALUE;
-    whiteMidgameScore += whiteRookMobilityCount * MOBILITY_MIDGAME_ROOK_VALUE;
-    blackMidgameScore += blackRookMobilityCount * MOBILITY_MIDGAME_ROOK_VALUE;
-    whiteMidgameScore += whiteQueenMobilityCount * MOBILITY_MIDGAME_QUEEN_VALUE;
-    blackMidgameScore += blackQueenMobilityCount * MOBILITY_MIDGAME_QUEEN_VALUE;
+    whiteMidgameScore += whiteKnightMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_KNIGHT_VALUE);
+    blackMidgameScore += blackKnightMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_KNIGHT_VALUE);
+    whiteMidgameScore += whiteBishopMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_BISHOP_VALUE);
+    blackMidgameScore += blackBishopMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_BISHOP_VALUE);
+    whiteMidgameScore += whiteRookMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_ROOK_VALUE);
+    blackMidgameScore += blackRookMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_ROOK_VALUE);
+    whiteMidgameScore += whiteQueenMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_QUEEN_VALUE);
+    blackMidgameScore += blackQueenMobilityCount * getEvalFeatureValue(MOBILITY_MIDGAME_QUEEN_VALUE);
 
-    whiteEndgameScore += whiteKnightMobilityCount * MOBILITY_ENDGAME_KNIGHT_VALUE;
-    blackEndgameScore += blackKnightMobilityCount * MOBILITY_ENDGAME_KNIGHT_VALUE;
-    whiteEndgameScore += whiteBishopMobilityCount * MOBILITY_ENDGAME_BISHOP_VALUE;
-    blackEndgameScore += blackBishopMobilityCount * MOBILITY_ENDGAME_BISHOP_VALUE;
-    whiteEndgameScore += whiteRookMobilityCount * MOBILITY_ENDGAME_ROOK_VALUE;
-    blackEndgameScore += blackRookMobilityCount * MOBILITY_ENDGAME_ROOK_VALUE;
-    whiteEndgameScore += whiteQueenMobilityCount * MOBILITY_ENDGAME_QUEEN_VALUE;
-    blackEndgameScore += blackQueenMobilityCount * MOBILITY_ENDGAME_QUEEN_VALUE;
+    whiteEndgameScore += whiteKnightMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_KNIGHT_VALUE);
+    blackEndgameScore += blackKnightMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_KNIGHT_VALUE);
+    whiteEndgameScore += whiteBishopMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_BISHOP_VALUE);
+    blackEndgameScore += blackBishopMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_BISHOP_VALUE);
+    whiteEndgameScore += whiteRookMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_ROOK_VALUE);
+    blackEndgameScore += blackRookMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_ROOK_VALUE);
+    whiteEndgameScore += whiteQueenMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_QUEEN_VALUE);
+    blackEndgameScore += blackQueenMobilityCount * getEvalFeatureValue(MOBILITY_ENDGAME_QUEEN_VALUE);
 }
 
 void Evaluation::evaluatePieces() {
@@ -126,8 +123,8 @@ void Evaluation::evaluatePieces() {
         const Piece piece = board.getPieceOnSquare(square);
         const PieceColor color = getPieceColor(piece);
 
-        const int midgamePst = getMidgamePst(piece, square);
-        const int endgamePst = getEndgamePst(piece, square);
+        const int midgamePst = getMidgamePstEvalFeature(piece, square);
+        const int endgamePst = getEndgamePstEvalFeature(piece, square);
 
         if (color == WHITE) {
             whiteMidgameScore += midgamePst;
@@ -230,22 +227,22 @@ int getPieceValue(const Piece piece) {
     switch (piece) {
         case WHITE_PAWN:
         case BLACK_PAWN:
-            return MATERIAL_MIDGAME_PAWN_VALUE;
+            return 100;
         case WHITE_KNIGHT:
         case BLACK_KNIGHT:
-            return MATERIAL_MIDGAME_KNIGHT_VALUE;
+            return 350;
         case WHITE_BISHOP:
         case BLACK_BISHOP:
-            return MATERIAL_MIDGAME_BISHOP_VALUE;
+            return 350;
         case WHITE_ROOK:
         case BLACK_ROOK:
-            return MATERIAL_MIDGAME_ROOK_VALUE;
+            return 525;
         case WHITE_QUEEN:
         case BLACK_QUEEN:
-            return MATERIAL_MIDGAME_QUEEN_VALUE;
+            return 1000;
         case WHITE_KING:
         case BLACK_KING:
-            return 10000;
+            return 0;
         default:
             assert(false);
             return 0;

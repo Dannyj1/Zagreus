@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -19,13 +18,10 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-#include "types.h"
+#include "tuner.h"
 
+#ifdef ZAGREUS_TUNER
 namespace Zagreus {
-void initializePst();
 
-int getMidgamePstBaseValue(Piece piece, Square square);
-
-int getEndgamePstBaseValue(Piece piece, Square square);
-} // namespace Zagreus
+}
+#endif

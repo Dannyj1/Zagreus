@@ -24,10 +24,10 @@
 #include "move.h"
 
 namespace Zagreus {
-// TODO: Implement efficient sorting by score, after implementing score.
 class MovePicker {
 private:
     MoveList& moveList;
+    std::array<int, MAX_MOVES> scores{};
     int currentIndex = 0;
 
 public:
@@ -54,6 +54,6 @@ public:
      * \brief sorts the move list based on certain criteria.
      * \param board The current board which is used to sort the moves.
      */
-    void sort(Board& board) const;
+    void sort(Board& board);
 };
 } // namespace Zagreus

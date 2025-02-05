@@ -55,43 +55,47 @@ void MovePicker::reset() {
 
 static TranspositionTable* tt = TranspositionTable::getTT();
 
-void MovePicker::sort(Board& board) const {
+void MovePicker::sort(Board& board) {
     // TODO: Make better system that supports assigns a score to moves and sorts based on those
     const PvLine& pvLine = board.getPreviousPvLine();
     const int currentPly = board.getPly();
     const int pvMoveIndex = currentPly - pvLine.startPly;
     Move pvMove = NO_MOVE;
-    bool foundPvMove = false;
+    Move ttMove = NO_MOVE;
 
     if (pvLine.moveCount >= pvMoveIndex) {
         pvMove = pvLine.moves[pvMoveIndex];
-
-        if (pvMove != NO_MOVE) {
-            for (int i = 0; i < moveList.size; i++) {
-                if (moveList.moves[i] == pvMove) {
-                    foundPvMove = true;
-                    std::swap(moveList.moves[0], moveList.moves[i]);
-                    break;
-                }
-            }
-        }
     }
 
     uint64_t zobristHash = board.getZobristHash();
     TTEntry* entry = tt->getEntry(zobristHash);
 
     if (entry != nullptr) {
-        Move bestMove = entry->bestMove;
+        ttMove = entry->bestMove;
 
-        if (bestMove != NO_MOVE && bestMove != pvMove) {
-            // Find the best move and put it at the front of the list
-            for (int i = 0; i < moveList.size; i++) {
-                if (moveList.moves[i] == bestMove) {
-                    int targetIndex = foundPvMove ? 1 : 0;
+        if (ttMove == pvMove) {
+            ttMove = NO_MOVE;
+        }
+    }
 
-                    std::swap(moveList.moves[targetIndex], moveList.moves[i]);
-                    break;
-                }
+    for (int i = 0; i < moveList.size; ++i) {
+        const Move move = moveList.moves[i];
+
+        if (move == pvMove) {
+            scores[i] = 50000;
+        } else if (move == ttMove) {
+            scores[i] = 25000;
+        } else {
+            scores[i] = 0;
+        }
+    }
+
+    // Sort the moves after scoring them
+    for (int i = 0; i < moveList.size; ++i) {
+        for (int j = i + 1; j < moveList.size; ++j) {
+            if (scores[j] > scores[i]) {
+                std::swap(scores[j], scores[i]);
+                std::swap(moveList.moves[j], moveList.moves[i]);
             }
         }
     }

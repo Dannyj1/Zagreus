@@ -20,12 +20,9 @@
  */
 
 #pragma once
-#include "types.h"
 
+#ifdef ZAGREUS_TUNER
 namespace Zagreus {
-void initializePst();
 
-int getMidgamePstBaseValue(Piece piece, Square square);
-
-int getEndgamePstBaseValue(Piece piece, Square square);
-} // namespace Zagreus
+}
+#endif

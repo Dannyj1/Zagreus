@@ -215,13 +215,13 @@ void initializePst() {
     }
 }
 
-int getMidgamePst(const Piece piece, const Square square) {
+int getMidgamePstBaseValue(const Piece piece, const Square square) {
     assert(piece < PIECES);
     assert(square < SQUARES);
     return midgamePst[piece][square];
 }
 
-int getEndgamePst(const Piece piece, const Square square) {
+int getEndgamePstBaseValue(const Piece piece, const Square square) {
     assert(piece < PIECES);
     assert(square < SQUARES);
     return endgamePst[piece][square];

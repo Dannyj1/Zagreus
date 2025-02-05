@@ -32,6 +32,7 @@
 
 #include "bitboard.h"
 #include "board.h"
+#include "eval_features.h"
 #include "magics.h"
 #include "move.h"
 #include "perft.h"
@@ -53,7 +54,7 @@ void Engine::doSetup() {
     initializeMagicBitboards();
     initializeBetweenLookupTable();
     initializeAttackLookupTables();
-    initializePst();
+    initializeEvalFeatures();
 
     UCIOption hashOption = getOption("Hash");
     TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
