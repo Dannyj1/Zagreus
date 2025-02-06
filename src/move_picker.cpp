@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include "constants.h"
+#include "eval.h"
 #include "tt.h"
 
 namespace Zagreus {
@@ -82,11 +83,21 @@ void MovePicker::sort(Board& board) {
         const Move move = moveList.moves[i];
 
         if (move == pvMove) {
-            scores[i] = 50000;
+            scores[i] = 100000;
         } else if (move == ttMove) {
-            scores[i] = 25000;
+            scores[i] = 50000;
         } else {
-            scores[i] = 0;
+            // MVV-LVA
+            const Square toSquare = getToSquare(move);
+            const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
+            if (capturedPiece != EMPTY) {
+                const PieceType movingPiece = getPieceType(board.getPieceOnSquare(getFromSquare(move)));
+                // 10 * Piece Value - Index of the captured piece
+                const int mvvLva = 7 * getPieceValue(capturedPiece) - static_cast<int>(movingPiece);
+
+                scores[i] = mvvLva;
+            }
         }
     }
 
