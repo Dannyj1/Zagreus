@@ -158,19 +158,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     stats.nodesSearched += 1;
-    bool foundTTMove = false;
 
     if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
-            foundTTMove = true;
             return score;
         }
-    }
-
-    if (depth >= 5 && isPV && !foundTTMove) {
-        depth -= 1;
     }
 
     bool firstMove = true;
@@ -178,7 +172,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     Move move;
     MoveList moves = MoveList{};
-    const bool isInCheck = board.isKingInCheck<color>();
+    bool isInCheck = board.isKingInCheck<color>();
 
     if (isInCheck) {
         generateMoves<color, EVASIONS>(board, moves);
