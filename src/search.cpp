@@ -181,7 +181,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     MovePicker movePicker{moves};
-    movePicker.sort<false>(board);
+    movePicker.sort(board);
     Move bestMove = NO_MOVE;
     PvLine nodePvLine = PvLine{board.getPly()};
 
@@ -312,7 +312,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     }
 
     MovePicker movePicker{moves};
-    movePicker.sort<true>(board);
+    movePicker.sort(board);
 
     while (movePicker.next(move)) {
         const Square toSquare = getToSquare(move);

@@ -22,7 +22,6 @@
 
 #include "board.h"
 #include "move.h"
-#include "move_gen.h"
 
 namespace Zagreus {
 class MovePicker {
@@ -55,7 +54,6 @@ public:
      * \brief sorts the move list based on certain criteria.
      * \param board The current board which is used to sort the moves.
      */
-    template <bool isQsearch>
     void sort(Board& board);
 };
 } // namespace Zagreus

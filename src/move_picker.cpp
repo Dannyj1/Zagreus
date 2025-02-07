@@ -56,10 +56,8 @@ void MovePicker::reset() {
 
 static TranspositionTable* tt = TranspositionTable::getTT();
 
-template <bool isQSearch>
 void MovePicker::sort(Board& board) {
     // TODO: Make better system that supports assigns a score to moves and sorts based on those
-    const Move previousMove = board.getPreviousMove();
     const PvLine& pvLine = board.getPreviousPvLine();
     const int currentPly = board.getPly();
     const int pvMoveIndex = currentPly - pvLine.startPly;
@@ -83,31 +81,23 @@ void MovePicker::sort(Board& board) {
 
     for (int i = 0; i < moveList.size; ++i) {
         const Move move = moveList.moves[i];
-        const Square toSquare = getToSquare(move);
-        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
 
         if (move == pvMove) {
-            scores[i] = 500000;
+            scores[i] = 100000;
         } else if (move == ttMove) {
-            scores[i] = 250000;
-        } else if (capturedPiece != EMPTY) {
-            // Capture related sorting
-            // MVV-LVA
-            const PieceType movingPiece = getPieceType(board.getPieceOnSquare(getFromSquare(move)));
-            // 10 * Piece Value - Index of the captured piece
-            const int mvvLva = 10 * getPieceValue(capturedPiece) - static_cast<int>(movingPiece);
-            // Don't perform SEE sorting in qsearch
-            const bool see = isQSearch ? true : board.see(move, 0);
-
-            if (see) {
-                scores[i] = mvvLva;
-            } else {
-                scores[i] = mvvLva - 10000;
-            }
+            scores[i] = 50000;
         } else {
-            // Non-capture related sorting
-            // TODO: Implement
-            scores[i] = 0;
+            // MVV-LVA
+            const Square toSquare = getToSquare(move);
+            const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
+            if (capturedPiece != EMPTY) {
+                const PieceType movingPiece = getPieceType(board.getPieceOnSquare(getFromSquare(move)));
+                // 10 * Piece Value - Index of the captured piece
+                const int mvvLva = 7 * getPieceValue(capturedPiece) - static_cast<int>(movingPiece);
+
+                scores[i] = mvvLva;
+            }
         }
     }
 
@@ -121,7 +111,4 @@ void MovePicker::sort(Board& board) {
         }
     }
 }
-
-template void MovePicker::sort<false>(Board& board);
-template void MovePicker::sort<true>(Board& board);
 } // namespace Zagreus

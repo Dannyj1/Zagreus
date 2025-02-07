@@ -416,7 +416,6 @@ void Board::makeMove(const Move move) {
     const Piece capturedPiece = getPieceOnSquare(toSquare);
 
     history[ply].move = move;
-    history[ply].previousMove = previousMove;
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
 
@@ -578,8 +577,6 @@ void Board::makeMove(const Move move) {
         }
     }
 
-    previousMove = move;
-
     if (sideToMove == BLACK) {
         fullmoveClock += 1;
     }
@@ -650,7 +647,6 @@ void Board::unmakeMove() {
         fullmoveClock -= 1;
     }
 
-    this->previousMove = state.previousMove;
     this->halfMoveClock = state.halfMoveClock;
     this->sideToMove = !sideToMove;
     this->enPassantSquare = state.enPassantSquare;

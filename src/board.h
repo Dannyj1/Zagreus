@@ -48,8 +48,7 @@ void initZobristConstants();
  */
 struct BoardState {
     uint64_t zobristHash = 0;
-    Move move = NO_MOVE;
-    Move previousMove = NO_MOVE;
+    Move move = 0;
     Piece capturedPiece = EMPTY;
     uint8_t enPassantSquare = 0;
     uint8_t castlingRights = 0;
@@ -69,7 +68,6 @@ private:
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;
     uint64_t zobristHash = 0;
-    Move previousMove = NO_MOVE;
     uint16_t ply = 0;
     uint16_t fullmoveClock = 1;
     uint8_t halfMoveClock = 0;
@@ -459,13 +457,6 @@ public:
         const uint64_t pawns = getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>();
 
         return pawns & promotionRank;
-    }
-
-    /**
-     * \brief Retrieves the previous move made.
-     */
-    [[nodiscard]] constexpr Move getPreviousMove() const {
-        return previousMove;
     }
 };
 } // namespace Zagreus
