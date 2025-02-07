@@ -416,6 +416,7 @@ void Board::makeMove(const Move move) {
     const Piece capturedPiece = getPieceOnSquare(toSquare);
 
     history[ply].move = move;
+    history[ply].previousMove = previousMove;
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
 
@@ -581,6 +582,7 @@ void Board::makeMove(const Move move) {
         fullmoveClock += 1;
     }
 
+    previousMove = move;
     sideToMove = !sideToMove;
     zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
 
@@ -647,6 +649,7 @@ void Board::unmakeMove() {
         fullmoveClock -= 1;
     }
 
+    this->previousMove = state.previousMove;
     this->halfMoveClock = state.halfMoveClock;
     this->sideToMove = !sideToMove;
     this->enPassantSquare = state.enPassantSquare;

@@ -82,6 +82,7 @@ void MovePicker::sort(Board& board) {
     for (int i = 0; i < moveList.size; ++i) {
         const Move move = moveList.moves[i];
         const Square toSquare = getToSquare(move);
+        const Square fromSquare = getFromSquare(move);
         const Piece capturedPiece = board.getPieceOnSquare(toSquare);
 
         if (move == pvMove) {
@@ -96,10 +97,17 @@ void MovePicker::sort(Board& board) {
 
             scores[i] = mvvLva;
         } else {
-            // Ordering of quiet moves
-            const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);
+            const Move previousMove = board.getPreviousMove();
+            const Move counterMove = tt->counterMoves[getFromSquare(previousMove)][getToSquare(previousMove)];
 
-            scores[i] = historyValue;
+            if (move == counterMove) {
+                scores[i] = 50000;
+            } else {
+                // Ordering of quiet moves
+                const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);
+
+                scores[i] = historyValue;
+            }
         }
     }
 
