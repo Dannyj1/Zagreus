@@ -117,6 +117,19 @@ TranspositionTable* TranspositionTable::getTT() {
     static TranspositionTable instance{};
     return &instance;
 }
+
+template <PieceColor color>
+void TranspositionTable::updateHistory(const Move move, const int value) {
+    const Square from = getFromSquare(move);
+    const Square to = getToSquare(move);
+    const int clampedValue = std::clamp(value, -MAX_HISTORY, MAX_HISTORY);
+
+    history[color][from][to] += clampedValue - history[color][from][to] * std::abs(clampedValue) / MAX_HISTORY;
+}
+
+template void TranspositionTable::updateHistory<WHITE>(Move move, int value);
+template void TranspositionTable::updateHistory<BLACK>(Move move, int value);
+
 } // namespace Zagreus
 
 

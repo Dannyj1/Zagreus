@@ -41,6 +41,9 @@ struct TTEntry {
 };
 
 class TranspositionTable {
+private:
+    int history[COLORS][SQUARES][SQUARES]{};
+
 public:
     TTEntry* transpositionTable = new TTEntry[1]{};
     uint64_t hashSize = 0;
@@ -68,5 +71,24 @@ public:
     [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply) const;
 
     [[nodiscard]] TTEntry* getEntry(uint64_t zobristHash) const;
+
+    template <PieceColor color>
+    void updateHistory(Move move, int value);
+
+    template <PieceColor color>
+    [[nodiscard]] int getHistoryValue(const Move move) const {
+        const Square fromSquare = getFromSquare(move);
+        const Square toSquare = getToSquare(move);
+
+        return history[color][fromSquare][toSquare];
+    }
+
+    [[nodiscard]] int getHistoryValue(const PieceColor color, const Move move) const {
+        const Square fromSquare = getFromSquare(move);
+        const Square toSquare = getToSquare(move);
+
+        return history[color][fromSquare][toSquare];
+    }
+
 };
 } // namespace Zagreus

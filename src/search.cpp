@@ -180,6 +180,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         generateMoves<color, ALL>(board, moves);
     }
 
+    MoveList searchedQuietMoves{};
     MovePicker movePicker{moves};
     movePicker.sort(board);
     Move bestMove = NO_MOVE;
@@ -194,6 +195,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         legalMoves += 1;
+
+        const Square toSquare = getToSquare(move);
+        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
+        if (capturedPiece == EMPTY && !isInCheck) {
+            searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
+        }
 
         int score;
 
@@ -222,6 +230,19 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
                 bestMove = move;
+
+                if (capturedPiece != EMPTY) {
+                    const int historyValue = 300 * depth - 250;
+
+                    tt->updateHistory<color>(move, historyValue);
+
+                    for (int i = 0; i < searchedQuietMoves.size; ++i) {
+                        const Move quietMove = searchedQuietMoves.moves[i];
+
+                        tt->updateHistory<color>(quietMove, -historyValue);
+                    }
+                }
+
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
             }
 

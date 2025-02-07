@@ -81,23 +81,25 @@ void MovePicker::sort(Board& board) {
 
     for (int i = 0; i < moveList.size; ++i) {
         const Move move = moveList.moves[i];
+        const Square toSquare = getToSquare(move);
+        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
 
         if (move == pvMove) {
-            scores[i] = 100000;
+            scores[i] = 5000000;
         } else if (move == ttMove) {
-            scores[i] = 50000;
-        } else {
+            scores[i] = 2500000;
+        } else if (capturedPiece != EMPTY) {
             // MVV-LVA
-            const Square toSquare = getToSquare(move);
-            const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+            const PieceType movingPiece = getPieceType(board.getPieceOnSquare(getFromSquare(move)));
+            // 200 * Piece Value - Index of the captured piece. Factor of 200 so it's always above history scores. Should be changed once we have staged movegen.
+            const int mvvLva = 200 * getPieceValue(capturedPiece) - static_cast<int>(movingPiece);
 
-            if (capturedPiece != EMPTY) {
-                const PieceType movingPiece = getPieceType(board.getPieceOnSquare(getFromSquare(move)));
-                // 10 * Piece Value - Index of the captured piece
-                const int mvvLva = 7 * getPieceValue(capturedPiece) - static_cast<int>(movingPiece);
+            scores[i] = mvvLva;
+        } else {
+            // Ordering of quiet moves
+            const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);
 
-                scores[i] = mvvLva;
-            }
+            scores[i] = historyValue;
         }
     }
 
