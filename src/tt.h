@@ -89,6 +89,5 @@ public:
 
         return history[color][fromSquare][toSquare];
     }
-
 };
 } // namespace Zagreus

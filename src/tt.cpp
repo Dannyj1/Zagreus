@@ -129,7 +129,6 @@ void TranspositionTable::updateHistory(const Move move, const int value) {
 
 template void TranspositionTable::updateHistory<WHITE>(Move move, int value);
 template void TranspositionTable::updateHistory<BLACK>(Move move, int value);
-
 } // namespace Zagreus
 
 

@@ -187,6 +187,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     PvLine nodePvLine = PvLine{board.getPly()};
 
     while (movePicker.next(move)) {
+        const Square toSquare = getToSquare(move);
+        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
         board.makeMove(move);
 
         if (!board.isPositionLegal<color>()) {
@@ -196,10 +199,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
         legalMoves += 1;
 
-        const Square toSquare = getToSquare(move);
-        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
-
-        if (capturedPiece == EMPTY && !isInCheck) {
+        if (capturedPiece == EMPTY) {
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
         }
 
@@ -231,7 +231,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             if (!engine.isSearchStopped()) {
                 bestMove = move;
 
-                if (capturedPiece != EMPTY) {
+                if (capturedPiece == EMPTY) {
                     const int historyValue = 300 * depth - 250;
 
                     tt->updateHistory<color>(move, historyValue);
