@@ -158,6 +158,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     stats.nodesSearched += 1;
+    // Move ttMove = NO_MOVE;
 
     if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
@@ -165,7 +166,17 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         if (score != NO_TT_SCORE) {
             return score;
         }
-    }
+    } /* else {
+        const TTEntry* ttEntry = tt->getEntry(board.getZobristHash());
+
+        if (ttEntry) {
+            ttMove = ttEntry->bestMove;
+        }
+    }*/
+
+    /*if (isPV && depth >= 5 && ttMove == NO_MOVE) {
+        depth -= 1;
+    }*/
 
     bool firstMove = true;
     int legalMoves = 0;
@@ -243,10 +254,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                             tt->updateHistory<color>(quietMove, -historyValue);
                         }
                     }
-
-                    const Move previousMove = board.getPreviousMove();
-
-                    tt->counterMoves[getFromSquare(previousMove)][getToSquare(previousMove)] = move;
                 }
 
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);

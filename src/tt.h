@@ -35,7 +35,7 @@ enum TTNodeType : uint8_t {
 struct TTEntry {
     uint32_t validationHash = 0;
     int16_t score = 0;
-    Move bestMove = 0;
+    Move bestMove = NO_MOVE;
     int8_t depth = INT8_MIN;
     TTNodeType nodeType = EXACT;
 };
@@ -45,15 +45,10 @@ private:
     int history[COLORS][SQUARES][SQUARES]{};
 
 public:
-    Move counterMoves[SQUARES][SQUARES]{};
     TTEntry* transpositionTable = new TTEntry[1]{};
     uint64_t hashSize = 0;
 
-    TranspositionTable() {
-        for (int fromSquare = 0; fromSquare < SQUARES; fromSquare++) {
-            std::fill_n(counterMoves[fromSquare], SQUARES, NO_MOVE);
-        }
-    }
+    TranspositionTable() = default;
 
     ~TranspositionTable() {
         delete[] transpositionTable;
@@ -66,10 +61,6 @@ public:
             for (int fromSquare = 0; fromSquare < SQUARES; fromSquare++) {
                 std::fill_n(history[color][fromSquare], SQUARES, 0);
             }
-        }
-
-        for (int fromSquare = 0; fromSquare < SQUARES; fromSquare++) {
-            std::fill_n(counterMoves[fromSquare], SQUARES, NO_MOVE);
         }
     }
 

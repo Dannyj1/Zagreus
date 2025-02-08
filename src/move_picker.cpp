@@ -97,17 +97,10 @@ void MovePicker::sort(Board& board) {
 
             scores[i] = mvvLva;
         } else {
-            const Move previousMove = board.getPreviousMove();
-            const Move counterMove = tt->counterMoves[getFromSquare(previousMove)][getToSquare(previousMove)];
+            // Ordering of quiet moves
+            const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);
 
-            if (move == counterMove) {
-            scores[i] = 50000;
-            } else {
-                // Ordering of quiet moves
-                const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);
-
-                scores[i] = historyValue;
-            }
+            scores[i] = historyValue;
         }
     }
 
