@@ -244,9 +244,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                         }
                     }
 
-                    // const Move previousMove = board.getPreviousMove();
+                    const Move previousMove = board.getPreviousMove();
 
-                    // tt->counterMoves[getFromSquare(previousMove)][getToSquare(previousMove)] = move;
+                    tt->counterMoves[getFromSquare(previousMove)][getToSquare(previousMove)] = move;
                 }
 
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
