@@ -232,7 +232,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 bestMove = move;
 
                 if (capturedPiece == EMPTY) {
-                    const Square fromSquare = getFromSquare(move);
                     const int historyValue = 300 * depth - 250;
 
                     tt->updateHistory<color>(move, historyValue);
@@ -240,12 +239,14 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                     for (int i = 0; i < searchedQuietMoves.size; ++i) {
                         const Move quietMove = searchedQuietMoves.moves[i];
 
-                        tt->updateHistory<color>(quietMove, -historyValue);
+                        if (quietMove != move) {
+                            tt->updateHistory<color>(quietMove, -historyValue);
+                        }
                     }
 
-                    const Move previousMove = board.getPreviousMove();
+                    // const Move previousMove = board.getPreviousMove();
 
-                    tt->counterMoves[getFromSquare(previousMove)][getToSquare(previousMove)] = move;
+                    // tt->counterMoves[getFromSquare(previousMove)][getToSquare(previousMove)] = move;
                 }
 
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
