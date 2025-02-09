@@ -168,11 +168,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             return score;
         }
 
-        int evalScore = Evaluation(board).evaluate();
-
         // Null Move Pruning
-        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && !board.getPreviousMove() == NO_MOVE &&
-            Evaluation(board).evaluate() >= beta) {
+        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && !board.getPreviousMove() == NO_MOVE) {
             board.makeNullMove();
             const int R = depth >= 6 ? 3 : 2;
             PvLine nmpPvLine = PvLine{board.getPly()};
