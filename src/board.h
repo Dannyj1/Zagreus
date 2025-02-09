@@ -327,12 +327,22 @@ public:
      * \brief Makes a move on the board.
      * \param move The move to make.
      */
-    void makeMove(const Move move);
+    void makeMove(Move move);
 
     /**
      * \brief Unmakes the last move on the board.
      */
     void unmakeMove();
+
+    /**
+     * \brief Makes a null move on the board, meaning the side to move does not make a move and the turn is passed.
+     */
+    void makeNullMove();
+
+    /**
+     * \brief Unmakes the last null move on the board. Should only be called after a makeNullMove.
+     */
+    void unmakeNullMove();
 
     /**
      * \brief Sets a piece on the board from a FEN character.
@@ -431,7 +441,7 @@ public:
      *
      * \return True if the move is good for the given color, false otherwise.
      */
-    bool see(const Move move, int threshold);
+    bool see(Move move, int threshold);
 
     /**
      * \brief Retrieves the half move clock.
@@ -463,9 +473,31 @@ public:
 
     /**
      * \brief Gets the previous move made.
+     *
+     * \return The previous move made.
      */
     [[nodiscard]] Move getPreviousMove() const {
         return previousMove;
+    }
+
+    /**
+     * \brief Determines if the board has material that isn't pawn or king.
+     *
+     * \return True if the board has material that isn't pawn or king, false otherwise.
+     */
+    [[nodiscard]] bool hasNonPawnMaterial() const {
+        return occupied & ~(getPieceBoard<WHITE_KING>() | getPieceBoard<BLACK_KING>() | getPieceBoard<WHITE_PAWN>() | getPieceBoard<BLACK_PAWN>());
+    }
+
+    /**
+     * \brief Determines if the board has material that isn't pawn or king for the given color.
+     * \tparam color The color to check for material.
+     *
+     * \return True if the board has material that isn't pawn or king, false otherwise.
+     */
+    template <PieceColor color>
+    [[nodiscard]] bool hasNonPawnMaterial() const {
+        return getColorBitboard<color>() & ~(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>() | getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>());
     }
 };
 } // namespace Zagreus

@@ -158,12 +158,26 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     stats.nodesSearched += 1;
+    bool isInCheck = board.isKingInCheck<color>();
 
     if (!isPV) {
+        // Check for a transposition table hit
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
         if (score != NO_TT_SCORE) {
             return score;
+        }
+
+        // Null Move Pruning
+        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && !board.getPreviousMove() == NO_MOVE) {
+            board.makeNullMove();
+            const int R = depth / 3;
+            const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(engine, board, -beta, -beta + 1, depth - R - 1, stats, endTime, pvLine);
+            board.unmakeNullMove();
+
+            if (nullMoveScore >= beta) {
+                return beta;
+            }
         }
     }
 
@@ -172,7 +186,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     Move move;
     MoveList moves = MoveList{};
-    bool isInCheck = board.isKingInCheck<color>();
 
     if (isInCheck) {
         generateMoves<color, EVASIONS>(board, moves);

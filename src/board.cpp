@@ -589,7 +589,6 @@ void Board::makeMove(const Move move) {
     assert(ply < MAX_PLY);
     ply++;
     assert(ply < MAX_PLY);
-
     assert(enPassantSquare == 255 || (enPassantSquare / 8 == 2 || enPassantSquare / 8 == 5));
 }
 
@@ -649,6 +648,55 @@ void Board::unmakeMove() {
         fullmoveClock -= 1;
     }
 
+    assert(state.previousMove != NO_MOVE);
+    this->previousMove = state.previousMove;
+    this->halfMoveClock = state.halfMoveClock;
+    this->sideToMove = !sideToMove;
+    this->enPassantSquare = state.enPassantSquare;
+    this->castlingRights = state.castlingRights;
+    this->zobristHash = state.zobristHash;
+}
+
+void Board::makeNullMove() {
+    history[ply].move = NO_MOVE;
+    history[ply].previousMove = previousMove;
+    history[ply].capturedPiece = EMPTY;
+    history[ply].enPassantSquare = enPassantSquare;
+
+    if (enPassantSquare != 255) {
+        zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
+    }
+
+    enPassantSquare = 255;
+    history[ply].castlingRights = castlingRights;
+    history[ply].zobristHash = zobristHash;
+    history[ply].halfMoveClock = halfMoveClock;
+
+    halfMoveClock += 1;
+
+    if (sideToMove == BLACK) {
+        fullmoveClock += 1;
+    }
+
+    previousMove = NO_MOVE;
+    sideToMove = !sideToMove;
+    zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
+
+    assert(ply < MAX_PLY);
+    ply++;
+    assert(ply < MAX_PLY);
+}
+
+void Board::unmakeNullMove() {
+    ply--;
+    assert(ply >= 0 && ply < MAX_PLY);
+    const BoardState& state = history[ply];
+
+    if (sideToMove == BLACK) {
+        fullmoveClock -= 1;
+    }
+
+    assert(state.previousMove == NO_MOVE);
     this->previousMove = state.previousMove;
     this->halfMoveClock = state.halfMoveClock;
     this->sideToMove = !sideToMove;
