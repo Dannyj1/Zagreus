@@ -486,7 +486,8 @@ public:
      * \return True if the board has material that isn't pawn or king, false otherwise.
      */
     [[nodiscard]] bool hasNonPawnMaterial() const {
-        return occupied & ~(getPieceBoard<WHITE_KING>() | getPieceBoard<BLACK_KING>() | getPieceBoard<WHITE_PAWN>() | getPieceBoard<BLACK_PAWN>());
+        return occupied & ~(getPieceBoard<WHITE_KING>() | getPieceBoard<BLACK_KING>() | getPieceBoard<WHITE_PAWN>() |
+                            getPieceBoard<BLACK_PAWN>());
     }
 
     /**
@@ -497,7 +498,8 @@ public:
      */
     template <PieceColor color>
     [[nodiscard]] bool hasNonPawnMaterial() const {
-        return getColorBitboard<color>() & ~(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>() | getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>());
+        return getColorBitboard<color>() & ~(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>() | getPieceBoard<
+                                                 color == WHITE ? WHITE_PAWN : BLACK_PAWN>());
     }
 };
 } // namespace Zagreus

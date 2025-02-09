@@ -171,8 +171,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         // Null Move Pruning
         if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && !board.getPreviousMove() == NO_MOVE) {
             board.makeNullMove();
-            const int R = depth / 3;
-            const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(engine, board, -beta, -beta + 1, depth - R - 1, stats, endTime, pvLine);
+            const int R = depth >= 6 ? 3 : 2;
+            PvLine nmpPvLine = PvLine{board.getPly()};
+            const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(engine, board, -beta, -beta + 1, depth - R - 1,
+                                                                        stats, endTime, nmpPvLine);
             board.unmakeNullMove();
 
             if (nullMoveScore >= beta) {
