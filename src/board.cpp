@@ -648,7 +648,7 @@ void Board::unmakeMove() {
         fullmoveClock -= 1;
     }
 
-    assert(state.previousMove != NO_MOVE);
+    assert(state.move != NO_MOVE);
     this->previousMove = state.previousMove;
     this->halfMoveClock = state.halfMoveClock;
     this->sideToMove = !sideToMove;
@@ -696,7 +696,7 @@ void Board::unmakeNullMove() {
         fullmoveClock -= 1;
     }
 
-    assert(state.previousMove == NO_MOVE);
+    assert(state.move == NO_MOVE);
     this->previousMove = state.previousMove;
     this->halfMoveClock = state.halfMoveClock;
     this->sideToMove = !sideToMove;
