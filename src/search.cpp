@@ -173,8 +173,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             board.makeNullMove();
             const int R = depth >= 6 ? 3 : 2;
             PvLine nmpPvLine = PvLine{board.getPly()};
-            const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(engine, board, -beta, -beta + 1,
-                                                                        std::max(1, depth - R - 1),
+            const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(engine, board, -beta, -beta + 1, depth - R - 1,
                                                                         stats, endTime, nmpPvLine);
             board.unmakeNullMove();
 
@@ -201,6 +200,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     movePicker.sort(board);
     PvLine nodePvLine = PvLine{board.getPly()};
     Move bestMove = NO_MOVE;
+    int bestScore = INT32_MIN;
 
     while (movePicker.next(move)) {
         const Square toSquare = getToSquare(move);
