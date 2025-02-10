@@ -200,6 +200,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     movePicker.sort(board);
     PvLine nodePvLine = PvLine{board.getPly()};
     Move bestMove = NO_MOVE;
+    int bestScore = INT32_MIN;
 
     while (movePicker.next(move)) {
         const Square toSquare = getToSquare(move);
@@ -259,11 +260,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 }
 
                 if (!isRoot) {
-                    tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
+                    tt->savePosition(board.getZobristHash(), depth, board.getPly(), beta, bestMove, BETA);
                 }
             }
 
-            return score;
+            return beta;
         }
 
         if (score > alpha) {
@@ -328,10 +329,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     if (bestScore >= beta) {
         if (!engine.isSearchStopped()) {
-            tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), beta, NO_MOVE, BETA);
         }
 
-        return bestScore;
+        return beta;
     }
 
     if (bestScore > alpha) {
@@ -380,10 +381,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
-                tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
+                tt->savePosition(board.getZobristHash(), depth, board.getPly(), beta, bestMove, BETA);
             }
 
-            return score;
+            return beta;
         }
 
         if (score > bestScore) {
@@ -411,10 +412,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     }
 
     if (!engine.isSearchStopped()) {
-        tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
+        tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
     }
 
     assert(alpha != INITIAL_ALPHA);
-    return bestScore;
+    return alpha;
 }
 } // namespace Zagreus
