@@ -178,7 +178,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             board.unmakeNullMove();
 
             if (nullMoveScore >= beta) {
-                return beta;
+                return nullMoveScore;
             }
         }
     }
@@ -260,31 +260,38 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 }
 
                 if (!isRoot) {
-                    tt->savePosition(board.getZobristHash(), depth, board.getPly(), beta, bestMove, BETA);
+                    tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
                 }
             }
 
-            return beta;
+            return score;
         }
 
-        if (score > alpha) {
-            bestMove = move;
-            alpha = score;
-            pvLine.moves[0] = move;
-            std::memcpy(pvLine.moves + 1, nodePvLine.moves, nodePvLine.moveCount * sizeof(Move));
-            pvLine.moveCount = nodePvLine.moveCount + 1;
+        if (score > bestScore) {
+            bestScore = score;
+
+            if (score > alpha) {
+                bestMove = move;
+                alpha = score;
+                pvLine.moves[0] = move;
+                std::memcpy(pvLine.moves + 1, nodePvLine.moves, nodePvLine.moveCount * sizeof(Move));
+                pvLine.moveCount = nodePvLine.moveCount + 1;
+            }
         }
     }
 
     if (!legalMoves) {
         if (isInCheck) {
             alpha = -MATE_SCORE + board.getPly();
+            bestScore = alpha;
         } else {
             alpha = DRAW_SCORE;
+            bestScore = DRAW_SCORE;
         }
     } else {
         if (!isRoot && board.isDraw()) {
-            return DRAW_SCORE;
+            alpha = DRAW_SCORE;
+            bestScore = DRAW_SCORE;
         }
     }
 
@@ -296,12 +303,12 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         if (!engine.isSearchStopped()) {
-            tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
         }
     }
 
-    assert(alpha != INITIAL_ALPHA);
-    return alpha;
+    assert(bestScore != INITIAL_ALPHA);
+    return bestScore;
 }
 
 template <PieceColor color, NodeType nodeType>
@@ -309,6 +316,11 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
             const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
     assert(nodeType != ROOT);
     constexpr bool isPV = nodeType == PV;
+
+    if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
+        engine.setSearchStopped(true);
+        return beta;
+    }
 
     if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
@@ -318,21 +330,16 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         }
     }
 
-    if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
-        engine.setSearchStopped(true);
-        return beta;
-    }
-
     stats.qNodesSearched += 1;
 
     int bestScore = Evaluation(board).evaluate();
 
     if (bestScore >= beta) {
         if (!engine.isSearchStopped()) {
-            tt->savePosition(board.getZobristHash(), depth, board.getPly(), beta, NO_MOVE, BETA);
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
         }
 
-        return beta;
+        return bestScore;
     }
 
     if (bestScore > alpha) {
@@ -381,10 +388,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
-                tt->savePosition(board.getZobristHash(), depth, board.getPly(), beta, bestMove, BETA);
+                tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
             }
 
-            return beta;
+            return score;
         }
 
         if (score > bestScore) {
@@ -401,7 +408,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         bestScore = -MATE_SCORE + board.getPly();
     } else {
         if (board.isDraw()) {
-            return DRAW_SCORE;
+            bestScore = DRAW_SCORE;
         }
     }
 
@@ -412,10 +419,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     }
 
     if (!engine.isSearchStopped()) {
-        tt->savePosition(board.getZobristHash(), depth, board.getPly(), alpha, bestMove, ttNodeType);
+        tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
     }
 
-    assert(alpha != INITIAL_ALPHA);
-    return alpha;
+    assert(bestScore != INITIAL_ALPHA);
+    return bestScore;
 }
 } // namespace Zagreus
