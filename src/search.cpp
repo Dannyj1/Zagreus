@@ -233,8 +233,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             doFullSearch = false;
             int R = 0;
             R = lmrTable[depth][movesSearched];
-            R -= isPV;
-            R -= isInCheck;
 
             // Make sure depth - 1 - R is at least 1
             if (depth - 1 - R <= 0) {
