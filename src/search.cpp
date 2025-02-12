@@ -228,8 +228,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         const int movesSearched = movePicker.getMovesSearched();
         bool doFullSearch = true;
         int score = INT32_MIN;
+        int minMovesSearched = isPV ? 2 : 1;
 
-        if (movesSearched >= 3 && depth >= 3) {
+        if (movesSearched > minMovesSearched && depth >= 3) {
             doFullSearch = false;
             int R = 0;
             R = lmrTable[depth][movesSearched];
