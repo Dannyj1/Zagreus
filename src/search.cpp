@@ -228,9 +228,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
         bool doFullSearch = true;
         int score = INT32_MIN;
-        int minMovesSearched = isPV ? 2 : 1;
 
-        if (movesSearched > minMovesSearched && depth >= 3) {
+        if (movesSearched > 1 && depth >= 3) {
             doFullSearch = false;
             int R = 0;
             R = lmrTable[depth][movesSearched];
@@ -242,8 +241,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
             R = std::max(0, R);
 
-            score = -pvSearch<opponentColor, nodeType>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats,
-                                                       endTime, nodePvLine);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats,
+                                                      endTime, nodePvLine);
 
             if (score > alpha) {
                 doFullSearch = true;
