@@ -137,7 +137,7 @@ void benchmark(bool fast) {
     std::vector<std::string> positions = fast ? FAST_BENCHMARK_POSITIONS : BENCHMARK_POSITIONS;
     SearchParams params{};
 
-    params.depth = fast ? 3 : 6;
+    params.depth = fast ? 3 : 7;
 
     for (const std::string& position : positions) {
         for (int i = 0; i < 2; i++) {

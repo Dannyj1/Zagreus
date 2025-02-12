@@ -332,21 +332,24 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     stats.qNodesSearched += 1;
 
+    const bool isInCheck = board.isKingInCheck<color>();
     int bestScore = Evaluation(board).evaluate();
 
-    if (bestScore >= beta) {
-        if (!engine.isSearchStopped()) {
-            tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
+    if (!isInCheck) {
+        // Stand pat
+        if (bestScore >= beta) {
+            if (!engine.isSearchStopped()) {
+                tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
+            }
+
+            return bestScore;
         }
 
-        return bestScore;
+        if (bestScore > alpha) {
+            alpha = bestScore;
+        }
     }
 
-    if (bestScore > alpha) {
-        alpha = bestScore;
-    }
-
-    const bool isInCheck = board.isKingInCheck<color>();
     int legalMoves = 0;
     Move move;
     MoveList moves = MoveList{};
