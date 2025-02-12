@@ -104,6 +104,7 @@ void MovePicker::sort(Board& board) {
         }
     }
 
+    // TODO: Use the old implementation from stable as it's faster
     // Sort the moves after scoring them
     for (int i = 0; i < moveList.size; ++i) {
         for (int j = i + 1; j < moveList.size; ++j) {
@@ -113,5 +114,9 @@ void MovePicker::sort(Board& board) {
             }
         }
     }
+}
+
+int MovePicker::getMovesSearched() const {
+    return currentIndex;
 }
 } // namespace Zagreus

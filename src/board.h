@@ -64,7 +64,7 @@ private:
     std::array<Piece, SQUARES> board{};
     std::array<uint64_t, PIECES> bitboards{};
     std::array<uint64_t, COLORS> colorBoards{};
-    std::array<BoardState, MAX_PLY> history{};
+    std::array<BoardState, MAX_PLIES> history{};
     PvLine previousPvLine{0};
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;

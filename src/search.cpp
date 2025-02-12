@@ -19,16 +19,12 @@
  */
 
 #include "search.h"
-// ReSharper disable once CppUnusedIncludeDirective
-#include <compare>
 #include <iostream>
-#include <limits>
 #include <cstring>
 #include <string>
 #include "board.h"
 #include "constants.h"
 #include "eval.h"
-#include "eval_features.h"
 #include "move.h"
 #include "move_gen.h"
 #include "move_picker.h"
@@ -39,6 +35,16 @@
 
 namespace Zagreus {
 static TranspositionTable* tt = TranspositionTable::getTT();
+static int lmrTable[MAX_PLIES][MAX_MOVES]{};
+
+void initializeSearch() {
+    for (int depth = 1; depth < MAX_PLIES; ++depth) {
+        for (int moveCount = 1; moveCount < MAX_MOVES; ++moveCount) {
+            lmrTable[depth][moveCount] = static_cast<int>(0.5 + 0.5 * std::log(depth) * std::log(moveCount));
+        }
+    }
+}
+
 
 // TODO: Support more search variables (infinite, max nodes, etc.)
 template <PieceColor color>
@@ -52,7 +58,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
 
     engine.setSearchStopped(false);
 
-    while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLY) {
+    while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLIES) {
         if (params.blackTime > 0 || params.whiteTime > 0) {
             // Don't start the next iteration if we are 10% away from the end time
             if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
@@ -219,25 +225,49 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
         }
 
-        int score;
+        const int movesSearched = movePicker.getMovesSearched();
+        bool doFullSearch = true;
+        int score = INT32_MIN;
 
-        if (firstMove) {
-            if (isRoot) {
-                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
-                                                     nodePvLine);
-            } else {
-                score = -pvSearch<opponentColor, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
-                                                           nodePvLine);
+        if (movesSearched >= 3 && depth >= 3) {
+            doFullSearch = false;
+            int R = 0;
+            R = lmrTable[depth][movesSearched];
+
+            // Make sure depth - 1 - R is at least 1
+            if (depth - 1 - R <= 0) {
+                R = depth - 2;
             }
 
-            firstMove = false;
-        } else {
-            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
-                                                      nodePvLine);
+            R = std::max(0, R);
 
-            if (isPV && score > alpha) {
-                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
-                                                     nodePvLine);
+            score = -pvSearch<opponentColor, nodeType>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats,
+                                                       endTime, nodePvLine);
+
+            if (score > alpha) {
+                doFullSearch = true;
+            }
+        }
+
+        if (doFullSearch) {
+            if (firstMove) {
+                if (isRoot) {
+                    score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
+                                                         nodePvLine);
+                } else {
+                    score = -pvSearch<opponentColor, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
+                                                               nodePvLine);
+                }
+
+                firstMove = false;
+            } else {
+                score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
+                                                          nodePvLine);
+
+                if (isPV && score > alpha) {
+                    score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
+                                                         nodePvLine);
+                }
             }
         }
 

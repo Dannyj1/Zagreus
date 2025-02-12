@@ -55,5 +55,11 @@ public:
      * \param board The current board which is used to sort the moves.
      */
     void sort(Board& board);
+
+    /**
+     * \brief Gets the amount of moves searched.
+     * \return The amount of moves searched.
+     */
+    int getMovesSearched() const;
 };
 } // namespace Zagreus

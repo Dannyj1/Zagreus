@@ -51,6 +51,7 @@ void Engine::doSetup() {
     }
 
     didSetup = true;
+    initializeSearch();
     initializeMagicBitboards();
     initializeBetweenLookupTable();
     initializeAttackLookupTables();

@@ -23,8 +23,6 @@
 
 #include <cstdint>
 
-#define MAX_PLY 750
-
 #define NOT_A_FILE 0xFEFEFEFEFEFEFEFEULL
 #define NOT_AB_FILE 0xFCFCFCFCFCFCFCFCULL
 #define NOT_GH_FILE 0x3F3F3F3F3F3F3F3FULL
@@ -60,6 +58,7 @@
 #define PIECE_TYPES 6
 #define COLORS 2
 
+#define MAX_PLIES 750
 #define MAX_MOVES 255
 #define NO_MOVE 0
 

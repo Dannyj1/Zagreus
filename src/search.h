@@ -52,6 +52,8 @@ struct SearchStats {
     uint64_t timeSpentMs = 0;
 };
 
+void initializeSearch();
+
 template <PieceColor color>
 [[nodiscard]] Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
 
