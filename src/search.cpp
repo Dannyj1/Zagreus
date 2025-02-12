@@ -169,7 +169,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         // Null Move Pruning
-        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && !board.getPreviousMove() == NO_MOVE) {
+        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE) {
             board.makeNullMove();
             const int R = 2 + depth / 3;
             PvLine nmpPvLine = PvLine{board.getPly()};
@@ -381,6 +381,17 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         }
 
         legalMoves += 1;
+
+        const MoveType moveType = getMoveType(move);
+
+        if (moveType == PROMOTION) {
+            const PromotionPiece promotionPiece = getPromotionPiece(move);
+
+            if (promotionPiece != QUEEN) {
+                board.unmakeMove();
+                continue;
+            }
+        }
 
         const int score = -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
 
