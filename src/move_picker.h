@@ -56,10 +56,5 @@ public:
      */
     void sort(Board& board);
 
-    /**
-     * \brief Gets the amount of moves searched.
-     * \return The amount of moves searched.
-     */
-    int getMovesSearched() const;
 };
 } // namespace Zagreus

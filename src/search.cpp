@@ -207,6 +207,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     PvLine nodePvLine = PvLine{board.getPly()};
     Move bestMove = NO_MOVE;
     int bestScore = INT32_MIN;
+    int movesSearched = 0;
 
     while (movePicker.next(move)) {
         const Square toSquare = getToSquare(move);
@@ -225,7 +226,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
         }
 
-        const int movesSearched = movePicker.getMovesSearched();
         bool doFullSearch = true;
         int score = INT32_MIN;
         int minMovesSearched = isPV ? 2 : 1;
@@ -309,6 +309,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 pvLine.moveCount = nodePvLine.moveCount + 1;
             }
         }
+
+        movesSearched += 1;
     }
 
     if (!legalMoves) {

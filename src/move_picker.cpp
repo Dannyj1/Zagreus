@@ -115,8 +115,4 @@ void MovePicker::sort(Board& board) {
         }
     }
 }
-
-int MovePicker::getMovesSearched() const {
-    return currentIndex;
-}
 } // namespace Zagreus
