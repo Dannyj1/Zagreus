@@ -232,9 +232,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         if (movesSearched > 1 && depth >= 3) {
             doFullSearch = false;
             int R = 0;
+            const Square opponentKingSquare = bitboardToSquare(board.getPieceBoard<color == WHITE ? BLACK_KING : WHITE_KING>());
+            const uint64_t opponentKingAttackers = board.getSquareAttackersByColor<color>(opponentKingSquare);
+
             R = lmrTable[depth][movesSearched];
             R -= isPV;
             R -= isInCheck;
+            R -= opponentKingAttackers != 0;
 
             // Make sure depth - 1 - R is at least 1
             if (depth - 1 - R <= 0) {
