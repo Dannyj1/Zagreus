@@ -54,7 +54,7 @@ public:
      * \brief sorts the move list based on certain criteria.
      * \param board The current board which is used to sort the moves.
      */
-    void sort(Board& board);
+    void score(Board& board);
 
 };
 } // namespace Zagreus

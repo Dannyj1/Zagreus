@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -500,6 +499,11 @@ public:
     [[nodiscard]] bool hasNonPawnMaterial() const {
         return getColorBitboard<color>() & ~(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>() | getPieceBoard<
                                                  color == WHITE ? WHITE_PAWN : BLACK_PAWN>());
+    }
+
+    template <PieceColor color>
+    [[nodiscard]] Square getKingSquare() const {
+        return bitboardToSquare(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>());
     }
 };
 } // namespace Zagreus

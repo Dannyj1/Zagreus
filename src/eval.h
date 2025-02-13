@@ -39,6 +39,9 @@ struct FeatureValue {
 #endif
 
 struct EvalData {
+    uint64_t mobilityArea[COLORS];
+
+    // These are initialized later by evaluatePieces
     uint64_t attacksFrom[SQUARES];
     uint64_t attacksByColor[COLORS];
     uint64_t attacksByPiece[PIECES];
@@ -66,14 +69,54 @@ private:
     [[nodiscard]] int calculatePhase() const;
 
     /**
-     * \brief Evaluates piece mobility.
+     * \brief Adds the given midgame and endgame score to the given color.
+     * \tparam color The color to add the score to.
+     * \param midgameScore The midgame score to add.
+     * \param endgameScore The endgame score to add.
      */
-    void evaluateMobility();
+    template <PieceColor color>
+    void addScore(int midgameScore, int endgameScore);
 
     /**
      * \brief Evaluates several features related to pieces on the board.
      */
     void evaluatePieces();
+
+    /**
+    * \brief Evaluates features related to pawns on the board.
+    */
+    template <PieceColor color>
+    void evaluatePawns();
+
+    /**
+     * \brief Evaluates features related to knights on the board.
+     */
+    template <PieceColor color>
+    void evaluateKnights();
+
+    /**
+     * \brief Evaluates features related to bishops on the board.
+     */
+    template <PieceColor color>
+    void evaluateBishops();
+
+    /**
+     * \brief Evaluates features related to rooks on the board.
+     */
+    template <PieceColor color>
+    void evaluateRooks();
+
+    /**
+     * \brief Evaluates features related to queens on the board.
+     */
+    template <PieceColor color>
+    void evaluateQueens();
+
+    /**
+     * \brief Evaluates features related to the king on the board.
+     */
+    template <PieceColor color>
+    void evaluateKing();
 
 public:
     /**
@@ -88,7 +131,7 @@ public:
 
 
     /**
-     * \brief Initializes the evaluation data needed to evaluate the board position.
+     * \brief Initializes part of the evaluation data needed to evaluate the board position.
      */
     void initializeEvalData();
 

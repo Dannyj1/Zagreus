@@ -203,7 +203,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     MoveList searchedQuietMoves{};
     MovePicker movePicker{moves};
-    movePicker.sort(board);
+    movePicker.score(board);
     PvLine nodePvLine = PvLine{board.getPly()};
     Move bestMove = NO_MOVE;
     int bestScore = INT32_MIN;
@@ -229,6 +229,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         bool doFullSearch = true;
         int score = INT32_MIN;
 
+
+        // Late Move Reduction
         if (movesSearched > 1 && depth >= 3 && !(isPV && capturedPiece != EMPTY) && !(
                 isPV && getMoveType(move) == PROMOTION)) {
             doFullSearch = false;
@@ -402,7 +404,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     }
 
     MovePicker movePicker{moves};
-    movePicker.sort(board);
+    movePicker.score(board);
 
     while (movePicker.next(move)) {
         const Square toSquare = getToSquare(move);

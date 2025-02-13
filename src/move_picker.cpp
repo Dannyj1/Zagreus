@@ -37,6 +37,19 @@ bool MovePicker::next(Move& move) {
         return false;
     }
 
+    int bestIndex = currentIndex;
+    int bestScore = scores[currentIndex];
+
+    for (int i = currentIndex + 1; i < moveList.size; ++i) {
+        if (scores[i] > bestScore) {
+            bestIndex = i;
+            bestScore = scores[i];
+        }
+    }
+
+    std::swap(scores[currentIndex], scores[bestIndex]);
+    std::swap(moveList.moves[currentIndex], moveList.moves[bestIndex]);
+
     move = moveList.moves[currentIndex];
 
     if (move == NO_MOVE) {
@@ -56,7 +69,7 @@ void MovePicker::reset() {
 
 static TranspositionTable* tt = TranspositionTable::getTT();
 
-void MovePicker::sort(Board& board) {
+void MovePicker::score(Board& board) {
     // TODO: Make better system that supports assigns a score to moves and sorts based on those
     const PvLine& pvLine = board.getPreviousPvLine();
     const int currentPly = board.getPly();
@@ -82,7 +95,6 @@ void MovePicker::sort(Board& board) {
     for (int i = 0; i < moveList.size; ++i) {
         const Move move = moveList.moves[i];
         const Square toSquare = getToSquare(move);
-        const Square fromSquare = getFromSquare(move);
         const Piece capturedPiece = board.getPieceOnSquare(toSquare);
 
         if (move == pvMove) {
@@ -101,17 +113,6 @@ void MovePicker::sort(Board& board) {
             const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);
 
             scores[i] = historyValue;
-        }
-    }
-
-    // TODO: Use the old implementation from stable as it's faster
-    // Sort the moves after scoring them
-    for (int i = 0; i < moveList.size; ++i) {
-        for (int j = i + 1; j < moveList.size; ++j) {
-            if (scores[j] > scores[i]) {
-                std::swap(scores[j], scores[i]);
-                std::swap(moveList.moves[j], moveList.moves[i]);
-            }
         }
     }
 }
