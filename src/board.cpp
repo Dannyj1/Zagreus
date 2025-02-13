@@ -586,9 +586,9 @@ void Board::makeMove(const Move move) {
     sideToMove = !sideToMove;
     zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
 
-    assert(ply < MAX_PLY);
+    assert(ply < MAX_PLIES);
     ply++;
-    assert(ply < MAX_PLY);
+    assert(ply < MAX_PLIES);
     assert(enPassantSquare == 255 || (enPassantSquare / 8 == 2 || enPassantSquare / 8 == 5));
 }
 
@@ -597,7 +597,7 @@ void Board::makeMove(const Move move) {
  */
 void Board::unmakeMove() {
     ply--;
-    assert(ply >= 0 && ply < MAX_PLY);
+    assert(ply >= 0 && ply < MAX_PLIES);
     const BoardState& state = history[ply];
     const uint8_t fromSquare = getFromSquare(state.move);
     const uint8_t toSquare = getToSquare(state.move);
@@ -682,14 +682,14 @@ void Board::makeNullMove() {
     sideToMove = !sideToMove;
     zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
 
-    assert(ply < MAX_PLY);
+    assert(ply < MAX_PLIES);
     ply++;
-    assert(ply < MAX_PLY);
+    assert(ply < MAX_PLIES);
 }
 
 void Board::unmakeNullMove() {
     ply--;
-    assert(ply >= 0 && ply < MAX_PLY);
+    assert(ply >= 0 && ply < MAX_PLIES);
     const BoardState& state = history[ply];
 
     if (sideToMove == BLACK) {

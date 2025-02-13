@@ -229,7 +229,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         bool doFullSearch = true;
         int score = INT32_MIN;
 
-        if (movesSearched > 1 && depth >= 3) {
+        if (movesSearched > 1 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
             doFullSearch = false;
             int R = 0;
             const Square opponentKingSquare = bitboardToSquare(
@@ -240,8 +240,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             R -= isPV;
             R -= isInCheck;
             R -= opponentKingAttackers != 0;
-            R -= getMoveType(move) == PROMOTION;
-            R -= capturedPiece != EMPTY;
 
             // Make sure depth - 1 - R is at least 1
             if (depth - 1 - R <= 0) {
