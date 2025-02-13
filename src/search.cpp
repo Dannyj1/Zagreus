@@ -19,7 +19,7 @@
  */
 
 #include "search.h"
-#include <iostream>
+#include <cmath>
 #include <cstring>
 #include <string>
 #include "board.h"
@@ -229,7 +229,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         bool doFullSearch = true;
         int score = INT32_MIN;
 
-        if (movesSearched > 1 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+        if (movesSearched > 1 && depth >= 3 && !(isPV && capturedPiece != EMPTY) && !(
+                isPV && getMoveType(move) == PROMOTION)) {
             doFullSearch = false;
             int R = 0;
             const Square opponentKingSquare = bitboardToSquare(
