@@ -247,7 +247,7 @@ template <PieceColor color>
 void Evaluation::evaluateKing() {
     constexpr Piece kingPiece = color == WHITE ? WHITE_KING : BLACK_KING;
     const Square square = board.getKingSquare<color>();
-    
+
     const int midgamePst = getMidgamePstEvalFeature(kingPiece, square);
     const int endgamePst = getEndgamePstEvalFeature(kingPiece, square);
 

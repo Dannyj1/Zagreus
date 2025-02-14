@@ -166,6 +166,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     stats.nodesSearched += 1;
     bool isInCheck = board.isKingInCheck<color>();
 
+    if (isInCheck) {
+        depth += 1;
+    }
+
     if (!isPV) {
         // Check for a transposition table hit
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
