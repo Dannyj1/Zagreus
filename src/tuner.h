@@ -20,9 +20,16 @@
  */
 
 #pragma once
-
 #ifdef ZAGREUS_TUNER
-namespace Zagreus {
+#include <string>
 
+namespace Zagreus {
+struct TunePosition {
+    std::string fen = "";
+    double result = 0.0;
+    int evalScore = 0;
+};
+
+void startTuning(std::string filePath);
 }
 #endif

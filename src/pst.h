@@ -20,12 +20,11 @@
  */
 
 #pragma once
-#include "types.h"
+#include "constants.h"
 
 namespace Zagreus {
+extern int midgamePstTable[PIECES][SQUARES];
+extern int endgamePstTable[PIECES][SQUARES];
+
 void initializePst();
-
-int getMidgamePstBaseValue(Piece piece, Square square);
-
-int getEndgamePstBaseValue(Piece piece, Square square);
 } // namespace Zagreus

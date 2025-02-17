@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -24,19 +23,9 @@
 #include <cstdint>
 #include "board.h"
 #include "constants.h"
-
-#ifdef ZAGREUS_TUNER
-    #include <vector>
-#endif
+#include "eval_features.h"
 
 namespace Zagreus {
-
-#ifdef ZAGREUS_TUNER
-struct FeatureValue {
-    int featureIndex;
-    int value;
-};
-#endif
 
 struct EvalData {
     uint64_t mobilityArea[COLORS];
@@ -47,6 +36,14 @@ struct EvalData {
     uint64_t attacksByPiece[PIECES];
 };
 
+#ifdef ZAGREUS_TUNER
+struct EvalTrace {
+    int material[COLORS][PIECE_TYPES]{};
+    int pst[COLORS][PIECE_TYPES][SQUARES]{};
+    int mobility[COLORS][PIECE_TYPES]{};
+};
+#endif
+
 class Evaluation {
 private:
     const Board& board;
@@ -55,10 +52,6 @@ private:
     int whiteEndgameScore{};
     int blackMidgameScore{};
     int blackEndgameScore{};
-
-#ifdef ZAGREUS_TUNER
-    std::vector<FeatureValue> featureValues{};
-#endif
 
     /**
      * \brief Evaluates the material on the board.
@@ -119,6 +112,10 @@ private:
     void evaluateKing();
 
 public:
+#ifdef ZAGREUS_TUNER
+    EvalTrace trace{};
+#endif
+
     /**
      * \brief Constructs an Evaluation object with the given board.
      * \param board The current state of the chess board.

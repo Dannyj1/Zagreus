@@ -57,6 +57,9 @@
 #define PIECES 12
 #define PIECE_TYPES 6
 #define COLORS 2
+#define GAME_PHASES 2
+#define MIDGAME 0
+#define ENDGAME 1
 
 #define MAX_PLIES 750
 #define MAX_MOVES 255

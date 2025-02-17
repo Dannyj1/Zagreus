@@ -161,10 +161,10 @@ int eg_king_table[64] = {
     -53, -34, -21, -11, -28, -14, -24, -43
 };
 
-static int midgamePst[PIECES][SQUARES]{};
-static int endgamePst[PIECES][SQUARES]{};
+int midgamePstTable[PIECES][SQUARES]{};
+int endgamePstTable[PIECES][SQUARES]{};
 
-int* getMidgameTable(PieceType pieceType) {
+int* getMidgameTable(const PieceType pieceType) {
     switch (pieceType) {
         case PAWN:
             return mg_pawn_table;
@@ -181,7 +181,7 @@ int* getMidgameTable(PieceType pieceType) {
     }
 }
 
-int* getEndgameTable(PieceType pieceType) {
+int* getEndgameTable(const PieceType pieceType) {
     switch (pieceType) {
         case PAWN:
             return eg_pawn_table;
@@ -201,29 +201,18 @@ int* getEndgameTable(PieceType pieceType) {
 void initializePst() {
     for (Piece piece = WHITE_PAWN; piece <= BLACK_KING; piece++) {
         for (Square square = A1; square <= H8; square++) {
-            const int pieceValue = getPieceValue(piece);
+            const int midgamePieceValue = evalMaterialValues[MIDGAME][getPieceType(piece)];
+            const int endgamePieceValue = evalMaterialValues[ENDGAME][getPieceType(piece)];
             const PieceColor color = getPieceColor(piece);
 
             if (color == WHITE) {
-                midgamePst[piece][square] = pieceValue + getMidgameTable(getPieceType(piece))[square ^ 56];
-                endgamePst[piece][square] = pieceValue + getEndgameTable(getPieceType(piece))[square ^ 56];
+                midgamePstTable[piece][square] = midgamePieceValue + getMidgameTable(getPieceType(piece))[square ^ 56];
+                endgamePstTable[piece][square] = endgamePieceValue + getEndgameTable(getPieceType(piece))[square ^ 56];
             } else {
-                midgamePst[piece][square] = pieceValue + getMidgameTable(getPieceType(piece))[square];
-                endgamePst[piece][square] = pieceValue + getEndgameTable(getPieceType(piece))[square];
+                midgamePstTable[piece][square] = midgamePieceValue + getMidgameTable(getPieceType(piece))[square];
+                endgamePstTable[piece][square] = endgamePieceValue + getEndgameTable(getPieceType(piece))[square];
             }
         }
     }
-}
-
-int getMidgamePstBaseValue(const Piece piece, const Square square) {
-    assert(piece < PIECES);
-    assert(square < SQUARES);
-    return midgamePst[piece][square];
-}
-
-int getEndgamePstBaseValue(const Piece piece, const Square square) {
-    assert(piece < PIECES);
-    assert(square < SQUARES);
-    return endgamePst[piece][square];
 }
 } // namespace Zagreus

@@ -29,6 +29,7 @@
 #include "board.h"
 #include "search.h"
 #include "tt.h"
+#include "tuner.h"
 #include "types.h"
 #include "uci.h"
 
@@ -111,6 +112,20 @@ int main(const int argc, char* argv[]) {
             benchmark(fast);
             return 0;
         }
+
+#ifdef ZAGREUS_TUNER
+        if (std::string(argv[1]) == "tune") {
+            const std::string filePath = argc > 2 ? std::string(argv[2]) : "";
+
+            if (filePath.empty()) {
+                std::cerr << "No file path provided for tuning" << std::endl;
+                return 1;
+            }
+
+            startTuning(filePath);
+            return 0;
+        }
+#endif
     }
 
     try {
@@ -126,7 +141,7 @@ int main(const int argc, char* argv[]) {
 }
 
 void benchmark(bool fast) {
-    Engine engine;
+    Engine engine{};
     uint64_t nodes = 0;
     double totalMs = 0;
     Board board{};

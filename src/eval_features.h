@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -22,37 +21,11 @@
 #pragma once
 #include <vector>
 
+#include "constants.h"
 #include "pst.h"
 
 namespace Zagreus {
-enum EvalFeature {
-    MATERIAL_MIDGAME_PAWN_VALUE,
-    MATERIAL_MIDGAME_KNIGHT_VALUE,
-    MATERIAL_MIDGAME_BISHOP_VALUE,
-    MATERIAL_MIDGAME_ROOK_VALUE,
-    MATERIAL_MIDGAME_QUEEN_VALUE,
-    MATERIAL_ENDGAME_PAWN_VALUE,
-    MATERIAL_ENDGAME_KNIGHT_VALUE,
-    MATERIAL_ENDGAME_BISHOP_VALUE,
-    MATERIAL_ENDGAME_ROOK_VALUE,
-    MATERIAL_ENDGAME_QUEEN_VALUE,
-    MOBILITY_MIDGAME_KNIGHT_VALUE,
-    MOBILITY_MIDGAME_BISHOP_VALUE,
-    MOBILITY_MIDGAME_ROOK_VALUE,
-    MOBILITY_MIDGAME_QUEEN_VALUE,
-    MOBILITY_ENDGAME_KNIGHT_VALUE,
-    MOBILITY_ENDGAME_BISHOP_VALUE,
-    MOBILITY_ENDGAME_ROOK_VALUE,
-    MOBILITY_ENDGAME_QUEEN_VALUE,
-};
+extern int evalMaterialValues[GAME_PHASES][PIECE_TYPES];
 
-void initializeEvalFeatures();
-
-void updateFeatureValues(const std::vector<int>& values);
-
-int getEvalFeatureValue(EvalFeature feature);
-
-int getMidgamePstEvalFeature(Piece piece, Square square);
-
-int getEndgamePstEvalFeature(Piece piece, Square square);
+extern int evalMobility[GAME_PHASES][PIECE_TYPES];
 } // namespace Zagreus

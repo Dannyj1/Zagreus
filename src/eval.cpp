@@ -20,6 +20,8 @@
 
 #include "eval.h"
 
+#include <iostream>
+
 #include "bitboard.h"
 #include "bitwise.h"
 #include "eval_features.h"
@@ -119,8 +121,13 @@ void Evaluation::evaluatePawns() {
 
     while (pawns) {
         const Square square = static_cast<Square>(popLsb(pawns));
-        const int midgamePst = getMidgamePstEvalFeature(pawnPiece, square);
-        const int endgamePst = getEndgamePstEvalFeature(pawnPiece, square);
+        const int midgamePst = midgamePstTable[pawnPiece][square];
+        const int endgamePst = endgamePstTable[pawnPiece][square];
+
+#ifdef ZAGREUS_TUNER
+        trace.material[color][PAWN] += 1;
+        trace.pst[color][PAWN][square] += 1;
+#endif
 
         addScore<color>(midgamePst, endgamePst);
 
@@ -142,8 +149,13 @@ void Evaluation::evaluateKnights() {
 
     while (knights) {
         const Square square = static_cast<Square>(popLsb(knights));
-        const int midgamePst = getMidgamePstEvalFeature(knightPiece, square);
-        const int endgamePst = getEndgamePstEvalFeature(knightPiece, square);
+        const int midgamePst = midgamePstTable[knightPiece][square];
+        const int endgamePst = endgamePstTable[knightPiece][square];
+
+#ifdef ZAGREUS_TUNER
+        trace.material[color][KNIGHT] += 1;
+        trace.pst[color][KNIGHT][square] += 1;
+#endif
 
         addScore<color>(midgamePst, endgamePst);
 
@@ -155,8 +167,12 @@ void Evaluation::evaluateKnights() {
 
         const uint64_t mobility = attacks & evalData.mobilityArea[color];
         const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = getEvalFeatureValue(MOBILITY_MIDGAME_KNIGHT_VALUE) * mobilityScore;
-        const int endgameMobilityScore = getEvalFeatureValue(MOBILITY_ENDGAME_KNIGHT_VALUE) * mobilityScore;
+        const int midgameMobilityScore = evalMobility[MIDGAME][KNIGHT] * mobilityScore;
+        const int endgameMobilityScore = evalMobility[ENDGAME][KNIGHT] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+        trace.mobility[color][PAWN] += mobilityScore;
+#endif
 
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
     }
@@ -169,8 +185,13 @@ void Evaluation::evaluateBishops() {
 
     while (bishops) {
         const Square square = static_cast<Square>(popLsb(bishops));
-        const int midgamePst = getMidgamePstEvalFeature(bishopPiece, square);
-        const int endgamePst = getEndgamePstEvalFeature(bishopPiece, square);
+        const int midgamePst = midgamePstTable[bishopPiece][square];
+        const int endgamePst = endgamePstTable[bishopPiece][square];
+
+#ifdef ZAGREUS_TUNER
+        trace.material[color][BISHOP] += 1;
+        trace.pst[color][BISHOP][square] += 1;
+#endif
 
         addScore<color>(midgamePst, endgamePst);
 
@@ -182,8 +203,12 @@ void Evaluation::evaluateBishops() {
 
         const uint64_t mobility = attacks & evalData.mobilityArea[color];
         const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = getEvalFeatureValue(MOBILITY_MIDGAME_BISHOP_VALUE) * mobilityScore;
-        const int endgameMobilityScore = getEvalFeatureValue(MOBILITY_ENDGAME_BISHOP_VALUE) * mobilityScore;
+        const int midgameMobilityScore = evalMobility[MIDGAME][BISHOP] * mobilityScore;
+        const int endgameMobilityScore = evalMobility[ENDGAME][BISHOP] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+        trace.mobility[color][BISHOP] += mobilityScore;
+#endif
 
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
     }
@@ -196,8 +221,13 @@ void Evaluation::evaluateRooks() {
 
     while (rooks) {
         const Square square = static_cast<Square>(popLsb(rooks));
-        const int midgamePst = getMidgamePstEvalFeature(rookPiece, square);
-        const int endgamePst = getEndgamePstEvalFeature(rookPiece, square);
+        const int midgamePst = midgamePstTable[rookPiece][square];
+        const int endgamePst = endgamePstTable[rookPiece][square];
+
+#ifdef ZAGREUS_TUNER
+        trace.material[color][ROOK] += 1;
+        trace.pst[color][ROOK][square] += 1;
+#endif
 
         addScore<color>(midgamePst, endgamePst);
 
@@ -209,8 +239,12 @@ void Evaluation::evaluateRooks() {
 
         const uint64_t mobility = attacks & evalData.mobilityArea[color];
         const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = getEvalFeatureValue(MOBILITY_MIDGAME_ROOK_VALUE) * mobilityScore;
-        const int endgameMobilityScore = getEvalFeatureValue(MOBILITY_ENDGAME_ROOK_VALUE) * mobilityScore;
+        const int midgameMobilityScore = evalMobility[MIDGAME][ROOK] * mobilityScore;
+        const int endgameMobilityScore = evalMobility[ENDGAME][ROOK] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+        trace.mobility[color][ROOK] += mobilityScore;
+#endif
 
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
     }
@@ -223,8 +257,13 @@ void Evaluation::evaluateQueens() {
 
     while (queens) {
         const Square square = static_cast<Square>(popLsb(queens));
-        const int midgamePst = getMidgamePstEvalFeature(queenPiece, square);
-        const int endgamePst = getEndgamePstEvalFeature(queenPiece, square);
+        const int midgamePst = midgamePstTable[queenPiece][square];
+        const int endgamePst = endgamePstTable[queenPiece][square];
+
+#ifdef ZAGREUS_TUNER
+        trace.material[color][QUEEN] += 1;
+        trace.pst[color][QUEEN][square] += 1;
+#endif
 
         addScore<color>(midgamePst, endgamePst);
 
@@ -236,8 +275,12 @@ void Evaluation::evaluateQueens() {
 
         const uint64_t mobility = attacks & evalData.mobilityArea[color];
         const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = getEvalFeatureValue(MOBILITY_MIDGAME_QUEEN_VALUE) * mobilityScore;
-        const int endgameMobilityScore = getEvalFeatureValue(MOBILITY_ENDGAME_QUEEN_VALUE) * mobilityScore;
+        const int midgameMobilityScore = evalMobility[MIDGAME][QUEEN] * mobilityScore;
+        const int endgameMobilityScore = evalMobility[ENDGAME][QUEEN] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+        trace.mobility[color][QUEEN] += mobilityScore;
+#endif
 
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
     }
@@ -248,8 +291,13 @@ void Evaluation::evaluateKing() {
     constexpr Piece kingPiece = color == WHITE ? WHITE_KING : BLACK_KING;
     const Square square = board.getKingSquare<color>();
 
-    const int midgamePst = getMidgamePstEvalFeature(kingPiece, square);
-    const int endgamePst = getEndgamePstEvalFeature(kingPiece, square);
+    const int midgamePst = midgamePstTable[kingPiece][square];
+    const int endgamePst = endgamePstTable[kingPiece][square];
+
+#ifdef ZAGREUS_TUNER
+    trace.material[color][KING] += 1;
+    trace.pst[color][KING][square] += 1;
+#endif
 
     addScore<color>(midgamePst, endgamePst);
 

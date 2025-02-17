@@ -55,7 +55,7 @@ void Engine::doSetup() {
     initializeMagicBitboards();
     initializeBetweenLookupTable();
     initializeAttackLookupTables();
-    initializeEvalFeatures();
+    initializePst();
 
     UCIOption hashOption = getOption("Hash");
     TranspositionTable::getTT()->setTableSize(std::stoi(hashOption.getValue()));
