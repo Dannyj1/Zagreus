@@ -171,7 +171,7 @@ void Evaluation::evaluateKnights() {
         const int endgameMobilityScore = evalMobility[ENDGAME][KNIGHT] * mobilityScore;
 
 #ifdef ZAGREUS_TUNER
-        trace.mobility[color][PAWN] += mobilityScore;
+        trace.mobility[color][KNIGHT] += mobilityScore;
 #endif
 
         addScore<color>(midgameMobilityScore, endgameMobilityScore);

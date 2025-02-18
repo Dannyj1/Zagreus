@@ -23,8 +23,13 @@
 #include "constants.h"
 
 namespace Zagreus {
+enum PieceType : uint8_t;
 extern int midgamePstTable[PIECES][SQUARES];
 extern int endgamePstTable[PIECES][SQUARES];
 
 void initializePst();
+
+int* getMidgameTable(PieceType pieceType);
+
+int* getEndgameTable(PieceType pieceType);
 } // namespace Zagreus

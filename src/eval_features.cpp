@@ -23,13 +23,15 @@
 #include <vector>
 
 namespace Zagreus {
+// Material values
 int evalMaterialValues[GAME_PHASES][PIECE_TYPES]{
-    {100, 350, 350, 525, 1000}, // Midgame
-    {100, 350, 350, 525, 1000} // Endgame
+    {166, 382, 423, 517, 1000, 0}, // Midgame
+    {277, 368, 384, 521, 999, 0} // Endgame
 };
 
+// Mobility values
 int evalMobility[GAME_PHASES][PIECE_TYPES]{
-    {0, 4, 6, 2, 4, 0},
-    {0, 2, 3, 5, 6, 0}
+    {0, 20, 18, -3, 4, 0}, // Midgame
+    {0, 37, 29, -6, -7, 0} // Endgame
 };
 } // namespace Zagreus

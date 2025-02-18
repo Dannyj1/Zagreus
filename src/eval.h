@@ -54,14 +54,6 @@ private:
     int blackEndgameScore{};
 
     /**
-     * \brief Evaluates the material on the board.
-     *
-     * This function evaluates the material on the board for both sides (white and black)
-     * and updates the midgame and endgame scores accordingly.
-     */
-    [[nodiscard]] int calculatePhase() const;
-
-    /**
      * \brief Adds the given midgame and endgame score to the given color.
      * \tparam color The color to add the score to.
      * \param midgameScore The midgame score to add.
@@ -137,6 +129,14 @@ public:
      * \return The evaluation score of the current board position.
      */
     [[nodiscard]] int evaluate();
+
+    /**
+     * \brief Evaluates the material on the board.
+     *
+     * This function evaluates the material on the board for both sides (white and black)
+     * and updates the midgame and endgame scores accordingly.
+     */
+    [[nodiscard]] int calculatePhase() const;
 };
 
 /**
