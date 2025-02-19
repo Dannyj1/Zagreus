@@ -60,9 +60,12 @@ void initializeWeights() {
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
             for (int square = 0; square < SQUARES; ++square) {
                 const int index = pstWeightStart + (phase * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
-                weights[index] = phase == MIDGAME ? 
-                    getBaseMidgameTable(static_cast<PieceType>(piece))[square] : 
-                    getBaseEndgameTable(static_cast<PieceType>(piece))[square];
+
+                if (phase == MIDGAME) {
+                    weights[index] = getBaseMidgameTable(static_cast<PieceType>(piece))[square];
+                } else {
+                    weights[index] = getBaseEndgameTable(static_cast<PieceType>(piece))[square];
+                }
             }
         }
     }
@@ -85,16 +88,15 @@ void updateEvaluationParameters() {
     }
 
     // Update PST weights
-    for (int phase = 0; phase < GAME_PHASES; ++phase) {
-        for (int piece = 0; piece < PIECE_TYPES; ++piece) {
-            for (int square = 0; square < SQUARES; ++square) {
-                const int index = pstWeightStart + (phase * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
-                if (phase == MIDGAME) {
-                    midgamePstTable[piece][square] = static_cast<int>(std::round(weights[index]));
-                } else {
-                    endgamePstTable[piece][square] = static_cast<int>(std::round(weights[index]));
-                }
-            }
+    for (Piece piece = WHITE_PAWN; piece <= BLACK_KING; piece++) {
+        for (Square square = A1; square <= H8; square++) {
+            const PieceType pieceType = getPieceType(piece);
+            const PieceColor color = getPieceColor(piece);
+            const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + (color == WHITE ? square ^ 56 : square);
+            const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + (color == WHITE ? square ^ 56 : square);
+
+            midgamePstTable[piece][square] = evalMaterialValues[MIDGAME][pieceType] + static_cast<int>(std::round(weights[mgIndex]));
+            endgamePstTable[piece][square] = evalMaterialValues[ENDGAME][pieceType] + static_cast<int>(std::round(weights[egIndex]));
         }
     }
 
