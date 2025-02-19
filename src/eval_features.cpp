@@ -25,13 +25,14 @@
 namespace Zagreus {
 // Material values
 int evalMaterialValues[GAME_PHASES][PIECE_TYPES]{
-    {104, 353, 358, 529, 1003, 0}, // Midgame
-    {122, 352, 353, 531, 1003, 0} // Endgame
+    {99, 351, 354, 526, 1001, 0}, // Midgame
+    {107, 350, 351, 527, 1001, 0} // Endgame
 };
 
 // Mobility values
 int evalMobility[GAME_PHASES][PIECE_TYPES]{
-    {0, 16, 16, 0, 5, 0}, // Midgame
-    {0, 9, 12, 27, 35, 0} // Endgame
+    {0, 5, 8, 1, 1, 0}, // Midgame
+    {0, -1, 2, 10, 12, 0} // Endgame
 };
+
 } // namespace Zagreus
