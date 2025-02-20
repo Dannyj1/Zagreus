@@ -34,5 +34,4 @@ int evalMobility[GAME_PHASES][PIECE_TYPES]{
     {0, 1, 5, 3, 1, 0}, // Midgame
     {0, 0, 0, 5, 7, 0} // Endgame
 };
-
 } // namespace Zagreus

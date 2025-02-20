@@ -71,17 +71,15 @@ void updateEvaluationParameters() {
             const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + (color == WHITE ? square ^ 56 : square);
             const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + (color == WHITE ? square ^ 56 : square);
 
-            const int baseMgPst = color == WHITE ?
-                getBaseMidgameTable(pieceType)[square ^ 56] :
-                getBaseMidgameTable(pieceType)[square];
-            const int baseEgPst = color == WHITE ?
-                getBaseEndgameTable(pieceType)[square ^ 56] :
-                getBaseEndgameTable(pieceType)[square];
+            const int baseMgPst = color == WHITE ? getBaseMidgameTable(pieceType)[square ^ 56] : getBaseMidgameTable(pieceType)[square];
+            const int baseEgPst = color == WHITE
+                                      ? getBaseEndgameTable(pieceType)[square ^ 56]
+                                      : getBaseEndgameTable(pieceType)[square];
 
             midgamePstTable[piece][square] = evalMaterialValues[MIDGAME][pieceType] +
-                static_cast<int>(std::round(baseMgPst + weights[mgIndex]));
+                                             static_cast<int>(std::round(baseMgPst + weights[mgIndex]));
             endgamePstTable[piece][square] = evalMaterialValues[ENDGAME][pieceType] +
-                static_cast<int>(std::round(baseEgPst + weights[egIndex]));
+                                             static_cast<int>(std::round(baseEgPst + weights[egIndex]));
         }
     }
 
@@ -90,7 +88,7 @@ void updateEvaluationParameters() {
             const int index = mobilityWeightStart + (phase * PIECE_TYPES) + piece;
             evalMobility[phase][piece] = static_cast<int>(std::round(
                 baseMobility[phase][piece] + weights[index]
-            ));
+                ));
 
             // Don't allow mobility values to be negative
             if (evalMobility[phase][piece] < 0) {

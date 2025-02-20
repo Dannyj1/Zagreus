@@ -312,8 +312,8 @@ void Evaluation::evaluateKing() {
  * \brief Initializes part of the evaluation data needed to evaluate the board position.
  */
 void Evaluation::initializeEvalData() {
-    evalData.mobilityArea[WHITE] = ~(board.getColorBitboard<WHITE>());
-    evalData.mobilityArea[BLACK] = ~(board.getColorBitboard<BLACK>());
+    evalData.mobilityArea[WHITE] = ~(board.getColorBitboard<WHITE>() | board.getPieceBoard<BLACK_KING>());
+    evalData.mobilityArea[BLACK] = ~(board.getColorBitboard<BLACK>() | board.getPieceBoard<WHITE_KING>());
 }
 
 /**
