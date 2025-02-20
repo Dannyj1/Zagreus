@@ -18,9 +18,9 @@
 
 namespace Zagreus {
 const int epochs = 10000;
-const int batchSize = 16384;
-const double learningRate = 10.0;
-const int earlyStoppingPatience = 20;
+const int batchSize = 256;
+const double learningRate = 1.0;
+const int earlyStoppingPatience = 25;
 const int saveEvery = 50;
 const double maxGradientNorm = 1.0;
 int seed = 42;
@@ -55,6 +55,12 @@ void updateEvaluationParameters() {
             evalMaterialValues[phase][piece] = static_cast<int>(std::round(
                 baseMaterialValues[phase][piece] + weights[materialWeightStart + (phase * PIECE_TYPES) + piece]
             ));
+
+            // Don't allow material values to be negative
+            if (evalMaterialValues[phase][piece] < 0) {
+                evalMaterialValues[phase][piece] = 0;
+                weights[materialWeightStart + (phase * PIECE_TYPES) + piece] = -baseMaterialValues[phase][piece];
+            }
         }
     }
 
@@ -65,16 +71,16 @@ void updateEvaluationParameters() {
             const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + (color == WHITE ? square ^ 56 : square);
             const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + (color == WHITE ? square ^ 56 : square);
 
-            const int baseMgPst = color == WHITE ? 
-                getBaseMidgameTable(pieceType)[square ^ 56] : 
+            const int baseMgPst = color == WHITE ?
+                getBaseMidgameTable(pieceType)[square ^ 56] :
                 getBaseMidgameTable(pieceType)[square];
-            const int baseEgPst = color == WHITE ? 
-                getBaseEndgameTable(pieceType)[square ^ 56] : 
+            const int baseEgPst = color == WHITE ?
+                getBaseEndgameTable(pieceType)[square ^ 56] :
                 getBaseEndgameTable(pieceType)[square];
 
-            midgamePstTable[piece][square] = evalMaterialValues[MIDGAME][pieceType] + 
+            midgamePstTable[piece][square] = evalMaterialValues[MIDGAME][pieceType] +
                 static_cast<int>(std::round(baseMgPst + weights[mgIndex]));
-            endgamePstTable[piece][square] = evalMaterialValues[ENDGAME][pieceType] + 
+            endgamePstTable[piece][square] = evalMaterialValues[ENDGAME][pieceType] +
                 static_cast<int>(std::round(baseEgPst + weights[egIndex]));
         }
     }
@@ -85,6 +91,12 @@ void updateEvaluationParameters() {
             evalMobility[phase][piece] = static_cast<int>(std::round(
                 baseMobility[phase][piece] + weights[index]
             ));
+
+            // Don't allow mobility values to be negative
+            if (evalMobility[phase][piece] < 0) {
+                evalMobility[phase][piece] = 0;
+                weights[index] = -baseMobility[phase][piece];
+            }
         }
     }
 }
@@ -297,8 +309,6 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
 
 void gradientDescent(std::vector<TunePosition>& trainingSet, const std::vector<TunePosition>& validationSet,
                      const std::vector<TunePosition>& testSet, std::mt19937_64& gen, Board& board) {
-    initializeWeights();
-    
     double bestValidationError = std::numeric_limits<double>::infinity();
     std::vector<double> bestWeights = weights;
     int epochsWithoutImprovement = 0;
@@ -544,6 +554,10 @@ void startTuning(std::string filePath) {
     Engine engine{};
     engine.registerOptions();
     engine.doSetup();
+    initializeBasePst();
+    initializeWeights();
+    // Initialize evaluation parameters with base values
+    updateEvaluationParameters();
 
     Board board{};
     std::vector<TunePosition> trainingSet = loadPositions(filePath, gen, board);
