@@ -23,15 +23,15 @@
 #include <vector>
 
 namespace Zagreus {
-// Material values
-int evalMaterialValues[GAME_PHASES][PIECE_TYPES]{
-    {81, 352, 367, 526, 1002, 0}, // Midgame
-    {108, 340, 349, 527, 1001, 0} // Endgame
+// Base material values
+int evalMaterialValues[GAME_PHASES][PIECE_TYPES] = {
+    {100, 350, 350, 525, 1000, 0}, // Midgame
+    {100, 350, 350, 525, 1000, 0}  // Endgame
 };
 
-// Mobility values
-int evalMobility[GAME_PHASES][PIECE_TYPES]{
-    {0, 1, 5, 3, 1, 0}, // Midgame
-    {0, 0, 0, 5, 7, 0} // Endgame
+// Base mobility values
+int evalMobility[GAME_PHASES][PIECE_TYPES] = {
+    {0, 4, 6, 2, 4, 0}, // Midgame
+    {0, 2, 3, 5, 6, 0}  // Endgame
 };
 } // namespace Zagreus
