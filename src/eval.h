@@ -34,6 +34,7 @@ struct EvalData {
     uint64_t attacksFrom[SQUARES];
     uint64_t attacksByColor[COLORS];
     uint64_t attacksByPiece[PIECES];
+    uint64_t attackedBy2[COLORS];
 };
 
 #ifdef ZAGREUS_TUNER

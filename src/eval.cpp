@@ -98,6 +98,10 @@ void Evaluation::evaluatePieces() {
     evaluatePawns<WHITE>();
     evaluatePawns<BLACK>();
 
+    // Exclude enemy pawn attacks from mobility after evaluatePawns filled the attack tables
+    evalData.mobilityArea[WHITE] &= ~evalData.attacksByPiece[BLACK_PAWN];
+    evalData.mobilityArea[BLACK] &= ~evalData.attacksByPiece[WHITE_PAWN];
+
     evaluateKnights<WHITE>();
     evaluateKnights<BLACK>();
 
@@ -134,6 +138,7 @@ void Evaluation::evaluatePawns() {
         const uint64_t attacks = getPawnAttacks<color>(square);
 
         evalData.attacksFrom[square] = attacks;
+        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
         evalData.attacksByColor[color] |= attacks;
         evalData.attacksByPiece[pawnPiece] |= attacks;
     }
@@ -162,6 +167,7 @@ void Evaluation::evaluateKnights() {
         const uint64_t attacks = getKnightAttacks(square);
 
         evalData.attacksFrom[square] = attacks;
+        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
         evalData.attacksByColor[color] |= attacks;
         evalData.attacksByPiece[knightPiece] |= attacks;
 
@@ -198,6 +204,7 @@ void Evaluation::evaluateBishops() {
         const uint64_t attacks = getBishopAttacks(square, board.getOccupiedBitboard());
 
         evalData.attacksFrom[square] = attacks;
+        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
         evalData.attacksByColor[color] |= attacks;
         evalData.attacksByPiece[bishopPiece] |= attacks;
 
@@ -234,6 +241,7 @@ void Evaluation::evaluateRooks() {
         const uint64_t attacks = getRookAttacks(square, board.getOccupiedBitboard());
 
         evalData.attacksFrom[square] = attacks;
+        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
         evalData.attacksByColor[color] |= attacks;
         evalData.attacksByPiece[rookPiece] |= attacks;
 
@@ -270,6 +278,7 @@ void Evaluation::evaluateQueens() {
         const uint64_t attacks = queenAttacks(square, board.getOccupiedBitboard());
 
         evalData.attacksFrom[square] = attacks;
+        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
         evalData.attacksByColor[color] |= attacks;
         evalData.attacksByPiece[queenPiece] |= attacks;
 
@@ -304,6 +313,7 @@ void Evaluation::evaluateKing() {
     const uint64_t attacks = getKingAttacks(square);
 
     evalData.attacksFrom[square] = attacks;
+    evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
     evalData.attacksByColor[color] |= attacks;
     evalData.attacksByPiece[kingPiece] |= attacks;
 }
