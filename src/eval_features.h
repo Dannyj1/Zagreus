@@ -28,4 +28,10 @@ namespace Zagreus {
 extern int evalMaterialValues[GAME_PHASES][PIECE_TYPES];
 
 extern int evalMobility[GAME_PHASES][PIECE_TYPES];
+
+extern int evalPieceOnStrongSquare[GAME_PHASES];
+
+extern int evalPieceOnWeakSquare[GAME_PHASES];
+
+extern int evalUnoccupiedStrongSquare[GAME_PHASES];
 } // namespace Zagreus

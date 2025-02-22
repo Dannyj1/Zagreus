@@ -116,6 +116,9 @@ void Evaluation::evaluatePieces() {
 
     evaluateKing<WHITE>();
     evaluateKing<BLACK>();
+
+    evaluateSquareControl<WHITE>();
+    evaluateSquareControl<BLACK>();
 }
 
 template <PieceColor color>
@@ -316,6 +319,54 @@ void Evaluation::evaluateKing() {
     evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
     evalData.attacksByColor[color] |= attacks;
     evalData.attacksByPiece[kingPiece] |= attacks;
+}
+
+template <PieceColor color>
+void Evaluation::evaluateSquareControl() {
+    uint64_t ownPieces = board.getColorBitboard<color>();
+    uint64_t occupied = board.getOccupiedBitboard();
+    uint64_t ownAttacks = evalData.attacksByColor[color];
+    uint64_t opponentAttacks = evalData.attacksByColor[!color];
+    uint64_t ownAttacksBy2 = evalData.attackedBy2[color];
+    uint64_t opponentAttacksBy2 = evalData.attackedBy2[!color];
+    uint64_t ownPawnAttacks = evalData.attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
+    uint64_t opponentPawnAttacks = evalData.attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
+
+    // Strong squares is any square that is:
+    // 1. Attacked by us and not attacked by the opponent
+    // 2. Square attacked by our pawn and exactly one non-pawn piece of the opponent (so not attacked by 2 pieces)
+    // 3. Square attacked by 2 of our pieces and only 1 of the opponent that is not a pawn
+    // 4. Square attacked by 2 of our pieces from which one is a pawn and exactly 1 of the opponent that may be a pawn
+    uint64_t strongSquares = (ownAttacks & ~opponentAttacks)
+                             | (ownPawnAttacks & (opponentAttacks & ~opponentAttacksBy2 & ~opponentPawnAttacks))
+                             | (ownAttacksBy2 & ~opponentAttacksBy2 & ~opponentPawnAttacks)
+                             | ((ownAttacksBy2 & ownPawnAttacks) & (opponentAttacks & ~opponentAttacksBy2));
+
+    // Weak squares are the opponent's strong squares
+    uint64_t weakSquares = (opponentAttacks & ~ownAttacks)
+                           | (opponentPawnAttacks & (ownAttacks & ~ownAttacksBy2 & ~ownPawnAttacks))
+                           | (opponentAttacksBy2 & ~ownAttacksBy2 & ~ownPawnAttacks)
+                           | ((opponentAttacksBy2 & opponentPawnAttacks) & (ownAttacks & ~ownAttacksBy2));
+
+    uint64_t piecesOnStrongSquares = ownPieces & strongSquares;
+    uint64_t piecesOnWeakSquares = ownPieces & weakSquares;
+    uint64_t unoccupiedStrongSquares = strongSquares & ~occupied;
+    int piecesOnStrongSquaresCount = popcnt(piecesOnStrongSquares);
+    int piecesOnWeakSquaresCount = popcnt(piecesOnWeakSquares);
+    int unoccupiedStrongSquaresCount = popcnt(unoccupiedStrongSquares);
+
+    int midgameScore = 0;
+    int endgameScore = 0;
+
+    // TODO: Add tracing
+    midgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[MIDGAME];
+    endgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[ENDGAME];
+    midgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquare[MIDGAME];
+    endgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquare[ENDGAME];
+    midgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[MIDGAME];
+    endgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[ENDGAME];
+
+    addScore<color>(midgameScore, endgameScore);
 }
 
 /**

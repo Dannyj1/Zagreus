@@ -34,4 +34,10 @@ int evalMobility[GAME_PHASES][PIECE_TYPES] = {
     {0, 4, 6, 2, 4, 0}, // Midgame
     {0, 2, 3, 5, 6, 0}  // Endgame
 };
+
+int evalPieceOnStrongSquare[GAME_PHASES]{4, 1};
+
+int evalPieceOnWeakSquare[GAME_PHASES]{-4, -1};
+
+int evalUnoccupiedStrongSquare[GAME_PHASES]{2, 0};
 } // namespace Zagreus

@@ -70,39 +70,52 @@ private:
 
     /**
     * \brief Evaluates features related to pawns on the board.
+    * \tparam color The color of the pawn to evaluate.
     */
     template <PieceColor color>
     void evaluatePawns();
 
     /**
      * \brief Evaluates features related to knights on the board.
+     * \tparam color The color of the knight to evaluate.
      */
     template <PieceColor color>
     void evaluateKnights();
 
     /**
      * \brief Evaluates features related to bishops on the board.
+     * \tparam color The color of the bishop to evaluate.
      */
     template <PieceColor color>
     void evaluateBishops();
 
     /**
      * \brief Evaluates features related to rooks on the board.
+     * \tparam color The color of the rook to evaluate.
      */
     template <PieceColor color>
     void evaluateRooks();
 
     /**
      * \brief Evaluates features related to queens on the board.
+     * \tparam color The color of the queen to evaluate.
      */
     template <PieceColor color>
     void evaluateQueens();
 
     /**
      * \brief Evaluates features related to the king on the board.
+     * \tparam color The color of the king to evaluate.
      */
     template <PieceColor color>
     void evaluateKing();
+
+    /**
+     * \brief Evaluates features related to square control.
+     * \tparam color The color to evaluate.
+     */
+    template <PieceColor color>
+    void evaluateSquareControl();
 
 public:
 #ifdef ZAGREUS_TUNER
