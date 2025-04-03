@@ -25,6 +25,9 @@ namespace Zagreus {
 enum PieceType : uint8_t;
 extern const int baseMaterialValues[GAME_PHASES][PIECE_TYPES];
 extern const int baseMobility[GAME_PHASES][PIECE_TYPES];
+extern const int basePieceOnStrongSquare[GAME_PHASES];
+extern const int basePieceOnWeakSquare[GAME_PHASES];
+extern const int baseUnoccupiedStrongSquare[GAME_PHASES];
 
 extern const int baseMgPawnTable[64];
 extern const int baseEgPawnTable[64];

@@ -34,6 +34,11 @@ const int baseMobility[GAME_PHASES][PIECE_TYPES] = {
     {0, 2, 3, 5, 6, 0}  // Endgame
 };
 
+// Square control base values
+const int basePieceOnStrongSquare[GAME_PHASES] = {4, 1};
+const int basePieceOnWeakSquare[GAME_PHASES] = {-4, -1};
+const int baseUnoccupiedStrongSquare[GAME_PHASES] = {2, 0};
+
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1
 const int baseMgPawnTable[64] = {

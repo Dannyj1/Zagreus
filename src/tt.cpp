@@ -19,6 +19,7 @@
  */
 
 #include "tt.h"
+#include <algorithm>
 #include <cmath>
 #include "constants.h"
 
@@ -39,7 +40,7 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
             score -= ply;
         }
 
-        score = std::clamp(score, INT16_MIN, INT16_MAX);
+        score = std::clamp<int>(score, INT16_MIN, INT16_MAX);
 
         entry->validationHash = zobristHash >> 32;
         entry->depth = depth;
@@ -73,9 +74,9 @@ int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8
         if (returnScore) {
             int adjustedScore = entry->score;
 
-            if (adjustedScore >= MATE_SCORE) {
+            if (adjustedScore >= (MATE_SCORE - MAX_PLIES)) {
                 adjustedScore -= ply;
-            } else if (adjustedScore <= -MATE_SCORE) {
+            } else if (adjustedScore <= (-MATE_SCORE + MAX_PLIES)) {
                 adjustedScore += ply;
             }
 
@@ -130,5 +131,3 @@ void TranspositionTable::updateHistory(const Move move, const int value) {
 template void TranspositionTable::updateHistory<WHITE>(Move move, int value);
 template void TranspositionTable::updateHistory<BLACK>(Move move, int value);
 } // namespace Zagreus
-
-

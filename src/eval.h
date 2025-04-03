@@ -42,6 +42,9 @@ struct EvalTrace {
     int material[COLORS][PIECE_TYPES]{};
     int pst[COLORS][PIECE_TYPES][SQUARES]{};
     int mobility[COLORS][PIECE_TYPES]{};
+    int piecesOnStrongSquares[COLORS]{};
+    int piecesOnWeakSquares[COLORS]{};
+    int unoccupiedStrongSquares[COLORS]{};
 };
 #endif
 

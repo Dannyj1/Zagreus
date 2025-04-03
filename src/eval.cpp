@@ -358,7 +358,12 @@ void Evaluation::evaluateSquareControl() {
     int midgameScore = 0;
     int endgameScore = 0;
 
-    // TODO: Add tracing
+#ifdef ZAGREUS_TUNER
+    trace.piecesOnStrongSquares[color] += piecesOnStrongSquaresCount;
+    trace.piecesOnWeakSquares[color] += piecesOnWeakSquaresCount;
+    trace.unoccupiedStrongSquares[color] += unoccupiedStrongSquaresCount;
+#endif
+
     midgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[MIDGAME];
     endgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[ENDGAME];
     midgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquare[MIDGAME];
