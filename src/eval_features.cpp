@@ -40,4 +40,6 @@ int evalPieceOnStrongSquare[GAME_PHASES]{4, 1};
 int evalPieceOnWeakSquare[GAME_PHASES]{-4, -1};
 
 int evalUnoccupiedStrongSquare[GAME_PHASES]{2, 0};
+
+int bishopPairBonus[GAME_PHASES]{50, 25};
 } // namespace Zagreus

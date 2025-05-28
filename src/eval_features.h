@@ -34,4 +34,6 @@ extern int evalPieceOnStrongSquare[GAME_PHASES];
 extern int evalPieceOnWeakSquare[GAME_PHASES];
 
 extern int evalUnoccupiedStrongSquare[GAME_PHASES];
+
+extern int bishopPairBonus[GAME_PHASES];
 } // namespace Zagreus

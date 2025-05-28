@@ -191,6 +191,14 @@ template <PieceColor color>
 void Evaluation::evaluateBishops() {
     constexpr Piece bishopPiece = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     uint64_t bishops = board.getPieceBoard<bishopPiece>();
+    const uint8_t bishopCount = popcnt(bishops);
+    const uint8_t lightSquareBishopCount = popcnt(bishops & LIGHT_SQUARES);
+    const uint8_t darkSquareBishopCount = popcnt(bishops & DARK_SQUARES);
+
+    if (bishopCount > 1 && lightSquareBishopCount > 0 && darkSquareBishopCount > 0) {
+        // TODO: Add to tuner
+        addScore<color>(bishopPairBonus[MIDGAME], bishopPairBonus[ENDGAME]);
+    }
 
     while (bishops) {
         const Square square = static_cast<Square>(popLsb(bishops));

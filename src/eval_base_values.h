@@ -29,6 +29,8 @@ extern const int basePieceOnStrongSquare[GAME_PHASES];
 extern const int basePieceOnWeakSquare[GAME_PHASES];
 extern const int baseUnoccupiedStrongSquare[GAME_PHASES];
 
+extern const int bishopPairBonus[GAME_PHASES];
+
 extern const int baseMgPawnTable[64];
 extern const int baseEgPawnTable[64];
 extern const int baseMgKnightTable[64];
