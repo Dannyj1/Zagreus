@@ -723,6 +723,8 @@ Variables</h2></td></tr>
 <tr class="separator:aa8e8962295c39ae072b00af6e568543a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe3ba8ec83d9eec69966a495ef8d1a6b" id="r_abe3ba8ec83d9eec69966a495ef8d1a6b"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe3ba8ec83d9eec69966a495ef8d1a6b">baseUnoccupiedStrongSquare</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {2, 0}</td></tr>
 <tr class="separator:abe3ba8ec83d9eec69966a495ef8d1a6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a054ad3b428df0238149a973a548583ce" id="r_a054ad3b428df0238149a973a548583ce"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a054ad3b428df0238149a973a548583ce">baseBishopPairBonus</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] {50, 25}</td></tr>
+<tr class="separator:a054ad3b428df0238149a973a548583ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4914d0b53a00ff44887d6a4a5495dc9" id="r_af4914d0b53a00ff44887d6a4a5495dc9"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4914d0b53a00ff44887d6a4a5495dc9">baseMgPawnTable</a> [64]</td></tr>
 <tr class="separator:af4914d0b53a00ff44887d6a4a5495dc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af50df7ce17f989de9753a0b0edbbb298" id="r_af50df7ce17f989de9753a0b0edbbb298"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af50df7ce17f989de9753a0b0edbbb298">baseEgPawnTable</a> [64]</td></tr>
@@ -751,6 +753,8 @@ Variables</h2></td></tr>
 <tr class="separator:ae4d5f9f80fa20aa20a4d3e8aefcdd966"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af32b0c7494d88d0cf4c911431caf4b4f" id="r_af32b0c7494d88d0cf4c911431caf4b4f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af32b0c7494d88d0cf4c911431caf4b4f">baseEndgamePstTable</a> [<a class="el" href="constants_8h.html#a818a7aec9c89ec6951d701e6bd4220ac">PIECES</a>][<a class="el" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>] {}</td></tr>
 <tr class="separator:af32b0c7494d88d0cf4c911431caf4b4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00836a905046e397954cba4ebfbaf677" id="r_a00836a905046e397954cba4ebfbaf677"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00836a905046e397954cba4ebfbaf677">bishopPairBonus</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] {50, 25}</td></tr>
+<tr class="separator:a00836a905046e397954cba4ebfbaf677"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77212675e9ec1ea5afc27509b4afdd4a" id="r_a77212675e9ec1ea5afc27509b4afdd4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77212675e9ec1ea5afc27509b4afdd4a">evalMaterialValues</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="el" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>]</td></tr>
 <tr class="separator:a77212675e9ec1ea5afc27509b4afdd4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a025a34fc4750a9af6e51d2c95b95c4d0" id="r_a025a34fc4750a9af6e51d2c95b95c4d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a025a34fc4750a9af6e51d2c95b95c4d0">evalMobility</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="el" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>]</td></tr>
@@ -3763,7 +3767,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00198">198</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00201">201</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3792,7 +3796,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00180">180</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00183">183</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -5172,7 +5176,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the given piece. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00391">391</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00399">399</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -6100,7 +6104,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00216">216</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00219">219</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -9819,6 +9823,22 @@ Here is the caller graph for this function:</div>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="a054ad3b428df0238149a973a548583ce" name="a054ad3b428df0238149a973a548583ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a054ad3b428df0238149a973a548583ce">&#9670;&#160;</a></span>baseBishopPairBonus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int Zagreus::baseBishopPairBonus[<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] {50, 25}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00043">43</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+
+</div>
+</div>
 <a id="af9f00d4fdf0f0a5ae66081734dfc2e84" name="af9f00d4fdf0f0a5ae66081734dfc2e84"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af9f00d4fdf0f0a5ae66081734dfc2e84">&#9670;&#160;</a></span>baseEgBishopTable</h2>
 
@@ -9841,7 +9861,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -23, -9, -23, -5, -9, -16, -5, -17,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00099">99</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00102">102</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -9867,7 +9887,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -53, -34, -21, -11, -28, -14, -24, -43</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00165">165</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00168">168</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -9893,7 +9913,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -29, -51, -23, -15, -22, -18, -50, -64,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00077">77</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00080">80</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -9919,7 +9939,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    0, 0, 0, 0, 0, 0, 0, 0,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00055">55</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00058">58</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -9945,7 +9965,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -33, -28, -22, -43, -5, -32, -20, -41,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00143">143</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00146">146</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -9971,7 +9991,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -9, 2, 3, -1, -5, -13, 4, -20,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00121">121</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00124">124</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -9987,7 +10007,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00177">177</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00180">180</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10033,7 +10053,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -33, -3, -14, -21, -13, -12, -39, -21,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00088">88</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00091">91</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10059,7 +10079,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -15, 36, 12, -54, 8, -28, 24, 14,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00154">154</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00157">157</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10085,7 +10105,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -105, -21, -58, -33, -17, -28, -19, -23,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00066">66</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00069">69</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10111,7 +10131,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    0, 0, 0, 0, 0, 0, 0, 0,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00044">44</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00047">47</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10137,7 +10157,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -1, -18, -9, 10, -15, -25, -31, -50,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00132">132</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00135">135</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10163,7 +10183,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -19, -13, 1, 17, 16, 7, -37, -26,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00110">110</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00113">113</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10179,7 +10199,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00176">176</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00179">179</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10296,6 +10316,22 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="magics_8cpp_source.html#l00036">36</a> of file <a class="el" href="magics_8cpp_source.html">magics.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a00836a905046e397954cba4ebfbaf677" name="a00836a905046e397954cba4ebfbaf677"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00836a905046e397954cba4ebfbaf677">&#9670;&#160;</a></span>bishopPairBonus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Zagreus::bishopPairBonus {50, 25}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="eval__features_8cpp_source.html#l00044">44</a> of file <a class="el" href="eval__features_8cpp_source.html">eval_features.cpp</a>.</p>
 
 </div>
 </div>
