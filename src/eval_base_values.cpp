@@ -25,13 +25,13 @@ namespace Zagreus {
 // Base material values
 const int baseMaterialValues[GAME_PHASES][PIECE_TYPES] = {
     {100, 350, 350, 525, 1000, 0}, // Midgame
-    {100, 350, 350, 525, 1000, 0}  // Endgame
+    {100, 350, 350, 525, 1000, 0} // Endgame
 };
 
 // Base mobility values
 const int baseMobility[GAME_PHASES][PIECE_TYPES] = {
     {0, 4, 6, 2, 4, 0}, // Midgame
-    {0, 2, 3, 5, 6, 0}  // Endgame
+    {0, 2, 3, 5, 6, 0} // Endgame
 };
 
 // Square control base values
@@ -41,6 +41,10 @@ const int baseUnoccupiedStrongSquare[GAME_PHASES] = {2, 0};
 
 // Piece related values
 const int baseBishopPairBonus[GAME_PHASES]{50, 25};
+const int basePawnShieldBonus[GAME_PHASES][2] = {
+    {20, 10}, // Midgame
+    {10, 5} // Endgame
+};
 
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1
@@ -224,11 +228,15 @@ void initializeBasePst() {
             const PieceColor color = getPieceColor(piece);
 
             if (color == WHITE) {
-                baseMidgamePstTable[piece][square] = midgamePieceValue + getBaseMidgameTable(getPieceType(piece))[square ^ 56];
-                baseEndgamePstTable[piece][square] = endgamePieceValue + getBaseEndgameTable(getPieceType(piece))[square ^ 56];
+                baseMidgamePstTable[piece][square] =
+                    midgamePieceValue + getBaseMidgameTable(getPieceType(piece))[square ^ 56];
+                baseEndgamePstTable[piece][square] =
+                    endgamePieceValue + getBaseEndgameTable(getPieceType(piece))[square ^ 56];
             } else {
-                baseMidgamePstTable[piece][square] = midgamePieceValue + getBaseMidgameTable(getPieceType(piece))[square];
-                baseEndgamePstTable[piece][square] = endgamePieceValue + getBaseEndgameTable(getPieceType(piece))[square];
+                baseMidgamePstTable[piece][square] =
+                    midgamePieceValue + getBaseMidgameTable(getPieceType(piece))[square];
+                baseEndgamePstTable[piece][square] =
+                    endgamePieceValue + getBaseEndgameTable(getPieceType(piece))[square];
             }
         }
     }

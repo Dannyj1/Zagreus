@@ -22,7 +22,6 @@
 #include <vector>
 
 #include "constants.h"
-#include "pst.h"
 
 namespace Zagreus {
 extern int evalMaterialValues[GAME_PHASES][PIECE_TYPES];
@@ -36,4 +35,6 @@ extern int evalPieceOnWeakSquare[GAME_PHASES];
 extern int evalUnoccupiedStrongSquare[GAME_PHASES];
 
 extern int bishopPairBonus[GAME_PHASES];
+
+extern int pawnShieldBonus[GAME_PHASES][PAWN_SHIELD_RANKS];
 } // namespace Zagreus
