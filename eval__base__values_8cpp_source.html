@@ -119,7 +119,7 @@ $(function(){ initResizable(false); });
 <div class="foldopen" id="foldopen00026" data-start="{" data-end="};">
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a8002064517b22c062042466b7f1fe09c">   26</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a8002064517b22c062042466b7f1fe09c">baseMaterialValues</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="code hl_define" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>] = {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    {100, 350, 350, 525, 1000, 0}, <span class="comment">// Midgame</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    {100, 350, 350, 525, 1000, 0}  <span class="comment">// Endgame</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    {100, 350, 350, 525, 1000, 0} <span class="comment">// Endgame</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>};</div>
 </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
@@ -127,7 +127,7 @@ $(function(){ initResizable(false); });
 <div class="foldopen" id="foldopen00032" data-start="{" data-end="};">
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a955db901977df5e3bedc86ea5533b590">   32</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a955db901977df5e3bedc86ea5533b590">baseMobility</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="code hl_define" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>] = {</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    {0, 4, 6, 2, 4, 0}, <span class="comment">// Midgame</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    {0, 2, 3, 5, 6, 0}  <span class="comment">// Endgame</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    {0, 2, 3, 5, 6, 0} <span class="comment">// Endgame</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>};</div>
 </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
@@ -137,230 +137,240 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#abe3ba8ec83d9eec69966a495ef8d1a6b">   40</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#abe3ba8ec83d9eec69966a495ef8d1a6b">baseUnoccupiedStrongSquare</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {2, 0};</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">// Piece related values</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a054ad3b428df0238149a973a548583ce">   43</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a054ad3b428df0238149a973a548583ce">baseBishopPairBonus</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>]{50, 25};</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment">// PeSTO&#39;s piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment">// For every table: The first square in the table [0] is square A8 and the last square [63] is H1</span></div>
-<div class="foldopen" id="foldopen00047" data-start="{" data-end="};">
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">   47</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">baseMgPawnTable</a>[64] = {</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    0, 0, 0, 0, 0, 0, 0, 0,</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    98, 134, 61, 95, 68, 126, 34, -11,</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    -6, 7, 26, 31, 65, 56, 25, -20,</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    -14, 13, 6, 21, 23, 12, 17, -23,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    -27, -2, -5, 12, 17, 6, 10, -25,</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    -26, -4, -4, -10, 3, 3, 33, -12,</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    -35, -1, -20, -23, -15, 24, 38, -22,</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    0, 0, 0, 0, 0, 0, 0, 0,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>};</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af8e247bcc2881b9e8fb24aaa59700daf">   43</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af8e247bcc2881b9e8fb24aaa59700daf">baseBishopPairBonus</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>]{50, 25};</div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="};">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af31bda4f506941ea63c76101ba20fe44">   44</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af31bda4f506941ea63c76101ba20fe44">basePawnShieldBonus</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][2] = {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    {20, 10}, <span class="comment">// Midgame</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    {10, 5} <span class="comment">// Endgame</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>};</div>
 </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="foldopen" id="foldopen00058" data-start="{" data-end="};">
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">   58</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">baseEgPawnTable</a>[64] = {</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">// PeSTO&#39;s piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">// For every table: The first square in the table [0] is square A8 and the last square [63] is H1</span></div>
+<div class="foldopen" id="foldopen00051" data-start="{" data-end="};">
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">   51</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">baseMgPawnTable</a>[64] = {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    0, 0, 0, 0, 0, 0, 0, 0,</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    98, 134, 61, 95, 68, 126, 34, -11,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    -6, 7, 26, 31, 65, 56, 25, -20,</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    -14, 13, 6, 21, 23, 12, 17, -23,</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    -27, -2, -5, 12, 17, 6, 10, -25,</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    -26, -4, -4, -10, 3, 3, 33, -12,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    -35, -1, -20, -23, -15, 24, 38, -22,</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    0, 0, 0, 0, 0, 0, 0, 0,</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    178, 173, 158, 134, 147, 132, 165, 187,</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    94, 100, 85, 67, 56, 53, 82, 84,</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    32, 24, 13, 5, -2, 4, 17, 17,</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    13, 9, -3, -7, -7, -8, 3, -1,</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    4, 7, -6, 1, 0, -5, -1, -8,</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    13, 8, 8, 10, 13, 0, 2, -7,</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    0, 0, 0, 0, 0, 0, 0, 0,</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>};</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>};</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="foldopen" id="foldopen00069" data-start="{" data-end="};">
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">   69</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">baseMgKnightTable</a>[64] = {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    -167, -89, -34, -49, 61, -97, -15, -107,</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    -73, -41, 72, 36, 23, 62, 7, -17,</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    -47, 60, 37, 65, 84, 129, 73, 44,</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    -9, 17, 19, 53, 37, 69, 18, 22,</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    -13, 4, 16, 13, 28, 19, 21, -8,</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    -23, -9, 12, 10, 19, 17, 25, -16,</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    -29, -53, -12, -3, -1, 18, -14, -19,</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    -105, -21, -58, -33, -17, -28, -19, -23,</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>};</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="foldopen" id="foldopen00062" data-start="{" data-end="};">
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">   62</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">baseEgPawnTable</a>[64] = {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    0, 0, 0, 0, 0, 0, 0, 0,</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    178, 173, 158, 134, 147, 132, 165, 187,</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    94, 100, 85, 67, 56, 53, 82, 84,</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    32, 24, 13, 5, -2, 4, 17, 17,</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    13, 9, -3, -7, -7, -8, 3, -1,</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    4, 7, -6, 1, 0, -5, -1, -8,</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    13, 8, 8, 10, 13, 0, 2, -7,</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    0, 0, 0, 0, 0, 0, 0, 0,</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>};</div>
 </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="foldopen" id="foldopen00080" data-start="{" data-end="};">
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">   80</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">baseEgKnightTable</a>[64] = {</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    -58, -38, -13, -28, -31, -27, -63, -99,</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    -25, -8, -25, -2, -9, -25, -24, -52,</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    -24, -20, 10, 9, -1, -9, -19, -41,</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    -17, 3, 22, 22, 22, 11, 8, -18,</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    -18, -6, 16, 25, 16, 17, 4, -18,</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    -23, -3, -1, 15, 10, -3, -20, -22,</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    -42, -20, -10, -5, -2, -20, -23, -44,</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    -29, -51, -23, -15, -22, -18, -50, -64,</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>};</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="};">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">   73</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">baseMgKnightTable</a>[64] = {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    -167, -89, -34, -49, 61, -97, -15, -107,</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    -73, -41, 72, 36, 23, 62, 7, -17,</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    -47, 60, 37, 65, 84, 129, 73, 44,</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    -9, 17, 19, 53, 37, 69, 18, 22,</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    -13, 4, 16, 13, 28, 19, 21, -8,</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    -23, -9, 12, 10, 19, 17, 25, -16,</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    -29, -53, -12, -3, -1, 18, -14, -19,</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    -105, -21, -58, -33, -17, -28, -19, -23,</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>};</div>
 </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="foldopen" id="foldopen00091" data-start="{" data-end="};">
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">   91</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">baseMgBishopTable</a>[64] = {</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    -29, 4, -82, -37, -25, -42, 7, -8,</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    -26, 16, -18, -13, 30, 59, 18, -47,</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    -16, 37, 43, 40, 35, 50, 37, -2,</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    -4, 5, 19, 50, 37, 37, 7, -2,</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    -6, 13, 13, 26, 34, 12, 10, 4,</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    0, 15, 15, 15, 14, 27, 18, 10,</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    4, 15, 16, 0, 7, 21, 33, 1,</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    -33, -3, -14, -21, -13, -12, -39, -21,</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>};</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="foldopen" id="foldopen00084" data-start="{" data-end="};">
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">   84</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">baseEgKnightTable</a>[64] = {</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    -58, -38, -13, -28, -31, -27, -63, -99,</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    -25, -8, -25, -2, -9, -25, -24, -52,</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    -24, -20, 10, 9, -1, -9, -19, -41,</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    -17, 3, 22, 22, 22, 11, 8, -18,</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    -18, -6, 16, 25, 16, 17, 4, -18,</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    -23, -3, -1, 15, 10, -3, -20, -22,</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    -42, -20, -10, -5, -2, -20, -23, -44,</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    -29, -51, -23, -15, -22, -18, -50, -64,</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>};</div>
 </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="foldopen" id="foldopen00102" data-start="{" data-end="};">
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">  102</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">baseEgBishopTable</a>[64] = {</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    -14, -21, -11, -8, -7, -9, -17, -24,</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    -8, -4, 7, -12, -3, -13, -4, -14,</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    2, -8, 0, -1, -2, 6, 0, 4,</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    -3, 9, 12, 9, 14, 10, 3, 2,</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    -6, 3, 13, 19, 7, 10, -3, -9,</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    -12, -3, 8, 10, 13, 3, -7, -15,</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    -14, -18, -7, -1, 4, -9, -15, -27,</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    -23, -9, -23, -5, -9, -16, -5, -17,</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>};</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="foldopen" id="foldopen00095" data-start="{" data-end="};">
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">   95</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">baseMgBishopTable</a>[64] = {</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    -29, 4, -82, -37, -25, -42, 7, -8,</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    -26, 16, -18, -13, 30, 59, 18, -47,</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    -16, 37, 43, 40, 35, 50, 37, -2,</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    -4, 5, 19, 50, 37, 37, 7, -2,</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    -6, 13, 13, 26, 34, 12, 10, 4,</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    0, 15, 15, 15, 14, 27, 18, 10,</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    4, 15, 16, 0, 7, 21, 33, 1,</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    -33, -3, -14, -21, -13, -12, -39, -21,</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>};</div>
 </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="foldopen" id="foldopen00113" data-start="{" data-end="};">
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">  113</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">baseMgRookTable</a>[64] = {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    32, 42, 32, 51, 63, 9, 31, 43,</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    27, 32, 58, 62, 80, 67, 26, 44,</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    -5, 19, 26, 36, 17, 45, 61, 16,</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    -24, -11, 7, 26, 24, 35, -8, -20,</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    -36, -26, -12, -1, 9, -7, 6, -23,</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    -45, -25, -16, -17, 3, 0, -5, -33,</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    -44, -16, -20, -9, -1, 11, -6, -71,</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    -19, -13, 1, 17, 16, 7, -37, -26,</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>};</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="foldopen" id="foldopen00106" data-start="{" data-end="};">
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">  106</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">baseEgBishopTable</a>[64] = {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    -14, -21, -11, -8, -7, -9, -17, -24,</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    -8, -4, 7, -12, -3, -13, -4, -14,</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    2, -8, 0, -1, -2, 6, 0, 4,</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    -3, 9, 12, 9, 14, 10, 3, 2,</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    -6, 3, 13, 19, 7, 10, -3, -9,</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    -12, -3, 8, 10, 13, 3, -7, -15,</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    -14, -18, -7, -1, 4, -9, -15, -27,</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    -23, -9, -23, -5, -9, -16, -5, -17,</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>};</div>
 </div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
-<div class="foldopen" id="foldopen00124" data-start="{" data-end="};">
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">  124</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">baseEgRookTable</a>[64] = {</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    13, 10, 18, 15, 12, 12, 8, 5,</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    11, 13, 13, 11, -3, 3, 8, 3,</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    7, 7, 7, 5, 4, -3, -5, -3,</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    4, 3, 13, 1, 2, 1, -1, 2,</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    3, 5, 8, 4, -5, -6, -8, -11,</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    -4, 0, -5, -1, -7, -12, -8, -16,</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    -6, -6, 0, 2, -9, -9, -11, -3,</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    -9, 2, 3, -1, -5, -13, 4, -20,</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>};</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="foldopen" id="foldopen00117" data-start="{" data-end="};">
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">  117</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">baseMgRookTable</a>[64] = {</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    32, 42, 32, 51, 63, 9, 31, 43,</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    27, 32, 58, 62, 80, 67, 26, 44,</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    -5, 19, 26, 36, 17, 45, 61, 16,</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    -24, -11, 7, 26, 24, 35, -8, -20,</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    -36, -26, -12, -1, 9, -7, 6, -23,</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    -45, -25, -16, -17, 3, 0, -5, -33,</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    -44, -16, -20, -9, -1, 11, -6, -71,</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    -19, -13, 1, 17, 16, 7, -37, -26,</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>};</div>
 </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
-<div class="foldopen" id="foldopen00135" data-start="{" data-end="};">
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">  135</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">baseMgQueenTable</a>[64] = {</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    -28, 0, 29, 12, 59, 44, 43, 45,</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    -24, -39, -5, 1, -16, 57, 28, 54,</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    -13, -17, 7, 8, 29, 56, 47, 57,</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    -27, -27, -16, -16, -1, 17, -2, 1,</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    -9, -26, -9, -10, -2, -4, 3, -3,</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    -14, 2, -11, -2, -5, 2, 14, 5,</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    -35, -8, 11, 2, 8, 15, -3, 1,</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    -1, -18, -9, 10, -15, -25, -31, -50,</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>};</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
+<div class="foldopen" id="foldopen00128" data-start="{" data-end="};">
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">  128</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">baseEgRookTable</a>[64] = {</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    13, 10, 18, 15, 12, 12, 8, 5,</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    11, 13, 13, 11, -3, 3, 8, 3,</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    7, 7, 7, 5, 4, -3, -5, -3,</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    4, 3, 13, 1, 2, 1, -1, 2,</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    3, 5, 8, 4, -5, -6, -8, -11,</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    -4, 0, -5, -1, -7, -12, -8, -16,</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    -6, -6, 0, 2, -9, -9, -11, -3,</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    -9, 2, 3, -1, -5, -13, 4, -20,</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>};</div>
 </div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
-<div class="foldopen" id="foldopen00146" data-start="{" data-end="};">
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">  146</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">baseEgQueenTable</a>[64] = {</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    -9, 22, 22, 27, 27, 19, 10, 20,</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    -17, 20, 32, 41, 58, 25, 30, 0,</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    -20, 6, 9, 49, 47, 35, 19, 9,</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    3, 22, 24, 45, 57, 40, 57, 36,</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    -18, 28, 19, 47, 31, 34, 39, 23,</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    -16, -27, 15, 6, 9, 17, 10, 5,</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    -22, -23, -30, -16, -16, -23, -36, -32,</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    -33, -28, -22, -43, -5, -32, -20, -41,</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>};</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
+<div class="foldopen" id="foldopen00139" data-start="{" data-end="};">
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">  139</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">baseMgQueenTable</a>[64] = {</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    -28, 0, 29, 12, 59, 44, 43, 45,</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    -24, -39, -5, 1, -16, 57, 28, 54,</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    -13, -17, 7, 8, 29, 56, 47, 57,</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    -27, -27, -16, -16, -1, 17, -2, 1,</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    -9, -26, -9, -10, -2, -4, 3, -3,</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    -14, 2, -11, -2, -5, 2, 14, 5,</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    -35, -8, 11, 2, 8, 15, -3, 1,</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    -1, -18, -9, 10, -15, -25, -31, -50,</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>};</div>
 </div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
-<div class="foldopen" id="foldopen00157" data-start="{" data-end="};">
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">  157</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">baseMgKingTable</a>[64] = {</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    -65, 23, 16, -15, -56, -34, 2, 13,</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    29, -1, -20, -7, -8, -4, -38, -29,</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    -9, 24, 2, -16, -20, 6, 22, -22,</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    -17, -20, -12, -27, -30, -25, -14, -36,</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    -49, -1, -27, -39, -46, -44, -33, -51,</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    -14, -14, -22, -46, -44, -30, -15, -27,</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    1, 7, -8, -64, -43, -16, 9, 8,</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    -15, 36, 12, -54, 8, -28, 24, 14,</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>};</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="foldopen" id="foldopen00150" data-start="{" data-end="};">
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">  150</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">baseEgQueenTable</a>[64] = {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    -9, 22, 22, 27, 27, 19, 10, 20,</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    -17, 20, 32, 41, 58, 25, 30, 0,</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    -20, 6, 9, 49, 47, 35, 19, 9,</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    3, 22, 24, 45, 57, 40, 57, 36,</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    -18, 28, 19, 47, 31, 34, 39, 23,</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    -16, -27, 15, 6, 9, 17, 10, 5,</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    -22, -23, -30, -16, -16, -23, -36, -32,</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    -33, -28, -22, -43, -5, -32, -20, -41,</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>};</div>
 </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="foldopen" id="foldopen00168" data-start="{" data-end="};">
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">  168</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">baseEgKingTable</a>[64] = {</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    -74, -35, -18, -18, -11, 15, 4, -17,</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    -12, 17, 14, 17, 17, 38, 23, 11,</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    10, 17, 23, 15, 20, 45, 44, 13,</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    -8, 22, 24, 27, 26, 33, 26, 3,</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    -18, -4, 21, 24, 27, 23, 9, -11,</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    -19, -3, 11, 21, 23, 16, 7, -9,</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    -27, -11, 4, 13, 14, 4, -5, -17,</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    -53, -34, -21, -11, -28, -14, -24, -43</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>};</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="foldopen" id="foldopen00161" data-start="{" data-end="};">
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">  161</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">baseMgKingTable</a>[64] = {</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    -65, 23, 16, -15, -56, -34, 2, 13,</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    29, -1, -20, -7, -8, -4, -38, -29,</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    -9, 24, 2, -16, -20, 6, 22, -22,</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    -17, -20, -12, -27, -30, -25, -14, -36,</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    -49, -1, -27, -39, -46, -44, -33, -51,</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    -14, -14, -22, -46, -44, -30, -15, -27,</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    1, 7, -8, -64, -43, -16, 9, 8,</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    -15, 36, 12, -54, 8, -28, 24, 14,</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>};</div>
 </div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">  179</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">baseMidgamePstTable</a>[<a class="code hl_define" href="constants_8h.html#a818a7aec9c89ec6951d701e6bd4220ac">PIECES</a>][<a class="code hl_define" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>]{};</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">  180</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">baseEndgamePstTable</a>[<a class="code hl_define" href="constants_8h.html#a818a7aec9c89ec6951d701e6bd4220ac">PIECES</a>][<a class="code hl_define" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>]{};</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="comment">// Helper functions to get base PST tables</span></div>
-<div class="foldopen" id="foldopen00183" data-start="{" data-end="}">
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">  183</a></span><span class="keyword">const</span> <span class="keywordtype">int</span>* <a class="code hl_function" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">getBaseMidgameTable</a>(<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577">PieceType</a> pieceType) {</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    <span class="keywordflow">switch</span> (pieceType) {</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a82df154e325fe73e8dbbd6464fff311d">PAWN</a>:</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">baseMgPawnTable</a>;</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a44f109c25adab1281c20ef1c69c5901f">KNIGHT</a>:</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">baseMgKnightTable</a>;</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577adaf844db36f5f40671b14dd2d6e3715d">BISHOP</a>:</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">baseMgBishopTable</a>;</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9b208961400d25333f2379d5739ad3fb">ROOK</a>:</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">baseMgRookTable</a>;</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9cf2c52e3aa569497f2f7f35aaec6973">QUEEN</a>:</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">baseMgQueenTable</a>;</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577abbc1bdd5634088aa65b187af1b68b376">KING</a>:</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">baseMgKingTable</a>;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    }</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>}</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
+<div class="foldopen" id="foldopen00172" data-start="{" data-end="};">
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">  172</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">baseEgKingTable</a>[64] = {</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    -74, -35, -18, -18, -11, 15, 4, -17,</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    -12, 17, 14, 17, 17, 38, 23, 11,</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    10, 17, 23, 15, 20, 45, 44, 13,</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    -8, 22, 24, 27, 26, 33, 26, 3,</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    -18, -4, 21, 24, 27, 23, 9, -11,</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    -19, -3, 11, 21, 23, 16, 7, -9,</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    -27, -11, 4, 13, 14, 4, -5, -17,</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    -53, -34, -21, -11, -28, -14, -24, -43</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>};</div>
 </div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
-<div class="foldopen" id="foldopen00201" data-start="{" data-end="}">
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">  201</a></span><span class="keyword">const</span> <span class="keywordtype">int</span>* <a class="code hl_function" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">getBaseEndgameTable</a>(<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577">PieceType</a> pieceType) {</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="keywordflow">switch</span> (pieceType) {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a82df154e325fe73e8dbbd6464fff311d">PAWN</a>:</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">baseEgPawnTable</a>;</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a44f109c25adab1281c20ef1c69c5901f">KNIGHT</a>:</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">baseEgKnightTable</a>;</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577adaf844db36f5f40671b14dd2d6e3715d">BISHOP</a>:</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">baseEgBishopTable</a>;</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9b208961400d25333f2379d5739ad3fb">ROOK</a>:</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">baseEgRookTable</a>;</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9cf2c52e3aa569497f2f7f35aaec6973">QUEEN</a>:</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">baseEgQueenTable</a>;</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577abbc1bdd5634088aa65b187af1b68b376">KING</a>:</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">baseEgKingTable</a>;</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    }</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>}</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">  183</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">baseMidgamePstTable</a>[<a class="code hl_define" href="constants_8h.html#a818a7aec9c89ec6951d701e6bd4220ac">PIECES</a>][<a class="code hl_define" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>]{};</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">  184</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">baseEndgamePstTable</a>[<a class="code hl_define" href="constants_8h.html#a818a7aec9c89ec6951d701e6bd4220ac">PIECES</a>][<a class="code hl_define" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>]{};</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="comment">// Helper functions to get base PST tables</span></div>
+<div class="foldopen" id="foldopen00187" data-start="{" data-end="}">
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">  187</a></span><span class="keyword">const</span> <span class="keywordtype">int</span>* <a class="code hl_function" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">getBaseMidgameTable</a>(<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577">PieceType</a> pieceType) {</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    <span class="keywordflow">switch</span> (pieceType) {</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a82df154e325fe73e8dbbd6464fff311d">PAWN</a>:</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">baseMgPawnTable</a>;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a44f109c25adab1281c20ef1c69c5901f">KNIGHT</a>:</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">baseMgKnightTable</a>;</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577adaf844db36f5f40671b14dd2d6e3715d">BISHOP</a>:</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">baseMgBishopTable</a>;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9b208961400d25333f2379d5739ad3fb">ROOK</a>:</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">baseMgRookTable</a>;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9cf2c52e3aa569497f2f7f35aaec6973">QUEEN</a>:</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">baseMgQueenTable</a>;</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577abbc1bdd5634088aa65b187af1b68b376">KING</a>:</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">baseMgKingTable</a>;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    }</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>}</div>
 </div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
-<div class="foldopen" id="foldopen00219" data-start="{" data-end="}">
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a5c8fc2bd17d3d2bd77f1af6f854ef834">  219</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceZagreus.html#a5c8fc2bd17d3d2bd77f1af6f854ef834">initializeBasePst</a>() {</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keywordflow">for</span> (<a class="code hl_enumeration" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> piece = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aa98910381a8ea8065b924a806c71e1f8">WHITE_PAWN</a>; piece &lt;= <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a246e7229bb5a2bb421334de50974d5d9">BLACK_KING</a>; piece++) {</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        <span class="keywordflow">for</span> (<a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> square = <a class="code hl_enumvalue" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa0afccc9f6be10f66dd9e8f56507ddc8a">A1</a>; square &lt;= <a class="code hl_enumvalue" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa77fd272e3be3db394dc8ca799116364c">H8</a>; square++) {</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            <span class="keyword">const</span> <span class="keywordtype">int</span> midgamePieceValue = <a class="code hl_variable" href="namespaceZagreus.html#a8002064517b22c062042466b7f1fe09c">baseMaterialValues</a>[<a class="code hl_define" href="constants_8h.html#ad991e7c9f6e7b4dadd2bdf7da02af183">MIDGAME</a>][<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece)];</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="keyword">const</span> <span class="keywordtype">int</span> endgamePieceValue = <a class="code hl_variable" href="namespaceZagreus.html#a8002064517b22c062042466b7f1fe09c">baseMaterialValues</a>[<a class="code hl_define" href="constants_8h.html#a29111d5b3d48776267f2ec66fb745a02">ENDGAME</a>][<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece)];</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>            <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">PieceColor</a> color = <a class="code hl_function" href="namespaceZagreus.html#a4797edd07c51dd24a1f1239ae3f66d7f">getPieceColor</a>(piece);</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            <span class="keywordflow">if</span> (color == <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a>) {</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                <a class="code hl_variable" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">baseMidgamePstTable</a>[piece][square] = midgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">getBaseMidgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square ^ 56];</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                <a class="code hl_variable" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">baseEndgamePstTable</a>[piece][square] = endgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">getBaseEndgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square ^ 56];</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                <a class="code hl_variable" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">baseMidgamePstTable</a>[piece][square] = midgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">getBaseMidgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square];</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                <a class="code hl_variable" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">baseEndgamePstTable</a>[piece][square] = endgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">getBaseEndgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square];</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            }</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        }</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    }</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>}</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
+<div class="foldopen" id="foldopen00205" data-start="{" data-end="}">
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">  205</a></span><span class="keyword">const</span> <span class="keywordtype">int</span>* <a class="code hl_function" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">getBaseEndgameTable</a>(<span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577">PieceType</a> pieceType) {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keywordflow">switch</span> (pieceType) {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a82df154e325fe73e8dbbd6464fff311d">PAWN</a>:</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">baseEgPawnTable</a>;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a44f109c25adab1281c20ef1c69c5901f">KNIGHT</a>:</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">baseEgKnightTable</a>;</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577adaf844db36f5f40671b14dd2d6e3715d">BISHOP</a>:</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">baseEgBishopTable</a>;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9b208961400d25333f2379d5739ad3fb">ROOK</a>:</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">baseEgRookTable</a>;</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a9cf2c52e3aa569497f2f7f35aaec6973">QUEEN</a>:</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">baseEgQueenTable</a>;</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577abbc1bdd5634088aa65b187af1b68b376">KING</a>:</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">baseEgKingTable</a>;</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    }</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>}</div>
 </div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>} <span class="comment">// namespace Zagreus </span></div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="foldopen" id="foldopen00223" data-start="{" data-end="}">
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a5c8fc2bd17d3d2bd77f1af6f854ef834">  223</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceZagreus.html#a5c8fc2bd17d3d2bd77f1af6f854ef834">initializeBasePst</a>() {</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    <span class="keywordflow">for</span> (<a class="code hl_enumeration" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> piece = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aa98910381a8ea8065b924a806c71e1f8">WHITE_PAWN</a>; piece &lt;= <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a246e7229bb5a2bb421334de50974d5d9">BLACK_KING</a>; piece++) {</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        <span class="keywordflow">for</span> (<a class="code hl_enumeration" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> square = <a class="code hl_enumvalue" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa0afccc9f6be10f66dd9e8f56507ddc8a">A1</a>; square &lt;= <a class="code hl_enumvalue" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa77fd272e3be3db394dc8ca799116364c">H8</a>; square++) {</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            <span class="keyword">const</span> <span class="keywordtype">int</span> midgamePieceValue = <a class="code hl_variable" href="namespaceZagreus.html#a8002064517b22c062042466b7f1fe09c">baseMaterialValues</a>[<a class="code hl_define" href="constants_8h.html#ad991e7c9f6e7b4dadd2bdf7da02af183">MIDGAME</a>][<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece)];</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            <span class="keyword">const</span> <span class="keywordtype">int</span> endgamePieceValue = <a class="code hl_variable" href="namespaceZagreus.html#a8002064517b22c062042466b7f1fe09c">baseMaterialValues</a>[<a class="code hl_define" href="constants_8h.html#a29111d5b3d48776267f2ec66fb745a02">ENDGAME</a>][<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece)];</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">PieceColor</a> color = <a class="code hl_function" href="namespaceZagreus.html#a4797edd07c51dd24a1f1239ae3f66d7f">getPieceColor</a>(piece);</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            <span class="keywordflow">if</span> (color == <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a>) {</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                <a class="code hl_variable" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">baseMidgamePstTable</a>[piece][square] =</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                    midgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">getBaseMidgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square ^ 56];</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                <a class="code hl_variable" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">baseEndgamePstTable</a>[piece][square] =</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                    endgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">getBaseEndgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square ^ 56];</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                <a class="code hl_variable" href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">baseMidgamePstTable</a>[piece][square] =</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                    midgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">getBaseMidgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square];</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                <a class="code hl_variable" href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">baseEndgamePstTable</a>[piece][square] =</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                    endgamePieceValue + <a class="code hl_function" href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">getBaseEndgameTable</a>(<a class="code hl_function" href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">getPieceType</a>(piece))[square];</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>            }</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        }</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    }</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>}</div>
+</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>} <span class="comment">// namespace Zagreus </span></div>
 <div class="ttc" id="aconstants_8h_html_a170754edbd09a328bef8d53b71d0e9e8"><div class="ttname"><a href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a></div><div class="ttdeci">#define GAME_PHASES</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00060">constants.h:60</a></div></div>
 <div class="ttc" id="aconstants_8h_html_a29111d5b3d48776267f2ec66fb745a02"><div class="ttname"><a href="constants_8h.html#a29111d5b3d48776267f2ec66fb745a02">ENDGAME</a></div><div class="ttdeci">#define ENDGAME</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00062">constants.h:62</a></div></div>
 <div class="ttc" id="aconstants_8h_html_a7fade7363ac979586113d8813d65826b"><div class="ttname"><a href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a></div><div class="ttdeci">#define SQUARES</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00056">constants.h:56</a></div></div>
@@ -369,13 +379,12 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aconstants_8h_html_ad991e7c9f6e7b4dadd2bdf7da02af183"><div class="ttname"><a href="constants_8h.html#ad991e7c9f6e7b4dadd2bdf7da02af183">MIDGAME</a></div><div class="ttdeci">#define MIDGAME</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00061">constants.h:61</a></div></div>
 <div class="ttc" id="aeval__base__values_8h_html"><div class="ttname"><a href="eval__base__values_8h.html">eval_base_values.h</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html"><div class="ttname"><a href="namespaceZagreus.html">Zagreus</a></div><div class="ttdef"><b>Definition</b> <a href="bitboard_8cpp_source.html#l00025">bitboard.cpp:25</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a054ad3b428df0238149a973a548583ce"><div class="ttname"><a href="namespaceZagreus.html#a054ad3b428df0238149a973a548583ce">Zagreus::baseBishopPairBonus</a></div><div class="ttdeci">const int baseBishopPairBonus[GAME_PHASES]</div><div class="ttdef"><b>Definition</b> <a href="#l00043">eval_base_values.cpp:43</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a06e913bde27d160c82c691b3925920a4"><div class="ttname"><a href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">Zagreus::PieceColor</a></div><div class="ttdeci">PieceColor</div><div class="ttdoc">Enum representing colors of chess pieces.</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00103">types.h:103</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad"><div class="ttname"><a href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">Zagreus::WHITE</a></div><div class="ttdeci">@ WHITE</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00103">types.h:103</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a1bc94c6eadeaeb20ead1537706da1e03"><div class="ttname"><a href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">Zagreus::baseEgKingTable</a></div><div class="ttdeci">const int baseEgKingTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00168">eval_base_values.cpp:168</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a1bc94c6eadeaeb20ead1537706da1e03"><div class="ttname"><a href="namespaceZagreus.html#a1bc94c6eadeaeb20ead1537706da1e03">Zagreus::baseEgKingTable</a></div><div class="ttdeci">const int baseEgKingTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00172">eval_base_values.cpp:172</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a4797edd07c51dd24a1f1239ae3f66d7f"><div class="ttname"><a href="namespaceZagreus.html#a4797edd07c51dd24a1f1239ae3f66d7f">Zagreus::getPieceColor</a></div><div class="ttdeci">constexpr PieceColor getPieceColor(const Piece piece)</div><div class="ttdoc">Gets the color of a piece.</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00162">types.h:162</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a56fb30233329373dbfd95ff37bbc49dc"><div class="ttname"><a href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">Zagreus::baseMgKnightTable</a></div><div class="ttdeci">const int baseMgKnightTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00069">eval_base_values.cpp:69</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a5c8fc2bd17d3d2bd77f1af6f854ef834"><div class="ttname"><a href="namespaceZagreus.html#a5c8fc2bd17d3d2bd77f1af6f854ef834">Zagreus::initializeBasePst</a></div><div class="ttdeci">void initializeBasePst()</div><div class="ttdef"><b>Definition</b> <a href="#l00219">eval_base_values.cpp:219</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a56fb30233329373dbfd95ff37bbc49dc"><div class="ttname"><a href="namespaceZagreus.html#a56fb30233329373dbfd95ff37bbc49dc">Zagreus::baseMgKnightTable</a></div><div class="ttdeci">const int baseMgKnightTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00073">eval_base_values.cpp:73</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a5c8fc2bd17d3d2bd77f1af6f854ef834"><div class="ttname"><a href="namespaceZagreus.html#a5c8fc2bd17d3d2bd77f1af6f854ef834">Zagreus::initializeBasePst</a></div><div class="ttdeci">void initializeBasePst()</div><div class="ttdef"><b>Definition</b> <a href="#l00223">eval_base_values.cpp:223</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a6ff930e561c85660192d5277086e9577"><div class="ttname"><a href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577">Zagreus::PieceType</a></div><div class="ttdeci">PieceType</div><div class="ttdoc">Enum representing types of chess pieces.</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00086">types.h:86</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a6ff930e561c85660192d5277086e9577a44f109c25adab1281c20ef1c69c5901f"><div class="ttname"><a href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a44f109c25adab1281c20ef1c69c5901f">Zagreus::KNIGHT</a></div><div class="ttdeci">@ KNIGHT</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00086">types.h:86</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a6ff930e561c85660192d5277086e9577a82df154e325fe73e8dbbd6464fff311d"><div class="ttname"><a href="namespaceZagreus.html#a6ff930e561c85660192d5277086e9577a82df154e325fe73e8dbbd6464fff311d">Zagreus::PAWN</a></div><div class="ttdeci">@ PAWN</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00086">types.h:86</a></div></div>
@@ -390,25 +399,27 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespaceZagreus_html_a80c68b0ed6d2623104cdff1da84729a7"><div class="ttname"><a href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Zagreus::Piece</a></div><div class="ttdeci">Piece</div><div class="ttdoc">Enum representing chess pieces, separated by color and type.</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00117">types.h:117</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a80c68b0ed6d2623104cdff1da84729a7a246e7229bb5a2bb421334de50974d5d9"><div class="ttname"><a href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a246e7229bb5a2bb421334de50974d5d9">Zagreus::BLACK_KING</a></div><div class="ttdeci">@ BLACK_KING</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00129">types.h:129</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a80c68b0ed6d2623104cdff1da84729a7aa98910381a8ea8065b924a806c71e1f8"><div class="ttname"><a href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aa98910381a8ea8065b924a806c71e1f8">Zagreus::WHITE_PAWN</a></div><div class="ttdeci">@ WHITE_PAWN</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00118">types.h:118</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a88fc5780ec8dd1f7b87eaf77986352b2"><div class="ttname"><a href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">Zagreus::getBaseEndgameTable</a></div><div class="ttdeci">const int * getBaseEndgameTable(const PieceType pieceType)</div><div class="ttdef"><b>Definition</b> <a href="#l00201">eval_base_values.cpp:201</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a88fc5780ec8dd1f7b87eaf77986352b2"><div class="ttname"><a href="namespaceZagreus.html#a88fc5780ec8dd1f7b87eaf77986352b2">Zagreus::getBaseEndgameTable</a></div><div class="ttdeci">const int * getBaseEndgameTable(const PieceType pieceType)</div><div class="ttdef"><b>Definition</b> <a href="#l00205">eval_base_values.cpp:205</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a955db901977df5e3bedc86ea5533b590"><div class="ttname"><a href="namespaceZagreus.html#a955db901977df5e3bedc86ea5533b590">Zagreus::baseMobility</a></div><div class="ttdeci">const int baseMobility[GAME_PHASES][PIECE_TYPES]</div><div class="ttdef"><b>Definition</b> <a href="#l00032">eval_base_values.cpp:32</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a9c64c258d62800727b4738caf41f037e"><div class="ttname"><a href="namespaceZagreus.html#a9c64c258d62800727b4738caf41f037e">Zagreus::basePieceOnStrongSquare</a></div><div class="ttdeci">const int basePieceOnStrongSquare[GAME_PHASES]</div><div class="ttdef"><b>Definition</b> <a href="#l00038">eval_base_values.cpp:38</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_aa6428d553f59f115ce7375f2c0346567"><div class="ttname"><a href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">Zagreus::getBaseMidgameTable</a></div><div class="ttdeci">const int * getBaseMidgameTable(const PieceType pieceType)</div><div class="ttdef"><b>Definition</b> <a href="#l00183">eval_base_values.cpp:183</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_aa6428d553f59f115ce7375f2c0346567"><div class="ttname"><a href="namespaceZagreus.html#aa6428d553f59f115ce7375f2c0346567">Zagreus::getBaseMidgameTable</a></div><div class="ttdeci">const int * getBaseMidgameTable(const PieceType pieceType)</div><div class="ttdef"><b>Definition</b> <a href="#l00187">eval_base_values.cpp:187</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_aa8e8962295c39ae072b00af6e568543a"><div class="ttname"><a href="namespaceZagreus.html#aa8e8962295c39ae072b00af6e568543a">Zagreus::basePieceOnWeakSquare</a></div><div class="ttdeci">const int basePieceOnWeakSquare[GAME_PHASES]</div><div class="ttdef"><b>Definition</b> <a href="#l00039">eval_base_values.cpp:39</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_ab1e30746a9f26ce008c81e2a92da4f29"><div class="ttname"><a href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">Zagreus::baseMgKingTable</a></div><div class="ttdeci">const int baseMgKingTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00157">eval_base_values.cpp:157</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_ab60534040b6003cfc4f8507781f37b11"><div class="ttname"><a href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">Zagreus::baseEgRookTable</a></div><div class="ttdeci">const int baseEgRookTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00124">eval_base_values.cpp:124</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_abaa7d4cbaef0a562a5735089dd9cc585"><div class="ttname"><a href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">Zagreus::baseMgRookTable</a></div><div class="ttdeci">const int baseMgRookTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00113">eval_base_values.cpp:113</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_ab1e30746a9f26ce008c81e2a92da4f29"><div class="ttname"><a href="namespaceZagreus.html#ab1e30746a9f26ce008c81e2a92da4f29">Zagreus::baseMgKingTable</a></div><div class="ttdeci">const int baseMgKingTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00161">eval_base_values.cpp:161</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_ab60534040b6003cfc4f8507781f37b11"><div class="ttname"><a href="namespaceZagreus.html#ab60534040b6003cfc4f8507781f37b11">Zagreus::baseEgRookTable</a></div><div class="ttdeci">const int baseEgRookTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00128">eval_base_values.cpp:128</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_abaa7d4cbaef0a562a5735089dd9cc585"><div class="ttname"><a href="namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585">Zagreus::baseMgRookTable</a></div><div class="ttdeci">const int baseMgRookTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00117">eval_base_values.cpp:117</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_abe3ba8ec83d9eec69966a495ef8d1a6b"><div class="ttname"><a href="namespaceZagreus.html#abe3ba8ec83d9eec69966a495ef8d1a6b">Zagreus::baseUnoccupiedStrongSquare</a></div><div class="ttdeci">const int baseUnoccupiedStrongSquare[GAME_PHASES]</div><div class="ttdef"><b>Definition</b> <a href="#l00040">eval_base_values.cpp:40</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_adb7c2bc2a5c82fa1251715906dab3a22"><div class="ttname"><a href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">Zagreus::baseEgQueenTable</a></div><div class="ttdeci">const int baseEgQueenTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00146">eval_base_values.cpp:146</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_adb7c2bc2a5c82fa1251715906dab3a22"><div class="ttname"><a href="namespaceZagreus.html#adb7c2bc2a5c82fa1251715906dab3a22">Zagreus::baseEgQueenTable</a></div><div class="ttdeci">const int baseEgQueenTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00150">eval_base_values.cpp:150</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_ae1b3bf55cd6adf4ca93bffdc9ced467e"><div class="ttname"><a href="namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e">Zagreus::getPieceType</a></div><div class="ttdeci">constexpr PieceType getPieceType(const Piece piece)</div><div class="ttdoc">Gets the type of a piece.</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00172">types.h:172</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_ae4d5f9f80fa20aa20a4d3e8aefcdd966"><div class="ttname"><a href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">Zagreus::baseMidgamePstTable</a></div><div class="ttdeci">int baseMidgamePstTable[PIECES][SQUARES]</div><div class="ttdef"><b>Definition</b> <a href="#l00179">eval_base_values.cpp:179</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_ae5023435434d2d4eee8e4b98435bdcda"><div class="ttname"><a href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">Zagreus::baseEgKnightTable</a></div><div class="ttdeci">const int baseEgKnightTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00080">eval_base_values.cpp:80</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_ae9e96f35a0a318a796925db038ca76f0"><div class="ttname"><a href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">Zagreus::baseMgBishopTable</a></div><div class="ttdeci">const int baseMgBishopTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00091">eval_base_values.cpp:91</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_aee190511bbd6b63c66247150103ab447"><div class="ttname"><a href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">Zagreus::baseMgQueenTable</a></div><div class="ttdeci">const int baseMgQueenTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00135">eval_base_values.cpp:135</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_af32b0c7494d88d0cf4c911431caf4b4f"><div class="ttname"><a href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">Zagreus::baseEndgamePstTable</a></div><div class="ttdeci">int baseEndgamePstTable[PIECES][SQUARES]</div><div class="ttdef"><b>Definition</b> <a href="#l00180">eval_base_values.cpp:180</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_af4914d0b53a00ff44887d6a4a5495dc9"><div class="ttname"><a href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">Zagreus::baseMgPawnTable</a></div><div class="ttdeci">const int baseMgPawnTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00047">eval_base_values.cpp:47</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_af50df7ce17f989de9753a0b0edbbb298"><div class="ttname"><a href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">Zagreus::baseEgPawnTable</a></div><div class="ttdeci">const int baseEgPawnTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00058">eval_base_values.cpp:58</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_af9f00d4fdf0f0a5ae66081734dfc2e84"><div class="ttname"><a href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">Zagreus::baseEgBishopTable</a></div><div class="ttdeci">const int baseEgBishopTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00102">eval_base_values.cpp:102</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_ae4d5f9f80fa20aa20a4d3e8aefcdd966"><div class="ttname"><a href="namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966">Zagreus::baseMidgamePstTable</a></div><div class="ttdeci">int baseMidgamePstTable[PIECES][SQUARES]</div><div class="ttdef"><b>Definition</b> <a href="#l00183">eval_base_values.cpp:183</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_ae5023435434d2d4eee8e4b98435bdcda"><div class="ttname"><a href="namespaceZagreus.html#ae5023435434d2d4eee8e4b98435bdcda">Zagreus::baseEgKnightTable</a></div><div class="ttdeci">const int baseEgKnightTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00084">eval_base_values.cpp:84</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_ae9e96f35a0a318a796925db038ca76f0"><div class="ttname"><a href="namespaceZagreus.html#ae9e96f35a0a318a796925db038ca76f0">Zagreus::baseMgBishopTable</a></div><div class="ttdeci">const int baseMgBishopTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00095">eval_base_values.cpp:95</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_aee190511bbd6b63c66247150103ab447"><div class="ttname"><a href="namespaceZagreus.html#aee190511bbd6b63c66247150103ab447">Zagreus::baseMgQueenTable</a></div><div class="ttdeci">const int baseMgQueenTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00139">eval_base_values.cpp:139</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_af31bda4f506941ea63c76101ba20fe44"><div class="ttname"><a href="namespaceZagreus.html#af31bda4f506941ea63c76101ba20fe44">Zagreus::basePawnShieldBonus</a></div><div class="ttdeci">const int basePawnShieldBonus[GAME_PHASES][2]</div><div class="ttdef"><b>Definition</b> <a href="#l00044">eval_base_values.cpp:44</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_af32b0c7494d88d0cf4c911431caf4b4f"><div class="ttname"><a href="namespaceZagreus.html#af32b0c7494d88d0cf4c911431caf4b4f">Zagreus::baseEndgamePstTable</a></div><div class="ttdeci">int baseEndgamePstTable[PIECES][SQUARES]</div><div class="ttdef"><b>Definition</b> <a href="#l00184">eval_base_values.cpp:184</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_af4914d0b53a00ff44887d6a4a5495dc9"><div class="ttname"><a href="namespaceZagreus.html#af4914d0b53a00ff44887d6a4a5495dc9">Zagreus::baseMgPawnTable</a></div><div class="ttdeci">const int baseMgPawnTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00051">eval_base_values.cpp:51</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_af50df7ce17f989de9753a0b0edbbb298"><div class="ttname"><a href="namespaceZagreus.html#af50df7ce17f989de9753a0b0edbbb298">Zagreus::baseEgPawnTable</a></div><div class="ttdeci">const int baseEgPawnTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00062">eval_base_values.cpp:62</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_af8e247bcc2881b9e8fb24aaa59700daf"><div class="ttname"><a href="namespaceZagreus.html#af8e247bcc2881b9e8fb24aaa59700daf">Zagreus::baseBishopPairBonus</a></div><div class="ttdeci">const int baseBishopPairBonus[GAME_PHASES]</div><div class="ttdef"><b>Definition</b> <a href="#l00043">eval_base_values.cpp:43</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_af9f00d4fdf0f0a5ae66081734dfc2e84"><div class="ttname"><a href="namespaceZagreus.html#af9f00d4fdf0f0a5ae66081734dfc2e84">Zagreus::baseEgBishopTable</a></div><div class="ttdeci">const int baseEgBishopTable[64]</div><div class="ttdef"><b>Definition</b> <a href="#l00106">eval_base_values.cpp:106</a></div></div>
 <div class="ttc" id="atypes_8h_html"><div class="ttname"><a href="types_8h.html">types.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
