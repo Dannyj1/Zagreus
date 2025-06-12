@@ -455,6 +455,10 @@ inline Square bitboardToSquare(const uint64_t bb) {
     return static_cast<Square>(bitscanForward(bb));
 }
 
+inline uint8_t squareToFile(const Square square) {
+    return static_cast<uint8_t>(square % 8);
+}
+
 /**
  * \brief Gets a bitboard of all squares between two squares.
  * \param fromSquare The starting square.
