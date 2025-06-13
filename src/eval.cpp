@@ -343,47 +343,38 @@ void Evaluation::evaluateKing() {
     }
 
     if (isLeftSide || isRightSide) {
-        uint64_t shieldRow1;
-        uint64_t shieldRow2;
+        uint64_t shieldRank1;
+        uint64_t shieldRank2;
 
         if (isLeftSide) {
             if (color == WHITE) {
-                shieldRow1 = 0x700;
-                shieldRow2 = 0x70000;
+                shieldRank1 = 0x700;
+                shieldRank2 = 0x70000;
             } else {
-                shieldRow1 = 0x7000000000000;
-                shieldRow2 = 0x70000000000;
+                shieldRank1 = 0x7000000000000;
+                shieldRank2 = 0x70000000000;
             }
         } else {
             if (color == WHITE) {
-                shieldRow1 = 0xe000;
-                shieldRow2 = 0xe00000;
+                shieldRank1 = 0xe000;
+                shieldRank2 = 0xe00000;
             } else {
-                shieldRow1 = 0xe0000000000000;
-                shieldRow2 = 0xe00000000000;
+                shieldRank1 = 0xe0000000000000;
+                shieldRank2 = 0xe00000000000;
             }
         }
 
-        const uint64_t pawnsOnRow1 = board.getPieceBoard<ownPawn>() & shieldRow1;
-        const uint8_t shieldRow1Count = popcnt(pawnsOnRow1);
+        const uint8_t shieldRank1Count = popcnt(board.getPieceBoard<ownPawn>() & shieldRank1);
+        const uint8_t shieldRank2Count = popcnt(board.getPieceBoard<ownPawn>() & shieldRank2);
 
-        // Don't count pawns on row 2 if there are pawns on row 1, otherwise we are rewarding doubled pawns
-        if (color == WHITE) {
-            shieldRow2 &= ~(pawnsOnRow1 << 8);
-        } else {
-            shieldRow2 &= ~(pawnsOnRow1 >> 8);
+        if (shieldRank1Count > 0) {
+            addScore<color>(pawnShieldBonus[MIDGAME][0] * shieldRank1Count,
+                            pawnShieldBonus[ENDGAME][0] * shieldRank1Count);
         }
 
-        const uint8_t shieldRow2Count = popcnt(board.getPieceBoard<ownPawn>() & shieldRow2);
-
-        if (shieldRow1Count > 0) {
-            addScore<color>(pawnShieldBonus[MIDGAME][0] * shieldRow1Count,
-                            pawnShieldBonus[ENDGAME][0] * shieldRow1Count);
-        }
-
-        if (shieldRow2Count > 0) {
-            addScore<color>(pawnShieldBonus[MIDGAME][1] * shieldRow2Count,
-                            pawnShieldBonus[ENDGAME][1] * shieldRow2Count);
+        if (shieldRank2Count > 0) {
+            addScore<color>(pawnShieldBonus[MIDGAME][1] * shieldRank2Count,
+                            pawnShieldBonus[ENDGAME][1] * shieldRank2Count);
         }
     }
 }
