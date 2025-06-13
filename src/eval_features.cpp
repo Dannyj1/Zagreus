@@ -26,13 +26,13 @@ namespace Zagreus {
 // Base material values
 int evalMaterialValues[GAME_PHASES][PIECE_TYPES] = {
     {100, 350, 350, 525, 1000, 0}, // Midgame
-    {100, 350, 350, 525, 1000, 0} // Endgame
+    {100, 350, 350, 525, 1000, 0}  // Endgame
 };
 
 // Base mobility values
 int evalMobility[GAME_PHASES][PIECE_TYPES] = {
     {0, 4, 6, 2, 4, 0}, // Midgame
-    {0, 2, 3, 5, 6, 0} // Endgame
+    {0, 2, 3, 5, 6, 0}  // Endgame
 };
 
 int evalPieceOnStrongSquare[GAME_PHASES]{4, 1};
@@ -42,9 +42,4 @@ int evalPieceOnWeakSquare[GAME_PHASES]{-4, -1};
 int evalUnoccupiedStrongSquare[GAME_PHASES]{2, 0};
 
 int bishopPairBonus[GAME_PHASES]{50, 25};
-
-int pawnShieldBonus[GAME_PHASES][PAWN_SHIELD_RANKS] = {
-    {20, 10}, // Midgame
-    {10, 5} // Endgame
-};
 } // namespace Zagreus

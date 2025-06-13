@@ -25,7 +25,6 @@
 #include "bitboard.h"
 #include "bitwise.h"
 #include "eval_features.h"
-#include "pst.h"
 #include "types.h"
 
 namespace Zagreus {
@@ -310,11 +309,10 @@ void Evaluation::evaluateQueens() {
 template <PieceColor color>
 void Evaluation::evaluateKing() {
     constexpr Piece kingPiece = color == WHITE ? WHITE_KING : BLACK_KING;
-    const uint64_t kingBitboard = board.getPieceBoard<kingPiece>();
-    const Square kingSquare = bitboardToSquare(kingBitboard);
-    constexpr Piece ownPawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    const int midgamePst = midgamePstTable[kingPiece][kingSquare];
-    const int endgamePst = endgamePstTable[kingPiece][kingSquare];
+    const Square square = board.getKingSquare<color>();
+
+    const int midgamePst = midgamePstTable[kingPiece][square];
+    const int endgamePst = endgamePstTable[kingPiece][square];
 
 #ifdef ZAGREUS_TUNER
     trace.material[color][KING] += 1;
@@ -323,88 +321,40 @@ void Evaluation::evaluateKing() {
 
     addScore<color>(midgamePst, endgamePst);
 
-    const uint64_t attacks = getKingAttacks(kingSquare);
+    const uint64_t attacks = getKingAttacks(square);
 
-    evalData.attacksFrom[kingSquare] = attacks;
+    evalData.attacksFrom[square] = attacks;
     evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
     evalData.attacksByColor[color] |= attacks;
     evalData.attacksByPiece[kingPiece] |= attacks;
-
-    // Pawn shield
-    bool isRightSide;
-    bool isLeftSide;
-
-    if (color == WHITE) {
-        isRightSide = (0xe0e0 & kingBitboard) != 0;
-        isLeftSide = (0x707 & kingBitboard) != 0;
-    } else {
-        isRightSide = (0xe0e0000000000000 & kingBitboard) != 0;
-        isLeftSide = (0x707000000000000 & kingBitboard) != 0;
-    }
-
-    if (isLeftSide || isRightSide) {
-        uint64_t shieldRank1;
-        uint64_t shieldRank2;
-
-        if (isLeftSide) {
-            if (color == WHITE) {
-                shieldRank1 = 0x700;
-                shieldRank2 = 0x70000;
-            } else {
-                shieldRank1 = 0x7000000000000;
-                shieldRank2 = 0x70000000000;
-            }
-        } else {
-            if (color == WHITE) {
-                shieldRank1 = 0xe000;
-                shieldRank2 = 0xe00000;
-            } else {
-                shieldRank1 = 0xe0000000000000;
-                shieldRank2 = 0xe00000000000;
-            }
-        }
-
-        const uint8_t shieldRank1Count = popcnt(board.getPieceBoard<ownPawn>() & shieldRank1);
-        const uint8_t shieldRank2Count = popcnt(board.getPieceBoard<ownPawn>() & shieldRank2);
-
-        if (shieldRank1Count > 0) {
-            addScore<color>(pawnShieldBonus[MIDGAME][0] * shieldRank1Count,
-                            pawnShieldBonus[ENDGAME][0] * shieldRank1Count);
-        }
-
-        if (shieldRank2Count > 0) {
-            addScore<color>(pawnShieldBonus[MIDGAME][1] * shieldRank2Count,
-                            pawnShieldBonus[ENDGAME][1] * shieldRank2Count);
-        }
-    }
 }
 
 template <PieceColor color>
 void Evaluation::evaluateSquareControl() {
-    const uint64_t ownPieces = board.getColorBitboard<color>();
-    const uint64_t occupied = board.getOccupiedBitboard();
-    const uint64_t ownAttacks = evalData.attacksByColor[color];
-    const uint64_t opponentAttacks = evalData.attacksByColor[!color];
-    const uint64_t ownAttacksBy2 = evalData.attackedBy2[color];
-    const uint64_t opponentAttacksBy2 = evalData.attackedBy2[!color];
-    const uint64_t ownPawnAttacks = evalData.attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
-    const uint64_t opponentPawnAttacks = evalData.attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
+    uint64_t ownPieces = board.getColorBitboard<color>();
+    uint64_t occupied = board.getOccupiedBitboard();
+    uint64_t ownAttacks = evalData.attacksByColor[color];
+    uint64_t opponentAttacks = evalData.attacksByColor[!color];
+    uint64_t ownAttacksBy2 = evalData.attackedBy2[color];
+    uint64_t opponentAttacksBy2 = evalData.attackedBy2[!color];
+    uint64_t ownPawnAttacks = evalData.attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
+    uint64_t opponentPawnAttacks = evalData.attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
 
     // Strong squares is any square that is:
     // 1. Attacked by us and not attacked by the opponent
     // 2. Square attacked by our pawn and exactly one non-pawn piece of the opponent (so not attacked by 2 pieces)
     // 3. Square attacked by 2 of our pieces and only 1 of the opponent that is not a pawn
     // 4. Square attacked by 2 of our pieces from which one is a pawn and exactly 1 of the opponent that may be a pawn
-    const uint64_t strongSquares = (ownAttacks & ~opponentAttacks)
-                                   | (ownPawnAttacks & (opponentAttacks & ~opponentAttacksBy2 & ~opponentPawnAttacks))
-                                   | (ownAttacksBy2 & ~opponentAttacksBy2 & ~opponentPawnAttacks)
-                                   | ((ownAttacksBy2 & ownPawnAttacks) & (opponentAttacks & ~opponentAttacksBy2));
+    uint64_t strongSquares = (ownAttacks & ~opponentAttacks)
+                             | (ownPawnAttacks & (opponentAttacks & ~opponentAttacksBy2 & ~opponentPawnAttacks))
+                             | (ownAttacksBy2 & ~opponentAttacksBy2 & ~opponentPawnAttacks)
+                             | ((ownAttacksBy2 & ownPawnAttacks) & (opponentAttacks & ~opponentAttacksBy2));
 
     // Weak squares are the opponent's strong squares
-    const uint64_t weakSquares = (opponentAttacks & ~ownAttacks)
-                                 | (opponentPawnAttacks & (ownAttacks & ~ownAttacksBy2 & ~ownPawnAttacks))
-                                 | (opponentAttacksBy2 & ~ownAttacksBy2 & ~ownPawnAttacks)
-                                 | ((opponentAttacksBy2 & opponentPawnAttacks) & (ownAttacks & ~ownAttacksBy2));
+    uint64_t weakSquares = (opponentAttacks & ~ownAttacks)
+                           | (opponentPawnAttacks & (ownAttacks & ~ownAttacksBy2 & ~ownPawnAttacks))
+                           | (opponentAttacksBy2 & ~ownAttacksBy2 & ~ownPawnAttacks)
+                           | ((opponentAttacksBy2 & opponentPawnAttacks) & (ownAttacks & ~ownAttacksBy2));
 
     uint64_t piecesOnStrongSquares = ownPieces & strongSquares;
     uint64_t piecesOnWeakSquares = ownPieces & weakSquares;
