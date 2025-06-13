@@ -36,8 +36,11 @@ const int baseMobility[GAME_PHASES][PIECE_TYPES] = {
 
 // Square control base values
 const int basePieceOnStrongSquare[GAME_PHASES] = {4, 1};
-const int basePieceOnWeakSquare[GAME_PHASES] = {-4, -1};
+const int basePieceOnWeakSquarePenalty[GAME_PHASES] = {-4, -1};
 const int baseUnoccupiedStrongSquare[GAME_PHASES] = {2, 0};
+
+// Pawn structure
+const int baseBackwardPawnPenalty[GAME_PHASES] = {-8, -12};
 
 // Piece related values
 const int baseBishopPairBonus[GAME_PHASES]{50, 25};

@@ -120,6 +120,9 @@ private:
     template <PieceColor color>
     void evaluateSquareControl();
 
+    template <PieceColor color>
+    void evaluatePawnStructure();
+
 public:
 #ifdef ZAGREUS_TUNER
     EvalTrace trace{};

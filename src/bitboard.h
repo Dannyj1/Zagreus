@@ -28,7 +28,6 @@
 #include "types.h"
 
 namespace Zagreus {
-
 /**
  * \brief Initializes the attack lookup tables for pawns, knights, and kings.
  */
@@ -463,4 +462,20 @@ inline Square bitboardToSquare(const uint64_t bb) {
  * \return The bitboard of squares between the two squares.
  */
 uint64_t getSquaresBetween(Square fromSquare, Square toSquare);
+
+inline uint64_t fillNorth(uint64_t bb) {
+    bb |= (bb << 8);
+    bb |= (bb << 16);
+    bb |= (bb << 32);
+
+    return bb;
+}
+
+inline uint64_t fillSouth(uint64_t bb) {
+    bb |= (bb >> 8);
+    bb |= (bb >> 16);
+    bb |= (bb >> 32);
+
+    return bb;
+}
 } // namespace Zagreus

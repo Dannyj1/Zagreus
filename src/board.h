@@ -505,5 +505,66 @@ public:
     [[nodiscard]] Square getKingSquare() const {
         return bitboardToSquare(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>());
     }
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t pawnFrontSpans() const {
+        if (color == WHITE) {
+            const uint64_t pawns = getPieceBoard<WHITE_PAWN>();
+
+            return shiftNorth(fillNorth(pawns));
+        } else {
+            const uint64_t pawns = getPieceBoard<BLACK_PAWN>();
+
+            return shiftSouth(fillSouth(pawns));
+        }
+    }
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t pawnRearSpans() const {
+        if (color == WHITE) {
+            const uint64_t pawns = getPieceBoard<WHITE_PAWN>();
+
+            return shiftSouth(fillSouth(pawns));
+        } else {
+            const uint64_t pawns = getPieceBoard<BLACK_PAWN>();
+
+            return shiftNorth(fillNorth(pawns));
+        }
+    }
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t pawnAttackFrontSpans() const {
+        const uint64_t spans = pawnFrontSpans<color>();
+
+        return shiftEast(spans) | shiftWest(spans);
+    }
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t pawnAttackRearSpans() const {
+        const uint64_t spans = pawnRearSpans<color>();
+
+        return shiftEast(spans) | shiftWest(spans);
+    }
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t backwardPawns() const {
+        if (color == WHITE) {
+            const uint64_t pawns = getPieceBoard<WHITE_PAWN>();
+            const uint64_t opponentPawns = getPieceBoard<BLACK_PAWN>();
+            const uint64_t stops = pawns << 8;
+            const uint64_t whiteAttackSpans = pawnAttackFrontSpans<WHITE>();
+            const uint64_t blackPawnAttacks = calculateBlackPawnAttacks(opponentPawns);
+
+            return (stops & blackPawnAttacks & ~whiteAttackSpans) >> 8;
+        } else {
+            const uint64_t pawns = getPieceBoard<BLACK_PAWN>();
+            const uint64_t opponentPawns = getPieceBoard<WHITE_PAWN>();
+            const uint64_t stops = pawns >> 8;
+            const uint64_t blackAttackSpans = pawnAttackFrontSpans<BLACK>();
+            const uint64_t whitePawnAttacks = calculateWhitePawnAttacks(opponentPawns);
+
+            return (stops & whitePawnAttacks & ~blackAttackSpans) << 8;
+        }
+    }
 };
 } // namespace Zagreus

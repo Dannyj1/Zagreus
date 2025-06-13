@@ -24,6 +24,7 @@
 
 #include "bitboard.h"
 #include "bitwise.h"
+#include "eval_base_values.h"
 #include "eval_features.h"
 #include "types.h"
 
@@ -119,6 +120,9 @@ void Evaluation::evaluatePieces() {
 
     evaluateSquareControl<WHITE>();
     evaluateSquareControl<BLACK>();
+
+    evaluatePawnStructure<WHITE>();
+    evaluatePawnStructure<BLACK>();
 }
 
 template <PieceColor color>
@@ -197,7 +201,7 @@ void Evaluation::evaluateBishops() {
 
     if (bishopCount > 1 && lightSquareBishopCount > 0 && darkSquareBishopCount > 0) {
         // TODO: Add to tuner
-        addScore<color>(bishopPairBonus[MIDGAME], bishopPairBonus[ENDGAME]);
+        addScore<color>(evalBishopPairBonus[MIDGAME], evalBishopPairBonus[ENDGAME]);
     }
 
     while (bishops) {
@@ -374,12 +378,21 @@ void Evaluation::evaluateSquareControl() {
 
     midgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[MIDGAME];
     endgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[ENDGAME];
-    midgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquare[MIDGAME];
-    endgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquare[ENDGAME];
+    midgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[MIDGAME];
+    endgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[ENDGAME];
     midgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[MIDGAME];
     endgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[ENDGAME];
 
     addScore<color>(midgameScore, endgameScore);
+}
+
+template <PieceColor color>
+void Evaluation::evaluatePawnStructure() {
+    const uint64_t backwardsPawns = board.backwardPawns<color>();
+    const int backwardPawnsCount = popcnt(backwardsPawns);
+
+    addScore<color>(backwardPawnsCount * baseBackwardPawnPenalty[MIDGAME],
+                    backwardPawnsCount * baseBackwardPawnPenalty[ENDGAME]);
 }
 
 /**
