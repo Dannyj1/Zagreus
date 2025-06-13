@@ -1,0 +1,5 @@
+<map id="Zagreus::Board::halfOpenOrOpenFiles" name="Zagreus::Board::halfOpenOrOpenFiles">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,193,45"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#abf7ceb384a0bfbaef721d8d6d7a089c2" title="Retrieves the bitboard for a given piece type." alt="" coords="241,5,427,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,23,228,23,228,28,193,28"/>
+</map>

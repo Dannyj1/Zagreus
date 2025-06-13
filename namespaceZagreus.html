@@ -475,6 +475,8 @@ Functions</h2></td></tr>
 <tr class="separator:a3d136b3797c2fa47ba8b3ec25f12bf81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa30e2771798432f823a8b6900da3e451" id="r_aa30e2771798432f823a8b6900da3e451"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa30e2771798432f823a8b6900da3e451">fillSouth</a> (uint64_t bb)</td></tr>
 <tr class="separator:aa30e2771798432f823a8b6900da3e451"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aa9633bed3d0ae33b3fdbcffe608a39" id="r_a0aa9633bed3d0ae33b3fdbcffe608a39"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0aa9633bed3d0ae33b3fdbcffe608a39">fillFile</a> (const uint64_t bb)</td></tr>
+<tr class="separator:a0aa9633bed3d0ae33b3fdbcffe608a39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0fea3f1f058b2d21f3f387a149b7f8a" id="r_aa0fea3f1f058b2d21f3f387a149b7f8a"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0fea3f1f058b2d21f3f387a149b7f8a">popcnt</a> (uint64_t bb)</td></tr>
 <tr class="memdesc:aa0fea3f1f058b2d21f3f387a149b7f8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts the number of set bits (population count) in a bitboard.  <br /></td></tr>
 <tr class="separator:aa0fea3f1f058b2d21f3f387a149b7f8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -729,6 +731,8 @@ Variables</h2></td></tr>
 <tr class="separator:abe3ba8ec83d9eec69966a495ef8d1a6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11dc1c820049729fde2c9c16ee58406f" id="r_a11dc1c820049729fde2c9c16ee58406f"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11dc1c820049729fde2c9c16ee58406f">baseBackwardPawnPenalty</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-8, -12}</td></tr>
 <tr class="separator:a11dc1c820049729fde2c9c16ee58406f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6adb0e62849a729688a7fc6984e6fca1" id="r_a6adb0e62849a729688a7fc6984e6fca1"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6adb0e62849a729688a7fc6984e6fca1">baseBackwardPawnOnHalfOpenFilePenalty</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-8, -12}</td></tr>
+<tr class="separator:a6adb0e62849a729688a7fc6984e6fca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a054ad3b428df0238149a973a548583ce" id="r_a054ad3b428df0238149a973a548583ce"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a054ad3b428df0238149a973a548583ce">baseBishopPairBonus</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] {50, 25}</td></tr>
 <tr class="separator:a054ad3b428df0238149a973a548583ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4914d0b53a00ff44887d6a4a5495dc9" id="r_af4914d0b53a00ff44887d6a4a5495dc9"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4914d0b53a00ff44887d6a4a5495dc9">baseMgPawnTable</a> [64]</td></tr>
@@ -771,8 +775,10 @@ Variables</h2></td></tr>
 <tr class="separator:ae28386cad7b5c7425388ba01dfdb46da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1185cde53fd56796e75eaa68e15d89a" id="r_aa1185cde53fd56796e75eaa68e15d89a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1185cde53fd56796e75eaa68e15d89a">evalUnoccupiedStrongSquare</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] {2, 0}</td></tr>
 <tr class="separator:aa1185cde53fd56796e75eaa68e15d89a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae53ff6c6c51681f9facfaddd017979f3" id="r_ae53ff6c6c51681f9facfaddd017979f3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae53ff6c6c51681f9facfaddd017979f3">evalBackwardPawnPenalty</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-8, -12}</td></tr>
-<tr class="separator:ae53ff6c6c51681f9facfaddd017979f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a965d0e5c355d63416d8b0a99fa94ae47" id="r_a965d0e5c355d63416d8b0a99fa94ae47"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a965d0e5c355d63416d8b0a99fa94ae47">evalBackwardPawnPenalty</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-8, -12}</td></tr>
+<tr class="separator:a965d0e5c355d63416d8b0a99fa94ae47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af71d29fa8903cde86d614510f3486d00" id="r_af71d29fa8903cde86d614510f3486d00"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af71d29fa8903cde86d614510f3486d00">evalBackwardPawnOnHalfOpenFilePenalty</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-8, -12}</td></tr>
+<tr class="separator:af71d29fa8903cde86d614510f3486d00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54858d46cee0af83548f8f8307a04171" id="r_a54858d46cee0af83548f8f8307a04171"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54858d46cee0af83548f8f8307a04171">evalBishopPairBonus</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] {50, 25}</td></tr>
 <tr class="separator:a54858d46cee0af83548f8f8307a04171"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fac5ee53f7209a034032316726a7e81" id="r_a6fac5ee53f7209a034032316726a7e81"><td class="memItemLeft" align="right" valign="top">std::random_device&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fac5ee53f7209a034032316726a7e81">rd</a></td></tr>
@@ -2566,6 +2572,45 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a0aa9633bed3d0ae33b3fdbcffe608a39" name="a0aa9633bed3d0ae33b3fdbcffe608a39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aa9633bed3d0ae33b3fdbcffe608a39">&#9670;&#160;</a></span>fillFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t Zagreus::fillFile </td>
+          <td>(</td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>bb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00482">482</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespaceZagreus_a0aa9633bed3d0ae33b3fdbcffe608a39_cgraph.png" border="0" usemap="#anamespaceZagreus_a0aa9633bed3d0ae33b3fdbcffe608a39_cgraph" alt=""/></div>
+<map name="anamespaceZagreus_a0aa9633bed3d0ae33b3fdbcffe608a39_cgraph" id="anamespaceZagreus_a0aa9633bed3d0ae33b3fdbcffe608a39_cgraph">
+<area shape="rect" title=" " alt="" coords="5,31,128,56"/>
+<area shape="rect" href="namespaceZagreus.html#a3d136b3797c2fa47ba8b3ec25f12bf81" title=" " alt="" coords="177,5,311,31"/>
+<area shape="poly" title=" " alt="" coords="128,32,163,27,164,32,128,37"/>
+<area shape="rect" href="namespaceZagreus.html#aa30e2771798432f823a8b6900da3e451" title=" " alt="" coords="176,55,312,80"/>
+<area shape="poly" title=" " alt="" coords="128,49,163,54,162,59,128,54"/>
+</map>
+</div>
+
+</div>
+</div>
 <a id="a3d136b3797c2fa47ba8b3ec25f12bf81" name="a3d136b3797c2fa47ba8b3ec25f12bf81"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3d136b3797c2fa47ba8b3ec25f12bf81">&#9670;&#160;</a></span>fillNorth()</h2>
 
@@ -2595,17 +2640,19 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="namespaceZagreus_a3d136b3797c2fa47ba8b3ec25f12bf81_icgraph.png" border="0" usemap="#anamespaceZagreus_a3d136b3797c2fa47ba8b3ec25f12bf81_icgraph" alt=""/></div>
 <map name="anamespaceZagreus_a3d136b3797c2fa47ba8b3ec25f12bf81_icgraph" id="anamespaceZagreus_a3d136b3797c2fa47ba8b3ec25f12bf81_icgraph">
-<area shape="rect" title=" " alt="" coords="745,45,880,70"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="500,5,697,45"/>
-<area shape="poly" title=" " alt="" coords="731,48,697,43,698,37,732,43"/>
-<area shape="rect" href="classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8" title=" " alt="" coords="501,69,696,109"/>
-<area shape="poly" title=" " alt="" coords="732,72,697,77,696,72,731,67"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="245,5,452,45"/>
-<area shape="poly" title=" " alt="" coords="487,28,452,28,452,23,487,23"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,5,197,45"/>
-<area shape="poly" title=" " alt="" coords="232,28,198,28,198,23,232,23"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c" title=" " alt="" coords="245,69,452,109"/>
-<area shape="poly" title=" " alt="" coords="487,92,452,92,452,87,487,87"/>
+<area shape="rect" title=" " alt="" coords="745,63,880,88"/>
+<area shape="rect" href="namespaceZagreus.html#a0aa9633bed3d0ae33b3fdbcffe608a39" title=" " alt="" coords="537,5,660,31"/>
+<area shape="poly" title=" " alt="" coords="752,61,697,46,649,33,650,28,698,41,754,56"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="500,55,697,95"/>
+<area shape="poly" title=" " alt="" coords="732,78,697,78,697,73,732,73"/>
+<area shape="rect" href="classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8" title=" " alt="" coords="501,119,696,159"/>
+<area shape="poly" title=" " alt="" coords="757,95,667,122,666,117,755,90"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="245,55,452,95"/>
+<area shape="poly" title=" " alt="" coords="487,78,452,78,452,73,487,73"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,55,197,95"/>
+<area shape="poly" title=" " alt="" coords="232,78,198,78,198,73,232,73"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c" title=" " alt="" coords="245,119,452,159"/>
+<area shape="poly" title=" " alt="" coords="487,142,452,142,452,137,487,137"/>
 </map>
 </div>
 
@@ -2640,17 +2687,19 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="namespaceZagreus_aa30e2771798432f823a8b6900da3e451_icgraph.png" border="0" usemap="#anamespaceZagreus_aa30e2771798432f823a8b6900da3e451_icgraph" alt=""/></div>
 <map name="anamespaceZagreus_aa30e2771798432f823a8b6900da3e451_icgraph" id="anamespaceZagreus_aa30e2771798432f823a8b6900da3e451_icgraph">
-<area shape="rect" title=" " alt="" coords="745,45,881,70"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="500,5,697,45"/>
-<area shape="poly" title=" " alt="" coords="731,48,697,43,698,37,732,43"/>
-<area shape="rect" href="classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8" title=" " alt="" coords="501,69,696,109"/>
-<area shape="poly" title=" " alt="" coords="732,72,696,77,696,72,731,67"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="245,5,452,45"/>
-<area shape="poly" title=" " alt="" coords="487,28,452,28,452,23,487,23"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,5,197,45"/>
-<area shape="poly" title=" " alt="" coords="232,28,198,28,198,23,232,23"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c" title=" " alt="" coords="245,69,452,109"/>
-<area shape="poly" title=" " alt="" coords="487,92,452,92,452,87,487,87"/>
+<area shape="rect" title=" " alt="" coords="745,63,881,88"/>
+<area shape="rect" href="namespaceZagreus.html#a0aa9633bed3d0ae33b3fdbcffe608a39" title=" " alt="" coords="537,5,660,31"/>
+<area shape="poly" title=" " alt="" coords="753,61,697,46,649,33,650,28,698,41,754,56"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="500,55,697,95"/>
+<area shape="poly" title=" " alt="" coords="731,78,698,78,698,73,731,73"/>
+<area shape="rect" href="classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8" title=" " alt="" coords="501,119,696,159"/>
+<area shape="poly" title=" " alt="" coords="757,95,667,122,666,117,756,90"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="245,55,452,95"/>
+<area shape="poly" title=" " alt="" coords="487,78,452,78,452,73,487,73"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,55,197,95"/>
+<area shape="poly" title=" " alt="" coords="232,78,198,78,198,73,232,73"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c" title=" " alt="" coords="245,119,452,159"/>
+<area shape="poly" title=" " alt="" coords="487,142,452,142,452,137,487,137"/>
 </map>
 </div>
 
@@ -3875,7 +3924,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00204">204</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00205">205</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3904,7 +3953,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00186">186</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00187">187</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -5284,7 +5333,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the given piece. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00412">412</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00416">416</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -6212,7 +6261,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00222">222</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00223">223</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -9975,6 +10024,22 @@ Here is the caller graph for this function:</div>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="a6adb0e62849a729688a7fc6984e6fca1" name="a6adb0e62849a729688a7fc6984e6fca1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6adb0e62849a729688a7fc6984e6fca1">&#9670;&#160;</a></span>baseBackwardPawnOnHalfOpenFilePenalty</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int Zagreus::baseBackwardPawnOnHalfOpenFilePenalty = {-8, -12}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00044">44</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a11dc1c820049729fde2c9c16ee58406f" name="a11dc1c820049729fde2c9c16ee58406f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a11dc1c820049729fde2c9c16ee58406f">&#9670;&#160;</a></span>baseBackwardPawnPenalty</h2>
 
@@ -10003,7 +10068,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00046">46</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00047">47</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10029,7 +10094,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -23, -9, -23, -5, -9, -16, -5, -17,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00105">105</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00106">106</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10055,7 +10120,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -53, -34, -21, -11, -28, -14, -24, -43</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00171">171</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00172">172</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10081,7 +10146,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -29, -51, -23, -15, -22, -18, -50, -64,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00083">83</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00084">84</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10107,7 +10172,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    0, 0, 0, 0, 0, 0, 0, 0,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00061">61</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00062">62</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10133,7 +10198,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -33, -28, -22, -43, -5, -32, -20, -41,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00149">149</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00150">150</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10159,7 +10224,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -9, 2, 3, -1, -5, -13, 4, -20,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00127">127</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00128">128</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10175,7 +10240,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00183">183</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00184">184</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10221,7 +10286,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -33, -3, -14, -21, -13, -12, -39, -21,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00094">94</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00095">95</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10247,7 +10312,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -15, 36, 12, -54, 8, -28, 24, 14,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00160">160</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00161">161</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10273,7 +10338,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -105, -21, -58, -33, -17, -28, -19, -23,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00072">72</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00073">73</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10299,7 +10364,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    0, 0, 0, 0, 0, 0, 0, 0,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00050">50</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00051">51</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10325,7 +10390,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -1, -18, -9, 10, -15, -25, -31, -50,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00138">138</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00139">139</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10351,7 +10416,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -19, -13, 1, 17, 16, 7, -37, -26,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00116">116</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00117">117</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10367,7 +10432,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00182">182</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00183">183</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10741,14 +10806,30 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="ae53ff6c6c51681f9facfaddd017979f3" name="ae53ff6c6c51681f9facfaddd017979f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae53ff6c6c51681f9facfaddd017979f3">&#9670;&#160;</a></span>evalBackwardPawnPenalty</h2>
+<a id="af71d29fa8903cde86d614510f3486d00" name="af71d29fa8903cde86d614510f3486d00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af71d29fa8903cde86d614510f3486d00">&#9670;&#160;</a></span>evalBackwardPawnOnHalfOpenFilePenalty</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int Zagreus::evalBackwardPawnPenalty[<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-8, -12}</td>
+          <td class="memname">int Zagreus::evalBackwardPawnOnHalfOpenFilePenalty = {-8, -12}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="eval__features_8cpp_source.html#l00046">46</a> of file <a class="el" href="eval__features_8cpp_source.html">eval_features.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a965d0e5c355d63416d8b0a99fa94ae47" name="a965d0e5c355d63416d8b0a99fa94ae47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a965d0e5c355d63416d8b0a99fa94ae47">&#9670;&#160;</a></span>evalBackwardPawnPenalty</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Zagreus::evalBackwardPawnPenalty = {-8, -12}</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -10769,7 +10850,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__features_8cpp_source.html#l00047">47</a> of file <a class="el" href="eval__features_8cpp_source.html">eval_features.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__features_8cpp_source.html#l00048">48</a> of file <a class="el" href="eval__features_8cpp_source.html">eval_features.cpp</a>.</p>
 
 </div>
 </div>

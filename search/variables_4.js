@@ -8,11 +8,12 @@ var searchData=
   ['eg_5frook_5ftable_5',['eg_rook_table',['../namespaceZagreus.html#ab189515946f82df48dd4bd326e608c72',1,'Zagreus']]],
   ['endgamepsttable_6',['endgamePstTable',['../namespaceZagreus.html#a7b3cc214c8366a5b0a70e7743277d0a9',1,'Zagreus']]],
   ['enpassantsquare_7',['enPassantSquare',['../structZagreus_1_1BoardState.html#a8168f2482c44d4edf790701162e2a79f',1,'Zagreus::BoardState']]],
-  ['evalbackwardpawnpenalty_8',['evalBackwardPawnPenalty',['../namespaceZagreus.html#ae53ff6c6c51681f9facfaddd017979f3',1,'Zagreus']]],
-  ['evalbishoppairbonus_9',['evalBishopPairBonus',['../namespaceZagreus.html#a54858d46cee0af83548f8f8307a04171',1,'Zagreus']]],
-  ['evalmaterialvalues_10',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
-  ['evalmobility_11',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['evalpieceonstrongsquare_12',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
-  ['evalpieceonweaksquarepenalty_13',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
-  ['evalunoccupiedstrongsquare_14',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
+  ['evalbackwardpawnonhalfopenfilepenalty_8',['evalBackwardPawnOnHalfOpenFilePenalty',['../namespaceZagreus.html#af71d29fa8903cde86d614510f3486d00',1,'Zagreus']]],
+  ['evalbackwardpawnpenalty_9',['evalBackwardPawnPenalty',['../namespaceZagreus.html#a965d0e5c355d63416d8b0a99fa94ae47',1,'Zagreus']]],
+  ['evalbishoppairbonus_10',['evalBishopPairBonus',['../namespaceZagreus.html#a54858d46cee0af83548f8f8307a04171',1,'Zagreus']]],
+  ['evalmaterialvalues_11',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
+  ['evalmobility_12',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
+  ['evalpieceonstrongsquare_13',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
+  ['evalpieceonweaksquarepenalty_14',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
+  ['evalunoccupiedstrongsquare_15',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
 ];
