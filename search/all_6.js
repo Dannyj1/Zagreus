@@ -9,6 +9,8 @@ var searchData=
   ['f7_6',['F7',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa080c6e0113a7e7849127b9794f49c0c5',1,'Zagreus']]],
   ['f8_7',['F8',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa2d55cde46faea08a66574735c53017e8',1,'Zagreus']]],
   ['fast_5fbenchmark_5fpositions_8',['FAST_BENCHMARK_POSITIONS',['../main_8cpp.html#af116b404f707d30ebd18c5de501bcaa4',1,'main.cpp']]],
-  ['find_5fmagic_9',['find_magic',['../namespaceZagreus.html#a61bf0620553dd24e6a4181fedf8e2718',1,'Zagreus']]],
-  ['findfastestseed_10',['findFastestSeed',['../namespaceZagreus.html#a8b9de4c6d0212eec3f86b7011ca830aa',1,'Zagreus']]]
+  ['fillnorth_9',['fillNorth',['../namespaceZagreus.html#a3d136b3797c2fa47ba8b3ec25f12bf81',1,'Zagreus']]],
+  ['fillsouth_10',['fillSouth',['../namespaceZagreus.html#aa30e2771798432f823a8b6900da3e451',1,'Zagreus']]],
+  ['find_5fmagic_11',['find_magic',['../namespaceZagreus.html#a61bf0620553dd24e6a4181fedf8e2718',1,'Zagreus']]],
+  ['findfastestseed_12',['findFastestSeed',['../namespaceZagreus.html#a8b9de4c6d0212eec3f86b7011ca830aa',1,'Zagreus']]]
 ];

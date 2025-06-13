@@ -1,0 +1,19 @@
+<map id="Zagreus::Board::pawnAttackFrontSpans" name="Zagreus::Board::pawnAttackFrontSpans">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,162,212,202"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="260,105,457,145"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,159,257,145,258,150,197,165"/>
+<area shape="rect" id="Node000008" href="$namespaceZagreus.html#a39029e9c2426f95abe2fa9e1b6c6297c" title="Shifts the bitboard east by one file." alt="" coords="289,169,428,195"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="212,179,275,179,275,185,212,185"/>
+<area shape="rect" id="Node000009" href="$namespaceZagreus.html#a6733b1ddfb36c4f0462c716732aeb6b4" title="Shifts the bitboard west by one file." alt="" coords="287,219,430,244"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="211,199,281,213,280,219,210,205"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a3d136b3797c2fa47ba8b3ec25f12bf81" title=" " alt="" coords="531,5,665,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="389,102,441,70,504,40,525,32,527,37,506,44,444,75,391,107"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#aa30e2771798432f823a8b6900da3e451" title=" " alt="" coords="530,55,666,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="442,102,531,81,532,86,443,107"/>
+<area shape="rect" id="Node000005" href="$classZagreus_1_1Board.html#abf7ceb384a0bfbaef721d8d6d7a089c2" title="Retrieves the bitboard for a given piece type." alt="" coords="505,105,691,145"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="458,122,491,122,491,127,458,127"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a70869d31a469efacc2790cbd2d5cbf42" title="Shifts the bitboard north by one rank." alt="" coords="525,169,671,195"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="443,142,532,164,531,169,442,147"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#a5f01c9bf422a21d35c075ff1befb41d2" title="Shifts the bitboard south by one rank." alt="" coords="524,219,672,244"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="436,143,459,154,474,168,483,181,492,193,507,205,519,211,516,216,504,210,488,197,479,184,470,171,456,159,433,147"/>
+</map>
