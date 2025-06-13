@@ -388,8 +388,9 @@ void Evaluation::evaluateSquareControl() {
 
 template <PieceColor color>
 void Evaluation::evaluatePawnStructure() {
+    constexpr PieceColor opponentColor = !color;
     const uint64_t backwardsPawns = board.backwardPawns<color>();
-    const uint64_t halfOpenFiles = board.halfOpenOrOpenFiles<color>();
+    const uint64_t halfOpenFiles = board.halfOpenFiles<opponentColor>();
     const int backwardPawnsCount = popcnt(backwardsPawns);
     const int halfOpenFilesCount = popcnt(backwardsPawns & halfOpenFiles);
 
