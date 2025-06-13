@@ -566,5 +566,25 @@ public:
             return (stops & whitePawnAttacks & ~blackAttackSpans) << 8;
         }
     }
+
+    uint64_t openFiles() const;
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t halfOpenOrOpenFiles() const {
+        if (color == WHITE) {
+            const uint64_t pawns = getPieceBoard<WHITE_PAWN>();
+
+            return ~fillFile(pawns);
+        } else {
+            const uint64_t pawns = getPieceBoard<BLACK_PAWN>();
+
+            return ~fillFile(pawns);
+        }
+    }
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t halfOpenFiles() const {
+        return halfOpenOrOpenFiles<color>() ^ openFiles();
+    }
 };
 } // namespace Zagreus

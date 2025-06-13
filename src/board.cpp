@@ -397,10 +397,17 @@ bool Board::see(const Move move, int threshold) {
         }
     }
 
-    bool result = sideToMove != oldSideToMove;
+    const bool result = sideToMove != oldSideToMove;
     occupied = oldOccupied;
     sideToMove = oldSideToMove;
     return result;
+}
+
+uint64_t Board::openFiles() const {
+    const uint64_t whitePawns = getPieceBoard<WHITE_PAWN>();
+    const uint64_t blackPawns = getPieceBoard<BLACK_PAWN>();
+
+    return ~fillFile(whitePawns) & ~fillFile(blackPawns);
 }
 
 /**

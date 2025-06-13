@@ -389,10 +389,14 @@ void Evaluation::evaluateSquareControl() {
 template <PieceColor color>
 void Evaluation::evaluatePawnStructure() {
     const uint64_t backwardsPawns = board.backwardPawns<color>();
+    const uint64_t halfOpenFiles = board.halfOpenOrOpenFiles<color>();
     const int backwardPawnsCount = popcnt(backwardsPawns);
+    const int halfOpenFilesCount = popcnt(backwardsPawns & halfOpenFiles);
 
-    addScore<color>(backwardPawnsCount * baseBackwardPawnPenalty[MIDGAME],
-                    backwardPawnsCount * baseBackwardPawnPenalty[ENDGAME]);
+    addScore<color>(backwardPawnsCount * evalBackwardPawnPenalty[MIDGAME],
+                    backwardPawnsCount * evalBackwardPawnPenalty[ENDGAME]);
+    addScore<color>(halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[MIDGAME],
+                    halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[ENDGAME]);
 }
 
 /**

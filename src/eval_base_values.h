@@ -33,6 +33,8 @@ extern const int baseBackwardPawnPenalty[GAME_PHASES];
 
 extern const int bishopPairBonus[GAME_PHASES];
 
+extern const int baseBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES];
+
 extern const int baseMgPawnTable[64];
 extern const int baseEgPawnTable[64];
 extern const int baseMgKnightTable[64];

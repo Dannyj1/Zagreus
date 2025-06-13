@@ -478,4 +478,8 @@ inline uint64_t fillSouth(uint64_t bb) {
 
     return bb;
 }
+
+inline uint64_t fillFile(const uint64_t bb) {
+    return fillNorth(bb) | fillSouth(bb);
+}
 } // namespace Zagreus

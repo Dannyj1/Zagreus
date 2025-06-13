@@ -36,4 +36,8 @@ extern int evalPieceOnWeakSquarePenalty[GAME_PHASES];
 extern int evalUnoccupiedStrongSquare[GAME_PHASES];
 
 extern int evalBishopPairBonus[GAME_PHASES];
+
+extern int evalBackwardPawnPenalty[GAME_PHASES];
+
+extern int evalBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES];
 } // namespace Zagreus
