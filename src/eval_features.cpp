@@ -44,7 +44,7 @@ int evalUnoccupiedStrongSquare[GAME_PHASES]{2, 0};
 int bishopPairBonus[GAME_PHASES]{50, 25};
 
 int pawnShieldBonus[GAME_PHASES][PAWN_SHIELD_RANKS] = {
-    {10, 5}, // Midgame
-    {4, 2} // Endgame
+    {20, 10}, // Midgame
+    {10, 5} // Endgame
 };
 } // namespace Zagreus

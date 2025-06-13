@@ -331,16 +331,18 @@ void Evaluation::evaluateKing() {
     evalData.attacksByPiece[kingPiece] |= attacks;
 
     // Pawn shield
-    bool isRightSide;
-    bool isLeftSide;
+    int kingFile = squareToFile(kingSquare);
 
-    if (color == WHITE) {
+    /*if (color == WHITE) {
         isRightSide = (0xe0e0 & kingBitboard) != 0;
         isLeftSide = (0x707 & kingBitboard) != 0;
     } else {
         isRightSide = (0xe0e0000000000000 & kingBitboard) != 0;
         isLeftSide = (0x707000000000000 & kingBitboard) != 0;
-    }
+    }*/
+
+    bool isRightSide = kingFile >= 5;
+    bool isLeftSide = kingFile <= 2;
 
     if (isLeftSide || isRightSide) {
         uint64_t shieldRow1;
