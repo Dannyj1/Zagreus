@@ -11,9 +11,10 @@ var searchData=
   ['evalbackwardpawnonhalfopenfilepenalty_8',['evalBackwardPawnOnHalfOpenFilePenalty',['../namespaceZagreus.html#af71d29fa8903cde86d614510f3486d00',1,'Zagreus']]],
   ['evalbackwardpawnpenalty_9',['evalBackwardPawnPenalty',['../namespaceZagreus.html#a965d0e5c355d63416d8b0a99fa94ae47',1,'Zagreus']]],
   ['evalbishoppairbonus_10',['evalBishopPairBonus',['../namespaceZagreus.html#a54858d46cee0af83548f8f8307a04171',1,'Zagreus']]],
-  ['evalmaterialvalues_11',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
-  ['evalmobility_12',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['evalpieceonstrongsquare_13',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
-  ['evalpieceonweaksquarepenalty_14',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
-  ['evalunoccupiedstrongsquare_15',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
+  ['evaldoubledpawnpenalty_11',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
+  ['evalmaterialvalues_12',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
+  ['evalmobility_13',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
+  ['evalpieceonstrongsquare_14',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
+  ['evalpieceonweaksquarepenalty_15',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
+  ['evalunoccupiedstrongsquare_16',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
 ];
