@@ -389,6 +389,7 @@ void Evaluation::evaluateSquareControl() {
 template <PieceColor color>
 void Evaluation::evaluatePawnStructure() {
     constexpr PieceColor opponentColor = !color;
+    constexpr Piece ownPawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     const uint64_t backwardsPawns = board.backwardPawns<color>();
     const uint64_t halfOpenFiles = board.halfOpenFiles<opponentColor>();
     const int backwardPawnsCount = popcnt(backwardsPawns);
@@ -398,6 +399,14 @@ void Evaluation::evaluatePawnStructure() {
                     backwardPawnsCount * evalBackwardPawnPenalty[ENDGAME]);
     addScore<color>(halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[MIDGAME],
                     halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[ENDGAME]);
+
+    // Double and tripled pawns penalty
+    const uint64_t pawnFrontSpans = board.pawnFrontSpans<color>();
+    const uint64_t doubledPawns = board.getPieceBoard<ownPawn>() & pawnFrontSpans;
+    const int doubledPawnCount = popcnt(doubledPawns);
+
+    addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME],
+                    doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
 }
 
 /**

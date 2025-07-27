@@ -42,6 +42,7 @@ const int baseUnoccupiedStrongSquare[GAME_PHASES] = {2, 0};
 // Pawn structure
 const int baseBackwardPawnPenalty[GAME_PHASES] = {-8, -12};
 const int baseBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES] = {-8, -12};
+const int baseDoubledPawnPenalty[GAME_PHASES] = {-5, -10};
 
 // Piece related values
 const int baseBishopPairBonus[GAME_PHASES]{50, 25};

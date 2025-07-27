@@ -44,6 +44,8 @@ int evalUnoccupiedStrongSquare[GAME_PHASES]{2, 0};
 // Pawn structure
 int evalBackwardPawnPenalty[GAME_PHASES] = {-8, -12};
 int evalBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES] = {-8, -12};
+int evalDoubledPawnPenalty[GAME_PHASES] = {-5, -10};
 
+// Piece related values
 int evalBishopPairBonus[GAME_PHASES]{50, 25};
 } // namespace Zagreus

@@ -30,8 +30,9 @@ extern const int basePieceOnWeakSquarePenalty[GAME_PHASES];
 extern const int baseUnoccupiedStrongSquare[GAME_PHASES];
 
 extern const int baseBackwardPawnPenalty[GAME_PHASES];
+extern const int baseDoubledPawnPenalty[GAME_PHASES];
 
-extern const int bishopPairBonus[GAME_PHASES];
+extern const int baseBishopPairBonus[GAME_PHASES];
 
 extern const int baseBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES];
 

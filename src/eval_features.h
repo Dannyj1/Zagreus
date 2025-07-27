@@ -40,4 +40,6 @@ extern int evalBishopPairBonus[GAME_PHASES];
 extern int evalBackwardPawnPenalty[GAME_PHASES];
 
 extern int evalBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES];
+
+extern int evalDoubledPawnPenalty[GAME_PHASES];
 } // namespace Zagreus
