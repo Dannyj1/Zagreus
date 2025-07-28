@@ -31,9 +31,9 @@
 <area shape="rect" id="Node000020" href="$namespaceZagreus.html#a6733b1ddfb36c4f0462c716732aeb6b4" title="Shifts the bitboard west by one file." alt="" coords="554,399,697,424"/>
 <area shape="poly" id="edge20_Node000013_Node000020" title=" " alt="" coords="408,350,509,383,547,393,545,398,507,389,406,355"/>
 <area shape="poly" id="edge16_Node000014_Node000012" title=" " alt="" coords="689,282,806,245,807,250,691,287"/>
-<area shape="rect" id="Node000015" href="$namespaceZagreus.html#a3d136b3797c2fa47ba8b3ec25f12bf81" title=" " alt="" coords="816,268,951,293"/>
+<area shape="rect" id="Node000015" href="$namespaceZagreus.html#a3d136b3797c2fa47ba8b3ec25f12bf81" title="Fills the north direction of a bitboard." alt="" coords="816,268,951,293"/>
 <area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="724,293,802,286,803,291,725,298"/>
-<area shape="rect" id="Node000016" href="$namespaceZagreus.html#aa30e2771798432f823a8b6900da3e451" title=" " alt="" coords="815,317,951,343"/>
+<area shape="rect" id="Node000016" href="$namespaceZagreus.html#aa30e2771798432f823a8b6900da3e451" title="Fills the south direction of a bitboard." alt="" coords="815,317,951,343"/>
 <area shape="poly" id="edge15_Node000014_Node000016" title=" " alt="" coords="725,312,802,319,802,325,724,317"/>
 <area shape="rect" id="Node000017" href="$namespaceZagreus.html#a70869d31a469efacc2790cbd2d5cbf42" title="Shifts the bitboard north by one rank." alt="" coords="810,367,957,392"/>
 <area shape="poly" id="edge17_Node000014_Node000017" title=" " alt="" coords="704,322,744,334,792,351,821,360,820,366,790,357,742,339,702,327"/>

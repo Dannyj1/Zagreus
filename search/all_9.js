@@ -8,8 +8,8 @@ var searchData=
   ['initial_5fbeta_5',['INITIAL_BETA',['../constants_8h.html#aa3094dd1da19fd1778768da781d1530f',1,'constants.h']]],
   ['initializeattacklookuptables_6',['initializeAttackLookupTables',['../namespaceZagreus.html#af09541379517ebbc25c28b2070c83221',1,'Zagreus']]],
   ['initializebasepst_7',['initializeBasePst',['../namespaceZagreus.html#a5c8fc2bd17d3d2bd77f1af6f854ef834',1,'Zagreus']]],
-  ['initializebetweenlookuptable_8',['initializeBetweenLookupTable',['../namespaceZagreus.html#adc3ee813ad65365afafcaba934983a2a',1,'Zagreus']]],
-  ['initializeevaldata_9',['initializeEvalData',['../classZagreus_1_1Evaluation.html#abb089e1f075e914b0789cfefef917fcd',1,'Zagreus::Evaluation']]],
+  ['initializeevaldata_8',['initializeEvalData',['../classZagreus_1_1Evaluation.html#abb089e1f075e914b0789cfefef917fcd',1,'Zagreus::Evaluation']]],
+  ['initializelookuptables_9',['initializeLookupTables',['../namespaceZagreus.html#acb4b9298e4a79622dd3ea881c0bec068',1,'Zagreus']]],
   ['initializemagicbitboards_10',['initializeMagicBitboards',['../namespaceZagreus.html#a37e2265345b942f5ed69201304442a05',1,'Zagreus']]],
   ['initializepst_11',['initializePst',['../namespaceZagreus.html#acd3bf64552a1c6ab99042c49db1b2b1a',1,'Zagreus']]],
   ['initializesearch_12',['initializeSearch',['../namespaceZagreus.html#a2869e9fc155c108cb9b85350d3250177',1,'Zagreus']]],
@@ -19,8 +19,9 @@ var searchData=
   ['is_5fmcg_16',['is_mcg',['../classpcg__detail_1_1no__stream.html#a8571eb34d4cf85425a812f329dd93129',1,'pcg_detail::no_stream::is_mcg'],['../classpcg__detail_1_1oneseq__stream.html#ac15eabd5d288cd794e5b74af6c927336',1,'pcg_detail::oneseq_stream::is_mcg'],['../classpcg__detail_1_1specific__stream.html#ac29793333290df30fee4cf9c3037d249',1,'pcg_detail::specific_stream::is_mcg']]],
   ['isdraw_17',['isDraw',['../classZagreus_1_1Board.html#aca84663c90a0118a09ae4777aa5731ec',1,'Zagreus::Board']]],
   ['iskingincheck_18',['isKingInCheck',['../classZagreus_1_1Board.html#a27b03cc9604c065a113d26a9848ee0ea',1,'Zagreus::Board']]],
-  ['ispieceonsquare_19',['isPieceOnSquare',['../classZagreus_1_1Board.html#a47123e6793832bd624e425116173c933',1,'Zagreus::Board']]],
-  ['ispositionlegal_20',['isPositionLegal',['../classZagreus_1_1Board.html#a30e87c423701c0fe273a588c8119b4c8',1,'Zagreus::Board']]],
-  ['issearchstopped_21',['isSearchStopped',['../classZagreus_1_1Engine.html#a2fd88cb737e7b4b2af11f6a2e93e6634',1,'Zagreus::Engine']]],
-  ['isslidingpiece_22',['isSlidingPiece',['../namespaceZagreus.html#abf76ffcbd4040cf7ec9d76440c7b8058',1,'Zagreus']]]
+  ['isolatedpawns_19',['isolatedPawns',['../structZagreus_1_1EvalData.html#af181c3c093d3fcb28d38aceeaaeea3ab',1,'Zagreus::EvalData']]],
+  ['ispieceonsquare_20',['isPieceOnSquare',['../classZagreus_1_1Board.html#a47123e6793832bd624e425116173c933',1,'Zagreus::Board']]],
+  ['ispositionlegal_21',['isPositionLegal',['../classZagreus_1_1Board.html#a30e87c423701c0fe273a588c8119b4c8',1,'Zagreus::Board']]],
+  ['issearchstopped_22',['isSearchStopped',['../classZagreus_1_1Engine.html#a2fd88cb737e7b4b2af11f6a2e93e6634',1,'Zagreus::Engine']]],
+  ['isslidingpiece_23',['isSlidingPiece',['../namespaceZagreus.html#abf76ffcbd4040cf7ec9d76440c7b8058',1,'Zagreus']]]
 ];

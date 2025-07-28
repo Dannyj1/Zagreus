@@ -96,19 +96,22 @@ $(function(){ initResizable(false); });
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="bitboard_8h_source.html">bitboard.h</a>&quot;</code><br />
 <code>#include &lt;array&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
 <code>#include &quot;<a class="el" href="magics_8h_source.html">magics.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for bitboard.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="bitboard_8cpp__incl.png" border="0" usemap="#asrc_2bitboard_8cpp" alt=""/></div>
 <map name="asrc_2bitboard_8cpp" id="asrc_2bitboard_8cpp">
-<area shape="rect" title=" " alt="" coords="323,5,450,31"/>
+<area shape="rect" title=" " alt="" coords="355,5,482,31"/>
 <area shape="rect" href="bitboard_8h.html" title=" " alt="" coords="130,79,218,104"/>
-<area shape="poly" title=" " alt="" coords="353,33,222,77,221,72,351,28"/>
+<area shape="poly" title=" " alt="" coords="380,33,228,77,226,72,378,28"/>
 <area shape="rect" title=" " alt="" coords="424,79,480,104"/>
-<area shape="poly" title=" " alt="" coords="399,29,434,67,430,70,395,33"/>
+<area shape="poly" title=" " alt="" coords="426,30,443,65,438,67,421,32"/>
+<area shape="rect" title=" " alt="" coords="504,79,584,104"/>
+<area shape="poly" title=" " alt="" coords="440,28,513,69,510,74,437,33"/>
 <area shape="rect" href="magics_8h.html" title=" " alt="" coords="332,225,414,251"/>
-<area shape="poly" title=" " alt="" coords="388,31,377,211,372,211,383,31"/>
+<area shape="poly" title=" " alt="" coords="419,32,381,212,376,211,413,30"/>
 <area shape="rect" title=" " alt="" coords="21,299,90,324"/>
 <area shape="poly" title=" " alt="" coords="146,107,105,126,64,154,30,186,20,203,10,226,9,242,13,258,34,287,30,290,9,261,3,243,5,225,15,200,26,182,61,150,102,122,143,102"/>
 <area shape="rect" title=" " alt="" coords="197,299,264,324"/>
@@ -141,9 +144,9 @@ Functions</h2></td></tr>
 <tr class="memitem:af09541379517ebbc25c28b2070c83221" id="r_af09541379517ebbc25c28b2070c83221"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#af09541379517ebbc25c28b2070c83221">Zagreus::initializeAttackLookupTables</a> ()</td></tr>
 <tr class="memdesc:af09541379517ebbc25c28b2070c83221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the attack lookup tables for pawns, knights, and kings.  <br /></td></tr>
 <tr class="separator:af09541379517ebbc25c28b2070c83221"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc3ee813ad65365afafcaba934983a2a" id="r_adc3ee813ad65365afafcaba934983a2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#adc3ee813ad65365afafcaba934983a2a">Zagreus::initializeBetweenLookupTable</a> ()</td></tr>
-<tr class="memdesc:adc3ee813ad65365afafcaba934983a2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the between lookup table.  <br /></td></tr>
-<tr class="separator:adc3ee813ad65365afafcaba934983a2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb4b9298e4a79622dd3ea881c0bec068" id="r_acb4b9298e4a79622dd3ea881c0bec068"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#acb4b9298e4a79622dd3ea881c0bec068">Zagreus::initializeLookupTables</a> ()</td></tr>
+<tr class="memdesc:acb4b9298e4a79622dd3ea881c0bec068"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the lookup tables.  <br /></td></tr>
+<tr class="separator:acb4b9298e4a79622dd3ea881c0bec068"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2eab45eaa846a4406ab8df6ac0f13b63" id="r_a2eab45eaa846a4406ab8df6ac0f13b63"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">PieceColor</a> color&gt; </td></tr>
 <tr class="memitem:a2eab45eaa846a4406ab8df6ac0f13b63"><td class="memTemplItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#a2eab45eaa846a4406ab8df6ac0f13b63">Zagreus::getPawnAttacks</a> (const uint8_t square)</td></tr>
 <tr class="memdesc:a2eab45eaa846a4406ab8df6ac0f13b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the pawn attacks for a given square and color.  <br /></td></tr>
@@ -170,6 +173,9 @@ Functions</h2></td></tr>
 <tr class="memitem:afda138ab890ea8e4d7fae44a866326ad" id="r_afda138ab890ea8e4d7fae44a866326ad"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#afda138ab890ea8e4d7fae44a866326ad">Zagreus::getSquaresBetween</a> (const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> fromSquare, const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> toSquare)</td></tr>
 <tr class="memdesc:afda138ab890ea8e4d7fae44a866326ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a bitboard of all squares between two squares.  <br /></td></tr>
 <tr class="separator:afda138ab890ea8e4d7fae44a866326ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a863051aa5211eb2050a9001cb48b5651" id="r_a863051aa5211eb2050a9001cb48b5651"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#a863051aa5211eb2050a9001cb48b5651">Zagreus::getNeighboringFiles</a> (const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> square)</td></tr>
+<tr class="memdesc:a863051aa5211eb2050a9001cb48b5651"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the neighboring files for a given square.  <br /></td></tr>
+<tr class="separator:a863051aa5211eb2050a9001cb48b5651"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

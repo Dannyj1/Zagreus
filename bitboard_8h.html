@@ -201,9 +201,9 @@ Functions</h2></td></tr>
 <tr class="memitem:af09541379517ebbc25c28b2070c83221" id="r_af09541379517ebbc25c28b2070c83221"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#af09541379517ebbc25c28b2070c83221">Zagreus::initializeAttackLookupTables</a> ()</td></tr>
 <tr class="memdesc:af09541379517ebbc25c28b2070c83221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the attack lookup tables for pawns, knights, and kings.  <br /></td></tr>
 <tr class="separator:af09541379517ebbc25c28b2070c83221"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc3ee813ad65365afafcaba934983a2a" id="r_adc3ee813ad65365afafcaba934983a2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#adc3ee813ad65365afafcaba934983a2a">Zagreus::initializeBetweenLookupTable</a> ()</td></tr>
-<tr class="memdesc:adc3ee813ad65365afafcaba934983a2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the between lookup table.  <br /></td></tr>
-<tr class="separator:adc3ee813ad65365afafcaba934983a2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb4b9298e4a79622dd3ea881c0bec068" id="r_acb4b9298e4a79622dd3ea881c0bec068"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#acb4b9298e4a79622dd3ea881c0bec068">Zagreus::initializeLookupTables</a> ()</td></tr>
+<tr class="memdesc:acb4b9298e4a79622dd3ea881c0bec068"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the lookup tables.  <br /></td></tr>
+<tr class="separator:acb4b9298e4a79622dd3ea881c0bec068"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70869d31a469efacc2790cbd2d5cbf42" id="r_a70869d31a469efacc2790cbd2d5cbf42"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#a70869d31a469efacc2790cbd2d5cbf42">Zagreus::shiftNorth</a> (const uint64_t bb)</td></tr>
 <tr class="memdesc:a70869d31a469efacc2790cbd2d5cbf42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shifts the bitboard north by one rank.  <br /></td></tr>
 <tr class="separator:a70869d31a469efacc2790cbd2d5cbf42"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -326,17 +326,29 @@ Functions</h2></td></tr>
 <tr class="memitem:ad1261455060994b4cea7b1eea416e6f6" id="r_ad1261455060994b4cea7b1eea416e6f6"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#ad1261455060994b4cea7b1eea416e6f6">Zagreus::squareToBitboard</a> (const uint8_t square)</td></tr>
 <tr class="memdesc:ad1261455060994b4cea7b1eea416e6f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a square index to a bitboard.  <br /></td></tr>
 <tr class="separator:ad1261455060994b4cea7b1eea416e6f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc553c77bd88141c9450570fa2718699" id="r_afc553c77bd88141c9450570fa2718699"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#afc553c77bd88141c9450570fa2718699">Zagreus::squareToRankMask</a> (const uint8_t square)</td></tr>
+<tr class="memdesc:afc553c77bd88141c9450570fa2718699"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a square index to a rank mask.  <br /></td></tr>
+<tr class="separator:afc553c77bd88141c9450570fa2718699"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00b06f88b6b8fd4e1f8da0896444461d" id="r_a00b06f88b6b8fd4e1f8da0896444461d"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#a00b06f88b6b8fd4e1f8da0896444461d">Zagreus::squareToFileMask</a> (const uint8_t square)</td></tr>
+<tr class="memdesc:a00b06f88b6b8fd4e1f8da0896444461d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a square index to a file mask.  <br /></td></tr>
+<tr class="separator:a00b06f88b6b8fd4e1f8da0896444461d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2f3cb3e05478be9e11f947ea5cc08da" id="r_aa2f3cb3e05478be9e11f947ea5cc08da"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#aa2f3cb3e05478be9e11f947ea5cc08da">Zagreus::bitboardToSquare</a> (const uint64_t bb)</td></tr>
 <tr class="memdesc:aa2f3cb3e05478be9e11f947ea5cc08da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a bitboard to a square index.  <br /></td></tr>
 <tr class="separator:aa2f3cb3e05478be9e11f947ea5cc08da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afda138ab890ea8e4d7fae44a866326ad" id="r_afda138ab890ea8e4d7fae44a866326ad"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#afda138ab890ea8e4d7fae44a866326ad">Zagreus::getSquaresBetween</a> (const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> fromSquare, const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> toSquare)</td></tr>
 <tr class="memdesc:afda138ab890ea8e4d7fae44a866326ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a bitboard of all squares between two squares.  <br /></td></tr>
 <tr class="separator:afda138ab890ea8e4d7fae44a866326ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a863051aa5211eb2050a9001cb48b5651" id="r_a863051aa5211eb2050a9001cb48b5651"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#a863051aa5211eb2050a9001cb48b5651">Zagreus::getNeighboringFiles</a> (const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> square)</td></tr>
+<tr class="memdesc:a863051aa5211eb2050a9001cb48b5651"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the neighboring files for a given square.  <br /></td></tr>
+<tr class="separator:a863051aa5211eb2050a9001cb48b5651"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d136b3797c2fa47ba8b3ec25f12bf81" id="r_a3d136b3797c2fa47ba8b3ec25f12bf81"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#a3d136b3797c2fa47ba8b3ec25f12bf81">Zagreus::fillNorth</a> (uint64_t bb)</td></tr>
+<tr class="memdesc:a3d136b3797c2fa47ba8b3ec25f12bf81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the north direction of a bitboard.  <br /></td></tr>
 <tr class="separator:a3d136b3797c2fa47ba8b3ec25f12bf81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa30e2771798432f823a8b6900da3e451" id="r_aa30e2771798432f823a8b6900da3e451"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#aa30e2771798432f823a8b6900da3e451">Zagreus::fillSouth</a> (uint64_t bb)</td></tr>
+<tr class="memdesc:aa30e2771798432f823a8b6900da3e451"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the south direction of a bitboard.  <br /></td></tr>
 <tr class="separator:aa30e2771798432f823a8b6900da3e451"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0aa9633bed3d0ae33b3fdbcffe608a39" id="r_a0aa9633bed3d0ae33b3fdbcffe608a39"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceZagreus.html#a0aa9633bed3d0ae33b3fdbcffe608a39">Zagreus::fillFile</a> (const uint64_t bb)</td></tr>
+<tr class="memdesc:a0aa9633bed3d0ae33b3fdbcffe608a39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the entire file of a bitboard.  <br /></td></tr>
 <tr class="separator:a0aa9633bed3d0ae33b3fdbcffe608a39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
