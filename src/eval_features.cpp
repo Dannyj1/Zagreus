@@ -51,5 +51,5 @@ int evalBishopPairBonus[GAME_PHASES]{50, 25};
 
 // Knight values
 int evalKnightOutpostBonus[GAME_PHASES]{15, 5};
-int evalKnightPotentialOutpost[GAME_PHASES] = {5, 2};
+
 } // namespace Zagreus

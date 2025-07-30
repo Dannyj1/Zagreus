@@ -161,6 +161,15 @@ void Evaluation::evaluateKnights() {
     constexpr Piece pawnPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     uint64_t knights = board.getPieceBoard<knightPiece>();
 
+    // Outposts
+    constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
+    const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
+    const uint64_t blackAttackSpans = board.pawnFrontSpans<opponentColor>();
+    const uint64_t outpostSquares = knights & (outpostArea & pawnDefendedSquares & ~blackAttackSpans);
+    const int outpostCount = popcnt(outpostSquares);
+
+    addScore<color>(outpostCount * evalKnightOutpostBonus[MIDGAME], outpostCount * evalKnightOutpostBonus[ENDGAME]);
+
     while (knights) {
         const Square square = static_cast<Square>(popLsb(knights));
         const int midgamePst = midgamePstTable[knightPiece][square];
@@ -191,19 +200,6 @@ void Evaluation::evaluateKnights() {
 
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
     }
-
-    // Outposts
-    knights = board.getPieceBoard<knightPiece>();
-    constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
-    const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
-    const uint64_t blackAttackSpans = board.pawnFrontSpans<opponentColor>();
-    const uint64_t outpostSquares = outpostArea & pawnDefendedSquares & ~blackAttackSpans;
-    const int outpostCount = popcnt(knights & outpostSquares);
-    const uint64_t potentialOutposts = evalData.attacksByPiece[knightPiece] & outpostSquares & ~board.getColorBitboard<color>();
-    const int potentialOutpostCount = popcnt(potentialOutposts);
-
-    addScore<color>(outpostCount * evalKnightOutpostBonus[MIDGAME], outpostCount * evalKnightOutpostBonus[ENDGAME]);
-    addScore<color>(potentialOutpostCount * evalKnightPotentialOutpost[MIDGAME], potentialOutpostCount * evalKnightPotentialOutpost[ENDGAME]);
 }
 
 template <PieceColor color>
