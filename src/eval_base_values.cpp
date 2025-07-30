@@ -44,8 +44,11 @@ const int baseBackwardPawnPenalty[GAME_PHASES] = {-8, -12};
 const int baseBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES] = {-8, -12};
 const int baseDoubledPawnPenalty[GAME_PHASES] = {-5, -10};
 
-// Piece related values
+// Bishop values
 const int baseBishopPairBonus[GAME_PHASES]{50, 25};
+
+// Knight values
+const int baseKnightOutpostBonus[GAME_PHASES]{15, 5};
 
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1

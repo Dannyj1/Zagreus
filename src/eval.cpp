@@ -156,8 +156,19 @@ void Evaluation::evaluatePawns() {
  */
 template <PieceColor color>
 void Evaluation::evaluateKnights() {
+    constexpr PieceColor opponentColor = !color;
     constexpr Piece knightPiece = color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+    constexpr Piece pawnPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
     uint64_t knights = board.getPieceBoard<knightPiece>();
+
+    // Outposts
+    constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
+    const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
+    const uint64_t blackAttackSpans = board.pawnFrontSpans<opponentColor>();
+    const uint64_t outpostSquares = knights & (outpostArea & pawnDefendedSquares & ~blackAttackSpans);
+    const int outpostCount = popcnt(outpostSquares);
+
+    addScore<color>(outpostCount * evalKnightOutpostBonus[MIDGAME], outpostCount * evalKnightOutpostBonus[ENDGAME]);
 
     while (knights) {
         const Square square = static_cast<Square>(popLsb(knights));
