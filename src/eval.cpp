@@ -164,7 +164,7 @@ void Evaluation::evaluateKnights() {
     // Outposts
     constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
     const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
-    const uint64_t blackAttackSpans = board.pawnFrontSpans<opponentColor>();
+    const uint64_t blackAttackSpans = board.pawnAttackFrontSpans<opponentColor>();
     const uint64_t outpostSquares = knights & (outpostArea & pawnDefendedSquares & ~blackAttackSpans);
     const int outpostCount = popcnt(outpostSquares);
 
