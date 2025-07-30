@@ -13,10 +13,9 @@ var searchData=
   ['evalbishoppairbonus_10',['evalBishopPairBonus',['../namespaceZagreus.html#a54858d46cee0af83548f8f8307a04171',1,'Zagreus']]],
   ['evaldoubledpawnpenalty_11',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
   ['evalknightoutpostbonus_12',['evalKnightOutpostBonus',['../namespaceZagreus.html#a8daf0c26a0f0edc65c4dab8e00ddb0d2',1,'Zagreus']]],
-  ['evalknightpotentialoutpost_13',['evalKnightPotentialOutpost',['../namespaceZagreus.html#a8ec4465968ff07263c67d00ba8d351d7',1,'Zagreus']]],
-  ['evalmaterialvalues_14',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
-  ['evalmobility_15',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['evalpieceonstrongsquare_16',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
-  ['evalpieceonweaksquarepenalty_17',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
-  ['evalunoccupiedstrongsquare_18',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
+  ['evalmaterialvalues_13',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
+  ['evalmobility_14',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
+  ['evalpieceonstrongsquare_15',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
+  ['evalpieceonweaksquarepenalty_16',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
+  ['evalunoccupiedstrongsquare_17',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
 ];
