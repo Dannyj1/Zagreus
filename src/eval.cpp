@@ -196,7 +196,7 @@ void Evaluation::evaluateKnights() {
         // Outposts
         constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
         const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
-        uint64_t attackSpanMask = color == WHITE ? fillNorth(squareBB) : fillSouth(squareBB);
+        uint64_t attackSpanMask = color == WHITE ? shiftNorth(fillNorth(squareBB)) : shiftSouth(fillSouth(squareBB));
         attackSpanMask = shiftEast(attackSpanMask) | shiftWest(attackSpanMask);
         const uint64_t attackingPawns = attackSpanMask & board.getPieceBoard<opponentPawnPiece>();
         const bool isOutpost = (squareBB & outpostArea & pawnDefendedSquares) != 0;
