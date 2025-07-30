@@ -44,4 +44,5 @@ extern int evalBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES];
 extern int evalDoubledPawnPenalty[GAME_PHASES];
 
 extern int evalKnightOutpostBonus[GAME_PHASES];
+extern int evalKnightPotentialOutpost[GAME_PHASES];
 } // namespace Zagreus
