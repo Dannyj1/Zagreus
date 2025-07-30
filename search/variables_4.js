@@ -12,11 +12,10 @@ var searchData=
   ['evalbackwardpawnpenalty_9',['evalBackwardPawnPenalty',['../namespaceZagreus.html#a965d0e5c355d63416d8b0a99fa94ae47',1,'Zagreus']]],
   ['evalbishoppairbonus_10',['evalBishopPairBonus',['../namespaceZagreus.html#a54858d46cee0af83548f8f8307a04171',1,'Zagreus']]],
   ['evaldoubledpawnpenalty_11',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
-  ['evalisolatedpawnonopenfilepenalty_12',['evalIsolatedPawnOnOpenFilePenalty',['../namespaceZagreus.html#a8481eaf58ee14c6850148bf67703da3c',1,'Zagreus']]],
-  ['evalisolatedpawnpenalty_13',['evalIsolatedPawnPenalty',['../namespaceZagreus.html#a4482b05d66a5bd53963a38398c0359ab',1,'Zagreus']]],
-  ['evalmaterialvalues_14',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
-  ['evalmobility_15',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['evalpieceonstrongsquare_16',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
-  ['evalpieceonweaksquarepenalty_17',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
-  ['evalunoccupiedstrongsquare_18',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
+  ['evalisolatedpawnpenalty_12',['evalIsolatedPawnPenalty',['../namespaceZagreus.html#a4482b05d66a5bd53963a38398c0359ab',1,'Zagreus']]],
+  ['evalmaterialvalues_13',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
+  ['evalmobility_14',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
+  ['evalpieceonstrongsquare_15',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
+  ['evalpieceonweaksquarepenalty_16',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
+  ['evalunoccupiedstrongsquare_17',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]]
 ];
