@@ -1,9 +1,0 @@
-<map id="Zagreus::initializeLookupTables" name="Zagreus::initializeLookupTables">
-<area shape="rect" id="Node000001" title="Initializes the lookup tables." alt="" coords="5,47,191,87"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a39029e9c2426f95abe2fa9e1b6c6297c" title="Shifts the bitboard east by one file." alt="" coords="269,5,407,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,46,261,31,262,36,191,51"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a6733b1ddfb36c4f0462c716732aeb6b4" title="Shifts the bitboard west by one file." alt="" coords="267,55,409,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="191,65,253,65,253,70,191,70"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a00b06f88b6b8fd4e1f8da0896444461d" title="Converts a square index to a file mask." alt="" coords="239,104,437,129"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="191,84,262,98,261,104,190,89"/>
-</map>

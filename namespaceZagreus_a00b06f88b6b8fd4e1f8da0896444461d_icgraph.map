@@ -1,7 +1,0 @@
-<map id="Zagreus::squareToFileMask" name="Zagreus::squareToFileMask">
-<area shape="rect" id="Node000001" title="Converts a square index to a file mask." alt="" coords="475,13,673,38"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#acb4b9298e4a79622dd3ea881c0bec068" title="Initializes the lookup tables." alt="" coords="241,5,427,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="461,28,427,28,427,23,461,23"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Engine.html#aa97883c4a13a6a6e8b348589c820aafb" title=" " alt="" coords="5,13,193,38"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="227,28,194,28,194,23,227,23"/>
-</map>
