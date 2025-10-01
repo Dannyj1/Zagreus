@@ -28,25 +28,30 @@
 #include "eval_features.h"
 #include "types.h"
 
-namespace Zagreus {
-/**
+namespace Zagreus
+{
+    /**
  * \brief Adds the given midgame and endgame score to the given color.
  * \tparam color The color to add the score to.
  * \param midgameScore The midgame score to add.
  * \param endgameScore The endgame score to add.
  */
-template <PieceColor color>
-void Evaluation::addScore(const int midgameScore, const int endgameScore) {
-    if (color == WHITE) {
-        whiteMidgameScore += midgameScore;
-        whiteEndgameScore += endgameScore;
-    } else {
-        blackMidgameScore += midgameScore;
-        blackEndgameScore += endgameScore;
+    template <PieceColor color>
+    void Evaluation::addScore(const int midgameScore, const int endgameScore)
+    {
+        if (color == WHITE)
+        {
+            whiteMidgameScore += midgameScore;
+            whiteEndgameScore += endgameScore;
+        }
+        else
+        {
+            blackMidgameScore += midgameScore;
+            blackEndgameScore += endgameScore;
+        }
     }
-}
 
-/**
+    /**
  * \brief Evaluates the current board position.
  *
  * This function calculates the evaluation score of the current board position
@@ -55,27 +60,28 @@ void Evaluation::addScore(const int midgameScore, const int endgameScore) {
  *
  * \return The evaluation score of the current board position.
  */
-int Evaluation::evaluate() {
-    const int phase = calculatePhase();
-    const int modifier = board.getSideToMove() == WHITE ? 1 : -1;
+    int Evaluation::evaluate()
+    {
+        const int phase = calculatePhase();
+        const int modifier = board.getSideToMove() == WHITE ? 1 : -1;
 
-    initializeEvalData();
+        initializeEvalData();
 
-    evaluatePieces();
+        evaluatePieces();
 
-    const int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
-    const int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
+        const int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
+        const int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
 
-    return (whiteScore - blackScore) * modifier;
-}
+        return (whiteScore - blackScore) * modifier;
+    }
 
-constexpr int knightPhase = 1;
-constexpr int bishopPhase = 1;
-constexpr int rookPhase = 2;
-constexpr int queenPhase = 4;
-constexpr int totalPhase = knightPhase * 4 + bishopPhase * 4 + rookPhase * 4 + queenPhase * 2;
+    constexpr int knightPhase = 1;
+    constexpr int bishopPhase = 1;
+    constexpr int rookPhase = 2;
+    constexpr int queenPhase = 4;
+    constexpr int totalPhase = knightPhase * 4 + bishopPhase * 4 + rookPhase * 4 + queenPhase * 2;
 
-/**
+    /**
  * \brief Calculates the phase of the game.
  *
  * This function calculates the phase of the game (midgame or endgame) based on
@@ -84,363 +90,388 @@ constexpr int totalPhase = knightPhase * 4 + bishopPhase * 4 + rookPhase * 4 + q
  *
  * \return The phase of the game as an integer.
  */
-int Evaluation::calculatePhase() const {
-    int phase = totalPhase;
+    int Evaluation::calculatePhase() const
+    {
+        int phase = totalPhase;
 
-    phase -= popcnt(board.getPieceBoard<WHITE_KNIGHT>() | board.getPieceBoard<BLACK_KNIGHT>()) * knightPhase;
-    phase -= popcnt(board.getPieceBoard<WHITE_BISHOP>() | board.getPieceBoard<BLACK_BISHOP>()) * bishopPhase;
-    phase -= popcnt(board.getPieceBoard<WHITE_ROOK>() | board.getPieceBoard<BLACK_ROOK>()) * rookPhase;
-    phase -= popcnt(board.getPieceBoard<WHITE_QUEEN>() | board.getPieceBoard<BLACK_QUEEN>()) * queenPhase;
+        phase -= popcnt(board.getPieceBoard<WHITE_KNIGHT>() | board.getPieceBoard<BLACK_KNIGHT>()) * knightPhase;
+        phase -= popcnt(board.getPieceBoard<WHITE_BISHOP>() | board.getPieceBoard<BLACK_BISHOP>()) * bishopPhase;
+        phase -= popcnt(board.getPieceBoard<WHITE_ROOK>() | board.getPieceBoard<BLACK_ROOK>()) * rookPhase;
+        phase -= popcnt(board.getPieceBoard<WHITE_QUEEN>() | board.getPieceBoard<BLACK_QUEEN>()) * queenPhase;
 
-    return (phase * 256 + (totalPhase / 2)) / totalPhase;
-}
-
-void Evaluation::evaluatePieces() {
-    evaluatePawns<WHITE>();
-    evaluatePawns<BLACK>();
-
-    // Exclude enemy pawn attacks from mobility after evaluatePawns filled the attack tables
-    evalData.mobilityArea[WHITE] &= ~evalData.attacksByPiece[BLACK_PAWN];
-    evalData.mobilityArea[BLACK] &= ~evalData.attacksByPiece[WHITE_PAWN];
-
-    evaluateKnights<WHITE>();
-    evaluateKnights<BLACK>();
-
-    evaluateBishops<WHITE>();
-    evaluateBishops<BLACK>();
-
-    evaluateRooks<WHITE>();
-    evaluateRooks<BLACK>();
-
-    evaluateQueens<WHITE>();
-    evaluateQueens<BLACK>();
-
-    evaluateKing<WHITE>();
-    evaluateKing<BLACK>();
-
-    evaluateSquareControl<WHITE>();
-    evaluateSquareControl<BLACK>();
-
-    evaluatePawnStructure<WHITE>();
-    evaluatePawnStructure<BLACK>();
-}
-
-template <PieceColor color>
-void Evaluation::evaluatePawns() {
-    constexpr Piece pawnPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    uint64_t pawns = board.getPieceBoard<pawnPiece>();
-
-    while (pawns) {
-        const Square square = static_cast<Square>(popLsb(pawns));
-        const int midgamePst = midgamePstTable[pawnPiece][square];
-        const int endgamePst = endgamePstTable[pawnPiece][square];
-
-#ifdef ZAGREUS_TUNER
-        trace.material[color][PAWN] += 1;
-        trace.pst[color][PAWN][square] += 1;
-#endif
-
-        addScore<color>(midgamePst, endgamePst);
-
-        const uint64_t attacks = getPawnAttacks<color>(square);
-
-        evalData.attacksFrom[square] = attacks;
-        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
-        evalData.attacksByColor[color] |= attacks;
-        evalData.attacksByPiece[pawnPiece] |= attacks;
+        return (phase * 256 + (totalPhase / 2)) / totalPhase;
     }
-}
 
-/**
- * \brief Evaluates features related to knights on the board.
- */
-template <PieceColor color>
-void Evaluation::evaluateKnights() {
-    constexpr PieceColor opponentColor = !color;
-    constexpr Piece knightPiece = color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
-    constexpr Piece pawnPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    constexpr Piece opponentPawnPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
-    uint64_t knights = board.getPieceBoard<knightPiece>();
+    void Evaluation::evaluatePieces()
+    {
+        evaluatePawns<WHITE>();
+        evaluatePawns<BLACK>();
 
-    while (knights) {
-        const Square square = static_cast<Square>(popLsb(knights));
-        const uint64_t squareBB = squareToBitboard(square);
-        const int midgamePst = midgamePstTable[knightPiece][square];
-        const int endgamePst = endgamePstTable[knightPiece][square];
+        // Exclude enemy pawn attacks from mobility after evaluatePawns filled the attack tables
+        evalData.mobilityArea[WHITE] &= ~evalData.attacksByPiece[BLACK_PAWN];
+        evalData.mobilityArea[BLACK] &= ~evalData.attacksByPiece[WHITE_PAWN];
+
+        evaluateKnights<WHITE>();
+        evaluateKnights<BLACK>();
+
+        evaluateBishops<WHITE>();
+        evaluateBishops<BLACK>();
+
+        evaluateRooks<WHITE>();
+        evaluateRooks<BLACK>();
+
+        evaluateQueens<WHITE>();
+        evaluateQueens<BLACK>();
+
+        evaluateKing<WHITE>();
+        evaluateKing<BLACK>();
+
+        evaluateSquareControl<WHITE>();
+        evaluateSquareControl<BLACK>();
+
+        evaluatePawnStructure<WHITE>();
+        evaluatePawnStructure<BLACK>();
+    }
+
+    template <PieceColor color>
+    void Evaluation::evaluatePawns()
+    {
+        constexpr Piece pawnPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
+        uint64_t pawns = board.getPieceBoard<pawnPiece>();
+
+        while (pawns)
+        {
+            const Square square = static_cast<Square>(popLsb(pawns));
+            const int midgamePst = midgamePstTable[pawnPiece][square];
+            const int endgamePst = endgamePstTable[pawnPiece][square];
 
 #ifdef ZAGREUS_TUNER
-        trace.material[color][KNIGHT] += 1;
-        trace.pst[color][KNIGHT][square] += 1;
+            trace.material[color][PAWN] += 1;
+            trace.pst[color][PAWN][square] += 1;
 #endif
 
-        addScore<color>(midgamePst, endgamePst);
+            addScore<color>(midgamePst, endgamePst);
 
-        const uint64_t attacks = getKnightAttacks(square);
+            const uint64_t attacks = getPawnAttacks<color>(square);
 
-        evalData.attacksFrom[square] = attacks;
-        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
-        evalData.attacksByColor[color] |= attacks;
-        evalData.attacksByPiece[knightPiece] |= attacks;
-
-        const uint64_t mobility = attacks & evalData.mobilityArea[color];
-        const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = evalMobility[MIDGAME][KNIGHT] * mobilityScore;
-        const int endgameMobilityScore = evalMobility[ENDGAME][KNIGHT] * mobilityScore;
-
-#ifdef ZAGREUS_TUNER
-        trace.mobility[color][KNIGHT] += mobilityScore;
-#endif
-
-        addScore<color>(midgameMobilityScore, endgameMobilityScore);
-
-        // Outposts
-        constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
-        const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
-        uint64_t attackSpanMask = color == WHITE ? shiftNorth(fillNorth(squareBB)) : shiftSouth(fillSouth(squareBB));
-        attackSpanMask = shiftEast(attackSpanMask) | shiftWest(attackSpanMask);
-        const uint64_t attackingPawns = attackSpanMask & board.getPieceBoard<opponentPawnPiece>();
-        const bool isOutpost = (squareBB & outpostArea & pawnDefendedSquares) != 0;
-
-        if (isOutpost && !attackingPawns) {
-            addScore<color>(evalKnightOutpostBonus[MIDGAME], evalKnightOutpostBonus[ENDGAME]);
+            evalData.attacksFrom[square] = attacks;
+            evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
+            evalData.attacksByColor[color] |= attacks;
+            evalData.attacksByPiece[pawnPiece] |= attacks;
         }
     }
-}
 
-template <PieceColor color>
-void Evaluation::evaluateBishops() {
-    constexpr Piece bishopPiece = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
-    uint64_t bishops = board.getPieceBoard<bishopPiece>();
-    const uint8_t bishopCount = popcnt(bishops);
-    const uint8_t lightSquareBishopCount = popcnt(bishops & LIGHT_SQUARES);
-    const uint8_t darkSquareBishopCount = popcnt(bishops & DARK_SQUARES);
+    /**
+ * \brief Evaluates features related to knights on the board.
+ */
+    template <PieceColor color>
+    void Evaluation::evaluateKnights()
+    {
+        constexpr PieceColor opponentColor = !color;
+        constexpr Piece knightPiece = color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+        constexpr Piece pawnPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
+        constexpr Piece opponentPawnPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
+        uint64_t knights = board.getPieceBoard<knightPiece>();
 
-    if (bishopCount > 1 && lightSquareBishopCount > 0 && darkSquareBishopCount > 0) {
-        // TODO: Add to tuner
-        addScore<color>(evalBishopPairBonus[MIDGAME], evalBishopPairBonus[ENDGAME]);
-    }
-
-    while (bishops) {
-        const Square square = static_cast<Square>(popLsb(bishops));
-        const int midgamePst = midgamePstTable[bishopPiece][square];
-        const int endgamePst = endgamePstTable[bishopPiece][square];
+        while (knights)
+        {
+            const Square square = static_cast<Square>(popLsb(knights));
+            const uint64_t squareBB = squareToBitboard(square);
+            const int midgamePst = midgamePstTable[knightPiece][square];
+            const int endgamePst = endgamePstTable[knightPiece][square];
 
 #ifdef ZAGREUS_TUNER
-        trace.material[color][BISHOP] += 1;
-        trace.pst[color][BISHOP][square] += 1;
+            trace.material[color][KNIGHT] += 1;
+            trace.pst[color][KNIGHT][square] += 1;
+#endif
+
+            addScore<color>(midgamePst, endgamePst);
+
+            const uint64_t attacks = getKnightAttacks(square);
+
+            evalData.attacksFrom[square] = attacks;
+            evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
+            evalData.attacksByColor[color] |= attacks;
+            evalData.attacksByPiece[knightPiece] |= attacks;
+
+            const uint64_t mobility = attacks & evalData.mobilityArea[color];
+            const int mobilityScore = popcnt(mobility);
+            const int midgameMobilityScore = evalMobility[MIDGAME][KNIGHT] * mobilityScore;
+            const int endgameMobilityScore = evalMobility[ENDGAME][KNIGHT] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+            trace.mobility[color][KNIGHT] += mobilityScore;
+#endif
+
+            addScore<color>(midgameMobilityScore, endgameMobilityScore);
+
+            // Outposts
+            constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
+            const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
+            uint64_t attackSpanMask =
+                color == WHITE ? shiftNorth(fillNorth(squareBB)) : shiftSouth(fillSouth(squareBB));
+            attackSpanMask = shiftEast(attackSpanMask) | shiftWest(attackSpanMask);
+            const uint64_t opponentPawnsBitboard = board.getPieceBoard<opponentPawnPiece>();
+            const uint64_t attackingPawns = attackSpanMask & opponentPawnsBitboard;
+            const bool isOutpost = (squareBB & outpostArea & pawnDefendedSquares) != 0;
+
+            if (isOutpost && !attackingPawns)
+            {
+                addScore<color>(evalKnightOutpostBonus[MIDGAME], evalKnightOutpostBonus[ENDGAME]);
+            }
+        }
+    }
+
+    template <PieceColor color>
+    void Evaluation::evaluateBishops()
+    {
+        constexpr Piece bishopPiece = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+        uint64_t bishops = board.getPieceBoard<bishopPiece>();
+        const uint8_t bishopCount = popcnt(bishops);
+        const uint8_t lightSquareBishopCount = popcnt(bishops & LIGHT_SQUARES);
+        const uint8_t darkSquareBishopCount = popcnt(bishops & DARK_SQUARES);
+
+        if (bishopCount > 1 && lightSquareBishopCount > 0 && darkSquareBishopCount > 0)
+        {
+            // TODO: Add to tuner
+            addScore<color>(evalBishopPairBonus[MIDGAME], evalBishopPairBonus[ENDGAME]);
+        }
+
+        while (bishops)
+        {
+            const Square square = static_cast<Square>(popLsb(bishops));
+            const int midgamePst = midgamePstTable[bishopPiece][square];
+            const int endgamePst = endgamePstTable[bishopPiece][square];
+
+#ifdef ZAGREUS_TUNER
+            trace.material[color][BISHOP] += 1;
+            trace.pst[color][BISHOP][square] += 1;
+#endif
+
+            addScore<color>(midgamePst, endgamePst);
+
+            const uint64_t occupiedBitboard = board.getOccupiedBitboard();
+            const uint64_t attacks = getBishopAttacks(square, occupiedBitboard);
+
+            evalData.attacksFrom[square] = attacks;
+            evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
+            evalData.attacksByColor[color] |= attacks;
+            evalData.attacksByPiece[bishopPiece] |= attacks;
+
+            const uint64_t mobility = attacks & evalData.mobilityArea[color];
+            const int mobilityScore = popcnt(mobility);
+            const int midgameMobilityScore = evalMobility[MIDGAME][BISHOP] * mobilityScore;
+            const int endgameMobilityScore = evalMobility[ENDGAME][BISHOP] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+            trace.mobility[color][BISHOP] += mobilityScore;
+#endif
+
+            addScore<color>(midgameMobilityScore, endgameMobilityScore);
+        }
+    }
+
+    template <PieceColor color>
+    void Evaluation::evaluateRooks()
+    {
+        constexpr Piece rookPiece = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
+        uint64_t rooks = board.getPieceBoard<rookPiece>();
+
+        while (rooks)
+        {
+            const Square square = static_cast<Square>(popLsb(rooks));
+            const int midgamePst = midgamePstTable[rookPiece][square];
+            const int endgamePst = endgamePstTable[rookPiece][square];
+
+#ifdef ZAGREUS_TUNER
+            trace.material[color][ROOK] += 1;
+            trace.pst[color][ROOK][square] += 1;
+#endif
+
+            addScore<color>(midgamePst, endgamePst);
+
+            const uint64_t occupiedBitboard = board.getOccupiedBitboard();
+            const uint64_t attacks = getRookAttacks(square, occupiedBitboard);
+
+            evalData.attacksFrom[square] = attacks;
+            evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
+            evalData.attacksByColor[color] |= attacks;
+            evalData.attacksByPiece[rookPiece] |= attacks;
+
+            const uint64_t mobility = attacks & evalData.mobilityArea[color];
+            const int mobilityScore = popcnt(mobility);
+            const int midgameMobilityScore = evalMobility[MIDGAME][ROOK] * mobilityScore;
+            const int endgameMobilityScore = evalMobility[ENDGAME][ROOK] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+            trace.mobility[color][ROOK] += mobilityScore;
+#endif
+
+            addScore<color>(midgameMobilityScore, endgameMobilityScore);
+        }
+    }
+
+    template <PieceColor color>
+    void Evaluation::evaluateQueens()
+    {
+        constexpr Piece queenPiece = color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+        uint64_t queens = board.getPieceBoard<queenPiece>();
+
+        while (queens)
+        {
+            const Square square = static_cast<Square>(popLsb(queens));
+            const int midgamePst = midgamePstTable[queenPiece][square];
+            const int endgamePst = endgamePstTable[queenPiece][square];
+
+#ifdef ZAGREUS_TUNER
+            trace.material[color][QUEEN] += 1;
+            trace.pst[color][QUEEN][square] += 1;
+#endif
+
+            addScore<color>(midgamePst, endgamePst);
+
+            const uint64_t occupiedBitboard = board.getOccupiedBitboard();
+            const uint64_t attacks = queenAttacks(square, occupiedBitboard);
+
+            evalData.attacksFrom[square] = attacks;
+            evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
+            evalData.attacksByColor[color] |= attacks;
+            evalData.attacksByPiece[queenPiece] |= attacks;
+
+            const uint64_t mobility = attacks & evalData.mobilityArea[color];
+            const int mobilityScore = popcnt(mobility);
+            const int midgameMobilityScore = evalMobility[MIDGAME][QUEEN] * mobilityScore;
+            const int endgameMobilityScore = evalMobility[ENDGAME][QUEEN] * mobilityScore;
+
+#ifdef ZAGREUS_TUNER
+            trace.mobility[color][QUEEN] += mobilityScore;
+#endif
+
+            addScore<color>(midgameMobilityScore, endgameMobilityScore);
+        }
+    }
+
+    template <PieceColor color>
+    void Evaluation::evaluateKing()
+    {
+        constexpr Piece kingPiece = color == WHITE ? WHITE_KING : BLACK_KING;
+        const Square square = board.getKingSquare<color>();
+
+        const int midgamePst = midgamePstTable[kingPiece][square];
+        const int endgamePst = endgamePstTable[kingPiece][square];
+
+#ifdef ZAGREUS_TUNER
+        trace.material[color][KING] += 1;
+        trace.pst[color][KING][square] += 1;
 #endif
 
         addScore<color>(midgamePst, endgamePst);
 
-        const uint64_t attacks = getBishopAttacks(square, board.getOccupiedBitboard());
+        const uint64_t attacks = getKingAttacks(square);
 
         evalData.attacksFrom[square] = attacks;
         evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
         evalData.attacksByColor[color] |= attacks;
-        evalData.attacksByPiece[bishopPiece] |= attacks;
-
-        const uint64_t mobility = attacks & evalData.mobilityArea[color];
-        const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = evalMobility[MIDGAME][BISHOP] * mobilityScore;
-        const int endgameMobilityScore = evalMobility[ENDGAME][BISHOP] * mobilityScore;
-
-#ifdef ZAGREUS_TUNER
-        trace.mobility[color][BISHOP] += mobilityScore;
-#endif
-
-        addScore<color>(midgameMobilityScore, endgameMobilityScore);
+        evalData.attacksByPiece[kingPiece] |= attacks;
     }
-}
 
-template <PieceColor color>
-void Evaluation::evaluateRooks() {
-    constexpr Piece rookPiece = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
-    uint64_t rooks = board.getPieceBoard<rookPiece>();
+    template <PieceColor color>
+    void Evaluation::evaluateSquareControl()
+    {
+        const uint64_t ownPieces = board.getColorBitboard<color>();
+        const uint64_t occupied = board.getOccupiedBitboard();
+        uint64_t ownAttacks = evalData.attacksByColor[color];
+        uint64_t opponentAttacks = evalData.attacksByColor[!color];
+        uint64_t ownAttacksBy2 = evalData.attackedBy2[color];
+        uint64_t opponentAttacksBy2 = evalData.attackedBy2[!color];
+        uint64_t ownPawnAttacks = evalData.attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
+        uint64_t opponentPawnAttacks = evalData.attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
 
-    while (rooks) {
-        const Square square = static_cast<Square>(popLsb(rooks));
-        const int midgamePst = midgamePstTable[rookPiece][square];
-        const int endgamePst = endgamePstTable[rookPiece][square];
+        // Strong squares is any square that is:
+        // 1. Attacked by us and not attacked by the opponent
+        // 2. Square attacked by our pawn and exactly one non-pawn piece of the opponent (so not attacked by 2 pieces)
+        // 3. Square attacked by 2 of our pieces and only 1 of the opponent that is not a pawn
+        // 4. Square attacked by 2 of our pieces from which one is a pawn and exactly 1 of the opponent that may be a pawn
+        uint64_t strongSquares = (ownAttacks & ~opponentAttacks)
+            | (ownPawnAttacks & (opponentAttacks & ~opponentAttacksBy2 & ~opponentPawnAttacks))
+            | (ownAttacksBy2 & ~opponentAttacksBy2 & ~opponentPawnAttacks)
+            | ((ownAttacksBy2 & ownPawnAttacks) & (opponentAttacks & ~opponentAttacksBy2));
+
+        // Weak squares are the opponent's strong squares
+        uint64_t weakSquares = (opponentAttacks & ~ownAttacks)
+            | (opponentPawnAttacks & (ownAttacks & ~ownAttacksBy2 & ~ownPawnAttacks))
+            | (opponentAttacksBy2 & ~ownAttacksBy2 & ~ownPawnAttacks)
+            | ((opponentAttacksBy2 & opponentPawnAttacks) & (ownAttacks & ~ownAttacksBy2));
+
+        uint64_t piecesOnStrongSquares = ownPieces & strongSquares;
+        uint64_t piecesOnWeakSquares = ownPieces & weakSquares;
+        uint64_t unoccupiedStrongSquares = strongSquares & ~occupied;
+        int piecesOnStrongSquaresCount = popcnt(piecesOnStrongSquares);
+        int piecesOnWeakSquaresCount = popcnt(piecesOnWeakSquares);
+        int unoccupiedStrongSquaresCount = popcnt(unoccupiedStrongSquares);
+
+        int midgameScore = 0;
+        int endgameScore = 0;
 
 #ifdef ZAGREUS_TUNER
-        trace.material[color][ROOK] += 1;
-        trace.pst[color][ROOK][square] += 1;
+        trace.piecesOnStrongSquares[color] += piecesOnStrongSquaresCount;
+        trace.piecesOnWeakSquares[color] += piecesOnWeakSquaresCount;
+        trace.unoccupiedStrongSquares[color] += unoccupiedStrongSquaresCount;
 #endif
 
-        addScore<color>(midgamePst, endgamePst);
+        midgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[MIDGAME];
+        endgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[ENDGAME];
+        midgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[MIDGAME];
+        endgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[ENDGAME];
+        midgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[MIDGAME];
+        endgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[ENDGAME];
 
-        const uint64_t attacks = getRookAttacks(square, board.getOccupiedBitboard());
-
-        evalData.attacksFrom[square] = attacks;
-        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
-        evalData.attacksByColor[color] |= attacks;
-        evalData.attacksByPiece[rookPiece] |= attacks;
-
-        const uint64_t mobility = attacks & evalData.mobilityArea[color];
-        const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = evalMobility[MIDGAME][ROOK] * mobilityScore;
-        const int endgameMobilityScore = evalMobility[ENDGAME][ROOK] * mobilityScore;
-
-#ifdef ZAGREUS_TUNER
-        trace.mobility[color][ROOK] += mobilityScore;
-#endif
-
-        addScore<color>(midgameMobilityScore, endgameMobilityScore);
+        addScore<color>(midgameScore, endgameScore);
     }
-}
 
-template <PieceColor color>
-void Evaluation::evaluateQueens() {
-    constexpr Piece queenPiece = color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
-    uint64_t queens = board.getPieceBoard<queenPiece>();
+    template <PieceColor color>
+    void Evaluation::evaluatePawnStructure()
+    {
+        constexpr PieceColor opponentColor = !color;
+        constexpr Piece ownPawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
+        const uint64_t backwardsPawns = board.backwardPawns<color>();
+        const uint64_t halfOpenFiles = board.halfOpenFiles < opponentColor > ();
+        const uint64_t pawnFrontSpans = board.pawnFrontSpans < color > ();
+        const int backwardPawnsCount = popcnt(backwardsPawns);
+        const int halfOpenFilesCount = popcnt(backwardsPawns & halfOpenFiles);
 
-    while (queens) {
-        const Square square = static_cast<Square>(popLsb(queens));
-        const int midgamePst = midgamePstTable[queenPiece][square];
-        const int endgamePst = endgamePstTable[queenPiece][square];
+        addScore<color>(backwardPawnsCount * evalBackwardPawnPenalty[MIDGAME],
+                        backwardPawnsCount * evalBackwardPawnPenalty[ENDGAME]);
+        addScore<color>(halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[MIDGAME],
+                        halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[ENDGAME]);
 
-#ifdef ZAGREUS_TUNER
-        trace.material[color][QUEEN] += 1;
-        trace.pst[color][QUEEN][square] += 1;
-#endif
+        // Double and tripled pawns penalty
+        const uint64_t doubledPawns = board.getPieceBoard<ownPawn>() & pawnFrontSpans;
+        const int doubledPawnCount = popcnt(doubledPawns);
 
-        addScore<color>(midgamePst, endgamePst);
-
-        const uint64_t attacks = queenAttacks(square, board.getOccupiedBitboard());
-
-        evalData.attacksFrom[square] = attacks;
-        evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
-        evalData.attacksByColor[color] |= attacks;
-        evalData.attacksByPiece[queenPiece] |= attacks;
-
-        const uint64_t mobility = attacks & evalData.mobilityArea[color];
-        const int mobilityScore = popcnt(mobility);
-        const int midgameMobilityScore = evalMobility[MIDGAME][QUEEN] * mobilityScore;
-        const int endgameMobilityScore = evalMobility[ENDGAME][QUEEN] * mobilityScore;
-
-#ifdef ZAGREUS_TUNER
-        trace.mobility[color][QUEEN] += mobilityScore;
-#endif
-
-        addScore<color>(midgameMobilityScore, endgameMobilityScore);
+        addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME],
+                        doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
     }
-}
 
-template <PieceColor color>
-void Evaluation::evaluateKing() {
-    constexpr Piece kingPiece = color == WHITE ? WHITE_KING : BLACK_KING;
-    const Square square = board.getKingSquare<color>();
-
-    const int midgamePst = midgamePstTable[kingPiece][square];
-    const int endgamePst = endgamePstTable[kingPiece][square];
-
-#ifdef ZAGREUS_TUNER
-    trace.material[color][KING] += 1;
-    trace.pst[color][KING][square] += 1;
-#endif
-
-    addScore<color>(midgamePst, endgamePst);
-
-    const uint64_t attacks = getKingAttacks(square);
-
-    evalData.attacksFrom[square] = attacks;
-    evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
-    evalData.attacksByColor[color] |= attacks;
-    evalData.attacksByPiece[kingPiece] |= attacks;
-}
-
-template <PieceColor color>
-void Evaluation::evaluateSquareControl() {
-    uint64_t ownPieces = board.getColorBitboard<color>();
-    uint64_t occupied = board.getOccupiedBitboard();
-    uint64_t ownAttacks = evalData.attacksByColor[color];
-    uint64_t opponentAttacks = evalData.attacksByColor[!color];
-    uint64_t ownAttacksBy2 = evalData.attackedBy2[color];
-    uint64_t opponentAttacksBy2 = evalData.attackedBy2[!color];
-    uint64_t ownPawnAttacks = evalData.attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
-    uint64_t opponentPawnAttacks = evalData.attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
-
-    // Strong squares is any square that is:
-    // 1. Attacked by us and not attacked by the opponent
-    // 2. Square attacked by our pawn and exactly one non-pawn piece of the opponent (so not attacked by 2 pieces)
-    // 3. Square attacked by 2 of our pieces and only 1 of the opponent that is not a pawn
-    // 4. Square attacked by 2 of our pieces from which one is a pawn and exactly 1 of the opponent that may be a pawn
-    uint64_t strongSquares = (ownAttacks & ~opponentAttacks)
-                             | (ownPawnAttacks & (opponentAttacks & ~opponentAttacksBy2 & ~opponentPawnAttacks))
-                             | (ownAttacksBy2 & ~opponentAttacksBy2 & ~opponentPawnAttacks)
-                             | ((ownAttacksBy2 & ownPawnAttacks) & (opponentAttacks & ~opponentAttacksBy2));
-
-    // Weak squares are the opponent's strong squares
-    uint64_t weakSquares = (opponentAttacks & ~ownAttacks)
-                           | (opponentPawnAttacks & (ownAttacks & ~ownAttacksBy2 & ~ownPawnAttacks))
-                           | (opponentAttacksBy2 & ~ownAttacksBy2 & ~ownPawnAttacks)
-                           | ((opponentAttacksBy2 & opponentPawnAttacks) & (ownAttacks & ~ownAttacksBy2));
-
-    uint64_t piecesOnStrongSquares = ownPieces & strongSquares;
-    uint64_t piecesOnWeakSquares = ownPieces & weakSquares;
-    uint64_t unoccupiedStrongSquares = strongSquares & ~occupied;
-    int piecesOnStrongSquaresCount = popcnt(piecesOnStrongSquares);
-    int piecesOnWeakSquaresCount = popcnt(piecesOnWeakSquares);
-    int unoccupiedStrongSquaresCount = popcnt(unoccupiedStrongSquares);
-
-    int midgameScore = 0;
-    int endgameScore = 0;
-
-#ifdef ZAGREUS_TUNER
-    trace.piecesOnStrongSquares[color] += piecesOnStrongSquaresCount;
-    trace.piecesOnWeakSquares[color] += piecesOnWeakSquaresCount;
-    trace.unoccupiedStrongSquares[color] += unoccupiedStrongSquaresCount;
-#endif
-
-    midgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[MIDGAME];
-    endgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[ENDGAME];
-    midgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[MIDGAME];
-    endgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[ENDGAME];
-    midgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[MIDGAME];
-    endgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[ENDGAME];
-
-    addScore<color>(midgameScore, endgameScore);
-}
-
-template <PieceColor color>
-void Evaluation::evaluatePawnStructure() {
-    constexpr PieceColor opponentColor = !color;
-    constexpr Piece ownPawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    const uint64_t backwardsPawns = board.backwardPawns<color>();
-    const uint64_t halfOpenFiles = board.halfOpenFiles<opponentColor>();
-    const int backwardPawnsCount = popcnt(backwardsPawns);
-    const int halfOpenFilesCount = popcnt(backwardsPawns & halfOpenFiles);
-
-    addScore<color>(backwardPawnsCount * evalBackwardPawnPenalty[MIDGAME],
-                    backwardPawnsCount * evalBackwardPawnPenalty[ENDGAME]);
-    addScore<color>(halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[MIDGAME],
-                    halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[ENDGAME]);
-
-    // Double and tripled pawns penalty
-    const uint64_t pawnFrontSpans = board.pawnFrontSpans<color>();
-    const uint64_t doubledPawns = board.getPieceBoard<ownPawn>() & pawnFrontSpans;
-    const int doubledPawnCount = popcnt(doubledPawns);
-
-    addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME],
-                    doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
-}
-
-/**
+    /**
  * \brief Initializes part of the evaluation data needed to evaluate the board position.
  */
-void Evaluation::initializeEvalData() {
-    evalData.mobilityArea[WHITE] = ~(board.getColorBitboard<WHITE>() | board.getPieceBoard<BLACK_KING>());
-    evalData.mobilityArea[BLACK] = ~(board.getColorBitboard<BLACK>() | board.getPieceBoard<WHITE_KING>());
-}
+    void Evaluation::initializeEvalData()
+    {
+        evalData.mobilityArea[WHITE] = ~(board.getColorBitboard<WHITE>() | board.getPieceBoard<BLACK_KING>());
+        evalData.mobilityArea[BLACK] = ~(board.getColorBitboard<BLACK>() | board.getPieceBoard<WHITE_KING>());
+    }
 
-/**
+    /**
  * \brief Gets the value of a given piece.
  *
  * @param piece The piece to get the value of.
  * @return The value of the given piece.
  */
-int getPieceValue(const Piece piece) {
-    switch (piece) {
+    int getPieceValue(const Piece piece)
+    {
+        switch (piece)
+        {
         case WHITE_PAWN:
         case BLACK_PAWN:
             return 100;
@@ -462,6 +493,6 @@ int getPieceValue(const Piece piece) {
         default:
             assert(false);
             return 0;
+        }
     }
-}
 } // namespace Zagreus
