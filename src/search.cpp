@@ -379,9 +379,13 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     stats.qNodesSearched += 1;
 
     const bool isInCheck = board.isKingInCheck<color>();
-    int bestScore = Evaluation(board).evaluate();
+    int bestScore;
 
-    if (!isInCheck) {
+    if (isInCheck) {
+        bestScore = -MATE_SCORE;
+    } else {
+        bestScore = Evaluation(board).evaluate();
+
         // Stand pat
         if (bestScore >= beta) {
             if (!engine.isSearchStopped()) {
