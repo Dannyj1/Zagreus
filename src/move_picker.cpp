@@ -19,6 +19,7 @@
  */
 
 #include "move_picker.h"
+
 #include <array>
 #include <iostream>
 
@@ -63,9 +64,7 @@ bool MovePicker::next(Move& move) {
 /**
  *\brief Resets the move picker to the beginning of the move list.
  */
-void MovePicker::reset() {
-    currentIndex = 0;
-}
+void MovePicker::reset() { currentIndex = 0; }
 
 static TranspositionTable* tt = TranspositionTable::getTT();
 
@@ -104,7 +103,8 @@ void MovePicker::score(Board& board) {
         } else if (capturedPiece != EMPTY) {
             // MVV-LVA
             const PieceType movingPiece = getPieceType(board.getPieceOnSquare(getFromSquare(move)));
-            // 200 * Piece Value - Index of the captured piece. Factor of 200 so it's always above history scores. Should be changed once we have staged movegen.
+            // 200 * Piece Value - Index of the captured piece. Factor of 200 so it's always above history scores.
+            // Should be changed once we have staged movegen.
             const int mvvLva = 200 * getPieceValue(capturedPiece) - static_cast<int>(movingPiece);
 
             scores[i] = mvvLva;
@@ -116,4 +116,4 @@ void MovePicker::score(Board& board) {
         }
     }
 }
-} // namespace Zagreus
+}  // namespace Zagreus

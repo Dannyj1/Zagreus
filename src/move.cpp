@@ -18,9 +18,9 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cassert>
-
 #include "move.h"
+
+#include <cassert>
 
 namespace Zagreus {
 /**
@@ -75,8 +75,7 @@ std::string getMoveNotation(const Move move) {
     const uint8_t fromSquare = getFromSquare(move);
     const uint8_t toSquare = getToSquare(move);
 
-    if (const MoveType moveType = getMoveType(move);
-        moveType == PROMOTION) {
+    if (const MoveType moveType = getMoveType(move); moveType == PROMOTION) {
         const PromotionPiece promotionPiece = getPromotionPiece(move);
 
         return getMoveNotation(fromSquare, toSquare, promotionPiece);
@@ -149,4 +148,4 @@ Square getSquareFromNotation(const std::string_view notation) {
 
     return static_cast<Square>(file + rank * 8);
 }
-} // namespace Zagreus
+}  // namespace Zagreus

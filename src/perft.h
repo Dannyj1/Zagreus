@@ -35,5 +35,5 @@ namespace Zagreus {
  * \param printNodes If true, prints the number of nodes for each move at the root level.
  * \return The number of nodes reached.
  */
-uint64_t perft(Board &board, int depth, bool printNodes = true);
-} // namespace Zagreus
+uint64_t perft(Board& board, int depth, bool printNodes = true);
+}  // namespace Zagreus

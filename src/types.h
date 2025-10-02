@@ -107,9 +107,7 @@ enum PieceColor : uint8_t { WHITE = 0, BLACK = 1 };
  * \param color The current color.
  * \return The opposite color.
  */
-constexpr PieceColor operator!(const PieceColor color) {
-    return static_cast<PieceColor>(color ^ 1);
-}
+constexpr PieceColor operator!(const PieceColor color) { return static_cast<PieceColor>(color ^ 1); }
 
 /**
  * \brief Enum representing chess pieces, separated by color and type.
@@ -232,4 +230,4 @@ constexpr char getCharacterForPieceType(const Piece piece) {
 inline bool isSlidingPiece(const PieceType pieceType) {
     return pieceType == BISHOP || pieceType == ROOK || pieceType == QUEEN;
 }
-} // namespace Zagreus
+}  // namespace Zagreus

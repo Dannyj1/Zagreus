@@ -1,19 +1,19 @@
 /*
  This file is part of Zagreus.
- 
+
  Zagreus is a UCI chess engine
  Copyright (C) 2023-2025  Danny Jelsma
- 
+
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
  by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  Zagreus is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -43,144 +43,112 @@ void initializeBetweenLookupTable();
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftNorth(const uint64_t bb) {
-    return bb << 8;
-}
+inline uint64_t shiftNorth(const uint64_t bb) { return bb << 8; }
 
 /**
  * \brief Shifts the bitboard south by one rank.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftSouth(const uint64_t bb) {
-    return bb >> 8;
-}
+inline uint64_t shiftSouth(const uint64_t bb) { return bb >> 8; }
 
 /**
  * \brief Shifts the bitboard east by one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftEast(const uint64_t bb) {
-    return (bb << 1) & NOT_A_FILE;
-}
+inline uint64_t shiftEast(const uint64_t bb) { return (bb << 1) & NOT_A_FILE; }
 
 /**
  * \brief Shifts the bitboard west by one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftWest(const uint64_t bb) {
-    return (bb >> 1) & NOT_H_FILE;
-}
+inline uint64_t shiftWest(const uint64_t bb) { return (bb >> 1) & NOT_H_FILE; }
 
 /**
  * \brief Shifts the bitboard north-east by one rank and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftNorthEast(const uint64_t bb) {
-    return (bb << 9) & NOT_A_FILE;
-}
+inline uint64_t shiftNorthEast(const uint64_t bb) { return (bb << 9) & NOT_A_FILE; }
 
 /**
  * \brief Shifts the bitboard north-west by one rank and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftNorthWest(const uint64_t bb) {
-    return (bb << 7) & NOT_H_FILE;
-}
+inline uint64_t shiftNorthWest(const uint64_t bb) { return (bb << 7) & NOT_H_FILE; }
 
 /**
  * \brief Shifts the bitboard south-east by one rank and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftSouthEast(const uint64_t bb) {
-    return (bb >> 7) & NOT_A_FILE;
-}
+inline uint64_t shiftSouthEast(const uint64_t bb) { return (bb >> 7) & NOT_A_FILE; }
 
 /**
  * \brief Shifts the bitboard south-west by one rank and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftSouthWest(const uint64_t bb) {
-    return (bb >> 9) & NOT_H_FILE;
-}
+inline uint64_t shiftSouthWest(const uint64_t bb) { return (bb >> 9) & NOT_H_FILE; }
 
 /**
  * \brief Shifts the bitboard north-north-east by two ranks and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftNorthNorthEast(const uint64_t bb) {
-    return (bb << 17) & NOT_A_FILE;
-}
+inline uint64_t shiftNorthNorthEast(const uint64_t bb) { return (bb << 17) & NOT_A_FILE; }
 
 /**
  * \brief Shifts the bitboard north-east-east by one rank and two files.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftNorthEastEast(const uint64_t bb) {
-    return (bb << 10) & NOT_AB_FILE;
-}
+inline uint64_t shiftNorthEastEast(const uint64_t bb) { return (bb << 10) & NOT_AB_FILE; }
 
 /**
  * \brief Shifts the bitboard south-east-east by one rank and two files.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftSouthEastEast(const uint64_t bb) {
-    return (bb >> 6) & NOT_AB_FILE;
-}
+inline uint64_t shiftSouthEastEast(const uint64_t bb) { return (bb >> 6) & NOT_AB_FILE; }
 
 /**
  * \brief Shifts the bitboard south-south-east by two ranks and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftSouthSouthEast(const uint64_t bb) {
-    return (bb >> 15) & NOT_A_FILE;
-}
+inline uint64_t shiftSouthSouthEast(const uint64_t bb) { return (bb >> 15) & NOT_A_FILE; }
 
 /**
  * \brief Shifts the bitboard north-north-west by two ranks and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftNorthNorthWest(const uint64_t bb) {
-    return (bb << 15) & NOT_H_FILE;
-}
+inline uint64_t shiftNorthNorthWest(const uint64_t bb) { return (bb << 15) & NOT_H_FILE; }
 
 /**
  * \brief Shifts the bitboard north-west-west by one rank and two files.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftNorthWestWest(const uint64_t bb) {
-    return (bb << 6) & NOT_GH_FILE;
-}
+inline uint64_t shiftNorthWestWest(const uint64_t bb) { return (bb << 6) & NOT_GH_FILE; }
 
 /**
  * \brief Shifts the bitboard south-west-west by one rank and two files.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftSouthWestWest(const uint64_t bb) {
-    return (bb >> 10) & NOT_GH_FILE;
-}
+inline uint64_t shiftSouthWestWest(const uint64_t bb) { return (bb >> 10) & NOT_GH_FILE; }
 
 /**
  * \brief Shifts the bitboard south-south-west by two ranks and one file.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
  */
-inline uint64_t shiftSouthSouthWest(const uint64_t bb) {
-    return (bb >> 17) & NOT_H_FILE;
-}
+inline uint64_t shiftSouthSouthWest(const uint64_t bb) { return (bb >> 17) & NOT_H_FILE; }
 
 /**
  * \brief Shifts the bitboard in the specified direction.
@@ -231,9 +199,7 @@ constexpr uint64_t shift(const uint64_t bb) {
  * \param empty The bitboard representing the empty squares.
  * \return The bitboard representing the single push.
  */
-inline uint64_t whitePawnSinglePush(const uint64_t bb, const uint64_t empty) {
-    return shiftNorth(bb) & empty;
-}
+inline uint64_t whitePawnSinglePush(const uint64_t bb, const uint64_t empty) { return shiftNorth(bb) & empty; }
 
 /**
  * \brief Calculates the double push for white pawns.
@@ -251,18 +217,14 @@ inline uint64_t whitePawnDoublePush(const uint64_t bb, const uint64_t empty) {
  * \param bb The bitboard representing the pawns.
  * \return The bitboard representing the west attacks.
  */
-inline uint64_t whitePawnWestAttacks(const uint64_t bb) {
-    return shiftNorthWest(bb);
-}
+inline uint64_t whitePawnWestAttacks(const uint64_t bb) { return shiftNorthWest(bb); }
 
 /**
  * \brief Calculates the east attacks for white pawns.
  * \param bb The bitboard representing the pawns.
  * \return The bitboard representing the east attacks.
  */
-inline uint64_t whitePawnEastAttacks(const uint64_t bb) {
-    return shiftNorthEast(bb);
-}
+inline uint64_t whitePawnEastAttacks(const uint64_t bb) { return shiftNorthEast(bb); }
 
 /**
  * \brief Calculates the attacks for white pawns.
@@ -279,9 +241,7 @@ inline uint64_t calculateWhitePawnAttacks(const uint64_t bb) {
  * \param empty The bitboard representing the empty squares.
  * \return The bitboard representing the pushable pawns.
  */
-inline uint64_t whitePushablePawns(const uint64_t bb, const uint64_t empty) {
-    return shiftSouth(empty) & bb;
-}
+inline uint64_t whitePushablePawns(const uint64_t bb, const uint64_t empty) { return shiftSouth(empty) & bb; }
 
 /**
  * \brief Calculates the double pushable pawns for white.
@@ -300,9 +260,7 @@ inline uint64_t whiteDoublePushablePawns(const uint64_t bb, const uint64_t empty
  * \param empty The bitboard representing the empty squares.
  * \return The bitboard representing the single push.
  */
-inline uint64_t blackPawnSinglePush(const uint64_t bb, const uint64_t empty) {
-    return shiftSouth(bb) & empty;
-}
+inline uint64_t blackPawnSinglePush(const uint64_t bb, const uint64_t empty) { return shiftSouth(bb) & empty; }
 
 /**
  * \brief Calculates the double push for black pawns.
@@ -320,18 +278,14 @@ inline uint64_t blackPawnDoublePush(const uint64_t bb, const uint64_t empty) {
  * \param bb The bitboard representing the pawns.
  * \return The bitboard representing the west attacks.
  */
-inline uint64_t blackPawnWestAttacks(const uint64_t bb) {
-    return shiftSouthWest(bb);
-}
+inline uint64_t blackPawnWestAttacks(const uint64_t bb) { return shiftSouthWest(bb); }
 
 /**
  * \brief Calculates the east attacks for black pawns.
  * \param bb The bitboard representing the pawns.
  * \return The bitboard representing the east attacks.
  */
-inline uint64_t blackPawnEastAttacks(const uint64_t bb) {
-    return shiftSouthEast(bb);
-}
+inline uint64_t blackPawnEastAttacks(const uint64_t bb) { return shiftSouthEast(bb); }
 
 /**
  * \brief Calculates the attacks for black pawns.
@@ -348,9 +302,7 @@ inline uint64_t calculateBlackPawnAttacks(const uint64_t bb) {
  * \param empty The bitboard representing the empty squares.
  * \return The bitboard representing the pushable pawns.
  */
-inline uint64_t blackPushablePawns(const uint64_t bb, const uint64_t empty) {
-    return shiftNorth(empty) & bb;
-}
+inline uint64_t blackPushablePawns(const uint64_t bb, const uint64_t empty) { return shiftNorth(empty) & bb; }
 
 /**
  * \brief Calculates the double pushable pawns for black.
@@ -369,9 +321,8 @@ inline uint64_t blackDoublePushablePawns(const uint64_t bb, const uint64_t empty
  * \return The bitboard representing the attacks.
  */
 inline uint64_t calculateKnightAttacks(const uint64_t bb) {
-    return shiftNorthNorthEast(bb) | shiftNorthEastEast(bb) | shiftSouthEastEast(bb) |
-           shiftSouthSouthEast(bb) | shiftSouthSouthWest(bb) | shiftSouthWestWest(bb) |
-           shiftNorthWestWest(bb) | shiftNorthNorthWest(bb);
+    return shiftNorthNorthEast(bb) | shiftNorthEastEast(bb) | shiftSouthEastEast(bb) | shiftSouthSouthEast(bb) |
+           shiftSouthSouthWest(bb) | shiftSouthWestWest(bb) | shiftNorthWestWest(bb) | shiftNorthNorthWest(bb);
 }
 
 /**
@@ -437,9 +388,7 @@ inline uint64_t calculateKingAttacks(uint64_t bb) {
  * \param square The square index (0-63).
  * \return The bitboard representing the square.
  */
-inline uint64_t squareToBitboard(const uint8_t square) {
-    return 1ULL << square;
-}
+inline uint64_t squareToBitboard(const uint8_t square) { return 1ULL << square; }
 
 /**
  * \brief Converts a bitboard to a square index.
@@ -479,7 +428,5 @@ inline uint64_t fillSouth(uint64_t bb) {
     return bb;
 }
 
-inline uint64_t fillFile(const uint64_t bb) {
-    return fillNorth(bb) | fillSouth(bb);
-}
-} // namespace Zagreus
+inline uint64_t fillFile(const uint64_t bb) { return fillNorth(bb) | fillSouth(bb); }
+}  // namespace Zagreus

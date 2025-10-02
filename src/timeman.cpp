@@ -19,6 +19,7 @@
  */
 
 #include "timeman.h"
+
 #include <algorithm>
 #include <limits>
 
@@ -41,5 +42,4 @@ int calculateSearchTime(SearchParams& params) {
 
 template int calculateSearchTime<WHITE>(SearchParams& params);
 template int calculateSearchTime<BLACK>(SearchParams& params);
-
-} // namespace Zagreus
+}  // namespace Zagreus

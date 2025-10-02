@@ -19,11 +19,12 @@ This file is part of Zagreus.
  */
 
 #include "bitboard.h"
+
 #include <array>
+
 #include "magics.h"
 
 namespace Zagreus {
-
 // Lookup tables for attack patterns
 static std::array<std::array<uint64_t, SQUARES>, COLORS> pawnAttacksTable{};
 static std::array<uint64_t, SQUARES> knightAttacksTable{};
@@ -156,4 +157,4 @@ uint64_t getSquaresBetween(const Square fromSquare, const Square toSquare) {
     assert(fromSquare < SQUARES && toSquare < SQUARES);
     return betweenLookupTable[fromSquare][toSquare];
 }
-} // namespace Zagreus
+}  // namespace Zagreus

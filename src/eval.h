@@ -21,12 +21,12 @@
 #pragma once
 
 #include <cstdint>
+
 #include "board.h"
 #include "constants.h"
 #include "eval_features.h"
 
 namespace Zagreus {
-
 struct EvalData {
     uint64_t mobilityArea[COLORS];
 
@@ -49,7 +49,7 @@ struct EvalTrace {
 #endif
 
 class Evaluation {
-private:
+   private:
     const Board& board;
     EvalData evalData{};
     int whiteMidgameScore{};
@@ -72,9 +72,9 @@ private:
     void evaluatePieces();
 
     /**
-    * \brief Evaluates features related to pawns on the board.
-    * \tparam color The color of the pawn to evaluate.
-    */
+     * \brief Evaluates features related to pawns on the board.
+     * \tparam color The color of the pawn to evaluate.
+     */
     template <PieceColor color>
     void evaluatePawns();
 
@@ -123,7 +123,7 @@ private:
     template <PieceColor color>
     void evaluatePawnStructure();
 
-public:
+   public:
 #ifdef ZAGREUS_TUNER
     EvalTrace trace{};
 #endif
@@ -137,7 +137,6 @@ public:
     Evaluation(const Evaluation&) = delete;
 
     Evaluation& operator=(const Evaluation&) = delete;
-
 
     /**
      * \brief Initializes part of the evaluation data needed to evaluate the board position.
@@ -166,4 +165,4 @@ public:
  * @return The value of the given piece.
  */
 [[nodiscard]] int getPieceValue(Piece piece);
-} // namespace Zagreus
+}  // namespace Zagreus

@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -32,4 +31,4 @@ void initializePst();
 int* getMidgameTable(PieceType pieceType);
 
 int* getEndgameTable(PieceType pieceType);
-} // namespace Zagreus
+}  // namespace Zagreus

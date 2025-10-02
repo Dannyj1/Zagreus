@@ -19,6 +19,7 @@
  */
 
 #include "uci.h"
+
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -45,7 +46,8 @@ namespace Zagreus {
 constexpr std::string_view startPosFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 void Engine::doSetup() {
-    // According to the UCI specification, bitboard, magic bitboards and other stuff should be done only when "isready" or "setoption" is called
+    // According to the UCI specification, bitboard, magic bitboards and other stuff should be done only when "isready"
+    // or "setoption" is called
     if (didSetup) {
         return;
     }
@@ -93,8 +95,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.)");
     sendMessage("");
 
-    sendMessage(
-        "Zagreus UCI chess engine " + getVersionString() + " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
+    sendMessage("Zagreus UCI chess engine " + getVersionString() +
+                " by Danny Jelsma (https://github.com/Dannyj1/Zagreus)");
     sendMessage("");
 }
 
@@ -111,9 +113,7 @@ void Engine::handleUciCommand() {
     sendMessage("uciok");
 }
 
-void Engine::handleDebugCommand(std::string_view args) {
-    sendMessage("Debug mode is currently not implemented.");
-}
+void Engine::handleDebugCommand(std::string_view args) { sendMessage("Debug mode is currently not implemented."); }
 
 void Engine::handleIsReadyCommand(std::string_view args) {
     if (!didSetup) {
@@ -269,7 +269,7 @@ void Engine::handlePositionCommand(const std::string_view args) {
             }
         } else if (movedPiece == WHITE_PAWN || movedPiece == BLACK_PAWN) {
             if (getToSquare(move) == board.getEnPassantSquare()) {
-                    move = encodeMove(getFromSquare(move), getToSquare(move), EN_PASSANT);
+                move = encodeMove(getFromSquare(move), getToSquare(move), EN_PASSANT);
             }
         }
 
@@ -346,11 +346,9 @@ void Engine::handleStopCommand() {
     sendInfoMessage("Search stopped.");
 }
 
-void Engine::handlePonderHitCommand(std::string_view args) {
-}
+void Engine::handlePonderHitCommand(std::string_view args) {}
 
-void Engine::handleQuitCommand(std::string_view args) {
-}
+void Engine::handleQuitCommand(std::string_view args) {}
 
 void Engine::handlePerftCommand(const std::string& args) {
     if (!didSetup) {
@@ -390,13 +388,11 @@ void Engine::handlePerftCommand(const std::string& args) {
     const auto end = std::chrono::high_resolution_clock::now();
     const std::string tookSeconds = std::to_string(std::chrono::duration<double>(end - start).count());
 
-    sendInfoMessage(
-        "Depth: " + std::to_string(depth) + ", Nodes: " + std::to_string(nodes) + ", Time: " + tookSeconds + "s");
+    sendInfoMessage("Depth: " + std::to_string(depth) + ", Nodes: " + std::to_string(nodes) + ", Time: " + tookSeconds +
+                    "s");
 }
 
-void Engine::handlePrintCommand() {
-    board.print();
-}
+void Engine::handlePrintCommand() { board.print(); }
 
 void Engine::processCommand(const std::string_view command, const std::string& args) {
     if (command == "uci") {
@@ -448,31 +444,23 @@ void Engine::processCommand(const std::string_view command, const std::string& a
     }
 }
 
-void Engine::addOption(UCIOption& option) {
-    this->options[option.getName()] = option;
-}
+void Engine::addOption(UCIOption& option) { this->options[option.getName()] = option; }
 
 UCIOption& Engine::getOption(const std::string& name) {
     UCIOption result = this->options[name];
 
     if (result.getValue().empty() && !result.getDefaultValue().empty()) {
-            result.setValue(result.getDefaultValue());
+        result.setValue(result.getDefaultValue());
     }
 
     return this->options[name];
 }
 
-bool Engine::hasOption(const std::string& name) const {
-    return this->options.contains(name);
-}
+bool Engine::hasOption(const std::string& name) const { return this->options.contains(name); }
 
-bool Engine::isSearchStopped() const {
-    return this->searchStopped;
-}
+bool Engine::isSearchStopped() const { return this->searchStopped; }
 
-void Engine::setSearchStopped(bool value) {
-    this->searchStopped = value;
-}
+void Engine::setSearchStopped(bool value) { this->searchStopped = value; }
 
 void Engine::processLine(const std::string& inputLine) {
     std::string line = removeRedundantSpaces(inputLine);
@@ -509,17 +497,13 @@ void Engine::startUci() {
     }
 }
 
-void Engine::sendInfoMessage(const std::string_view message) {
-    std::cout << "info " << message << std::endl;
-}
+void Engine::sendInfoMessage(const std::string_view message) { std::cout << "info " << message << std::endl; }
 
-void Engine::sendMessage(const std::string_view message) {
-    std::cout << message << std::endl;
-}
+void Engine::sendMessage(const std::string_view message) { std::cout << message << std::endl; }
 
 std::string removeRedundantSpaces(const std::string_view input) {
     std::string result;
-    bool inSpace = false; // Track if we are in a sequence of spaces/tabs
+    bool inSpace = false;  // Track if we are in a sequence of spaces/tabs
 
     for (size_t i = 0; i < input.length(); ++i) {
         char current = input[i];
@@ -555,13 +539,9 @@ std::string removeRedundantSpaces(const std::string_view input) {
     return result;
 }
 
-UCIOptionType UCIOption::getOptionType() const {
-    return this->optionType;
-}
+UCIOptionType UCIOption::getOptionType() const { return this->optionType; }
 
-std::string UCIOption::getName() {
-    return this->name;
-}
+std::string UCIOption::getName() { return this->name; }
 
 std::string UCIOption::getValue() {
     std::string result = this->value;
@@ -573,33 +553,19 @@ std::string UCIOption::getValue() {
     return result;
 }
 
-void UCIOption::setValue(const std::string& value) {
-    this->value = value;
-}
+void UCIOption::setValue(const std::string& value) { this->value = value; }
 
-std::string UCIOption::getDefaultValue() {
-    return this->defaultValue;
-}
+std::string UCIOption::getDefaultValue() { return this->defaultValue; }
 
-void UCIOption::setDefaultValue(const std::string& value) {
-    this->defaultValue = value;
-}
+void UCIOption::setDefaultValue(const std::string& value) { this->defaultValue = value; }
 
-std::string UCIOption::getMinValue() {
-    return this->minValue;
-}
+std::string UCIOption::getMinValue() { return this->minValue; }
 
-void UCIOption::setMinValue(std::string value) {
-    this->minValue = value;
-}
+void UCIOption::setMinValue(std::string value) { this->minValue = value; }
 
-std::string UCIOption::getMaxValue() {
-    return this->maxValue;
-}
+std::string UCIOption::getMaxValue() { return this->maxValue; }
 
-void UCIOption::setMaxValue(std::string value) {
-    this->maxValue = value;
-}
+void UCIOption::setMaxValue(std::string value) { this->maxValue = value; }
 
 std::string getUciOptionTypeAsString(const UCIOptionType type) {
     switch (type) {
@@ -642,27 +608,17 @@ std::string UCIOption::toString() {
     return result;
 }
 
-void UCIOption::addVar(std::string value) {
-    this->var.push_back(value);
-}
+void UCIOption::addVar(std::string value) { this->var.push_back(value); }
 
-void UCIOption::setVar(std::vector<std::string> values) {
-    this->var = values;
-}
+void UCIOption::setVar(std::vector<std::string> values) { this->var = values; }
 
 void UCIOption::removeVar(std::string value) {
     this->var.erase(std::remove(this->var.begin(), this->var.end(), value), this->var.end());
 }
 
-void UCIOption::clearVar() {
-    this->var.clear();
-}
+void UCIOption::clearVar() { this->var.clear(); }
 
-std::string UCIOption::getVar(const int index) {
-    return this->var.at(index);
-}
+std::string UCIOption::getVar(const int index) { return this->var.at(index); }
 
-std::vector<std::string> UCIOption::getVar() {
-    return this->var;
-}
-} // namespace Zagreus
+std::vector<std::string> UCIOption::getVar() { return this->var; }
+}  // namespace Zagreus

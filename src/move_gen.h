@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -22,16 +21,13 @@
 #pragma once
 
 #include <cstdint>
+
 #include "board.h"
 #include "move.h"
 #include "types.h"
 
 namespace Zagreus {
-enum GenerationType : uint8_t {
-    ALL,
-    QSEARCH,
-    EVASIONS
-};
+enum GenerationType : uint8_t { ALL, QSEARCH, EVASIONS };
 
 /**
  * \brief Generates all pseudo-legal moves for all pieces of a certain color for a given color and generation type.
@@ -108,4 +104,4 @@ void generateQueenMoves(const Board& board, MoveList& moves, uint64_t genMask);
  */
 template <PieceColor color, GenerationType type>
 void generateKingMoves(const Board& board, MoveList& moves, uint64_t genMask);
-} // namespace Zagreus
+}  // namespace Zagreus

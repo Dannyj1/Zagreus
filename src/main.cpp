@@ -18,8 +18,8 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cstdint>
 #include <chrono>
+#include <cstdint>
 #include <exception>
 #include <iostream>
 #include <ratio>
@@ -85,8 +85,7 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
     "8/8/1P6/5pr1/8/4R3/7k/2K5 w - - 0 1",
     "8/8/3P3k/8/1p6/8/1P6/1K3n2 b - - 0 1",
-    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"
-};
+    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"};
 
 const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
@@ -100,8 +99,7 @@ const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "r1bbk1nr/pp3p1p/2n5/1N4p1/2Np1B2/8/PPP2PPP/2KR1B1R w kq - 0 13",
     "8/2R5/8/k7/N5PP/2K5/8/5b2 w - -",
     "rnbqk2r/1p1p1pbp/4p2n/p1p3p1/2PPP1P1/5P1N/PP1K2BP/RNBQR3 w kq -",
-    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"
-};
+    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"};
 
 void benchmark(bool fast);
 

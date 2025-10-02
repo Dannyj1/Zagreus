@@ -19,9 +19,12 @@
  */
 
 #include "board.h"
+
 #include <ctype.h>
+
 #include <iostream>
 #include <string_view>
+
 #include "bitwise.h"
 #include "eval.h"
 #include "pcg_random.hpp"
@@ -108,7 +111,8 @@ template bool Board::isPositionLegal<WHITE>() const;
 template bool Board::isPositionLegal<BLACK>() const;
 
 /**
- * \brief Checks if castling is possible for the given side. It checks every rule, except for attacks on the castling path or if the king is in check
+ * \brief Checks if castling is possible for the given side. It checks every rule, except for attacks on the castling
+ * path or if the king is in check
  * \tparam side The side to check for castling (WHITE_KINGSIDE, WHITE_QUEENSIDE, BLACK_KINGSIDE, BLACK_QUEENSIDE).
  * \return True if castling is possible, false otherwise.
  */
@@ -158,12 +162,10 @@ uint64_t Board::getSquareAttackers(const Square square) const {
     rooksQueens |= getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>();
     bishopsQueens |= getPieceBoard<WHITE_BISHOP>() | getPieceBoard<BLACK_BISHOP>();
 
-    return (getPawnAttacks<WHITE>(square) & getPieceBoard<BLACK_PAWN>())
-           | (getPawnAttacks<BLACK>(square) & getPieceBoard<WHITE_PAWN>())
-           | (getKnightAttacks(square) & knights)
-           | (getKingAttacks(square) & kings)
-           | (getBishopAttacks(square, occupied) & bishopsQueens)
-           | (getRookAttacks(square, occupied) & rooksQueens);
+    return (getPawnAttacks<WHITE>(square) & getPieceBoard<BLACK_PAWN>()) |
+           (getPawnAttacks<BLACK>(square) & getPieceBoard<WHITE_PAWN>()) | (getKnightAttacks(square) & knights) |
+           (getKingAttacks(square) & kings) | (getBishopAttacks(square, occupied) & bishopsQueens) |
+           (getRookAttacks(square, occupied) & rooksQueens);
 }
 
 /**
@@ -224,9 +226,9 @@ bool Board::isDraw() const {
         }
     }
 
-    const uint64_t sufficientMaterial = getPieceBoard<WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>()
-                                        | getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>()
-                                        | getPieceBoard<WHITE_PAWN>() | getPieceBoard<BLACK_PAWN>();
+    const uint64_t sufficientMaterial = getPieceBoard<WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>() |
+                                        getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>() |
+                                        getPieceBoard<WHITE_PAWN>() | getPieceBoard<BLACK_PAWN>();
 
     if (sufficientMaterial) {
         // Can never be a draw with queens, rooks or pawns
@@ -241,8 +243,7 @@ bool Board::isDraw() const {
     // Check for KBvK, KNvK
     if (popcnt(occupied) == 3) {
         if (getPieceBoard<WHITE_BISHOP>() || getPieceBoard<BLACK_BISHOP>() || getPieceBoard<WHITE_KNIGHT>() ||
-            getPieceBoard<
-                BLACK_KNIGHT>()) {
+            getPieceBoard<BLACK_KNIGHT>()) {
             return true;
         }
     }
@@ -263,9 +264,7 @@ bool Board::isDraw() const {
     return false;
 }
 
-uint64_t Board::getZobristHash() const {
-    return this->zobristHash;
-}
+uint64_t Board::getZobristHash() const { return this->zobristHash; }
 
 /**
  * \brief gets the square of the attacker with the lowest value of a given square
@@ -283,13 +282,9 @@ Square Board::getSmallestAttacker(Square square) const {
     }
 
     constexpr Piece attackerOrder[6] = {
-        color == WHITE ? WHITE_PAWN : BLACK_PAWN,
-        color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT,
-        color == WHITE ? WHITE_BISHOP : BLACK_BISHOP,
-        color == WHITE ? WHITE_ROOK : BLACK_ROOK,
-        color == WHITE ? WHITE_QUEEN : BLACK_QUEEN,
-        color == WHITE ? WHITE_KING : BLACK_KING
-    };
+        color == WHITE ? WHITE_PAWN : BLACK_PAWN,     color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT,
+        color == WHITE ? WHITE_BISHOP : BLACK_BISHOP, color == WHITE ? WHITE_ROOK : BLACK_ROOK,
+        color == WHITE ? WHITE_QUEEN : BLACK_QUEEN,   color == WHITE ? WHITE_KING : BLACK_KING};
 
     for (const Piece piece : attackerOrder) {
         if (const uint64_t candidate = attackers & bitboards[piece]) {
@@ -307,7 +302,7 @@ int estimateMoveValue(const Board& board, const Move move) {
 
     if (moveType == PROMOTION) {
         value += getPieceValue(getPieceFromPromotionPiece(getPromotionPiece(move), board.getSideToMove())) -
-            getPieceValue(WHITE_PAWN);
+                 getPieceValue(WHITE_PAWN);
     } else if (moveType == EN_PASSANT) {
         value = getPieceValue(WHITE_PAWN);
     } else if (moveType == CASTLING) {
@@ -318,18 +313,19 @@ int estimateMoveValue(const Board& board, const Move move) {
 }
 
 /**
- * \brief Calculates the Static Exchange Evaluation (SEE) score for a capture move. The implementation is mostly based on Ethereal's SEE implementation.
+ * \brief Calculates the Static Exchange Evaluation (SEE) score for a capture move. The implementation is mostly based
+ * on Ethereal's SEE implementation.
  * \param move The move to evaluate.
  *
- * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material.
+ * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores
+ * indicate a gain of material.
  */
 bool Board::see(const Move move, int threshold) {
     const Square fromSquare = getFromSquare(move);
     const Square toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
-    const Piece nextVictim = moveType == PROMOTION
-                                 ? getPieceFromPromotionPiece(getPromotionPiece(move), sideToMove)
-                                 : getPieceOnSquare(fromSquare);
+    const Piece nextVictim = moveType == PROMOTION ? getPieceFromPromotionPiece(getPromotionPiece(move), sideToMove)
+                                                   : getPieceOnSquare(fromSquare);
     PieceType nextVictimType = getPieceType(nextVictim);
     const int moveValue = estimateMoveValue(*this, move);
     int balance = moveValue - threshold;
@@ -344,10 +340,10 @@ bool Board::see(const Move move, int threshold) {
         return true;
     }
 
-    const uint64_t bishops = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<BLACK_BISHOP>() | getPieceBoard<
-                                 WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
-    const uint64_t rooks = getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>() | getPieceBoard<
-                               WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
+    const uint64_t bishops = getPieceBoard<WHITE_BISHOP>() | getPieceBoard<BLACK_BISHOP>() |
+                             getPieceBoard<WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
+    const uint64_t rooks = getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>() | getPieceBoard<WHITE_QUEEN>() |
+                           getPieceBoard<BLACK_QUEEN>();
     const uint64_t oldOccupied = getOccupiedBitboard();
     const PieceColor oldSideToMove = sideToMove;
     occupied = (occupied ^ squareToBitboard(fromSquare)) | squareToBitboard(toSquare);
@@ -879,4 +875,4 @@ bool Board::setFromFEN(const std::string_view fen) {
 
     return true;
 }
-} // namespace Zagreus
+}  // namespace Zagreus

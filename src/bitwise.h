@@ -25,7 +25,6 @@
 #include "types.h"
 
 namespace Zagreus {
-
 /**
  * \brief Counts the number of set bits (population count) in a bitboard.
  * \param bb The bitboard to count the set bits in.
@@ -49,7 +48,7 @@ inline int bitscanForward(uint64_t bb) {
 #ifdef _MSC_VER
     unsigned long index;
     _BitScanForward64(&index, bb);
-    return (int) index;
+    return (int)index;
 #else
     return __builtin_ctzll(bb);
 #endif
@@ -65,7 +64,7 @@ inline int bitscanReverse(const uint64_t bb) {
 #ifdef _MSC_VER
     unsigned long index;
     _BitScanReverse64(&index, bb);
-    return (int) index;
+    return (int)index;
 #else
     return 63 - __builtin_clzll(bb);
 #endif
@@ -84,5 +83,4 @@ inline int popLsb(uint64_t& bb) {
     bb &= bb - 1;
     return lsb;
 }
-
-} // namespace Zagreus::Bitwise
+}  // namespace Zagreus

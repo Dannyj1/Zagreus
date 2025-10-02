@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -31,5 +30,5 @@ struct TunePosition {
 };
 
 void startTuning(std::string filePath);
-}
+}  // namespace Zagreus
 #endif

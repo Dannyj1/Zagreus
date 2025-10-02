@@ -51,6 +51,9 @@ extern const int baseEgQueenTable[64];
 extern const int baseMgKingTable[64];
 extern const int baseEgKingTable[64];
 
+extern const int basePawnShieldBonus[GAME_PHASES];
+extern const int basePawnShieldAdvancedBonus[GAME_PHASES];
+
 extern int baseMidgamePstTable[PIECES][SQUARES];
 extern int baseEndgamePstTable[PIECES][SQUARES];
 
@@ -59,4 +62,4 @@ void initializeBasePst();
 const int* getBaseMidgameTable(PieceType pieceType);
 
 const int* getBaseEndgameTable(PieceType pieceType);
-} // namespace Zagreus 
+}  // namespace Zagreus

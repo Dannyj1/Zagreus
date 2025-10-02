@@ -25,6 +25,7 @@
 #include <cassert>
 #include <cstdint>
 #include <string_view>
+
 #include "bitboard.h"
 #include "bitwise.h"
 #include "constants.h"
@@ -59,7 +60,7 @@ struct BoardState {
  * \brief Represents the chess board and provides methods to manipulate it. The board consists of several bitboards.
  */
 class Board {
-private:
+   private:
     std::array<Piece, SQUARES> board{};
     std::array<uint64_t, PIECES> bitboards{};
     std::array<uint64_t, COLORS> colorBoards{};
@@ -75,7 +76,7 @@ private:
     uint8_t castlingRights = 0;
     uint8_t enPassantSquare = 255;
 
-public:
+   public:
     /**
      * \brief Constructs a new Board object and initializes it to the starting position.
      */
@@ -105,9 +106,7 @@ public:
      * \tparam piece The piece type.
      * \return The bitboard for the given piece type.
      */
-    [[nodiscard]] constexpr uint64_t getPieceBoard(const Piece piece) const {
-        return bitboards[piece];
-    }
+    [[nodiscard]] constexpr uint64_t getPieceBoard(const Piece piece) const { return bitboards[piece]; }
 
     /**
      * \brief Retrieves the bitboard for a given color.
@@ -124,9 +123,7 @@ public:
      * \param color The color.
      * \return The bitboard for the given color.
      */
-    [[nodiscard]] constexpr uint64_t getColorBitboard(PieceColor color) const {
-        return colorBoards[color];
-    }
+    [[nodiscard]] constexpr uint64_t getColorBitboard(PieceColor color) const { return colorBoards[color]; }
 
     /**
      * \brief Retrieves the piece on a given square.
@@ -143,88 +140,66 @@ public:
      * \param square The square index (0-63).
      * \return True if there is a piece on the given square, false otherwise.
      */
-    [[nodiscard]] constexpr bool isPieceOnSquare(const int square) const {
-        return board[square] != EMPTY;
-    }
+    [[nodiscard]] constexpr bool isPieceOnSquare(const int square) const { return board[square] != EMPTY; }
 
     /**
      * \brief Retrieves the bitboard representing occupied squares.
      * \return The bitboard representing occupied squares.
      */
-    [[nodiscard]] constexpr uint64_t getOccupiedBitboard() const {
-        return occupied;
-    }
+    [[nodiscard]] constexpr uint64_t getOccupiedBitboard() const { return occupied; }
 
     /**
      * \brief Retrieves the bitboard representing empty squares.
      * \return The bitboard representing empty squares.
      */
-    [[nodiscard]] constexpr uint64_t getEmptyBitboard() const {
-        return ~occupied;
-    }
+    [[nodiscard]] constexpr uint64_t getEmptyBitboard() const { return ~occupied; }
 
     /**
      * \brief Retrieves the color of the side to move.
      * \return The color of the side to move.
      */
-    [[nodiscard]] constexpr PieceColor getSideToMove() const {
-        return sideToMove;
-    }
+    [[nodiscard]] constexpr PieceColor getSideToMove() const { return sideToMove; }
 
     /**
      * \brief Sets the side to move.
      */
-    void setSideToMove(const PieceColor color) {
-        sideToMove = color;
-    }
+    void setSideToMove(const PieceColor color) { sideToMove = color; }
 
     /**
      * \brief Retrieves the number of plies since the start of the game.
      * \return The number of plies since the start of the game.
      */
-    [[nodiscard]] constexpr int getPly() const {
-        return ply;
-    }
+    [[nodiscard]] constexpr int getPly() const { return ply; }
 
     /**
      * \brief Retrieves the castling rights available.
      * \return The castling rights available.
      */
-    [[nodiscard]] constexpr uint8_t getCastlingRights() const {
-        return castlingRights;
-    }
+    [[nodiscard]] constexpr uint8_t getCastlingRights() const { return castlingRights; }
 
     /**
      * \brief Retrieves the en passant square, if applicable.
      * \return The en passant square.
      */
-    [[nodiscard]] constexpr uint8_t getEnPassantSquare() const {
-        return enPassantSquare;
-    }
+    [[nodiscard]] constexpr uint8_t getEnPassantSquare() const { return enPassantSquare; }
 
     /**
      * \brief Retrieves the last move made.
      * \return The last move made.
      */
-    [[nodiscard]] constexpr Move getLastMove() const {
-        return history[ply - 1].move;
-    }
+    [[nodiscard]] constexpr Move getLastMove() const { return history[ply - 1].move; }
 
     /**
      * \brief sets the previous PV line.
      */
-    void setPreviousPvLine(const PvLine& pvLine) {
-        previousPvLine = pvLine;
-    }
+    void setPreviousPvLine(const PvLine& pvLine) { previousPvLine = pvLine; }
 
     /**
      * \brief Gets the previous PV line.
      *
      * \return The previous PV line.
      */
-    PvLine& getPreviousPvLine() {
-        return previousPvLine;
-    }
+    PvLine& getPreviousPvLine() { return previousPvLine; }
 
     /**
      * \brief Sets a piece on a given square.
@@ -353,7 +328,7 @@ public:
     template <PieceColor color>
     [[nodiscard]] bool isKingInCheck() const {
         constexpr PieceColor opponentColor = !color;
-        const uint64_t kingBB = getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>();
+        const uint64_t kingBB = getPieceBoard < color == WHITE ? WHITE_KING : BLACK_KING > ();
         const Square kingSquare = bitboardToSquare(kingBB);
 
         return getSquareAttackersByColor<opponentColor>(kingSquare) != 0;
@@ -387,7 +362,8 @@ public:
 
     /**
      * \brief Checks if castling is possible for the given side.
-     * \tparam side The side to check for castling (WHITE\_KINGSIDE, WHITE\_QUEENSIDE, BLACK\_KINGSIDE, BLACK\_QUEENSIDE).
+     * \tparam side The side to check for castling (WHITE\_KINGSIDE, WHITE\_QUEENSIDE, BLACK\_KINGSIDE,
+     * BLACK\_QUEENSIDE).
      * \return True if castling is possible, false otherwise.
      */
     template <CastlingRights side>
@@ -446,17 +422,13 @@ public:
      * \brief Retrieves the half move clock.
      * \return The half move clock.
      */
-    [[nodiscard]] constexpr uint8_t getHalfMoveClock() const {
-        return halfMoveClock;
-    }
+    [[nodiscard]] constexpr uint8_t getHalfMoveClock() const { return halfMoveClock; }
 
     /**
      * \brief Retrieves the full move clock.
      * \return The full move clock.
      */
-    [[nodiscard]] constexpr uint16_t getFullMoveClock() const {
-        return fullmoveClock;
-    }
+    [[nodiscard]] constexpr uint16_t getFullMoveClock() const { return fullmoveClock; }
 
     /**
      * \brief Checks if the given color is close to promoting a pawn.
@@ -465,7 +437,7 @@ public:
     template <PieceColor color>
     [[nodiscard]] bool canPromotePawn() const {
         const uint64_t promotionRank = color == WHITE ? RANK_7 : RANK_2;
-        const uint64_t pawns = getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>();
+        const uint64_t pawns = getPieceBoard < color == WHITE ? WHITE_PAWN : BLACK_PAWN > ();
 
         return pawns & promotionRank;
     }
@@ -475,9 +447,7 @@ public:
      *
      * \return The previous move made.
      */
-    [[nodiscard]] Move getPreviousMove() const {
-        return previousMove;
-    }
+    [[nodiscard]] Move getPreviousMove() const { return previousMove; }
 
     /**
      * \brief Determines if the board has material that isn't pawn or king.
@@ -497,13 +467,14 @@ public:
      */
     template <PieceColor color>
     [[nodiscard]] bool hasNonPawnMaterial() const {
-        return getColorBitboard<color>() & ~(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>() | getPieceBoard<
-                                                 color == WHITE ? WHITE_PAWN : BLACK_PAWN>());
+        return getColorBitboard<color>() & ~(getPieceBoard < color == WHITE                     ? WHITE_KING
+                                             : BLACK_KING > () | getPieceBoard < color == WHITE ? WHITE_PAWN
+                                                                                                : BLACK_PAWN > ());
     }
 
     template <PieceColor color>
     [[nodiscard]] Square getKingSquare() const {
-        return bitboardToSquare(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>());
+        return bitboardToSquare(getPieceBoard < color == WHITE ? WHITE_KING : BLACK_KING > ());
     }
 
     template <PieceColor color>
@@ -587,4 +558,4 @@ public:
         return halfOpenOrOpenFiles<color>() ^ openFiles();
     }
 };
-} // namespace Zagreus
+}  // namespace Zagreus

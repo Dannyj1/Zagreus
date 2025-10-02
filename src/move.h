@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -21,14 +20,14 @@
 
 #pragma once
 
+#include <array>
 #include <cassert>
 #include <cstdint>
-#include <array>
 #include <string>
 #include <string_view>
+
 #include "constants.h"
 #include "types.h"
-
 
 namespace Zagreus {
 using Move = uint16_t;
@@ -42,12 +41,7 @@ struct MoveList {
     MoveList& operator=(const MoveList&) = delete;
 };
 
-enum MoveType : uint8_t {
-    NORMAL = 0b00,
-    PROMOTION = 0b01,
-    EN_PASSANT = 0b10,
-    CASTLING = 0b11
-};
+enum MoveType : uint8_t { NORMAL = 0b00, PROMOTION = 0b01, EN_PASSANT = 0b10, CASTLING = 0b11 };
 
 enum PromotionPiece : uint8_t {
     QUEEN_PROMOTION = 0b00,
@@ -55,7 +49,6 @@ enum PromotionPiece : uint8_t {
     BISHOP_PROMOTION = 0b10,
     KNIGHT_PROMOTION = 0b11
 };
-
 
 /**
  * \brief Struct representing a PV line.
@@ -65,9 +58,7 @@ struct PvLine {
     int moveCount = 0;
     int startPly = 0;
 
-    explicit PvLine(int startPly) : startPly(startPly) {
-        std::fill_n(moves, MAX_MOVES, NO_MOVE);
-    }
+    explicit PvLine(int startPly) : startPly(startPly) { std::fill_n(moves, MAX_MOVES, NO_MOVE); }
 };
 
 std::string getMoveNotation(uint8_t fromSquare, uint8_t toSquare);
@@ -99,21 +90,13 @@ inline Move encodeMove(const uint8_t fromSquare, const uint8_t toSquare, const P
     return fromSquare | (toSquare << 6) | (PROMOTION << 12) | (promotionPiece << 14);
 }
 
-inline Square getFromSquare(const Move move) {
-    return static_cast<Square>(move & 0x3F);
-}
+inline Square getFromSquare(const Move move) { return static_cast<Square>(move & 0x3F); }
 
-inline Square getToSquare(const Move move) {
-    return static_cast<Square>((move >> 6) & 0x3F);
-}
+inline Square getToSquare(const Move move) { return static_cast<Square>((move >> 6) & 0x3F); }
 
-inline MoveType getMoveType(const Move move) {
-    return static_cast<MoveType>((move >> 12) & 0x3);
-}
+inline MoveType getMoveType(const Move move) { return static_cast<MoveType>((move >> 12) & 0x3); }
 
-inline PromotionPiece getPromotionPiece(const Move move) {
-    return static_cast<PromotionPiece>((move >> 14) & 0x3);
-}
+inline PromotionPiece getPromotionPiece(const Move move) { return static_cast<PromotionPiece>((move >> 14) & 0x3); }
 
 inline Piece getPieceFromPromotionPiece(const PromotionPiece promotionPiece, const PieceColor color) {
     switch (promotionPiece) {
@@ -150,4 +133,4 @@ inline std::string parsePvLine(const PvLine& pvLine) {
 
     return result;
 }
-} // namespace Zagreus
+}  // namespace Zagreus

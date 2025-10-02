@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -21,8 +20,9 @@
 
 #pragma once
 
-#include <cstdint>
 #include <chrono>
+#include <cstdint>
+
 #include "board.h"
 #include "move.h"
 #include "types.h"
@@ -58,8 +58,10 @@ template <PieceColor color>
 [[nodiscard]] Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
 
 template <PieceColor color, NodeType nodeType>
-int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine);
+int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
+             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine);
 
 template <PieceColor color, NodeType nodeType>
-[[nodiscard]] int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats, const std::chrono::time_point<std::chrono::steady_clock>& endTime);
-} // namespace Zagreus
+[[nodiscard]] int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
+                          const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+}  // namespace Zagreus

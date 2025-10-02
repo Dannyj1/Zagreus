@@ -19,9 +19,11 @@
  */
 
 #include "move_gen.h"
-#include <cassert>
+
 #include <array>
+#include <cassert>
 #include <initializer_list>
+
 #include "bitboard.h"
 #include "bitwise.h"
 #include "board.h"
@@ -30,7 +32,6 @@
 #include "types.h"
 
 namespace Zagreus {
-
 /**
  * \brief Generates all pseudo-legal moves for all pieces of a certain color for a given color and generation type.
  * \tparam color The color of the pieces to generate moves for.
@@ -153,8 +154,8 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         const uint8_t squareFrom = squareTo - fromPushDirection;
 
         if (squareToBB & promotionRank) {
-            for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
-                                                        KNIGHT_PROMOTION}) {
+            for (const PromotionPiece promotionPiece :
+                 {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
                 const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
                 moves.moves[moves.size] = move;
                 moves.size++;
@@ -187,8 +188,8 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
             moves.size++;
         } else {
             if (squareToBB & promotionRank) {
-                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
-                                                            KNIGHT_PROMOTION}) {
+                for (const PromotionPiece promotionPiece :
+                     {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
                     const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
                     moves.moves[moves.size] = move;
                     moves.size++;
@@ -212,8 +213,8 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
             moves.size++;
         } else {
             if (squareToBB & promotionRank) {
-                for (const PromotionPiece promotionPiece : {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
-                                                            KNIGHT_PROMOTION}) {
+                for (const PromotionPiece promotionPiece :
+                     {QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION}) {
                     const Move move = encodeMove(squareFrom, squareTo, promotionPiece);
                     moves.moves[moves.size] = move;
                     moves.size++;
@@ -402,5 +403,4 @@ template void generateMoves<WHITE, EVASIONS>(const Board& board, MoveList& moves
 template void generateMoves<BLACK, ALL>(const Board& board, MoveList& moves);
 template void generateMoves<BLACK, QSEARCH>(const Board& board, MoveList& moves);
 template void generateMoves<BLACK, EVASIONS>(const Board& board, MoveList& moves);
-
-} // namespace Zagreus
+}  // namespace Zagreus

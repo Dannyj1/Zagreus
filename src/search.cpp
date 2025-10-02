@@ -19,9 +19,11 @@
  */
 
 #include "search.h"
+
 #include <cmath>
 #include <cstring>
 #include <string>
+
 #include "board.h"
 #include "constants.h"
 #include "eval.h"
@@ -44,7 +46,6 @@ void initializeSearch() {
         }
     }
 }
-
 
 // TODO: Support more search variables (infinite, max nodes, etc.)
 template <PieceColor color>
@@ -74,8 +75,8 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
 
         PvLine pvLine = PvLine{board.getPly()};
 
-        const int score = pvSearch<color, ROOT>(engine, board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime,
-                                                pvLine);
+        const int score =
+            pvSearch<color, ROOT>(engine, board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime, pvLine);
         assert(score != INITIAL_ALPHA && score != INITIAL_BETA);
         assert(depth > 0);
 
@@ -92,8 +93,8 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         board.setPreviousPvLine(bestPvLine);
 
         stats.score = score;
-        stats.timeSpentMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now() - startTime).count();
+        stats.timeSpentMs =
+            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTime).count();
         stats.depth = depth;
 
         // Make sure we don't divide by zero
@@ -102,8 +103,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         }
 
         const uint64_t totalNodesSearch = stats.nodesSearched + stats.qNodesSearched;
-        const uint64_t nps = static_cast<double>(totalNodesSearch) / (
-                                 static_cast<double>(stats.timeSpentMs) / 1000.0);
+        const uint64_t nps = static_cast<double>(totalNodesSearch) / (static_cast<double>(stats.timeSpentMs) / 1000.0);
         std::string pvString = parsePvLine(bestPvLine);
         engine.sendInfoMessage("depth " + std::to_string(stats.depth) + " score cp " + std::to_string(stats.score) +
                                " nodes " + std::to_string(totalNodesSearch) + " time " +
@@ -151,8 +151,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
 
-    if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() >
-        endTime) {
+    if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 &&
+        std::chrono::steady_clock::now() > endTime) {
         engine.setSearchStopped(true);
         return beta;
     }
@@ -234,14 +234,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         bool doFullSearch = true;
         int score = INT32_MIN;
 
-
         // Late Move Reduction
-        if (movesSearched > 1 && depth >= 3 && !(isPV && capturedPiece != EMPTY) && !(
-                isPV && getMoveType(move) == PROMOTION)) {
+        if (movesSearched > 1 && depth >= 3 && !(isPV && capturedPiece != EMPTY) &&
+            !(isPV && getMoveType(move) == PROMOTION)) {
             doFullSearch = false;
             int R = 0;
-            const Square opponentKingSquare = bitboardToSquare(
-                board.getPieceBoard<color == WHITE ? BLACK_KING : WHITE_KING>());
+            const Square opponentKingSquare =
+                bitboardToSquare(board.getPieceBoard < color == WHITE ? BLACK_KING : WHITE_KING > ());
             const uint64_t opponentKingAttackers = board.getSquareAttackersByColor<color>(opponentKingSquare);
 
             R = lmrTable[depth][movesSearched];
@@ -256,8 +255,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
             R = std::max(0, R);
 
-            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats,
-                                                      endTime, nodePvLine);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats, endTime,
+                                                      nodePvLine);
 
             if (score > alpha) {
                 doFullSearch = true;
@@ -475,4 +474,4 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     assert(bestScore != INITIAL_ALPHA);
     return bestScore;
 }
-} // namespace Zagreus
+}  // namespace Zagreus

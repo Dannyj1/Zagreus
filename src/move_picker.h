@@ -25,14 +25,13 @@
 
 namespace Zagreus {
 class MovePicker {
-private:
+   private:
     MoveList& moveList;
     std::array<int, MAX_MOVES> scores{};
     int currentIndex = 0;
 
-public:
-    explicit MovePicker(MoveList& moveList) : moveList(moveList) {
-    }
+   public:
+    explicit MovePicker(MoveList& moveList) : moveList(moveList) {}
 
     MovePicker(const MovePicker&) = delete;
 
@@ -55,6 +54,5 @@ public:
      * \param board The current board which is used to sort the moves.
      */
     void score(Board& board);
-
 };
-} // namespace Zagreus
+}  // namespace Zagreus

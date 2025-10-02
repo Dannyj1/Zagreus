@@ -19,10 +19,12 @@
  */
 
 #include "perft.h"
-#include <cassert>
+
 #include <array>
+#include <cassert>
 #include <iostream>
 #include <string>
+
 #include "move.h"
 #include "move_gen.h"
 #include "types.h"
@@ -84,5 +86,4 @@ uint64_t perft(Board& board, const int depth, bool printNodes) {
 
     return nodes;
 }
-} // namespace Zagreus
-
+}  // namespace Zagreus

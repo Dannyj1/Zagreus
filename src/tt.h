@@ -1,4 +1,3 @@
-
 /*
  This file is part of Zagreus.
 
@@ -23,11 +22,12 @@
 
 #include <algorithm>
 #include <cstdint>
+
 #include "move.h"
 
 namespace Zagreus {
 enum TTNodeType : uint8_t {
-    EXACT, // PV
+    EXACT,  // PV
     ALPHA,
     BETA
 };
@@ -41,18 +41,16 @@ struct TTEntry {
 };
 
 class TranspositionTable {
-private:
+   private:
     int history[COLORS][SQUARES][SQUARES]{};
 
-public:
+   public:
     TTEntry* transpositionTable = new TTEntry[1]{};
     uint64_t hashSize = 0;
 
     TranspositionTable() = default;
 
-    ~TranspositionTable() {
-        delete[] transpositionTable;
-    }
+    ~TranspositionTable() { delete[] transpositionTable; }
 
     void reset() {
         std::fill_n(transpositionTable, hashSize + 1, TTEntry{});
@@ -71,8 +69,7 @@ public:
 
     void setTableSize(int megaBytes);
 
-    void savePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove,
-                      TTNodeType nodeType) const;
+    void savePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
 
     [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply) const;
 
@@ -96,4 +93,4 @@ public:
         return history[color][fromSquare][toSquare];
     }
 };
-} // namespace Zagreus
+}  // namespace Zagreus

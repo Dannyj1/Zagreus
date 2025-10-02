@@ -32,7 +32,7 @@ namespace Zagreus {
 class UCIOption;
 
 class Engine {
-private:
+   private:
     bool didSetup = false;
     bool searchStopped = false;
     std::map<std::string, UCIOption> options{};
@@ -53,9 +53,10 @@ private:
     void processCommand(std::string_view command, const std::string& args);
     void processLine(const std::string& inputLine);
 
-public:
+   public:
     Engine() {
-        // Needs to be here so the position command does not mess with the zobrist hash, while we still do the most expensive setup when the specification allows it
+        // Needs to be here so the position command does not mess with the zobrist hash, while we still do the most
+        // expensive setup when the specification allows it
         initZobristConstants();
     }
 
@@ -68,7 +69,7 @@ public:
     void sendInfoMessage(std::string_view message);
     void sendMessage(std::string_view message);
     void doSetup();
-    [[nodiscard]] static std::string getVersionString() ;
+    [[nodiscard]] static std::string getVersionString();
     void printStartupMessage();
     void addOption(UCIOption& option);
     UCIOption& getOption(const std::string& name);
@@ -77,16 +78,10 @@ public:
     void setSearchStopped(bool value);
 };
 
-enum UCIOptionType {
-    Check,
-    Spin,
-    Combo,
-    Button,
-    String
-};
+enum UCIOptionType { Check, Spin, Combo, Button, String };
 
 class UCIOption {
-private:
+   private:
     std::string name;
     UCIOptionType optionType;
     std::string value;
@@ -94,16 +89,22 @@ private:
     std::string minValue;
     std::string maxValue;
     std::vector<std::string> var;
-public:
+
+   public:
     UCIOption() = default;
 
     UCIOption(std::string name, const UCIOptionType optionType) : name(std::move(name)), optionType(optionType) {}
 
-    UCIOption(std::string name, const UCIOptionType optionType, std::string defaultValue) : name(std::move(name)), optionType(optionType), defaultValue(std::move(defaultValue)) {
-    }
+    UCIOption(std::string name, const UCIOptionType optionType, std::string defaultValue)
+        : name(std::move(name)), optionType(optionType), defaultValue(std::move(defaultValue)) {}
 
-    UCIOption(std::string name, const UCIOptionType optionType, std::string defaultValue, std::string minValue, std::string maxValue) : name(std::move(name)), optionType(optionType), defaultValue(std::move(defaultValue)), minValue(std::move(minValue)), maxValue(std::move(maxValue)) {
-    }
+    UCIOption(std::string name, const UCIOptionType optionType, std::string defaultValue, std::string minValue,
+              std::string maxValue)
+        : name(std::move(name)),
+          optionType(optionType),
+          defaultValue(std::move(defaultValue)),
+          minValue(std::move(minValue)),
+          maxValue(std::move(maxValue)) {}
 
     UCIOptionType getOptionType() const;
 
@@ -141,4 +142,4 @@ public:
 };
 
 std::string removeRedundantSpaces(std::string_view input);
-} // namespace Zagreus
+}  // namespace Zagreus
