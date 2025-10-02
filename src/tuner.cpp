@@ -109,8 +109,8 @@ void updateEvaluationParameters() {
             static_cast<int>(std::round(basePieceOnStrongSquare[phase] + weights[squareControlWeightStart + phase]));
 
         // PieceOnWeakSquare
-        evalPieceOnWeakSquare[phase] = static_cast<int>(
-            std::round(basePieceOnWeakSquare[phase] + weights[squareControlWeightStart + GAME_PHASES + phase]));
+        evalPieceOnWeakSquarePenalty[phase] = static_cast<int>(
+            std::round(basePieceOnWeakSquarePenalty[phase] + weights[squareControlWeightStart + GAME_PHASES + phase]));
 
         // UnoccupiedStrongSquare
         evalUnoccupiedStrongSquare[phase] = static_cast<int>(std::round(
@@ -158,6 +158,7 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
 
         const double sigmoidValue = sigmoid(evalScore);
         const double error = (K * std::log(10.0) / 400.0) * (pos.result - sigmoidValue);
+        const double grad_base = -error * (isBlack ? -1.0 : 1.0);
         const int phase = eval.calculatePhase();
         const double mgPhaseScale = static_cast<double>(256 - phase) / 256.0;
         const double egPhaseScale = static_cast<double>(phase) / 256.0;
@@ -168,19 +169,20 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
             if (diff != 0.0) {
                 const int mgIndex = materialWeightStart + (MIDGAME * PIECE_TYPES) + piece;
                 const int egIndex = materialWeightStart + (ENDGAME * PIECE_TYPES) + piece;
-                gradients[mgIndex] += -error * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += -error * (diff * egPhaseScale) / N;
+                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
             }
         }
 
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
-            for (int square = 0; square < SQUARES; ++square) {
-                const double diff = eval.trace.pst[WHITE][piece][square] - eval.trace.pst[BLACK][piece][square];
+            for (int s = 0; s < SQUARES; ++s) {  // s is canonical square
+                const int s_flipped = s ^ 56;
+                const double diff = eval.trace.pst[WHITE][piece][s_flipped] - eval.trace.pst[BLACK][piece][s];
                 if (diff != 0.0) {
-                    const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
-                    const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
-                    gradients[mgIndex] += -error * (diff * mgPhaseScale) / N;
-                    gradients[egIndex] += -error * (diff * egPhaseScale) / N;
+                    const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + s;
+                    const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + s;
+                    gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
+                    gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
                 }
             }
         }
@@ -190,8 +192,8 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
             if (diff != 0.0) {
                 const int mgIndex = mobilityWeightStart + (MIDGAME * PIECE_TYPES) + piece;
                 const int egIndex = mobilityWeightStart + (ENDGAME * PIECE_TYPES) + piece;
-                gradients[mgIndex] += -error * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += -error * (diff * egPhaseScale) / N;
+                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
             }
         }
 
@@ -200,8 +202,8 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
             if (diff != 0.0) {
                 const int mgIndex = squareControlWeightStart + MIDGAME;
                 const int egIndex = squareControlWeightStart + ENDGAME;
-                gradients[mgIndex] += -error * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += -error * (diff * egPhaseScale) / N;
+                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
             }
         }
 
@@ -210,8 +212,8 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
             if (diff != 0.0) {
                 const int mgIndex = squareControlWeightStart + GAME_PHASES + MIDGAME;
                 const int egIndex = squareControlWeightStart + GAME_PHASES + ENDGAME;
-                gradients[mgIndex] += -error * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += -error * (diff * egPhaseScale) / N;
+                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
             }
         }
 
@@ -220,8 +222,8 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
             if (diff != 0.0) {
                 const int mgIndex = squareControlWeightStart + (2 * GAME_PHASES) + MIDGAME;
                 const int egIndex = squareControlWeightStart + (2 * GAME_PHASES) + ENDGAME;
-                gradients[mgIndex] += -error * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += -error * (diff * egPhaseScale) / N;
+                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
             }
         }
     }
