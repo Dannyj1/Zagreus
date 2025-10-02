@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['zobrist_5fcastling_5fblack_5fkingside_5findex_0',['ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX',['../constants_8h.html#a19b7f5ce24364970bf9a0d2ed28d3ce2',1,'constants.h']]],
-  ['zobrist_5fcastling_5fblack_5fqueenside_5findex_1',['ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX',['../constants_8h.html#a79d6939f215d359f64b751a6e3d314ea',1,'constants.h']]],
-  ['zobrist_5fcastling_5fwhite_5fkingside_5findex_2',['ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX',['../constants_8h.html#a792ff6636faa80fd402190354e8dddb2',1,'constants.h']]],
-  ['zobrist_5fcastling_5fwhite_5fqueenside_5findex_3',['ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX',['../constants_8h.html#a9fd6784240224a0f3bbbfb9cb6c12095',1,'constants.h']]],
-  ['zobrist_5fen_5fpassant_5fstart_5findex_4',['ZOBRIST_EN_PASSANT_START_INDEX',['../constants_8h.html#a88c95f25885741abbd2d288754a68b47',1,'constants.h']]],
-  ['zobrist_5fpiece_5fstart_5findex_5',['ZOBRIST_PIECE_START_INDEX',['../constants_8h.html#ad65345b8798f8291c40f1de8091a7350',1,'constants.h']]],
-  ['zobrist_5fside_5fto_5fmove_5findex_6',['ZOBRIST_SIDE_TO_MOVE_INDEX',['../constants_8h.html#a763d2f16525171e564b5ac63c5cb95c5',1,'constants.h']]]
+  ['rank_5f1_0',['RANK_1',['../constants_8h.html#ae1b4f7f9c47f74eac46c43684ef4dfda',1,'constants.h']]],
+  ['rank_5f2_1',['RANK_2',['../constants_8h.html#a2fe7ef7422ba07ee140346bb41240a1f',1,'constants.h']]],
+  ['rank_5f3_2',['RANK_3',['../constants_8h.html#a89f9c2403863c423d0fd1192c42a2728',1,'constants.h']]],
+  ['rank_5f4_3',['RANK_4',['../constants_8h.html#a2ee992a86019ad5c7419930b2598452e',1,'constants.h']]],
+  ['rank_5f5_4',['RANK_5',['../constants_8h.html#a29ff368db9e3b5a6729352a321a0e79c',1,'constants.h']]],
+  ['rank_5f6_5',['RANK_6',['../constants_8h.html#aad8e963e28196159c6b6a3b0c0ed5112',1,'constants.h']]],
+  ['rank_5f7_6',['RANK_7',['../constants_8h.html#a80dfe69e847b2d1dc6071488e5f76c3c',1,'constants.h']]],
+  ['rank_5f8_7',['RANK_8',['../constants_8h.html#a800d3b922a698275366a78f7fa8465f7',1,'constants.h']]]
 ];

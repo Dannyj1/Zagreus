@@ -97,48 +97,48 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">pcg_extras.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;cinttypes&gt;</code><br />
+<div class="textblock"><code>#include &lt;cassert&gt;</code><br />
+<code>#include &lt;cinttypes&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;cstdlib&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
-<code>#include &lt;cassert&gt;</code><br />
-<code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;iterator&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
+<code>#include &lt;locale&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
-<code>#include &lt;locale&gt;</code><br />
-<code>#include &lt;iterator&gt;</code><br />
 <code>#include &quot;pcg_uint128.hpp&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for pcg_extras.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="pcg__extras_8hpp__incl.png" border="0" usemap="#asrc_2pcg__extras_8hpp" alt=""/></div>
 <map name="asrc_2pcg__extras_8hpp" id="asrc_2pcg__extras_8hpp">
-<area shape="rect" title=" " alt="" coords="485,5,629,31"/>
-<area shape="rect" title=" " alt="" coords="5,79,88,104"/>
-<area shape="poly" title=" " alt="" coords="485,30,315,50,102,81,102,76,314,45,485,24"/>
-<area shape="rect" title=" " alt="" coords="113,79,183,104"/>
-<area shape="poly" title=" " alt="" coords="486,32,355,52,198,81,197,76,355,47,485,27"/>
-<area shape="rect" title=" " alt="" coords="207,79,273,104"/>
-<area shape="poly" title=" " alt="" coords="504,33,287,81,286,76,502,28"/>
-<area shape="rect" title=" " alt="" coords="297,79,364,104"/>
-<area shape="poly" title=" " alt="" coords="522,33,378,78,376,73,520,28"/>
-<area shape="rect" title=" " alt="" coords="388,79,457,104"/>
-<area shape="poly" title=" " alt="" coords="537,33,458,74,456,70,534,28"/>
-<area shape="rect" title=" " alt="" coords="481,79,540,104"/>
-<area shape="poly" title=" " alt="" coords="552,32,528,69,524,66,547,30"/>
-<area shape="rect" title=" " alt="" coords="564,79,644,104"/>
-<area shape="poly" title=" " alt="" coords="567,30,591,66,587,69,563,32"/>
-<area shape="rect" title=" " alt="" coords="669,79,761,104"/>
-<area shape="poly" title=" " alt="" coords="584,28,678,71,676,75,582,33"/>
-<area shape="rect" title=" " alt="" coords="785,79,845,104"/>
-<area shape="poly" title=" " alt="" coords="599,28,772,75,770,81,598,33"/>
-<area shape="rect" title=" " alt="" coords="869,79,931,104"/>
-<area shape="poly" title=" " alt="" coords="622,28,857,76,856,81,621,33"/>
-<area shape="rect" title=" " alt="" coords="955,79,1026,104"/>
-<area shape="poly" title=" " alt="" coords="630,26,770,46,942,76,941,81,769,52,629,31"/>
+<area shape="rect" title=" " alt="" coords="499,5,643,31"/>
+<area shape="rect" title=" " alt="" coords="5,79,75,104"/>
+<area shape="poly" title=" " alt="" coords="499,28,317,48,89,81,88,76,316,42,498,23"/>
+<area shape="rect" title=" " alt="" coords="99,79,181,104"/>
+<area shape="poly" title=" " alt="" coords="499,32,196,81,195,76,498,27"/>
+<area shape="rect" title=" " alt="" coords="206,79,277,104"/>
+<area shape="poly" title=" " alt="" coords="514,33,291,81,289,76,513,28"/>
+<area shape="rect" title=" " alt="" coords="301,79,366,104"/>
+<area shape="poly" title=" " alt="" coords="533,33,380,79,378,74,532,28"/>
+<area shape="rect" title=" " alt="" coords="391,79,457,104"/>
+<area shape="poly" title=" " alt="" coords="548,33,461,75,459,70,546,28"/>
+<area shape="rect" title=" " alt="" coords="481,79,561,104"/>
+<area shape="poly" title=" " alt="" coords="565,33,539,69,535,66,560,29"/>
+<area shape="rect" title=" " alt="" coords="586,79,657,104"/>
+<area shape="poly" title=" " alt="" coords="581,29,607,66,603,69,577,33"/>
+<area shape="rect" title=" " alt="" coords="681,79,740,104"/>
+<area shape="poly" title=" " alt="" coords="594,28,677,70,675,75,592,33"/>
+<area shape="rect" title=" " alt="" coords="764,79,825,104"/>
+<area shape="poly" title=" " alt="" coords="607,28,752,74,750,79,606,33"/>
+<area shape="rect" title=" " alt="" coords="850,79,942,104"/>
+<area shape="poly" title=" " alt="" coords="624,28,837,74,836,80,622,33"/>
+<area shape="rect" title=" " alt="" coords="966,79,1026,104"/>
+<area shape="poly" title=" " alt="" coords="643,25,783,45,953,76,952,81,782,50,643,31"/>
 <area shape="rect" title=" " alt="" coords="1050,79,1179,104"/>
-<area shape="poly" title=" " alt="" coords="630,25,1037,76,1036,81,629,30"/>
+<area shape="poly" title=" " alt="" coords="643,25,1037,76,1036,81,643,31"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -181,18 +181,18 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:af8b3abc3d67d2b36426c7556dc726307" id="r_af8b3abc3d67d2b36426c7556dc726307"><td class="memItemLeft" align="right" valign="top">typedef pcg_extras::uint_x4&lt; uint32_t, uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg_extras::pcg128_t</a></td></tr>
-<tr class="separator:af8b3abc3d67d2b36426c7556dc726307"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a598396e053d112413eaf530d29f18d1d" id="r_a598396e053d112413eaf530d29f18d1d"><td class="memItemLeft" align="right" valign="top">typedef pcg_extras::uint_x4&lt; uint32_t, uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a598396e053d112413eaf530d29f18d1d">pcg_extras::pcg128_t</a></td></tr>
+<tr class="separator:a598396e053d112413eaf530d29f18d1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65a637ab6de9e71377b242891018695c" id="r_a65a637ab6de9e71377b242891018695c"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a65a637ab6de9e71377b242891018695c">pcg_extras::bitcount_t</a></td></tr>
 <tr class="separator:a65a637ab6de9e71377b242891018695c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a2ca4c43cbcc10e146b49443d9f93de56" id="r_a2ca4c43cbcc10e146b49443d9f93de56"><td class="memTemplParams" colspan="2">template&lt;typename CharT , typename Traits &gt; </td></tr>
-<tr class="memitem:a2ca4c43cbcc10e146b49443d9f93de56"><td class="memTemplItemLeft" align="right" valign="top">std::basic_ostream&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a2ca4c43cbcc10e146b49443d9f93de56">pcg_extras::operator&lt;&lt;</a> (std::basic_ostream&lt; CharT, Traits &gt; &amp;out, <a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a> value)</td></tr>
+<tr class="memitem:a2ca4c43cbcc10e146b49443d9f93de56"><td class="memTemplItemLeft" align="right" valign="top">std::basic_ostream&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a2ca4c43cbcc10e146b49443d9f93de56">pcg_extras::operator&lt;&lt;</a> (std::basic_ostream&lt; CharT, Traits &gt; &amp;out, <a class="el" href="namespacepcg__extras.html#a598396e053d112413eaf530d29f18d1d">pcg128_t</a> value)</td></tr>
 <tr class="separator:a2ca4c43cbcc10e146b49443d9f93de56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a41e52e72f1a895d3eb84039e6b8a92" id="r_a1a41e52e72f1a895d3eb84039e6b8a92"><td class="memTemplParams" colspan="2">template&lt;typename CharT , typename Traits &gt; </td></tr>
-<tr class="memitem:a1a41e52e72f1a895d3eb84039e6b8a92"><td class="memTemplItemLeft" align="right" valign="top">std::basic_istream&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a1a41e52e72f1a895d3eb84039e6b8a92">pcg_extras::operator&gt;&gt;</a> (std::basic_istream&lt; CharT, Traits &gt; &amp;in, <a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a> &amp;value)</td></tr>
+<tr class="memitem:a1a41e52e72f1a895d3eb84039e6b8a92"><td class="memTemplItemLeft" align="right" valign="top">std::basic_istream&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a1a41e52e72f1a895d3eb84039e6b8a92">pcg_extras::operator&gt;&gt;</a> (std::basic_istream&lt; CharT, Traits &gt; &amp;in, <a class="el" href="namespacepcg__extras.html#a598396e053d112413eaf530d29f18d1d">pcg128_t</a> &amp;value)</td></tr>
 <tr class="separator:a1a41e52e72f1a895d3eb84039e6b8a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b23316570ef45b5db036cb3eb2aec27" id="r_a5b23316570ef45b5db036cb3eb2aec27"><td class="memTemplParams" colspan="2">template&lt;typename CharT , typename Traits &gt; </td></tr>
 <tr class="memitem:a5b23316570ef45b5db036cb3eb2aec27"><td class="memTemplItemLeft" align="right" valign="top">std::basic_ostream&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a5b23316570ef45b5db036cb3eb2aec27">pcg_extras::operator&lt;&lt;</a> (std::basic_ostream&lt; CharT, Traits &gt; &amp;out, uint8_t value)</td></tr>
@@ -231,7 +231,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a41e1950d9f7429f7e9775c3924a861db" id="r_a41e1950d9f7429f7e9775c3924a861db"><td class="memTemplParams" colspan="2">template&lt;size_t size, typename SeedSeq , typename DestIter &gt; </td></tr>
 <tr class="memitem:a41e1950d9f7429f7e9775c3924a861db"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#a41e1950d9f7429f7e9775c3924a861db">pcg_extras::generate_to</a> (SeedSeq &amp;&amp;generator, DestIter dest)</td></tr>
 <tr class="separator:a41e1950d9f7429f7e9775c3924a861db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa725ad9f9f0b511be8646ffff716665d" id="r_aa725ad9f9f0b511be8646ffff716665d"><td class="memTemplParams" colspan="2">template&lt;typename UInt , size_t i = 0UL, size_t N = i+1UL, typename SeedSeq &gt; </td></tr>
+<tr class="memitem:aa725ad9f9f0b511be8646ffff716665d" id="r_aa725ad9f9f0b511be8646ffff716665d"><td class="memTemplParams" colspan="2">template&lt;typename UInt , size_t i = 0UL, size_t N = i + 1UL, typename SeedSeq &gt; </td></tr>
 <tr class="memitem:aa725ad9f9f0b511be8646ffff716665d"><td class="memTemplItemLeft" align="right" valign="top">UInt&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepcg__extras.html#aa725ad9f9f0b511be8646ffff716665d">pcg_extras::generate_one</a> (SeedSeq &amp;&amp;generator)</td></tr>
 <tr class="separator:aa725ad9f9f0b511be8646ffff716665d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09fe30ab14f4bae059b13199966e6562" id="r_a09fe30ab14f4bae059b13199966e6562"><td class="memTemplParams" colspan="2">template&lt;typename RngType &gt; </td></tr>
@@ -263,7 +263,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">            pcg128_t(high,low)</div>
+<b>Value:</b><div class="fragment"><div class="line">pcg128_t(high, low)</div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00091">91</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
 
@@ -281,7 +281,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00093">93</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00092">92</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
 
 </div>
 </div>
@@ -297,7 +297,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00062">62</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00061">61</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
 
 </div>
 </div>

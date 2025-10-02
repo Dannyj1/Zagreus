@@ -1,9 +1,7 @@
 <map id="pcg_detail::engine::advance" name="pcg_detail::engine::advance">
-<area shape="rect" id="Node000001" title=" " alt="" coords="195,69,336,109"/>
-<area shape="rect" id="Node000002" href="$classpcg__detail_1_1engine.html#ad825cdb944e1a8c9e58e1b20dcbdf042" title=" " alt="" coords="5,5,147,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,67,135,48,137,43,194,62"/>
-<area shape="rect" id="Node000003" href="$classpcg__detail_1_1engine.html#adfb7a9ba483de8ef30e53ea3a9a7ba0e" title=" " alt="" coords="5,69,147,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="181,92,147,92,147,87,181,87"/>
-<area shape="rect" id="Node000004" href="$classpcg__detail_1_1engine.html#ab47ab15e70c4ac7d284509642a4628a1" title=" " alt="" coords="5,133,147,173"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="194,116,137,136,135,131,192,111"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="195,37,336,77"/>
+<area shape="rect" id="Node000002" href="$classpcg__detail_1_1engine.html#adfb7a9ba483de8ef30e53ea3a9a7ba0e" title=" " alt="" coords="5,5,147,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,46,146,40,147,35,182,41"/>
+<area shape="rect" id="Node000003" href="$classpcg__detail_1_1engine.html#ab47ab15e70c4ac7d284509642a4628a1" title=" " alt="" coords="5,69,147,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="182,74,147,80,146,75,181,69"/>
 </map>

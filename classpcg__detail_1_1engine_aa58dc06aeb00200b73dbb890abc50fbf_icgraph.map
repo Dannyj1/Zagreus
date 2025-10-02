@@ -1,5 +1,7 @@
 <map id="pcg_detail::engine::distance" name="pcg_detail::engine::distance">
-<area shape="rect" id="Node000001" title=" " alt="" coords="195,5,336,45"/>
-<area shape="rect" id="Node000002" href="$classpcg__detail_1_1engine.html#a00e9d352d7c83b5c5287d7b55b19b4bc" title=" " alt="" coords="5,5,147,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,28,147,28,147,23,181,23"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="211,35,352,75"/>
+<area shape="rect" id="Node000002" href="$classpcg__detail_1_1engine.html#a00e9d352d7c83b5c5287d7b55b19b4bc" title=" " alt="" coords="13,5,155,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,45,155,39,156,33,197,40"/>
+<area shape="rect" id="Node000003" href="$namespacepcg__detail.html#a4aae5e3d1c68d31e2608dcd41572869c" title=" " alt="" coords="5,70,163,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="197,69,163,74,162,69,196,64"/>
 </map>

@@ -87,8 +87,7 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">pcg_detail Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -131,6 +130,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpcg__detail_1_1specific__stream.html">specific_stream</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpcg__detail_1_1unique__stream.html">unique_stream</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpcg__detail_1_1xsh__mixin.html">xsh_mixin</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpcg__detail_1_1xsh__rr__mixin.html">xsh_rr_mixin</a></td></tr>
@@ -146,25 +147,21 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ad5095fef675921b63d0a1b6f27d94860" id="r_ad5095fef675921b63d0a1b6f27d94860"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
-<tr class="memitem:ad5095fef675921b63d0a1b6f27d94860"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad5095fef675921b63d0a1b6f27d94860">oneseq_base</a></td></tr>
-<tr class="separator:ad5095fef675921b63d0a1b6f27d94860"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a109cde600ca2ce6a9587f7106340a760" id="r_a109cde600ca2ce6a9587f7106340a760"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
-<tr class="memitem:a109cde600ca2ce6a9587f7106340a760"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a109cde600ca2ce6a9587f7106340a760">unique_base</a></td></tr>
-<tr class="separator:a109cde600ca2ce6a9587f7106340a760"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae40270c071954c20a28b5362dbee43d0" id="r_ae40270c071954c20a28b5362dbee43d0"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
-<tr class="memitem:ae40270c071954c20a28b5362dbee43d0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae40270c071954c20a28b5362dbee43d0">setseq_base</a></td></tr>
-<tr class="separator:ae40270c071954c20a28b5362dbee43d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71530cd89a1c16f73ea7672210065e7e" id="r_a71530cd89a1c16f73ea7672210065e7e"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
-<tr class="memitem:a71530cd89a1c16f73ea7672210065e7e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a71530cd89a1c16f73ea7672210065e7e">mcg_base</a></td></tr>
-<tr class="separator:a71530cd89a1c16f73ea7672210065e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab995052dddc2fecd697d45a8a8616608" id="r_ab995052dddc2fecd697d45a8a8616608"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
+<tr class="memitem:ab995052dddc2fecd697d45a8a8616608"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab995052dddc2fecd697d45a8a8616608">oneseq_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1oneseq__stream.html">oneseq_stream</a>&lt;itype&gt;&gt;</td></tr>
+<tr class="separator:ab995052dddc2fecd697d45a8a8616608"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e89a90e05317f5f4748e44144ea33bf" id="r_a0e89a90e05317f5f4748e44144ea33bf"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
+<tr class="memitem:a0e89a90e05317f5f4748e44144ea33bf"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0e89a90e05317f5f4748e44144ea33bf">unique_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1unique__stream.html">unique_stream</a>&lt;itype&gt;&gt;</td></tr>
+<tr class="separator:a0e89a90e05317f5f4748e44144ea33bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1aa8d33f185ffc47ee4b7665ee25490" id="r_ac1aa8d33f185ffc47ee4b7665ee25490"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
+<tr class="memitem:ac1aa8d33f185ffc47ee4b7665ee25490"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac1aa8d33f185ffc47ee4b7665ee25490">setseq_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1specific__stream.html">specific_stream</a>&lt;itype&gt;&gt;</td></tr>
+<tr class="separator:ac1aa8d33f185ffc47ee4b7665ee25490"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ca213690ef2b41c96872968d5af0ede" id="r_a9ca213690ef2b41c96872968d5af0ede"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </td></tr>
+<tr class="memitem:a9ca213690ef2b41c96872968d5af0ede"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9ca213690ef2b41c96872968d5af0ede">mcg_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1no__stream.html">no_stream</a>&lt;itype&gt;&gt;</td></tr>
+<tr class="separator:a9ca213690ef2b41c96872968d5af0ede"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6b95611bc9c355e26db45d06136a32dd" id="r_a6b95611bc9c355e26db45d06136a32dd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b95611bc9c355e26db45d06136a32dd">PCG_DEFINE_CONSTANT</a> (<a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a>, <a class="el" href="#a7cefe974db0a1bb3a1fef33b171dfe60">default</a>, multiplier, <a class="el" href="#a5076fb5d29a1e7226df47ddba552512b">PCG_128BIT_CONSTANT</a>(2549297995355413924ULL, 4865540595714422341ULL)) PCG_DEFINE_CONSTANT(<a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a></td></tr>
-<tr class="separator:a6b95611bc9c355e26db45d06136a32dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5076fb5d29a1e7226df47ddba552512b" id="r_a5076fb5d29a1e7226df47ddba552512b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5076fb5d29a1e7226df47ddba552512b">PCG_128BIT_CONSTANT</a> (6364136223846793005ULL, 1442695040888963407ULL)) template&lt; typename itype &gt; class unique_stream</td></tr>
-<tr class="separator:a5076fb5d29a1e7226df47ddba552512b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b9a337ed222873a06dd92a1d5ee18ee" id="r_a5b9a337ed222873a06dd92a1d5ee18ee"><td class="memTemplParams" colspan="2">template&lt;typename CharT , typename Traits , typename xtype , typename itype , typename output_mixin , bool output_previous, typename stream_mixin , typename multiplier_mixin &gt; </td></tr>
 <tr class="memitem:a5b9a337ed222873a06dd92a1d5ee18ee"><td class="memTemplItemLeft" align="right" valign="top">std::basic_ostream&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5b9a337ed222873a06dd92a1d5ee18ee">operator&lt;&lt;</a> (std::basic_ostream&lt; CharT, Traits &gt; &amp;out, const <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt; &amp;rng)</td></tr>
 <tr class="separator:a5b9a337ed222873a06dd92a1d5ee18ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,10 +177,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ae301c41cc112c18882cd3f69d4a79c00" id="r_ae301c41cc112c18882cd3f69d4a79c00"><td class="memTemplParams" colspan="2">template&lt;typename xtype , typename itype , typename output_mixin , bool output_previous, typename stream_mixin_lhs , typename multiplier_mixin_lhs , typename stream_mixin_rhs , typename multiplier_mixin_rhs &gt; </td></tr>
 <tr class="memitem:ae301c41cc112c18882cd3f69d4a79c00"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae301c41cc112c18882cd3f69d4a79c00">operator!=</a> (const <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt; xtype, itype, output_mixin, output_previous, stream_mixin_lhs, multiplier_mixin_lhs &gt; &amp;lhs, const <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt; xtype, itype, output_mixin, output_previous, stream_mixin_rhs, multiplier_mixin_rhs &gt; &amp;rhs)</td></tr>
 <tr class="separator:ae301c41cc112c18882cd3f69d4a79c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8eca94340632aea6e654fc12f4f54fb3" id="r_a8eca94340632aea6e654fc12f4f54fb3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8eca94340632aea6e654fc12f4f54fb3">PCG_DEFINE_CONSTANT</a> (<a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a>, <a class="el" href="#a1338b2f0b0575e795053506ae0579262">mcg</a>, multiplier, <a class="el" href="#a5076fb5d29a1e7226df47ddba552512b">PCG_128BIT_CONSTANT</a>(17766728186571221404ULL, 12605985483714917081ULL)) PCG_DEFINE_CONSTANT(<a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a></td></tr>
-<tr class="separator:a8eca94340632aea6e654fc12f4f54fb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c64172ece8dce70c1e0f9a41e4e4409" id="r_a7c64172ece8dce70c1e0f9a41e4e4409"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c64172ece8dce70c1e0f9a41e4e4409">PCG_128BIT_CONSTANT</a> (14422606686972528997ULL, 15009553638781119849ULL)) template&lt; typename xtype</td></tr>
-<tr class="separator:a7c64172ece8dce70c1e0f9a41e4e4409"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5285db7f4a5ff43c3f68fe9ea87426e" id="r_af5285db7f4a5ff43c3f68fe9ea87426e"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespacepcg__extras.html#a65a637ab6de9e71377b242891018695c">bitcount_t</a> table_pow2, <a class="el" href="namespacepcg__extras.html#a65a637ab6de9e71377b242891018695c">bitcount_t</a> advance_pow2, typename baseclass , typename extvalclass , bool kdd&gt; </td></tr>
 <tr class="memitem:af5285db7f4a5ff43c3f68fe9ea87426e"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af5285db7f4a5ff43c3f68fe9ea87426e">operator==</a> (const <a class="el" href="classpcg__detail_1_1extended.html">extended</a>&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt; &amp;lhs, const <a class="el" href="classpcg__detail_1_1extended.html">extended</a>&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt; &amp;rhs)</td></tr>
 <tr class="separator:af5285db7f4a5ff43c3f68fe9ea87426e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,21 +189,10 @@ Functions</h2></td></tr>
 <tr class="memitem:aa91742de07f5a49f68b78012e2d90213" id="r_aa91742de07f5a49f68b78012e2d90213"><td class="memTemplParams" colspan="2">template&lt;typename CharT , typename Traits , <a class="el" href="namespacepcg__extras.html#a65a637ab6de9e71377b242891018695c">bitcount_t</a> table_pow2, <a class="el" href="namespacepcg__extras.html#a65a637ab6de9e71377b242891018695c">bitcount_t</a> advance_pow2, typename baseclass , typename extvalclass , bool kdd&gt; </td></tr>
 <tr class="memitem:aa91742de07f5a49f68b78012e2d90213"><td class="memTemplItemLeft" align="right" valign="top">std::basic_istream&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa91742de07f5a49f68b78012e2d90213">operator&gt;&gt;</a> (std::basic_istream&lt; CharT, Traits &gt; &amp;in, <a class="el" href="classpcg__detail_1_1extended.html">extended</a>&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt; &amp;rng)</td></tr>
 <tr class="separator:aa91742de07f5a49f68b78012e2d90213"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a7cefe974db0a1bb3a1fef33b171dfe60" id="r_a7cefe974db0a1bb3a1fef33b171dfe60"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cefe974db0a1bb3a1fef33b171dfe60">default</a></td></tr>
-<tr class="separator:a7cefe974db0a1bb3a1fef33b171dfe60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a247ab2bf10e0640c12437b650ab15848" id="r_a247ab2bf10e0640c12437b650ab15848"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a247ab2bf10e0640c12437b650ab15848">increment</a></td></tr>
-<tr class="separator:a247ab2bf10e0640c12437b650ab15848"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1338b2f0b0575e795053506ae0579262" id="r_a1338b2f0b0575e795053506ae0579262"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1338b2f0b0575e795053506ae0579262">mcg</a></td></tr>
-<tr class="separator:a1338b2f0b0575e795053506ae0579262"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a260bd33be49f954c81d6905bd68728c8" id="r_a260bd33be49f954c81d6905bd68728c8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a260bd33be49f954c81d6905bd68728c8">unmultiplier</a></td></tr>
-<tr class="separator:a260bd33be49f954c81d6905bd68728c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a id="a71530cd89a1c16f73ea7672210065e7e" name="a71530cd89a1c16f73ea7672210065e7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71530cd89a1c16f73ea7672210065e7e">&#9670;&#160;</a></span>mcg_base</h2>
+<a id="a9ca213690ef2b41c96872968d5af0ede" name="a9ca213690ef2b41c96872968d5af0ede"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ca213690ef2b41c96872968d5af0ede">&#9670;&#160;</a></span>mcg_base</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,20 +200,17 @@ Variables</h2></td></tr>
 template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="#a71530cd89a1c16f73ea7672210065e7e">pcg_detail::mcg_base</a></td>
+          <td class="memname">using <a class="el" href="#a9ca213690ef2b41c96872968d5af0ede">pcg_detail::mcg_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1no__stream.html">no_stream</a>&lt;itype&gt;&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line"> engine&lt;xtype, itype,</div>
-<div class="line">                      output_mixin&lt;xtype, itype&gt;, output_previous,</div>
-<div class="line">                      no_stream&lt;itype&gt; &gt;</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00737">737</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00573">573</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
-<a id="ad5095fef675921b63d0a1b6f27d94860" name="ad5095fef675921b63d0a1b6f27d94860"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5095fef675921b63d0a1b6f27d94860">&#9670;&#160;</a></span>oneseq_base</h2>
+<a id="ab995052dddc2fecd697d45a8a8616608" name="ab995052dddc2fecd697d45a8a8616608"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab995052dddc2fecd697d45a8a8616608">&#9670;&#160;</a></span>oneseq_base</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,20 +218,17 @@ template&lt;typename xtype , typename itype , template&lt; typename XT, typename
 template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="#ad5095fef675921b63d0a1b6f27d94860">pcg_detail::oneseq_base</a></td>
+          <td class="memname">using <a class="el" href="#ab995052dddc2fecd697d45a8a8616608">pcg_detail::oneseq_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1oneseq__stream.html">oneseq_stream</a>&lt;itype&gt;&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line"> engine&lt;xtype, itype,</div>
-<div class="line">                        output_mixin&lt;xtype, itype&gt;, output_previous,</div>
-<div class="line">                        oneseq_stream&lt;itype&gt; &gt;</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00716">716</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00561">561</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
-<a id="ae40270c071954c20a28b5362dbee43d0" name="ae40270c071954c20a28b5362dbee43d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae40270c071954c20a28b5362dbee43d0">&#9670;&#160;</a></span>setseq_base</h2>
+<a id="ac1aa8d33f185ffc47ee4b7665ee25490" name="ac1aa8d33f185ffc47ee4b7665ee25490"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1aa8d33f185ffc47ee4b7665ee25490">&#9670;&#160;</a></span>setseq_base</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -260,20 +236,17 @@ template&lt;typename xtype , typename itype , template&lt; typename XT, typename
 template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="#ae40270c071954c20a28b5362dbee43d0">pcg_detail::setseq_base</a></td>
+          <td class="memname">using <a class="el" href="#ac1aa8d33f185ffc47ee4b7665ee25490">pcg_detail::setseq_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1specific__stream.html">specific_stream</a>&lt;itype&gt;&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line"> engine&lt;xtype, itype,</div>
-<div class="line">                         output_mixin&lt;xtype, itype&gt;, output_previous,</div>
-<div class="line">                         specific_stream&lt;itype&gt; &gt;</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00730">730</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00569">569</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a109cde600ca2ce6a9587f7106340a760" name="a109cde600ca2ce6a9587f7106340a760"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a109cde600ca2ce6a9587f7106340a760">&#9670;&#160;</a></span>unique_base</h2>
+<a id="a0e89a90e05317f5f4748e44144ea33bf" name="a0e89a90e05317f5f4748e44144ea33bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e89a90e05317f5f4748e44144ea33bf">&#9670;&#160;</a></span>unique_base</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -281,15 +254,12 @@ template&lt;typename xtype , typename itype , template&lt; typename XT, typename
 template&lt;typename xtype , typename itype , template&lt; typename XT, typename IT &gt; class output_mixin, bool output_previous = (sizeof(itype) &lt;= 8)&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="#a109cde600ca2ce6a9587f7106340a760">pcg_detail::unique_base</a></td>
+          <td class="memname">using <a class="el" href="#a0e89a90e05317f5f4748e44144ea33bf">pcg_detail::unique_base</a> = <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, <a class="el" href="classpcg__detail_1_1unique__stream.html">unique_stream</a>&lt;itype&gt;&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line"> engine&lt;xtype, itype,</div>
-<div class="line">                         output_mixin&lt;xtype, itype&gt;, output_previous,</div>
-<div class="line">                         unique_stream&lt;itype&gt; &gt;</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00723">723</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00565">565</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -323,7 +293,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00702">702</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00553">553</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -366,7 +336,7 @@ template&lt;<a class="el" href="namespacepcg__extras.html#a65a637ab6de9e71377b24
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01368">1368</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01115">1115</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -391,7 +361,17 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00668">668</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00535">535</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespacepcg__detail_a4aae5e3d1c68d31e2608dcd41572869c_cgraph.png" border="0" usemap="#anamespacepcg__detail_a4aae5e3d1c68d31e2608dcd41572869c_cgraph" alt=""/></div>
+<map name="anamespacepcg__detail_a4aae5e3d1c68d31e2608dcd41572869c_cgraph" id="anamespacepcg__detail_a4aae5e3d1c68d31e2608dcd41572869c_cgraph">
+<area shape="rect" title=" " alt="" coords="5,13,163,38"/>
+<area shape="rect" href="classpcg__detail_1_1engine.html#aa58dc06aeb00200b73dbb890abc50fbf" title=" " alt="" coords="211,5,352,45"/>
+<area shape="poly" title=" " alt="" coords="163,23,197,23,197,28,163,28"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -416,7 +396,7 @@ template&lt;typename CharT , typename Traits , typename xtype , typename itype ,
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00152">152</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01433">1433</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -441,7 +421,7 @@ template&lt;typename CharT , typename Traits , <a class="el" href="namespacepcg_
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01368">1368</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01115">1115</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -466,7 +446,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00686">686</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00545">545</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -501,7 +481,7 @@ template&lt;<a class="el" href="namespacepcg__extras.html#a65a637ab6de9e71377b24
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01355">1355</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01107">1107</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -526,7 +506,17 @@ template&lt;typename CharT , typename Traits , typename xtype , typename itype ,
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00579">579</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00455">455</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespacepcg__detail_a068443fd2c3baef10154c6a164a50200_cgraph.png" border="0" usemap="#anamespacepcg__detail_a068443fd2c3baef10154c6a164a50200_cgraph" alt=""/></div>
+<map name="anamespacepcg__detail_a068443fd2c3baef10154c6a164a50200_cgraph" id="anamespacepcg__detail_a068443fd2c3baef10154c6a164a50200_cgraph">
+<area shape="rect" title=" " alt="" coords="5,13,180,38"/>
+<area shape="rect" href="classpcg__detail_1_1oneseq__stream.html#a12107cf1c4f41caf6f3fc1366e7edf0d" title=" " alt="" coords="228,5,384,45"/>
+<area shape="poly" title=" " alt="" coords="180,23,214,23,214,28,180,28"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -551,178 +541,7 @@ template&lt;typename CharT , typename Traits , <a class="el" href="namespacepcg_
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01404">1404</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a7c64172ece8dce70c1e0f9a41e4e4409" name="a7c64172ece8dce70c1e0f9a41e4e4409"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c64172ece8dce70c1e0f9a41e4e4409">&#9670;&#160;</a></span>PCG_128BIT_CONSTANT() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::PCG_128BIT_CONSTANT </td>
-          <td>(</td>
-          <td class="paramtype">14422606686972528997ULL</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">15009553638781119849ULL</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5076fb5d29a1e7226df47ddba552512b" name="a5076fb5d29a1e7226df47ddba552512b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5076fb5d29a1e7226df47ddba552512b">&#9670;&#160;</a></span>PCG_128BIT_CONSTANT() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::PCG_128BIT_CONSTANT </td>
-          <td>(</td>
-          <td class="paramtype">6364136223846793005ULL</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">1442695040888963407ULL</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00152">152</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a6b95611bc9c355e26db45d06136a32dd" name="a6b95611bc9c355e26db45d06136a32dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b95611bc9c355e26db45d06136a32dd">&#9670;&#160;</a></span>PCG_DEFINE_CONSTANT() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::PCG_DEFINE_CONSTANT </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a></td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a7cefe974db0a1bb3a1fef33b171dfe60">default</a></td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">multiplier</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a5076fb5d29a1e7226df47ddba552512b">PCG_128BIT_CONSTANT</a>(2549297995355413924ULL, 4865540595714422341ULL)</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8eca94340632aea6e654fc12f4f54fb3" name="a8eca94340632aea6e654fc12f4f54fb3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8eca94340632aea6e654fc12f4f54fb3">&#9670;&#160;</a></span>PCG_DEFINE_CONSTANT() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::PCG_DEFINE_CONSTANT </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespacepcg__extras.html#af8b3abc3d67d2b36426c7556dc726307">pcg128_t</a></td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a1338b2f0b0575e795053506ae0579262">mcg</a></td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">multiplier</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a5076fb5d29a1e7226df47ddba552512b">PCG_128BIT_CONSTANT</a>(17766728186571221404ULL, 12605985483714917081ULL)</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="a7cefe974db0a1bb3a1fef33b171dfe60" name="a7cefe974db0a1bb3a1fef33b171dfe60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cefe974db0a1bb3a1fef33b171dfe60">&#9670;&#160;</a></span>default</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::default</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00151">151</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a247ab2bf10e0640c12437b650ab15848" name="a247ab2bf10e0640c12437b650ab15848"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a247ab2bf10e0640c12437b650ab15848">&#9670;&#160;</a></span>increment</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::increment</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00151">151</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a1338b2f0b0575e795053506ae0579262" name="a1338b2f0b0575e795053506ae0579262"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1338b2f0b0575e795053506ae0579262">&#9670;&#160;</a></span>mcg</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::mcg</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00891">891</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a260bd33be49f954c81d6905bd68728c8" name="a260bd33be49f954c81d6905bd68728c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a260bd33be49f954c81d6905bd68728c8">&#9670;&#160;</a></span>unmultiplier</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pcg_detail::unmultiplier</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00891">891</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l01140">1140</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>

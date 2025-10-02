@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['whiteinc_0',['whiteInc',['../structZagreus_1_1SearchParams.html#ae64edfa9997730b853a1ca4e0a58205f',1,'Zagreus::SearchParams']]],
-  ['whitetime_1',['whiteTime',['../structZagreus_1_1SearchParams.html#a05e3612c3fadb30878fc56e636c6b425',1,'Zagreus::SearchParams']]]
+  ['zobristhash_0',['zobristHash',['../structZagreus_1_1BoardState.html#afc232be750e7efa53b5c03508f51d606',1,'Zagreus::BoardState']]]
 ];

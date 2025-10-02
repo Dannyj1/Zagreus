@@ -1,5 +1,4 @@
 <map id="pcg_detail::engine::advance" name="pcg_detail::engine::advance">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,147,45"/>
-<area shape="rect" id="Node000002" href="$classpcg__detail_1_1engine.html#a12d3653cfe490a59f7ce55d028f1a7e0" title=" " alt="" coords="195,5,336,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,23,181,23,181,28,147,28"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,147,69"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="49,29,47,20,52,11,61,5,76,3,93,6,102,13,99,17,91,11,76,8,63,10,56,14,53,20,54,29"/>
 </map>

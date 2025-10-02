@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['increment_0',['increment',['../classpcg__detail_1_1no__stream.html#a66595e3e5a36627092dbd551011e3672',1,'pcg_detail::no_stream::increment()'],['../classpcg__detail_1_1specific__stream.html#a27613848a2d0cce630b09fb3f4efd8ea',1,'pcg_detail::specific_stream::increment()']]],
+  ['increment_0',['increment',['../classpcg__detail_1_1unique__stream.html#a31b87fef92aae8e285522a441417c685',1,'pcg_detail::unique_stream::increment()'],['../classpcg__detail_1_1no__stream.html#a66595e3e5a36627092dbd551011e3672',1,'pcg_detail::no_stream::increment()'],['../classpcg__detail_1_1specific__stream.html#a27613848a2d0cce630b09fb3f4efd8ea',1,'pcg_detail::specific_stream::increment()']]],
   ['index_5fto_5fuint64_5ft_1',['index_to_uint64_t',['../namespaceZagreus.html#a15a6487ba787f60a788c341846fc3cf2',1,'Zagreus']]],
   ['init_5fsliders_5fattacks_2',['init_sliders_attacks',['../namespaceZagreus.html#a294ebe229d913ef95b6b65410c2d84e2',1,'Zagreus']]],
   ['initializeattacklookuptables_3',['initializeAttackLookupTables',['../namespaceZagreus.html#af09541379517ebbc25c28b2070c83221',1,'Zagreus']]],

@@ -99,13 +99,13 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a0168de8c2e22973e0d7802ed69050d6f" id="r_a0168de8c2e22973e0d7802ed69050d6f"><td class="memItemLeft" align="right" valign="top">static constexpr IntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0168de8c2e22973e0d7802ed69050d6f">value</a></td></tr>
+<tr class="memitem:a0168de8c2e22973e0d7802ed69050d6f" id="r_a0168de8c2e22973e0d7802ed69050d6f"><td class="memItemLeft" align="right" valign="top">static constexpr IntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0168de8c2e22973e0d7802ed69050d6f">value</a> = fnv(IntType(2166136261U ^ sizeof(IntType)), __DATE__ __TIME__ __FILE__)</td></tr>
 <tr class="separator:a0168de8c2e22973e0d7802ed69050d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename IntType&gt;<br />
 struct pcg_extras::static_arbitrary_seed&lt; IntType &gt;</div>
-<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00595">595</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00534">534</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a0168de8c2e22973e0d7802ed69050d6f" name="a0168de8c2e22973e0d7802ed69050d6f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0168de8c2e22973e0d7802ed69050d6f">&#9670;&#160;</a></span>value</h2>
@@ -119,7 +119,7 @@ template&lt;typename IntType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">IntType <a class="el" href="structpcg__extras_1_1static__arbitrary__seed.html">pcg_extras::static_arbitrary_seed</a>&lt; IntType &gt;::value</td>
+          <td class="memname">IntType <a class="el" href="structpcg__extras_1_1static__arbitrary__seed.html">pcg_extras::static_arbitrary_seed</a>&lt; IntType &gt;::value = fnv(IntType(2166136261U ^ sizeof(IntType)), __DATE__ __TIME__ __FILE__)</td>
         </tr>
       </table>
   </td>
@@ -128,10 +128,8 @@ template&lt;typename IntType &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= fnv(IntType(2166136261U ^ <span class="keyword">sizeof</span>(IntType)),</div>
-<div class="line">                        __DATE__ __TIME__ __FILE__)</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00604">604</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="pcg__extras_8hpp_source.html#l00541">541</a> of file <a class="el" href="pcg__extras_8hpp_source.html">pcg_extras.hpp</a>.</p>
 
 </div>
 </div>

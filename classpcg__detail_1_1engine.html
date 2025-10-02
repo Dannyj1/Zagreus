@@ -172,9 +172,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a911dbf0e47820abfe544bde5e63f5645" id="r_a911dbf0e47820abfe544bde5e63f5645"><td class="memTemplParams" colspan="2">template&lt;typename sm  = stream_mixin&gt; </td></tr>
 <tr class="memitem:a911dbf0e47820abfe544bde5e63f5645"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a911dbf0e47820abfe544bde5e63f5645">engine</a> (itype state, typename sm::stream_state stream_seed)</td></tr>
 <tr class="separator:a911dbf0e47820abfe544bde5e63f5645"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bbf8478024a65a6d07f5adedaf2d7ae" id="r_a4bbf8478024a65a6d07f5adedaf2d7ae"><td class="memTemplParams" colspan="2">template&lt;typename SeedSeq &gt; </td></tr>
-<tr class="memitem:a4bbf8478024a65a6d07f5adedaf2d7ae"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4bbf8478024a65a6d07f5adedaf2d7ae">engine</a> (SeedSeq &amp;&amp;seedSeq, typename std::enable_if&lt; !stream_mixin::can_specify_stream &amp;&amp;!std::is_convertible&lt; SeedSeq, itype &gt;::value &amp;&amp;!std::is_convertible&lt; SeedSeq, <a class="el" href="classpcg__detail_1_1engine.html">engine</a> &gt;::value, <a class="el" href="structpcg__detail_1_1engine_1_1no__specifiable__stream__tag.html">no_specifiable_stream_tag</a> &gt;::type={})</td></tr>
-<tr class="separator:a4bbf8478024a65a6d07f5adedaf2d7ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a346579aae6e9f583d1db948bc666c665" id="r_a346579aae6e9f583d1db948bc666c665"><td class="memTemplParams" colspan="2">template&lt;typename SeedSeq &gt; </td></tr>
+<tr class="memitem:a346579aae6e9f583d1db948bc666c665"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a346579aae6e9f583d1db948bc666c665">engine</a> (SeedSeq &amp;&amp;seedSeq, typename std::enable_if&lt;!stream_mixin::can_specify_stream &amp;&amp;!std::is_convertible&lt; SeedSeq, itype &gt;::value &amp;&amp;!std::is_convertible&lt; SeedSeq, <a class="el" href="classpcg__detail_1_1engine.html">engine</a> &gt;::value, <a class="el" href="structpcg__detail_1_1engine_1_1no__specifiable__stream__tag.html">no_specifiable_stream_tag</a> &gt;::type={})</td></tr>
+<tr class="separator:a346579aae6e9f583d1db948bc666c665"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a5018b2637964646c6623442d68d24d" id="r_a4a5018b2637964646c6623442d68d24d"><td class="memTemplParams" colspan="2">template&lt;typename SeedSeq &gt; </td></tr>
 <tr class="memitem:a4a5018b2637964646c6623442d68d24d"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4a5018b2637964646c6623442d68d24d">engine</a> (SeedSeq &amp;&amp;seedSeq, typename std::enable_if&lt; stream_mixin::can_specify_stream &amp;&amp;!std::is_convertible&lt; SeedSeq, itype &gt;::value &amp;&amp;!std::is_convertible&lt; SeedSeq, <a class="el" href="classpcg__detail_1_1engine.html">engine</a> &gt;::value, <a class="el" href="structpcg__detail_1_1engine_1_1can__specify__stream__tag.html">can_specify_stream_tag</a> &gt;::type={})</td></tr>
 <tr class="separator:a4a5018b2637964646c6623442d68d24d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -209,7 +209,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="inherit_header pro_methods_classpcg__detail_1_1oneseq__stream"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classpcg__detail_1_1oneseq__stream')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classpcg__detail_1_1oneseq__stream.html">pcg_detail::oneseq_stream&lt; itype &gt;</a></td></tr>
 <tr class="memitem:a12107cf1c4f41caf6f3fc1366e7edf0d inherit pro_methods_classpcg__detail_1_1oneseq__stream" id="r_a12107cf1c4f41caf6f3fc1366e7edf0d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpcg__detail_1_1oneseq__stream.html#a12107cf1c4f41caf6f3fc1366e7edf0d">set_stream</a> (...)</td></tr>
 <tr class="separator:a12107cf1c4f41caf6f3fc1366e7edf0d inherit pro_methods_classpcg__detail_1_1oneseq__stream"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bd1152cb63171e71ef739d44bd392fa inherit pro_methods_classpcg__detail_1_1oneseq__stream" id="r_a3bd1152cb63171e71ef739d44bd392fa"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpcg__detail_1_1oneseq__stream.html#a3bd1152cb63171e71ef739d44bd392fa">oneseq_stream</a> ()=<a class="el" href="namespacepcg__detail.html#a7cefe974db0a1bb3a1fef33b171dfe60">default</a></td></tr>
+<tr class="memitem:a3bd1152cb63171e71ef739d44bd392fa inherit pro_methods_classpcg__detail_1_1oneseq__stream" id="r_a3bd1152cb63171e71ef739d44bd392fa"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpcg__detail_1_1oneseq__stream.html#a3bd1152cb63171e71ef739d44bd392fa">oneseq_stream</a> ()=default</td></tr>
 <tr class="separator:a3bd1152cb63171e71ef739d44bd392fa inherit pro_methods_classpcg__detail_1_1oneseq__stream"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
@@ -251,7 +251,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename xtype, typename itype, typename output_mixin, bool output_previous = true, typename stream_mixin = oneseq_stream&lt;itype&gt;, typename multiplier_mixin = default_multiplier&lt;itype&gt;&gt;<br />
 class pcg_detail::engine&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt;</div>
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00352">352</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00301">301</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a81cdacdeaef30ec157306b333a67cbe4" name="a81cdacdeaef30ec157306b333a67cbe4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a81cdacdeaef30ec157306b333a67cbe4">&#9670;&#160;</a></span>result_type</h2>
@@ -267,7 +267,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00365">365</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00313">313</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -285,7 +285,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00366">366</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00314">314</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -315,7 +315,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00458">458</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00373">373</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -364,12 +364,12 @@ template&lt;typename sm  = stream_mixin&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00469">469</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00382">382</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a4bbf8478024a65a6d07f5adedaf2d7ae" name="a4bbf8478024a65a6d07f5adedaf2d7ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bbf8478024a65a6d07f5adedaf2d7ae">&#9670;&#160;</a></span>engine() <span class="overload">[3/4]</span></h2>
+<a id="a346579aae6e9f583d1db948bc666c665" name="a346579aae6e9f583d1db948bc666c665"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a346579aae6e9f583d1db948bc666c665">&#9670;&#160;</a></span>engine() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -389,7 +389,7 @@ template&lt;typename SeedSeq &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt; !stream_mixin::can_specify_stream &amp;&amp;!std::is_convertible&lt; SeedSeq, itype &gt;::value &amp;&amp;!std::is_convertible&lt; SeedSeq, <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt; &gt;::value, <a class="el" href="structpcg__detail_1_1engine_1_1no__specifiable__stream__tag.html">no_specifiable_stream_tag</a> &gt;::type</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+          <td class="paramtype">typename std::enable_if&lt;!stream_mixin::can_specify_stream &amp;&amp;!std::is_convertible&lt; SeedSeq, itype &gt;::value &amp;&amp;!std::is_convertible&lt; SeedSeq, <a class="el" href="classpcg__detail_1_1engine.html">engine</a>&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt; &gt;::value, <a class="el" href="structpcg__detail_1_1engine_1_1no__specifiable__stream__tag.html">no_specifiable_stream_tag</a> &gt;::type</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -399,7 +399,7 @@ template&lt;typename SeedSeq &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00478">478</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00388">388</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -434,7 +434,7 @@ template&lt;typename SeedSeq &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00489">489</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00397">397</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -464,15 +464,23 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00431">431</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00356">356</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_cgraph.png" border="0" usemap="#aclasspcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_cgraph" alt=""/></div>
 <map name="aclasspcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_cgraph" id="aclasspcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_cgraph">
-<area shape="rect" title=" " alt="" coords="5,5,147,45"/>
-<area shape="rect" href="classpcg__detail_1_1engine.html#a12d3653cfe490a59f7ce55d028f1a7e0" title=" " alt="" coords="195,5,336,45"/>
-<area shape="poly" title=" " alt="" coords="147,23,181,23,181,28,147,28"/>
+<area shape="rect" title=" " alt="" coords="5,29,147,69"/>
+<area shape="poly" title=" " alt="" coords="49,29,47,20,52,11,61,5,76,3,93,6,102,13,99,17,91,11,76,8,63,10,56,14,53,20,54,29"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classpcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_icgraph.png" border="0" usemap="#aclasspcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_icgraph" alt=""/></div>
+<map name="aclasspcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_icgraph" id="aclasspcg__detail_1_1engine_ad825cdb944e1a8c9e58e1b20dcbdf042_icgraph">
+<area shape="rect" title=" " alt="" coords="5,29,147,69"/>
+<area shape="poly" title=" " alt="" coords="99,17,91,11,76,8,63,10,56,14,53,20,54,29,49,29,47,20,52,11,61,5,76,3,93,6,102,13"/>
 </map>
 </div>
 
@@ -517,19 +525,17 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00614">614</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00485">485</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpcg__detail_1_1engine_a12d3653cfe490a59f7ce55d028f1a7e0_icgraph.png" border="0" usemap="#aclasspcg__detail_1_1engine_a12d3653cfe490a59f7ce55d028f1a7e0_icgraph" alt=""/></div>
 <map name="aclasspcg__detail_1_1engine_a12d3653cfe490a59f7ce55d028f1a7e0_icgraph" id="aclasspcg__detail_1_1engine_a12d3653cfe490a59f7ce55d028f1a7e0_icgraph">
-<area shape="rect" title=" " alt="" coords="195,69,336,109"/>
-<area shape="rect" href="classpcg__detail_1_1engine.html#ad825cdb944e1a8c9e58e1b20dcbdf042" title=" " alt="" coords="5,5,147,45"/>
-<area shape="poly" title=" " alt="" coords="192,67,135,48,137,43,194,62"/>
-<area shape="rect" href="classpcg__detail_1_1engine.html#adfb7a9ba483de8ef30e53ea3a9a7ba0e" title=" " alt="" coords="5,69,147,109"/>
-<area shape="poly" title=" " alt="" coords="181,92,147,92,147,87,181,87"/>
-<area shape="rect" href="classpcg__detail_1_1engine.html#ab47ab15e70c4ac7d284509642a4628a1" title=" " alt="" coords="5,133,147,173"/>
-<area shape="poly" title=" " alt="" coords="194,116,137,136,135,131,192,111"/>
+<area shape="rect" title=" " alt="" coords="195,37,336,77"/>
+<area shape="rect" href="classpcg__detail_1_1engine.html#adfb7a9ba483de8ef30e53ea3a9a7ba0e" title=" " alt="" coords="5,5,147,45"/>
+<area shape="poly" title=" " alt="" coords="181,46,146,40,147,35,182,41"/>
+<area shape="rect" href="classpcg__detail_1_1engine.html#ab47ab15e70c4ac7d284509642a4628a1" title=" " alt="" coords="5,69,147,109"/>
+<area shape="poly" title=" " alt="" coords="182,74,147,80,146,75,181,69"/>
 </map>
 </div>
 
@@ -560,7 +566,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00436">436</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00358">358</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -599,7 +605,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00392">392</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00328">328</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -648,7 +654,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00397">397</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00330">330</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -697,7 +703,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00387">387</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00326">326</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -741,7 +747,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00441">441</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00360">360</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -799,15 +805,17 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00645">645</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00515">515</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpcg__detail_1_1engine_aa58dc06aeb00200b73dbb890abc50fbf_icgraph.png" border="0" usemap="#aclasspcg__detail_1_1engine_aa58dc06aeb00200b73dbb890abc50fbf_icgraph" alt=""/></div>
 <map name="aclasspcg__detail_1_1engine_aa58dc06aeb00200b73dbb890abc50fbf_icgraph" id="aclasspcg__detail_1_1engine_aa58dc06aeb00200b73dbb890abc50fbf_icgraph">
-<area shape="rect" title=" " alt="" coords="195,5,336,45"/>
-<area shape="rect" href="classpcg__detail_1_1engine.html#a00e9d352d7c83b5c5287d7b55b19b4bc" title=" " alt="" coords="5,5,147,45"/>
-<area shape="poly" title=" " alt="" coords="181,28,147,28,147,23,181,23"/>
+<area shape="rect" title=" " alt="" coords="211,35,352,75"/>
+<area shape="rect" href="classpcg__detail_1_1engine.html#a00e9d352d7c83b5c5287d7b55b19b4bc" title=" " alt="" coords="13,5,155,45"/>
+<area shape="poly" title=" " alt="" coords="197,45,155,39,156,33,197,40"/>
+<area shape="rect" href="namespacepcg__detail.html#a4aae5e3d1c68d31e2608dcd41572869c" title=" " alt="" coords="5,70,163,95"/>
+<area shape="poly" title=" " alt="" coords="197,69,163,74,162,69,196,64"/>
 </map>
 </div>
 
@@ -842,7 +850,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00425">425</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00351">351</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -881,7 +889,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00381">381</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00323">323</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -910,7 +918,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00376">376</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00321">321</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -939,7 +947,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00405">405</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00337">337</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -983,7 +991,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00413">413</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00344">344</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1022,7 +1030,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00368">368</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00316">316</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -1053,7 +1061,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00502">502</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00406">406</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1104,7 +1112,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00446">446</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00362">362</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
@@ -1264,7 +1272,7 @@ template&lt;typename xtype , typename itype , typename output_mixin , bool outpu
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00356">356</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pcg__random_8hpp_source.html#l00303">303</a> of file <a class="el" href="pcg__random_8hpp_source.html">pcg_random.hpp</a>.</p>
 
 </div>
 </div>
