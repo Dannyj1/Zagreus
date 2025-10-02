@@ -194,13 +194,13 @@ void Evaluation::evaluateKnights() {
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
 
         // Outposts
-        constexpr uint64_t outpostArea = (color == WHITE ? BLACK_HALF : WHITE_HALF) | CENTER_SQUARES;
+        constexpr uint64_t outpostRanks = color == WHITE ? (RANK_4 | RANK_5 | RANK_6) : (RANK_5 | RANK_4 | RANK_3);
         const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
         uint64_t attackSpanMask = color == WHITE ? shiftNorth(fillNorth(squareBB)) : shiftSouth(fillSouth(squareBB));
         attackSpanMask = shiftEast(attackSpanMask) | shiftWest(attackSpanMask);
         const uint64_t opponentPawnsBitboard = board.getPieceBoard<opponentPawnPiece>();
         const uint64_t attackingPawns = attackSpanMask & opponentPawnsBitboard;
-        const bool isOutpost = (squareBB & outpostArea & pawnDefendedSquares) != 0;
+        const bool isOutpost = (squareBB & outpostRanks & pawnDefendedSquares) != 0;
 
         if (isOutpost && !attackingPawns) {
             addScore<color>(evalKnightOutpostBonus[MIDGAME], evalKnightOutpostBonus[ENDGAME]);
