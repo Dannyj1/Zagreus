@@ -60,6 +60,12 @@ class TranspositionTable {
                 std::fill_n(history[color][fromSquare], SQUARES, 0);
             }
         }
+
+        for (int color = 0; color < COLORS; color++) {
+            for (int fromSquare = 0; fromSquare < SQUARES; fromSquare++) {
+                std::fill_n(history[color][fromSquare], SQUARES, 0);
+            }
+        }
     }
 
     TranspositionTable(TranspositionTable& other) = delete;
