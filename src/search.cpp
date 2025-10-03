@@ -303,7 +303,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 }
 
                 if (!isRoot) {
-                    tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
+                    tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
                 }
             }
 
@@ -440,7 +440,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
-                tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, bestMove, BETA);
+                tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
             }
 
             return score;
