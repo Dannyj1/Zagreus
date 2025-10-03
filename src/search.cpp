@@ -180,7 +180,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         // Null Move Pruning
-        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && !board.getPreviousMove() == NO_MOVE) {
+        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE) {
             board.makeNullMove();
             const int R = 2 + depth / 3;
             PvLine nmpPvLine = PvLine{board.getPly()};
@@ -235,8 +235,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         int score = INT32_MIN;
 
         // Late Move Reduction
-        if (movesSearched > 1 && depth >= 3 && !(isPV && capturedPiece != EMPTY) &&
-            !(isPV && getMoveType(move) == PROMOTION)) {
+        if (movesSearched > 1 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
             doFullSearch = false;
             int R = 0;
             const Square opponentKingSquare =
