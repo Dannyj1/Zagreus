@@ -56,7 +56,17 @@ void generateMoves(const Board& board, MoveList& moves) {
         const uint64_t enPassantSquareBB =
             board.getEnPassantSquare() == NO_EN_PASSANT ? 0 : squareToBitboard(board.getEnPassantSquare());
 
-        genMask &= (opponentPieces | enPassantSquareBB);
+        const uint64_t promotionRank = color == WHITE ? RANK_8 : RANK_1;
+        const uint64_t pawnBB = board.getPieceBoard < color == WHITE ? WHITE_PAWN : BLACK_PAWN > ();
+        uint64_t pawnPushesToPromotion;
+
+        if constexpr (color == WHITE) {
+            pawnPushesToPromotion = whitePawnSinglePush(pawnBB, board.getEmptyBitboard()) & promotionRank;
+        } else {
+            pawnPushesToPromotion = blackPawnSinglePush(pawnBB, board.getEmptyBitboard()) & promotionRank;
+        }
+
+        genMask &= (opponentPieces | enPassantSquareBB | pawnPushesToPromotion);
     } else if (type == EVASIONS) {
         const Square kingSquare = bitboardToSquare(board.getPieceBoard<ownKing>());
         const uint64_t attackers = board.getSquareAttackersByColor<opponentColor>(kingSquare);
