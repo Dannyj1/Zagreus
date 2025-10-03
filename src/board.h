@@ -74,7 +74,7 @@ class Board {
     uint16_t fullmoveClock = 1;
     uint8_t halfMoveClock = 0;
     uint8_t castlingRights = 0;
-    uint8_t enPassantSquare = 255;
+    uint8_t enPassantSquare = NO_EN_PASSANT;
 
    public:
     /**

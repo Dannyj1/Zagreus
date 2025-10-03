@@ -75,6 +75,7 @@
 #define MAX_PLIES 750
 #define MAX_MOVES 255
 #define NO_MOVE 0
+#define NO_EN_PASSANT 255
 
 #define NO_TT_SCORE INT16_MIN
 

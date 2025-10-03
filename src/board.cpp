@@ -209,7 +209,7 @@ void Board::reset() {
     this->fullmoveClock = 1;
     this->halfMoveClock = 0;
     this->castlingRights = 0;
-    this->enPassantSquare = 255;
+    this->enPassantSquare = NO_EN_PASSANT;
     this->previousPvLine = PvLine{0};
 
     std::ranges::fill(board, EMPTY);
@@ -456,11 +456,11 @@ void Board::makeMove(const Move move) {
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
 
-    if (enPassantSquare != 255) {
+    if (enPassantSquare != NO_EN_PASSANT) {
         zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
     }
 
-    enPassantSquare = 255;
+    enPassantSquare = NO_EN_PASSANT;
     history[ply].castlingRights = castlingRights;
     history[ply].zobristHash = zobristHash;
     history[ply].halfMoveClock = halfMoveClock;
@@ -625,7 +625,7 @@ void Board::makeMove(const Move move) {
     assert(ply < MAX_PLIES);
     ply++;
     assert(ply < MAX_PLIES);
-    assert(enPassantSquare == 255 || (enPassantSquare / 8 == 2 || enPassantSquare / 8 == 5));
+    assert(enPassantSquare == NO_EN_PASSANT || (enPassantSquare / 8 == 2 || enPassantSquare / 8 == 5));
 }
 
 /**
@@ -699,11 +699,11 @@ void Board::makeNullMove() {
     history[ply].capturedPiece = EMPTY;
     history[ply].enPassantSquare = enPassantSquare;
 
-    if (enPassantSquare != 255) {
+    if (enPassantSquare != NO_EN_PASSANT) {
         zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
     }
 
-    enPassantSquare = 255;
+    enPassantSquare = NO_EN_PASSANT;
     history[ply].castlingRights = castlingRights;
     history[ply].zobristHash = zobristHash;
     history[ply].halfMoveClock = halfMoveClock;

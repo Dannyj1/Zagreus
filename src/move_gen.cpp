@@ -53,8 +53,10 @@ void generateMoves(const Board& board, MoveList& moves) {
 
     if (type == QSEARCH) {
         const uint64_t opponentPieces = board.getColorBitboard<opponentColor>();
+        const uint64_t enPassantSquareBB =
+            board.getEnPassantSquare() == NO_EN_PASSANT ? 0 : squareToBitboard(board.getEnPassantSquare());
 
-        genMask &= opponentPieces;
+        genMask &= (opponentPieces | enPassantSquareBB);
     } else if (type == EVASIONS) {
         const Square kingSquare = bitboardToSquare(board.getPieceBoard<ownKing>());
         const uint64_t attackers = board.getSquareAttackersByColor<opponentColor>(kingSquare);
