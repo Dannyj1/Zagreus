@@ -82,7 +82,10 @@ void generateMoves(const Board& board, MoveList& moves) {
                 evasionsMask |= squaresBetween;
             }
 
-            genMask = evasionsMask;
+            const uint64_t enPassantSquareBB =
+                board.getEnPassantSquare() == NO_EN_PASSANT ? 0 : squareToBitboard(board.getEnPassantSquare());
+
+            genMask = evasionsMask | enPassantSquareBB;
         } else {
             // If the king is in double check, only king moves are legal
             onlyKingMoves = true;
