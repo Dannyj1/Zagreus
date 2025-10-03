@@ -341,11 +341,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     if (!isRoot) {
-        TTNodeType ttNodeType = ALPHA;
-
-        if (isPV) {
-            ttNodeType = EXACT;
-        }
+        const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
 
         if (!engine.isSearchStopped()) {
             tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
@@ -464,11 +460,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         }
     }
 
-    TTNodeType ttNodeType = ALPHA;
-
-    if (isPV) {
-        ttNodeType = EXACT;
-    }
+    const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
 
     if (!engine.isSearchStopped()) {
         tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);

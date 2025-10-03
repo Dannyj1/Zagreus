@@ -42,7 +42,7 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
             score -= ply;
         }
 
-        score = std::clamp<int>(score, INT16_MIN, INT16_MAX);
+        score = std::clamp<int>(score, INT16_MIN + 1, INT16_MAX);
 
         entry->validationHash = zobristHash >> 32;
         entry->depth = depth;
