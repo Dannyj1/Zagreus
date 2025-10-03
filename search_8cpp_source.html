@@ -387,7 +387,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        <span class="keywordflow">if</span> (score &gt;= beta) {</div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            <span class="keywordflow">if</span> (!engine.<a class="code hl_function" href="classZagreus_1_1Engine.html#a2fd88cb737e7b4b2af11f6a2e93e6634">isSearchStopped</a>()) {</div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                <span class="keywordflow">if</span> (capturedPiece == <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7ad46b5d947d7e11d716e462ac7a2f8c1d">EMPTY</a>) {</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> historyValue = 300 * depth - 250;</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> historyValue = depth * depth;</div>
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span> </div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>                    tt-&gt;<a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#a0cad62cc546cbfb21e62441420ce0d69">updateHistory</a>&lt;color&gt;(move, historyValue);</div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
