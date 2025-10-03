@@ -2,36 +2,30 @@
 <area shape="rect" id="Node000001" title="gets the square of the attacker with the lowest value of a given square" alt="" coords="5,143,212,183"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#a3b7dc37ae50fe6f86723b9c113ba301f" title="Finds the index of the least significant set bit (LSB) in a bitboard." alt="" coords="266,121,449,147"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,149,252,144,253,149,213,154"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#ab5dadccf0de6e5507efa4c35b225a675" title="Retrieves the attackers of a given square by color." alt="" coords="260,171,455,211"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#adc52ad654205e521ebb03e472997889b" title="Retrieves the attackers of a given square by color." alt="" coords="260,171,455,211"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,172,247,176,246,182,212,178"/>
-<area shape="rect" id="Node000004" href="$classZagreus_1_1Board.html#ae05e57705dd28daf8718d043c68d16d2" title="Retrieves the bitboard for a given color." alt="" coords="508,139,692,179"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="455,176,494,171,495,176,455,181"/>
-<area shape="rect" id="Node000005" href="$classZagreus_1_1Board.html#a2f1f56b6140937dd1c0e430f0c0784bb" title="Retrieves the attackers of a given square." alt="" coords="503,203,697,243"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="455,202,489,206,489,211,455,207"/>
-<area shape="rect" id="Node000006" href="$namespaceZagreus.html#adda3e72c179c4e9f1ef1406a61d9fea7" title="Retrieves the bishop attacks for a given square and occupied squares." alt="" coords="745,55,943,80"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="679,201,696,189,706,177,713,165,718,140,724,115,732,102,744,89,750,84,753,89,747,93,736,105,729,116,723,141,718,167,711,180,699,193,682,205"/>
-<area shape="rect" id="Node000010" href="$namespaceZagreus.html#ae4187afed0ab9a364680cf692f292ee3" title="Retrieves the king attacks for a given square." alt="" coords="753,104,935,129"/>
-<area shape="poly" id="edge9_Node000005_Node000010" title=" " alt="" coords="673,201,696,189,710,177,719,164,728,151,744,138,757,132,759,137,747,143,732,155,723,167,714,180,699,194,676,206"/>
-<area shape="rect" id="Node000011" href="$namespaceZagreus.html#ade21087cb829e4b3fbcdecc362df557e" title="Retrieves the knight attacks for a given square." alt="" coords="747,153,941,179"/>
-<area shape="poly" id="edge10_Node000005_Node000011" title=" " alt="" coords="685,201,775,179,777,184,686,206"/>
-<area shape="rect" id="Node000012" href="$namespaceZagreus.html#acf014bb71364ab1fefd85f1534fd8ac9" title=" " alt="" coords="751,203,937,243"/>
-<area shape="poly" id="edge11_Node000005_Node000012" title=" " alt="" coords="697,221,737,221,737,226,697,226"/>
-<area shape="rect" id="Node000013" href="$namespaceZagreus.html#a6bc5df6eb9e6addf084bf8f712089101" title=" " alt="" coords="751,267,937,307"/>
-<area shape="poly" id="edge12_Node000005_Node000013" title=" " alt="" coords="678,241,755,261,754,266,676,246"/>
-<area shape="rect" id="Node000014" href="$classZagreus_1_1Board.html#abf7ceb384a0bfbaef721d8d6d7a089c2" title="Retrieves the bitboard for a given piece type." alt="" coords="751,331,937,371"/>
-<area shape="poly" id="edge13_Node000005_Node000014" title=" " alt="" coords="629,241,682,279,747,317,762,324,760,329,744,322,679,284,626,246"/>
-<area shape="rect" id="Node000015" href="$namespaceZagreus.html#add77fa8eb55ed30b4214c32fe19535a2" title="Retrieves the rook attacks for a given square and occupied squares." alt="" coords="751,396,937,421"/>
-<area shape="poly" id="edge14_Node000005_Node000015" title=" " alt="" coords="616,242,667,311,704,349,747,381,762,389,759,393,744,386,701,353,663,314,612,245"/>
-<area shape="rect" id="Node000007" href="$namespaceZagreus.html#ae3519ba733e472381623f3868513e43f" title=" " alt="" coords="1015,5,1202,31"/>
-<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="912,52,1026,31,1027,36,913,57"/>
-<area shape="rect" id="Node000008" href="$namespaceZagreus.html#acdb08b76f59773ab8364f87aebecc0ae" title=" " alt="" coords="991,55,1227,80"/>
-<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="943,65,977,65,977,70,943,70"/>
-<area shape="rect" id="Node000009" href="$namespaceZagreus.html#af639a00a96edb3e7b6595d2491a94e68" title=" " alt="" coords="1017,104,1200,129"/>
-<area shape="poly" id="edge8_Node000006_Node000009" title=" " alt="" coords="913,77,1027,99,1026,104,912,83"/>
-<area shape="rect" id="Node000016" href="$namespaceZagreus.html#ad4768ae93bb0dc19ee59941eca3939d4" title=" " alt="" coords="1021,347,1197,372"/>
-<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="912,393,1026,372,1027,377,913,399"/>
-<area shape="rect" id="Node000017" href="$namespaceZagreus.html#a5a1a0242284cacb058524547c81e6155" title=" " alt="" coords="996,396,1221,421"/>
-<area shape="poly" id="edge16_Node000015_Node000017" title=" " alt="" coords="937,406,982,406,982,411,937,411"/>
-<area shape="rect" id="Node000018" href="$namespaceZagreus.html#aad7a8f657e79fd0f873328e7cdbd5cc7" title=" " alt="" coords="1023,445,1195,471"/>
-<area shape="poly" id="edge17_Node000015_Node000018" title=" " alt="" coords="913,419,1027,440,1026,445,912,424"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#adda3e72c179c4e9f1ef1406a61d9fea7" title="Retrieves the bishop attacks for a given square and occupied squares." alt="" coords="503,55,700,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="431,169,453,156,468,140,476,123,484,106,501,89,511,83,514,88,504,93,489,109,481,125,472,143,456,160,433,174"/>
+<area shape="rect" id="Node000008" href="$namespaceZagreus.html#ae4187afed0ab9a364680cf692f292ee3" title="Retrieves the king attacks for a given square." alt="" coords="510,104,693,129"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="416,169,454,155,502,138,530,130,532,135,503,143,456,161,418,174"/>
+<area shape="rect" id="Node000009" href="$namespaceZagreus.html#ade21087cb829e4b3fbcdecc362df557e" title="Retrieves the knight attacks for a given square." alt="" coords="504,153,699,179"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="454,179,490,175,491,180,455,184"/>
+<area shape="rect" id="Node000010" href="$namespaceZagreus.html#a2eab45eaa846a4406ab8df6ac0f13b63" title="Retrieves the pawn attacks for a given square and color." alt="" coords="508,203,695,228"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="455,198,494,202,494,207,454,204"/>
+<area shape="rect" id="Node000011" href="$classZagreus_1_1Board.html#abf7ceb384a0bfbaef721d8d6d7a089c2" title="Retrieves the bitboard for a given piece type." alt="" coords="509,253,694,293"/>
+<area shape="poly" id="edge10_Node000003_Node000011" title=" " alt="" coords="418,209,504,238,527,246,525,251,502,243,416,214"/>
+<area shape="rect" id="Node000012" href="$namespaceZagreus.html#add77fa8eb55ed30b4214c32fe19535a2" title="Retrieves the rook attacks for a given square and occupied squares." alt="" coords="508,317,695,343"/>
+<area shape="poly" id="edge11_Node000003_Node000012" title=" " alt="" coords="380,210,434,256,468,281,504,302,524,311,522,316,501,307,465,286,430,261,377,214"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#ae3519ba733e472381623f3868513e43f" title=" " alt="" coords="773,5,959,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="670,52,783,31,784,36,671,57"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#acdb08b76f59773ab8364f87aebecc0ae" title=" " alt="" coords="748,55,984,80"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="700,65,734,65,734,70,700,70"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#af639a00a96edb3e7b6595d2491a94e68" title=" " alt="" coords="775,104,957,129"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="671,77,784,99,783,104,670,83"/>
+<area shape="rect" id="Node000013" href="$namespaceZagreus.html#ad4768ae93bb0dc19ee59941eca3939d4" title=" " alt="" coords="778,268,954,293"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="670,315,783,293,784,299,671,320"/>
+<area shape="rect" id="Node000014" href="$namespaceZagreus.html#a5a1a0242284cacb058524547c81e6155" title=" " alt="" coords="753,317,979,343"/>
+<area shape="poly" id="edge13_Node000012_Node000014" title=" " alt="" coords="695,327,739,327,739,333,695,333"/>
+<area shape="rect" id="Node000015" href="$namespaceZagreus.html#aad7a8f657e79fd0f873328e7cdbd5cc7" title=" " alt="" coords="780,367,952,392"/>
+<area shape="poly" id="edge14_Node000012_Node000015" title=" " alt="" coords="671,340,784,361,783,367,670,345"/>
 </map>

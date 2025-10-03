@@ -73,7 +73,7 @@ var searchData=
   ['getsidetomove_70',['getSideToMove',['../classZagreus_1_1Board.html#afc62efe1e90a8573ffddbb423ec95534',1,'Zagreus::Board']]],
   ['getsmallestattacker_71',['getSmallestAttacker',['../classZagreus_1_1Board.html#a0021a28ee0872d3abca5c8cfe3d8224a',1,'Zagreus::Board']]],
   ['getsquareattackers_72',['getSquareAttackers',['../classZagreus_1_1Board.html#a2f1f56b6140937dd1c0e430f0c0784bb',1,'Zagreus::Board']]],
-  ['getsquareattackersbycolor_73',['getSquareAttackersByColor',['../classZagreus_1_1Board.html#ab5dadccf0de6e5507efa4c35b225a675',1,'Zagreus::Board']]],
+  ['getsquareattackersbycolor_73',['getSquareAttackersByColor',['../classZagreus_1_1Board.html#adc52ad654205e521ebb03e472997889b',1,'Zagreus::Board']]],
   ['getsquarefromnotation_74',['getSquareFromNotation',['../namespaceZagreus.html#a9aa7811955e9aba1be53586fc5e865fb',1,'Zagreus']]],
   ['getsquarenotation_75',['getSquareNotation',['../namespaceZagreus.html#a041ce9eb95139cc823bfc48893542d92',1,'Zagreus']]],
   ['getsquaresbetween_76',['getSquaresBetween',['../namespaceZagreus.html#afda138ab890ea8e4d7fae44a866326ad',1,'Zagreus']]],
