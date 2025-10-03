@@ -136,7 +136,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            score -= ply;</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        }</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        score = std::clamp&lt;int&gt;(score, INT16_MIN, INT16_MAX);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        score = std::clamp&lt;int&gt;(score, INT16_MIN + 1, INT16_MAX);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        entry-&gt;<a class="code hl_variable" href="structZagreus_1_1TTEntry.html#af699059bdb42f1aadfc82f8439bdcba9">validationHash</a> = zobristHash &gt;&gt; 32;</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        entry-&gt;<a class="code hl_variable" href="structZagreus_1_1TTEntry.html#a4539437a1e61a7efe925be973097cc82">depth</a> = depth;</div>
