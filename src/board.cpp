@@ -220,8 +220,15 @@ bool Board::isDraw() const {
     const uint64_t zobristHash = getZobristHash();
 
     // 3-fold repetition
+    int repetitions = 0;
+
     for (int i = ply - 2; i >= 0; i -= 2) {
         if (history[i].zobristHash == zobristHash) {
+            repetitions++;
+        }
+
+        // The current board state happens twice in history, making this appearance the third time -> 3-fold repetition
+        if (repetitions >= 2) {
             return true;
         }
     }
