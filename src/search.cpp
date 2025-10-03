@@ -289,7 +289,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
                 if (capturedPiece == EMPTY) {
-                    const int historyValue = 300 * depth - 250;
+                    const int historyValue = depth * depth;
 
                     tt->updateHistory<color>(move, historyValue);
 
