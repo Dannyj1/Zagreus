@@ -169,6 +169,32 @@ uint64_t Board::getSquareAttackers(const Square square) const {
 }
 
 /**
+ * \brief Retrieves the attackers of a given square by color.
+ * \tparam color The color of the attackers.
+ * \param square The square index (0-63).
+ * \return A bitboard representing the attackers of the given color.
+ */
+template <PieceColor color>
+uint64_t Board::getSquareAttackersByColor(const Square square) const {
+    assert(square < SQUARES);
+    constexpr PieceColor opponentColor = !color;
+
+    const uint64_t knights = getPieceBoard < color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT > ();
+    const uint64_t kings = getPieceBoard < color == WHITE ? WHITE_KING : BLACK_KING > ();
+    uint64_t bishopsQueens = getPieceBoard < color == WHITE ? WHITE_QUEEN : BLACK_QUEEN > ();
+    uint64_t rooksQueens = getPieceBoard < color == WHITE ? WHITE_QUEEN : BLACK_QUEEN > ();
+    rooksQueens |= getPieceBoard < color == WHITE ? WHITE_ROOK : BLACK_ROOK > ();
+    bishopsQueens |= getPieceBoard < color == WHITE ? WHITE_BISHOP : BLACK_BISHOP > ();
+
+    return (getPawnAttacks<opponentColor>(square) & getPieceBoard < color == WHITE ? WHITE_PAWN : BLACK_PAWN > ()) |
+           (getKnightAttacks(square) & knights) | (getKingAttacks(square) & kings) |
+           (getBishopAttacks(square, occupied) & bishopsQueens) | (getRookAttacks(square, occupied) & rooksQueens);
+}
+
+template uint64_t Board::getSquareAttackersByColor<WHITE>(Square square) const;
+template uint64_t Board::getSquareAttackersByColor<BLACK>(Square square) const;
+
+/**
  * \brief Resets the board to the initial state.
  */
 void Board::reset() {

@@ -356,9 +356,7 @@ class Board {
      * \return A bitboard representing the attackers of the given color.
      */
     template <PieceColor color>
-    [[nodiscard]] uint64_t getSquareAttackersByColor(const Square square) const {
-        return getSquareAttackers(square) & getColorBitboard<color>();
-    }
+    [[nodiscard]] uint64_t getSquareAttackersByColor(const Square square) const;
 
     /**
      * \brief Checks if castling is possible for the given side.
