@@ -80,8 +80,8 @@ void MovePicker::score(Board& board) {
         pvMove = pvLine.moves[pvMoveIndex];
     }
 
-    uint64_t zobristHash = board.getZobristHash();
-    TTEntry* entry = tt->getEntry(zobristHash);
+    const uint64_t zobristHash = board.getZobristHash();
+    const TTEntry* entry = tt->getEntry(zobristHash);
 
     if (entry != nullptr) {
         ttMove = entry->bestMove;
@@ -101,13 +101,14 @@ void MovePicker::score(Board& board) {
         } else if (move == ttMove) {
             scores[i] = 2500000;
         } else if (capturedPiece != EMPTY) {
-            // MVV-LVA
-            const PieceType movingPiece = getPieceType(board.getPieceOnSquare(getFromSquare(move)));
-            // 200 * Piece Value - Index of the captured piece. Factor of 200 so it's always above history scores.
-            // Should be changed once we have staged movegen.
-            const int mvvLva = 200 * getPieceValue(capturedPiece) - static_cast<int>(movingPiece);
+            // SEE for identifying good and bad captures, then further ordering by capture history
+            const Piece movingPiece = board.getPieceOnSquare(getFromSquare(move));
+            const int captureHistoryValue = tt->getCaptureHistoryValue(move, movingPiece, capturedPiece);
+            const int captureScore = (getPieceValue(capturedPiece) * 10) + captureHistoryValue;
+            const bool isGoodCapture = board.see(move, 0);
+            const int seeScore = isGoodCapture ? 1000000 + captureScore : -1000000 + captureScore;
 
-            scores[i] = mvvLva;
+            scores[i] = seeScore;
         } else {
             // Ordering of quiet moves
             const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);

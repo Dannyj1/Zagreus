@@ -212,6 +212,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     MoveList searchedQuietMoves{};
+    MoveList searchedCaptures{};
     MovePicker movePicker{moves};
     movePicker.score(board);
     PvLine nodePvLine = PvLine{board.getPly()};
@@ -234,6 +235,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
         if (capturedPiece == EMPTY) {
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
+        } else {
+            searchedCaptures.moves[searchedCaptures.size++] = move;
         }
 
         bool doFullSearch = true;
@@ -303,6 +306,22 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
                         if (quietMove != move) {
                             tt->updateHistory<color>(quietMove, -historyValue);
+                        }
+                    }
+                } else {
+                    const int historyValue = 300 * depth - 250;
+                    const Piece movingPiece = board.getPieceOnSquare(getFromSquare(move));
+
+                    tt->updateCaptureHistory(move, movingPiece, capturedPiece, historyValue);
+
+                    for (int i = 0; i < searchedCaptures.size; ++i) {
+                        const Move captureMove = searchedCaptures.moves[i];
+
+                        if (captureMove != move) {
+                            const Piece otherMovingPiece = board.getPieceOnSquare(getFromSquare(captureMove));
+                            const Piece otherCapturedPiece = board.getPieceOnSquare(getToSquare(captureMove));
+
+                            tt->updateCaptureHistory(captureMove, otherMovingPiece, otherCapturedPiece, -historyValue);
                         }
                     }
                 }

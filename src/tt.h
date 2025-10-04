@@ -43,6 +43,8 @@ struct TTEntry {
 class TranspositionTable {
    private:
     int history[COLORS][SQUARES][SQUARES]{};
+    // [movingPiece][toSquare][capturedPiece]
+    int captureHistory[PIECES][SQUARES][PIECES]{};
 
    public:
     TTEntry* transpositionTable = new TTEntry[1]{};
@@ -64,6 +66,12 @@ class TranspositionTable {
         for (int color = 0; color < COLORS; color++) {
             for (int fromSquare = 0; fromSquare < SQUARES; fromSquare++) {
                 std::fill_n(history[color][fromSquare], SQUARES, 0);
+            }
+        }
+
+        for (int movingPiece = 0; movingPiece < PIECES; movingPiece++) {
+            for (int toSquare = 0; toSquare < SQUARES; toSquare++) {
+                std::fill_n(captureHistory[movingPiece][toSquare], PIECES, 0);
             }
         }
     }
@@ -97,6 +105,15 @@ class TranspositionTable {
         const Square toSquare = getToSquare(move);
 
         return history[color][fromSquare][toSquare];
+    }
+
+    void updateCaptureHistory(Move move, Piece movedPiece, Piece capturedPiece, int value);
+
+    [[nodiscard]] int getCaptureHistoryValue(const Move move, const Piece movingPiece,
+                                             const Piece capturedPiece) const {
+        const Square toSquare = getToSquare(move);
+
+        return captureHistory[movingPiece][toSquare][capturedPiece];
     }
 };
 }  // namespace Zagreus

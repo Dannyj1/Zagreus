@@ -130,6 +130,15 @@ void TranspositionTable::updateHistory(const Move move, const int value) {
     history[color][from][to] += clampedValue - history[color][from][to] * std::abs(clampedValue) / MAX_HISTORY;
 }
 
+void TranspositionTable::updateCaptureHistory(const Move move, const Piece movedPiece, const Piece capturedPiece,
+                                              const int value) {
+    const Square to = getToSquare(move);
+    const int clampedValue = std::clamp(value, -MAX_HISTORY, MAX_HISTORY);
+
+    captureHistory[movedPiece][to][capturedPiece] +=
+        clampedValue - captureHistory[movedPiece][to][capturedPiece] * std::abs(clampedValue) / MAX_HISTORY;
+}
+
 template void TranspositionTable::updateHistory<WHITE>(Move move, int value);
 template void TranspositionTable::updateHistory<BLACK>(Move move, int value);
 }  // namespace Zagreus
