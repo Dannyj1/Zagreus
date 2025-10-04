@@ -378,35 +378,37 @@ void generateKingMoves(const Board& board, MoveList& moves, const uint64_t genMa
         moves.size++;
     }
 
-    const uint8_t castlingRights = board.getCastlingRights();
+    if constexpr (type != QSEARCH && type != EVASIONS) {
+        const uint8_t castlingRights = board.getCastlingRights();
 
-    if constexpr (color == WHITE) {
-        if (castlingRights & WHITE_KINGSIDE && board.canCastle<WHITE_KINGSIDE>()) {
-            const Move move = encodeMove(E1, G1, CASTLING);
+        if constexpr (color == WHITE) {
+            if (castlingRights & WHITE_KINGSIDE && board.canCastle<WHITE_KINGSIDE>()) {
+                const Move move = encodeMove(E1, G1, CASTLING);
 
-            moves.moves[moves.size] = move;
-            moves.size++;
-        }
+                moves.moves[moves.size] = move;
+                moves.size++;
+            }
 
-        if (castlingRights & WHITE_QUEENSIDE && board.canCastle<WHITE_QUEENSIDE>()) {
-            const Move move = encodeMove(E1, C1, CASTLING);
+            if (castlingRights & WHITE_QUEENSIDE && board.canCastle<WHITE_QUEENSIDE>()) {
+                const Move move = encodeMove(E1, C1, CASTLING);
 
-            moves.moves[moves.size] = move;
-            moves.size++;
-        }
-    } else if constexpr (color == BLACK) {
-        if (castlingRights & BLACK_KINGSIDE && board.canCastle<BLACK_KINGSIDE>()) {
-            const Move move = encodeMove(E8, G8, CASTLING);
+                moves.moves[moves.size] = move;
+                moves.size++;
+            }
+        } else if constexpr (color == BLACK) {
+            if (castlingRights & BLACK_KINGSIDE && board.canCastle<BLACK_KINGSIDE>()) {
+                const Move move = encodeMove(E8, G8, CASTLING);
 
-            moves.moves[moves.size] = move;
-            moves.size++;
-        }
+                moves.moves[moves.size] = move;
+                moves.size++;
+            }
 
-        if (castlingRights & BLACK_QUEENSIDE && board.canCastle<BLACK_QUEENSIDE>()) {
-            const Move move = encodeMove(E8, C8, CASTLING);
+            if (castlingRights & BLACK_QUEENSIDE && board.canCastle<BLACK_QUEENSIDE>()) {
+                const Move move = encodeMove(E8, C8, CASTLING);
 
-            moves.moves[moves.size] = move;
-            moves.size++;
+                moves.moves[moves.size] = move;
+                moves.size++;
+            }
         }
     }
 }
