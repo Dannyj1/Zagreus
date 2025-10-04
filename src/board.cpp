@@ -248,7 +248,7 @@ bool Board::isDraw() const {
     // 3-fold repetition
     int repetitions = 0;
 
-    for (int i = ply - 2; i >= 0; i -= 2) {
+    for (int i = ply - 2; i >= (ply - halfMoveClock); i -= 2) {
         if (history[i].zobristHash == zobristHash) {
             repetitions++;
         }
@@ -281,16 +281,16 @@ bool Board::isDraw() const {
         }
     }
 
-    // Check for KBvKB where bishops are on the same color
+    // Check for KBvKB where bishops are on the same color, and KNvKN
     if (popcnt(occupied) == 4) {
         if (getPieceBoard<WHITE_BISHOP>() && getPieceBoard<BLACK_BISHOP>()) {
-            if ((getPieceBoard<WHITE_BISHOP>() & DARK_SQUARES) == (getPieceBoard<BLACK_BISHOP>() & DARK_SQUARES)) {
+            if (((getPieceBoard<WHITE_BISHOP>() & DARK_SQUARES) && (getPieceBoard<BLACK_BISHOP>() & DARK_SQUARES)) ||
+                ((getPieceBoard<WHITE_BISHOP>() & LIGHT_SQUARES) && (getPieceBoard<BLACK_BISHOP>() & LIGHT_SQUARES))) {
                 return true;
             }
-
-            if ((getPieceBoard<WHITE_BISHOP>() & LIGHT_SQUARES) == (getPieceBoard<BLACK_BISHOP>() & LIGHT_SQUARES)) {
-                return true;
-            }
+        }
+        if (getPieceBoard<WHITE_KNIGHT>() && getPieceBoard<BLACK_KNIGHT>()) {
+            return true;
         }
     }
 
