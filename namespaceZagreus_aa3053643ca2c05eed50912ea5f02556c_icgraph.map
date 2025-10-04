@@ -1,6 +1,6 @@
 <map id="Zagreus::getPieceFromType" name="Zagreus::getPieceFromType">
 <area shape="rect" id="Node000001" title="Gets the piece type from a color and type." alt="" coords="753,29,956,55"/>
-<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#ab5531cc66a779858ed8b61d53ab0d535" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="553,29,705,55"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#a0111e0667a870a6de442ef831a0fb17d" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="553,29,705,55"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="740,45,706,45,706,39,740,39"/>
 <area shape="rect" id="Node000003" href="$namespaceZagreus.html#aa7c500d003ac3b2a52af5b921a04b5b7" title=" " alt="" coords="371,29,505,55"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="539,45,506,45,506,39,539,39"/>
