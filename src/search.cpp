@@ -151,6 +151,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
 
+    if (board.isDraw()) {
+        return DRAW_SCORE;
+    }
+
     if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 &&
         std::chrono::steady_clock::now() > endTime) {
         engine.setSearchStopped(true);
@@ -357,6 +361,10 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
             const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
     assert(nodeType != ROOT);
     constexpr bool isPV = nodeType == PV;
+
+    if (board.isDraw()) {
+        return DRAW_SCORE;
+    }
 
     if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
         engine.setSearchStopped(true);
