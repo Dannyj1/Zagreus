@@ -22,6 +22,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <iostream>
 #include <string>
 
 #include "board.h"
@@ -337,11 +338,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             alpha = DRAW_SCORE;
             bestScore = DRAW_SCORE;
         }
-    } else {
-        if (!isRoot && board.isDraw()) {
-            alpha = DRAW_SCORE;
-            bestScore = DRAW_SCORE;
-        }
     }
 
     if (!isRoot) {
@@ -462,10 +458,6 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     if (!legalMoves && isInCheck) {
         bestScore = -MATE_SCORE + board.getPly();
-    } else {
-        if (board.isDraw()) {
-            bestScore = DRAW_SCORE;
-        }
     }
 
     const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
