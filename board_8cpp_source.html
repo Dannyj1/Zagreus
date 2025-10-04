@@ -522,15 +522,15 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>    history[ply].previousMove = previousMove;</div>
 <div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>    history[ply].capturedPiece = capturedPiece;</div>
 <div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>    history[ply].enPassantSquare = enPassantSquare;</div>
-<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span> </div>
-<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>    <span class="keywordflow">if</span> (enPassantSquare != <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>) {</div>
-<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>        zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">ZOBRIST_EN_PASSANT_START_INDEX</a> + (enPassantSquare % 8));</div>
-<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>    }</div>
-<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span> </div>
-<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>    enPassantSquare = <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>;</div>
-<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>    history[ply].castlingRights = castlingRights;</div>
-<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>    history[ply].zobristHash = zobristHash;</div>
-<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>    history[ply].halfMoveClock = halfMoveClock;</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>    history[ply].castlingRights = castlingRights;</div>
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>    history[ply].zobristHash = zobristHash;</div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>    history[ply].halfMoveClock = halfMoveClock;</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span> </div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>    <span class="keywordflow">if</span> (enPassantSquare != <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>) {</div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>        zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">ZOBRIST_EN_PASSANT_START_INDEX</a> + (enPassantSquare % 8));</div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>    }</div>
+<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span> </div>
+<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>    enPassantSquare = <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>;</div>
 <div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span> </div>
 <div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>    halfMoveClock += 1;</div>
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span> </div>
@@ -766,15 +766,15 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    history[ply].previousMove = previousMove;</div>
 <div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    history[ply].capturedPiece = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7ad46b5d947d7e11d716e462ac7a2f8c1d">EMPTY</a>;</div>
 <div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>    history[ply].enPassantSquare = enPassantSquare;</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span> </div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    <span class="keywordflow">if</span> (enPassantSquare != <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>) {</div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">ZOBRIST_EN_PASSANT_START_INDEX</a> + (enPassantSquare % 8));</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    }</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span> </div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    enPassantSquare = <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>;</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>    history[ply].castlingRights = castlingRights;</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    history[ply].zobristHash = zobristHash;</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    history[ply].halfMoveClock = halfMoveClock;</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>    history[ply].castlingRights = castlingRights;</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    history[ply].zobristHash = zobristHash;</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>    history[ply].halfMoveClock = halfMoveClock;</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span> </div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>    <span class="keywordflow">if</span> (enPassantSquare != <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>) {</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>        zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">ZOBRIST_EN_PASSANT_START_INDEX</a> + (enPassantSquare % 8));</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>    }</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span> </div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    enPassantSquare = <a class="code hl_define" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">NO_EN_PASSANT</a>;</div>
 <div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span> </div>
 <div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>    halfMoveClock += 1;</div>
 <div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span> </div>
