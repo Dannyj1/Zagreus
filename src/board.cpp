@@ -455,15 +455,15 @@ void Board::makeMove(const Move move) {
     history[ply].previousMove = previousMove;
     history[ply].capturedPiece = capturedPiece;
     history[ply].enPassantSquare = enPassantSquare;
+    history[ply].castlingRights = castlingRights;
+    history[ply].zobristHash = zobristHash;
+    history[ply].halfMoveClock = halfMoveClock;
 
     if (enPassantSquare != NO_EN_PASSANT) {
         zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
     }
 
     enPassantSquare = NO_EN_PASSANT;
-    history[ply].castlingRights = castlingRights;
-    history[ply].zobristHash = zobristHash;
-    history[ply].halfMoveClock = halfMoveClock;
 
     halfMoveClock += 1;
 
@@ -698,15 +698,15 @@ void Board::makeNullMove() {
     history[ply].previousMove = previousMove;
     history[ply].capturedPiece = EMPTY;
     history[ply].enPassantSquare = enPassantSquare;
+    history[ply].castlingRights = castlingRights;
+    history[ply].zobristHash = zobristHash;
+    history[ply].halfMoveClock = halfMoveClock;
 
     if (enPassantSquare != NO_EN_PASSANT) {
         zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
     }
 
     enPassantSquare = NO_EN_PASSANT;
-    history[ply].castlingRights = castlingRights;
-    history[ply].zobristHash = zobristHash;
-    history[ply].halfMoveClock = halfMoveClock;
 
     halfMoveClock += 1;
 
