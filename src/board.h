@@ -414,7 +414,7 @@ class Board {
      *
      * \return True if the move is good for the given color, false otherwise.
      */
-    bool see(Move move, int threshold);
+    bool see(Move move, int threshold) const;
 
     /**
      * \brief Retrieves the half move clock.

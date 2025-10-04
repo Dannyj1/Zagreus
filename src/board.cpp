@@ -353,7 +353,7 @@ int estimateMoveValue(const Board& board, const Move move) {
  * \return The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores
  * indicate a gain of material.
  */
-bool Board::see(const Move move, int threshold) {
+bool Board::see(const Move move, int threshold) const {
     const Square fromSquare = getFromSquare(move);
     const Square toSquare = getToSquare(move);
     const MoveType moveType = getMoveType(move);
@@ -377,19 +377,19 @@ bool Board::see(const Move move, int threshold) {
                              getPieceBoard<WHITE_QUEEN>() | getPieceBoard<BLACK_QUEEN>();
     const uint64_t rooks = getPieceBoard<WHITE_ROOK>() | getPieceBoard<BLACK_ROOK>() | getPieceBoard<WHITE_QUEEN>() |
                            getPieceBoard<BLACK_QUEEN>();
-    const uint64_t oldOccupied = getOccupiedBitboard();
-    const PieceColor oldSideToMove = sideToMove;
-    occupied = (occupied ^ squareToBitboard(fromSquare)) | squareToBitboard(toSquare);
+    uint64_t tempOccupied = getOccupiedBitboard();
+    PieceColor tempSideToMove = sideToMove;
+    tempOccupied = (tempOccupied ^ squareToBitboard(fromSquare)) | squareToBitboard(toSquare);
 
     if (moveType == EN_PASSANT) {
-        occupied ^= squareToBitboard(enPassantSquare);
+        tempOccupied ^= squareToBitboard(enPassantSquare);
     }
 
-    uint64_t attackers = getSquareAttackers(toSquare) & occupied;
-    sideToMove = !sideToMove;
+    uint64_t attackers = getSquareAttackers(toSquare) & tempOccupied;
+    tempSideToMove = !tempSideToMove;
 
     while (true) {
-        const uint64_t ownAttackers = attackers & getColorBitboard(sideToMove);
+        const uint64_t ownAttackers = attackers & getColorBitboard(tempSideToMove);
 
         if (!ownAttackers) {
             break;
@@ -397,39 +397,36 @@ bool Board::see(const Move move, int threshold) {
 
         for (nextVictimType = PAWN; nextVictimType <= QUEEN;
              nextVictimType = static_cast<PieceType>(nextVictimType + 1)) {
-            if (ownAttackers & getPieceBoard(getPieceFromType(nextVictimType, sideToMove))) {
+            if (ownAttackers & getPieceBoard(getPieceFromType(nextVictimType, tempSideToMove))) {
                 break;
             }
         }
 
-        occupied ^= squareToBitboard(
-            bitscanForward(ownAttackers & getPieceBoard(getPieceFromType(nextVictimType, sideToMove))));
+        tempOccupied ^= squareToBitboard(
+            bitscanForward(ownAttackers & getPieceBoard(getPieceFromType(nextVictimType, tempSideToMove))));
 
         if (nextVictimType == PAWN || nextVictimType == BISHOP || nextVictimType == QUEEN) {
-            attackers |= getBishopAttacks(toSquare, occupied) & bishops;
+            attackers |= getBishopAttacks(toSquare, tempOccupied) & bishops;
         }
 
         if (nextVictimType == ROOK || nextVictimType == QUEEN) {
-            attackers |= getRookAttacks(toSquare, occupied) & rooks;
+            attackers |= getRookAttacks(toSquare, tempOccupied) & rooks;
         }
 
-        attackers &= occupied;
-        balance = -balance - 1 - getPieceValue(getPieceFromType(nextVictimType, sideToMove));
-        sideToMove = !sideToMove;
+        attackers &= tempOccupied;
+        balance = -balance - 1 - getPieceValue(getPieceFromType(nextVictimType, tempSideToMove));
+        tempSideToMove = !tempSideToMove;
 
         if (balance >= 0) {
-            if (nextVictimType == KING && (attackers & getColorBitboard(sideToMove))) {
-                sideToMove = !sideToMove;
+            if (nextVictimType == KING && (attackers & getColorBitboard(tempSideToMove))) {
+                tempSideToMove = !tempSideToMove;
             }
 
             break;
         }
     }
 
-    const bool result = sideToMove != oldSideToMove;
-    occupied = oldOccupied;
-    sideToMove = oldSideToMove;
-    return result;
+    return tempSideToMove != sideToMove;
 }
 
 uint64_t Board::openFiles() const {
