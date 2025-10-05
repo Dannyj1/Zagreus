@@ -50,15 +50,16 @@ void generateMoves(const Board& board, MoveList& moves) {
     const uint64_t ownPieces = board.getColorBitboard<color>();
     const uint64_t opponentKingBB = board.getPieceBoard<opponentKing>();
     uint64_t genMask = ~(ownPieces | opponentKingBB);
+    uint64_t pawnPushesToPromotion = 0;
+    uint64_t enPassantSquareBB = 0;
 
     if (type == QSEARCH) {
         const uint64_t opponentPieces = board.getColorBitboard<opponentColor>();
-        const uint64_t enPassantSquareBB =
+        enPassantSquareBB =
             board.getEnPassantSquare() == NO_EN_PASSANT ? 0 : squareToBitboard(board.getEnPassantSquare());
 
         const uint64_t promotionRank = color == WHITE ? RANK_8 : RANK_1;
         const uint64_t pawnBB = board.getPieceBoard < color == WHITE ? WHITE_PAWN : BLACK_PAWN > ();
-        uint64_t pawnPushesToPromotion;
 
         if constexpr (color == WHITE) {
             pawnPushesToPromotion = whitePawnSinglePush(pawnBB, board.getEmptyBitboard()) & promotionRank;
@@ -82,10 +83,10 @@ void generateMoves(const Board& board, MoveList& moves) {
                 evasionsMask |= squaresBetween;
             }
 
-            const uint64_t enPassantSquareBB =
+            const uint64_t enPassantSquareLocalBB =
                 board.getEnPassantSquare() == NO_EN_PASSANT ? 0 : squareToBitboard(board.getEnPassantSquare());
 
-            genMask = evasionsMask | enPassantSquareBB;
+            genMask = evasionsMask | enPassantSquareLocalBB;
         } else {
             // If the king is in double check, only king moves are legal
             onlyKingMoves = true;
@@ -94,6 +95,11 @@ void generateMoves(const Board& board, MoveList& moves) {
 
     if (!onlyKingMoves) {
         generatePawnMoves<color, type>(board, moves, genMask);
+
+        if (type == QSEARCH) {
+            genMask &= ~(pawnPushesToPromotion | enPassantSquareBB);
+        }
+
         generateKnightMoves<color, type>(board, moves, genMask);
         generateBishopMoves<color, type>(board, moves, genMask);
         generateRookMoves<color, type>(board, moves, genMask);
