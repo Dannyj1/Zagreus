@@ -79,8 +79,6 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "6k1/3b3r/1p1p4/p1n2p2/1PPNpP1q/P3Q1p1/1R1RB1P1/5K2 b - - 0 1",
     "r2r1n2/pp2bk2/2p1p2p/3q4/3PN1QP/2P3R1/P4PP1/5RK1 w - - 0 1",
     "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
-    "8/8/8/8/8/6k1/6p1/6K1 w - -",
-    "7k/7P/6K1/8/3B4/8/8/8 b - -",
     "8/8/8/8/5kp1/P7/8/1K1N4 w - - 0 1",
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
     "8/8/1P6/5pr1/8/4R3/7k/2K5 w - - 0 1",
@@ -150,7 +148,7 @@ void benchmark(bool fast) {
     std::vector<std::string> positions = fast ? FAST_BENCHMARK_POSITIONS : BENCHMARK_POSITIONS;
     SearchParams params{};
 
-    params.depth = fast ? 4 : 8;
+    params.depth = fast ? 6 : 8;
 
     for (const std::string& position : positions) {
         for (int i = 0; i < 2; i++) {
