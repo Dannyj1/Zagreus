@@ -385,7 +385,9 @@ bool Board::see(const Move move, int threshold) const {
     tempOccupied = (tempOccupied ^ squareToBitboard(fromSquare)) | squareToBitboard(toSquare);
 
     if (moveType == EN_PASSANT) {
-        tempOccupied ^= squareToBitboard(enPassantSquare);
+        const Square capturedPawnSquare =
+            sideToMove == WHITE ? static_cast<Square>(toSquare + SOUTH) : static_cast<Square>(toSquare + NORTH);
+        tempOccupied ^= squareToBitboard(capturedPawnSquare);
     }
 
     uint64_t attackers = getSquareAttackers(toSquare) & tempOccupied;
