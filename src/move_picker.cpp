@@ -93,8 +93,13 @@ void MovePicker::score(Board& board) {
 
     for (int i = 0; i < moveList.size; ++i) {
         const Move move = moveList.moves[i];
+        const MoveType moveType = getMoveType(move);
         const Square toSquare = getToSquare(move);
-        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+        Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
+        if (moveType == EN_PASSANT) {
+            capturedPiece = board.getSideToMove() == WHITE ? BLACK_PAWN : WHITE_PAWN;
+        }
 
         if (move == pvMove) {
             scores[i] = 5000000;

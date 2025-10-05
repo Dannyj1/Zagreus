@@ -221,8 +221,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     int movesSearched = 0;
 
     while (movePicker.next(move)) {
+        const MoveType moveType = getMoveType(move);
         const Square toSquare = getToSquare(move);
-        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+        Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
+        if (moveType == EN_PASSANT) {
+            capturedPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
+        }
 
         board.makeMove(move);
 
@@ -319,7 +324,12 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
                         if (captureMove != move) {
                             const Piece otherMovingPiece = board.getPieceOnSquare(getFromSquare(captureMove));
-                            const Piece otherCapturedPiece = board.getPieceOnSquare(getToSquare(captureMove));
+                            const MoveType otherMoveType = getMoveType(captureMove);
+                            Piece otherCapturedPiece = board.getPieceOnSquare(getToSquare(captureMove));
+
+                            if (otherMoveType == EN_PASSANT) {
+                                otherCapturedPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
+                            }
 
                             tt->updateCaptureHistory(captureMove, otherMovingPiece, otherCapturedPiece, -historyValue);
                         }
@@ -433,8 +443,13 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     movePicker.score(board);
 
     while (movePicker.next(move)) {
+        const MoveType moveType = getMoveType(move);
         const Square toSquare = getToSquare(move);
-        const Piece capturedPiece = board.getPieceOnSquare(toSquare);
+        Piece capturedPiece = board.getPieceOnSquare(toSquare);
+
+        if (moveType == EN_PASSANT) {
+            capturedPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
+        }
 
         if (!isInCheck && capturedPiece != EMPTY) {
             const bool see = board.see(move, 0);

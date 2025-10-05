@@ -330,14 +330,17 @@ Square Board::getSmallestAttacker(Square square) const {
 
 int estimateMoveValue(const Board& board, const Move move) {
     const MoveType moveType = getMoveType(move);
-    const Piece capturedPiece = board.getPieceOnSquare(getToSquare(move));
+    Piece capturedPiece = board.getPieceOnSquare(getToSquare(move));
+
+    if (moveType == EN_PASSANT) {
+        capturedPiece = board.getSideToMove() == WHITE ? BLACK_PAWN : WHITE_PAWN;
+    }
+
     int value = getPieceValue(capturedPiece);
 
     if (moveType == PROMOTION) {
         value += getPieceValue(getPieceFromPromotionPiece(getPromotionPiece(move), board.getSideToMove())) -
                  getPieceValue(WHITE_PAWN);
-    } else if (moveType == EN_PASSANT) {
-        value = getPieceValue(WHITE_PAWN);
     } else if (moveType == CASTLING) {
         value = 0;
     }
@@ -446,7 +449,11 @@ void Board::makeMove(const Move move) {
     const MoveType moveType = getMoveType(move);
     const Piece movedPiece = getPieceOnSquare(fromSquare);
     const PieceType movedPieceType = getPieceType(movedPiece);
-    const Piece capturedPiece = getPieceOnSquare(toSquare);
+    Piece capturedPiece = getPieceOnSquare(toSquare);
+
+    if (moveType == EN_PASSANT) {
+        capturedPiece = sideToMove == WHITE ? BLACK_PAWN : WHITE_PAWN;
+    }
 
     history[ply].move = move;
     history[ply].previousMove = previousMove;
@@ -464,7 +471,7 @@ void Board::makeMove(const Move move) {
 
     halfMoveClock += 1;
 
-    if (capturedPiece != EMPTY) {
+    if (capturedPiece != EMPTY && moveType != EN_PASSANT) {
         removePiece(capturedPiece, toSquare);
         halfMoveClock = 0;
 
@@ -632,8 +639,8 @@ void Board::unmakeMove() {
     ply--;
     assert(ply >= 0 && ply < MAX_PLIES);
     const BoardState& state = history[ply];
-    const uint8_t fromSquare = getFromSquare(state.move);
-    const uint8_t toSquare = getToSquare(state.move);
+    const Square fromSquare = getFromSquare(state.move);
+    const Square toSquare = getToSquare(state.move);
     const MoveType moveType = getMoveType(state.move);
     Piece movedPiece = getPieceOnSquare(toSquare);
     const PieceColor movedColor = getPieceColor(movedPiece);
@@ -648,17 +655,14 @@ void Board::unmakeMove() {
     setPiece(movedPiece, fromSquare);
 
     if (state.capturedPiece != EMPTY) {
-        setPiece(state.capturedPiece, toSquare);
-    }
+        Square capturedSquare = toSquare;
 
-    if (moveType == EN_PASSANT) {
-        const PieceColor movedPieceColor = getPieceColor(movedPiece);
-
-        if (movedPieceColor == WHITE) {
-            setPiece(BLACK_PAWN, toSquare + SOUTH);
-        } else {
-            setPiece(WHITE_PAWN, toSquare + NORTH);
+        if (moveType == EN_PASSANT) {
+            capturedSquare =
+                movedColor == WHITE ? static_cast<Square>(toSquare + SOUTH) : static_cast<Square>(toSquare + NORTH);
         }
+
+        setPiece(state.capturedPiece, capturedSquare);
     }
 
     if (moveType == CASTLING) {
