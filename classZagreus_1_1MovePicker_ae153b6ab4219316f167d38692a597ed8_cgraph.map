@@ -24,7 +24,7 @@
 <area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="165,502,315,532,490,560,620,575,743,586,742,592,619,581,489,566,314,537,164,508"/>
 <area shape="rect" id="Node000013" href="$classZagreus_1_1Board.html#ad94cd8eb15a75774f32ae327ab968aa6" title="Gets the current zobrist hash of the board. It is pre&#45;computed and will only be retrieved from memory..." alt="" coords="212,908,441,933"/>
 <area shape="poly" id="edge15_Node000001_Node000013" title=" " alt="" coords="88,508,92,581,98,631,108,686,123,742,146,797,175,849,214,893,220,898,217,902,210,897,171,852,141,800,118,744,103,687,92,632,86,582,83,508"/>
-<area shape="rect" id="Node000014" href="$classZagreus_1_1Board.html#a0111e0667a870a6de442ef831a0fb17d" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="251,678,403,704"/>
+<area shape="rect" id="Node000014" href="$classZagreus_1_1Board.html#ab5531cc66a779858ed8b61d53ab0d535" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="251,678,403,704"/>
 <area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="98,507,115,540,141,581,174,622,214,657,241,671,239,676,210,661,170,625,137,584,111,543,93,510"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="428,100,559,104,703,112,775,119,775,124,702,118,559,110,428,106"/>
 <area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="428,163,489,156,775,136,775,141,490,162,428,168"/>

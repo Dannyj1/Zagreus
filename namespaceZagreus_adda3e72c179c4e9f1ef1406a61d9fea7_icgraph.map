@@ -4,7 +4,7 @@
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1424,109,1371,79,1310,50,1264,36,1266,31,1312,45,1374,74,1426,104"/>
 <area shape="rect" id="Node000007" href="$classZagreus_1_1Board.html#a2f1f56b6140937dd1c0e430f0c0784bb" title="Retrieves the attackers of a given square." alt="" coords="1099,224,1294,264"/>
 <area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="1421,149,1312,202,1252,227,1249,222,1310,197,1418,144"/>
-<area shape="rect" id="Node000008" href="$classZagreus_1_1Board.html#a0111e0667a870a6de442ef831a0fb17d" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="845,234,997,260"/>
+<area shape="rect" id="Node000008" href="$classZagreus_1_1Board.html#ab5531cc66a779858ed8b61d53ab0d535" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="845,234,997,260"/>
 <area shape="poly" id="edge32_Node000001_Node000008" title=" " alt="" coords="1387,145,980,237,978,232,1386,140"/>
 <area shape="rect" id="Node000010" href="$classZagreus_1_1Board.html#adc52ad654205e521ebb03e472997889b" title="Retrieves the attackers of a given square by color." alt="" coords="824,107,1019,147"/>
 <area shape="poly" id="edge16_Node000001_Node000010" title=" " alt="" coords="1344,130,1019,130,1019,124,1344,124"/>
