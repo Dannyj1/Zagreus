@@ -396,7 +396,8 @@ void Evaluation::evaluateKing() {
 
     // Virtual mobility penalty
     const Square kingSquare = board.getKingSquare<color>();
-    const uint64_t virtualAttacks = queenAttacks(kingSquare, board.getOccupiedBitboard());
+    const uint64_t opponentPieces = board.getColorBitboard<!color>();
+    const uint64_t virtualAttacks = queenAttacks(kingSquare, board.getOccupiedBitboard() & ~opponentPieces);
     const uint8_t virtualMobility = popcnt(virtualAttacks);
     const int midgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[MIDGAME] * virtualMobility;
     const int endgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[ENDGAME] * virtualMobility;
