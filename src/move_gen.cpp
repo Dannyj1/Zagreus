@@ -50,24 +50,10 @@ void generateMoves(const Board& board, MoveList& moves) {
     const uint64_t ownPieces = board.getColorBitboard<color>();
     const uint64_t opponentKingBB = board.getPieceBoard<opponentKing>();
     uint64_t genMask = ~(ownPieces | opponentKingBB);
-    uint64_t pawnPushesToPromotion = 0;
-    uint64_t enPassantSquareBB = 0;
 
     if (type == QSEARCH) {
         const uint64_t opponentPieces = board.getColorBitboard<opponentColor>();
-        enPassantSquareBB =
-            board.getEnPassantSquare() == NO_EN_PASSANT ? 0 : squareToBitboard(board.getEnPassantSquare());
-
-        const uint64_t promotionRank = color == WHITE ? RANK_8 : RANK_1;
-        const uint64_t pawnBB = board.getPieceBoard < color == WHITE ? WHITE_PAWN : BLACK_PAWN > ();
-
-        if constexpr (color == WHITE) {
-            pawnPushesToPromotion = whitePawnSinglePush(pawnBB, board.getEmptyBitboard()) & promotionRank;
-        } else {
-            pawnPushesToPromotion = blackPawnSinglePush(pawnBB, board.getEmptyBitboard()) & promotionRank;
-        }
-
-        genMask &= (opponentPieces | enPassantSquareBB | pawnPushesToPromotion);
+        genMask &= opponentPieces;
     } else if (type == EVASIONS) {
         const Square kingSquare = bitboardToSquare(board.getPieceBoard<ownKing>());
         const uint64_t attackers = board.getSquareAttackersByColor<opponentColor>(kingSquare);
@@ -79,14 +65,10 @@ void generateMoves(const Board& board, MoveList& moves) {
 
             if (isSlidingPiece(attackerType)) {
                 const uint64_t squaresBetween = getSquaresBetween(attackerSquare, kingSquare);
-
                 evasionsMask |= squaresBetween;
             }
 
-            const uint64_t enPassantSquareLocalBB =
-                board.getEnPassantSquare() == NO_EN_PASSANT ? 0 : squareToBitboard(board.getEnPassantSquare());
-
-            genMask = evasionsMask | enPassantSquareLocalBB;
+            genMask = evasionsMask;
         } else {
             // If the king is in double check, only king moves are legal
             onlyKingMoves = true;
@@ -95,11 +77,6 @@ void generateMoves(const Board& board, MoveList& moves) {
 
     if (!onlyKingMoves) {
         generatePawnMoves<color, type>(board, moves, genMask);
-
-        if (type == QSEARCH) {
-            genMask &= ~(pawnPushesToPromotion | enPassantSquareBB);
-        }
-
         generateKnightMoves<color, type>(board, moves, genMask);
         generateBishopMoves<color, type>(board, moves, genMask);
         generateRookMoves<color, type>(board, moves, genMask);
@@ -159,10 +136,31 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         enPassantMask &= RANK_3;
     }
 
-    pawnSinglePushes &= genMask;
-    pawnDoublePushes &= genMask;
-    pawnWestAttacks &= (opponentPieces | enPassantMask) & genMask;
-    pawnEastAttacks &= (opponentPieces | enPassantMask) & genMask;
+    if constexpr (type == QSEARCH) {
+        constexpr uint64_t promotionRank = color == WHITE ? RANK_8 : RANK_1;
+        uint64_t promotionPushes;
+
+        if constexpr (color == WHITE) {
+            promotionPushes = whitePawnSinglePush(pawnBB, emptyBB) & promotionRank;
+        } else {
+            promotionPushes = blackPawnSinglePush(pawnBB, emptyBB) & promotionRank;
+        }
+
+        pawnSinglePushes &= promotionPushes;
+        pawnDoublePushes = 0;
+        pawnWestAttacks &= (genMask | enPassantMask);
+        pawnEastAttacks &= (genMask | enPassantMask);
+    } else {
+        pawnSinglePushes &= genMask;
+        pawnDoublePushes &= genMask;
+        if constexpr (type == EVASIONS) {
+            pawnWestAttacks &= (opponentPieces & genMask) | enPassantMask;
+            pawnEastAttacks &= (opponentPieces & genMask) | enPassantMask;
+        } else {
+            pawnWestAttacks &= (opponentPieces | enPassantMask) & genMask;
+            pawnEastAttacks &= (opponentPieces | enPassantMask) & genMask;
+        }
+    }
 
     constexpr Direction fromPushDirection = color == WHITE ? NORTH : SOUTH;
     constexpr Direction fromSqWestAttackDirection = color == WHITE ? NORTH_WEST : SOUTH_WEST;
