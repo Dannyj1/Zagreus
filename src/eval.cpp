@@ -382,9 +382,9 @@ void Evaluation::evaluateKing() {
 
     const int shieldPawns = popcnt(shieldMask & pawns);
     const int advancedShieldPawns = popcnt(advancedShieldMask & pawns);
-    const int midgameScore =
+    const int shieldMidgameScore =
         shieldPawns * evalPawnShieldBonus[MIDGAME] + advancedShieldPawns * evalPawnShieldAdvancedBonus[MIDGAME];
-    const int endgameScore =
+    const int shieldEndgameScore =
         shieldPawns * evalPawnShieldBonus[ENDGAME] + advancedShieldPawns * evalPawnShieldAdvancedBonus[ENDGAME];
 
 #ifdef ZAGREUS_TUNER
@@ -392,7 +392,16 @@ void Evaluation::evaluateKing() {
     trace.advancedPawnShieldPawns[color] += advancedShieldPawns;
 #endif
 
-    addScore<color>(midgameScore, endgameScore);
+    addScore<color>(shieldMidgameScore, shieldEndgameScore);
+
+    // Virtual mobility penalty
+    const Square kingSquare = board.getKingSquare<color>();
+    const uint64_t virtualAttacks = queenAttacks(kingSquare, board.getOccupiedBitboard());
+    const uint8_t virtualMobility = popcnt(virtualAttacks);
+    const int midgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[MIDGAME] * virtualMobility;
+    const int endgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[ENDGAME] * virtualMobility;
+
+    addScore<color>(midgameVirtualMobilityPenalty, endgameVirtualMobilityPenalty);
 }
 
 template <PieceColor color>

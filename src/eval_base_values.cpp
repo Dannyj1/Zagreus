@@ -54,6 +54,7 @@ const int baseKnightOutpostBonus[GAME_PHASES]{15, 5};
 // King safety
 const int basePawnShieldBonus[GAME_PHASES]{10, 5};
 const int basePawnShieldAdvancedBonus[GAME_PHASES]{5, 2};
+const int baseVirtualMobilityPenalty[GAME_PHASES]{-3, -1};
 
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1

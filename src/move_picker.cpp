@@ -69,7 +69,6 @@ void MovePicker::reset() { currentIndex = 0; }
 static TranspositionTable* tt = TranspositionTable::getTT();
 
 void MovePicker::score(Board& board) {
-    // TODO: Make better system that supports assigns a score to moves and sorts based on those
     const PvLine& pvLine = board.getPreviousPvLine();
     const int currentPly = board.getPly();
     const int pvMoveIndex = currentPly - pvLine.startPly;

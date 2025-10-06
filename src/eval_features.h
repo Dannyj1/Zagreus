@@ -47,4 +47,5 @@ extern int evalKnightOutpostBonus[GAME_PHASES];
 
 extern int evalPawnShieldBonus[GAME_PHASES];
 extern int evalPawnShieldAdvancedBonus[GAME_PHASES];
+extern int evalVirtualMobilityPenalty[GAME_PHASES];
 }  // namespace Zagreus

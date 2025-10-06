@@ -55,4 +55,5 @@ int evalKnightOutpostBonus[GAME_PHASES]{15, 5};
 // King safety
 int evalPawnShieldBonus[GAME_PHASES]{10, 5};
 int evalPawnShieldAdvancedBonus[GAME_PHASES]{5, 2};
+int evalVirtualMobilityPenalty[GAME_PHASES]{-3, -1};
 }  // namespace Zagreus

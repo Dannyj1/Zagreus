@@ -3,3 +3,5 @@ Language: Cpp
 BasedOnStyle: Google
 ColumnLimit: 120
 IndentWidth: 4
+Standard: c++20
+SpacesInAngles: Never
