@@ -328,7 +328,7 @@ class Board {
     template <PieceColor color>
     [[nodiscard]] bool isKingInCheck() const {
         constexpr PieceColor opponentColor = !color;
-        const uint64_t kingBB = getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>();
+        const uint64_t kingBB = getPieceBoard < color == WHITE ? WHITE_KING : BLACK_KING > ();
         const Square kingSquare = bitboardToSquare(kingBB);
 
         return getSquareAttackersByColor<opponentColor>(kingSquare) != 0;
@@ -435,7 +435,7 @@ class Board {
     template <PieceColor color>
     [[nodiscard]] bool canPromotePawn() const {
         const uint64_t promotionRank = color == WHITE ? RANK_7 : RANK_2;
-        const uint64_t pawns = getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>();
+        const uint64_t pawns = getPieceBoard < color == WHITE ? WHITE_PAWN : BLACK_PAWN > ();
 
         return pawns & promotionRank;
     }
@@ -465,13 +465,14 @@ class Board {
      */
     template <PieceColor color>
     [[nodiscard]] bool hasNonPawnMaterial() const {
-        return getColorBitboard<color>() & ~(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>() |
-                                             getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>());
+        return getColorBitboard<color>() & ~(getPieceBoard < color == WHITE                     ? WHITE_KING
+                                             : BLACK_KING > () | getPieceBoard < color == WHITE ? WHITE_PAWN
+                                                                                                : BLACK_PAWN > ());
     }
 
     template <PieceColor color>
     [[nodiscard]] Square getKingSquare() const {
-        return bitboardToSquare(getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>());
+        return bitboardToSquare(getPieceBoard < color == WHITE ? WHITE_KING : BLACK_KING > ());
     }
 
     template <PieceColor color>
