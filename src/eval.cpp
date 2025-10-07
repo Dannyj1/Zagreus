@@ -118,11 +118,11 @@ void Evaluation::evaluatePieces() {
     evaluateKing<WHITE>();
     evaluateKing<BLACK>();
 
-    evaluateSquareControl<WHITE>();
-    evaluateSquareControl<BLACK>();
+    // evaluateSquareControl<WHITE>();
+    // evaluateSquareControl<BLACK>();
 
-    evaluatePawnStructure<WHITE>();
-    evaluatePawnStructure<BLACK>();
+    // evaluatePawnStructure<WHITE>();
+    // evaluatePawnStructure<BLACK>();
 }
 
 template <PieceColor color>
@@ -194,7 +194,7 @@ void Evaluation::evaluateKnights() {
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
 
         // Outposts
-        constexpr uint64_t outpostRanks = color == WHITE ? (RANK_4 | RANK_5 | RANK_6) : (RANK_5 | RANK_4 | RANK_3);
+        /*constexpr uint64_t outpostRanks = color == WHITE ? (RANK_4 | RANK_5 | RANK_6) : (RANK_5 | RANK_4 | RANK_3);
         const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
         uint64_t attackSpanMask = color == WHITE ? shiftNorth(fillNorth(squareBB)) : shiftSouth(fillSouth(squareBB));
         attackSpanMask = shiftEast(attackSpanMask) | shiftWest(attackSpanMask);
@@ -204,7 +204,7 @@ void Evaluation::evaluateKnights() {
 
         if (isOutpost && !attackingPawns) {
             addScore<color>(evalKnightOutpostBonus[MIDGAME], evalKnightOutpostBonus[ENDGAME]);
-        }
+        }*/
     }
 }
 
@@ -212,14 +212,14 @@ template <PieceColor color>
 void Evaluation::evaluateBishops() {
     constexpr Piece bishopPiece = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     uint64_t bishops = board.getPieceBoard<bishopPiece>();
-    const uint8_t bishopCount = popcnt(bishops);
+    /*const uint8_t bishopCount = popcnt(bishops);
     const uint8_t lightSquareBishopCount = popcnt(bishops & LIGHT_SQUARES);
     const uint8_t darkSquareBishopCount = popcnt(bishops & DARK_SQUARES);
 
     if (bishopCount > 1 && lightSquareBishopCount > 0 && darkSquareBishopCount > 0) {
         // TODO: Add to tuner
         addScore<color>(evalBishopPairBonus[MIDGAME], evalBishopPairBonus[ENDGAME]);
-    }
+    }*/
 
     while (bishops) {
         const Square square = static_cast<Square>(popLsb(bishops));
@@ -352,7 +352,7 @@ void Evaluation::evaluateKing() {
     evalData.attacksByColor[color] |= attacks;
     evalData.attacksByPiece[kingPiece] |= attacks;
 
-    // Pawn shield
+    /*// Pawn shield
     const uint8_t kingFile = square % 8;
     const bool isKingSide = kingFile >= 4;
 
@@ -401,7 +401,7 @@ void Evaluation::evaluateKing() {
     const int midgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[MIDGAME] * virtualMobility;
     const int endgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[ENDGAME] * virtualMobility;
 
-    addScore<color>(midgameVirtualMobilityPenalty, endgameVirtualMobilityPenalty);
+    addScore<color>(midgameVirtualMobilityPenalty, endgameVirtualMobilityPenalty);*/
 }
 
 template <PieceColor color>
