@@ -121,10 +121,10 @@ void MovePicker::score(Board& board) {
             const int promotionScore = 1500000 + getPieceValue(promotedPiece);
 
             scores[i] = promotionScore;
-            /*} else if (move == killerMove1) {
-                scores[i] = 900000;
-            } else if (move == killerMove2) {
-                scores[i] = 800000;*/
+        } else if (move == killerMove1) {
+            scores[i] = 900000;
+        } else if (move == killerMove2) {
+            scores[i] = 800000;
         } else {
             // Ordering of quiet moves
             const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);

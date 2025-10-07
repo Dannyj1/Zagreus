@@ -59,6 +59,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     PvLine bestPvLine = PvLine{board.getPly()};
 
     engine.setSearchStopped(false);
+    tt->resetKillerMoves();
 
     while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLIES) {
         if (params.blackTime > 0 || params.whiteTime > 0) {
@@ -300,6 +301,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
                 if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+                    // Killer moves
+                    tt->addKillerMove(move, board.getPly());
+
+                    // History heuristic
                     const int historyValue = 300 * depth - 250;
 
                     tt->updateHistory<color>(move, historyValue);
