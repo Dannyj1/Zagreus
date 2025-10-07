@@ -15,7 +15,7 @@
 <area shape="rect" id="Node000010" href="$classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba" title="Sets a piece on a given square." alt="" coords="286,156,470,181"/>
 <area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="223,166,272,166,272,171,223,171"/>
 <area shape="poly" id="edge7_Node000007_Node000004" title=" " alt="" coords="455,203,484,190,498,179,507,166,516,153,532,141,546,134,548,139,535,146,520,157,511,170,502,183,487,195,457,208"/>
-<area shape="rect" id="Node000008" href="$namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c" title="Gets the Zobrist constant for a given index." alt="" coords="533,205,741,231"/>
+<area shape="rect" id="Node000008" href="$namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272" title="Gets the Zobrist constant for a given index." alt="" coords="533,205,741,231"/>
 <area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="486,215,519,215,519,221,486,221"/>
 <area shape="rect" id="Node000009" href="$namespaceZagreus.html#ad1261455060994b4cea7b1eea416e6f6" title="Converts a square index to a bitboard." alt="" coords="539,156,735,181"/>
 <area shape="poly" id="edge9_Node000007_Node000009" title=" " alt="" coords="445,203,556,181,557,187,446,208"/>

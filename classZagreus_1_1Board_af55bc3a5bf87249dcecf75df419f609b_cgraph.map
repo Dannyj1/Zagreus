@@ -1,6 +1,6 @@
 <map id="Zagreus::Board::setFromFEN" name="Zagreus::Board::setFromFEN">
 <area shape="rect" id="Node000001" title="Sets the board state from a FEN string." alt="" coords="5,48,213,73"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c" title="Gets the Zobrist constant for a given index." alt="" coords="725,5,933,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272" title="Gets the Zobrist constant for a given index." alt="" coords="725,5,933,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,45,261,33,381,23,501,18,711,14,711,20,501,23,381,29,262,38,175,51"/>
 <area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a0bc759981d0c76d78c03440af1fc766c" title="Resets the board to the initial state." alt="" coords="272,48,435,73"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="213,58,258,58,258,63,213,63"/>

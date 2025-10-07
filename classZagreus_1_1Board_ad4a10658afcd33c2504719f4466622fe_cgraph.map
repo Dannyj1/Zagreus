@@ -1,5 +1,5 @@
 <map id="Zagreus::Board::makeNullMove" name="Zagreus::Board::makeNullMove">
 <area shape="rect" id="Node000001" title="Makes a null move on the board, meaning the side to move does not make a move and the turn is passed." alt="" coords="5,5,232,31"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c" title="Gets the Zobrist constant for a given index." alt="" coords="280,5,488,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272" title="Gets the Zobrist constant for a given index." alt="" coords="280,5,488,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="232,15,266,15,266,21,232,21"/>
 </map>

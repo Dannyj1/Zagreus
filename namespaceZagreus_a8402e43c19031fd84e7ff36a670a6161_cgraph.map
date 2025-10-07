@@ -92,7 +92,7 @@
 <area shape="poly" id="edge47_Node000061_Node000063" title=" " alt="" coords="874,1638,933,1665,1004,1693,1028,1701,1026,1706,1002,1698,931,1670,872,1643"/>
 <area shape="rect" id="Node000064" href="$namespaceZagreus.html#a6c2e1e6c4abc0bc1ae611cd9a78fca36" title=" " alt="" coords="1019,1772,1225,1798"/>
 <area shape="poly" id="edge50_Node000061_Node000064" title=" " alt="" coords="873,1638,914,1662,957,1695,971,1713,980,1729,988,1744,1004,1757,1018,1765,1015,1770,1001,1762,984,1747,975,1731,967,1716,953,1699,911,1667,871,1643"/>
-<area shape="rect" id="Node000065" href="$namespaceZagreus.html#a407181a24d35d16ddc196ecd2195629c" title="Gets the Zobrist constant for a given index." alt="" coords="1289,1740,1497,1766"/>
+<area shape="rect" id="Node000065" href="$namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272" title="Gets the Zobrist constant for a given index." alt="" coords="1289,1740,1497,1766"/>
 <area shape="poly" id="edge52_Node000061_Node000065" title=" " alt="" coords="878,1638,918,1661,957,1695,967,1711,973,1727,977,1757,983,1785,991,1797,1004,1808,1048,1829,1096,1838,1145,1838,1195,1831,1243,1818,1287,1802,1357,1770,1359,1775,1289,1807,1244,1823,1196,1836,1146,1844,1095,1844,1046,1834,1001,1812,987,1800,978,1787,972,1758,968,1729,963,1714,953,1699,915,1666,875,1643"/>
 <area shape="rect" id="Node000066" href="$classZagreus_1_1Board.html#aea72d78a798679410c1b862700061f83" title="Removes a piece from a given square." alt="" coords="1015,1658,1229,1683"/>
 <area shape="poly" id="edge53_Node000061_Node000066" title=" " alt="" coords="929,1638,1026,1653,1025,1658,928,1643"/>
