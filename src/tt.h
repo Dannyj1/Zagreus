@@ -22,7 +22,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <iostream>
 
 #include "move.h"
 
@@ -78,7 +77,10 @@ class TranspositionTable {
             }
         }
 
-        resetKillerMoves();
+        for (int ply = 0; ply < MAX_PLIES; ply++) {
+            killerMoves[ply][0] = NO_MOVE;
+            killerMoves[ply][1] = NO_MOVE;
+        }
     }
 
     TranspositionTable(TranspositionTable& other) = delete;
@@ -121,7 +123,7 @@ class TranspositionTable {
         return captureHistory[movingPiece][toSquare][capturedPiece];
     }
 
-    void addKillerMove(const Move move, const int ply) {
+    void addKillerMove(Move move, int ply) {
         assert(ply < MAX_PLIES);
         assert(move != NO_MOVE);
 
@@ -132,12 +134,5 @@ class TranspositionTable {
     }
 
     [[nodiscard]] Move getKillerMove(int ply, int index) const { return killerMoves[ply][index]; }
-
-    void resetKillerMoves() {
-        for (int ply = 0; ply < MAX_PLIES; ply++) {
-            killerMoves[ply][0] = NO_MOVE;
-            killerMoves[ply][1] = NO_MOVE;
-        }
-    }
 };
 }  // namespace Zagreus
