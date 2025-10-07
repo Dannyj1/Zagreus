@@ -197,6 +197,16 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 return nullMoveScore;
             }
         }
+
+        // Futility pruning
+        if (depth <= 2 && board.hasNonPawnMaterial<color>() && !isInCheck) {
+            int futilityMargin = 350 * depth;
+            const int staticEval = Evaluation(board).evaluate();
+
+            if (staticEval + futilityMargin < alpha) {
+                return qSearch<color, nodeType>(engine, board, alpha, beta, 0, stats, endTime);
+            }
+        }
     }
 
     bool firstMove = true;
