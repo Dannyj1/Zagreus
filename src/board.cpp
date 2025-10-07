@@ -52,7 +52,7 @@ void initZobristConstants() {
 /**
  * \brief Gets the Zobrist constant for a given index.
  */
-constexpr uint64_t getZobristConstant(const int index) {
+uint64_t getZobristConstant(const int index) {
     assert(index >= 0 && index < 781);
     assert(zobristConstants[index] != 0);
     return zobristConstants[index];

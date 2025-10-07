@@ -41,7 +41,7 @@ void initZobristConstants();
 /**
  * \brief Gets the Zobrist constant for a given index.
  */
-[[nodiscard]] constexpr uint64_t getZobristConstant(int index);
+[[nodiscard]] uint64_t getZobristConstant(int index);
 
 /**
  * \brief Represents the state of the board at a given ply
