@@ -25,6 +25,7 @@
 
 #include "move.h"
 
+// TODO: Some of the functions here can (and should) be in tt.cpp
 namespace Zagreus {
 enum TTNodeType : uint8_t {
     EXACT,  // PV
@@ -45,12 +46,13 @@ class TranspositionTable {
     int history[COLORS][SQUARES][SQUARES]{};
     // [movingPiece][toSquare][capturedPiece]
     int captureHistory[PIECES][SQUARES][PIECES]{};
+    Move killerMoves[MAX_PLIES][2]{};
 
    public:
     TTEntry* transpositionTable = new TTEntry[1]{};
     uint64_t hashSize = 0;
 
-    TranspositionTable() = default;
+    TranspositionTable() { reset(); }
 
     ~TranspositionTable() { delete[] transpositionTable; }
 
@@ -73,6 +75,11 @@ class TranspositionTable {
             for (int toSquare = 0; toSquare < SQUARES; toSquare++) {
                 std::fill_n(captureHistory[movingPiece][toSquare], PIECES, 0);
             }
+        }
+
+        for (int ply = 0; ply < MAX_PLIES; ply++) {
+            killerMoves[ply][0] = NO_MOVE;
+            killerMoves[ply][1] = NO_MOVE;
         }
     }
 
@@ -115,5 +122,17 @@ class TranspositionTable {
 
         return captureHistory[movingPiece][toSquare][capturedPiece];
     }
+
+    void addKillerMove(Move move, int ply) {
+        assert(ply < MAX_PLIES);
+        assert(move != NO_MOVE);
+
+        if (killerMoves[ply][0] != move) {
+            killerMoves[ply][1] = killerMoves[ply][0];
+            killerMoves[ply][0] = move;
+        }
+    }
+
+    [[nodiscard]] Move getKillerMove(int ply, int index) const { return killerMoves[ply][index]; }
 };
 }  // namespace Zagreus

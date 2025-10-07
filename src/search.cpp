@@ -215,6 +215,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     MoveList searchedCaptures{};
     MovePicker movePicker{moves};
     movePicker.score(board);
+
     PvLine nodePvLine = PvLine{board.getPly()};
     Move bestMove = NO_MOVE;
     int bestScore = INT32_MIN;
@@ -298,7 +299,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
-                if (capturedPiece == EMPTY) {
+                if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
                     const int historyValue = 300 * depth - 250;
 
                     tt->updateHistory<color>(move, historyValue);
@@ -310,7 +311,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                             tt->updateHistory<color>(quietMove, -historyValue);
                         }
                     }
-                } else {
+                }
+
+                if (capturedPiece != EMPTY) {
                     const int historyValue = 300 * depth - 250;
                     const Piece movingPiece = board.getPieceOnSquare(getFromSquare(move));
 
