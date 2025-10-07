@@ -111,8 +111,8 @@ Collaboration diagram for Zagreus::TranspositionTable:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4805d89ab49b51172956ac4f6d637f18" id="r_a4805d89ab49b51172956ac4f6d637f18"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4805d89ab49b51172956ac4f6d637f18">TranspositionTable</a> ()=default</td></tr>
-<tr class="separator:a4805d89ab49b51172956ac4f6d637f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af965c247ccc9326bf7c0b06bdf9eafe2" id="r_af965c247ccc9326bf7c0b06bdf9eafe2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af965c247ccc9326bf7c0b06bdf9eafe2">TranspositionTable</a> ()</td></tr>
+<tr class="separator:af965c247ccc9326bf7c0b06bdf9eafe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11326423d706ca8e9d757ee9287aed59" id="r_a11326423d706ca8e9d757ee9287aed59"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11326423d706ca8e9d757ee9287aed59">~TranspositionTable</a> ()</td></tr>
 <tr class="separator:a11326423d706ca8e9d757ee9287aed59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa27c01833383a197e102d2494be540b4" id="r_aa27c01833383a197e102d2494be540b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa27c01833383a197e102d2494be540b4">reset</a> ()</td></tr>
@@ -141,6 +141,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a345f25aae805dc81ee46fb339e39a3b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab71dade2752b32cf70e7f34b3d0e3ec3" id="r_ab71dade2752b32cf70e7f34b3d0e3ec3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab71dade2752b32cf70e7f34b3d0e3ec3">getCaptureHistoryValue</a> (const <a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move, const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> movingPiece, const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> capturedPiece) const</td></tr>
 <tr class="separator:ab71dade2752b32cf70e7f34b3d0e3ec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7889afa9221436dab5c84475c11ac3ed" id="r_a7889afa9221436dab5c84475c11ac3ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7889afa9221436dab5c84475c11ac3ed">addKillerMove</a> (<a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move, int ply)</td></tr>
+<tr class="separator:a7889afa9221436dab5c84475c11ac3ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95cb68b25557dd839277349b09d240af" id="r_a95cb68b25557dd839277349b09d240af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95cb68b25557dd839277349b09d240af">getKillerMove</a> (int ply, int index) const</td></tr>
+<tr class="separator:a95cb68b25557dd839277349b09d240af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -156,10 +160,10 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00043">43</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00044">44</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4805d89ab49b51172956ac4f6d637f18" name="a4805d89ab49b51172956ac4f6d637f18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4805d89ab49b51172956ac4f6d637f18">&#9670;&#160;</a></span>TranspositionTable() <span class="overload">[1/2]</span></h2>
+<a id="af965c247ccc9326bf7c0b06bdf9eafe2" name="af965c247ccc9326bf7c0b06bdf9eafe2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af965c247ccc9326bf7c0b06bdf9eafe2">&#9670;&#160;</a></span>TranspositionTable() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,10 +180,22 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00055">55</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classZagreus_1_1TranspositionTable_af965c247ccc9326bf7c0b06bdf9eafe2_cgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_af965c247ccc9326bf7c0b06bdf9eafe2_cgraph" alt=""/></div>
+<map name="aclassZagreus_1_1TranspositionTable_af965c247ccc9326bf7c0b06bdf9eafe2_cgraph" id="aclassZagreus_1_1TranspositionTable_af965c247ccc9326bf7c0b06bdf9eafe2_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,208,45"/>
+<area shape="rect" href="classZagreus_1_1TranspositionTable.html#aa27c01833383a197e102d2494be540b4" title=" " alt="" coords="256,5,459,45"/>
+<area shape="poly" title=" " alt="" coords="208,23,242,23,242,28,208,28"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -206,7 +222,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00055">55</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00057">57</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 
 </div>
 </div>
@@ -236,6 +252,37 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7889afa9221436dab5c84475c11ac3ed" name="a7889afa9221436dab5c84475c11ac3ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7889afa9221436dab5c84475c11ac3ed">&#9670;&#160;</a></span>addKillerMove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Zagreus::TranspositionTable::addKillerMove </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a></td>          <td class="paramname"><span class="paramname"><em>move</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ply</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00126">126</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+
+</div>
+</div>
 <a id="ab71dade2752b32cf70e7f34b3d0e3ec3" name="ab71dade2752b32cf70e7f34b3d0e3ec3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab71dade2752b32cf70e7f34b3d0e3ec3">&#9670;&#160;</a></span>getCaptureHistoryValue()</h2>
 
@@ -268,7 +315,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00112">112</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00119">119</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -372,7 +419,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00096">96</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00103">103</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -434,7 +481,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00103">103</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00110">110</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -445,6 +492,56 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="208,30,242,26,242,32,209,35"/>
 <area shape="rect" href="namespaceZagreus.html#a978d5894806a1bdb9f9089e820166aef" title=" " alt="" coords="266,55,429,80"/>
 <area shape="poly" title=" " alt="" coords="209,51,252,55,252,61,208,56"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a95cb68b25557dd839277349b09d240af" name="a95cb68b25557dd839277349b09d240af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95cb68b25557dd839277349b09d240af">&#9670;&#160;</a></span>getKillerMove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> Zagreus::TranspositionTable::getKillerMove </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ply</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00136">136</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph" alt=""/></div>
+<map name="aclassZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph" id="aclassZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph">
+<area shape="rect" title=" " alt="" coords="760,22,963,62"/>
+<area shape="rect" href="classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="553,22,712,62"/>
+<area shape="poly" title=" " alt="" coords="746,45,712,45,712,39,746,39"/>
+<area shape="rect" href="namespaceZagreus.html#a9cede8fac151bf6c2336600497bc8b54" title=" " alt="" coords="180,29,323,55"/>
+<area shape="poly" title=" " alt="" coords="539,35,505,33,438,30,371,33,323,36,323,31,371,27,438,25,505,27,540,30"/>
+<area shape="rect" href="namespaceZagreus.html#aa7c500d003ac3b2a52af5b921a04b5b7" title=" " alt="" coords="371,67,505,92"/>
+<area shape="poly" title=" " alt="" coords="541,62,506,69,505,64,539,57"/>
+<area shape="poly" title=" " alt="" coords="283,19,274,11,251,8,232,10,222,15,220,20,226,28,221,31,215,21,218,11,231,5,251,3,276,6,287,15"/>
+<area shape="rect" href="namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="5,29,132,55"/>
+<area shape="poly" title=" " alt="" coords="166,45,132,45,132,39,166,39"/>
+<area shape="poly" title=" " alt="" coords="360,67,315,57,316,52,361,61"/>
+<area shape="poly" title=" " alt="" coords="471,56,462,48,438,45,418,47,408,52,406,58,411,65,407,68,401,58,404,48,417,42,438,40,464,44,474,52"/>
 </map>
 </div>
 
@@ -602,17 +699,19 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00057">57</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00059">59</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classZagreus_1_1TranspositionTable_aa27c01833383a197e102d2494be540b4_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_aa27c01833383a197e102d2494be540b4_icgraph" alt=""/></div>
 <map name="aclassZagreus_1_1TranspositionTable_aa27c01833383a197e102d2494be540b4_icgraph" id="aclassZagreus_1_1TranspositionTable_aa27c01833383a197e102d2494be540b4_icgraph">
-<area shape="rect" title=" " alt="" coords="251,5,453,45"/>
-<area shape="rect" href="main_8cpp.html#a9da5c1576379032450eee69dc694e6a4" title=" " alt="" coords="108,13,203,38"/>
-<area shape="poly" title=" " alt="" coords="237,28,203,28,203,23,237,23"/>
-<area shape="rect" href="main_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e" title=" " alt="" coords="5,13,60,38"/>
-<area shape="poly" title=" " alt="" coords="95,28,60,28,60,23,95,23"/>
+<area shape="rect" title=" " alt="" coords="359,27,561,67"/>
+<area shape="rect" href="main_8cpp.html#a9da5c1576379032450eee69dc694e6a4" title=" " alt="" coords="162,5,257,31"/>
+<area shape="poly" title=" " alt="" coords="345,37,256,26,257,21,346,31"/>
+<area shape="rect" href="classZagreus_1_1TranspositionTable.html#af965c247ccc9326bf7c0b06bdf9eafe2" title=" " alt="" coords="108,55,311,95"/>
+<area shape="poly" title=" " alt="" coords="345,63,311,67,310,61,345,58"/>
+<area shape="rect" href="main_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e" title=" " alt="" coords="5,5,60,31"/>
+<area shape="poly" title=" " alt="" coords="148,21,60,21,60,15,148,15"/>
 </map>
 </div>
 
@@ -830,7 +929,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00051">51</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00053">53</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 
 </div>
 </div>
@@ -846,7 +945,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00050">50</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00052">52</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 
 </div>
 </div>

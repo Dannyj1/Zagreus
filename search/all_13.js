@@ -6,7 +6,7 @@ var searchData=
   ['tostring_3',['toString',['../classZagreus_1_1UCIOption.html#a5e42b636debf4838dd8fe63195ae7eb0',1,'Zagreus::UCIOption']]],
   ['totalphase_4',['totalPhase',['../namespaceZagreus.html#a8ceb0b3cc0d026bfb9486b159cb10721',1,'Zagreus']]],
   ['transform_5',['transform',['../namespaceZagreus.html#aeffbcbe2e765a3e2ee2a60c9fee5ef34',1,'Zagreus']]],
-  ['transpositiontable_6',['TranspositionTable',['../classZagreus_1_1TranspositionTable.html',1,'Zagreus::TranspositionTable'],['../classZagreus_1_1TranspositionTable.html#a4805d89ab49b51172956ac4f6d637f18',1,'Zagreus::TranspositionTable::TranspositionTable()=default'],['../classZagreus_1_1TranspositionTable.html#aa4b76abea2e9f7456d1a0aebc15eb910',1,'Zagreus::TranspositionTable::TranspositionTable(TranspositionTable &amp;other)=delete']]],
+  ['transpositiontable_6',['TranspositionTable',['../classZagreus_1_1TranspositionTable.html',1,'Zagreus::TranspositionTable'],['../classZagreus_1_1TranspositionTable.html#af965c247ccc9326bf7c0b06bdf9eafe2',1,'Zagreus::TranspositionTable::TranspositionTable()'],['../classZagreus_1_1TranspositionTable.html#aa4b76abea2e9f7456d1a0aebc15eb910',1,'Zagreus::TranspositionTable::TranspositionTable(TranspositionTable &amp;other)=delete']]],
   ['transpositiontable_7',['transpositionTable',['../classZagreus_1_1TranspositionTable.html#ab90f0aefbc8683bf17c8d6cb1b1143e6',1,'Zagreus::TranspositionTable']]],
   ['tt_2ecpp_8',['tt.cpp',['../tt_8cpp.html',1,'']]],
   ['tt_2eh_9',['tt.h',['../tt_8h.html',1,'']]],

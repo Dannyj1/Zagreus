@@ -1,7 +1,9 @@
 <map id="Zagreus::TranspositionTable::reset" name="Zagreus::TranspositionTable::reset">
-<area shape="rect" id="Node000001" title=" " alt="" coords="251,5,453,45"/>
-<area shape="rect" id="Node000002" href="$main_8cpp.html#a9da5c1576379032450eee69dc694e6a4" title=" " alt="" coords="108,13,203,38"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="237,28,203,28,203,23,237,23"/>
-<area shape="rect" id="Node000003" href="$main_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e" title=" " alt="" coords="5,13,60,38"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="95,28,60,28,60,23,95,23"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="359,27,561,67"/>
+<area shape="rect" id="Node000002" href="$main_8cpp.html#a9da5c1576379032450eee69dc694e6a4" title=" " alt="" coords="162,5,257,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="345,37,256,26,257,21,346,31"/>
+<area shape="rect" id="Node000004" href="$classZagreus_1_1TranspositionTable.html#af965c247ccc9326bf7c0b06bdf9eafe2" title=" " alt="" coords="108,55,311,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="345,63,311,67,310,61,345,58"/>
+<area shape="rect" id="Node000003" href="$main_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e" title=" " alt="" coords="5,5,60,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="148,21,60,21,60,15,148,15"/>
 </map>
