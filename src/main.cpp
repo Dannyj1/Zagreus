@@ -43,7 +43,6 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "1rbk1bnr/pp1p1ppp/n1pq4/4pP1Q/P1B1P3/2P4P/1P1P2P1/RNB2KNR b - -",
     "r1bn1r2/2k3p1/6p1/pP3p2/4P2P/1P1P3R/2P1NB2/Q3K1n1 b - -",
     "1rb1kb1r/p3p1pp/n4p2/1pppNn2/4P3/2PP3P/PB4P1/RN1QKB1R b KQk -",
-    "8/3P4/p4k2/P2Q4/N7/7B/4p3/4K3 w - -",
     "1B1N3k/4r3/5b1P/2n1P3/3K2p1/6P1/4b3/4R3 b - ",
     "r1n1k1r1/1pb2p2/5P2/pPPp2p1/5p1R/P1N1N3/2P1P3/B1R1KB2 w - -",
     "8/8/1qB1k3/1p6/3p4/1p6/8/4K3 b - -",
@@ -52,7 +51,6 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "2bq1b2/4k3/1p3ppr/2pp1Q1N/3p3P/2P5/PpN2PP1/1RB1KBR1 w - -",
     "8/2k5/4p1B1/4P2p/4P2P/1K6/7N/1q6 w - -",
     "1N1k4/P5b1/4p1p1/2PP3p/R4BrP/8/2nKb2R/1r6 w - -",
-    "2kN1r2/2n5/2Q5/7p/7P/1K1RB3/8/8 w - -",
     "8/7b/p1P1Pn2/P1k3N1/7p/K1p5/4B1P1/3N2R1 w - -",
     "rnbqkbnr/1p2pp1p/3p4/6p1/P1p2PP1/1p1P4/2P1P2P/RNBQKBNR w Kkq -",
     "1n6/8/2k3K1/2p5/2PpP1nb/3P4/8/1b6 w - -",
@@ -64,8 +62,6 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "rnb4r/4b2k/1R1pP3/4N2P/pP2nP1P/p1N5/3B4/1K5R b - -",
     "8/1pp5/3R2P1/1pkn1p1p/5P2/r6b/8/1N2K1N1 b - -",
     "rn3bnr/pBp1pk1p/5p2/1p4p1/6b1/N3Q3/PP1P1PPP/R1B1K1NR b - -",
-    "8/8/P7/2k4n/1pR4n/1B5P/3R4/3K2N1 b - -",
-    "q7/p1rbn1p1/P1ppR3/1PP2P1k/1B1PN2p/1Q5P/1R2K3/8 b - -",
     "6r1/3k2N1/2n5/3pbP2/8/8/8/3K1n2 b - -",
     "bnk4r/7p/R3q3/p1Pp4/P7/3p4/3P2Kn/1NB5 w - -",
     "r7/n3k1b1/p2p4/P1pP4/2K5/P6N/3BB2R/6Q1 b - -",
@@ -76,14 +72,25 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "4r1k1/r1q2ppp/ppp2n2/4P3/5Rb1/1N1BQ3/PPP3PP/R5K1 w - - 1 17",
     "2rqkb1r/ppp2p2/2npb1p1/1N1Nn2p/2P1PP2/8/PP2B1PP/R1BQK2R b KQ - 0 11",
     "r1bbk1nr/pp3p1p/2n5/1N4p1/2Np1B2/8/PPP2PPP/2KR1B1R w kq - 0 13",
-    "6k1/3b3r/1p1p4/p1n2p2/1PPNpP1q/P3Q1p1/1R1RB1P1/5K2 b - - 0 1",
-    "r2r1n2/pp2bk2/2p1p2p/3q4/3PN1QP/2P3R1/P4PP1/5RK1 w - - 0 1",
     "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
     "8/8/8/8/5kp1/P7/8/1K1N4 w - - 0 1",
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
     "8/8/1P6/5pr1/8/4R3/7k/2K5 w - - 0 1",
     "8/8/3P3k/8/1p6/8/1P6/1K3n2 b - - 0 1",
-    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"};
+    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124",
+    "rnbq1rk1/ppp1npb1/4p1p1/3P3p/3PP3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
+    "rr2qbk1/3n2p1/3Ppp1p/1p6/p3P3/1P1QBN1P/5PP1/R2R2K1 w - - 1 33",
+    "3r2k1/1R3ppp/p2R1p2/b7/5P2/P4N2/6PP/7K b - - 0 32",
+    "8/1b2k3/1r2p1p1/2r1nPp1/2BNp2P/1P6/2P5/2K1R1R1 w - - 0 31",
+    "1r2k2r/3bbppp/2n1p3/8/2PNP3/2B5/4BPPP/3RR1K1 b - - 0 21",
+    "8/2k2Rpp/2b5/2P1p3/4P3/r2B1KP1/7P/8 b - - 22 46",
+    "r1bq1k1r/pp2bppp/2n1pn2/2p5/2B1NB2/3P1N2/PPP2PPP/R2QR1K1 b - - 3 10",
+    "8/3rk1pp/2b5/R3p3/2P1P3/6P1/4BK1P/8 b - - 3 34",
+    "r3r1k1/ppp2pb1/4q1p1/3pP1Bp/P2P1P2/R6P/1P4P1/3QR1K1 b - - 0 20",
+    "4r1k1/5rb1/pP2q1p1/2p1P1B1/3pRPP1/1P4R1/8/3Q2K1 b - - 0 31",
+    "rr2qbk1/6p1/1n2pp1p/1p1P4/p3P3/1P1QBN1P/5PP1/R2R2K1 w - - 0 32",
+    "1rq3k1/R2n2p1/3rpp1p/1p6/1P2P3/5N1P/Q4PP1/R5K1 w - - 9 45"
+};
 
 const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
@@ -97,7 +104,12 @@ const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "r1bbk1nr/pp3p1p/2n5/1N4p1/2Np1B2/8/PPP2PPP/2KR1B1R w kq - 0 13",
     "8/2R5/8/k7/N5PP/2K5/8/5b2 w - -",
     "rnbqk2r/1p1p1pbp/4p2n/p1p3p1/2PPP1P1/5P1N/PP1K2BP/RNBQR3 w kq -",
-    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124"};
+    "8/R7/2q5/8/6k1/8/1P5p/K6R w - - 0 124",
+    "rnbq1rk1/ppp1npb1/4p1p1/3P3p/3PP3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
+    "3r2k1/1R3ppp/p2R1p2/b7/5P2/P4N2/6PP/7K b - - 0 32",
+    "r1bq1k1r/pp2bppp/2n1pn2/2p5/2B1NB2/3P1N2/PPP2PPP/R2QR1K1 b - - 3 10",
+    "1rq3k1/R2n2p1/3rpp1p/1p6/1P2P3/5N1P/Q4PP1/R5K1 w - - 9 45"
+};
 
 void benchmark(bool fast);
 
@@ -148,30 +160,27 @@ void benchmark(bool fast) {
     std::vector<std::string> positions = fast ? FAST_BENCHMARK_POSITIONS : BENCHMARK_POSITIONS;
     SearchParams params{};
 
-    params.depth = fast ? 6 : 8;
+    params.depth = fast ? 4 : 8;
 
     for (const std::string& position : positions) {
-        for (int i = 0; i < 2; i++) {
-            TranspositionTable::getTT()->reset();
-            const PieceColor color = i == 0 ? WHITE : BLACK;
+        board.setFromFEN(position);
+        const PieceColor color = board.getSideToMove();
 
-            board.setFromFEN(position);
-            board.setSideToMove(color);
-            SearchStats stats{};
-            auto start = std::chrono::steady_clock::now();
+        TranspositionTable::getTT()->reset();
+        SearchStats stats{};
+        auto start = std::chrono::steady_clock::now();
 
-            if (color == WHITE) {
-                search<WHITE>(engine, board, params, stats);
-            } else {
-                search<BLACK>(engine, board, params, stats);
-            }
-
-            auto end = std::chrono::steady_clock::now();
-            std::chrono::duration<double, std::milli> elapsed = end - start;
-
-            nodes += stats.nodesSearched + stats.qNodesSearched;
-            totalMs += elapsed.count();
+        if (color == WHITE) {
+            search<WHITE>(engine, board, params, stats);
+        } else {
+            search<BLACK>(engine, board, params, stats);
         }
+
+        auto end = std::chrono::steady_clock::now();
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+
+        nodes += stats.nodesSearched + stats.qNodesSearched;
+        totalMs += elapsed.count();
     }
 
     if (nodes == 0 || totalMs == 0) {
