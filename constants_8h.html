@@ -330,11 +330,11 @@ Macros</h2></td></tr>
 <tr class="separator:a763d2f16525171e564b5ac63c5cb95c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a792ff6636faa80fd402190354e8dddb2" id="r_a792ff6636faa80fd402190354e8dddb2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a792ff6636faa80fd402190354e8dddb2">ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a> + 1</td></tr>
 <tr class="separator:a792ff6636faa80fd402190354e8dddb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fd6784240224a0f3bbbfb9cb6c12095" id="r_a9fd6784240224a0f3bbbfb9cb6c12095"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9fd6784240224a0f3bbbfb9cb6c12095">ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a792ff6636faa80fd402190354e8dddb2">ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX</a> + 1</td></tr>
+<tr class="memitem:a9fd6784240224a0f3bbbfb9cb6c12095" id="r_a9fd6784240224a0f3bbbfb9cb6c12095"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9fd6784240224a0f3bbbfb9cb6c12095">ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a> + 2</td></tr>
 <tr class="separator:a9fd6784240224a0f3bbbfb9cb6c12095"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19b7f5ce24364970bf9a0d2ed28d3ce2" id="r_a19b7f5ce24364970bf9a0d2ed28d3ce2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19b7f5ce24364970bf9a0d2ed28d3ce2">ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a9fd6784240224a0f3bbbfb9cb6c12095">ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX</a> + 1</td></tr>
+<tr class="memitem:a19b7f5ce24364970bf9a0d2ed28d3ce2" id="r_a19b7f5ce24364970bf9a0d2ed28d3ce2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19b7f5ce24364970bf9a0d2ed28d3ce2">ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a> + 3</td></tr>
 <tr class="separator:a19b7f5ce24364970bf9a0d2ed28d3ce2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79d6939f215d359f64b751a6e3d314ea" id="r_a79d6939f215d359f64b751a6e3d314ea"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79d6939f215d359f64b751a6e3d314ea">ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a19b7f5ce24364970bf9a0d2ed28d3ce2">ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX</a> + 1</td></tr>
+<tr class="memitem:a79d6939f215d359f64b751a6e3d314ea" id="r_a79d6939f215d359f64b751a6e3d314ea"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79d6939f215d359f64b751a6e3d314ea">ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a> + 4</td></tr>
 <tr class="separator:a79d6939f215d359f64b751a6e3d314ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88c95f25885741abbd2d288754a68b47" id="r_a88c95f25885741abbd2d288754a68b47"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88c95f25885741abbd2d288754a68b47">ZOBRIST_EN_PASSANT_START_INDEX</a>&#160;&#160;&#160;<a class="el" href="#a79d6939f215d359f64b751a6e3d314ea">ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX</a> + 1</td></tr>
 <tr class="separator:a88c95f25885741abbd2d288754a68b47"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1179,7 +1179,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX&#160;&#160;&#160;<a class="el" href="#a9fd6784240224a0f3bbbfb9cb6c12095">ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX</a> + 1</td>
+          <td class="memname">#define ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX&#160;&#160;&#160;<a class="el" href="#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a> + 3</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1195,7 +1195,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX&#160;&#160;&#160;<a class="el" href="#a19b7f5ce24364970bf9a0d2ed28d3ce2">ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX</a> + 1</td>
+          <td class="memname">#define ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX&#160;&#160;&#160;<a class="el" href="#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a> + 4</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1227,7 +1227,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX&#160;&#160;&#160;<a class="el" href="#a792ff6636faa80fd402190354e8dddb2">ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX</a> + 1</td>
+          <td class="memname">#define ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX&#160;&#160;&#160;<a class="el" href="#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a> + 2</td>
         </tr>
       </table>
 </div><div class="memdoc">
