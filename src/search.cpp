@@ -166,6 +166,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     if (isInCheck) {
         depth += 1;
+#ifdef TRACE_SEARCH
+        stats.checkExtensions++;
+#endif
     }
 
     if (depth <= 0) {
@@ -177,15 +180,24 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     stats.nodesSearched += 1;
 
     if (!isPV) {
-        // Check for a transposition table hit
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
+#ifdef TRACE_SEARCH
+        stats.ttProbes++;
+#endif
+
         if (score != NO_TT_SCORE) {
+#ifdef TRACE_SEARCH
+            stats.ttHits++;
+#endif
             return score;
         }
 
         // Null Move Pruning
         if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE) {
+#ifdef TRACE_SEARCH
+            stats.nmpTries++;
+#endif
             board.makeNullMove();
             const int R = 2 + depth / 3;
             PvLine nmpPvLine = PvLine{board.getPly()};
@@ -194,6 +206,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             board.unmakeNullMove();
 
             if (nullMoveScore >= beta) {
+#ifdef TRACE_SEARCH
+                stats.nmpPrunes++;
+#endif
                 return nullMoveScore;
             }
         }
@@ -204,6 +219,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             const int staticEval = Evaluation(board).evaluate();
 
             if (staticEval + futilityMargin < alpha) {
+#ifdef TRACE_SEARCH
+                stats.futilityPrunes++;
+#endif
                 return qSearch<color, nodeType>(engine, board, alpha, beta, 0, stats, endTime);
             }
         }
@@ -275,10 +293,16 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
             R = std::max(0, R);
 
+#ifdef TRACE_SEARCH
+            stats.lmrSearches++;
+#endif
             score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats, endTime,
                                                       nodePvLine);
 
             if (score > alpha) {
+#ifdef TRACE_SEARCH
+                stats.lmrResearches++;
+#endif
                 doFullSearch = true;
             }
         }
@@ -308,6 +332,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         board.unmakeMove();
 
         if (score >= beta) {
+#ifdef TRACE_SEARCH
+            if (movesSearched == 0) {
+                stats.firstMoveCutoffs++;
+            }
+#endif
             if (!engine.isSearchStopped()) {
                 if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
                     const int historyValue = 300 * depth - 250;
@@ -347,6 +376,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 }
 
                 if (!isRoot) {
+#ifdef TRACE_SEARCH
+                    stats.ttWrites++;
+#endif
                     tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
                 }
             }
@@ -383,6 +415,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
 
         if (!engine.isSearchStopped()) {
+#ifdef TRACE_SEARCH
+            stats.ttWrites++;
+#endif
             tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
         }
     }
@@ -409,7 +444,14 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
 
+#ifdef TRACE_SEARCH
+        stats.qTtProbes++;
+#endif
+
         if (score != NO_TT_SCORE) {
+#ifdef TRACE_SEARCH
+            stats.qTtHits++;
+#endif
             return score;
         }
     }
@@ -427,6 +469,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         // Stand pat
         if (bestScore >= beta) {
             if (!engine.isSearchStopped()) {
+#ifdef TRACE_SEARCH
+                stats.ttWrites++;
+#endif
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, NO_MOVE, BETA);
             }
 
@@ -465,6 +510,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
             const bool see = board.see(move, 0);
 
             if (!see) {
+#ifdef TRACE_SEARCH
+                stats.seePrunes++;
+#endif
                 continue;
             }
         }
@@ -484,6 +532,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
         if (score >= beta) {
             if (!engine.isSearchStopped()) {
+#ifdef TRACE_SEARCH
+                stats.ttWrites++;
+#endif
                 tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
             }
 
@@ -507,6 +558,9 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
 
     if (!engine.isSearchStopped()) {
+#ifdef TRACE_SEARCH
+        stats.ttWrites++;
+#endif
         tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
     }
 
@@ -514,3 +568,62 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     return bestScore;
 }
 }  // namespace Zagreus
+
+#ifdef TRACE_SEARCH
+#include <iomanip>
+#include <sstream>
+
+namespace Zagreus {
+void SearchStats::clearTrace() {
+    ttProbes = 0;
+    ttHits = 0;
+    ttWrites = 0;
+    qTtProbes = 0;
+    qTtHits = 0;
+    firstMoveCutoffs = 0;
+    nmpTries = 0;
+    nmpPrunes = 0;
+    lmrSearches = 0;
+    lmrResearches = 0;
+    futilityPrunes = 0;
+    checkExtensions = 0;
+    seePrunes = 0;
+}
+
+void SearchStats::printTrace(Engine& engine, int numPositions) const {
+    const uint64_t totalNodes = nodesSearched + qNodesSearched;
+    const uint64_t avgTotalNodes = totalNodes / numPositions;
+    const double branchFactor = avgTotalNodes > 1 && depth > 1 ? std::pow(avgTotalNodes, 1.0 / depth) : 0.0;
+
+    const double ttHitRate = ttProbes > 0 ? static_cast<double>(ttHits) / ttProbes * 100.0 : 0.0;
+    const double qTtHitRate = qTtProbes > 0 ? static_cast<double>(qTtHits) / qTtProbes * 100.0 : 0.0;
+    const double nmpSuccessRate = nmpTries > 0 ? static_cast<double>(nmpPrunes) / nmpTries * 100.0 : 0.0;
+    const double lmrResearchRate = lmrSearches > 0 ? static_cast<double>(lmrResearches) / lmrSearches * 100.0 : 0.0;
+    const double firstMoveCutoffRate =
+        nodesSearched > 0 ? static_cast<double>(firstMoveCutoffs) / nodesSearched * 100.0 : 0.0;
+
+    std::stringstream ss;
+    ss << "\n--- Search Statistics" << (numPositions > 1 ? " (Averages per position)" : "") << " ---\n"
+       << "Effective Branching Factor: " << std::fixed << std::setprecision(2) << branchFactor << "\n"
+       << "\n--- Transposition Table ---\n"
+       << "Probes: " << ttProbes / numPositions << "\n"
+       << "Hits: " << ttHits / numPositions << " (" << ttHitRate << "%)\n"
+       << "Writes: " << ttWrites / numPositions << "\n"
+       << "Q-Search Probes: " << qTtProbes / numPositions << "\n"
+       << "Q-Search Hits: " << qTtHits / numPositions << " (" << qTtHitRate << "%)\n"
+       << "\n--- Move Ordering ---\n"
+       << "First Move Cutoffs: " << firstMoveCutoffs / numPositions << " (" << firstMoveCutoffRate << "%)\n"
+       << "\n--- Pruning, Reductions, and Extensions ---\n"
+       << "NMP Tries: " << nmpTries / numPositions << "\n"
+       << "NMP Prunes: " << nmpPrunes / numPositions << " (" << nmpSuccessRate << "%)\n"
+       << "LMR Searches: " << lmrSearches / numPositions << "\n"
+       << "LMR Researches: " << lmrResearches / numPositions << " (" << lmrResearchRate << "%)\n"
+       << "Futility Prunes: " << futilityPrunes / numPositions << "\n"
+       << "Check Extensions: " << checkExtensions / numPositions << "\n"
+       << "\n--- Quiescence Search ---\n"
+       << "SEE Prunes: " << seePrunes / numPositions << "\n"
+       << "-------------------------";
+    engine.sendInfoMessage(ss.str());
+}
+}  // namespace Zagreus
+#endif

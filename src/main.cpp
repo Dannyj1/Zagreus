@@ -152,6 +152,11 @@ void benchmark(bool fast) {
     double totalMs = 0;
     Board board{};
 
+#ifdef TRACE_SEARCH
+    SearchStats totalStats{};
+    totalStats.clearTrace();
+#endif
+
     engine.registerOptions();
     engine.doSetup();
     TranspositionTable::getTT()->setTableSize(128);
@@ -166,6 +171,9 @@ void benchmark(bool fast) {
 
         TranspositionTable::getTT()->reset();
         SearchStats stats{};
+#ifdef TRACE_SEARCH
+        stats.clearTrace();
+#endif
         auto start = std::chrono::steady_clock::now();
 
         if (color == WHITE) {
@@ -179,7 +187,30 @@ void benchmark(bool fast) {
 
         nodes += stats.nodesSearched + stats.qNodesSearched;
         totalMs += elapsed.count();
+
+#ifdef TRACE_SEARCH
+        totalStats.nodesSearched += stats.nodesSearched;
+        totalStats.qNodesSearched += stats.qNodesSearched;
+        totalStats.ttProbes += stats.ttProbes;
+        totalStats.ttHits += stats.ttHits;
+        totalStats.ttWrites += stats.ttWrites;
+        totalStats.qTtProbes += stats.qTtProbes;
+        totalStats.qTtHits += stats.qTtHits;
+        totalStats.firstMoveCutoffs += stats.firstMoveCutoffs;
+        totalStats.nmpTries += stats.nmpTries;
+        totalStats.nmpPrunes += stats.nmpPrunes;
+        totalStats.lmrSearches += stats.lmrSearches;
+        totalStats.lmrResearches += stats.lmrResearches;
+        totalStats.futilityPrunes += stats.futilityPrunes;
+        totalStats.checkExtensions += stats.checkExtensions;
+        totalStats.seePrunes += stats.seePrunes;
+#endif
     }
+
+#ifdef TRACE_SEARCH
+    totalStats.depth = params.depth;
+    totalStats.printTrace(engine, positions.size());
+#endif
 
     if (nodes == 0 || totalMs == 0) {
         engine.sendMessage("0 nodes 0 nps");

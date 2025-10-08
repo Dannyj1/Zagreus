@@ -324,6 +324,10 @@ void Engine::handleGoCommand(std::string_view args) {
     SearchParams params{};
     SearchStats stats{};
 
+#ifdef TRACE_SEARCH
+    stats.clearTrace();
+#endif
+
     params.whiteTime = whiteTime;
     params.blackTime = blackTime;
     params.whiteInc = whiteInc;
@@ -337,6 +341,10 @@ void Engine::handleGoCommand(std::string_view args) {
     } else {
         bestMove = search<BLACK>(*this, board, params, stats);
     }
+
+#ifdef TRACE_SEARCH
+    stats.printTrace(*this);
+#endif
 
     sendMessage("bestmove " + getMoveNotation(bestMove));
 }

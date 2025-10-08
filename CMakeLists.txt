@@ -56,6 +56,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     option(ENABLE_TESTS "Enable the compilation and execution of tests" ON)
     option(ENABLE_IWYU "Enable the use of Include What You Use (IWYU)" ON)
     option(ENABLE_TUNER "Enable compilation of the tuner" OFF)
+    option(TRACE_SEARCH "Enable search tracing" OFF)
 else ()
     option(ENABLE_OPTIMIZATION "Enable optimization flags (-O3)" ON)
     option(ENABLE_OPTIMIZATION_FAST_MATH "Enable fast math optimization flags (-Ofast)" ON)
@@ -72,6 +73,7 @@ else ()
     option(ENABLE_TESTS "Enable the compilation and execution of tests" OFF)
     option(ENABLE_IWYU "Enable the use of Include What You Use (IWYU)" OFF)
     option(ENABLE_TUNER "Enable compilation of the tuner" OFF)
+    option(TRACE_SEARCH "Enable search tracing" OFF)
 endif ()
 
 if (ENABLE_TESTS)
@@ -228,6 +230,10 @@ if (ENABLE_TUNER)
     add_compile_definitions(ZAGREUS_TUNER)
 endif ()
 
+if (TRACE_SEARCH)
+    target_compile_definitions(Zagreus PRIVATE TRACE_SEARCH)
+endif ()
+
 if (ENABLE_TESTS)
     file(GLOB tests_folder "tests/*.h" "tests/*.cpp")
 
@@ -236,6 +242,10 @@ if (ENABLE_TESTS)
 
     add_executable(zagreus-tests ${tests_folder} ${inc_zagreus})
     target_link_libraries(zagreus-tests PRIVATE Catch2::Catch2WithMain)
+
+    if (TRACE_SEARCH)
+        target_compile_definitions(zagreus-tests PRIVATE TRACE_SEARCH)
+    endif ()
 
     target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MAJOR="${ZAGREUS_VERSION_MAJOR}")
     target_compile_definitions(zagreus-tests PRIVATE ZAGREUS_VERSION_MINOR="${ZAGREUS_VERSION_MINOR}")

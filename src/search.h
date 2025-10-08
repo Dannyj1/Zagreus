@@ -50,6 +50,25 @@ struct SearchStats {
     int score = 0;
     uint16_t depth = 0;
     uint64_t timeSpentMs = 0;
+
+#ifdef TRACE_SEARCH
+    uint64_t ttProbes = 0;
+    uint64_t ttHits = 0;
+    uint64_t ttWrites = 0;
+    uint64_t qTtProbes = 0;
+    uint64_t qTtHits = 0;
+    uint64_t firstMoveCutoffs = 0;
+    uint64_t nmpTries = 0;
+    uint64_t nmpPrunes = 0;
+    uint64_t lmrSearches = 0;
+    uint64_t lmrResearches = 0;
+    uint64_t futilityPrunes = 0;
+    uint64_t checkExtensions = 0;
+    uint64_t seePrunes = 0;
+
+    void clearTrace();
+    void printTrace(Engine& engine, int numPositions = 1) const;
+#endif
 };
 
 void initializeSearch();
