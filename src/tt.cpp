@@ -44,7 +44,7 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
 
         score = std::clamp<int>(score, INT16_MIN + 1, INT16_MAX);
 
-        entry->validationHash = zobristHash;
+        entry->validationHash = static_cast<uint16_t>(zobristHash >> 48);
         entry->depth = depth;
         entry->bestMove = bestMove;
         entry->score = score;
@@ -57,7 +57,7 @@ int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8
     const uint64_t index = zobristHash & hashSize;
     const TTEntry* entry = &transpositionTable[index];
 
-    if (entry->validationHash == zobristHash && entry->depth >= depth) {
+    if (entry->validationHash == static_cast<uint16_t>(zobristHash >> 48) && entry->depth >= depth) {
         bool returnScore = false;
 
         if (entry->nodeType == EXACT) {
@@ -93,7 +93,7 @@ TTEntry* TranspositionTable::getEntry(const uint64_t zobristHash) const {
     TTEntry* entry = &transpositionTable[index];
 
     // Check validation hash to avoid hash collisions
-    if (entry->validationHash == zobristHash) {
+    if (entry->validationHash == static_cast<uint16_t>(zobristHash >> 48)) {
         return entry;
     }
 

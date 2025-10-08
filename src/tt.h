@@ -34,12 +34,11 @@ enum TTNodeType : uint8_t {
 };
 
 struct TTEntry {
-    uint64_t validationHash = 0;
+    uint16_t validationHash = 0;
     int16_t score = 0;
     Move bestMove = NO_MOVE;
     int8_t depth = INT8_MIN;
     TTNodeType nodeType = EXACT;
-    uint8_t padding[2];
 };
 
 class TranspositionTable {
