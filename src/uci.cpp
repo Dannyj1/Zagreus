@@ -299,6 +299,8 @@ void Engine::handleGoCommand(std::string_view args) {
     uint32_t whiteInc = 0;
     uint32_t blackInc = 0;
     uint16_t depth = 0;
+    uint64_t nodes = 0;
+    bool infinite = false;
 
     while (iss >> arg) {
         if (arg == "wtime") {
@@ -311,10 +313,14 @@ void Engine::handleGoCommand(std::string_view args) {
             iss >> whiteInc;
         } else if (arg == "binc") {
             iss >> blackInc;
+        } else if (arg == "nodes") {
+            iss >> nodes;
+        } else if (arg == "infinite") {
+            infinite = true;
         }
     }
 
-    if (whiteTime == 0 && blackTime == 0 && depth == 0) {
+    if (whiteTime == 0 && blackTime == 0 && depth == 0 && !infinite && nodes == 0) {
         // TODO: implement support for other args
         sendMessage("ERROR: No time control or depth limit provided.");
         return;
@@ -333,6 +339,8 @@ void Engine::handleGoCommand(std::string_view args) {
     params.whiteInc = whiteInc;
     params.blackInc = blackInc;
     params.depth = depth;
+    params.max_nodes = nodes;
+    params.infinite = infinite;
 
     Move bestMove;
 

@@ -48,20 +48,26 @@ void initializeSearch() {
     }
 }
 
-// TODO: Support more search variables (infinite, max nodes, etc.)
 template <PieceColor color>
 Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats) {
     int depth = 1;
     const int currentPly = board.getPly();
-    int searchTime = calculateSearchTime<color>(params);
-    const auto endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
+    int searchTime;
+    auto endTime = std::chrono::steady_clock::time_point{};
+
+    if (params.infinite) {
+        searchTime = 0;
+    } else {
+        searchTime = calculateSearchTime<color>(params);
+        endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
+    }
     const auto startTime = std::chrono::steady_clock::now();
     PvLine bestPvLine = PvLine{board.getPly()};
 
     engine.setSearchStopped(false);
 
     while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLIES) {
-        if (params.blackTime > 0 || params.whiteTime > 0) {
+        if (!params.infinite && (params.blackTime > 0 || params.whiteTime > 0)) {
             // Don't start the next iteration if we are 10% away from the end time
             if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
                 engine.setSearchStopped(true);
@@ -74,6 +80,11 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
             break;
         }
 
+        if (params.max_nodes > 0 && stats.nodesSearched + stats.qNodesSearched >= params.max_nodes) {
+            engine.setSearchStopped(true);
+            break;
+        }
+
         PvLine pvLine = PvLine{board.getPly()};
 
         const int score =
@@ -81,7 +92,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         assert(score != INITIAL_ALPHA && score != INITIAL_BETA);
         assert(depth > 0);
 
-        if (std::chrono::steady_clock::now() > endTime) {
+        if (endTime.time_since_epoch().count() != 0 && std::chrono::steady_clock::now() > endTime) {
             engine.setSearchStopped(true);
             break;
         }
@@ -156,10 +167,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         return DRAW_SCORE;
     }
 
-    if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 &&
-        std::chrono::steady_clock::now() > endTime) {
-        engine.setSearchStopped(true);
-        return beta;
+    if (!isRoot && (stats.nodesSearched + stats.qNodesSearched) % 4096 == 0) {
+        if (endTime.time_since_epoch().count() != 0 && std::chrono::steady_clock::now() > endTime) {
+            engine.setSearchStopped(true);
+            return beta;
+        }
     }
 
     bool isInCheck = board.isKingInCheck<color>();
@@ -440,9 +452,11 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         return DRAW_SCORE;
     }
 
-    if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0 && std::chrono::steady_clock::now() > endTime) {
-        engine.setSearchStopped(true);
-        return beta;
+    if ((stats.nodesSearched + stats.qNodesSearched) % 4096 == 0) {
+        if (endTime.time_since_epoch().count() != 0 && std::chrono::steady_clock::now() > endTime) {
+            engine.setSearchStopped(true);
+            return beta;
+        }
     }
 
     if (!isPV) {

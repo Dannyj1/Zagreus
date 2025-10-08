@@ -41,6 +41,8 @@ struct SearchParams {
     uint32_t whiteInc = 0;
     uint32_t blackInc = 0;
     uint16_t depth = 0;
+    uint64_t max_nodes = 0;
+    bool infinite = false;
 };
 
 struct SearchStats {
