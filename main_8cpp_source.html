@@ -252,51 +252,82 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    <span class="keywordtype">double</span> totalMs = 0;</div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <a class="code hl_class" href="classZagreus_1_1Board.html">Board</a> board{};</div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    engine.registerOptions();</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    engine.doSetup();</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    <a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#a4315934b5aa610a63321dfa6515b6f98">TranspositionTable::getTT</a>()-&gt;<a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#ad9c9d627d0a140aec262be74ad419857">setTableSize</a>(128);</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    std::vector&lt;std::string&gt; positions = fast ? <a class="code hl_variable" href="main_8cpp.html#af116b404f707d30ebd18c5de501bcaa4">FAST_BENCHMARK_POSITIONS</a> : <a class="code hl_variable" href="main_8cpp.html#a8cb361baefea80b2cb9bbeb2f7fda965">BENCHMARK_POSITIONS</a>;</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <a class="code hl_struct" href="structZagreus_1_1SearchParams.html">SearchParams</a> params{};</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    params.<a class="code hl_variable" href="structZagreus_1_1SearchParams.html#ab08825d4e55fac708025c608cff94dcc">depth</a> = fast ? 4 : 8;</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> std::string&amp; position : positions) {</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        board.setFromFEN(position);</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">PieceColor</a> color = board.getSideToMove();</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#a4315934b5aa610a63321dfa6515b6f98">TranspositionTable::getTT</a>()-&gt;<a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#aa27c01833383a197e102d2494be540b4">reset</a>();</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        <a class="code hl_struct" href="structZagreus_1_1SearchStats.html">SearchStats</a> stats{};</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        <span class="keyword">auto</span> start = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        <span class="keywordflow">if</span> (color == <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a>) {</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            <a class="code hl_function" href="namespaceZagreus.html#a017d655f1eb0989328824576ec76e214">search&lt;WHITE&gt;</a>(engine, board, params, stats);</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            <a class="code hl_function" href="namespaceZagreus.html#a302b1c7ce37f74ba5b0b96000f56a1f6">search&lt;BLACK&gt;</a>(engine, board, params, stats);</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        }</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        <span class="keyword">auto</span> end = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        std::chrono::duration&lt;double, std::milli&gt; elapsed = end - start;</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        nodes += stats.nodesSearched + stats.qNodesSearched;</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        totalMs += elapsed.count();</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    }</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    <span class="keywordflow">if</span> (nodes == 0 || totalMs == 0) {</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        engine.sendMessage(<span class="stringliteral">&quot;0 nodes 0 nps&quot;</span>);</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    }</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondsSpent = totalMs / 1000.0;</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    <span class="keyword">const</span> uint64_t nodesPerSecond = <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nodes) / secondsSpent);</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    std::string message = std::to_string(nodes) + <span class="stringliteral">&quot; nodes &quot;</span> + std::to_string(nodesPerSecond) + <span class="stringliteral">&quot; nps&quot;</span>;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    engine.sendMessage(message);</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>}</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    <a class="code hl_struct" href="structZagreus_1_1SearchStats.html">SearchStats</a> totalStats{};</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    totalStats.clearTrace();</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    engine.registerOptions();</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    engine.doSetup();</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#a4315934b5aa610a63321dfa6515b6f98">TranspositionTable::getTT</a>()-&gt;<a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#ad9c9d627d0a140aec262be74ad419857">setTableSize</a>(128);</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    std::vector&lt;std::string&gt; positions = fast ? <a class="code hl_variable" href="main_8cpp.html#af116b404f707d30ebd18c5de501bcaa4">FAST_BENCHMARK_POSITIONS</a> : <a class="code hl_variable" href="main_8cpp.html#a8cb361baefea80b2cb9bbeb2f7fda965">BENCHMARK_POSITIONS</a>;</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <a class="code hl_struct" href="structZagreus_1_1SearchParams.html">SearchParams</a> params{};</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    params.<a class="code hl_variable" href="structZagreus_1_1SearchParams.html#ab08825d4e55fac708025c608cff94dcc">depth</a> = fast ? 4 : 8;</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> std::string&amp; position : positions) {</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        board.setFromFEN(position);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">PieceColor</a> color = board.getSideToMove();</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        <a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#a4315934b5aa610a63321dfa6515b6f98">TranspositionTable::getTT</a>()-&gt;<a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#aa27c01833383a197e102d2494be540b4">reset</a>();</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        <a class="code hl_struct" href="structZagreus_1_1SearchStats.html">SearchStats</a> stats{};</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        stats.clearTrace();</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        <span class="keyword">auto</span> start = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        <span class="keywordflow">if</span> (color == <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a>) {</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            <a class="code hl_function" href="namespaceZagreus.html#a017d655f1eb0989328824576ec76e214">search&lt;WHITE&gt;</a>(engine, board, params, stats);</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            <a class="code hl_function" href="namespaceZagreus.html#a302b1c7ce37f74ba5b0b96000f56a1f6">search&lt;BLACK&gt;</a>(engine, board, params, stats);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        }</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        <span class="keyword">auto</span> end = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>        std::chrono::duration&lt;double, std::milli&gt; elapsed = end - start;</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span> </div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        nodes += stats.nodesSearched + stats.qNodesSearched;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        totalMs += elapsed.count();</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        totalStats.nodesSearched += stats.nodesSearched;</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        totalStats.qNodesSearched += stats.qNodesSearched;</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        totalStats.ttProbes += stats.ttProbes;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        totalStats.ttHits += stats.ttHits;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        totalStats.ttWrites += stats.ttWrites;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        totalStats.qTtProbes += stats.qTtProbes;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        totalStats.qTtHits += stats.qTtHits;</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        totalStats.firstMoveCutoffs += stats.firstMoveCutoffs;</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        totalStats.nmpTries += stats.nmpTries;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        totalStats.nmpPrunes += stats.nmpPrunes;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        totalStats.lmrSearches += stats.lmrSearches;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        totalStats.lmrResearches += stats.lmrResearches;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        totalStats.futilityPrunes += stats.futilityPrunes;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        totalStats.checkExtensions += stats.checkExtensions;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        totalStats.seePrunes += stats.seePrunes;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    }</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    totalStats.depth = params.depth;</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    totalStats.printTrace(engine, positions.size());</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keywordflow">if</span> (nodes == 0 || totalMs == 0) {</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        engine.sendMessage(<span class="stringliteral">&quot;0 nodes 0 nps&quot;</span>);</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    }</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondsSpent = totalMs / 1000.0;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <span class="keyword">const</span> uint64_t nodesPerSecond = <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nodes) / secondsSpent);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    std::string message = std::to_string(nodes) + <span class="stringliteral">&quot; nodes &quot;</span> + std::to_string(nodesPerSecond) + <span class="stringliteral">&quot; nps&quot;</span>;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    engine.sendMessage(message);</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>}</div>
 </div>
 <div class="ttc" id="aboard_8h_html"><div class="ttname"><a href="board_8h.html">board.h</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html"><div class="ttname"><a href="classZagreus_1_1Board.html">Zagreus::Board</a></div><div class="ttdoc">Represents the chess board and provides methods to manipulate it. The board consists of several bitbo...</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00062">board.h:62</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Engine_html"><div class="ttname"><a href="classZagreus_1_1Engine.html">Zagreus::Engine</a></div><div class="ttdef"><b>Definition</b> <a href="uci_8h_source.html#l00034">uci.h:34</a></div></div>
-<div class="ttc" id="aclassZagreus_1_1Engine_html_a757808849badf64e6332e8826eb1d060"><div class="ttname"><a href="classZagreus_1_1Engine.html#a757808849badf64e6332e8826eb1d060">Zagreus::Engine::startUci</a></div><div class="ttdeci">void startUci()</div><div class="ttdef"><b>Definition</b> <a href="uci_8cpp_source.html#l00490">uci.cpp:490</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1Engine_html_a757808849badf64e6332e8826eb1d060"><div class="ttname"><a href="classZagreus_1_1Engine.html#a757808849badf64e6332e8826eb1d060">Zagreus::Engine::startUci</a></div><div class="ttdeci">void startUci()</div><div class="ttdef"><b>Definition</b> <a href="uci_8cpp_source.html#l00498">uci.cpp:498</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_a4315934b5aa610a63321dfa6515b6f98"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#a4315934b5aa610a63321dfa6515b6f98">Zagreus::TranspositionTable::getTT</a></div><div class="ttdeci">static TranspositionTable * getTT()</div><div class="ttdef"><b>Definition</b> <a href="tt_8cpp_source.html#l00119">tt.cpp:119</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_aa27c01833383a197e102d2494be540b4"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#aa27c01833383a197e102d2494be540b4">Zagreus::TranspositionTable::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdef"><b>Definition</b> <a href="tt_8h_source.html#l00059">tt.h:59</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_ad9c9d627d0a140aec262be74ad419857"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#ad9c9d627d0a140aec262be74ad419857">Zagreus::TranspositionTable::setTableSize</a></div><div class="ttdeci">void setTableSize(int megaBytes)</div><div class="ttdef"><b>Definition</b> <a href="tt_8cpp_source.html#l00104">tt.cpp:104</a></div></div>
