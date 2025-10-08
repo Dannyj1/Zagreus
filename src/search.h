@@ -58,6 +58,9 @@ struct SearchStats {
     uint64_t qTtProbes = 0;
     uint64_t qTtHits = 0;
     uint64_t firstMoveCutoffs = 0;
+    uint64_t secondMoveCutoffs = 0;
+    uint64_t totalMoveCutoffNumber = 0;
+    uint64_t totalCutoffs = 0;
     uint64_t nmpTries = 0;
     uint64_t nmpPrunes = 0;
     uint64_t lmrSearches = 0;

@@ -335,7 +335,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 #ifdef TRACE_SEARCH
             if (movesSearched == 0) {
                 stats.firstMoveCutoffs++;
+            } else if (movesSearched == 1) {
+                stats.secondMoveCutoffs++;
             }
+            stats.totalMoveCutoffNumber += (movesSearched + 1);
+            stats.totalCutoffs++;
 #endif
             if (!engine.isSearchStopped()) {
                 if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
@@ -581,6 +585,9 @@ void SearchStats::clearTrace() {
     qTtProbes = 0;
     qTtHits = 0;
     firstMoveCutoffs = 0;
+    secondMoveCutoffs = 0;
+    totalMoveCutoffNumber = 0;
+    totalCutoffs = 0;
     nmpTries = 0;
     nmpPrunes = 0;
     lmrSearches = 0;
@@ -600,7 +607,10 @@ void SearchStats::printTrace(Engine& engine, int numPositions) const {
     const double nmpSuccessRate = nmpTries > 0 ? static_cast<double>(nmpPrunes) / nmpTries * 100.0 : 0.0;
     const double lmrResearchRate = lmrSearches > 0 ? static_cast<double>(lmrResearches) / lmrSearches * 100.0 : 0.0;
     const double firstMoveCutoffRate =
-        nodesSearched > 0 ? static_cast<double>(firstMoveCutoffs) / nodesSearched * 100.0 : 0.0;
+        totalCutoffs > 0 ? static_cast<double>(firstMoveCutoffs) / totalCutoffs * 100.0 : 0.0;
+    const double secondMoveCutoffRate =
+        totalCutoffs > 0 ? static_cast<double>(secondMoveCutoffs) / totalCutoffs * 100.0 : 0.0;
+    const double avgMoveCutoff = totalCutoffs > 0 ? static_cast<double>(totalMoveCutoffNumber) / totalCutoffs : 0.0;
 
     std::stringstream ss;
     ss << "\n--- Search Statistics" << (numPositions > 1 ? " (Averages per position)" : "") << " ---\n"
@@ -613,6 +623,8 @@ void SearchStats::printTrace(Engine& engine, int numPositions) const {
        << "Q-Search Hits: " << qTtHits / numPositions << " (" << qTtHitRate << "%)\n"
        << "\n--- Move Ordering ---\n"
        << "First Move Cutoffs: " << firstMoveCutoffs / numPositions << " (" << firstMoveCutoffRate << "%)\n"
+       << "Second Move Cutoffs: " << secondMoveCutoffs / numPositions << " (" << secondMoveCutoffRate << "%)\n"
+       << "Average Move Cutoff: " << avgMoveCutoff << "\n"
        << "\n--- Pruning, Reductions, and Extensions ---\n"
        << "NMP Tries: " << nmpTries / numPositions << "\n"
        << "NMP Prunes: " << nmpPrunes / numPositions << " (" << nmpSuccessRate << "%)\n"
