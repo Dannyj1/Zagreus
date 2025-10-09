@@ -208,11 +208,11 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">const</span> uint64_t byteSize = megaBytes * 1024 * 1024;</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">const</span> uint64_t entryCount = byteSize / <span class="keyword">sizeof</span>(<a class="code hl_struct" href="structZagreus_1_1TTEntry.html">TTEntry</a>);</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">delete</span>[] <a class="code hl_variable" href="classZagreus_1_1TranspositionTable.html#ab90f0aefbc8683bf17c8d6cb1b1143e6">transpositionTable</a>;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <a class="code hl_variable" href="classZagreus_1_1TranspositionTable.html#ab90f0aefbc8683bf17c8d6cb1b1143e6">transpositionTable</a> = <span class="keyword">new</span> <a class="code hl_struct" href="structZagreus_1_1TTEntry.html">TTEntry</a>[entryCount]{};</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <a class="code hl_variable" href="classZagreus_1_1TranspositionTable.html#aade013cae70e9ffa5aba82accf72a4de">hashSize</a> = entryCount - 1;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <a class="code hl_struct" href="structZagreus_1_1TTEntry.html">TTEntry</a>* newTranspositionTable = <span class="keyword">new</span> <a class="code hl_struct" href="structZagreus_1_1TTEntry.html">TTEntry</a>[entryCount]{};</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keyword">delete</span>[] <a class="code hl_variable" href="classZagreus_1_1TranspositionTable.html#ab90f0aefbc8683bf17c8d6cb1b1143e6">transpositionTable</a>;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <a class="code hl_variable" href="classZagreus_1_1TranspositionTable.html#ab90f0aefbc8683bf17c8d6cb1b1143e6">transpositionTable</a> = newTranspositionTable;</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    std::fill_n(<a class="code hl_variable" href="classZagreus_1_1TranspositionTable.html#ab90f0aefbc8683bf17c8d6cb1b1143e6">transpositionTable</a>, entryCount, <a class="code hl_struct" href="structZagreus_1_1TTEntry.html">TTEntry</a>{});</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <a class="code hl_variable" href="classZagreus_1_1TranspositionTable.html#aade013cae70e9ffa5aba82accf72a4de">hashSize</a> = entryCount - 1;</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>}</div>
 </div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
