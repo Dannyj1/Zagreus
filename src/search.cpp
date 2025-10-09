@@ -268,7 +268,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         legalMoves += 1;
 
         // Futility pruning
-        if (depth <= 2 && !isInCheck && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+        if (depth <= 4 && !isInCheck && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
             const int futilityMargin = 200 * depth;
             const int futilityScore = staticEval + futilityMargin;
 
