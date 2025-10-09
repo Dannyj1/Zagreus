@@ -106,8 +106,7 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1",
     "r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1",
     "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8",
-    "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10"
-};
+    "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10"};
 
 const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -130,8 +129,7 @@ const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "4k3/3p2p1/8/pP6/4P2P/8/8/4K3 w - a6 0 5",
     "r2qk2b/pp1bpp2/2n2np1/3pN3/3P4/2N5/PP2PPP1/R1BQKB2 w Qq - 3 11",
     "8/3R4/p2p1qk1/2pPp1p1/P1P1P3/5Q2/1P2KP1r/8 b - - 5 50",
-    "6k1/5p2/1P4p1/7q/8/1QP2P2/p3K2P/8 w - - 0 38"
-};
+    "6k1/5p2/1P4p1/7q/8/1QP2P2/p3K2P/8 w - - 0 38"};
 
 void benchmark(bool fast);
 

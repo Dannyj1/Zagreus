@@ -206,7 +206,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         // Null Move Pruning
-        if (depth >= 3 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE) {
+        if (depth >= 2 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE) {
 #ifdef TRACE_SEARCH
             stats.nmpTries++;
 #endif
