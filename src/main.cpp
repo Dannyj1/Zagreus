@@ -38,6 +38,7 @@ using namespace Zagreus;
 // Some of these benchmark positions are taken from Stockfish's benchmark.cpp:
 // https://github.com/official-stockfish/Stockfish/blob/master/src/benchmark.cpp
 const std::vector<std::string> BENCHMARK_POSITIONS = {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     "8/8/1n3k2/8/3P3P/5K2/8/1N4Q1 w - -",
     "1rb1kbnr/p1q1pppp/np4B1/2pp4/P1PP4/2N1P3/1P3PPP/R1BQK1NR w Kk",
     "1rbk1bnr/pp1p1ppp/n1pq4/4pP1Q/P1B1P3/2P4P/1P1P2P1/RNB2KNR b - -",
@@ -90,9 +91,26 @@ const std::vector<std::string> BENCHMARK_POSITIONS = {
     "4r1k1/5rb1/pP2q1p1/2p1P1B1/3pRPP1/1P4R1/8/3Q2K1 b - - 0 31",
     "rr2qbk1/6p1/1n2pp1p/1p1P4/p3P3/1P1QBN1P/5PP1/R2R2K1 w - - 0 32",
     "1rq3k1/R2n2p1/3rpp1p/1p6/1P2P3/5N1P/Q4PP1/R5K1 w - - 9 45",
-    "4k3/3p2p1/8/pP6/4P2P/8/8/4K3 w - a6 0 5"};
+    "4k3/3p2p1/8/pP6/4P2P/8/8/4K3 w - a6 0 5",
+    "r2qk2b/pp1bpp2/2n2np1/3pN3/3P4/2N5/PP2PPP1/R1BQKB2 w Qq - 3 11",
+    "8/3R4/p2p1qk1/2pPp1p1/P1P1P3/5Q2/1P2KP1r/8 b - - 5 50",
+    "1k2r3/1ppr1p2/p3q3/8/PnN2QP1/1P2PP1p/2P4B/4R1K1 w - - 1 26",
+    "r2r2k1/pp3pp1/4pnp1/5q2/2RPNb2/1PBQ1P1P/P5P1/5RK1 w - - 5 21",
+    "r2qkb1r/1p1n1ppp/p2pbn2/4p3/4P1P1/1NN1BP2/PPP4P/R2QKB1R b KQkq g3 0 9",
+    "3r1bk1/1b3p1p/p1q1pPp1/1p2P3/4P3/3B2P1/PB2Q1P1/3R3K b - - 0 31",
+    "r1b1k1nr/pppp1ppp/8/n7/8/8/P1PNPPPP/Q3KB1R b Kkq - 1 13",
+    "6k1/5p2/1P4p1/7q/8/1QP2P2/p3K2P/8 w - - 0 38",
+    "5rk1/6b1/p2pp2p/2p2q2/8/5NpP/PP2R1K1/5Q2 w - - 4 38",
+    "1r1r2k1/5pp1/2p1p2p/1p1n4/p2P1B2/P1P2P1P/1P3P2/3RR1K1 w - - 3 28",
+    "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1",
+    "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1",
+    "r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1",
+    "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8",
+    "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10"
+};
 
 const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     "8/3k4/8/8/8/4B3/4KB2/2B5 w - - 0 1",
     "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 10",
     "rn3bnr/pBp1pk1p/5p2/1p4p1/6b1/N3Q3/PP1P1PPP/R1B1K1NR b - -",
@@ -109,7 +127,11 @@ const std::vector<std::string> FAST_BENCHMARK_POSITIONS = {
     "3r2k1/1R3ppp/p2R1p2/b7/5P2/P4N2/6PP/7K b - - 0 32",
     "r1bq1k1r/pp2bppp/2n1pn2/2p5/2B1NB2/3P1N2/PPP2PPP/R2QR1K1 b - - 3 10",
     "1rq3k1/R2n2p1/3rpp1p/1p6/1P2P3/5N1P/Q4PP1/R5K1 w - - 9 45",
-    "4k3/3p2p1/8/pP6/4P2P/8/8/4K3 w - a6 0 5"};
+    "4k3/3p2p1/8/pP6/4P2P/8/8/4K3 w - a6 0 5",
+    "r2qk2b/pp1bpp2/2n2np1/3pN3/3P4/2N5/PP2PPP1/R1BQKB2 w Qq - 3 11",
+    "8/3R4/p2p1qk1/2pPp1p1/P1P1P3/5Q2/1P2KP1r/8 b - - 5 50",
+    "6k1/5p2/1P4p1/7q/8/1QP2P2/p3K2P/8 w - - 0 38"
+};
 
 void benchmark(bool fast);
 
@@ -165,7 +187,7 @@ void benchmark(bool fast) {
     std::vector<std::string> positions = fast ? FAST_BENCHMARK_POSITIONS : BENCHMARK_POSITIONS;
     SearchParams params{};
 
-    params.depth = fast ? 4 : 8;
+    params.depth = fast ? 5 : 10;
 
     for (const std::string& position : positions) {
         board.setFromFEN(position);
