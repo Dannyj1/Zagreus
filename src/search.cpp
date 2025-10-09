@@ -247,6 +247,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     Move bestMove = NO_MOVE;
     int bestScore = INT32_MIN;
     int movesSearched = 0;
+    const int staticEval = Evaluation(board).evaluate();
 
     while (movePicker.next(move)) {
         const MoveType moveType = getMoveType(move);
@@ -265,6 +266,25 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         legalMoves += 1;
+
+        // Futility pruning
+        if (depth <= 2 && !isInCheck && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+            const int futilityMargin = 200 * depth;
+            const int futilityScore = staticEval + futilityMargin;
+
+            if (futilityScore <= alpha) {
+#ifdef TRACE_SEARCH
+                stats.futilityPrunes++;
+#endif
+
+                if (futilityScore > bestScore) {
+                    bestScore = futilityScore;
+                }
+
+                board.unmakeMove();
+                continue;
+            }
+        }
 
         if (capturedPiece == EMPTY) {
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
@@ -340,6 +360,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             stats.totalMoveCutoffNumber += (movesSearched + 1);
             stats.totalCutoffs++;
 #endif
+
             if (!engine.isSearchStopped()) {
                 if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
                     const int historyValue = 300 * depth - 250;
