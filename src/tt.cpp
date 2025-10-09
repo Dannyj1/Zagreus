@@ -105,14 +105,13 @@ void TranspositionTable::setTableSize(int megaBytes) {
         megaBytes = 1 << static_cast<int>(log2(megaBytes));
     }
 
-    const uint64_t byteSize = megaBytes * 1024 * 1024;
+    const uint64_t byteSize = static_cast<uint64_t>(megaBytes) * 1024 * 1024;
     const uint64_t entryCount = byteSize / sizeof(TTEntry);
 
     delete[] transpositionTable;
     transpositionTable = new TTEntry[entryCount]{};
-    hashSize = entryCount - 1;
 
-    std::fill_n(transpositionTable, entryCount, TTEntry{});
+    hashSize = entryCount - 1;
 }
 
 TranspositionTable* TranspositionTable::getTT() {

@@ -65,12 +65,6 @@ class TranspositionTable {
             }
         }
 
-        for (int color = 0; color < COLORS; color++) {
-            for (int fromSquare = 0; fromSquare < SQUARES; fromSquare++) {
-                std::fill_n(history[color][fromSquare], SQUARES, 0);
-            }
-        }
-
         for (int movingPiece = 0; movingPiece < PIECES; movingPiece++) {
             for (int toSquare = 0; toSquare < SQUARES; toSquare++) {
                 std::fill_n(captureHistory[movingPiece][toSquare], PIECES, 0);
