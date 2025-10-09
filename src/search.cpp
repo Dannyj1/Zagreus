@@ -296,7 +296,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         int score = INT32_MIN;
 
         // Late Move Reduction
-        if (movesSearched > 3 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+        if (movesSearched > 2 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
             doFullSearch = false;
             int R = 0;
 
