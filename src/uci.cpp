@@ -463,13 +463,13 @@ void Engine::processCommand(const std::string_view command, const std::string& a
 void Engine::addOption(UCIOption& option) { this->options[option.getName()] = option; }
 
 UCIOption& Engine::getOption(const std::string& name) {
-    UCIOption result = this->options[name];
+    UCIOption& result = this->options[name];
 
     if (result.getValue().empty() && !result.getDefaultValue().empty()) {
         result.setValue(result.getDefaultValue());
     }
 
-    return this->options[name];
+    return result;
 }
 
 bool Engine::hasOption(const std::string& name) const { return this->options.contains(name); }
