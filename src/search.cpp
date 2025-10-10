@@ -210,14 +210,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         // Reverse Futility Pruning
         int rfMargin = 150 * depth;
         if (!isInCheck && depth <= 3 && eval >= beta + rfMargin) {
-            const TTEntry* ttEntry = tt->getEntry(board.getZobristHash());
-
-            if (!ttEntry || ttEntry->bestMove == NO_MOVE) {
 #ifdef TRACE_SEARCH
-                stats.reverseFutilityPrunes++;
+            stats.reverseFutilityPrunes++;
 #endif
-                return eval;
-            }
+            return eval;
         }
 
         // Null Move Pruning
