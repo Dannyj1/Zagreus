@@ -229,6 +229,7 @@ void benchmark(bool fast) {
         totalStats.futilityPrunes += stats.futilityPrunes;
         totalStats.checkExtensions += stats.checkExtensions;
         totalStats.seePrunes += stats.seePrunes;
+        totalStats.reverseFutilityPrunes += stats.reverseFutilityPrunes;
 #endif
     }
 

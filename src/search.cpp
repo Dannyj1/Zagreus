@@ -61,6 +61,7 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         searchTime = calculateSearchTime<color>(params);
         endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
     }
+
     const auto startTime = std::chrono::steady_clock::now();
     PvLine bestPvLine = PvLine{board.getPly()};
 
@@ -190,6 +191,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     stats.nodesSearched += 1;
+    const int eval = Evaluation(board).evaluate();
 
     if (!isPV) {
         const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
@@ -203,6 +205,15 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             stats.ttHits++;
 #endif
             return score;
+        }
+
+        // Reverse Futility Pruning
+        int rfMargin = 150 * depth;
+        if (!isInCheck && depth <= 3 && eval >= beta + rfMargin) {
+#ifdef TRACE_SEARCH
+            stats.reverseFutilityPrunes++;
+#endif
+            return eval;
         }
 
         // Null Move Pruning
@@ -247,7 +258,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     Move bestMove = NO_MOVE;
     int bestScore = INT32_MIN;
     int movesSearched = 0;
-    const int staticEval = Evaluation(board).evaluate();
 
     while (movePicker.next(move)) {
         const MoveType moveType = getMoveType(move);
@@ -270,7 +280,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         // Futility pruning
         if (depth <= 4 && !isInCheck && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
             const int futilityMargin = 200 * depth;
-            const int futilityScore = staticEval + futilityMargin;
+            const int futilityScore = eval + futilityMargin;
 
             if (futilityScore <= alpha) {
 #ifdef TRACE_SEARCH
@@ -653,6 +663,7 @@ void SearchStats::printTrace(Engine& engine, int numPositions) const {
        << "LMR Searches: " << lmrSearches / numPositions << "\n"
        << "LMR Researches: " << lmrResearches / numPositions << " (" << lmrResearchRate << "%)\n"
        << "Futility Prunes: " << futilityPrunes / numPositions << "\n"
+       << "Reverse Futility Prunes: " << reverseFutilityPrunes / numPositions << "\n"
        << "Check Extensions: " << checkExtensions / numPositions << "\n"
        << "\n--- Quiescence Search ---\n"
        << "SEE Prunes: " << seePrunes / numPositions << "\n"
