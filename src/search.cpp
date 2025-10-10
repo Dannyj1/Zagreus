@@ -373,6 +373,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
             if (!engine.isSearchStopped()) {
                 if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+                    // Killer move heuristic
+                    tt->addKillerMove(move, board.getPly());
+
+                    // History heuristic
                     const int historyValue = 300 * depth - 250;
 
                     tt->updateHistory<color>(move, historyValue);
