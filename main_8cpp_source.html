@@ -329,25 +329,26 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        totalStats.futilityPrunes += stats.futilityPrunes;</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        totalStats.checkExtensions += stats.checkExtensions;</div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        totalStats.seePrunes += stats.seePrunes;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    }</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span> </div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    totalStats.depth = params.depth;</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    totalStats.printTrace(engine, positions.size());</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <span class="keywordflow">if</span> (nodes == 0 || totalMs == 0) {</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        engine.sendMessage(<span class="stringliteral">&quot;0 nodes 0 nps&quot;</span>);</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    }</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> </div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondsSpent = totalMs / 1000.0;</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <span class="keyword">const</span> uint64_t nodesPerSecond = <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nodes) / secondsSpent);</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    std::string message = std::to_string(nodes) + <span class="stringliteral">&quot; nodes &quot;</span> + std::to_string(nodesPerSecond) + <span class="stringliteral">&quot; nps&quot;</span>;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    engine.sendMessage(message);</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>}</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        totalStats.reverseFutilityPrunes += stats.reverseFutilityPrunes;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    }</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    totalStats.depth = params.depth;</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    totalStats.printTrace(engine, positions.size());</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span> </div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <span class="keywordflow">if</span> (nodes == 0 || totalMs == 0) {</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        engine.sendMessage(<span class="stringliteral">&quot;0 nodes 0 nps&quot;</span>);</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    }</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondsSpent = totalMs / 1000.0;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <span class="keyword">const</span> uint64_t nodesPerSecond = <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nodes) / secondsSpent);</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    std::string message = std::to_string(nodes) + <span class="stringliteral">&quot; nodes &quot;</span> + std::to_string(nodesPerSecond) + <span class="stringliteral">&quot; nps&quot;</span>;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    engine.sendMessage(message);</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>}</div>
 </div>
 <div class="ttc" id="aboard_8h_html"><div class="ttname"><a href="board_8h.html">board.h</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html"><div class="ttname"><a href="classZagreus_1_1Board.html">Zagreus::Board</a></div><div class="ttdoc">Represents the chess board and provides methods to manipulate it. The board consists of several bitbo...</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00062">board.h:62</a></div></div>
