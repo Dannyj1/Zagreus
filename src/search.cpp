@@ -328,11 +328,12 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats, endTime,
                                                       nodePvLine);
 
-            if (score > alpha) {
+            if (score > alpha && R > 0) {
 #ifdef TRACE_SEARCH
                 stats.lmrResearches++;
 #endif
-                doFullSearch = true;
+
+                score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime, nodePvLine);
             }
         }
 
@@ -418,7 +419,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                                         otherCapturedPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
                                     }
 
-                                    tt->updateCaptureHistory(captureMove, otherMovingPiece, otherCapturedPiece, -historyValue);
+                                    tt->updateCaptureHistory(captureMove, otherMovingPiece, otherCapturedPiece,
+                                                             -historyValue);
                                 }
                             }
                         }
