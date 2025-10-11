@@ -351,7 +351,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
                                                           nodePvLine);
 
-                if (isPV && score > alpha && (isRoot || score < beta)) {
+                if (isPV && score > alpha) {
                     score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
                                                          nodePvLine);
                 }
@@ -359,70 +359,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         board.unmakeMove();
-
-        if (score >= beta) {
-#ifdef TRACE_SEARCH
-            if (movesSearched == 0) {
-                stats.firstMoveCutoffs++;
-            } else if (movesSearched == 1) {
-                stats.secondMoveCutoffs++;
-            }
-            stats.totalMoveCutoffNumber += (movesSearched + 1);
-            stats.totalCutoffs++;
-#endif
-
-            if (!engine.isSearchStopped()) {
-                if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
-                    // Killer move heuristic
-                    tt->addKillerMove(move, board.getPly());
-
-                    // History heuristic
-                    const int historyValue = 300 * depth - 250;
-
-                    tt->updateHistory<color>(move, historyValue);
-
-                    for (int i = 0; i < searchedQuietMoves.size; ++i) {
-                        const Move quietMove = searchedQuietMoves.moves[i];
-
-                        if (quietMove != move) {
-                            tt->updateHistory<color>(quietMove, -historyValue);
-                        }
-                    }
-                }
-
-                if (capturedPiece != EMPTY) {
-                    const int historyValue = 300 * depth - 250;
-                    const Piece movingPiece = board.getPieceOnSquare(getFromSquare(move));
-
-                    tt->updateCaptureHistory(move, movingPiece, capturedPiece, historyValue);
-
-                    for (int i = 0; i < searchedCaptures.size; ++i) {
-                        const Move captureMove = searchedCaptures.moves[i];
-
-                        if (captureMove != move) {
-                            const Piece otherMovingPiece = board.getPieceOnSquare(getFromSquare(captureMove));
-                            const MoveType otherMoveType = getMoveType(captureMove);
-                            Piece otherCapturedPiece = board.getPieceOnSquare(getToSquare(captureMove));
-
-                            if (otherMoveType == EN_PASSANT) {
-                                otherCapturedPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
-                            }
-
-                            tt->updateCaptureHistory(captureMove, otherMovingPiece, otherCapturedPiece, -historyValue);
-                        }
-                    }
-                }
-
-                if (!isRoot) {
-#ifdef TRACE_SEARCH
-                    stats.ttWrites++;
-#endif
-                    tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
-                }
-            }
-
-            return score;
-        }
 
         if (score > bestScore) {
             bestScore = score;
@@ -433,6 +369,69 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 pvLine.moves[0] = move;
                 std::memcpy(pvLine.moves + 1, nodePvLine.moves, nodePvLine.moveCount * sizeof(Move));
                 pvLine.moveCount = nodePvLine.moveCount + 1;
+
+                if (score >= beta) {
+#ifdef TRACE_SEARCH
+                    if (movesSearched == 0) {
+                        stats.firstMoveCutoffs++;
+                    } else if (movesSearched == 1) {
+                        stats.secondMoveCutoffs++;
+                    }
+                    stats.totalMoveCutoffNumber += (movesSearched + 1);
+                    stats.totalCutoffs++;
+#endif
+
+                    if (!engine.isSearchStopped()) {
+                        if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+                            // Killer move heuristic
+                            // tt->addKillerMove(move, board.getPly());
+
+                            // History heuristic
+                            const int historyValue = 300 * depth - 250;
+
+                            tt->updateHistory<color>(move, historyValue);
+
+                            for (int i = 0; i < searchedQuietMoves.size; ++i) {
+                                const Move quietMove = searchedQuietMoves.moves[i];
+
+                                if (quietMove != move) {
+                                    tt->updateHistory<color>(quietMove, -historyValue);
+                                }
+                            }
+                        }
+
+                        if (capturedPiece != EMPTY) {
+                            const int historyValue = 300 * depth - 250;
+                            const Piece movingPiece = board.getPieceOnSquare(getFromSquare(move));
+
+                            tt->updateCaptureHistory(move, movingPiece, capturedPiece, historyValue);
+
+                            for (int i = 0; i < searchedCaptures.size; ++i) {
+                                const Move captureMove = searchedCaptures.moves[i];
+
+                                if (captureMove != move) {
+                                    const Piece otherMovingPiece = board.getPieceOnSquare(getFromSquare(captureMove));
+                                    const MoveType otherMoveType = getMoveType(captureMove);
+                                    Piece otherCapturedPiece = board.getPieceOnSquare(getToSquare(captureMove));
+
+                                    if (otherMoveType == EN_PASSANT) {
+                                        otherCapturedPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
+                                    }
+
+                                    tt->updateCaptureHistory(captureMove, otherMovingPiece, otherCapturedPiece, -historyValue);
+                                }
+                            }
+                        }
+
+                        if (!isRoot) {
+#ifdef TRACE_SEARCH
+                            stats.ttWrites++;
+#endif
+                            tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
+                        }
+                    }
+                    return score;
+                }
             }
         }
 
@@ -570,23 +569,23 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
         board.unmakeMove();
 
-        if (score >= beta) {
-            if (!engine.isSearchStopped()) {
-#ifdef TRACE_SEARCH
-                stats.ttWrites++;
-#endif
-                tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
-            }
-
-            return score;
-        }
-
         if (score > bestScore) {
             bestScore = score;
 
             if (score > alpha) {
                 bestMove = move;
                 alpha = score;
+
+                if (score >= beta) {
+                    if (!engine.isSearchStopped()) {
+#ifdef TRACE_SEARCH
+                        stats.ttWrites++;
+#endif
+                        tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
+                    }
+
+                    return score;
+                }
             }
         }
     }
