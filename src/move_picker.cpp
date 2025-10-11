@@ -52,6 +52,7 @@ bool MovePicker::next(Move& move) {
     std::swap(moveList.moves[currentIndex], moveList.moves[bestIndex]);
 
     move = moveList.moves[currentIndex];
+    assert(move != NO_MOVE);
 
     if (move == NO_MOVE) {
         return false;
@@ -76,6 +77,7 @@ void MovePicker::score(Board& board) {
     Move ttMove = NO_MOVE;
 
     if (pvLine.moveCount >= pvMoveIndex) {
+        assert(pvLine.moves[pvMoveIndex] != NO_MOVE);
         pvMove = pvLine.moves[pvMoveIndex];
     }
 

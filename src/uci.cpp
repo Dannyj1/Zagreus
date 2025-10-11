@@ -364,9 +364,7 @@ void Engine::handleStopCommand() {
 
 void Engine::handlePonderHitCommand(std::string_view args) {}
 
-void Engine::handleQuitCommand(std::string_view args) {
-    std::exit(0);
-}
+void Engine::handleQuitCommand(std::string_view args) { std::exit(0); }
 
 void Engine::handlePerftCommand(const std::string& args) {
     if (!didSetup) {

@@ -302,64 +302,52 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             searchedCaptures.moves[searchedCaptures.size++] = move;
         }
 
-        bool doFullSearch = true;
-        int score = INT32_MIN;
+        int score;
 
-        // Late Move Reduction
-        if (movesSearched > 3 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
-            doFullSearch = false;
-            int R = 0;
+        if (isPV && movesSearched == 0) {
+            score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime, nodePvLine);
+        } else {
+            int reductions = 0;
+            bool isLmr = false;
 
-            R = lmrTable[depth][movesSearched];
-            R -= isPV;
-            R -= isInCheck;
-            R -= board.isKingInCheck<opponentColor>();
+            // Late Move Reduction
+            if (movesSearched > 3 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+                isLmr = true;
+#ifdef TRACE_SEARCH
+                stats.lmrSearches++;
+#endif
+                reductions = lmrTable[depth][movesSearched];
+                reductions -= isPV;
+                reductions -= isInCheck;
+                reductions -= board.isKingInCheck<opponentColor>();
 
-            // Make sure depth - 1 - R is at least 1
-            if (depth - 1 - R <= 0) {
-                R = depth - 2;
+                if (depth - 1 - reductions <= 0) {
+                    reductions = depth - 2;
+                }
+
+                reductions = std::max(0, reductions);
             }
 
-            R = std::max(0, R);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - reductions, stats,
+                                                      endTime, nodePvLine);
 
-#ifdef TRACE_SEARCH
-            stats.lmrSearches++;
-#endif
-            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - R, stats, endTime,
-                                                      nodePvLine);
-
-            if (score > alpha && R > 0) {
+            if (isLmr && score > alpha) {
 #ifdef TRACE_SEARCH
                 stats.lmrResearches++;
 #endif
 
-                score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime, nodePvLine);
-            }
-        }
-
-        if (doFullSearch) {
-            if (firstMove) {
-                if (isRoot) {
-                    score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
-                                                         nodePvLine);
-                } else {
-                    score = -pvSearch<opponentColor, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
-                                                               nodePvLine);
-                }
-
-                firstMove = false;
-            } else {
                 score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
                                                           nodePvLine);
+            }
 
-                if (isPV && score > alpha) {
-                    score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
-                                                         nodePvLine);
-                }
+            if (isPV && score > alpha) {
+                score =
+                    -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime, nodePvLine);
             }
         }
 
         board.unmakeMove();
+        movesSearched += 1;
 
         if (score > bestScore) {
             bestScore = score;
@@ -373,12 +361,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
                 if (score >= beta) {
 #ifdef TRACE_SEARCH
-                    if (movesSearched == 0) {
+                    if (movesSearched == 1) {
                         stats.firstMoveCutoffs++;
-                    } else if (movesSearched == 1) {
+                    } else if (movesSearched == 2) {
                         stats.secondMoveCutoffs++;
                     }
-                    stats.totalMoveCutoffNumber += (movesSearched + 1);
+
+                    stats.totalMoveCutoffNumber += movesSearched;
                     stats.totalCutoffs++;
 #endif
 
@@ -436,8 +425,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 }
             }
         }
-
-        movesSearched += 1;
     }
 
     if (!legalMoves) {
