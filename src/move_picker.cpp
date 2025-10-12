@@ -76,7 +76,7 @@ void MovePicker::score(Board& board) {
     Move pvMove = NO_MOVE;
     Move ttMove = NO_MOVE;
 
-    if (pvLine.moveCount >= pvMoveIndex) {
+    if (pvLine.moveCount > pvMoveIndex) {
         assert(pvLine.moves[pvMoveIndex] != NO_MOVE);
         pvMove = pvLine.moves[pvMoveIndex];
     }
