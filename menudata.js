@@ -95,12 +95,10 @@ var menudata={children:[
 {text:"h",url:"namespacemembers_eval.html#index_h"},
 {text:"k",url:"namespacemembers_eval.html#index_k"},
 {text:"n",url:"namespacemembers_eval.html#index_n"},
-{text:"o",url:"namespacemembers_eval.html#index_o"},
 {text:"p",url:"namespacemembers_eval.html#index_p"},
 {text:"q",url:"namespacemembers_eval.html#index_q"},
 {text:"r",url:"namespacemembers_eval.html#index_r"},
 {text:"s",url:"namespacemembers_eval.html#index_s"},
-{text:"t",url:"namespacemembers_eval.html#index_t"},
 {text:"w",url:"namespacemembers_eval.html#index_w"}]}]}]},
 {text:"Classes",url:"annotated.html",children:[
 {text:"Class List",url:"annotated.html"},
