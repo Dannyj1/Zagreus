@@ -128,7 +128,7 @@
 <area shape="poly" id="edge77_Node000070_Node000079" title=" " alt="" coords="290,1184,307,1083,340,929,362,849,387,775,414,716,429,693,445,676,478,654,514,636,552,624,591,616,670,611,742,615,742,620,670,616,592,622,553,629,516,641,480,658,448,680,433,696,419,718,392,777,367,850,345,930,312,1084,295,1185"/>
 <area shape="rect" id="Node000080" href="$classZagreus_1_1Board.html#ad4a10658afcd33c2504719f4466622fe" title="Makes a null move on the board, meaning the side to move does not make a move and the turn is passed." alt="" coords="455,1868,681,1894"/>
 <area shape="poly" id="edge84_Node000070_Node000080" title=" " alt="" coords="295,1210,309,1331,340,1524,361,1626,386,1719,416,1796,432,1825,449,1847,465,1860,462,1864,445,1851,427,1828,411,1798,381,1721,356,1627,335,1525,304,1332,289,1210"/>
-<area shape="rect" id="Node000081" href="$classZagreus_1_1TranspositionTable.html#a2d08e7957c241c6c487761ef0aa0fdf5" title=" " alt="" coords="745,1220,947,1260"/>
+<area shape="rect" id="Node000081" href="$classZagreus_1_1TranspositionTable.html#a34d04a1e9e1c338e856c3c4c85872872" title=" " alt="" coords="745,1220,947,1260"/>
 <area shape="poly" id="edge86_Node000070_Node000081" title=" " alt="" coords="361,1191,512,1190,601,1193,690,1201,760,1214,759,1219,689,1206,601,1198,512,1195,361,1196"/>
 <area shape="rect" id="Node000082" href="$namespaceZagreus.html#aa7c500d003ac3b2a52af5b921a04b5b7" title=" " alt="" coords="501,1108,635,1134"/>
 <area shape="poly" id="edge88_Node000070_Node000082" title=" " alt="" coords="334,1182,446,1150,504,1135,506,1140,447,1155,336,1187"/>

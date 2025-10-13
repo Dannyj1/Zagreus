@@ -330,33 +330,34 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        totalStats.checkExtensions += stats.checkExtensions;</div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        totalStats.seePrunes += stats.seePrunes;</div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        totalStats.reverseFutilityPrunes += stats.reverseFutilityPrunes;</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    }</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    totalStats.depth = params.depth;</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    totalStats.printTrace(engine, positions.size());</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span> </div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <span class="keywordflow">if</span> (nodes == 0 || totalMs == 0) {</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        engine.sendMessage(<span class="stringliteral">&quot;0 nodes 0 nps&quot;</span>);</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    }</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondsSpent = totalMs / 1000.0;</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <span class="keyword">const</span> uint64_t nodesPerSecond = <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nodes) / secondsSpent);</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    std::string message = std::to_string(nodes) + <span class="stringliteral">&quot; nodes &quot;</span> + std::to_string(nodesPerSecond) + <span class="stringliteral">&quot; nps&quot;</span>;</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    engine.sendMessage(message);</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>}</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        totalStats.internalIterativeReductions += stats.internalIterativeReductions;</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    }</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span> </div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="preprocessor">#ifdef TRACE_SEARCH</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    totalStats.depth = params.depth;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    totalStats.printTrace(engine, positions.size());</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keywordflow">if</span> (nodes == 0 || totalMs == 0) {</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        engine.sendMessage(<span class="stringliteral">&quot;0 nodes 0 nps&quot;</span>);</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    }</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondsSpent = totalMs / 1000.0;</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    <span class="keyword">const</span> uint64_t nodesPerSecond = <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nodes) / secondsSpent);</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    std::string message = std::to_string(nodes) + <span class="stringliteral">&quot; nodes &quot;</span> + std::to_string(nodesPerSecond) + <span class="stringliteral">&quot; nps&quot;</span>;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    engine.sendMessage(message);</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>}</div>
 </div>
 <div class="ttc" id="aboard_8h_html"><div class="ttname"><a href="board_8h.html">board.h</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html"><div class="ttname"><a href="classZagreus_1_1Board.html">Zagreus::Board</a></div><div class="ttdoc">Represents the chess board and provides methods to manipulate it. The board consists of several bitbo...</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00062">board.h:62</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Engine_html"><div class="ttname"><a href="classZagreus_1_1Engine.html">Zagreus::Engine</a></div><div class="ttdef"><b>Definition</b> <a href="uci_8h_source.html#l00034">uci.h:34</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Engine_html_a757808849badf64e6332e8826eb1d060"><div class="ttname"><a href="classZagreus_1_1Engine.html#a757808849badf64e6332e8826eb1d060">Zagreus::Engine::startUci</a></div><div class="ttdeci">void startUci()</div><div class="ttdef"><b>Definition</b> <a href="uci_8cpp_source.html#l00506">uci.cpp:506</a></div></div>
-<div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_a4315934b5aa610a63321dfa6515b6f98"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#a4315934b5aa610a63321dfa6515b6f98">Zagreus::TranspositionTable::getTT</a></div><div class="ttdeci">static TranspositionTable * getTT()</div><div class="ttdef"><b>Definition</b> <a href="tt_8cpp_source.html#l00117">tt.cpp:117</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_a4315934b5aa610a63321dfa6515b6f98"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#a4315934b5aa610a63321dfa6515b6f98">Zagreus::TranspositionTable::getTT</a></div><div class="ttdeci">static TranspositionTable * getTT()</div><div class="ttdef"><b>Definition</b> <a href="tt_8cpp_source.html#l00123">tt.cpp:123</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_aa27c01833383a197e102d2494be540b4"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#aa27c01833383a197e102d2494be540b4">Zagreus::TranspositionTable::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdef"><b>Definition</b> <a href="tt_8h_source.html#l00059">tt.h:59</a></div></div>
-<div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_ad9c9d627d0a140aec262be74ad419857"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#ad9c9d627d0a140aec262be74ad419857">Zagreus::TranspositionTable::setTableSize</a></div><div class="ttdeci">void setTableSize(int megaBytes)</div><div class="ttdef"><b>Definition</b> <a href="tt_8cpp_source.html#l00103">tt.cpp:103</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1TranspositionTable_html_ad9c9d627d0a140aec262be74ad419857"><div class="ttname"><a href="classZagreus_1_1TranspositionTable.html#ad9c9d627d0a140aec262be74ad419857">Zagreus::TranspositionTable::setTableSize</a></div><div class="ttdeci">void setTableSize(int megaBytes)</div><div class="ttdef"><b>Definition</b> <a href="tt_8cpp_source.html#l00109">tt.cpp:109</a></div></div>
 <div class="ttc" id="amain_8cpp_html_a638b85ceffac097c2aa79b76ba8c055e"><div class="ttname"><a href="main_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e">main</a></div><div class="ttdeci">int main(const int argc, char *argv[])</div><div class="ttdef"><b>Definition</b> <a href="#l00136">main.cpp:136</a></div></div>
 <div class="ttc" id="amain_8cpp_html_a8cb361baefea80b2cb9bbeb2f7fda965"><div class="ttname"><a href="main_8cpp.html#a8cb361baefea80b2cb9bbeb2f7fda965">BENCHMARK_POSITIONS</a></div><div class="ttdeci">const std::vector&lt; std::string &gt; BENCHMARK_POSITIONS</div><div class="ttdef"><b>Definition</b> <a href="#l00040">main.cpp:40</a></div></div>
 <div class="ttc" id="amain_8cpp_html_a9da5c1576379032450eee69dc694e6a4"><div class="ttname"><a href="main_8cpp.html#a9da5c1576379032450eee69dc694e6a4">benchmark</a></div><div class="ttdeci">void benchmark(bool fast)</div><div class="ttdef"><b>Definition</b> <a href="#l00171">main.cpp:171</a></div></div>
