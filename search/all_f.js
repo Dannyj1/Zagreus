@@ -82,7 +82,8 @@ var searchData=
   ['pst_2ecpp_79',['pst.cpp',['../pst_8cpp.html',1,'']]],
   ['pst_2eh_80',['pst.h',['../pst_8h.html',1,'']]],
   ['pv_81',['PV',['../namespaceZagreus.html#ada679bdc3b3121c6d715689e2990b0eaaef99d28c6254f51321928e4cd38522a8',1,'Zagreus']]],
-  ['pvline_82',['PvLine',['../structZagreus_1_1PvLine.html',1,'Zagreus::PvLine'],['../structZagreus_1_1PvLine.html#adc9f29c03ad4347fc94654ee90bdd772',1,'Zagreus::PvLine::PvLine()']]],
-  ['pvline_83',['pvLine',['../structZagreus_1_1SearchStats.html#a49bc7934f684502191e4f40c2fa1a062',1,'Zagreus::SearchStats']]],
-  ['pvsearch_84',['pvSearch',['../namespaceZagreus.html#a9cede8fac151bf6c2336600497bc8b54',1,'Zagreus']]]
+  ['pv_5fmove_82',['PV_MOVE',['../namespaceZagreus.html#ad0834d4617ec3c4adfefac6ed02910a8a687725cfaf751733fedd871fd1573856',1,'Zagreus']]],
+  ['pvline_83',['PvLine',['../structZagreus_1_1PvLine.html',1,'Zagreus::PvLine'],['../structZagreus_1_1PvLine.html#adc9f29c03ad4347fc94654ee90bdd772',1,'Zagreus::PvLine::PvLine()']]],
+  ['pvline_84',['pvLine',['../structZagreus_1_1SearchStats.html#a49bc7934f684502191e4f40c2fa1a062',1,'Zagreus::SearchStats']]],
+  ['pvsearch_85',['pvSearch',['../namespaceZagreus.html#a9cede8fac151bf6c2336600497bc8b54',1,'Zagreus']]]
 ];

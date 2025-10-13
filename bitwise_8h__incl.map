@@ -1,11 +1,7 @@
 <map id="src/bitwise.h" name="src/bitwise.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="35,5,139,31"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,152,75,177"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="75,33,56,53,41,80,36,110,38,138,32,139,31,109,36,78,52,50,71,29"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="112,152,179,177"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="101,29,119,50,136,78,145,109,148,138,143,139,139,110,131,80,115,53,97,33"/>
-<area shape="rect" id="Node000004" href="$types_8h.html" title=" " alt="" coords="51,79,122,104"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="89,31,89,65,84,65,84,31"/>
-<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="81,106,57,142,53,139,77,103"/>
-<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="98,103,129,140,125,143,94,106"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="33,5,137,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,75,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,32,57,69,52,66,76,30"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="99,79,165,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="95,30,119,66,115,69,91,32"/>
 </map>

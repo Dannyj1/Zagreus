@@ -46,8 +46,9 @@ var searchData=
   ['move_5fpicker_2ecpp_43',['move_picker.cpp',['../move__picker_8cpp.html',1,'']]],
   ['move_5fpicker_2eh_44',['move_picker.h',['../move__picker_8h.html',1,'']]],
   ['movecount_45',['moveCount',['../structZagreus_1_1PvLine.html#a24e84727144ed7667d658ddb67542e0f',1,'Zagreus::PvLine']]],
-  ['movelist_46',['MoveList',['../structZagreus_1_1MoveList.html',1,'Zagreus::MoveList'],['../structZagreus_1_1MoveList.html#a50020d74dad254fdb1aee79eb7c9c49b',1,'Zagreus::MoveList::MoveList()=default'],['../structZagreus_1_1MoveList.html#a4a6535c7c4c49b2dd88a584be042fd48',1,'Zagreus::MoveList::MoveList(const MoveList &amp;)=delete']]],
-  ['movepicker_47',['MovePicker',['../classZagreus_1_1MovePicker.html',1,'Zagreus::MovePicker'],['../classZagreus_1_1MovePicker.html#a5f804b45810623a00beac6659f9b97a1',1,'Zagreus::MovePicker::MovePicker(MoveList &amp;moveList)'],['../classZagreus_1_1MovePicker.html#ab7ad6f3739b2754630a5c66dc866eb31',1,'Zagreus::MovePicker::MovePicker(const MovePicker &amp;)=delete']]],
-  ['moves_48',['moves',['../structZagreus_1_1MoveList.html#a19aeee57e25aa2fafd66d4ef4fc0e020',1,'Zagreus::MoveList::moves'],['../structZagreus_1_1PvLine.html#a932f4df3c65d9fc564a7ed28363d7223',1,'Zagreus::PvLine::moves']]],
-  ['movetype_49',['MoveType',['../namespaceZagreus.html#a7735714492e635054e84a0cc179e46ba',1,'Zagreus']]]
+  ['movegenstage_46',['MoveGenStage',['../namespaceZagreus.html#ad0834d4617ec3c4adfefac6ed02910a8',1,'Zagreus']]],
+  ['movelist_47',['MoveList',['../structZagreus_1_1MoveList.html',1,'Zagreus::MoveList'],['../structZagreus_1_1MoveList.html#a50020d74dad254fdb1aee79eb7c9c49b',1,'Zagreus::MoveList::MoveList()=default'],['../structZagreus_1_1MoveList.html#a4a6535c7c4c49b2dd88a584be042fd48',1,'Zagreus::MoveList::MoveList(const MoveList &amp;)=delete']]],
+  ['movepicker_48',['MovePicker',['../classZagreus_1_1MovePicker.html',1,'Zagreus::MovePicker'],['../classZagreus_1_1MovePicker.html#a5f804b45810623a00beac6659f9b97a1',1,'Zagreus::MovePicker::MovePicker(MoveList &amp;moveList)'],['../classZagreus_1_1MovePicker.html#ab7ad6f3739b2754630a5c66dc866eb31',1,'Zagreus::MovePicker::MovePicker(const MovePicker &amp;)=delete']]],
+  ['moves_49',['moves',['../structZagreus_1_1MoveList.html#a19aeee57e25aa2fafd66d4ef4fc0e020',1,'Zagreus::MoveList::moves'],['../structZagreus_1_1PvLine.html#a932f4df3c65d9fc564a7ed28363d7223',1,'Zagreus::PvLine::moves']]],
+  ['movetype_50',['MoveType',['../namespaceZagreus.html#a7735714492e635054e84a0cc179e46ba',1,'Zagreus']]]
 ];

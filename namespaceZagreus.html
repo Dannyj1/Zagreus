@@ -150,6 +150,11 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#a3d471f60f5bbb9c34722924daef89c8caba68afb85bbe6921753860b2e6b68545">EVASIONS</a>
  }</td></tr>
 <tr class="separator:a3d471f60f5bbb9c34722924daef89c8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0834d4617ec3c4adfefac6ed02910a8" id="r_ad0834d4617ec3c4adfefac6ed02910a8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0834d4617ec3c4adfefac6ed02910a8">MoveGenStage</a> : uint8_t { <a class="el" href="#ad0834d4617ec3c4adfefac6ed02910a8a687725cfaf751733fedd871fd1573856">PV_MOVE</a>
+, <a class="el" href="#ad0834d4617ec3c4adfefac6ed02910a8ab3ced60fbe8b3be85d4177a5c8d130e0">TT_MOVE</a>
+, <a class="el" href="#ad0834d4617ec3c4adfefac6ed02910a8a085192210141a589fc5d0fc84e48b8ee">OTHER</a>
+ }</td></tr>
+<tr class="separator:ad0834d4617ec3c4adfefac6ed02910a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada679bdc3b3121c6d715689e2990b0ea" id="r_ada679bdc3b3121c6d715689e2990b0ea"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada679bdc3b3121c6d715689e2990b0ea">NodeType</a> { <a class="el" href="#ada679bdc3b3121c6d715689e2990b0eaac534770fa386ed803424f474ff35b133">ROOT</a>
 , <a class="el" href="#ada679bdc3b3121c6d715689e2990b0eaaef99d28c6254f51321928e4cd38522a8">PV</a>
 , <a class="el" href="#ada679bdc3b3121c6d715689e2990b0eaa62a1caec0ddad698f0545a2ef90820d3">REGULAR</a>
@@ -951,6 +956,27 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ad0834d4617ec3c4adfefac6ed02910a8" name="ad0834d4617ec3c4adfefac6ed02910a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0834d4617ec3c4adfefac6ed02910a8">&#9670;&#160;</a></span>MoveGenStage</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ad0834d4617ec3c4adfefac6ed02910a8">Zagreus::MoveGenStage</a> : uint8_t</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ad0834d4617ec3c4adfefac6ed02910a8a687725cfaf751733fedd871fd1573856" name="ad0834d4617ec3c4adfefac6ed02910a8a687725cfaf751733fedd871fd1573856"></a>PV_MOVE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad0834d4617ec3c4adfefac6ed02910a8ab3ced60fbe8b3be85d4177a5c8d130e0" name="ad0834d4617ec3c4adfefac6ed02910a8ab3ced60fbe8b3be85d4177a5c8d130e0"></a>TT_MOVE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad0834d4617ec3c4adfefac6ed02910a8a085192210141a589fc5d0fc84e48b8ee" name="ad0834d4617ec3c4adfefac6ed02910a8a085192210141a589fc5d0fc84e48b8ee"></a>OTHER&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="move__picker_8h_source.html#l00027">27</a> of file <a class="el" href="move__picker_8h_source.html">move_picker.h</a>.</p>
+
+</div>
+</div>
 <a id="a7735714492e635054e84a0cc179e46ba" name="a7735714492e635054e84a0cc179e46ba"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7735714492e635054e84a0cc179e46ba">&#9670;&#160;</a></span>MoveType</h2>
 
@@ -1418,7 +1444,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The index of the least significant set bit. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00046">46</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00044">44</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1521,7 +1547,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The index of the most significant set bit. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00062">62</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00060">60</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
 
 </div>
 </div>
@@ -5422,7 +5448,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the given piece. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00497">497</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00498">498</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -7278,7 +7304,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of set bits. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00033">33</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00031">31</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -7344,7 +7370,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The index of the popped least significant set bit. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00078">78</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00076">76</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -7706,7 +7732,7 @@ template&lt;<a class="el" href="#a06e913bde27d160c82c691b3925920a4">PieceColor</
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="search_8cpp_source.html#l00455">455</a> of file <a class="el" href="search_8cpp_source.html">search.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="search_8cpp_source.html#l00460">460</a> of file <a class="el" href="search_8cpp_source.html">search.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
