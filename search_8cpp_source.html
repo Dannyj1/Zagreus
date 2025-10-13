@@ -336,7 +336,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    }</div>
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <span class="comment">// Internal Iterative Reductions</span></div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <span class="keywordflow">if</span> (isPV &amp;&amp; depth &gt;= 8) {</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <span class="keywordflow">if</span> (isPV &amp;&amp; depth &gt;= 6) {</div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structZagreus_1_1TTEntry.html">TTEntry</a>* ttEntry = tt-&gt;<a class="code hl_function" href="classZagreus_1_1TranspositionTable.html#a0eaba95d499a76b17e0d3499fc14f0c2">getEntry</a>(board.<a class="code hl_function" href="classZagreus_1_1Board.html#ad94cd8eb15a75774f32ae327ab968aa6">getZobristHash</a>());</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        <span class="keyword">const</span> <a class="code hl_typedef" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> ttMove = ttEntry ? ttEntry-&gt;<a class="code hl_variable" href="structZagreus_1_1TTEntry.html#a11425f44f910837e629998c0a93d8774">bestMove</a> : <a class="code hl_define" href="constants_8h.html#a3bdc3d77ca3e6d7c92b502c91ce81096">NO_MOVE</a>;</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> </div>
