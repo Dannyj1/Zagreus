@@ -10,11 +10,11 @@
 <area shape="poly" id="edge11_Node000002_Node000008" title=" " alt="" coords="794,143,747,137,748,131,795,137"/>
 <area shape="rect" id="Node000009" href="$classZagreus_1_1Board.html#a30e87c423701c0fe273a588c8119b4c8" title="Checks if the current position is legal based on the color that just made a move." alt="" coords="561,166,753,206"/>
 <area shape="poly" id="edge14_Node000002_Node000009" title=" " alt="" coords="795,171,753,177,753,171,794,166"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a9cede8fac151bf6c2336600497bc8b54" title=" " alt="" coords="180,98,323,123"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="180,98,323,123"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="564,27,469,24,420,28,371,38,341,50,313,67,269,99,265,95,310,62,339,45,370,33,419,23,469,18,564,22"/>
 <area shape="rect" id="Node000005" href="$namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="5,98,132,123"/>
 <area shape="poly" id="edge9_Node000003_Node000005" title=" " alt="" coords="587,25,505,13,412,8,340,15,269,33,181,63,96,100,94,95,179,58,268,28,339,10,412,3,506,8,588,20"/>
-<area shape="rect" id="Node000006" href="$namespaceZagreus.html#aa7c500d003ac3b2a52af5b921a04b5b7" title=" " alt="" coords="371,72,505,98"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="371,72,505,98"/>
 <area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="584,56,499,75,498,70,583,51"/>
 <area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="283,87,274,79,251,76,232,78,222,83,220,89,226,96,221,99,215,89,218,79,231,73,251,71,276,75,287,83"/>
 <area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="166,113,132,113,132,108,166,108"/>

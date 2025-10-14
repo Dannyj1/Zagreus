@@ -2,11 +2,11 @@
 <area shape="rect" id="Node000001" title="Makes a move on the board." alt="" coords="553,117,755,143"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="381,29,495,55"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="608,114,469,57,471,52,610,110"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a9cede8fac151bf6c2336600497bc8b54" title=" " alt="" coords="180,155,323,180"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="180,155,323,180"/>
 <area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="565,118,471,112,421,114,371,121,320,137,277,157,275,152,318,132,370,115,420,109,471,107,566,113"/>
 <area shape="rect" id="Node000004" href="$namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="5,180,132,205"/>
 <area shape="poly" id="edge9_Node000001_Node000004" title=" " alt="" coords="619,151,567,175,506,194,404,208,302,211,208,209,132,203,132,197,208,203,302,206,404,202,505,189,565,170,617,147"/>
-<area shape="rect" id="Node000005" href="$namespaceZagreus.html#aa7c500d003ac3b2a52af5b921a04b5b7" title=" " alt="" coords="371,155,505,180"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="371,155,505,180"/>
 <area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="567,148,506,158,505,153,566,142"/>
 <area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="471,19,462,11,438,8,418,10,408,15,406,20,411,28,407,31,401,21,404,11,417,5,438,3,464,6,474,15"/>
 <area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="283,144,274,136,251,133,232,135,222,140,220,146,226,153,221,156,215,146,218,137,231,130,251,128,276,132,287,140"/>

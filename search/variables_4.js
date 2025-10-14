@@ -20,5 +20,6 @@ var searchData=
   ['evalpieceonstrongsquare_17',['evalPieceOnStrongSquare',['../namespaceZagreus.html#abebda8eaf5b5b15a1f536ba0356dae62',1,'Zagreus']]],
   ['evalpieceonweaksquarepenalty_18',['evalPieceOnWeakSquarePenalty',['../namespaceZagreus.html#ae28386cad7b5c7425388ba01dfdb46da',1,'Zagreus']]],
   ['evalunoccupiedstrongsquare_19',['evalUnoccupiedStrongSquare',['../namespaceZagreus.html#aa1185cde53fd56796e75eaa68e15d89a',1,'Zagreus']]],
-  ['evalvirtualmobilitypenalty_20',['evalVirtualMobilityPenalty',['../namespaceZagreus.html#a9273fd5123575bf068aac78f596d14cb',1,'Zagreus']]]
+  ['evalvirtualmobilitypenalty_20',['evalVirtualMobilityPenalty',['../namespaceZagreus.html#a9273fd5123575bf068aac78f596d14cb',1,'Zagreus']]],
+  ['excludedmove_21',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
 ];

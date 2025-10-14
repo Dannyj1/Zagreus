@@ -2,9 +2,9 @@
 <area shape="rect" id="Node000001" title="Gets the current zobrist hash of the board. It is pre&#45;computed and will only be retrieved from memory..." alt="" coords="776,85,1005,111"/>
 <area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#aca84663c90a0118a09ae4777aa5731ec" title="Checks if the current position is a draw. Checks everything but a stalemate." alt="" coords="553,5,728,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="836,84,681,33,682,28,838,79"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a9cede8fac151bf6c2336600497bc8b54" title=" " alt="" coords="180,92,323,117"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="180,92,323,117"/>
 <area shape="poly" id="edge8_Node000001_Node000003" title=" " alt="" coords="853,119,795,142,729,161,667,168,605,170,543,167,482,160,374,140,294,120,295,115,375,135,483,155,543,161,605,164,667,163,727,155,793,137,851,114"/>
-<area shape="rect" id="Node000005" href="$namespaceZagreus.html#aa7c500d003ac3b2a52af5b921a04b5b7" title=" " alt="" coords="371,67,505,92"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="371,67,505,92"/>
 <area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="762,95,505,85,505,79,762,90"/>
 <area shape="rect" id="Node000006" href="$classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="561,106,720,146"/>
 <area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="764,115,720,120,720,115,763,110"/>

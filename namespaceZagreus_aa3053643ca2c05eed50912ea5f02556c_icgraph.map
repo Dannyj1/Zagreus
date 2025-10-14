@@ -2,12 +2,12 @@
 <area shape="rect" id="Node000001" title="Gets the piece type from a color and type." alt="" coords="960,52,1163,77"/>
 <area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#ab5531cc66a779858ed8b61d53ab0d535" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="760,52,912,77"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="946,67,912,67,912,62,946,62"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#aa7c500d003ac3b2a52af5b921a04b5b7" title=" " alt="" coords="371,29,505,55"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="371,29,505,55"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="746,62,506,48,506,43,746,57"/>
 <area shape="rect" id="Node000006" href="$classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="553,73,712,113"/>
 <area shape="poly" id="edge7_Node000002_Node000006" title=" " alt="" coords="747,80,713,84,712,79,746,74"/>
 <area shape="poly" id="edge6_Node000003_Node000003" title=" " alt="" coords="471,19,462,11,438,8,418,10,408,15,406,20,411,28,407,31,401,21,404,11,417,5,438,3,464,6,474,15"/>
-<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a9cede8fac151bf6c2336600497bc8b54" title=" " alt="" coords="180,55,323,80"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="180,55,323,80"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="357,56,323,60,322,55,357,50"/>
 <area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="283,44,274,36,251,33,232,35,222,40,220,46,226,53,221,56,215,46,218,37,231,30,251,28,276,32,287,40"/>
 <area shape="rect" id="Node000005" href="$namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="5,55,132,80"/>
