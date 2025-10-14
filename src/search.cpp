@@ -87,9 +87,10 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         }
 
         PvLine pvLine = PvLine{board.getPly()};
+        SearchStack searchStack{};
 
-        const int score =
-            pvSearch<color, ROOT>(engine, board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime, pvLine);
+        const int score = pvSearch<color, ROOT>(engine, board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime,
+                                                pvLine, searchStack);
         assert(score != INITIAL_ALPHA && score != INITIAL_BETA);
         assert(depth > 0);
 
@@ -159,7 +160,7 @@ template Move search<BLACK>(Engine& engine, Board& board, SearchParams& params, 
 
 template <PieceColor color, NodeType nodeType>
 int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine) {
+             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine, SearchStack& searchStack) {
     constexpr bool isPV = nodeType == PV || nodeType == ROOT;
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
@@ -187,24 +188,27 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     if (depth <= 0) {
         assert(!isRoot);
         pvLine.moveCount = 0;
-        return qSearch<color, nodeType>(engine, board, alpha, beta, depth, stats, endTime);
+        return qSearch<color, nodeType>(engine, board, alpha, beta, depth, stats, endTime, searchStack);
     }
 
     stats.nodesSearched += 1;
     const int eval = Evaluation(board).evaluate();
+    TTEntry* ttEntry = nullptr;
+    const int16_t ttScore = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly(), ttEntry);
+    Move ttMove = ttEntry ? ttEntry->bestMove : NO_MOVE;
+    int ttDepth = ttEntry ? ttEntry->depth : -MAX_PLIES;
+
+#ifdef TRACE_SEARCH
+    stats.ttProbes++;
+
+    if (ttScore != NO_TT_SCORE) {
+        stats.ttHits++;
+    }
+#endif
 
     if (!isPV) {
-        const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
-
-#ifdef TRACE_SEARCH
-        stats.ttProbes++;
-#endif
-
-        if (score != NO_TT_SCORE) {
-#ifdef TRACE_SEARCH
-            stats.ttHits++;
-#endif
-            return score;
+        if (ttScore != NO_TT_SCORE) {
+            return ttScore;
         }
 
         // Reverse Futility Pruning
@@ -225,7 +229,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             const int R = 2 + depth / 3;
             PvLine nmpPvLine = PvLine{board.getPly()};
             const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(engine, board, -beta, -beta + 1, depth - R,
-                                                                        stats, endTime, nmpPvLine);
+                                                                        stats, endTime, nmpPvLine, searchStack);
             board.unmakeNullMove();
 
             if (nullMoveScore >= beta) {
@@ -237,7 +241,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     }
 
-    bool firstMove = true;
     int legalMoves = 0;
 
     Move move;
@@ -259,7 +262,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     int bestScore = INT32_MIN;
     int movesSearched = 0;
 
+    Move excludedMove = searchStack.excludedMove[depth];
+
     while (movePicker.next(move)) {
+        if (move == excludedMove) {
+            continue;
+        }
+
         const MoveType moveType = getMoveType(move);
         const Square toSquare = getToSquare(move);
         Piece capturedPiece = board.getPieceOnSquare(toSquare);
@@ -276,6 +285,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         legalMoves += 1;
+        int moveDepth = depth - 1;
 
         // Futility pruning
         if (depth <= 4 && !isInCheck && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
@@ -296,6 +306,37 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             }
         }
 
+        // Singular Extensions
+        if (!isRoot && excludedMove == NO_MOVE && depth >= 6 && ttEntry && move == ttMove &&
+            ttEntry->nodeType == BETA && ttDepth >= depth - 3) {
+#ifdef TRACE_SEARCH
+            stats.singularAttempts++;
+#endif
+            // Need to unmake the move, as it was already made
+            board.unmakeMove();
+
+            int singularBeta = ttEntry->score - depth;
+            int singularDepth = moveDepth / 2;
+
+            searchStack.excludedMove[singularDepth] = move;
+            PvLine singularPvLine = PvLine{board.getPly()};
+            const int singularScore =
+                pvSearch<color, REGULAR>(engine, board, singularBeta - 1, singularBeta, singularDepth, stats, endTime,
+                                         singularPvLine, searchStack);
+            searchStack.excludedMove[singularDepth] = NO_MOVE;
+
+            if (singularScore < singularBeta) {
+#ifdef TRACE_SEARCH
+                stats.singularExtensions++;
+#endif
+
+                moveDepth += 1;
+            }
+
+            // Re-make move
+            board.makeMove(move);
+        }
+
         if (capturedPiece == EMPTY) {
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
         } else {
@@ -305,9 +346,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         int score;
 
         if (isPV && movesSearched == 0) {
-            score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime, nodePvLine);
+            score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime, nodePvLine, searchStack);
         } else {
-            int reductions = 0;
+            int lmrReduction = 0;
             bool isLmr = false;
 
             // Late Move Reduction
@@ -316,33 +357,33 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 #ifdef TRACE_SEARCH
                 stats.lmrSearches++;
 #endif
-                reductions = lmrTable[depth][movesSearched];
-                reductions -= isPV;
-                reductions -= isInCheck;
-                reductions -= board.isKingInCheck<opponentColor>();
+                lmrReduction = lmrTable[depth][movesSearched];
+                lmrReduction -= isPV;
+                lmrReduction -= isInCheck;
+                lmrReduction -= board.isKingInCheck<opponentColor>();
 
-                if (depth - 1 - reductions <= 0) {
-                    reductions = depth - 2;
+                if (depth - 1 - lmrReduction <= 0) {
+                    lmrReduction = depth - 2;
                 }
 
-                reductions = std::max(0, reductions);
+                lmrReduction = std::max(0, lmrReduction);
+                assert(moveDepth - reductions > 0);
             }
 
-            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1 - reductions, stats,
-                                                      endTime, nodePvLine);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth - lmrReduction, stats,
+                                                      endTime, nodePvLine, searchStack);
 
             if (isLmr && score > alpha) {
 #ifdef TRACE_SEARCH
                 stats.lmrResearches++;
 #endif
 
-                score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, depth - 1, stats, endTime,
-                                                          nodePvLine);
+                score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth, stats, endTime,
+                                                          nodePvLine, searchStack);
             }
 
             if (isPV && score > alpha) {
-                score =
-                    -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, depth - 1, stats, endTime, nodePvLine);
+                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime, nodePvLine, searchStack);
             }
         }
 
@@ -454,7 +495,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
 template <PieceColor color, NodeType nodeType>
 int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-            const std::chrono::time_point<std::chrono::steady_clock>& endTime) {
+            const std::chrono::time_point<std::chrono::steady_clock>& endTime, SearchStack& searchStack) {
     assert(nodeType != ROOT);
     constexpr bool isPV = nodeType == PV;
 
@@ -470,7 +511,8 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
     }
 
     if (!isPV) {
-        const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly());
+        TTEntry* ttEntry = nullptr;
+        const int16_t score = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly(), ttEntry);
 
 #ifdef TRACE_SEARCH
         stats.qTtProbes++;
@@ -554,7 +596,8 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
         legalMoves += 1;
 
-        const int score = -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime);
+        const int score =
+            -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime, searchStack);
 
         board.unmakeMove();
 
@@ -618,6 +661,8 @@ void SearchStats::clearTrace() {
     lmrResearches = 0;
     futilityPrunes = 0;
     checkExtensions = 0;
+    singularExtensions = 0;
+    singularAttempts = 0;
     seePrunes = 0;
 }
 
@@ -625,7 +670,6 @@ void SearchStats::printTrace(Engine& engine, int numPositions) const {
     const uint64_t totalNodes = nodesSearched + qNodesSearched;
     const uint64_t avgTotalNodes = totalNodes / numPositions;
     const double branchFactor = avgTotalNodes > 1 && depth > 1 ? std::pow(avgTotalNodes, 1.0 / depth) : 0.0;
-
     const double ttHitRate = ttProbes > 0 ? static_cast<double>(ttHits) / ttProbes * 100.0 : 0.0;
     const double qTtHitRate = qTtProbes > 0 ? static_cast<double>(qTtHits) / qTtProbes * 100.0 : 0.0;
     const double nmpSuccessRate = nmpTries > 0 ? static_cast<double>(nmpPrunes) / nmpTries * 100.0 : 0.0;
@@ -637,30 +681,82 @@ void SearchStats::printTrace(Engine& engine, int numPositions) const {
     const double avgMoveCutoff = totalCutoffs > 0 ? static_cast<double>(totalMoveCutoffNumber) / totalCutoffs : 0.0;
 
     std::stringstream ss;
-    ss << "\n--- Search Statistics" << (numPositions > 1 ? " (Averages per position)" : "") << " ---\n"
-       << "Effective Branching Factor: " << std::fixed << std::setprecision(2) << branchFactor << "\n"
-       << "\n--- Transposition Table ---\n"
-       << "Probes: " << ttProbes / numPositions << "\n"
-       << "Hits: " << ttHits / numPositions << " (" << ttHitRate << "%)\n"
-       << "Writes: " << ttWrites / numPositions << "\n"
-       << "Q-Search Probes: " << qTtProbes / numPositions << "\n"
-       << "Q-Search Hits: " << qTtHits / numPositions << " (" << qTtHitRate << "%)\n"
-       << "\n--- Move Ordering ---\n"
-       << "First Move Cutoffs: " << firstMoveCutoffs / numPositions << " (" << firstMoveCutoffRate << "%)\n"
-       << "Second Move Cutoffs: " << secondMoveCutoffs / numPositions << " (" << secondMoveCutoffRate << "%)\n"
-       << "Average Move Cutoff: " << avgMoveCutoff << "\n"
-       << "\n--- Pruning, Reductions, and Extensions ---\n"
-       << "NMP Tries: " << nmpTries / numPositions << "\n"
-       << "NMP Prunes: " << nmpPrunes / numPositions << " (" << nmpSuccessRate << "%)\n"
-       << "LMR Searches: " << lmrSearches / numPositions << "\n"
-       << "LMR Researches: " << lmrResearches / numPositions << " (" << lmrResearchRate << "%)\n"
-       << "Futility Prunes: " << futilityPrunes / numPositions << "\n"
-       << "Reverse Futility Prunes: " << reverseFutilityPrunes / numPositions << "\n"
-       << "Check Extensions: " << checkExtensions / numPositions << "\n"
-       << "\n--- Quiescence Search ---\n"
-       << "SEE Prunes: " << seePrunes / numPositions << "\n"
-       << "-------------------------";
+    ss << std::fixed << std::setprecision(2);
+
+    auto printStatLine = [&](const std::string& label, uint64_t value) {
+        ss << label << ": " << value / numPositions;
+        if (numPositions > 1) {
+            ss << " (Total: " << value << ")";
+        }
+        ss << "\n";
+    };
+
+    auto printStatLineWithRate = [&](const std::string& label, uint64_t value, double rate) {
+        ss << label << ": " << value / numPositions;
+        if (numPositions > 1) {
+            ss << " (Total: " << value << ")";
+        }
+        ss << " (" << rate << "%)\n";
+    };
+
+    ss << "\n--- Search Statistics" << (numPositions > 1 ? " (Averages per position & Totals)" : "") << " ---\n"
+       << "Effective Branching Factor: " << branchFactor << "\n"
+       << "\n--- Transposition Table ---\n";
+
+    printStatLine("Probes", ttProbes);
+    printStatLineWithRate("Hits", ttHits, ttHitRate);
+    printStatLine("Writes", ttWrites);
+    printStatLine("Q-Search Probes", qTtProbes);
+    printStatLineWithRate("Q-Search Hits", qTtHits, qTtHitRate);
+
+    ss << "\n--- Move Ordering ---\n";
+    printStatLineWithRate("First Move Cutoffs", firstMoveCutoffs, firstMoveCutoffRate);
+    printStatLineWithRate("Second Move Cutoffs", secondMoveCutoffs, secondMoveCutoffRate);
+    ss << "Average Move Cutoff: " << avgMoveCutoff << "\n";
+
+    ss << "\n--- Pruning, Reductions, and Extensions ---\n";
+    printStatLine("NMP Tries", nmpTries);
+    printStatLineWithRate("NMP Prunes", nmpPrunes, nmpSuccessRate);
+    printStatLine("LMR Searches", lmrSearches);
+    printStatLineWithRate("LMR Researches", lmrResearches, lmrResearchRate);
+    printStatLine("Futility Prunes", futilityPrunes);
+    printStatLine("Reverse Futility Prunes", reverseFutilityPrunes);
+    printStatLine("Singular Extensions", singularExtensions);
+    printStatLine("Singular Attempts", singularAttempts);
+    printStatLine("Check Extensions", checkExtensions);
+
+    ss << "\n--- Quiescence Search ---\n";
+    printStatLine("SEE Prunes", seePrunes);
+
+    ss << "-------------------------";
     engine.sendInfoMessage(ss.str());
 }
+
+SearchStats& SearchStats::operator+=(const SearchStats& other) {
+    nodesSearched += other.nodesSearched;
+    qNodesSearched += other.qNodesSearched;
+    ttProbes += other.ttProbes;
+    ttHits += other.ttHits;
+    ttWrites += other.ttWrites;
+    qTtProbes += other.qTtProbes;
+    qTtHits += other.qTtHits;
+    firstMoveCutoffs += other.firstMoveCutoffs;
+    secondMoveCutoffs += other.secondMoveCutoffs;
+    totalMoveCutoffNumber += other.totalMoveCutoffNumber;
+    totalCutoffs += other.totalCutoffs;
+    nmpTries += other.nmpTries;
+    nmpPrunes += other.nmpPrunes;
+    lmrSearches += other.lmrSearches;
+    lmrResearches += other.lmrResearches;
+    futilityPrunes += other.futilityPrunes;
+    reverseFutilityPrunes += other.reverseFutilityPrunes;
+    checkExtensions += other.checkExtensions;
+    singularExtensions += other.singularExtensions;
+    singularAttempts += other.singularAttempts;
+    seePrunes += other.seePrunes;
+
+    return *this;
+}
+
 }  // namespace Zagreus
 #endif

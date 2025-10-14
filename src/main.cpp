@@ -211,25 +211,7 @@ void benchmark(bool fast) {
         totalMs += elapsed.count();
 
 #ifdef TRACE_SEARCH
-        totalStats.nodesSearched += stats.nodesSearched;
-        totalStats.qNodesSearched += stats.qNodesSearched;
-        totalStats.ttProbes += stats.ttProbes;
-        totalStats.ttHits += stats.ttHits;
-        totalStats.ttWrites += stats.ttWrites;
-        totalStats.qTtProbes += stats.qTtProbes;
-        totalStats.qTtHits += stats.qTtHits;
-        totalStats.firstMoveCutoffs += stats.firstMoveCutoffs;
-        totalStats.secondMoveCutoffs += stats.secondMoveCutoffs;
-        totalStats.totalMoveCutoffNumber += stats.totalMoveCutoffNumber;
-        totalStats.totalCutoffs += stats.totalCutoffs;
-        totalStats.nmpTries += stats.nmpTries;
-        totalStats.nmpPrunes += stats.nmpPrunes;
-        totalStats.lmrSearches += stats.lmrSearches;
-        totalStats.lmrResearches += stats.lmrResearches;
-        totalStats.futilityPrunes += stats.futilityPrunes;
-        totalStats.checkExtensions += stats.checkExtensions;
-        totalStats.seePrunes += stats.seePrunes;
-        totalStats.reverseFutilityPrunes += stats.reverseFutilityPrunes;
+        totalStats += stats;
 #endif
     }
 

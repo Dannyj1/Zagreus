@@ -53,35 +53,39 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
 }
 
 int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8_t depth, const int alpha,
-                                          const int beta, const int ply) const {
+                                          const int beta, const int ply, TTEntry*& ttEntry) const {
     const uint64_t index = zobristHash & hashSize;
-    const TTEntry* entry = &transpositionTable[index];
+    TTEntry* entry = &transpositionTable[index];
 
-    if (entry->validationHash == static_cast<uint16_t>(zobristHash >> 48) && entry->depth >= depth) {
-        bool returnScore = false;
+    if (entry->validationHash == static_cast<uint16_t>(zobristHash >> 48)) {
+        ttEntry = entry;
 
-        if (entry->nodeType == EXACT) {
-            returnScore = true;
-        } else if (entry->nodeType == ALPHA) {
-            if (entry->score <= alpha) {
+        if (entry->depth >= depth) {
+            bool returnScore = false;
+
+            if (entry->nodeType == EXACT) {
                 returnScore = true;
-            }
-        } else if (entry->nodeType == BETA) {
-            if (entry->score >= beta) {
-                returnScore = true;
-            }
-        }
-
-        if (returnScore) {
-            int adjustedScore = entry->score;
-
-            if (adjustedScore >= (MATE_SCORE - MAX_PLIES)) {
-                adjustedScore -= ply;
-            } else if (adjustedScore <= (-MATE_SCORE + MAX_PLIES)) {
-                adjustedScore += ply;
+            } else if (entry->nodeType == ALPHA) {
+                if (entry->score <= alpha) {
+                    returnScore = true;
+                }
+            } else if (entry->nodeType == BETA) {
+                if (entry->score >= beta) {
+                    returnScore = true;
+                }
             }
 
-            return adjustedScore;
+            if (returnScore) {
+                int adjustedScore = entry->score;
+
+                if (adjustedScore >= (MATE_SCORE - MAX_PLIES)) {
+                    adjustedScore -= ply;
+                } else if (adjustedScore <= (-MATE_SCORE + MAX_PLIES)) {
+                    adjustedScore += ply;
+                }
+
+                return adjustedScore;
+            }
         }
     }
 

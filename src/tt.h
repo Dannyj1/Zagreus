@@ -86,7 +86,8 @@ class TranspositionTable {
 
     void savePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
 
-    [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply) const;
+    [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply,
+                                        TTEntry*& ttEntry) const;
 
     [[nodiscard]] TTEntry* getEntry(uint64_t zobristHash) const;
 

@@ -45,6 +45,12 @@ struct SearchParams {
     bool infinite = false;
 };
 
+struct SearchStack {
+    std::array<Move, MAX_PLIES> excludedMove{};
+
+    SearchStack() { std::ranges::fill(excludedMove, NO_MOVE); }
+};
+
 struct SearchStats {
     PvLine pvLine{0};
     uint64_t nodesSearched = 0;
@@ -70,10 +76,13 @@ struct SearchStats {
     uint64_t futilityPrunes = 0;
     uint64_t reverseFutilityPrunes = 0;
     uint64_t checkExtensions = 0;
+    uint64_t singularExtensions = 0;
+    uint64_t singularAttempts = 0;
     uint64_t seePrunes = 0;
 
     void clearTrace();
     void printTrace(Engine& engine, int numPositions = 1) const;
+    SearchStats& operator+=(const SearchStats& other);
 #endif
 };
 
@@ -84,9 +93,10 @@ template <PieceColor color>
 
 template <PieceColor color, NodeType nodeType>
 int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine);
+             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine,
+             SearchStack& searchStack);
 
 template <PieceColor color, NodeType nodeType>
 [[nodiscard]] int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-                          const std::chrono::time_point<std::chrono::steady_clock>& endTime);
+                          const std::chrono::time_point<std::chrono::steady_clock>& endTime, SearchStack& searchStack);
 }  // namespace Zagreus
