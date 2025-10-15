@@ -14,7 +14,7 @@ var searchData=
   ['default_5fincrement_3c_20itype_20_3e_11',['default_increment&lt; itype &gt;',['../structpcg__detail_1_1default__increment.html',1,'pcg_detail']]],
   ['default_5fmultiplier_12',['default_multiplier',['../structpcg__detail_1_1default__multiplier.html',1,'pcg_detail']]],
   ['default_5fmultiplier_3c_20itype_20_3e_13',['default_multiplier&lt; itype &gt;',['../structpcg__detail_1_1default__multiplier.html',1,'pcg_detail']]],
-  ['depth_14',['depth',['../structZagreus_1_1SearchParams.html#ab08825d4e55fac708025c608cff94dcc',1,'Zagreus::SearchParams::depth'],['../structZagreus_1_1SearchStats.html#a26ada4d3e3751115f06285503ea3eda7',1,'Zagreus::SearchStats::depth'],['../structZagreus_1_1TTEntry.html#a4539437a1e61a7efe925be973097cc82',1,'Zagreus::TTEntry::depth']]],
+  ['depth_14',['depth',['../structZagreus_1_1SearchParams.html#ab08825d4e55fac708025c608cff94dcc',1,'Zagreus::SearchParams::depth'],['../structZagreus_1_1SearchStats.html#a26ada4d3e3751115f06285503ea3eda7',1,'Zagreus::SearchStats::depth'],['../structZagreus_1_1TTEntry.html#adb7884a08071e35fa4f2c266370480b1',1,'Zagreus::TTEntry::depth']]],
   ['direction_15',['Direction',['../namespaceZagreus.html#acbaf61e8219e5455fa0c0db3e50a94f0',1,'Zagreus']]],
   ['dis_16',['dis',['../namespaceZagreus.html#a7cbe1ef1cebd2532f1f7af1253da11d1',1,'Zagreus']]],
   ['discard_17',['discard',['../classpcg__detail_1_1engine.html#ab47ab15e70c4ac7d284509642a4628a1',1,'pcg_detail::engine']]],

@@ -128,11 +128,11 @@
 <area shape="poly" id="edge77_Node000070_Node000079" title=" " alt="" coords="290,1184,307,1083,340,929,362,849,387,775,414,716,429,693,445,676,478,654,514,636,552,624,591,616,670,611,742,615,742,620,670,616,592,622,553,629,516,641,480,658,448,680,433,696,419,718,392,777,367,850,345,930,312,1084,295,1185"/>
 <area shape="rect" id="Node000080" href="$classZagreus_1_1Board.html#ad4a10658afcd33c2504719f4466622fe" title="Makes a null move on the board, meaning the side to move does not make a move and the turn is passed." alt="" coords="455,1868,681,1894"/>
 <area shape="poly" id="edge84_Node000070_Node000080" title=" " alt="" coords="295,1210,309,1331,340,1524,361,1626,386,1719,416,1796,432,1825,449,1847,465,1860,462,1864,445,1851,427,1828,411,1798,381,1721,356,1627,335,1525,304,1332,289,1210"/>
-<area shape="rect" id="Node000081" href="$classZagreus_1_1TranspositionTable.html#a8a96b84c3093a4230cf33029d1b99f01" title=" " alt="" coords="745,1220,947,1260"/>
+<area shape="rect" id="Node000081" href="$classZagreus_1_1TranspositionTable.html#ae950ec6aafd607438555f30febb74da4" title=" " alt="" coords="745,1220,947,1260"/>
 <area shape="poly" id="edge86_Node000070_Node000081" title=" " alt="" coords="361,1191,512,1190,601,1193,690,1201,760,1214,759,1219,689,1206,601,1198,512,1195,361,1196"/>
 <area shape="rect" id="Node000082" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="501,1108,635,1134"/>
 <area shape="poly" id="edge88_Node000070_Node000082" title=" " alt="" coords="334,1182,446,1150,504,1135,506,1140,447,1155,336,1187"/>
-<area shape="rect" id="Node000083" href="$classZagreus_1_1TranspositionTable.html#ad87320d2bb05f483be6c7e6f928c7c43" title=" " alt="" coords="745,1284,947,1324"/>
+<area shape="rect" id="Node000083" href="$classZagreus_1_1TranspositionTable.html#afee1d5a7e789082f52272fd7ee75bfb6" title=" " alt="" coords="745,1284,947,1324"/>
 <area shape="poly" id="edge113_Node000070_Node000083" title=" " alt="" coords="361,1200,513,1218,602,1233,690,1252,738,1269,763,1277,761,1282,736,1274,689,1257,601,1238,512,1223,361,1205"/>
 <area shape="poly" id="edge114_Node000070_Node000096" title=" " alt="" coords="322,1207,380,1229,447,1252,515,1266,570,1273,624,1281,690,1303,715,1318,739,1333,756,1340,753,1345,736,1338,712,1322,688,1307,623,1286,569,1278,514,1272,446,1257,378,1234,320,1212"/>
 <area shape="poly" id="edge115_Node000070_Node000097" title=" " alt="" coords="297,1209,314,1254,345,1318,389,1385,417,1416,448,1441,496,1463,565,1481,725,1509,724,1514,564,1487,494,1468,445,1446,413,1419,385,1388,340,1320,309,1256,292,1211"/>

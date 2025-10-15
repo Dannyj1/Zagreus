@@ -33,11 +33,11 @@
 <area shape="poly" id="edge70_Node000001_Node000069" title=" " alt="" coords="81,1499,96,1470,121,1431,154,1392,195,1362,232,1345,270,1333,350,1319,429,1316,499,1319,498,1325,429,1321,351,1324,272,1338,233,1350,197,1366,157,1396,125,1434,101,1472,86,1502"/>
 <area shape="rect" id="Node000076" href="$classZagreus_1_1Board.html#ad4a10658afcd33c2504719f4466622fe" title="Makes a null move on the board, meaning the side to move does not make a move and the turn is passed." alt="" coords="204,2167,431,2193"/>
 <area shape="poly" id="edge80_Node000001_Node000076" title=" " alt="" coords="81,1526,88,1646,107,1836,122,1936,142,2028,167,2103,182,2132,198,2153,203,2158,199,2162,194,2157,177,2135,162,2105,137,2029,117,1937,101,1836,83,1646,76,1526"/>
-<area shape="rect" id="Node000077" href="$classZagreus_1_1TranspositionTable.html#a8a96b84c3093a4230cf33029d1b99f01" title=" " alt="" coords="494,1704,697,1744"/>
+<area shape="rect" id="Node000077" href="$classZagreus_1_1TranspositionTable.html#ae950ec6aafd607438555f30febb74da4" title=" " alt="" coords="494,1704,697,1744"/>
 <area shape="poly" id="edge82_Node000001_Node000077" title=" " alt="" coords="91,1525,135,1569,164,1594,197,1615,267,1647,341,1672,414,1692,481,1705,480,1711,413,1697,340,1678,265,1652,195,1620,161,1598,131,1573,87,1528"/>
 <area shape="rect" id="Node000078" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="250,1399,385,1425"/>
 <area shape="poly" id="edge84_Node000001_Node000078" title=" " alt="" coords="95,1499,139,1470,195,1442,242,1426,244,1431,197,1447,142,1475,97,1503"/>
-<area shape="rect" id="Node000079" href="$classZagreus_1_1TranspositionTable.html#ad87320d2bb05f483be6c7e6f928c7c43" title=" " alt="" coords="494,1883,697,1923"/>
+<area shape="rect" id="Node000079" href="$classZagreus_1_1TranspositionTable.html#afee1d5a7e789082f52272fd7ee75bfb6" title=" " alt="" coords="494,1883,697,1923"/>
 <area shape="poly" id="edge117_Node000001_Node000079" title=" " alt="" coords="82,1526,91,1575,111,1645,127,1684,146,1721,169,1756,198,1786,229,1810,263,1830,336,1862,411,1882,481,1893,480,1899,410,1887,334,1867,260,1835,226,1814,194,1790,165,1759,141,1724,122,1686,106,1647,86,1576,77,1527"/>
 <area shape="rect" id="Node000080" href="$classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="516,1475,675,1515"/>
 <area shape="poly" id="edge118_Node000001_Node000080" title=" " alt="" coords="148,1508,502,1496,502,1501,148,1514"/>

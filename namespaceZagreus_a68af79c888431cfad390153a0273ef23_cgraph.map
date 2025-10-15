@@ -25,9 +25,9 @@
 <area shape="poly" id="edge65_Node000001_Node000066" title=" " alt="" coords="78,1620,85,1673,104,1750,118,1793,137,1835,161,1875,190,1911,204,1922,201,1926,186,1915,156,1878,132,1838,113,1795,98,1752,80,1674,72,1621"/>
 <area shape="rect" id="Node000067" href="$classZagreus_1_1Board.html#a7b701a74fc4664bf23d71ab49195b535" title="Makes a move on the board." alt="" coords="453,2024,654,2049"/>
 <area shape="poly" id="edge66_Node000001_Node000067" title=" " alt="" coords="82,1619,97,1649,120,1689,151,1730,190,1765,217,1780,243,1787,293,1789,318,1789,343,1793,368,1803,393,1823,409,1846,417,1869,417,1916,416,1938,417,1961,424,1982,441,2004,455,2015,452,2020,437,2008,420,1985,412,1962,410,1938,412,1915,412,1870,405,1848,389,1827,365,1808,341,1798,318,1794,293,1794,242,1792,215,1785,186,1770,147,1734,116,1692,92,1652,77,1622"/>
-<area shape="rect" id="Node000074" href="$classZagreus_1_1TranspositionTable.html#a8a96b84c3093a4230cf33029d1b99f01" title=" " alt="" coords="188,1995,391,2035"/>
+<area shape="rect" id="Node000074" href="$classZagreus_1_1TranspositionTable.html#ae950ec6aafd607438555f30febb74da4" title=" " alt="" coords="188,1995,391,2035"/>
 <area shape="poly" id="edge82_Node000001_Node000074" title=" " alt="" coords="77,1620,80,1684,94,1781,108,1834,128,1887,155,1938,190,1982,194,1985,190,1989,186,1985,150,1940,123,1890,103,1836,89,1782,74,1684,71,1620"/>
-<area shape="rect" id="Node000075" href="$classZagreus_1_1TranspositionTable.html#ad87320d2bb05f483be6c7e6f928c7c43" title=" " alt="" coords="188,2059,391,2099"/>
+<area shape="rect" id="Node000075" href="$classZagreus_1_1TranspositionTable.html#afee1d5a7e789082f52272fd7ee75bfb6" title=" " alt="" coords="188,2059,391,2099"/>
 <area shape="poly" id="edge84_Node000001_Node000075" title=" " alt="" coords="78,1620,91,1705,115,1833,130,1900,148,1961,168,2012,190,2046,194,2049,190,2053,186,2049,163,2014,143,1963,125,1901,109,1834,86,1706,73,1620"/>
 <area shape="rect" id="Node000076" href="$classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="210,1715,369,1755"/>
 <area shape="poly" id="edge85_Node000001_Node000076" title=" " alt="" coords="97,1618,244,1706,241,1710,94,1622"/>

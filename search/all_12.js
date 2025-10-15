@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['saveposition_0',['savePosition',['../classZagreus_1_1TranspositionTable.html#ad87320d2bb05f483be6c7e6f928c7c43',1,'Zagreus::TranspositionTable']]],
+  ['saveposition_0',['savePosition',['../classZagreus_1_1TranspositionTable.html#afee1d5a7e789082f52272fd7ee75bfb6',1,'Zagreus::TranspositionTable']]],
   ['score_1',['score',['../structZagreus_1_1SearchStats.html#a0e35ee0f1326bffd7a0ae4ebddbf6617',1,'Zagreus::SearchStats::score'],['../structZagreus_1_1TTEntry.html#aacb2f56907deb79b0b6357d2423761cb',1,'Zagreus::TTEntry::score'],['../classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8',1,'Zagreus::MovePicker::score()']]],
   ['search_2',['search',['../namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161',1,'Zagreus']]],
   ['search_2ecpp_3',['search.cpp',['../search_8cpp.html',1,'']]],

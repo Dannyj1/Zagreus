@@ -8,5 +8,5 @@ var searchData=
   ['zobrist_5fen_5fpassant_5fstart_5findex_5',['ZOBRIST_EN_PASSANT_START_INDEX',['../constants_8h.html#a88c95f25885741abbd2d288754a68b47',1,'constants.h']]],
   ['zobrist_5fpiece_5fstart_5findex_6',['ZOBRIST_PIECE_START_INDEX',['../constants_8h.html#ad65345b8798f8291c40f1de8091a7350',1,'constants.h']]],
   ['zobrist_5fside_5fto_5fmove_5findex_7',['ZOBRIST_SIDE_TO_MOVE_INDEX',['../constants_8h.html#a763d2f16525171e564b5ac63c5cb95c5',1,'constants.h']]],
-  ['zobristhash_8',['zobristHash',['../structZagreus_1_1BoardState.html#afc232be750e7efa53b5c03508f51d606',1,'Zagreus::BoardState']]]
+  ['zobristhash_8',['zobristHash',['../structZagreus_1_1BoardState.html#afc232be750e7efa53b5c03508f51d606',1,'Zagreus::BoardState::zobristHash'],['../structZagreus_1_1TTEntry.html#a982271578dbd63f8302ce16ec95ff68d',1,'Zagreus::TTEntry::zobristHash']]]
 ];
