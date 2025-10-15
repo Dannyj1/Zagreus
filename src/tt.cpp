@@ -33,9 +33,8 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int16_t 
 
     // Only replace the entry if:
     // 1. Validation hash is 0 (the entry is empty)
-    // 1. Depth > 0 (the new node is a pvSearch node, can replace any node)
-    // 2. The entries' depth < 0 (the entry is a qSearch node, can be replaced by any node)
-    if (entry->zobristHash == 0 || depth > 0 || entry->depth < 0) {
+    // 2. Entry is from a shallower depth (lower depth value)
+    if (entry->zobristHash == 0 || entry->depth <= depth) {
         if (score >= (MATE_SCORE - MAX_PLIES)) {
             score += ply;
         } else if (score <= (-MATE_SCORE + MAX_PLIES)) {
