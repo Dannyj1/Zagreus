@@ -367,7 +367,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 }
 
                 lmrReduction = std::max(0, lmrReduction);
-                assert(moveDepth - reductions > 0);
+                assert(moveDepth - lmrReduction > 0);
             }
 
             score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth - lmrReduction, stats,
