@@ -34,7 +34,7 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int16_t 
     // Only replace the entry if:
     // 1. Validation hash is 0 (the entry is empty)
     // 2. Entry is from a shallower depth (lower depth value)
-    if (entry->zobristHash == 0 || entry->depth <= depth) {
+    if (entry->zobristHash != zobristHash || entry->depth <= depth) {
         if (score >= (MATE_SCORE - MAX_PLIES)) {
             score += ply;
         } else if (score <= (-MATE_SCORE + MAX_PLIES)) {
@@ -43,9 +43,14 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int16_t 
 
         score = std::clamp<int>(score, INT16_MIN + 1, INT16_MAX);
 
+        Move moveToSave = bestMove;
+        if (bestMove == NO_MOVE && entry->zobristHash == zobristHash) {
+            moveToSave = entry->bestMove;
+        }
+
         entry->zobristHash = zobristHash;
         entry->depth = depth;
-        entry->bestMove = bestMove;
+        entry->bestMove = moveToSave;
         entry->score = score;
         entry->nodeType = nodeType;
     }
