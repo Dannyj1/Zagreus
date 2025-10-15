@@ -465,7 +465,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>                }</div>
 <div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span> </div>
 <div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                lmrReduction = std::max(0, lmrReduction);</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                assert(moveDepth - reductions &gt; 0);</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                assert(moveDepth - lmrReduction &gt; 0);</div>
 <div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>            }</div>
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span> </div>
 <div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            score = -<a class="code hl_function" href="namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8">pvSearch&lt;opponentColor, REGULAR&gt;</a>(engine, board, -alpha - 1, -alpha, moveDepth - lmrReduction, stats,</div>
