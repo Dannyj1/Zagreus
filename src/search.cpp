@@ -89,9 +89,9 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         PvLine pvLine = PvLine{board.getPly()};
         SearchStack searchStack{};
 
-        const int score = pvSearch<color, ROOT>(engine, board, INITIAL_ALPHA, INITIAL_BETA, depth, stats, endTime,
-                                                pvLine, searchStack);
-        assert(score != INITIAL_ALPHA && score != INITIAL_BETA);
+        const int score =
+            pvSearch<color, ROOT>(engine, board, -MATE_SCORE, MATE_SCORE, depth, stats, endTime, pvLine, searchStack);
+        assert(score >= -MATE_SCORE && score <= MATE_SCORE);
         assert(depth > 0);
 
         if (endTime.time_since_epoch().count() != 0 && std::chrono::steady_clock::now() > endTime) {
@@ -487,7 +487,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     }
 
-    assert(bestScore != INITIAL_ALPHA);
+    assert(bestScore >= -MATE_SCORE && bestScore <= MATE_SCORE);
     return bestScore;
 }
 
@@ -633,7 +633,7 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
     }
 
-    assert(bestScore != INITIAL_ALPHA);
+    assert(bestScore >= -MATE_SCORE && bestScore <= MATE_SCORE);
     return bestScore;
 }
 }  // namespace Zagreus
