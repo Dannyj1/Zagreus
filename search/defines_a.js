@@ -1,8 +1,10 @@
 var searchData=
 [
-  ['mate_5fscore_0',['MATE_SCORE',['../constants_8h.html#a8d9895fbbd3a293b00425f34a9d5f14a',1,'constants.h']]],
-  ['max_5fhistory_1',['MAX_HISTORY',['../constants_8h.html#abf8d8994f09509f9e061f5bf82daf4cd',1,'constants.h']]],
-  ['max_5fmoves_2',['MAX_MOVES',['../constants_8h.html#afe0c4249f8b5f7d5be976a330a3117d1',1,'constants.h']]],
-  ['max_5fplies_3',['MAX_PLIES',['../constants_8h.html#a0bbe4cc8be73cec78c85e164eb6efea6',1,'constants.h']]],
-  ['midgame_4',['MIDGAME',['../constants_8h.html#ad991e7c9f6e7b4dadd2bdf7da02af183',1,'constants.h']]]
+  ['no_5fen_5fpassant_0',['NO_EN_PASSANT',['../constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766',1,'constants.h']]],
+  ['no_5fmove_1',['NO_MOVE',['../constants_8h.html#a3bdc3d77ca3e6d7c92b502c91ce81096',1,'constants.h']]],
+  ['no_5ftt_5fscore_2',['NO_TT_SCORE',['../constants_8h.html#a95c8989f44eada4c4b98ea1b26ee0bd2',1,'constants.h']]],
+  ['not_5fa_5ffile_3',['NOT_A_FILE',['../constants_8h.html#ac20368a2adc30ceaedfe8484ce836694',1,'constants.h']]],
+  ['not_5fab_5ffile_4',['NOT_AB_FILE',['../constants_8h.html#a1855ce31b9fc481091af54eb40acb05e',1,'constants.h']]],
+  ['not_5fgh_5ffile_5',['NOT_GH_FILE',['../constants_8h.html#a14259391451b64c0e399bea76ada8f14',1,'constants.h']]],
+  ['not_5fh_5ffile_6',['NOT_H_FILE',['../constants_8h.html#a710210a9db0940f6af2287ae9df9ef2b',1,'constants.h']]]
 ];
