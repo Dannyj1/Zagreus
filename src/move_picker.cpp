@@ -70,26 +70,13 @@ void MovePicker::reset() { currentIndex = 0; }
 static TranspositionTable* tt = TranspositionTable::getTT();
 
 void MovePicker::score(Board& board) {
-    const PvLine& pvLine = board.getPreviousPvLine();
-    const int currentPly = board.getPly();
-    const int pvMoveIndex = currentPly - pvLine.startPly;
-    Move pvMove = NO_MOVE;
     Move ttMove = NO_MOVE;
-
-    if (pvLine.moveCount > pvMoveIndex) {
-        assert(pvLine.moves[pvMoveIndex] != NO_MOVE);
-        pvMove = pvLine.moves[pvMoveIndex];
-    }
 
     const uint64_t zobristHash = board.getZobristHash();
     const TTEntry* entry = tt->getEntry(zobristHash);
 
     if (entry != nullptr) {
         ttMove = entry->bestMove;
-
-        if (ttMove == pvMove) {
-            ttMove = NO_MOVE;
-        }
     }
 
     // const Move killerMove1 = tt->getKillerMove(currentPly, 0);
@@ -105,10 +92,8 @@ void MovePicker::score(Board& board) {
             capturedPiece = board.getSideToMove() == WHITE ? BLACK_PAWN : WHITE_PAWN;
         }
 
-        if (move == pvMove) {
+        if (move == ttMove) {
             scores[i] = 5000000;
-        } else if (move == ttMove) {
-            scores[i] = 2500000;
         } else if (capturedPiece != EMPTY) {
             // SEE for identifying good and bad captures, then further ordering by capture history
             const Piece movingPiece = board.getPieceOnSquare(getFromSquare(move));

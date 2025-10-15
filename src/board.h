@@ -65,7 +65,6 @@ class Board {
     std::array<uint64_t, PIECES> bitboards{};
     std::array<uint64_t, COLORS> colorBoards{};
     std::array<BoardState, MAX_PLIES> history{};
-    PvLine previousPvLine{0};
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;
     uint64_t zobristHash = 0;
@@ -188,18 +187,6 @@ class Board {
      * \return The last move made.
      */
     [[nodiscard]] constexpr Move getLastMove() const { return history[ply - 1].move; }
-
-    /**
-     * \brief sets the previous PV line.
-     */
-    void setPreviousPvLine(const PvLine& pvLine) { previousPvLine = pvLine; }
-
-    /**
-     * \brief Gets the previous PV line.
-     *
-     * \return The previous PV line.
-     */
-    PvLine& getPreviousPvLine() { return previousPvLine; }
 
     /**
      * \brief Sets a piece on a given square.

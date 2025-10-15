@@ -104,7 +104,6 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         }
 
         bestPvLine = pvLine;
-        board.setPreviousPvLine(bestPvLine);
 
         stats.score = score;
         stats.timeSpentMs =
@@ -151,7 +150,6 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     }
 
     assert(bestPvLine.moves[0] != NO_MOVE);
-    board.setPreviousPvLine(bestPvLine);
     return bestPvLine.moves[0];
 }
 
