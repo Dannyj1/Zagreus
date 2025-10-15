@@ -307,7 +307,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         // Singular Extensions
-        if (!isRoot && excludedMove == NO_MOVE && depth >= 6 && ttEntry && move == ttMove &&
+        /*if (!isRoot && excludedMove == NO_MOVE && depth >= 6 && ttEntry && move == ttMove &&
             ttEntry->nodeType == BETA && ttDepth >= depth - 3) {
 #ifdef TRACE_SEARCH
             stats.singularAttempts++;
@@ -335,7 +335,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
             // Re-make move
             board.makeMove(move);
-        }
+        }*/
 
         if (capturedPiece == EMPTY) {
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;

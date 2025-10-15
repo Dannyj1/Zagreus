@@ -26,7 +26,7 @@
 #include "constants.h"
 
 namespace Zagreus {
-void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t depth, const int ply, int score,
+void TranspositionTable::savePosition(const uint64_t zobristHash, const int16_t depth, const int ply, int score,
                                       const Move bestMove, const TTNodeType nodeType) const {
     const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
@@ -35,7 +35,7 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
     // 1. Validation hash is 0 (the entry is empty)
     // 1. Depth > 0 (the new node is a pvSearch node, can replace any node)
     // 2. The entries' depth < 0 (the entry is a qSearch node, can be replaced by any node)
-    if (entry->validationHash == 0 || depth > 0 || entry->depth < 0) {
+    if (entry->zobristHash == 0 || depth > 0 || entry->depth < 0) {
         if (score >= (MATE_SCORE - MAX_PLIES)) {
             score += ply;
         } else if (score <= (-MATE_SCORE + MAX_PLIES)) {
@@ -44,7 +44,7 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
 
         score = std::clamp<int>(score, INT16_MIN + 1, INT16_MAX);
 
-        entry->validationHash = static_cast<uint16_t>(zobristHash >> 48);
+        entry->zobristHash = zobristHash;
         entry->depth = depth;
         entry->bestMove = bestMove;
         entry->score = score;
@@ -52,12 +52,12 @@ void TranspositionTable::savePosition(const uint64_t zobristHash, const int8_t d
     }
 }
 
-int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int8_t depth, const int alpha,
+int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int16_t depth, const int alpha,
                                           const int beta, const int ply, TTEntry*& ttEntry) const {
     const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
-    if (entry->validationHash == static_cast<uint16_t>(zobristHash >> 48)) {
+    if (entry->zobristHash == zobristHash) {
         ttEntry = entry;
 
         if (entry->depth >= depth) {
@@ -96,8 +96,8 @@ TTEntry* TranspositionTable::getEntry(const uint64_t zobristHash) const {
     const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
-    // Check validation hash to avoid hash collisions
-    if (entry->validationHash == static_cast<uint16_t>(zobristHash >> 48)) {
+    // Check full Zobrist hash to ensure positions match
+    if (entry->zobristHash == zobristHash) {
         return entry;
     }
 

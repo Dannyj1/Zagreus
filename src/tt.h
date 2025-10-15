@@ -34,11 +34,12 @@ enum TTNodeType : uint8_t {
 };
 
 struct TTEntry {
-    uint16_t validationHash = 0;
+    uint64_t zobristHash = 0;
     int16_t score = 0;
     Move bestMove = NO_MOVE;
-    int8_t depth = INT8_MIN;
+    int16_t depth = INT16_MIN;
     TTNodeType nodeType = EXACT;
+    uint8_t _padding = 0;
 };
 
 class TranspositionTable {
@@ -84,9 +85,9 @@ class TranspositionTable {
 
     void setTableSize(int megaBytes);
 
-    void savePosition(uint64_t zobristHash, int8_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
+    void savePosition(uint64_t zobristHash, int16_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
 
-    [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int8_t depth, int alpha, int beta, int ply,
+    [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int16_t depth, int alpha, int beta, int ply,
                                         TTEntry*& ttEntry) const;
 
     [[nodiscard]] TTEntry* getEntry(uint64_t zobristHash) const;
