@@ -158,7 +158,8 @@ template Move search<BLACK>(Engine& engine, Board& board, SearchParams& params, 
 
 template <PieceColor color, NodeType nodeType>
 int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine, SearchStack& searchStack) {
+             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine,
+             SearchStack& searchStack) {
     constexpr bool isPV = nodeType == PV || nodeType == ROOT;
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
@@ -219,7 +220,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         // Null Move Pruning
-        if (depth >= 2 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE && eval >= beta) {
+        if (depth >= 2 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE &&
+            eval >= beta) {
 #ifdef TRACE_SEARCH
             stats.nmpTries++;
 #endif
@@ -344,7 +346,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         int score;
 
         if (isPV && movesSearched == 0) {
-            score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime, nodePvLine, searchStack);
+            score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime, nodePvLine,
+                                                 searchStack);
         } else {
             int lmrReduction = 0;
             bool isLmr = false;
@@ -368,8 +371,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 assert(moveDepth - lmrReduction > 0);
             }
 
-            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth - lmrReduction, stats,
-                                                      endTime, nodePvLine, searchStack);
+            score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth - lmrReduction,
+                                                      stats, endTime, nodePvLine, searchStack);
 
             if (isLmr && score > alpha) {
 #ifdef TRACE_SEARCH
@@ -381,7 +384,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             }
 
             if (isPV && score > alpha) {
-                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime, nodePvLine, searchStack);
+                score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime,
+                                                     nodePvLine, searchStack);
             }
         }
 
@@ -413,7 +417,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                     if (!engine.isSearchStopped()) {
                         if (capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
                             // Killer move heuristic
-                            // tt->addKillerMove(move, board.getPly());
+                            tt->addKillerMove(move, board.getPly());
 
                             // History heuristic
                             const int historyValue = 300 * depth - 250;

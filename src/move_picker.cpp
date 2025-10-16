@@ -79,8 +79,10 @@ void MovePicker::score(Board& board) {
         ttMove = entry->bestMove;
     }
 
-    // const Move killerMove1 = tt->getKillerMove(currentPly, 0);
-    // const Move killerMove2 = tt->getKillerMove(currentPly, 1);
+    int currentPly = board.getPly();
+
+    const Move killerMove1 = tt->getKillerMove(currentPly, 0);
+    const Move killerMove2 = tt->getKillerMove(currentPly, 1);
 
     for (int i = 0; i < moveList.size; ++i) {
         const Move move = moveList.moves[i];
@@ -108,10 +110,10 @@ void MovePicker::score(Board& board) {
             const int promotionScore = 1500000 + getPieceValue(promotedPiece);
 
             scores[i] = promotionScore;
-            // } else if (move == killerMove1) {
-            //     scores[i] = 900000;
-            // } else if (move == killerMove2) {
-            //     scores[i] = 800000;
+        } else if (move == killerMove1) {
+            scores[i] = 900000;
+        } else if (move == killerMove2) {
+            scores[i] = 800000;
         } else {
             // Ordering of quiet moves
             const int historyValue = tt->getHistoryValue(board.getSideToMove(), move);

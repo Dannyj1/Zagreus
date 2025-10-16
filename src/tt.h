@@ -47,7 +47,7 @@ class TranspositionTable {
     int history[COLORS][SQUARES][SQUARES]{};
     // [movingPiece][toSquare][capturedPiece]
     int captureHistory[PIECES][SQUARES][PIECES]{};
-    // Move killerMoves[MAX_PLIES][2]{};
+    Move killerMoves[MAX_PLIES][2]{};
 
    public:
     TTEntry* transpositionTable = new TTEntry[1]{};
@@ -72,10 +72,10 @@ class TranspositionTable {
             }
         }
 
-        // for (int ply = 0; ply < MAX_PLIES; ply++) {
-        //     killerMoves[ply][0] = NO_MOVE;
-        //     killerMoves[ply][1] = NO_MOVE;
-        // }
+        for (int ply = 0; ply < MAX_PLIES; ply++) {
+            killerMoves[ply][0] = NO_MOVE;
+            killerMoves[ply][1] = NO_MOVE;
+        }
     }
 
     TranspositionTable(TranspositionTable& other) = delete;
@@ -85,7 +85,8 @@ class TranspositionTable {
 
     void setTableSize(int megaBytes);
 
-    void savePosition(uint64_t zobristHash, int16_t depth, int ply, int score, Move bestMove, TTNodeType nodeType) const;
+    void savePosition(uint64_t zobristHash, int16_t depth, int ply, int score, Move bestMove,
+                      TTNodeType nodeType) const;
 
     [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int16_t depth, int alpha, int beta, int ply,
                                         TTEntry*& ttEntry) const;
@@ -119,16 +120,16 @@ class TranspositionTable {
         return captureHistory[movingPiece][toSquare][capturedPiece];
     }
 
-    // void addKillerMove(Move move, int ply) {
-    //     assert(ply < MAX_PLIES);
-    //     assert(move != NO_MOVE);
-    //
-    //     if (killerMoves[ply][0] != move) {
-    //         killerMoves[ply][1] = killerMoves[ply][0];
-    //         killerMoves[ply][0] = move;
-    //     }
-    // }
-    //
-    // [[nodiscard]] Move getKillerMove(int ply, int index) const { return killerMoves[ply][index]; }
+    void addKillerMove(Move move, int ply) {
+        assert(ply < MAX_PLIES);
+        assert(move != NO_MOVE);
+
+        if (killerMoves[ply][0] != move) {
+            killerMoves[ply][1] = killerMoves[ply][0];
+            killerMoves[ply][0] = move;
+        }
+    }
+
+    [[nodiscard]] Move getKillerMove(int ply, int index) const { return killerMoves[ply][index]; }
 };
 }  // namespace Zagreus
