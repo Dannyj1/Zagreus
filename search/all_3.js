@@ -32,5 +32,6 @@ var searchData=
   ['combo_29',['Combo',['../namespaceZagreus.html#a25277ebd2a95d3a6cec246971a6e41c1adcc0a0c4aa2f3a0af20f04b99a7f135d',1,'Zagreus']]],
   ['constants_2eh_30',['constants.h',['../constants_8h.html',1,'']]],
   ['count_5f1s_31',['count_1s',['../namespaceZagreus.html#ad12d6d30c4c67b4bae5738e8481399b0',1,'Zagreus']]],
-  ['count_5fbits_32',['count_bits',['../namespaceZagreus.html#a4ab101cae51c4b69a1d384d608a0ac45',1,'Zagreus']]]
+  ['count_5fbits_32',['count_bits',['../namespaceZagreus.html#a4ab101cae51c4b69a1d384d608a0ac45',1,'Zagreus']]],
+  ['counter_33',['counter',['../structZagreus_1_1TTEntry.html#ada8a7621f5b43e12fde37e00ff06462a',1,'Zagreus::TTEntry']]]
 ];

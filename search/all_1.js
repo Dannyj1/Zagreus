@@ -13,10 +13,11 @@ var searchData=
   ['addoption_10',['addOption',['../classZagreus_1_1Engine.html#a88a7ddc125e98976af68011c08213a5a',1,'Zagreus::Engine']]],
   ['addvar_11',['addVar',['../classZagreus_1_1UCIOption.html#a9bd71248e84bb86ff3dc177f5fba4c1a',1,'Zagreus::UCIOption']]],
   ['advance_12',['advance',['../classpcg__detail_1_1engine.html#a12d3653cfe490a59f7ce55d028f1a7e0',1,'pcg_detail::engine::advance(itype state, itype delta, itype cur_mult, itype cur_plus)'],['../classpcg__detail_1_1engine.html#ad825cdb944e1a8c9e58e1b20dcbdf042',1,'pcg_detail::engine::advance(itype delta)'],['../classpcg__detail_1_1extended.html#ad917a2241597772e81668695c18ab2bb',1,'pcg_detail::extended::advance()']]],
-  ['all_13',['ALL',['../namespaceZagreus.html#a3d471f60f5bbb9c34722924daef89c8caa6d0baaddf607878ab0d9a3c8bbe321e',1,'Zagreus']]],
-  ['alpha_14',['ALPHA',['../namespaceZagreus.html#ae0877a94867882cbc10b59abe123769ea400e68c7fe8580a082d6f80a13040da7',1,'Zagreus']]],
-  ['attackedby2_15',['attackedBy2',['../structZagreus_1_1EvalData.html#a2285bb84fb57c4592b0f44bdf78fa7aa',1,'Zagreus::EvalData']]],
-  ['attacksbycolor_16',['attacksByColor',['../structZagreus_1_1EvalData.html#ac2e6c5e1688cafce6f1ca9fa86e5129d',1,'Zagreus::EvalData']]],
-  ['attacksbypiece_17',['attacksByPiece',['../structZagreus_1_1EvalData.html#af1b1b70cb80e19ff429cd3bf94b8d86b',1,'Zagreus::EvalData']]],
-  ['attacksfrom_18',['attacksFrom',['../structZagreus_1_1EvalData.html#a91f81be15d05dbe44b32a211c586cb44',1,'Zagreus::EvalData']]]
+  ['agecounter_13',['ageCounter',['../classZagreus_1_1TranspositionTable.html#a16f858aa8e3b465e473cb45822fb04e0',1,'Zagreus::TranspositionTable']]],
+  ['all_14',['ALL',['../namespaceZagreus.html#a3d471f60f5bbb9c34722924daef89c8caa6d0baaddf607878ab0d9a3c8bbe321e',1,'Zagreus']]],
+  ['alpha_15',['ALPHA',['../namespaceZagreus.html#ae0877a94867882cbc10b59abe123769ea400e68c7fe8580a082d6f80a13040da7',1,'Zagreus']]],
+  ['attackedby2_16',['attackedBy2',['../structZagreus_1_1EvalData.html#a2285bb84fb57c4592b0f44bdf78fa7aa',1,'Zagreus::EvalData']]],
+  ['attacksbycolor_17',['attacksByColor',['../structZagreus_1_1EvalData.html#ac2e6c5e1688cafce6f1ca9fa86e5129d',1,'Zagreus::EvalData']]],
+  ['attacksbypiece_18',['attacksByPiece',['../structZagreus_1_1EvalData.html#af1b1b70cb80e19ff429cd3bf94b8d86b',1,'Zagreus::EvalData']]],
+  ['attacksfrom_19',['attacksFrom',['../structZagreus_1_1EvalData.html#a91f81be15d05dbe44b32a211c586cb44',1,'Zagreus::EvalData']]]
 ];

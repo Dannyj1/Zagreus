@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['value_0',['value',['../structpcg__extras_1_1static__arbitrary__seed.html#a0168de8c2e22973e0d7802ed69050d6f',1,'pcg_extras::static_arbitrary_seed']]]
+  ['whiteinc_0',['whiteInc',['../structZagreus_1_1SearchParams.html#ae64edfa9997730b853a1ca4e0a58205f',1,'Zagreus::SearchParams']]],
+  ['whitetime_1',['whiteTime',['../structZagreus_1_1SearchParams.html#a05e3612c3fadb30878fc56e636c6b425',1,'Zagreus::SearchParams']]]
 ];

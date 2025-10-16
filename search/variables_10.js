@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['score_0',['score',['../structZagreus_1_1SearchStats.html#a0e35ee0f1326bffd7a0ae4ebddbf6617',1,'Zagreus::SearchStats::score'],['../structZagreus_1_1TTEntry.html#aacb2f56907deb79b0b6357d2423761cb',1,'Zagreus::TTEntry::score']]],
-  ['size_1',['size',['../structZagreus_1_1MoveList.html#adffad2603ba0d4cf3c011d7fd9bf016f',1,'Zagreus::MoveList']]],
-  ['startply_2',['startPly',['../structZagreus_1_1PvLine.html#a56dfb9b78e51e2ce3b8e6aa37bdd3c6b',1,'Zagreus::PvLine']]],
-  ['startposfen_3',['startPosFEN',['../namespaceZagreus.html#af06c7a265e63d5df7642baf04e51a761',1,'Zagreus']]],
-  ['state_5f_4',['state_',['../classpcg__detail_1_1engine.html#a8e29a3b26c9966667b6ea7a7f153b145',1,'pcg_detail::engine']]]
+  ['timespentms_0',['timeSpentMs',['../structZagreus_1_1SearchStats.html#a5cd01a93f513de2fcdad8b073038eb35',1,'Zagreus::SearchStats']]],
+  ['totalphase_1',['totalPhase',['../namespaceZagreus.html#a8ceb0b3cc0d026bfb9486b159cb10721',1,'Zagreus']]],
+  ['transpositiontable_2',['transpositionTable',['../classZagreus_1_1TranspositionTable.html#ab90f0aefbc8683bf17c8d6cb1b1143e6',1,'Zagreus::TranspositionTable']]]
 ];
