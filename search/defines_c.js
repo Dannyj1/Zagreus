@@ -7,5 +7,6 @@ var searchData=
   ['rank_5f5_4',['RANK_5',['../constants_8h.html#a29ff368db9e3b5a6729352a321a0e79c',1,'constants.h']]],
   ['rank_5f6_5',['RANK_6',['../constants_8h.html#aad8e963e28196159c6b6a3b0c0ed5112',1,'constants.h']]],
   ['rank_5f7_6',['RANK_7',['../constants_8h.html#a80dfe69e847b2d1dc6071488e5f76c3c',1,'constants.h']]],
-  ['rank_5f8_7',['RANK_8',['../constants_8h.html#a800d3b922a698275366a78f7fa8465f7',1,'constants.h']]]
+  ['rank_5f8_7',['RANK_8',['../constants_8h.html#a800d3b922a698275366a78f7fa8465f7',1,'constants.h']]],
+  ['ranks_8',['RANKS',['../constants_8h.html#aedc44b4ee04cb21138343a56d92a12c3',1,'constants.h']]]
 ];
