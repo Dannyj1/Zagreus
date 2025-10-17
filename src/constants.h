@@ -69,6 +69,7 @@
 #define PIECE_TYPES 6
 #define COLORS 2
 #define GAME_PHASES 2
+#define RANKS 8
 #define MIDGAME 0
 #define ENDGAME 1
 

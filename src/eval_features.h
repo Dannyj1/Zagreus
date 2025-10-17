@@ -29,23 +29,10 @@ extern int evalMaterialValues[GAME_PHASES][PIECE_TYPES];
 
 extern int evalMobility[GAME_PHASES][PIECE_TYPES];
 
-extern int evalPieceOnStrongSquare[GAME_PHASES];
-
-extern int evalPieceOnWeakSquarePenalty[GAME_PHASES];
-
-extern int evalUnoccupiedStrongSquare[GAME_PHASES];
-
-extern int evalBishopPairBonus[GAME_PHASES];
-
-extern int evalBackwardPawnPenalty[GAME_PHASES];
-
-extern int evalBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES];
-
+// Pawn structure
+// Doubled pawns
 extern int evalDoubledPawnPenalty[GAME_PHASES];
 
-extern int evalKnightOutpostBonus[GAME_PHASES];
-
-extern int evalPawnShieldBonus[GAME_PHASES];
-extern int evalPawnShieldAdvancedBonus[GAME_PHASES];
-extern int evalVirtualMobilityPenalty[GAME_PHASES];
+// Passed Pawns
+extern int evalPassedPawnBonus[GAME_PHASES][RANKS];
 }  // namespace Zagreus

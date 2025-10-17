@@ -403,6 +403,9 @@ inline Square bitboardToSquare(const uint64_t bb) {
     return static_cast<Square>(bitscanForward(bb));
 }
 
+// Square to rank
+inline uint8_t getRank(const Square square) { return square >> 3; }
+
 /**
  * \brief Gets a bitboard of all squares between two squares.
  * \param fromSquare The starting square.

@@ -35,26 +35,15 @@ const int baseMobility[GAME_PHASES][PIECE_TYPES] = {
     {0, 2, 3, 5, 6, 0}   // Endgame
 };
 
-// Square control base values
-const int basePieceOnStrongSquare[GAME_PHASES] = {4, 1};
-const int basePieceOnWeakSquarePenalty[GAME_PHASES] = {-4, -1};
-const int baseUnoccupiedStrongSquare[GAME_PHASES] = {2, 0};
-
 // Pawn structure
-const int baseBackwardPawnPenalty[GAME_PHASES] = {-8, -12};
-const int baseBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES] = {-8, -12};
-const int baseDoubledPawnPenalty[GAME_PHASES] = {-5, -10};
+// Doubled pawns
+const int baseDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
 
-// Bishop values
-const int baseBishopPairBonus[GAME_PHASES]{50, 25};
-
-// Knight values
-const int baseKnightOutpostBonus[GAME_PHASES]{15, 5};
-
-// King safety
-const int basePawnShieldBonus[GAME_PHASES]{10, 5};
-const int basePawnShieldAdvancedBonus[GAME_PHASES]{5, 2};
-const int baseVirtualMobilityPenalty[GAME_PHASES]{-3, -1};
+// Passed Pawns
+const int basePassedPawnBonus[GAME_PHASES][RANKS] = {
+    {0, 5, 10, 20, 35, 60, 100, 0},   // Midgame
+    {0, 10, 20, 40, 70, 120, 200, 0}  // Endgame
+};
 
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1

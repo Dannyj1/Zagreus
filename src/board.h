@@ -541,5 +541,24 @@ class Board {
     [[nodiscard]] uint64_t halfOpenFiles() const {
         return halfOpenOrOpenFiles<color>() ^ openFiles();
     }
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t passedPawns() const {
+        if (color == WHITE) {
+            const uint64_t whitePawns = getPieceBoard<WHITE_PAWN>();
+            const uint64_t blackFrontSpans = pawnFrontSpans<BLACK>();
+            const uint64_t blackAttackSpans = shiftEast(blackFrontSpans) | shiftWest(blackFrontSpans);
+            const uint64_t combinedSpans = blackFrontSpans | blackAttackSpans;
+
+            return whitePawns & ~combinedSpans;
+        } else {
+            const uint64_t blackPawns = getPieceBoard<BLACK_PAWN>();
+            const uint64_t whiteFrontSpans = pawnFrontSpans<WHITE>();
+            const uint64_t whiteAttackSpans = shiftEast(whiteFrontSpans) | shiftWest(whiteFrontSpans);
+            const uint64_t combinedSpans = whiteFrontSpans | whiteAttackSpans;
+
+            return blackPawns & ~combinedSpans;
+        }
+    }
 };
 }  // namespace Zagreus

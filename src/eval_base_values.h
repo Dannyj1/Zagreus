@@ -25,18 +25,13 @@ namespace Zagreus {
 enum PieceType : uint8_t;
 extern const int baseMaterialValues[GAME_PHASES][PIECE_TYPES];
 extern const int baseMobility[GAME_PHASES][PIECE_TYPES];
-extern const int basePieceOnStrongSquare[GAME_PHASES];
-extern const int basePieceOnWeakSquarePenalty[GAME_PHASES];
-extern const int baseUnoccupiedStrongSquare[GAME_PHASES];
 
-extern const int baseBackwardPawnPenalty[GAME_PHASES];
+// Pawn structure
+// Doubled pawns
 extern const int baseDoubledPawnPenalty[GAME_PHASES];
 
-extern const int baseBishopPairBonus[GAME_PHASES];
-
-extern const int baseKnightOutpostBonus[GAME_PHASES];
-
-extern const int baseBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES];
+// Passed Pawns
+extern const int basePassedPawnBonus[GAME_PHASES][RANKS];
 
 extern const int baseMgPawnTable[64];
 extern const int baseEgPawnTable[64];
@@ -50,10 +45,6 @@ extern const int baseMgQueenTable[64];
 extern const int baseEgQueenTable[64];
 extern const int baseMgKingTable[64];
 extern const int baseEgKingTable[64];
-
-extern const int basePawnShieldBonus[GAME_PHASES];
-extern const int basePawnShieldAdvancedBonus[GAME_PHASES];
-extern const int baseVirtualMobilityPenalty[GAME_PHASES];
 
 extern int baseMidgamePstTable[PIECES][SQUARES];
 extern int baseEndgamePstTable[PIECES][SQUARES];

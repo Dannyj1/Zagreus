@@ -35,25 +35,14 @@ int evalMobility[GAME_PHASES][PIECE_TYPES] = {
     {0, 2, 3, 5, 6, 0}   // Endgame
 };
 
-int evalPieceOnStrongSquare[GAME_PHASES]{4, 1};
-
-int evalPieceOnWeakSquarePenalty[GAME_PHASES]{-4, -1};
-
-int evalUnoccupiedStrongSquare[GAME_PHASES]{2, 0};
-
 // Pawn structure
-int evalBackwardPawnPenalty[GAME_PHASES] = {-8, -12};
-int evalBackwardPawnOnHalfOpenFilePenalty[GAME_PHASES] = {-8, -12};
-int evalDoubledPawnPenalty[GAME_PHASES] = {-5, -10};
+// Doubled pawns
+int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
 
-// Bishop values
-int evalBishopPairBonus[GAME_PHASES]{50, 25};
+// Passed Pawns
+int evalPassedPawnBonus[GAME_PHASES][RANKS] = {
+    {0, 5, 10, 20, 35, 60, 100, 0},   // Midgame
+    {0, 10, 20, 40, 70, 120, 200, 0}  // Endgame
+};
 
-// Knight values
-int evalKnightOutpostBonus[GAME_PHASES]{15, 5};
-
-// King safety
-int evalPawnShieldBonus[GAME_PHASES]{10, 5};
-int evalPawnShieldAdvancedBonus[GAME_PHASES]{5, 2};
-int evalVirtualMobilityPenalty[GAME_PHASES]{-3, -1};
 }  // namespace Zagreus

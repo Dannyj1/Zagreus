@@ -113,13 +113,6 @@ class Evaluation {
     template <PieceColor color>
     void evaluateKing();
 
-    /**
-     * \brief Evaluates features related to square control.
-     * \tparam color The color to evaluate.
-     */
-    template <PieceColor color>
-    void evaluateSquareControl();
-
     template <PieceColor color>
     void evaluatePawnStructure();
 

@@ -110,6 +110,7 @@ void Evaluation::evaluatePieces() {
     evaluateBishops<BLACK>();
 
     evaluateRooks<WHITE>();
+
     evaluateRooks<BLACK>();
 
     evaluateQueens<WHITE>();
@@ -118,11 +119,8 @@ void Evaluation::evaluatePieces() {
     evaluateKing<WHITE>();
     evaluateKing<BLACK>();
 
-    // evaluateSquareControl<WHITE>();
-    // evaluateSquareControl<BLACK>();
-
-    // evaluatePawnStructure<WHITE>();
-    // evaluatePawnStructure<BLACK>();
+    evaluatePawnStructure<WHITE>();
+    evaluatePawnStructure<BLACK>();
 }
 
 template <PieceColor color>
@@ -156,15 +154,11 @@ void Evaluation::evaluatePawns() {
  */
 template <PieceColor color>
 void Evaluation::evaluateKnights() {
-    constexpr PieceColor opponentColor = !color;
     constexpr Piece knightPiece = color == WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
-    constexpr Piece pawnPiece = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    constexpr Piece opponentPawnPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
     uint64_t knights = board.getPieceBoard<knightPiece>();
 
     while (knights) {
         const Square square = static_cast<Square>(popLsb(knights));
-        const uint64_t squareBB = squareToBitboard(square);
         const int midgamePst = midgamePstTable[knightPiece][square];
         const int endgamePst = endgamePstTable[knightPiece][square];
 
@@ -192,19 +186,6 @@ void Evaluation::evaluateKnights() {
 #endif
 
         addScore<color>(midgameMobilityScore, endgameMobilityScore);
-
-        // Outposts
-        /*constexpr uint64_t outpostRanks = color == WHITE ? (RANK_4 | RANK_5 | RANK_6) : (RANK_5 | RANK_4 | RANK_3);
-        const uint64_t pawnDefendedSquares = evalData.attacksByPiece[pawnPiece];
-        uint64_t attackSpanMask = color == WHITE ? shiftNorth(fillNorth(squareBB)) : shiftSouth(fillSouth(squareBB));
-        attackSpanMask = shiftEast(attackSpanMask) | shiftWest(attackSpanMask);
-        const uint64_t opponentPawnsBitboard = board.getPieceBoard<opponentPawnPiece>();
-        const uint64_t attackingPawns = attackSpanMask & opponentPawnsBitboard;
-        const bool isOutpost = (squareBB & outpostRanks & pawnDefendedSquares) != 0;
-
-        if (isOutpost && !attackingPawns) {
-            addScore<color>(evalKnightOutpostBonus[MIDGAME], evalKnightOutpostBonus[ENDGAME]);
-        }*/
     }
 }
 
@@ -212,14 +193,6 @@ template <PieceColor color>
 void Evaluation::evaluateBishops() {
     constexpr Piece bishopPiece = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     uint64_t bishops = board.getPieceBoard<bishopPiece>();
-    /*const uint8_t bishopCount = popcnt(bishops);
-    const uint8_t lightSquareBishopCount = popcnt(bishops & LIGHT_SQUARES);
-    const uint8_t darkSquareBishopCount = popcnt(bishops & DARK_SQUARES);
-
-    if (bishopCount > 1 && lightSquareBishopCount > 0 && darkSquareBishopCount > 0) {
-        // TODO: Add to tuner
-        addScore<color>(evalBishopPairBonus[MIDGAME], evalBishopPairBonus[ENDGAME]);
-    }*/
 
     while (bishops) {
         const Square square = static_cast<Square>(popLsb(bishops));
@@ -351,133 +324,37 @@ void Evaluation::evaluateKing() {
     evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
     evalData.attacksByColor[color] |= attacks;
     evalData.attacksByPiece[kingPiece] |= attacks;
-
-    /*// Pawn shield
-    const uint8_t kingFile = square % 8;
-    const bool isKingSide = kingFile >= 4;
-
-    uint64_t shieldRank;
-    uint64_t advancedShieldRank;
-    uint64_t pawns;
-
-    if (color == WHITE) {
-        shieldRank = RANK_2;
-        advancedShieldRank = RANK_3;
-        pawns = board.getPieceBoard<WHITE_PAWN>();
-    } else {
-        shieldRank = RANK_7;
-        advancedShieldRank = RANK_6;
-        pawns = board.getPieceBoard<BLACK_PAWN>();
-    }
-
-    uint64_t filesMask;
-    if (isKingSide) {
-        filesMask = F_FILE | G_FILE | H_FILE;
-    } else {
-        filesMask = A_FILE | B_FILE | C_FILE;
-    }
-
-    const uint64_t shieldMask = filesMask & shieldRank;
-    const uint64_t advancedShieldMask = filesMask & advancedShieldRank;
-
-    const int shieldPawns = popcnt(shieldMask & pawns);
-    const int advancedShieldPawns = popcnt(advancedShieldMask & pawns);
-    const int shieldMidgameScore =
-        shieldPawns * evalPawnShieldBonus[MIDGAME] + advancedShieldPawns * evalPawnShieldAdvancedBonus[MIDGAME];
-    const int shieldEndgameScore =
-        shieldPawns * evalPawnShieldBonus[ENDGAME] + advancedShieldPawns * evalPawnShieldAdvancedBonus[ENDGAME];
-
-#ifdef ZAGREUS_TUNER
-    trace.pawnShieldPawns[color] += shieldPawns;
-    trace.advancedPawnShieldPawns[color] += advancedShieldPawns;
-#endif
-
-    addScore<color>(shieldMidgameScore, shieldEndgameScore);
-
-    // Virtual mobility penalty
-    const Square kingSquare = board.getKingSquare<color>();
-    const uint64_t virtualAttacks = queenAttacks(kingSquare, board.getOccupiedBitboard());
-    const uint8_t virtualMobility = popcnt(virtualAttacks);
-    const int midgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[MIDGAME] * virtualMobility;
-    const int endgameVirtualMobilityPenalty = evalVirtualMobilityPenalty[ENDGAME] * virtualMobility;
-
-    addScore<color>(midgameVirtualMobilityPenalty, endgameVirtualMobilityPenalty);*/
-}
-
-template <PieceColor color>
-void Evaluation::evaluateSquareControl() {
-    const uint64_t ownPieces = board.getColorBitboard<color>();
-    const uint64_t occupied = board.getOccupiedBitboard();
-    uint64_t ownAttacks = evalData.attacksByColor[color];
-    uint64_t opponentAttacks = evalData.attacksByColor[!color];
-    uint64_t ownAttacksBy2 = evalData.attackedBy2[color];
-    uint64_t opponentAttacksBy2 = evalData.attackedBy2[!color];
-    uint64_t ownPawnAttacks = evalData.attacksByPiece[color == WHITE ? WHITE_PAWN : BLACK_PAWN];
-    uint64_t opponentPawnAttacks = evalData.attacksByPiece[color == WHITE ? BLACK_PAWN : WHITE_PAWN];
-
-    // Strong squares is any square that is:
-    // 1. Attacked by us and not attacked by the opponent
-    // 2. Square attacked by our pawn and exactly one non-pawn piece of the opponent (so not attacked by 2 pieces)
-    // 3. Square attacked by 2 of our pieces and only 1 of the opponent that is not a pawn
-    // 4. Square attacked by 2 of our pieces from which one is a pawn and exactly 1 of the opponent that may be a pawn
-    uint64_t strongSquares = (ownAttacks & ~opponentAttacks) |
-                             (ownPawnAttacks & (opponentAttacks & ~opponentAttacksBy2 & ~opponentPawnAttacks)) |
-                             (ownAttacksBy2 & ~opponentAttacksBy2 & ~opponentPawnAttacks) |
-                             ((ownAttacksBy2 & ownPawnAttacks) & (opponentAttacks & ~opponentAttacksBy2));
-
-    // Weak squares are the opponent's strong squares
-    uint64_t weakSquares = (opponentAttacks & ~ownAttacks) |
-                           (opponentPawnAttacks & (ownAttacks & ~ownAttacksBy2 & ~ownPawnAttacks)) |
-                           (opponentAttacksBy2 & ~ownAttacksBy2 & ~ownPawnAttacks) |
-                           ((opponentAttacksBy2 & opponentPawnAttacks) & (ownAttacks & ~ownAttacksBy2));
-
-    uint64_t piecesOnStrongSquares = ownPieces & strongSquares;
-    uint64_t piecesOnWeakSquares = ownPieces & weakSquares;
-    uint64_t unoccupiedStrongSquares = strongSquares & ~occupied;
-    int piecesOnStrongSquaresCount = popcnt(piecesOnStrongSquares);
-    int piecesOnWeakSquaresCount = popcnt(piecesOnWeakSquares);
-    int unoccupiedStrongSquaresCount = popcnt(unoccupiedStrongSquares);
-
-    int midgameScore = 0;
-    int endgameScore = 0;
-
-#ifdef ZAGREUS_TUNER
-    trace.piecesOnStrongSquares[color] += piecesOnStrongSquaresCount;
-    trace.piecesOnWeakSquares[color] += piecesOnWeakSquaresCount;
-    trace.unoccupiedStrongSquares[color] += unoccupiedStrongSquaresCount;
-#endif
-
-    midgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[MIDGAME];
-    endgameScore += piecesOnStrongSquaresCount * evalPieceOnStrongSquare[ENDGAME];
-    midgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[MIDGAME];
-    endgameScore += piecesOnWeakSquaresCount * evalPieceOnWeakSquarePenalty[ENDGAME];
-    midgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[MIDGAME];
-    endgameScore += unoccupiedStrongSquaresCount * evalUnoccupiedStrongSquare[ENDGAME];
-
-    addScore<color>(midgameScore, endgameScore);
 }
 
 template <PieceColor color>
 void Evaluation::evaluatePawnStructure() {
-    constexpr PieceColor opponentColor = !color;
+    // Doubled and tripled pawns
     constexpr Piece ownPawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
-    const uint64_t backwardsPawns = board.backwardPawns<color>();
-    const uint64_t halfOpenFiles = board.halfOpenFiles<opponentColor>();
     const uint64_t pawnFrontSpans = board.pawnFrontSpans<color>();
-    const int backwardPawnsCount = popcnt(backwardsPawns);
-    const int halfOpenFilesCount = popcnt(backwardsPawns & halfOpenFiles);
-
-    addScore<color>(backwardPawnsCount * evalBackwardPawnPenalty[MIDGAME],
-                    backwardPawnsCount * evalBackwardPawnPenalty[ENDGAME]);
-    addScore<color>(halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[MIDGAME],
-                    halfOpenFilesCount * evalBackwardPawnOnHalfOpenFilePenalty[ENDGAME]);
 
     // Double and tripled pawns penalty
     const uint64_t doubledPawns = board.getPieceBoard<ownPawn>() & pawnFrontSpans;
     const int doubledPawnCount = popcnt(doubledPawns);
+    addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME], doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
 
-    addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME],
-                    doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
+    // Passed pawns
+    /*uint64_t passedPawns = board.passedPawns<color>();
+    int midgameScore = 0;
+    int endgameScore = 0;
+
+    while (passedPawns) {
+        const Square square = static_cast<Square>(popLsb(passedPawns));
+        uint8_t rank = getRank(square);
+
+        if (color == BLACK) {
+            rank = 7 - rank;
+        }
+
+        midgameScore += evalPassedPawnBonus[MIDGAME][rank];
+        endgameScore += evalPassedPawnBonus[ENDGAME][rank];
+    }
+
+    addScore<color>(midgameScore, endgameScore);*/
 }
 
 /**
