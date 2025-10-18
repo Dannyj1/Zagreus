@@ -1,9 +1,11 @@
 <map id="Zagreus::Board::pawnFrontSpans" name="Zagreus::Board::pawnFrontSpans">
-<area shape="rect" id="Node000001" title=" " alt="" coords="509,27,707,67"/>
-<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#a008960a1b25a7a86518db1b742a70ae3" title=" " alt="" coords="245,5,461,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="496,37,461,33,462,28,496,32"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="250,55,457,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="496,62,457,67,457,61,496,57"/>
-<area shape="rect" id="Node000004" href="$classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,55,197,95"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="236,78,197,78,197,73,236,73"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="509,63,707,103"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#ab5a601b2bd5a6c6aed31fbd284261765" title=" " alt="" coords="257,5,450,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="505,62,442,48,443,43,506,57"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a008960a1b25a7a86518db1b742a70ae3" title=" " alt="" coords="245,70,461,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="496,85,461,85,461,80,496,80"/>
+<area shape="rect" id="Node000004" href="$classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="250,120,457,160"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="506,108,443,123,442,117,505,103"/>
+<area shape="rect" id="Node000005" href="$classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,120,197,160"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="236,143,197,143,197,137,236,137"/>
 </map>

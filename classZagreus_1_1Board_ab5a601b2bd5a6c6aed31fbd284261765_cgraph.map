@@ -1,0 +1,16 @@
+<map id="Zagreus::Board::candidatePawns" name="Zagreus::Board::candidatePawns">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,60,199,100"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#abf7ceb384a0bfbaef721d8d6d7a089c2" title="Retrieves the bitboard for a given piece type." alt="" coords="492,5,677,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,66,478,35,478,40,199,72"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="247,88,444,128"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="199,88,233,92,233,98,198,94"/>
+<area shape="poly" id="edge5_Node000003_Node000002" title=" " alt="" coords="403,85,512,47,514,52,405,91"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a3d136b3797c2fa47ba8b3ec25f12bf81" title=" " alt="" coords="517,70,652,95"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="444,95,503,89,504,94,445,100"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#aa30e2771798432f823a8b6900da3e451" title=" " alt="" coords="517,119,653,145"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="445,115,503,121,503,127,444,121"/>
+<area shape="rect" id="Node000006" href="$namespaceZagreus.html#a70869d31a469efacc2790cbd2d5cbf42" title="Shifts the bitboard north by one rank." alt="" coords="511,169,658,194"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="406,125,493,153,524,162,522,168,491,159,404,131"/>
+<area shape="rect" id="Node000007" href="$namespaceZagreus.html#a5f01c9bf422a21d35c075ff1befb41d2" title="Shifts the bitboard south by one rank." alt="" coords="511,218,659,243"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="372,126,426,166,493,204,511,211,509,216,491,209,423,170,369,130"/>
+</map>
