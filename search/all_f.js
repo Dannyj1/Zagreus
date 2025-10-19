@@ -79,11 +79,12 @@ var searchData=
   ['probeposition_76',['probePosition',['../classZagreus_1_1TranspositionTable.html#ae950ec6aafd607438555f30febb74da4',1,'Zagreus::TranspositionTable']]],
   ['promotion_77',['PROMOTION',['../namespaceZagreus.html#a7735714492e635054e84a0cc179e46baa8b18bc5047643a18a4ec27886a319d00',1,'Zagreus']]],
   ['promotion_5fsquares_78',['PROMOTION_SQUARES',['../constants_8h.html#a4c5a61b127f0411d1032a4707370f8f5',1,'constants.h']]],
-  ['promotionpiece_79',['PromotionPiece',['../namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac',1,'Zagreus']]],
-  ['pst_2ecpp_80',['pst.cpp',['../pst_8cpp.html',1,'']]],
-  ['pst_2eh_81',['pst.h',['../pst_8h.html',1,'']]],
-  ['pv_82',['PV',['../namespaceZagreus.html#ada679bdc3b3121c6d715689e2990b0eaaef99d28c6254f51321928e4cd38522a8',1,'Zagreus']]],
-  ['pvline_83',['PvLine',['../structZagreus_1_1PvLine.html',1,'Zagreus::PvLine'],['../structZagreus_1_1PvLine.html#adc9f29c03ad4347fc94654ee90bdd772',1,'Zagreus::PvLine::PvLine()']]],
-  ['pvline_84',['pvLine',['../structZagreus_1_1SearchStats.html#a49bc7934f684502191e4f40c2fa1a062',1,'Zagreus::SearchStats']]],
-  ['pvsearch_85',['pvSearch',['../namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8',1,'Zagreus']]]
+  ['promotioncandidates_79',['promotionCandidates',['../classZagreus_1_1Board.html#a6da17671cd2d1e9a3077fd6dc8c33b4f',1,'Zagreus::Board']]],
+  ['promotionpiece_80',['PromotionPiece',['../namespaceZagreus.html#ae3d5464d72c8b3e99114db86d97e2cac',1,'Zagreus']]],
+  ['pst_2ecpp_81',['pst.cpp',['../pst_8cpp.html',1,'']]],
+  ['pst_2eh_82',['pst.h',['../pst_8h.html',1,'']]],
+  ['pv_83',['PV',['../namespaceZagreus.html#ada679bdc3b3121c6d715689e2990b0eaaef99d28c6254f51321928e4cd38522a8',1,'Zagreus']]],
+  ['pvline_84',['PvLine',['../structZagreus_1_1PvLine.html',1,'Zagreus::PvLine'],['../structZagreus_1_1PvLine.html#adc9f29c03ad4347fc94654ee90bdd772',1,'Zagreus::PvLine::PvLine()']]],
+  ['pvline_85',['pvLine',['../structZagreus_1_1SearchStats.html#a49bc7934f684502191e4f40c2fa1a062',1,'Zagreus::SearchStats']]],
+  ['pvsearch_86',['pvSearch',['../namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8',1,'Zagreus']]]
 ];
