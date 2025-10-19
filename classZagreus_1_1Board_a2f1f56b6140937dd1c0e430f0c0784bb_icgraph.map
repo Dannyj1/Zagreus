@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title="Retrieves the attackers of a given square." alt="" coords="960,45,1155,85"/>
 <area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#ab5531cc66a779858ed8b61d53ab0d535" title="Calculates if the Static Exchange Evaluation (SEE) for a given move is good for the given color." alt="" coords="760,52,912,77"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="946,67,912,67,912,62,946,62"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a641c1da6eb76ef881ebaec68a14ab2fa" title=" " alt="" coords="371,29,505,55"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="371,29,505,55"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="746,62,506,48,506,43,746,57"/>
 <area shape="rect" id="Node000006" href="$classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="553,73,712,113"/>
 <area shape="poly" id="edge7_Node000002_Node000006" title=" " alt="" coords="747,80,713,84,712,79,746,74"/>

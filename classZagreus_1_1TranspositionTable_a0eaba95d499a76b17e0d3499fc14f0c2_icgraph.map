@@ -1,6 +1,6 @@
 <map id="Zagreus::TranspositionTable::getEntry" name="Zagreus::TranspositionTable::getEntry">
 <area shape="rect" id="Node000001" title=" " alt="" coords="760,45,963,85"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a641c1da6eb76ef881ebaec68a14ab2fa" title=" " alt="" coords="371,29,505,55"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="371,29,505,55"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="746,61,505,48,506,43,746,56"/>
 <area shape="rect" id="Node000005" href="$classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="553,73,712,113"/>
 <area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="746,81,712,86,712,80,746,76"/>
