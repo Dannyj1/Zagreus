@@ -337,6 +337,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             board.makeMove(move);
         }*/
 
+        __builtin_prefetch(&tt->transpositionTable[board.getZobristHash() & tt->hashSize]);
+
         if (capturedPiece == EMPTY) {
             searchedQuietMoves.moves[searchedQuietMoves.size++] = move;
         } else {
@@ -597,6 +599,8 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
         }
 
         legalMoves += 1;
+
+        __builtin_prefetch(&tt->transpositionTable[board.getZobristHash() & tt->hashSize]);
 
         const int score =
             -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime, searchStack);
