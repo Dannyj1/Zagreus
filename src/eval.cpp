@@ -193,6 +193,7 @@ template <PieceColor color>
 void Evaluation::evaluateBishops() {
     constexpr Piece bishopPiece = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     uint64_t bishops = board.getPieceBoard<bishopPiece>();
+    const uint64_t occupiedBitboard = board.getOccupiedBitboard();
 
     while (bishops) {
         const Square square = static_cast<Square>(popLsb(bishops));
@@ -206,7 +207,6 @@ void Evaluation::evaluateBishops() {
 
         addScore<color>(midgamePst, endgamePst);
 
-        const uint64_t occupiedBitboard = board.getOccupiedBitboard();
         const uint64_t attacks = getBishopAttacks(square, occupiedBitboard);
 
         evalData.attacksFrom[square] = attacks;
@@ -231,6 +231,7 @@ template <PieceColor color>
 void Evaluation::evaluateRooks() {
     constexpr Piece rookPiece = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
     uint64_t rooks = board.getPieceBoard<rookPiece>();
+    const uint64_t occupiedBitboard = board.getOccupiedBitboard();
 
     while (rooks) {
         const Square square = static_cast<Square>(popLsb(rooks));
@@ -244,7 +245,6 @@ void Evaluation::evaluateRooks() {
 
         addScore<color>(midgamePst, endgamePst);
 
-        const uint64_t occupiedBitboard = board.getOccupiedBitboard();
         const uint64_t attacks = getRookAttacks(square, occupiedBitboard);
 
         evalData.attacksFrom[square] = attacks;
@@ -269,6 +269,7 @@ template <PieceColor color>
 void Evaluation::evaluateQueens() {
     constexpr Piece queenPiece = color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
     uint64_t queens = board.getPieceBoard<queenPiece>();
+    const uint64_t occupiedBitboard = board.getOccupiedBitboard();
 
     while (queens) {
         const Square square = static_cast<Square>(popLsb(queens));
@@ -282,7 +283,6 @@ void Evaluation::evaluateQueens() {
 
         addScore<color>(midgamePst, endgamePst);
 
-        const uint64_t occupiedBitboard = board.getOccupiedBitboard();
         const uint64_t attacks = queenAttacks(square, occupiedBitboard);
 
         evalData.attacksFrom[square] = attacks;
@@ -335,7 +335,8 @@ void Evaluation::evaluatePawnStructure() {
     // Double and tripled pawns penalty
     const uint64_t doubledPawns = board.getPieceBoard<ownPawn>() & pawnFrontSpans;
     const int doubledPawnCount = popcnt(doubledPawns);
-    addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME], doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
+    addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME],
+                    doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
 
     // Passed pawns
     /*uint64_t passedPawns = board.passedPawns<color>();
