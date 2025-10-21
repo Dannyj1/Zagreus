@@ -21,7 +21,6 @@
 #include "search.h"
 
 #include <cmath>
-#include <cstring>
 #include <iostream>
 #include <string>
 
@@ -49,6 +48,50 @@ void initializeSearch() {
 }
 
 template <PieceColor color>
+static int aspirationSearch(Engine& engine, Board& board, SearchParams& params, SearchStats& stats, int depth,
+                            int previousScore, const std::chrono::time_point<std::chrono::steady_clock>& endTime,
+                            PvLine& pvLine) {
+    int alpha, beta, score;
+    int delta = 50;
+
+    if (depth >= 4) {
+        alpha = std::max(-MATE_SCORE, previousScore - delta);
+        beta = std::min(MATE_SCORE, previousScore + delta);
+    } else {
+        alpha = -MATE_SCORE;
+        beta = MATE_SCORE;
+    }
+
+    SearchStack searchStack{};
+    pvLine.moveCount = 0;
+
+    while (true) {
+        score = pvSearch<color, ROOT>(engine, board, alpha, beta, depth, stats, endTime, pvLine, searchStack);
+        assert(score >= -MATE_SCORE && score <= MATE_SCORE);
+
+        if (engine.isSearchStopped()) {
+            break;
+        }
+
+        if (score <= alpha) {
+            beta = alpha;
+            alpha = std::max(-MATE_SCORE, alpha - delta);
+            delta *= 2;
+            continue;
+        } else if (score >= beta) {
+            alpha = beta;
+            beta = std::min(MATE_SCORE, beta + delta);
+            delta *= 2;
+            continue;
+        }
+
+        break;
+    }
+
+    return score;
+}
+
+template <PieceColor color>
 Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats) {
     int depth = 1;
     const int currentPly = board.getPly();
@@ -66,6 +109,8 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     PvLine bestPvLine = PvLine{board.getPly()};
 
     engine.setSearchStopped(false);
+
+    int previousScore = 0;
 
     while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLIES) {
         if (!params.infinite && (params.blackTime > 0 || params.whiteTime > 0)) {
@@ -86,24 +131,16 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
             break;
         }
 
-        PvLine pvLine = PvLine{board.getPly()};
-        SearchStack searchStack{};
-
+        PvLine currentPvLine = PvLine{board.getPly()};
         const int score =
-            pvSearch<color, ROOT>(engine, board, -MATE_SCORE, MATE_SCORE, depth, stats, endTime, pvLine, searchStack);
-        assert(score >= -MATE_SCORE && score <= MATE_SCORE);
-        assert(depth > 0);
-
-        if (endTime.time_since_epoch().count() != 0 && std::chrono::steady_clock::now() > endTime) {
-            engine.setSearchStopped(true);
-            break;
-        }
+            aspirationSearch<color>(engine, board, params, stats, depth, previousScore, endTime, currentPvLine);
 
         if (engine.isSearchStopped()) {
             break;
         }
 
-        bestPvLine = pvLine;
+        previousScore = score;
+        bestPvLine = currentPvLine;
 
         stats.score = score;
         stats.timeSpentMs =
