@@ -23,6 +23,8 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+// ReSharper disable once CppUnusedIncludeDirective
+#include <cstring>
 
 #include "board.h"
 #include "constants.h"
