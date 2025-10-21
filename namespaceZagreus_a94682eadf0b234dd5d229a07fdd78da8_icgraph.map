@@ -1,6 +1,4 @@
 <map id="Zagreus::pvSearch" name="Zagreus::pvSearch">
-<area shape="rect" id="Node000001" title=" " alt="" coords="180,29,323,55"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="283,19,274,11,251,8,232,10,222,15,220,20,226,28,221,31,215,21,218,11,231,5,251,3,276,6,287,15"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="5,29,132,55"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="166,45,132,45,132,39,166,39"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,148,55"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="101,18,94,11,77,8,62,10,55,15,53,20,57,28,53,30,48,21,50,11,60,5,77,3,96,6,105,15"/>
 </map>
