@@ -25,18 +25,18 @@
 namespace Zagreus {
 // Material values
 int evalMaterialValues[GAME_PHASES][PIECE_TYPES]{
-    {90, 459, 496, 655, 1284, 0},  // Midgame
-    {108, 257, 263, 475, 874, 0}   // Endgame
+    {99, 349, 454, 611, 1155, -1},  // Midgame
+    {106, 349, 349, 524, 999, 40}   // Endgame
 };
 
 // Mobility values
 int evalMobility[GAME_PHASES][PIECE_TYPES]{
-    {0, 4, 5, 2, 4, 0},  // Midgame
-    {0, 2, 3, 5, 6, 0}   // Endgame
+    {0, 3, 5, 1, 3, 0},  // Midgame
+    {0, 1, 2, 4, 5, 0}   // Endgame
 };
 
 // Pawn structure
-int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -21};
+int evalDoubledPawnPenalty[GAME_PHASES] = {-12, -34};
 
 // Passed Pawns
 /*int evalPassedPawnBonus[GAME_PHASES][RANKS] = {

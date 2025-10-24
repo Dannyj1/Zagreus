@@ -361,6 +361,8 @@ class Board {
      */
     [[nodiscard]] bool setFromFEN(std::string_view fen);
 
+    void setFromFENTuner(std::string_view fen);
+
     /**
      * \brief Resets the board to the initial state.
      */

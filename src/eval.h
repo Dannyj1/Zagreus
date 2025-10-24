@@ -24,7 +24,6 @@
 
 #include "board.h"
 #include "constants.h"
-#include "eval_features.h"
 
 namespace Zagreus {
 struct EvalData {
@@ -46,6 +45,7 @@ struct EvalTrace {
     int piecesOnWeakSquares[COLORS]{};
     int unoccupiedStrongSquares[COLORS]{};
     int doubledPawns[COLORS]{};
+    int phase{};
 };
 #endif
 

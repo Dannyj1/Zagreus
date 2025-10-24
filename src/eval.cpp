@@ -57,6 +57,9 @@ void Evaluation::addScore(const int midgameScore, const int endgameScore) {
  */
 int Evaluation::evaluate() {
     const int phase = calculatePhase();
+#ifdef ZAGREUS_TUNER
+    trace.phase = phase;
+#endif
     const int modifier = board.getSideToMove() == WHITE ? 1 : -1;
 
     initializeEvalData();

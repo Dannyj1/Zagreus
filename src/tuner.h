@@ -20,13 +20,19 @@
 
 #pragma once
 #ifdef ZAGREUS_TUNER
+#include <array>
 #include <string>
+
+#include "constants.h"
+#include "eval.h"
+#include "types.h"
 
 namespace Zagreus {
 struct TunePosition {
-    std::string fen = "";
+    std::string fen;
+    PieceColor sideToMove = WHITE;
     double result = 0.0;
-    int evalScore = 0;
+    EvalTrace trace{};
 };
 
 void startTuning(std::string filePath);
