@@ -137,87 +137,87 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">int</span> material[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>][<a class="code hl_define" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>]{};</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">int</span> pst[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>][<a class="code hl_define" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>][<a class="code hl_define" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>]{};</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordtype">int</span> mobility[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>][<a class="code hl_define" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>]{};</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">int</span> piecesOnStrongSquares[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>]{};</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">int</span> piecesOnWeakSquares[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>]{};</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">int</span> unoccupiedStrongSquares[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>]{};</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>};</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="foldopen" id="foldopen00051" data-start="{" data-end="};">
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html">   51</a></span><span class="keyword">class </span><a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a> {</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>   <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Board.html">Board</a>&amp; board;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <a class="code hl_struct" href="structZagreus_1_1EvalData.html">EvalData</a> evalData{};</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordtype">int</span> whiteMidgameScore{};</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordtype">int</span> whiteEndgameScore{};</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordtype">int</span> blackMidgameScore{};</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordtype">int</span> blackEndgameScore{};</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordtype">void</span> addScore(<span class="keywordtype">int</span> midgameScore, <span class="keywordtype">int</span> endgameScore);</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordtype">void</span> evaluatePieces();</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordtype">void</span> evaluatePawns();</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordtype">void</span> evaluateKnights();</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordtype">void</span> evaluateBishops();</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordtype">void</span> evaluateRooks();</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordtype">void</span> evaluateQueens();</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keywordtype">void</span> evaluateKing();</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordtype">void</span> evaluatePawnStructure();</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>   <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="preprocessor">#ifdef ZAGREUS_TUNER</span></div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    EvalTrace trace{};</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html#ae6c3954cd63bcea3be3239a2569bfef7">  128</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#ae6c3954cd63bcea3be3239a2569bfef7">Evaluation</a>(<span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Board.html">Board</a>&amp; board) : board(board) {}</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html#ad293a94ce5061c7ecdf2b5c9c1e5fcb8">  130</a></span>    <a class="code hl_function" href="classZagreus_1_1Evaluation.html#ad293a94ce5061c7ecdf2b5c9c1e5fcb8">Evaluation</a>(<span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html#a6d1edf08dbeb14dc69efda4fb5bb2081">  132</a></span>    <a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a>&amp; <a class="code hl_function" href="classZagreus_1_1Evaluation.html#a6d1edf08dbeb14dc69efda4fb5bb2081">operator=</a>(<span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#abb089e1f075e914b0789cfefef917fcd">initializeEvalData</a>();</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    [[nodiscard]] <span class="keywordtype">int</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#a0f4174df46fff74d4c208a04c861622a">evaluate</a>();</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    [[nodiscard]] <span class="keywordtype">int</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#a3f92719cc46b4ab20e9c18cd7c994d6f">calculatePhase</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>};</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">int</span> doubledPawns[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>]{};</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">int</span> passedPawns[<a class="code hl_define" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a>][<a class="code hl_define" href="constants_8h.html#aedc44b4ee04cb21138343a56d92a12c3">RANKS</a>]{};</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>};</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="foldopen" id="foldopen00050" data-start="{" data-end="};">
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html">   50</a></span><span class="keyword">class </span><a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a> {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>   <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Board.html">Board</a>&amp; board;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <a class="code hl_struct" href="structZagreus_1_1EvalData.html">EvalData</a> evalData{};</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordtype">int</span> whiteMidgameScore{};</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordtype">int</span> whiteEndgameScore{};</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordtype">int</span> blackMidgameScore{};</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordtype">int</span> blackEndgameScore{};</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordtype">void</span> addScore(<span class="keywordtype">int</span> midgameScore, <span class="keywordtype">int</span> endgameScore);</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">void</span> evaluatePieces();</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keywordtype">void</span> evaluatePawns();</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keywordtype">void</span> evaluateKnights();</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordtype">void</span> evaluateBishops();</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordtype">void</span> evaluateRooks();</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    <span class="keywordtype">void</span> evaluateQueens();</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keywordtype">void</span> evaluateKing();</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordtype">void</span> evaluatePawnStructure();</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>   <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span><span class="preprocessor">#ifdef ZAGREUS_TUNER</span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    EvalTrace trace{};</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html#ae6c3954cd63bcea3be3239a2569bfef7">  127</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#ae6c3954cd63bcea3be3239a2569bfef7">Evaluation</a>(<span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Board.html">Board</a>&amp; board) : board(board) {}</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html#ad293a94ce5061c7ecdf2b5c9c1e5fcb8">  129</a></span>    <a class="code hl_function" href="classZagreus_1_1Evaluation.html#ad293a94ce5061c7ecdf2b5c9c1e5fcb8">Evaluation</a>(<span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno"><a class="line" href="classZagreus_1_1Evaluation.html#a6d1edf08dbeb14dc69efda4fb5bb2081">  131</a></span>    <a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a>&amp; <a class="code hl_function" href="classZagreus_1_1Evaluation.html#a6d1edf08dbeb14dc69efda4fb5bb2081">operator=</a>(<span class="keyword">const</span> <a class="code hl_class" href="classZagreus_1_1Evaluation.html">Evaluation</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#abb089e1f075e914b0789cfefef917fcd">initializeEvalData</a>();</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    [[nodiscard]] <span class="keywordtype">int</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#a0f4174df46fff74d4c208a04c861622a">evaluate</a>();</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    [[nodiscard]] <span class="keywordtype">int</span> <a class="code hl_function" href="classZagreus_1_1Evaluation.html#a3f92719cc46b4ab20e9c18cd7c994d6f">calculatePhase</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>};</div>
 </div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>[[nodiscard]] <span class="keywordtype">int</span> <a class="code hl_function" href="namespaceZagreus.html#a8ae2c4ed999615a6f6b3bc9f23329e25">getPieceValue</a>(<a class="code hl_enumeration" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> piece);</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>}  <span class="comment">// namespace Zagreus</span></div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>[[nodiscard]] <span class="keywordtype">int</span> <a class="code hl_function" href="namespaceZagreus.html#a8ae2c4ed999615a6f6b3bc9f23329e25">getPieceValue</a>(<a class="code hl_enumeration" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> piece);</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>}  <span class="comment">// namespace Zagreus</span></div>
 <div class="ttc" id="aboard_8h_html"><div class="ttname"><a href="board_8h.html">board.h</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html"><div class="ttname"><a href="classZagreus_1_1Board.html">Zagreus::Board</a></div><div class="ttdoc">Represents the chess board and provides methods to manipulate it. The board consists of several bitbo...</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00062">board.h:62</a></div></div>
-<div class="ttc" id="aclassZagreus_1_1Evaluation_html"><div class="ttname"><a href="classZagreus_1_1Evaluation.html">Zagreus::Evaluation</a></div><div class="ttdef"><b>Definition</b> <a href="#l00051">eval.h:51</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1Evaluation_html"><div class="ttname"><a href="classZagreus_1_1Evaluation.html">Zagreus::Evaluation</a></div><div class="ttdef"><b>Definition</b> <a href="#l00050">eval.h:50</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Evaluation_html_a0f4174df46fff74d4c208a04c861622a"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#a0f4174df46fff74d4c208a04c861622a">Zagreus::Evaluation::evaluate</a></div><div class="ttdeci">int evaluate()</div><div class="ttdoc">Evaluates the current board position.</div><div class="ttdef"><b>Definition</b> <a href="eval_8cpp_source.html#l00058">eval.cpp:58</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Evaluation_html_a3f92719cc46b4ab20e9c18cd7c994d6f"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#a3f92719cc46b4ab20e9c18cd7c994d6f">Zagreus::Evaluation::calculatePhase</a></div><div class="ttdeci">int calculatePhase() const</div><div class="ttdoc">Evaluates the material on the board.</div><div class="ttdef"><b>Definition</b> <a href="eval_8cpp_source.html#l00087">eval.cpp:87</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Evaluation_html_a6d1edf08dbeb14dc69efda4fb5bb2081"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#a6d1edf08dbeb14dc69efda4fb5bb2081">Zagreus::Evaluation::operator=</a></div><div class="ttdeci">Evaluation &amp; operator=(const Evaluation &amp;)=delete</div></div>
-<div class="ttc" id="aclassZagreus_1_1Evaluation_html_abb089e1f075e914b0789cfefef917fcd"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#abb089e1f075e914b0789cfefef917fcd">Zagreus::Evaluation::initializeEvalData</a></div><div class="ttdeci">void initializeEvalData()</div><div class="ttdoc">Initializes part of the evaluation data needed to evaluate the board position.</div><div class="ttdef"><b>Definition</b> <a href="eval_8cpp_source.html#l00364">eval.cpp:364</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1Evaluation_html_abb089e1f075e914b0789cfefef917fcd"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#abb089e1f075e914b0789cfefef917fcd">Zagreus::Evaluation::initializeEvalData</a></div><div class="ttdeci">void initializeEvalData()</div><div class="ttdoc">Initializes part of the evaluation data needed to evaluate the board position.</div><div class="ttdef"><b>Definition</b> <a href="eval_8cpp_source.html#l00378">eval.cpp:378</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Evaluation_html_ad293a94ce5061c7ecdf2b5c9c1e5fcb8"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#ad293a94ce5061c7ecdf2b5c9c1e5fcb8">Zagreus::Evaluation::Evaluation</a></div><div class="ttdeci">Evaluation(const Evaluation &amp;)=delete</div></div>
-<div class="ttc" id="aclassZagreus_1_1Evaluation_html_ae6c3954cd63bcea3be3239a2569bfef7"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#ae6c3954cd63bcea3be3239a2569bfef7">Zagreus::Evaluation::Evaluation</a></div><div class="ttdeci">Evaluation(const Board &amp;board)</div><div class="ttdoc">Constructs an Evaluation object with the given board.</div><div class="ttdef"><b>Definition</b> <a href="#l00128">eval.h:128</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1Evaluation_html_ae6c3954cd63bcea3be3239a2569bfef7"><div class="ttname"><a href="classZagreus_1_1Evaluation.html#ae6c3954cd63bcea3be3239a2569bfef7">Zagreus::Evaluation::Evaluation</a></div><div class="ttdeci">Evaluation(const Board &amp;board)</div><div class="ttdoc">Constructs an Evaluation object with the given board.</div><div class="ttdef"><b>Definition</b> <a href="#l00127">eval.h:127</a></div></div>
 <div class="ttc" id="aconstants_8h_html"><div class="ttname"><a href="constants_8h.html">constants.h</a></div></div>
 <div class="ttc" id="aconstants_8h_html_a7fade7363ac979586113d8813d65826b"><div class="ttname"><a href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a></div><div class="ttdeci">#define SQUARES</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00067">constants.h:67</a></div></div>
 <div class="ttc" id="aconstants_8h_html_a818a7aec9c89ec6951d701e6bd4220ac"><div class="ttname"><a href="constants_8h.html#a818a7aec9c89ec6951d701e6bd4220ac">PIECES</a></div><div class="ttdeci">#define PIECES</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00068">constants.h:68</a></div></div>
 <div class="ttc" id="aconstants_8h_html_a883046b8f0d1f6368a9b9eaf5ca36af3"><div class="ttname"><a href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">COLORS</a></div><div class="ttdeci">#define COLORS</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00070">constants.h:70</a></div></div>
 <div class="ttc" id="aconstants_8h_html_ab2852fb03da622f49801aa40a676c658"><div class="ttname"><a href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a></div><div class="ttdeci">#define PIECE_TYPES</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00069">constants.h:69</a></div></div>
+<div class="ttc" id="aconstants_8h_html_aedc44b4ee04cb21138343a56d92a12c3"><div class="ttname"><a href="constants_8h.html#aedc44b4ee04cb21138343a56d92a12c3">RANKS</a></div><div class="ttdeci">#define RANKS</div><div class="ttdef"><b>Definition</b> <a href="constants_8h_source.html#l00072">constants.h:72</a></div></div>
 <div class="ttc" id="aeval__features_8h_html"><div class="ttname"><a href="eval__features_8h.html">eval_features.h</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html"><div class="ttname"><a href="namespaceZagreus.html">Zagreus</a></div><div class="ttdef"><b>Definition</b> <a href="bitboard_8cpp_source.html#l00027">bitboard.cpp:27</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html_a80c68b0ed6d2623104cdff1da84729a7"><div class="ttname"><a href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Zagreus::Piece</a></div><div class="ttdeci">Piece</div><div class="ttdoc">Enum representing chess pieces, separated by color and type.</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00115">types.h:115</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a8ae2c4ed999615a6f6b3bc9f23329e25"><div class="ttname"><a href="namespaceZagreus.html#a8ae2c4ed999615a6f6b3bc9f23329e25">Zagreus::getPieceValue</a></div><div class="ttdeci">int getPieceValue(const Piece piece)</div><div class="ttdoc">Gets the value of a given piece.</div><div class="ttdef"><b>Definition</b> <a href="eval_8cpp_source.html#l00375">eval.cpp:375</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a8ae2c4ed999615a6f6b3bc9f23329e25"><div class="ttname"><a href="namespaceZagreus.html#a8ae2c4ed999615a6f6b3bc9f23329e25">Zagreus::getPieceValue</a></div><div class="ttdeci">int getPieceValue(const Piece piece)</div><div class="ttdoc">Gets the value of a given piece.</div><div class="ttdef"><b>Definition</b> <a href="eval_8cpp_source.html#l00389">eval.cpp:389</a></div></div>
 <div class="ttc" id="astructZagreus_1_1EvalData_html"><div class="ttname"><a href="structZagreus_1_1EvalData.html">Zagreus::EvalData</a></div><div class="ttdef"><b>Definition</b> <a href="#l00030">eval.h:30</a></div></div>
 <div class="ttc" id="astructZagreus_1_1EvalData_html_a2285bb84fb57c4592b0f44bdf78fa7aa"><div class="ttname"><a href="structZagreus_1_1EvalData.html#a2285bb84fb57c4592b0f44bdf78fa7aa">Zagreus::EvalData::attackedBy2</a></div><div class="ttdeci">uint64_t attackedBy2[COLORS]</div><div class="ttdef"><b>Definition</b> <a href="#l00037">eval.h:37</a></div></div>
 <div class="ttc" id="astructZagreus_1_1EvalData_html_a91f81be15d05dbe44b32a211c586cb44"><div class="ttname"><a href="structZagreus_1_1EvalData.html#a91f81be15d05dbe44b32a211c586cb44">Zagreus::EvalData::attacksFrom</a></div><div class="ttdeci">uint64_t attacksFrom[SQUARES]</div><div class="ttdef"><b>Definition</b> <a href="#l00034">eval.h:34</a></div></div>
