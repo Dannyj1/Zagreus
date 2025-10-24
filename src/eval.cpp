@@ -335,6 +335,11 @@ void Evaluation::evaluatePawnStructure() {
     // Double and tripled pawns penalty
     const uint64_t doubledPawns = board.getPieceBoard<ownPawn>() & pawnFrontSpans;
     const int doubledPawnCount = popcnt(doubledPawns);
+
+#ifdef ZAGREUS_TUNER
+    trace.doubledPawns[color] += doubledPawnCount;
+#endif
+
     addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME],
                     doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
 

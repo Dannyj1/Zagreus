@@ -23,26 +23,25 @@
 #include <vector>
 
 namespace Zagreus {
-// Base material values
-int evalMaterialValues[GAME_PHASES][PIECE_TYPES] = {
-    {100, 350, 350, 525, 1000, 0},  // Midgame
-    {100, 350, 350, 525, 1000, 0}   // Endgame
+// Material values
+int evalMaterialValues[GAME_PHASES][PIECE_TYPES]{
+    {90, 459, 496, 655, 1284, 0},  // Midgame
+    {108, 257, 263, 475, 874, 0}   // Endgame
 };
 
-// Base mobility values
-int evalMobility[GAME_PHASES][PIECE_TYPES] = {
-    {0, 4, 6, 2, 4, 0},  // Midgame
+// Mobility values
+int evalMobility[GAME_PHASES][PIECE_TYPES]{
+    {0, 4, 5, 2, 4, 0},  // Midgame
     {0, 2, 3, 5, 6, 0}   // Endgame
 };
 
 // Pawn structure
-// Doubled pawns
-int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
+int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -21};
 
 // Passed Pawns
-int evalPassedPawnBonus[GAME_PHASES][RANKS] = {
+/*int evalPassedPawnBonus[GAME_PHASES][RANKS] = {
     {0, 5, 10, 20, 35, 60, 100, 0},   // Midgame
     {0, 10, 20, 40, 70, 120, 200, 0}  // Endgame
-};
+};*/
 
 }  // namespace Zagreus

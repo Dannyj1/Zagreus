@@ -40,10 +40,10 @@ const int baseMobility[GAME_PHASES][PIECE_TYPES] = {
 const int baseDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
 
 // Passed Pawns
-const int basePassedPawnBonus[GAME_PHASES][RANKS] = {
+/*const int basePassedPawnBonus[GAME_PHASES][RANKS] = {
     {0, 5, 10, 20, 35, 60, 100, 0},   // Midgame
     {0, 10, 20, 40, 70, 120, 200, 0}  // Endgame
-};
+};*/
 
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1

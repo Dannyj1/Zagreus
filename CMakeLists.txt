@@ -203,6 +203,16 @@ if (ENABLE_MARCH)
     endif ()
 endif ()
 
+if (ENABLE_TUNER)
+    add_compile_definitions(ZAGREUS_TUNER)
+
+    if (MSVC)
+        set(BUILD_FLAGS "${BUILD_FLAGS} /openmp")
+    else ()
+        set(BUILD_FLAGS "${BUILD_FLAGS} -fopenmp")
+    endif ()
+endif ()
+
 # Set the flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${BUILD_FLAGS}")
@@ -224,10 +234,6 @@ if (ENABLE_IWYU)
     else ()
         message(WARNING "IWYU requested but not found. Please install IWYU or disable ENABLE_IWYU.")
     endif ()
-endif ()
-
-if (ENABLE_TUNER)
-    add_compile_definitions(ZAGREUS_TUNER)
 endif ()
 
 if (TRACE_SEARCH)

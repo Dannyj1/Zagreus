@@ -34,5 +34,5 @@ extern int evalMobility[GAME_PHASES][PIECE_TYPES];
 extern int evalDoubledPawnPenalty[GAME_PHASES];
 
 // Passed Pawns
-extern int evalPassedPawnBonus[GAME_PHASES][RANKS];
+// extern int evalPassedPawnBonus[GAME_PHASES][RANKS];
 }  // namespace Zagreus
