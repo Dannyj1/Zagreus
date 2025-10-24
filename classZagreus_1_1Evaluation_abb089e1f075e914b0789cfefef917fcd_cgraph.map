@@ -1,7 +1,0 @@
-<map id="Zagreus::Evaluation::initializeEvalData" name="Zagreus::Evaluation::initializeEvalData">
-<area shape="rect" id="Node000001" title="Initializes part of the evaluation data needed to evaluate the board position." alt="" coords="5,37,157,77"/>
-<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#ae05e57705dd28daf8718d043c68d16d2" title="Retrieves the bitboard for a given color." alt="" coords="206,5,390,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,44,192,38,193,44,158,49"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#abf7ceb384a0bfbaef721d8d6d7a089c2" title="Retrieves the bitboard for a given piece type." alt="" coords="205,69,391,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,66,192,71,191,76,157,71"/>
-</map>
