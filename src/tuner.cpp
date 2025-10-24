@@ -19,11 +19,10 @@
 
 namespace Zagreus {
 const int epochs = 10000;
-const int batchSize = 256;
-const double learningRate = 1.0;
-const int earlyStoppingPatience = 25;
-const int saveEvery = 50;
-const double maxGradientNorm = 1.0;
+const int batchSize = 128;
+const double learningRate = 0.1;
+const int earlyStoppingPatience = 50;
+const int saveEvery = 25;
 int seed = 42;
 
 double K = 0.0;
@@ -34,7 +33,8 @@ std::vector<double> gradients{};
 int materialWeightStart = 0;
 int pstWeightStart;
 int mobilityWeightStart;
-int squareControlWeightStart;
+int doubledPawnsWeightStart;
+int passedPawnsWeightStart;
 int totalWeights;
 
 void initializeWeights() {
@@ -45,10 +45,13 @@ void initializeWeights() {
     mobilityWeightStart = pstWeightStart + numPstWeights;
 
     const int numMobilityWeights = GAME_PHASES * PIECE_TYPES;
-    squareControlWeightStart = mobilityWeightStart + numMobilityWeights;
+    doubledPawnsWeightStart = mobilityWeightStart + numMobilityWeights;
 
-    const int numSquareControlWeights = GAME_PHASES * 3;  // 3 types of square control (strong, weak, unoccupied)
-    totalWeights = squareControlWeightStart + numSquareControlWeights;
+    const int numDoubledPawnsWeights = GAME_PHASES;
+    passedPawnsWeightStart = doubledPawnsWeightStart + numDoubledPawnsWeights;
+
+    const int numPassedPawnsWeights = GAME_PHASES * RANKS;
+    totalWeights = passedPawnsWeightStart + numPassedPawnsWeights;
 
     weights.resize(totalWeights);
     gradients.resize(totalWeights);
@@ -59,12 +62,6 @@ void updateEvaluationParameters() {
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
             evalMaterialValues[phase][piece] = static_cast<int>(std::round(
                 baseMaterialValues[phase][piece] + weights[materialWeightStart + (phase * PIECE_TYPES) + piece]));
-
-            // Don't allow material values to be negative
-            if (evalMaterialValues[phase][piece] < 0) {
-                evalMaterialValues[phase][piece] = 0;
-                weights[materialWeightStart + (phase * PIECE_TYPES) + piece] = -baseMaterialValues[phase][piece];
-            }
         }
     }
 
@@ -72,10 +69,11 @@ void updateEvaluationParameters() {
         for (Square square = A1; square <= H8; square++) {
             const PieceType pieceType = getPieceType(piece);
             const PieceColor color = getPieceColor(piece);
-            const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) +
-                                (color == WHITE ? square ^ 56 : square);
-            const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) +
-                                (color == WHITE ? square ^ 56 : square);
+            const int weightSquare = color == WHITE ? (square ^ 56) : square;
+            const int mgIndex =
+                pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + weightSquare;
+            const int egIndex =
+                pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + weightSquare;
 
             const int baseMgPst =
                 color == WHITE ? getBaseMidgameTable(pieceType)[square ^ 56] : getBaseMidgameTable(pieceType)[square];
@@ -93,29 +91,23 @@ void updateEvaluationParameters() {
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
             const int index = mobilityWeightStart + (phase * PIECE_TYPES) + piece;
             evalMobility[phase][piece] = static_cast<int>(std::round(baseMobility[phase][piece] + weights[index]));
-
-            // Don't allow mobility values to be negative
-            if (evalMobility[phase][piece] < 0) {
-                evalMobility[phase][piece] = 0;
-                weights[index] = -baseMobility[phase][piece];
-            }
         }
     }
 
-    // Update square control parameters
+    // Update doubled pawns penalty parameters
     for (int phase = 0; phase < GAME_PHASES; ++phase) {
-        // PieceOnStrongSquare
-        evalPieceOnStrongSquare[phase] =
-            static_cast<int>(std::round(basePieceOnStrongSquare[phase] + weights[squareControlWeightStart + phase]));
-
-        // PieceOnWeakSquare
-        evalPieceOnWeakSquarePenalty[phase] = static_cast<int>(
-            std::round(basePieceOnWeakSquarePenalty[phase] + weights[squareControlWeightStart + GAME_PHASES + phase]));
-
-        // UnoccupiedStrongSquare
-        evalUnoccupiedStrongSquare[phase] = static_cast<int>(std::round(
-            baseUnoccupiedStrongSquare[phase] + weights[squareControlWeightStart + (2 * GAME_PHASES) + phase]));
+        const int index = doubledPawnsWeightStart + phase;
+        evalDoubledPawnPenalty[phase] = static_cast<int>(std::round(baseDoubledPawnPenalty[phase] + weights[index]));
     }
+
+    // Update passed pawns bonus parameters
+    // for (int phase = 0; phase < GAME_PHASES; ++phase) {
+    //     for (int rank = 0; rank < RANKS; ++rank) {
+    //         const int index = passedPawnsWeightStart + (phase * RANKS) + rank;
+    //         evalPassedPawnBonus[phase][rank] =
+    //             static_cast<int>(std::round(basePassedPawnBonus[phase][rank] + weights[index]));
+    //     }
+    // }
 }
 
 double sigmoid(const double x) { return 1.0 / (1.0 + std::pow(10.0, -K * x / 400.0)); }
@@ -130,8 +122,9 @@ double calculateError(const std::vector<TunePosition>& positions) {
 
         Evaluation eval{board};
         int evalScore = eval.evaluate();
+
         if (board.getSideToMove() == BLACK) {
-            evalScore *= -1;
+            evalScore = -evalScore;
         }
 
         const double prediction = sigmoid(evalScore);
@@ -151,14 +144,14 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
 
         Evaluation eval{board};
         int evalScore = eval.evaluate();
-        const bool isBlack = board.getSideToMove() == BLACK;
-        if (isBlack) {
+
+        if (board.getSideToMove() == BLACK) {
             evalScore *= -1;
         }
 
         const double sigmoidValue = sigmoid(evalScore);
         const double error = (K * std::log(10.0) / 400.0) * (pos.result - sigmoidValue);
-        const double grad_base = -error * (isBlack ? -1.0 : 1.0);
+        const double gradBase = -error;
         const int phase = eval.calculatePhase();
         const double mgPhaseScale = static_cast<double>(256 - phase) / 256.0;
         const double egPhaseScale = static_cast<double>(phase) / 256.0;
@@ -169,63 +162,55 @@ void computeGradients(const std::vector<TunePosition>& positions, Board& board) 
             if (diff != 0.0) {
                 const int mgIndex = materialWeightStart + (MIDGAME * PIECE_TYPES) + piece;
                 const int egIndex = materialWeightStart + (ENDGAME * PIECE_TYPES) + piece;
-                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
+                gradients[mgIndex] += gradBase * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += gradBase * (diff * egPhaseScale) / N;
             }
         }
 
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
-            for (int s = 0; s < SQUARES; ++s) {  // s is canonical square
-                const int s_flipped = s ^ 56;
-                const double diff = eval.trace.pst[WHITE][piece][s_flipped] - eval.trace.pst[BLACK][piece][s];
+            for (int square = 0; square < SQUARES; ++square) {
+                const double diff = eval.trace.pst[WHITE][piece][square] - eval.trace.pst[BLACK][piece][square];
                 if (diff != 0.0) {
-                    const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + s;
-                    const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + s;
-                    gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
-                    gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
+                    const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
+                    const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
+                    gradients[mgIndex] += gradBase * (diff * mgPhaseScale) / N;
+                    gradients[egIndex] += gradBase * (diff * egPhaseScale) / N;
                 }
             }
         }
 
-        for (int piece = 0; piece < PIECE_TYPES; ++piece) {
-            const double diff = eval.trace.mobility[WHITE][piece] - eval.trace.mobility[BLACK][piece];
+        for (const PieceType pieceType : {KNIGHT, BISHOP, ROOK, QUEEN}) {
+            const double diff = eval.trace.mobility[WHITE][pieceType] - eval.trace.mobility[BLACK][pieceType];
+
             if (diff != 0.0) {
-                const int mgIndex = mobilityWeightStart + (MIDGAME * PIECE_TYPES) + piece;
-                const int egIndex = mobilityWeightStart + (ENDGAME * PIECE_TYPES) + piece;
-                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
+                const int mgIndex = mobilityWeightStart + (MIDGAME * PIECE_TYPES) + pieceType;
+                const int egIndex = mobilityWeightStart + (ENDGAME * PIECE_TYPES) + pieceType;
+                gradients[mgIndex] += gradBase * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += gradBase * (diff * egPhaseScale) / N;
             }
         }
 
+        // Doubled Pawns Gradients
         {
-            const double diff = eval.trace.piecesOnStrongSquares[WHITE] - eval.trace.piecesOnStrongSquares[BLACK];
+            const double diff = eval.trace.doubledPawns[WHITE] - eval.trace.doubledPawns[BLACK];
             if (diff != 0.0) {
-                const int mgIndex = squareControlWeightStart + MIDGAME;
-                const int egIndex = squareControlWeightStart + ENDGAME;
-                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
+                const int mgIndex = doubledPawnsWeightStart + MIDGAME;
+                const int egIndex = doubledPawnsWeightStart + ENDGAME;
+                gradients[mgIndex] += gradBase * (diff * mgPhaseScale) / N;
+                gradients[egIndex] += gradBase * (diff * egPhaseScale) / N;
             }
         }
 
-        {
-            const double diff = eval.trace.piecesOnWeakSquares[WHITE] - eval.trace.piecesOnWeakSquares[BLACK];
-            if (diff != 0.0) {
-                const int mgIndex = squareControlWeightStart + GAME_PHASES + MIDGAME;
-                const int egIndex = squareControlWeightStart + GAME_PHASES + ENDGAME;
-                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
-            }
-        }
-
-        {
-            const double diff = eval.trace.unoccupiedStrongSquares[WHITE] - eval.trace.unoccupiedStrongSquares[BLACK];
-            if (diff != 0.0) {
-                const int mgIndex = squareControlWeightStart + (2 * GAME_PHASES) + MIDGAME;
-                const int egIndex = squareControlWeightStart + (2 * GAME_PHASES) + ENDGAME;
-                gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
-                gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
-            }
-        }
+        // Passed Pawns Gradients
+        // for (int rank = 0; rank < RANKS; ++rank) {
+        //     const double diff = eval.trace.passedPawns[WHITE][rank] - eval.trace.passedPawns[BLACK][rank];
+        //     if (diff != 0.0) {
+        //         const int mgIndex = passedPawnsWeightStart + (MIDGAME * RANKS) + rank;
+        //         const int egIndex = passedPawnsWeightStart + (ENDGAME * RANKS) + rank;
+        //         gradients[mgIndex] += grad_base * (diff * mgPhaseScale) / N;
+        //         gradients[egIndex] += grad_base * (diff * egPhaseScale) / N;
+        //     }
+        // }
     }
 }
 
@@ -305,39 +290,40 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
     fout << "} // Endgame\n";
     fout << "};\n\n";
 
-    fout << "// Square control values\n";
-    fout << "int evalPieceOnStrongSquare[GAME_PHASES]{\n";
+    fout << "// Doubled Pawns Penalty\n";
+    fout << "int evalDoubledPawnPenalty[GAME_PHASES]{\n";
     fout << "    ";
     for (int phase = 0; phase < GAME_PHASES; ++phase) {
+        const int index = doubledPawnsWeightStart + phase;
+        const int value = static_cast<int>(std::round(baseDoubledPawnPenalty[phase] + weights[index]));
+        fout << value;
+        if (phase < GAME_PHASES - 1) fout << ", ";
+    }
+    fout << " // Midgame, Endgame\n";
+    fout << "};\n\n";
+
+    /*fout << "// Passed Pawns Bonus\n";
+    fout << "int evalPassedPawnBonus[GAME_PHASES][RANKS]{\n";
+    fout << "    {";
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int index = passedPawnsWeightStart + (MIDGAME * RANKS) + rank;
         const int value =
-            static_cast<int>(std::round(basePieceOnStrongSquare[phase] + weights[squareControlWeightStart + phase]));
+            static_cast<int>(std::round(basePassedPawnBonus[MIDGAME][rank] + weights[index]));
         fout << value;
-        if (phase < GAME_PHASES - 1) fout << ", ";
+        if (rank < RANKS - 1) fout << ", ";
     }
-    fout << " // Midgame, Endgame\n";
-    fout << "};\n\n";
+    fout << "}, // Midgame\n";
 
-    fout << "int evalPieceOnWeakSquare[GAME_PHASES]{\n";
-    fout << "    ";
-    for (int phase = 0; phase < GAME_PHASES; ++phase) {
-        const int value = static_cast<int>(
-            std::round(basePieceOnWeakSquare[phase] + weights[squareControlWeightStart + GAME_PHASES + phase]));
+    fout << "    {";
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int index = passedPawnsWeightStart + (ENDGAME * RANKS) + rank;
+        const int value =
+            static_cast<int>(std::round(basePassedPawnBonus[ENDGAME][rank] + weights[index]));
         fout << value;
-        if (phase < GAME_PHASES - 1) fout << ", ";
+        if (rank < RANKS - 1) fout << ", ";
     }
-    fout << " // Midgame, Endgame\n";
-    fout << "};\n\n";
-
-    fout << "int evalUnoccupiedStrongSquare[GAME_PHASES]{\n";
-    fout << "    ";
-    for (int phase = 0; phase < GAME_PHASES; ++phase) {
-        const int value = static_cast<int>(std::round(baseUnoccupiedStrongSquare[phase] +
-                                                      weights[squareControlWeightStart + (2 * GAME_PHASES) + phase]));
-        fout << value;
-        if (phase < GAME_PHASES - 1) fout << ", ";
-    }
-    fout << " // Midgame, Endgame\n";
-    fout << "};\n\n";
+    fout << "} // Endgame\n";
+    fout << "};\n\n";*/
 
     const std::string pieceNames[] = {"pawn", "knight", "bishop", "rook", "queen", "king"};
 
@@ -402,18 +388,6 @@ void gradientDescent(std::vector<TunePosition>& trainingSet, const std::vector<T
 
         for (const auto& batch : batches) {
             computeGradients(batch, board);
-
-            double gradNormSq = 0.0;
-            for (double g : gradients) {
-                gradNormSq += g * g;
-            }
-            double gradNorm = std::sqrt(gradNormSq);
-            if (gradNorm > maxGradientNorm) {
-                double scale = maxGradientNorm / gradNorm;
-                for (auto& g : gradients) {
-                    g *= scale;
-                }
-            }
 
             for (size_t j = 0; j < weights.size(); ++j) {
                 weights[j] -= learningRate * gradients[j];
@@ -484,11 +458,11 @@ std::vector<TunePosition> loadPositions(const std::string& filePath, std::mt1993
         }
 
         double result;
-        size_t c9_pos = posLine.find(" c9 ");
-        if (c9_pos == std::string::npos) continue;
+        size_t c9Pos = posLine.find(" c9 ");
+        if (c9Pos == std::string::npos) continue;
 
-        std::string resultStr = posLine.substr(c9_pos + 4);
-        std::string fen = posLine.substr(0, c9_pos);
+        std::string resultStr = posLine.substr(c9Pos + 4);
+        std::string fen = posLine.substr(0, c9Pos);
 
         if (!board.setFromFEN(fen) || board.isDraw() || board.isKingInCheck<WHITE>() || board.isKingInCheck<BLACK>()) {
             continue;

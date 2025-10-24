@@ -24,14 +24,18 @@
 namespace Zagreus {
 enum PieceType : uint8_t;
 extern const int baseMaterialValues[GAME_PHASES][PIECE_TYPES];
-extern const int baseMobility[GAME_PHASES][PIECE_TYPES];
+
+extern const int baseKnightMobility[9][GAME_PHASES];
+extern const int baseBishopMobility[14][GAME_PHASES];
+extern const int baseRookMobility[15][GAME_PHASES];
+extern const int baseQueenMobility[28][GAME_PHASES];
 
 // Pawn structure
 // Doubled pawns
 extern const int baseDoubledPawnPenalty[GAME_PHASES];
 
 // Passed Pawns
-extern const int basePassedPawnBonus[GAME_PHASES][RANKS];
+// extern const int basePassedPawnBonus[GAME_PHASES][RANKS];
 
 extern const int baseMgPawnTable[64];
 extern const int baseEgPawnTable[64];
