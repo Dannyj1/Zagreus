@@ -761,7 +761,7 @@ Variables</h2></td></tr>
 <tr class="separator:a77212675e9ec1ea5afc27509b4afdd4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a025a34fc4750a9af6e51d2c95b95c4d0" id="r_a025a34fc4750a9af6e51d2c95b95c4d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a025a34fc4750a9af6e51d2c95b95c4d0">evalMobility</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="el" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>]</td></tr>
 <tr class="separator:a025a34fc4750a9af6e51d2c95b95c4d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f3c96f4d038028ca2915d6001233228" id="r_a5f3c96f4d038028ca2915d6001233228"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f3c96f4d038028ca2915d6001233228">evalDoubledPawnPenalty</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-10, -21}</td></tr>
+<tr class="memitem:a5f3c96f4d038028ca2915d6001233228" id="r_a5f3c96f4d038028ca2915d6001233228"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f3c96f4d038028ca2915d6001233228">evalDoubledPawnPenalty</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-14, -30}</td></tr>
 <tr class="separator:a5f3c96f4d038028ca2915d6001233228"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fac5ee53f7209a034032316726a7e81" id="r_a6fac5ee53f7209a034032316726a7e81"><td class="memItemLeft" align="right" valign="top">std::random_device&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fac5ee53f7209a034032316726a7e81">rd</a></td></tr>
 <tr class="separator:a6fac5ee53f7209a034032316726a7e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -4329,7 +4329,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00131">131</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00196">196</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -4590,7 +4590,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00114">114</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00179">179</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -6440,7 +6440,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00148">148</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00213">213</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -10484,12 +10484,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {-14, -21, -11, -8, -7, -9, -17, -24, -8,  -4, 7,   -12, -3, -13, -4, -14,</div>
-<div class="line">                           2,   -8,  0,   -1, -2, 6,  0,   4,   -3,  9,  12,  9,   14, 10,  3,  2,</div>
-<div class="line">                           -6,  3,   13,  19, 7,  10, -3,  -9,  -12, -3, 8,   10,  13, 3,   -7, -15,</div>
-<div class="line">                           -14, -18, -7,  -1, 4,  -9, -15, -27, -23, -9, -22, -5,  -9, -16, -5, -17}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -8, -25, -8, -13, 1, -11, -26, -25,</div>
+<div class="line">    -3, -5, 7, -15, -12, -24, -2, -7,</div>
+<div class="line">    3, -10, 3, 1, -6, 9, 1, 10,</div>
+<div class="line">    1, 2, 3, -1, 6, 4, 3, -6,</div>
+<div class="line">    -6, -9, 14, 1, -5, 11, -4, -16,</div>
+<div class="line">    -8, -7, 5, 8, 5, -4, -12, -17,</div>
+<div class="line">    -17, -20, -9, -7, 7, -15, -12, -28,</div>
+<div class="line">    -17, -8, -12, 6, -3, -9, -4, -16</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00080">80</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00129">129</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10505,17 +10511,17 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    -73, -35, -18, -18, -11, 15, 4, -17,</div>
-<div class="line">    -12, 17, 14, 17, 17, 38, 23, 11,</div>
-<div class="line">    10, 17, 22, 15, 20, 45, 45, 13,</div>
-<div class="line">    -8, 22, 24, 27, 26, 33, 26, 3,</div>
-<div class="line">    -18, -4, 21, 23, 26, 23, 9, -11,</div>
-<div class="line">    -19, -3, 11, 21, 23, 16, 7, -9,</div>
-<div class="line">    -27, -11, 4, 13, 14, 4, -5, -17,</div>
-<div class="line">    -52, -34, -21, -11, -28, -14, -23, -42</div>
+<div class="line">    -71, -26, -23, -18, -8, 20, 1, -16,</div>
+<div class="line">    -11, 11, 19, 12, 14, 40, 19, 8,</div>
+<div class="line">    6, 12, 20, 18, 22, 40, 41, 13,</div>
+<div class="line">    -3, 18, 15, 22, 18, 30, 23, 4,</div>
+<div class="line">    -17, -11, 14, 18, 21, 21, 3, -9,</div>
+<div class="line">    -25, 1, 5, 16, 18, 19, 5, -12,</div>
+<div class="line">    -31, -17, 5, 22, 13, 13, -1, -14,</div>
+<div class="line">    -56, -37, -20, -9, -24, -12, -36, -41</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00100">100</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00165">165</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10530,12 +10536,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {-58, -38, -13, -29, -31, -26, -62, -97, -25, -8,  -25, -2,  -9,  -25, -24, -53,</div>
-<div class="line">                           -25, -20, 10,  9,   -1,  -9,  -20, -41, -17, 3,   22,  22,  22,  11,  8,   -18,</div>
-<div class="line">                           -18, -6,  16,  24,  16,  17,  4,   -18, -23, -3,  -1,  15,  10,  -3,  -20, -22,</div>
-<div class="line">                           -42, -20, -10, -5,  -2,  -20, -23, -44, -28, -51, -23, -15, -22, -18, -50, -64}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -62, -36, -28, -29, -28, -28, -60, -110,</div>
+<div class="line">    -27, -12, -22, 1, -14, -26, -21, -64,</div>
+<div class="line">    -23, -14, 6, 7, -9, -15, -16, -41,</div>
+<div class="line">    -12, 8, 34, 25, 25, 4, 8, -21,</div>
+<div class="line">    -15, 1, 17, 27, 15, 16, 3, -15,</div>
+<div class="line">    -23, 6, -13, 8, 6, -6, -21, -13,</div>
+<div class="line">    -41, -11, -17, -8, 0, -16, -29, -35,</div>
+<div class="line">    -30, -49, -26, -13, -13, -11, -51, -65</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00074">74</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00117">117</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10550,11 +10562,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {0,  0,  0,  0,  0,  0, 0,  0,  180, 165, 158, 133, 148, 132, 164, 181, 99, 100, 87, 69, 57, 53,</div>
-<div class="line">                         83, 86, 33, 24, 13, 5, -2, 4,  17,  17,  13,  9,   -3,  -7,  -7,  -8,  3,  -1,  4,  7,  -6, 1,</div>
-<div class="line">                         0,  -5, -1, -8, 13, 8, 8,  10, 13,  0,   2,   -7,  0,   0,   0,   0,   0,  0,   0,  0}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    6, 2, 5, 3, -3, 4, -2, -6,</div>
+<div class="line">    173, 172, 159, 135, 148, 141, 165, 187,</div>
+<div class="line">    99, 97, 86, 69, 54, 55, 84, 86,</div>
+<div class="line">    38, 26, 11, 4, 2, 10, 14, 15,</div>
+<div class="line">    15, 10, -5, -6, -11, -14, 2, -2,</div>
+<div class="line">    7, 1, -8, 9, -1, 4, -2, -11,</div>
+<div class="line">    21, 7, 12, 0, 17, 3, 0, -8,</div>
+<div class="line">    2, 5, -5, 0, 3, 2, 0, 3</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00069">69</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00105">105</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10569,15 +10588,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {-9,  22,  22,  26,  26,  19,  10,  20,  -17, 20,  32,  41,  57, 25,  30,  0,</div>
-<div class="line">                          -21, 6,   9,   50,  48,  34,  19,  9,   3,   22,  24,  45,  56, 41,  58,  36,</div>
-<div class="line">    -18, 28, 19, 46, 30, 34, 39, 23,</div>
-<div class="line">    -16, -27, 15, 6, 9, 17, 10, 5,</div>
-<div class="line">    -22, -23, -30, -15, -16, -23, -36, -32,</div>
-<div class="line">    -34, -27, -22, -42, -5, -32, -20, -41</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -14, 12, 24, 25, 23, 15, 7, 14,</div>
+<div class="line">    -17, 20, 34, 38, 55, 23, 28, 1,</div>
+<div class="line">    -25, 7, 7, 57, 47, 39, 22, 7,</div>
+<div class="line">    1, 22, 22, 44, 50, 36, 54, 42,</div>
+<div class="line">    -21, 31, 18, 44, 34, 33, 42, 25,</div>
+<div class="line">    -16, -28, 17, 7, 8, 14, 8, 2,</div>
+<div class="line">    -24, -10, -33, -14, -11, -28, -37, -33,</div>
+<div class="line">    -29, -34, -21, -38, -8, -35, -15, -44</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00091">91</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00153">153</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10592,11 +10614,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {13, 10,  18, 15,  12, 12, 8, 5, 11, 13, 13,  11, -3, 3, 8,  3,  7,  7,   7,  5,  4,  -3,</div>
-<div class="line">                         -5, -3,  4,  3,   13, 1,  2, 1, -1, 2,  3,   5,  8,  4, -5, -6, -8, -11, -4, 0,  -5, -1,</div>
-<div class="line">                         -7, -12, -8, -16, -6, -6, 0, 2, -9, -9, -11, -3, -9, 2, 3,  -1, -5, -13, 4,  -20}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    19, 9, 11, 14, 10, 12, -3, 2,</div>
+<div class="line">    6, 8, 8, 6, -6, -6, 9, 5,</div>
+<div class="line">    10, 2, 11, 15, 1, -1, -5, -1,</div>
+<div class="line">    5, 17, 12, 3, 1, -3, 0, 2,</div>
+<div class="line">    4, -8, 12, 1, -4, -5, -4, -1,</div>
+<div class="line">    2, 2, -3, -7, -3, -8, -11, -15,</div>
+<div class="line">    -13, 5, -2, 6, -10, -6, -8, 1,</div>
+<div class="line">    0, 7, 9, -2, -6, -7, 0, -22</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00086">86</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00141">141</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10612,7 +10641,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00112">112</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00177">177</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10623,7 +10652,7 @@ Here is the caller graph for this function:</div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int Zagreus::evalDoubledPawnPenalty = {-10, -21}</td>
+          <td class="memname">int Zagreus::evalDoubledPawnPenalty = {-14, -30}</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -10644,8 +10673,8 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    {90, 459, 496, 655, 1284, 0},  </div>
-<div class="line">    {108, 257, 263, 475, 874, 0}   </div>
+<div class="line">    {78, 371, 404, 539, 1012, 1}, </div>
+<div class="line">    {117, 307, 311, 529, 1008, -6} </div>
 <div class="line">}</div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="eval__features_8cpp_source.html#l00027">27</a> of file <a class="el" href="eval__features_8cpp_source.html">eval_features.cpp</a>.</p>
@@ -10664,8 +10693,8 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    {0, 4, 5, 2, 4, 0},  </div>
-<div class="line">    {0, 2, 3, 5, 6, 0}   </div>
+<div class="line">    {3, 6, 7, 4, 4, 2}, </div>
+<div class="line">    {5, 2, 3, 5, 6, 11} </div>
 <div class="line">}</div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="eval__features_8cpp_source.html#l00033">33</a> of file <a class="el" href="eval__features_8cpp_source.html">eval_features.cpp</a>.</p>
@@ -10731,12 +10760,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {-28, 4,  -81, -37, -25, -42, 7,  -8, -26, 16, -18, -13, 30,  58,  17,  -47,</div>
-<div class="line">                           -16, 37, 42,  39,  34,  50,  37, -2, -4,  5, 19, 49, 36, 37, 7, -2,</div>
-<div class="line">                           -6,  13, 13,  26,  34,  12,  10, 4,  0,   15, 15,  14,  14,  27,  18,  10,</div>
-<div class="line">                           4,   15, 16,  0,   7,   21,  36, 1,  -33, -3, -13, -21, -13, -12, -39, -21}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -27, -3, -80, -36, -29, -46, 10, -6,</div>
+<div class="line">    -23, 16, -21, -12, 28, 55, 20, -48,</div>
+<div class="line">    -23, 33, 39, 45, 38, 51, 41, 3,</div>
+<div class="line">    -7, -3, 14, 50, 39, 38, 0, 7,</div>
+<div class="line">    -1, 16, 10, 28, 32, 5, 16, -11,</div>
+<div class="line">    9, 19, 23, 6, 16, 24, 20, 18,</div>
+<div class="line">    4, 30, 12, 14, 20, 22, 49, 4,</div>
+<div class="line">    -31, -4, 13, -12, -7, 0, -43, -25</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00045">45</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00057">57</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10751,12 +10786,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {-64, 23, 16,  -15, -56, -34, 2,   13,  29,  -1,  -20, -7,  -8,  -4,  -38, -29,</div>
-<div class="line">                         -9,  24, 2,   -16, -20, 6,   22,  -22, -17, -20, -12, -27, -30, -25, -14, -36,</div>
-<div class="line">                         -49, -1, -27, -39, -45, -44, -33, -52, -14, -14, -22, -46, -45, -30, -15, -27,</div>
-<div class="line">                         1,   7,  -8,  -64, -44, -16, 9,   8,   -15, 36,  12,  -54, 8,   -28, 26,  14}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -65, 23, 15, -19, -52, -34, 12, 8,</div>
+<div class="line">    30, -12, -26, -4, -11, 1, -55, -27,</div>
+<div class="line">    -6, 28, -2, -6, -29, 6, 17, -10,</div>
+<div class="line">    -17, -15, -10, -33, -29, -25, -13, -40,</div>
+<div class="line">    -50, -2, -18, -43, -49, -41, -31, -48,</div>
+<div class="line">    -11, -6, -19, -47, -42, -27, -13, -28,</div>
+<div class="line">    5, 4, -10, -66, -47, -20, 12, 12,</div>
+<div class="line">    -13, 37, 7, -51, 6, -27, 37, 17</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00063">63</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00093">93</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10771,12 +10812,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {-168, -90, -34, -49, 62, -96, -15, -107, -73,  -41, 70,  35,  23,  63,  7,   -17,</div>
-<div class="line">                           -47,  60,  37,  64,  83, 131, 74,  43,   -9,   17,  19,  53,  36,  68,  18,  22,</div>
-<div class="line">                           -13,  4,   16,  13,  28, 19,  21,  -8,   -23,  -9,  12,  10,  19,  17,  25,  -16,</div>
-<div class="line">                           -29,  -51, -12, -3,  -1, 18,  -14, -19,  -103, -21, -59, -32, -17, -28, -19, -23}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -163, -89, -41, -53, 60, -101, -11, -115,</div>
+<div class="line">    -70, -39, 73, 37, 25, 54, 9, -24,</div>
+<div class="line">    -48, 53, 39, 68, 82, 132, 76, 43,</div>
+<div class="line">    -10, 20, 22, 53, 22, 59, 8, 26,</div>
+<div class="line">    -10, 3, 17, 16, 27, 23, 16, -6,</div>
+<div class="line">    -21, -13, 12, 3, 26, 14, 23, -26,</div>
+<div class="line">    -35, -51, -12, 18, 7, 23, -17, -17,</div>
+<div class="line">    -100, -15, -49, -31, -18, -30, -18, -17</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00039">39</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00045">45</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10791,10 +10838,16 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {0,   0,  0,   0,   0,   0,  0,  0,   97,  131, 60, 95,  68, 121, 34, -11,</div>
-<div class="line">                         -6,  7,  26,  31,  65,  57, 25, -20, -14, 13,  6,  20,  22, 12,  17, -23,</div>
-<div class="line">                         -28, -2, -5,  11,  16,  6,  10, -27, -27, -4,  -4, -10, 3,  3,   34, -12,</div>
-<div class="line">                         -34, -1, -19, -22, -15, 25, 40, -19, 0,   0,   0,  0,   0,  0,   0,  0}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -7, -3, 2, -4, -3, 0, 0, -6,</div>
+<div class="line">    89, 125, 62, 106, 72, 127, 37, -17,</div>
+<div class="line">    -6, 8, 16, 31, 53, 64, 30, -30,</div>
+<div class="line">    -19, 0, -1, 10, 10, 13, 17, -22,</div>
+<div class="line">    -32, -12, -15, 1, 4, 4, -1, -42,</div>
+<div class="line">    -25, -9, -6, -8, 13, -9, 30, -11,</div>
+<div class="line">    -22, 0, -16, -6, 1, 32, 49, -6,</div>
+<div class="line">    -3, -6, 8, 1, 11, 1, 1, -4</div>
+<div class="line">}</div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00033">33</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
@@ -10811,12 +10864,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {-28, 0,   29, 12, 59, 44, 44, 44, -24, -40, -5,  1,   -16, 55,  29,  54,</div>
-<div class="line">                          -13, -16, 7,  8,   29, 55, 47, 57, -26, -26, -16, -17, -1,  17,  -2,  1,</div>
-<div class="line">                          -9,  -26, -9, -10, -2, -4, 3,  -3, -14, 2,   -11, -2,  -5,  2,   14,  5,</div>
-<div class="line">                          -35, -8,  11, 2,   8,  15, -3, 1,  -1,  -17, -9,  10,  -15, -25, -31, -50}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    -30, 6, 29, 19, 55, 41, 42, 47,</div>
+<div class="line">    -29, -46, -4, -3, -18, 57, 27, 50,</div>
+<div class="line">    -17, -21, 4, 5, 25, 52, 53, 61,</div>
+<div class="line">    -34, -26, -13, -24, -2, 14, -11, 5,</div>
+<div class="line">    -8, -22, -6, -18, -5, -7, 0, -1,</div>
+<div class="line">    -14, 1, -14, -8, -2, 2, 1, 3,</div>
+<div class="line">    -31, -6, 10, 8, 15, 9, 2, 10,</div>
+<div class="line">    -14, -24, 2, 20, -7, -21, -36, -42</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00057">57</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00081">81</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10831,12 +10890,18 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {32,  42,  32,  51, 63, 9,  31, 43,  27,  32,  57,  62,  81, 68, 26,  43,</div>
-<div class="line">                         -5,  19,  27,  36, 17, 45, 61, 16,  -23, -11, 7,   26,  24, 35, -8,  -20,</div>
-<div class="line">                         -36, -26, -12, -1, 9,  -7, 6,  -23, -45, -25, -16, -17, 3,  0,  -5,  -33,</div>
-<div class="line">                         -44, -16, -20, -9, -1, 12, -6, -71, -19, -13, 1,   17,  16, 7,  -37, -27}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    31, 39, 26, 51, 60, 8, 33, 56,</div>
+<div class="line">    22, 28, 53, 51, 86, 68, 23, 55,</div>
+<div class="line">    -4, 16, 27, 37, 20, 58, 48, 21,</div>
+<div class="line">    -23, -4, 6, 25, 23, 33, -11, -13,</div>
+<div class="line">    -34, -31, -14, -9, 6, -2, 10, -14,</div>
+<div class="line">    -49, -20, -11, -11, -4, 2, -6, -36,</div>
+<div class="line">    -47, -22, -13, -8, -4, 1, -7, -70,</div>
+<div class="line">    -9, -3, 7, 18, 23, 12, -38, -16</div>
+<div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00051">51</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00069">69</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>
@@ -10852,7 +10917,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00111">111</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00176">176</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
 
 </div>
 </div>

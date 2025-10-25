@@ -119,21 +119,21 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// Material values</span></div>
 <div class="foldopen" id="foldopen00027" data-start="{" data-end="};">
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a">   27</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a">evalMaterialValues</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="code hl_define" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>]{</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    {90, 459, 496, 655, 1284, 0},  <span class="comment">// Midgame</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    {108, 257, 263, 475, 874, 0}   <span class="comment">// Endgame</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    {78, 371, 404, 539, 1012, 1}, <span class="comment">// Midgame</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    {117, 307, 311, 529, 1008, -6} <span class="comment">// Endgame</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>};</div>
 </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">// Mobility values</span></div>
 <div class="foldopen" id="foldopen00033" data-start="{" data-end="};">
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0">   33</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0">evalMobility</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="code hl_define" href="constants_8h.html#ab2852fb03da622f49801aa40a676c658">PIECE_TYPES</a>]{</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    {0, 4, 5, 2, 4, 0},  <span class="comment">// Midgame</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    {0, 2, 3, 5, 6, 0}   <span class="comment">// Endgame</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    {3, 6, 7, 4, 4, 2}, <span class="comment">// Midgame</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    {5, 2, 3, 5, 6, 11} <span class="comment">// Endgame</span></div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>};</div>
 </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">// Pawn structure</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228">   39</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228">evalDoubledPawnPenalty</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-10, -21};</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228">   39</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228">evalDoubledPawnPenalty</a>[<a class="code hl_define" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {-14, -30};</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">// Passed Pawns</span></div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">/*int evalPassedPawnBonus[GAME_PHASES][RANKS] = {</span></div>
