@@ -1,20 +1,11 @@
 <map id="src/eval_features.h" name="src/eval_features.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="262,5,409,31"/>
-<area shape="rect" id="Node000002" href="$eval_8cpp.html" title=" " alt="" coords="5,152,105,177"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="298,39,209,81,76,154,73,150,206,76,295,34"/>
-<area shape="rect" id="Node000003" href="$eval_8h.html" title=" " alt="" coords="219,79,305,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="315,42,276,80,272,77,312,38"/>
-<area shape="rect" id="Node000008" href="$eval__features_8cpp.html" title=" " alt="" coords="329,79,491,104"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="359,38,400,77,396,80,355,42"/>
-<area shape="rect" id="Node000009" href="$uci_8cpp.html" title=" " alt="" coords="515,79,606,104"/>
-<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="385,32,525,76,523,81,384,37"/>
-<area shape="poly" id="edge4_Node000003_Node000002" title=" " alt="" coords="217,111,90,154,88,149,215,106"/>
-<area shape="rect" id="Node000004" href="$board_8cpp.html" title=" " alt="" coords="130,152,239,177"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="241,115,199,154,196,150,238,111"/>
-<area shape="rect" id="Node000005" href="$move__picker_8cpp.html" title=" " alt="" coords="263,152,418,177"/>
-<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="287,111,330,150,326,154,283,115"/>
-<area shape="rect" id="Node000006" href="$pst_8cpp.html" title=" " alt="" coords="443,152,535,177"/>
-<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="312,106,453,149,451,154,311,111"/>
-<area shape="rect" id="Node000007" href="$search_8cpp.html" title=" " alt="" coords="559,152,674,177"/>
-<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="318,101,319,101,559,149,558,155,317,107,317,107"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="211,5,358,31"/>
+<area shape="rect" id="Node000002" href="$eval_8cpp.html" title=" " alt="" coords="5,79,105,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="235,37,93,81,92,76,234,32"/>
+<area shape="rect" id="Node000003" href="$eval__features_8cpp.html" title=" " alt="" coords="129,79,291,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="265,42,224,80,220,77,261,38"/>
+<area shape="rect" id="Node000004" href="$pst_8cpp.html" title=" " alt="" coords="315,79,407,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="309,38,350,76,346,80,305,42"/>
+<area shape="rect" id="Node000005" href="$uci_8cpp.html" title=" " alt="" coords="431,79,522,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="329,33,446,76,444,81,328,38"/>
 </map>
