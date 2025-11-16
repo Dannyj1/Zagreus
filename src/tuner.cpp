@@ -16,6 +16,8 @@
 #include "eval_base_values.h"
 #include "eval_features.h"
 #include "pst.h"
+#include "search.h"
+#include "tt.h"
 #include "types.h"
 #include "uci.h"
 
@@ -23,13 +25,13 @@ namespace Zagreus {
 const double learningRate = 0.1;
 const double earlyStoppingMinDelta = 1e-4;
 const int maxIterations = 200;
-const int batchSize = 256;
+const int batchSize = 8192;
 const int earlyStoppingPatience = 5;
 const int earlyStoppingWarmup = 0;
-const int saveEvery = 5;
+const int saveFrequency = 5;
 int seed = 42;
 
-const int delta = 1;
+const float delta = 0.5;
 const double beta1 = 0.9;
 const double beta2 = 0.999;
 const double epsilon = 1e-8;
@@ -75,18 +77,6 @@ TunedEvaluationParameters getTunedParameters(const std::vector<double>& newWeigh
     TunedEvaluationParameters params{};
     auto weightsCopy = newWeights;
 
-    for (int i = materialWeightStart; i < pstWeightStart; ++i) {
-        if (weightsCopy[i] < 0) {
-            weightsCopy[i] = 0;
-        }
-    }
-
-    for (int i = mobilityWeightStart; i < doubledPawnWeightStart; ++i) {
-        if (weightsCopy[i] < 0) {
-            weightsCopy[i] = 0;
-        }
-    }
-
     for (int phase = 0; phase < GAME_PHASES; ++phase) {
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
             params.evalMaterialValues[phase][piece] = static_cast<int>(std::round(
@@ -98,28 +88,31 @@ TunedEvaluationParameters getTunedParameters(const std::vector<double>& newWeigh
         for (Square square = A1; square <= H8; square++) {
             const PieceType pieceType = getPieceType(piece);
             const PieceColor color = getPieceColor(piece);
-            const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) +
-                                (color == WHITE ? square ^ 56 : square);
-            const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) +
-                                (color == WHITE ? square ^ 56 : square);
+            const int canonicalSquare = (color == WHITE) ? (square ^ 56) : square;
 
-            const int baseMgPst =
-                color == WHITE ? getBaseMidgameTable(pieceType)[square ^ 56] : getBaseMidgameTable(pieceType)[square];
-            const int baseEgPst =
-                color == WHITE ? getBaseEndgameTable(pieceType)[square ^ 56] : getBaseEndgameTable(pieceType)[square];
+            const int mgIndex =
+                pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + canonicalSquare;
+            const int egIndex =
+                pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + canonicalSquare;
 
-            params.midgamePstTable[piece][square] = params.evalMaterialValues[MIDGAME][pieceType] +
-                                                    static_cast<int>(std::round(baseMgPst + weightsCopy[mgIndex]));
-            params.endgamePstTable[piece][square] = params.evalMaterialValues[ENDGAME][pieceType] +
-                                                    static_cast<int>(std::round(baseEgPst + weightsCopy[egIndex]));
+            const int baseMgPst = getBaseMidgameTable(pieceType)[canonicalSquare];
+            const int baseEgPst = getBaseEndgameTable(pieceType)[canonicalSquare];
+
+            params.midgamePstTable[piece][square] =
+                params.evalMaterialValues[MIDGAME][pieceType] +
+                static_cast<int>(std::round(baseMgPst + weightsCopy[mgIndex]));
+            params.endgamePstTable[piece][square] =
+                params.evalMaterialValues[ENDGAME][pieceType] +
+                static_cast<int>(std::round(baseEgPst + weightsCopy[egIndex]));
         }
     }
 
     for (int phase = 0; phase < GAME_PHASES; ++phase) {
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
             const int index = mobilityWeightStart + (phase * PIECE_TYPES) + piece;
-            params.evalMobility[phase][piece] =
+            int mobilityValue =
                 static_cast<int>(std::round(baseMobility[phase][piece] + weightsCopy[index]));
+            params.evalMobility[phase][piece] = mobilityValue;
         }
     }
 
@@ -144,15 +137,15 @@ void updateEvaluationParameters(const std::vector<double>& newWeights) {
         for (Square square = A1; square <= H8; square++) {
             const PieceType pieceType = getPieceType(piece);
             const PieceColor color = getPieceColor(piece);
-            const int mgIndex = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) +
-                                (color == WHITE ? square ^ 56 : square);
-            const int egIndex = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) +
-                                (color == WHITE ? square ^ 56 : square);
+            const int canonicalSquare = (color == WHITE) ? (square ^ 56) : square;
 
-            const int baseMgPst =
-                color == WHITE ? getBaseMidgameTable(pieceType)[square ^ 56] : getBaseMidgameTable(pieceType)[square];
-            const int baseEgPst =
-                color == WHITE ? getBaseEndgameTable(pieceType)[square ^ 56] : getBaseEndgameTable(pieceType)[square];
+            const int mgIndex =
+                pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + canonicalSquare;
+            const int egIndex =
+                pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (pieceType * SQUARES) + canonicalSquare;
+
+            const int baseMgPst = getBaseMidgameTable(pieceType)[canonicalSquare];
+            const int baseEgPst = getBaseEndgameTable(pieceType)[canonicalSquare];
 
             midgamePstTable[piece][square] =
                 evalMaterialValues[MIDGAME][pieceType] + static_cast<int>(std::round(baseMgPst + newWeights[mgIndex]));
@@ -164,7 +157,8 @@ void updateEvaluationParameters(const std::vector<double>& newWeights) {
     for (int phase = 0; phase < GAME_PHASES; ++phase) {
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
             const int index = mobilityWeightStart + (phase * PIECE_TYPES) + piece;
-            evalMobility[phase][piece] = static_cast<int>(std::round(baseMobility[phase][piece] + newWeights[index]));
+            int mobilityValue = static_cast<int>(std::round(baseMobility[phase][piece] + newWeights[index]));
+            evalMobility[phase][piece] = mobilityValue;
         }
     }
 
@@ -224,9 +218,7 @@ int evaluateFromTrace(const EvalTrace& trace, const PieceColor sideToMove, const
 }
 
 double calculateError(const std::vector<TunePosition>& positions) {
-    const double epsilon = 1e-10;
     double totalError = 0.0;
-
     const auto params = getTunedParameters(weights);
 
 #pragma omp parallel for reduction(+ : totalError) default(none) shared(positions, epsilon, params)
@@ -238,8 +230,8 @@ double calculateError(const std::vector<TunePosition>& positions) {
         }
 
         const double prediction = sigmoid(evalScore);
-        totalError +=
-            pos.result * -std::log(prediction + epsilon) + (1.0 - pos.result) * -std::log(1.0 - prediction + epsilon);
+        const double error = pos.result - prediction;
+        totalError += error * error;
     }
 
     return (1.0 / static_cast<double>(positions.size())) * totalError;
@@ -250,7 +242,6 @@ std::vector<double> calculateGradients(const std::vector<TunePosition>& position
     std::ranges::fill(gradients, 0.0);
 
     const double N = static_cast<double>(positions.size());
-    const double epsilon = 1e-10;
 
 #pragma omp parallel for default(none) shared(positions, weights, delta, gradients, N, epsilon)
     for (int j = 0; j < static_cast<int>(weights.size()); ++j) {
@@ -268,8 +259,8 @@ std::vector<double> calculateGradients(const std::vector<TunePosition>& position
             }
 
             const double plusSigmoid = sigmoid(evalScorePlus);
-            totalLossPlus += pos.result * -std::log(plusSigmoid + epsilon) +
-                             (1.0 - pos.result) * -std::log(1.0 - plusSigmoid + epsilon);
+            const double errorPlus = pos.result - plusSigmoid;
+            totalLossPlus += errorPlus * errorPlus;
         }
 
         const double avgLossPlus = totalLossPlus / N;
@@ -288,8 +279,8 @@ std::vector<double> calculateGradients(const std::vector<TunePosition>& position
             }
 
             const double minusSigmoid = sigmoid(evalScoreMinus);
-            totalLossMinus += pos.result * -std::log(minusSigmoid + epsilon) +
-                              (1.0 - pos.result) * -std::log(1.0 - minusSigmoid + epsilon);
+            const double errorMinus = pos.result - minusSigmoid;
+            totalLossMinus += errorMinus * errorMinus;
         }
 
         const double avgLossMinus = totalLossMinus / N;
@@ -360,7 +351,7 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
     fout << "int evalMobility[GAME_PHASES][PIECE_TYPES]{\n";
     fout << "    {";
     for (int piece = 0; piece < PIECE_TYPES; ++piece) {
-        const int value = static_cast<int>(
+        int value = static_cast<int>(
             std::round(baseMobility[MIDGAME][piece] + weights[mobilityWeightStart + (MIDGAME * PIECE_TYPES) + piece]));
         fout << value;
         if (piece < PIECE_TYPES - 1) fout << ", ";
@@ -369,7 +360,7 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
 
     fout << "    {";
     for (int piece = 0; piece < PIECE_TYPES; ++piece) {
-        const int value = static_cast<int>(
+        int value = static_cast<int>(
             std::round(baseMobility[ENDGAME][piece] + weights[mobilityWeightStart + (ENDGAME * PIECE_TYPES) + piece]));
         fout << value;
         if (piece < PIECE_TYPES - 1) fout << ", ";
@@ -392,7 +383,7 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
         for (int rank = 7; rank >= 0; --rank) {
             fout << "    ";
             for (int file = 0; file < 8; ++file) {
-                const int square = (7 - rank) * 8 + file;
+                const int square = rank * 8 + file;
                 const int index = pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
                 const int value = static_cast<int>(
                     std::round(getBaseMidgameTable(static_cast<PieceType>(piece))[square] + weights[index]));
@@ -412,7 +403,7 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
         for (int rank = 7; rank >= 0; --rank) {
             fout << "    ";
             for (int file = 0; file < 8; ++file) {
-                const int square = (7 - rank) * 8 + file;
+                const int square = rank * 8 + file;
                 const int index = pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
                 const int value = static_cast<int>(
                     std::round(getBaseEndgameTable(static_cast<PieceType>(piece))[square] + weights[index]));
@@ -493,7 +484,7 @@ void gradientDescent(std::vector<TunePosition>& trainingSet, const std::vector<T
         std::cout << "Iteration " << iteration + 1 << "/" << maxIterations << " - Training Error: " << iterationError
                   << " - Validation Error: " << validationError << std::endl;
 
-        if ((iteration + 1) % saveEvery == 0) {
+        if ((iteration + 1) % saveFrequency == 0) {
             exportTunedValues("tuned_values.h", iteration + 1, iterationError, validationError,
                               calculateError(testSet));
         }
