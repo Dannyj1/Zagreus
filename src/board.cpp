@@ -746,12 +746,6 @@ void Board::unmakeNullMove() {
     this->zobristHash = state.zobristHash;
 }
 
-static const Piece pieceCharLookup[128] = {
-    ['P'] = WHITE_PAWN,   ['p'] = BLACK_PAWN,   ['N'] = WHITE_KNIGHT, ['n'] = BLACK_KNIGHT,
-    ['B'] = WHITE_BISHOP, ['b'] = BLACK_BISHOP, ['R'] = WHITE_ROOK,   ['r'] = BLACK_ROOK,
-    ['Q'] = WHITE_QUEEN,  ['q'] = BLACK_QUEEN,  ['K'] = WHITE_KING,   ['k'] = BLACK_KING,
-};
-
 /**
  * \brief Sets a piece on the board from a FEN character.
  * \param character The FEN character representing the piece.
@@ -759,11 +753,9 @@ static const Piece pieceCharLookup[128] = {
  */
 void Board::setPieceFromFENChar(const char character, const uint8_t square) {
     assert(square < SQUARES);
-    const Piece piece = pieceCharLookup[static_cast<size_t>(character)];
-    setPiece(piece, square);
 
     // Uppercase char = white, lowercase = black
-    /*switch (character) {
+    switch (character) {
         case 'P':
             setPiece(WHITE_PAWN, square);
             break;
@@ -802,7 +794,7 @@ void Board::setPieceFromFENChar(const char character, const uint8_t square) {
             break;
         default:
             break;
-    }*/
+    }
 }
 
 /**

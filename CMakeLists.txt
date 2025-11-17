@@ -29,9 +29,9 @@ set(ZAGREUS_VERSION_MINOR "0")
 set(BUILD_FLAGS "")
 
 # Define the different profiles and their corresponding flags
-set(DEBUG_FLAGS "-static-libgcc -static-libstdc++ -fno-omit-frame-pointer -pthread -gdwarf-4 -g -Wno-unused-command-line-argument -std=c++23")
-set(PROFILING_FLAGS "-static-libgcc -static-libstdc++ -pthread -g -fno-omit-frame-pointer -Wno-unused-command-line-argument -std=c++23")
-set(RELEASE_FLAGS "-static-libgcc -static-libstdc++ -pthread -Wno-unused-command-line-argument -std=c++23")
+set(DEBUG_FLAGS "-static-libgcc -static-libstdc++ -fno-omit-frame-pointer -pthread -gdwarf-4 -g -std=c++23")
+set(PROFILING_FLAGS "-static-libgcc -static-libstdc++ -pthread -g -fno-omit-frame-pointer -std=c++23")
+set(RELEASE_FLAGS "-static-libgcc -static-libstdc++ -pthread -std=c++23")
 
 if (WIN32)
     # Add the --pdb flag for Windows
