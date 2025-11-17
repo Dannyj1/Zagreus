@@ -280,13 +280,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     } else {
         // Internal iterative reductions (IIR)
-        if (depth >= 8 && ttMove == NO_MOVE) {
+        /*if (depth >= 6 && ttMove == NO_MOVE) {
+            std::cout << "gfdashgjdakhfjal" << std::endl;
             depth -= 1;
-
-#ifdef TRACE_SEARCH
-            stats.internalIterativeReductions++;
-#endif
-        }
+        }*/
     }
 
     int legalMoves = 0;
@@ -713,7 +710,6 @@ void SearchStats::clearTrace() {
     nmpPrunes = 0;
     lmrSearches = 0;
     lmrResearches = 0;
-    internalIterativeReductions = 0;
     futilityPrunes = 0;
     checkExtensions = 0;
     singularExtensions = 0;
@@ -774,7 +770,6 @@ void SearchStats::printTrace(Engine& engine, int numPositions) const {
     printStatLineWithRate("NMP Prunes", nmpPrunes, nmpSuccessRate);
     printStatLine("LMR Searches", lmrSearches);
     printStatLineWithRate("LMR Researches", lmrResearches, lmrResearchRate);
-    printStatLine("Internal Iterative Reductions", internalIterativeReductions);
     printStatLine("Futility Prunes", futilityPrunes);
     printStatLine("Reverse Futility Prunes", reverseFutilityPrunes);
     printStatLine("Singular Extensions", singularExtensions);
@@ -804,7 +799,6 @@ SearchStats& SearchStats::operator+=(const SearchStats& other) {
     nmpPrunes += other.nmpPrunes;
     lmrSearches += other.lmrSearches;
     lmrResearches += other.lmrResearches;
-    internalIterativeReductions += other.internalIterativeReductions;
     futilityPrunes += other.futilityPrunes;
     reverseFutilityPrunes += other.reverseFutilityPrunes;
     checkExtensions += other.checkExtensions;
