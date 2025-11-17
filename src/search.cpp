@@ -278,6 +278,12 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 return nullMoveScore;
             }
         }
+    } else {
+        // Internal iterative reductions (IIR)
+        /*if (depth >= 6 && ttMove == NO_MOVE) {
+            std::cout << "gfdashgjdakhfjal" << std::endl;
+            depth -= 1;
+        }*/
     }
 
     int legalMoves = 0;
