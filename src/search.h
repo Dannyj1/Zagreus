@@ -73,6 +73,7 @@ struct SearchStats {
     uint64_t nmpPrunes = 0;
     uint64_t lmrSearches = 0;
     uint64_t lmrResearches = 0;
+    uint64_t internalIterativeReductions = 0;
     uint64_t futilityPrunes = 0;
     uint64_t reverseFutilityPrunes = 0;
     uint64_t checkExtensions = 0;
