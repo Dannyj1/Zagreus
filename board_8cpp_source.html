@@ -817,178 +817,170 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>}</div>
 </div>
 <div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span> </div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="keyword">static</span> <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> pieceCharLookup[128] = {</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    [<span class="charliteral">&#39;P&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aa98910381a8ea8065b924a806c71e1f8">WHITE_PAWN</a>,   [<span class="charliteral">&#39;p&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a2a57e9fcdc2a678513fd5fde1f754b32">BLACK_PAWN</a>,   [<span class="charliteral">&#39;N&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7ad4f47a03424d330b654b5b6ab3504026">WHITE_KNIGHT</a>, [<span class="charliteral">&#39;n&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a65d0912277a94b22fbcec71e8c49f87d">BLACK_KNIGHT</a>,</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    [<span class="charliteral">&#39;B&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a615500f3ba5dc0fa90abde0676041b8e">WHITE_BISHOP</a>, [<span class="charliteral">&#39;b&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a82a3d303dacf6645ef8c6e1766739733">BLACK_BISHOP</a>, [<span class="charliteral">&#39;R&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a64af4378222a703ff3d40c1c0ae1e456">WHITE_ROOK</a>,   [<span class="charliteral">&#39;r&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a5712c1f3cee1c5cce594e7a61bd0de8f">BLACK_ROOK</a>,</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    [<span class="charliteral">&#39;Q&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aadf1ce29fe9b9fe00c73ab950580612e">WHITE_QUEEN</a>,  [<span class="charliteral">&#39;q&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a30b05263a9c343f6a4cbf3af19559f31">BLACK_QUEEN</a>,  [<span class="charliteral">&#39;K&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aca2369bad3d86e4a05716035ac635084">WHITE_KING</a>,   [<span class="charliteral">&#39;k&#39;</span>] = <a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a246e7229bb5a2bb421334de50974d5d9">BLACK_KING</a>,</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>};</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span> </div>
-<div class="foldopen" id="foldopen00760" data-start="{" data-end="}">
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno"><a class="line" href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">  760</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">Board::setPieceFromFENChar</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> character, <span class="keyword">const</span> uint8_t square) {</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    assert(square &lt; <a class="code hl_define" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>);</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> piece = pieceCharLookup[<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(character)];</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(piece, square);</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span> </div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    <span class="comment">// Uppercase char = white, lowercase = black</span></div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    <span class="comment">/*switch (character) {</span></div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span><span class="comment">        case &#39;P&#39;:</span></div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span><span class="comment">            setPiece(WHITE_PAWN, square);</span></div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span><span class="comment">        case &#39;p&#39;:</span></div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="comment">            setPiece(BLACK_PAWN, square);</span></div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span><span class="comment">        case &#39;N&#39;:</span></div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span><span class="comment">            setPiece(WHITE_KNIGHT, square);</span></div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span><span class="comment">        case &#39;n&#39;:</span></div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span><span class="comment">            setPiece(BLACK_KNIGHT, square);</span></div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span><span class="comment">        case &#39;B&#39;:</span></div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><span class="comment">            setPiece(WHITE_BISHOP, square);</span></div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span><span class="comment">        case &#39;b&#39;:</span></div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span><span class="comment">            setPiece(BLACK_BISHOP, square);</span></div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="comment">        case &#39;R&#39;:</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span><span class="comment">            setPiece(WHITE_ROOK, square);</span></div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span><span class="comment">        case &#39;r&#39;:</span></div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span><span class="comment">            setPiece(BLACK_ROOK, square);</span></div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span><span class="comment">        case &#39;Q&#39;:</span></div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span><span class="comment">            setPiece(WHITE_QUEEN, square);</span></div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span><span class="comment">        case &#39;q&#39;:</span></div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span><span class="comment">            setPiece(BLACK_QUEEN, square);</span></div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="comment">        case &#39;K&#39;:</span></div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span><span class="comment">            setPiece(WHITE_KING, square);</span></div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="comment">        case &#39;k&#39;:</span></div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="comment">            setPiece(BLACK_KING, square);</span></div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="comment">        default:</span></div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="comment">            break;</span></div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment">    }*/</span></div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>}</div>
+<div class="foldopen" id="foldopen00754" data-start="{" data-end="}">
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno"><a class="line" href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">  754</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">Board::setPieceFromFENChar</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> character, <span class="keyword">const</span> uint8_t square) {</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    assert(square &lt; <a class="code hl_define" href="constants_8h.html#a7fade7363ac979586113d8813d65826b">SQUARES</a>);</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span> </div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    <span class="comment">// Uppercase char = white, lowercase = black</span></div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>    <span class="keywordflow">switch</span> (character) {</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;P&#39;</span>:</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aa98910381a8ea8065b924a806c71e1f8">WHITE_PAWN</a>, square);</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;p&#39;</span>:</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a2a57e9fcdc2a678513fd5fde1f754b32">BLACK_PAWN</a>, square);</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;N&#39;</span>:</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7ad4f47a03424d330b654b5b6ab3504026">WHITE_KNIGHT</a>, square);</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;n&#39;</span>:</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a65d0912277a94b22fbcec71e8c49f87d">BLACK_KNIGHT</a>, square);</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;B&#39;</span>:</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a615500f3ba5dc0fa90abde0676041b8e">WHITE_BISHOP</a>, square);</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;b&#39;</span>:</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a82a3d303dacf6645ef8c6e1766739733">BLACK_BISHOP</a>, square);</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;R&#39;</span>:</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a64af4378222a703ff3d40c1c0ae1e456">WHITE_ROOK</a>, square);</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;r&#39;</span>:</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a5712c1f3cee1c5cce594e7a61bd0de8f">BLACK_ROOK</a>, square);</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;Q&#39;</span>:</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aadf1ce29fe9b9fe00c73ab950580612e">WHITE_QUEEN</a>, square);</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;q&#39;</span>:</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a30b05263a9c343f6a4cbf3af19559f31">BLACK_QUEEN</a>, square);</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;K&#39;</span>:</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7aca2369bad3d86e4a05716035ac635084">WHITE_KING</a>, square);</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>        <span class="keywordflow">case</span> <span class="charliteral">&#39;k&#39;</span>:</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>            <a class="code hl_function" href="classZagreus_1_1Board.html#ab61577ea27b99e8bc99b5004e5645fba">setPiece</a>(<a class="code hl_enumvalue" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7a246e7229bb5a2bb421334de50974d5d9">BLACK_KING</a>, square);</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>        <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>    }</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>}</div>
 </div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span> </div>
-<div class="foldopen" id="foldopen00813" data-start="{" data-end="}">
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno"><a class="line" href="classZagreus_1_1Board.html#af55bc3a5bf87249dcecf75df419f609b">  813</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classZagreus_1_1Board.html#af55bc3a5bf87249dcecf75df419f609b">Board::setFromFEN</a>(<span class="keyword">const</span> std::string_view fen) {</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>    uint8_t index = <a class="code hl_enumvalue" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fae273a67f60d99acb2e0864ef1be168e6">A8</a>;</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>    <span class="keywordtype">int</span> spaces = 0;</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span> </div>
+<div class="foldopen" id="foldopen00805" data-start="{" data-end="}">
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno"><a class="line" href="classZagreus_1_1Board.html#af55bc3a5bf87249dcecf75df419f609b">  805</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classZagreus_1_1Board.html#af55bc3a5bf87249dcecf75df419f609b">Board::setFromFEN</a>(<span class="keyword">const</span> std::string_view fen) {</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>    uint8_t index = <a class="code hl_enumvalue" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fae273a67f60d99acb2e0864ef1be168e6">A8</a>;</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>    <span class="keywordtype">int</span> spaces = 0;</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span> </div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>    <a class="code hl_function" href="classZagreus_1_1Board.html#a0bc759981d0c76d78c03440af1fc766c">reset</a>();</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span> </div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">char</span> character : fen) {</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>        <span class="keywordflow">if</span> (character == <span class="charliteral">&#39; &#39;</span>) {</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>            spaces++;</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>        }</div>
 <div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span> </div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>    <a class="code hl_function" href="classZagreus_1_1Board.html#a0bc759981d0c76d78c03440af1fc766c">reset</a>();</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">char</span> character : fen) {</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        <span class="keywordflow">if</span> (character == <span class="charliteral">&#39; &#39;</span>) {</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>            spaces++;</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>        }</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span> </div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>        <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;,&#39;</span>) {</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>        }</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span> </div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>        <span class="keywordflow">if</span> (spaces == 0) {</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;/&#39;</span>) {</div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>                index -= 16;</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>            }</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span> </div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;1&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;8&#39;</span>) {</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>                index += character - <span class="charliteral">&#39;0&#39;</span>;</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>            }</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;,&#39;</span>) {</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        }</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span> </div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        <span class="keywordflow">if</span> (spaces == 0) {</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;/&#39;</span>) {</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                index -= 16;</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>            }</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;1&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;8&#39;</span>) {</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                index += character - <span class="charliteral">&#39;0&#39;</span>;</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>            }</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span> </div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;A&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;z&#39;</span>) {</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>                <a class="code hl_function" href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">setPieceFromFENChar</a>(character, index);</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>                index++;</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>            }</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>        }</div>
 <div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span> </div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;A&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;z&#39;</span>) {</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>                <a class="code hl_function" href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">setPieceFromFENChar</a>(character, index);</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>                index++;</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>            }</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>        }</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span> </div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>        <span class="keywordflow">if</span> (spaces == 1) {</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>            <span class="keywordflow">if</span> (tolower(character) == <span class="charliteral">&#39;w&#39;</span>) {</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>                sideToMove = <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a>;</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>            } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (tolower(character) == <span class="charliteral">&#39;b&#39;</span>) {</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>                sideToMove = <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4ab1fb42f15541a4c85d5f0023ebdea8f2">BLACK</a>;</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a>);</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>            }</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>        }</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span> </div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>        <span class="keywordflow">if</span> (spaces == 2) {</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;-&#39;</span>) {</div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>            } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;K&#39;</span>) {</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5eac88d0b46821140a315dd42fa50108680">WHITE_KINGSIDE</a>;</div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a792ff6636faa80fd402190354e8dddb2">ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX</a>);</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>            }</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span> </div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;Q&#39;</span>) {</div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5ea92b22860bdd94458bf34aef701abe53c">WHITE_QUEENSIDE</a>;</div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a9fd6784240224a0f3bbbfb9cb6c12095">ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX</a>);</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>            }</div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span> </div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;k&#39;</span>) {</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5eab57cfa1fc870395611d4a564cb8e1139">BLACK_KINGSIDE</a>;</div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a19b7f5ce24364970bf9a0d2ed28d3ce2">ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX</a>);</div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>            }</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span> </div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;q&#39;</span>) {</div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5ea4440bca379a9b21345e272209f141769">BLACK_QUEENSIDE</a>;</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a79d6939f215d359f64b751a6e3d314ea">ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX</a>);</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>        <span class="keywordflow">if</span> (spaces == 1) {</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>            <span class="keywordflow">if</span> (tolower(character) == <span class="charliteral">&#39;w&#39;</span>) {</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>                sideToMove = <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a>;</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>            } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (tolower(character) == <span class="charliteral">&#39;b&#39;</span>) {</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>                sideToMove = <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4ab1fb42f15541a4c85d5f0023ebdea8f2">BLACK</a>;</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a763d2f16525171e564b5ac63c5cb95c5">ZOBRIST_SIDE_TO_MOVE_INDEX</a>);</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>            }</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>        }</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span> </div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>        <span class="keywordflow">if</span> (spaces == 2) {</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;-&#39;</span>) {</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>            } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;K&#39;</span>) {</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5eac88d0b46821140a315dd42fa50108680">WHITE_KINGSIDE</a>;</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a792ff6636faa80fd402190354e8dddb2">ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX</a>);</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>            }</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span> </div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;Q&#39;</span>) {</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5ea92b22860bdd94458bf34aef701abe53c">WHITE_QUEENSIDE</a>;</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a9fd6784240224a0f3bbbfb9cb6c12095">ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX</a>);</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>            }</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span> </div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;k&#39;</span>) {</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5eab57cfa1fc870395611d4a564cb8e1139">BLACK_KINGSIDE</a>;</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a19b7f5ce24364970bf9a0d2ed28d3ce2">ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX</a>);</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>            }</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span> </div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;q&#39;</span>) {</div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>                castlingRights |= <a class="code hl_enumvalue" href="namespaceZagreus.html#a26be0ed2eb6dbddc9a617b4ec7b05a5ea4440bca379a9b21345e272209f141769">BLACK_QUEENSIDE</a>;</div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>                zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a79d6939f215d359f64b751a6e3d314ea">ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX</a>);</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>            }</div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span> </div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>        }</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span> </div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>        <span class="keywordflow">if</span> (spaces == 3) {</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;-&#39;</span>) {</div>
 <div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>                <span class="keywordflow">continue</span>;</div>
 <div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>            }</div>
 <div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span> </div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>        }</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span> </div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>        <span class="keywordflow">if</span> (spaces == 3) {</div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>            <span class="keywordflow">if</span> (character == <span class="charliteral">&#39;-&#39;</span>) {</div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>            }</div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span> </div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>            <span class="keywordflow">if</span> (tolower(character) &lt; <span class="charliteral">&#39;a&#39;</span> || tolower(character) &gt; <span class="charliteral">&#39;h&#39;</span>) {</div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>            }</div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span> </div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>            <span class="keyword">const</span> int8_t file = tolower(character) - <span class="charliteral">&#39;a&#39;</span>;</div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>            <span class="keyword">const</span> int8_t rank = (!sideToMove) == <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a> ? 2 : 5;</div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span> </div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>            <span class="keywordflow">if</span> (file &lt; 0 || file &gt; 7) {</div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>            }</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span> </div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>            enPassantSquare = rank * 8 + file;</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>            zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">ZOBRIST_EN_PASSANT_START_INDEX</a> + (enPassantSquare % 8));</div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>            index += 2;</div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>        }</div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span> </div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>        <span class="keywordflow">if</span> (spaces == 4) {</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;9&#39;</span>) {</div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>                halfMoveClock = halfMoveClock * 10 + (character - <span class="charliteral">&#39;0&#39;</span>);</div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>            }</div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>        }</div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span> </div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>        <span class="keywordflow">if</span> (spaces == 5) {</div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;9&#39;</span>) {</div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>                fullmoveClock = fullmoveClock * 10 + (character - <span class="charliteral">&#39;0&#39;</span>);</div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>            }</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>        }</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>    }</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span> </div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>}</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>            <span class="keywordflow">if</span> (tolower(character) &lt; <span class="charliteral">&#39;a&#39;</span> || tolower(character) &gt; <span class="charliteral">&#39;h&#39;</span>) {</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>            }</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span> </div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>            <span class="keyword">const</span> int8_t file = tolower(character) - <span class="charliteral">&#39;a&#39;</span>;</div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>            <span class="keyword">const</span> int8_t rank = (!sideToMove) == <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a> ? 2 : 5;</div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span> </div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>            <span class="keywordflow">if</span> (file &lt; 0 || file &gt; 7) {</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>            }</div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span> </div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>            enPassantSquare = rank * 8 + file;</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>            zobristHash ^= <a class="code hl_function" href="namespaceZagreus.html#a2828e686dcbd38c309b309a9f0506272">getZobristConstant</a>(<a class="code hl_define" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">ZOBRIST_EN_PASSANT_START_INDEX</a> + (enPassantSquare % 8));</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>            index += 2;</div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>        }</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span> </div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>        <span class="keywordflow">if</span> (spaces == 4) {</div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;9&#39;</span>) {</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>                halfMoveClock = halfMoveClock * 10 + (character - <span class="charliteral">&#39;0&#39;</span>);</div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>            }</div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>        }</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span> </div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>        <span class="keywordflow">if</span> (spaces == 5) {</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>            <span class="keywordflow">if</span> (character &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; character &lt;= <span class="charliteral">&#39;9&#39;</span>) {</div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>                fullmoveClock = fullmoveClock * 10 + (character - <span class="charliteral">&#39;0&#39;</span>);</div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>            }</div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>        }</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>    }</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span> </div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>}</div>
 </div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span> </div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>}  <span class="comment">// namespace Zagreus</span></div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span> </div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>}  <span class="comment">// namespace Zagreus</span></div>
 <div class="ttc" id="abitwise_8h_html"><div class="ttname"><a href="bitwise_8h.html">bitwise.h</a></div></div>
 <div class="ttc" id="aboard_8h_html"><div class="ttname"><a href="board_8h.html">board.h</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html"><div class="ttname"><a href="classZagreus_1_1Board.html">Zagreus::Board</a></div><div class="ttdoc">Represents the chess board and provides methods to manipulate it. The board consists of several bitbo...</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00062">board.h:62</a></div></div>
@@ -999,7 +991,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclassZagreus_1_1Board_html_a4d486c5cd179cdf1b49946cab761a210"><div class="ttname"><a href="classZagreus_1_1Board.html#a4d486c5cd179cdf1b49946cab761a210">Zagreus::Board::openFiles</a></div><div class="ttdeci">uint64_t openFiles() const</div><div class="ttdef"><b>Definition</b> <a href="#l00439">board.cpp:439</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_a5a387be98476403d3a63633af71c13d7"><div class="ttname"><a href="classZagreus_1_1Board.html#a5a387be98476403d3a63633af71c13d7">Zagreus::Board::unmakeNullMove</a></div><div class="ttdeci">void unmakeNullMove()</div><div class="ttdoc">Unmakes the last null move on the board. Should only be called after a makeNullMove.</div><div class="ttdef"><b>Definition</b> <a href="#l00731">board.cpp:731</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_a677f3a4ab501298bb506e3923752c047"><div class="ttname"><a href="classZagreus_1_1Board.html#a677f3a4ab501298bb506e3923752c047">Zagreus::Board::getLastMove</a></div><div class="ttdeci">constexpr Move getLastMove() const</div><div class="ttdoc">Retrieves the last move made.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00189">board.h:189</a></div></div>
-<div class="ttc" id="aclassZagreus_1_1Board_html_a7801b76e1ebf0292f9192ee68b38dbd8"><div class="ttname"><a href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">Zagreus::Board::setPieceFromFENChar</a></div><div class="ttdeci">void setPieceFromFENChar(char character, uint8_t square)</div><div class="ttdoc">Sets a piece on the board from a FEN character.</div><div class="ttdef"><b>Definition</b> <a href="#l00760">board.cpp:760</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1Board_html_a7801b76e1ebf0292f9192ee68b38dbd8"><div class="ttname"><a href="classZagreus_1_1Board.html#a7801b76e1ebf0292f9192ee68b38dbd8">Zagreus::Board::setPieceFromFENChar</a></div><div class="ttdeci">void setPieceFromFENChar(char character, uint8_t square)</div><div class="ttdoc">Sets a piece on the board from a FEN character.</div><div class="ttdef"><b>Definition</b> <a href="#l00754">board.cpp:754</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_a7b701a74fc4664bf23d71ab49195b535"><div class="ttname"><a href="classZagreus_1_1Board.html#a7b701a74fc4664bf23d71ab49195b535">Zagreus::Board::makeMove</a></div><div class="ttdeci">void makeMove(Move move)</div><div class="ttdoc">Makes a move on the board.</div><div class="ttdef"><b>Definition</b> <a href="#l00450">board.cpp:450</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_a82a99b7d0775ddd726fd3175f63241e1"><div class="ttname"><a href="classZagreus_1_1Board.html#a82a99b7d0775ddd726fd3175f63241e1">Zagreus::Board::print</a></div><div class="ttdeci">void print() const</div><div class="ttdoc">Prints the current state of the board to the console.</div><div class="ttdef"><b>Definition</b> <a href="#l00223">board.cpp:223</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_a9d9ff553f48c46abe04c951636ff64c9"><div class="ttname"><a href="classZagreus_1_1Board.html#a9d9ff553f48c46abe04c951636ff64c9">Zagreus::Board::canCastle</a></div><div class="ttdeci">bool canCastle() const</div><div class="ttdoc">Checks if castling is possible for the given side.</div><div class="ttdef"><b>Definition</b> <a href="#l00120">board.cpp:120</a></div></div>
@@ -1014,7 +1006,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclassZagreus_1_1Board_html_ae05e57705dd28daf8718d043c68d16d2"><div class="ttname"><a href="classZagreus_1_1Board.html#ae05e57705dd28daf8718d043c68d16d2">Zagreus::Board::getColorBitboard</a></div><div class="ttdeci">constexpr uint64_t getColorBitboard() const</div><div class="ttdoc">Retrieves the bitboard for a given color.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00116">board.h:116</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_aea6dd15340ca705e00c18b7f967f073c"><div class="ttname"><a href="classZagreus_1_1Board.html#aea6dd15340ca705e00c18b7f967f073c">Zagreus::Board::getOccupiedBitboard</a></div><div class="ttdeci">constexpr uint64_t getOccupiedBitboard() const</div><div class="ttdoc">Retrieves the bitboard representing occupied squares.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00148">board.h:148</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_aea72d78a798679410c1b862700061f83"><div class="ttname"><a href="classZagreus_1_1Board.html#aea72d78a798679410c1b862700061f83">Zagreus::Board::removePiece</a></div><div class="ttdeci">void removePiece(const uint8_t square)</div><div class="ttdoc">Removes a piece from a given square.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00234">board.h:234</a></div></div>
-<div class="ttc" id="aclassZagreus_1_1Board_html_af55bc3a5bf87249dcecf75df419f609b"><div class="ttname"><a href="classZagreus_1_1Board.html#af55bc3a5bf87249dcecf75df419f609b">Zagreus::Board::setFromFEN</a></div><div class="ttdeci">bool setFromFEN(std::string_view fen)</div><div class="ttdoc">Sets the board state from a FEN string.</div><div class="ttdef"><b>Definition</b> <a href="#l00813">board.cpp:813</a></div></div>
+<div class="ttc" id="aclassZagreus_1_1Board_html_af55bc3a5bf87249dcecf75df419f609b"><div class="ttname"><a href="classZagreus_1_1Board.html#af55bc3a5bf87249dcecf75df419f609b">Zagreus::Board::setFromFEN</a></div><div class="ttdeci">bool setFromFEN(std::string_view fen)</div><div class="ttdoc">Sets the board state from a FEN string.</div><div class="ttdef"><b>Definition</b> <a href="#l00805">board.cpp:805</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_afc62efe1e90a8573ffddbb423ec95534"><div class="ttname"><a href="classZagreus_1_1Board.html#afc62efe1e90a8573ffddbb423ec95534">Zagreus::Board::getSideToMove</a></div><div class="ttdeci">constexpr PieceColor getSideToMove() const</div><div class="ttdoc">Retrieves the color of the side to move.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00160">board.h:160</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_afd4c02ec09ab6fde7631b59b2a4d9c97"><div class="ttname"><a href="classZagreus_1_1Board.html#afd4c02ec09ab6fde7631b59b2a4d9c97">Zagreus::Board::getPieceOnSquare</a></div><div class="ttdeci">constexpr Piece getPieceOnSquare(const int square) const</div><div class="ttdoc">Retrieves the piece on a given square.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00132">board.h:132</a></div></div>
 <div class="ttc" id="aclasspcg__detail_1_1engine_html"><div class="ttname"><a href="classpcg__detail_1_1engine.html">pcg_detail::engine</a></div><div class="ttdef"><b>Definition</b> <a href="pcg__random_8hpp_source.html#l00301">pcg_random.hpp:301</a></div></div>
