@@ -401,7 +401,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             bool isLmr = false;
 
             // Late Move Reduction
-            if (movesSearched > 2 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
+            if (movesSearched > 2 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION && !isInCheck && !moveGivesCheck) {
                 isLmr = true;
 #ifdef TRACE_SEARCH
                 stats.lmrSearches++;
