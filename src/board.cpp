@@ -58,57 +58,70 @@ uint64_t getZobristConstant(const int index) {
     return zobristConstants[index];
 }
 
-/**
- * \brief Checks if the current position is legal for the given color.
- * \tparam movedColor The color of the player who just moved.
- * \return True if the position is legal, false otherwise.
- */
-template <PieceColor movedColor>
-bool Board::isPositionLegal() const {
-    constexpr PieceColor opponentColor = !movedColor;
-    constexpr Piece king = movedColor == WHITE ? WHITE_KING : BLACK_KING;
-    const uint64_t kingBB = getPieceBoard<king>();
-    const Square kingSquare = bitboardToSquare(kingBB);
-    const Move lastMove = getLastMove();
-    const MoveType lastMoveType = getMoveType(lastMove);
+bool Board::isMoveLegal(const Move move) const {
+    const Square toSquare = getToSquare(move);
+    const Piece pieceOnSquare = getPieceOnSquare(getFromSquare(move));
+    const PieceType movedPiece = getPieceType(pieceOnSquare);
+    const PieceColor movedColor = getPieceColor(pieceOnSquare);
+    const MoveType moveType = getMoveType(move);
 
-    if (lastMoveType == CASTLING) {
-        const Square fromSquare = getFromSquare(lastMove);
-        const Square toSquare = getToSquare(lastMove);
-        const uint64_t fromSquareAttacks = getSquareAttackersByColor<opponentColor>(fromSquare);
+    const Square kingSquare = movedColor == WHITE ? getKingSquare<WHITE>() : getKingSquare<BLACK>();
 
-        if (fromSquareAttacks) {
-            // King was in check before castling
-            return false;
+    if (moveType == EN_PASSANT) {
+        const Square fromSquare = getFromSquare(move);
+        const Square capturedPawnSquare = static_cast<Square>(toSquare + (movedColor == WHITE ? SOUTH : NORTH));
+        const uint64_t occupancy = (occupied ^ squareToBitboard(fromSquare) ^ squareToBitboard(capturedPawnSquare)) |
+                                   squareToBitboard(toSquare);
+
+        if (movedColor == WHITE) {
+            return !isSquareAttackedBySlider<BLACK>(kingSquare, occupancy);
+        } else {
+            return !isSquareAttackedBySlider<WHITE>(kingSquare, occupancy);
         }
+    }
 
-        uint64_t castlingPath = 0;
+    const Square fromSquare = getFromSquare(move);
+
+    if (moveType == CASTLING) {
+        uint64_t castlingPath = squareToBitboard(fromSquare) | squareToBitboard(toSquare);
 
         if (toSquare == G1) {
-            castlingPath = WHITE_KINGSIDE_CASTLE_PATH;
+            castlingPath |= WHITE_KINGSIDE_CASTLE_PATH;
         } else if (toSquare == C1) {
-            castlingPath = WHITE_QUEENSIDE_CASTLE_PATH;
+            castlingPath |= WHITE_QUEENSIDE_CASTLE_PATH;
         } else if (toSquare == G8) {
-            castlingPath = BLACK_KINGSIDE_CASTLE_PATH;
+            castlingPath |= BLACK_KINGSIDE_CASTLE_PATH;
         } else if (toSquare == C8) {
-            castlingPath = BLACK_QUEENSIDE_CASTLE_PATH;
+            castlingPath |= BLACK_QUEENSIDE_CASTLE_PATH;
         }
 
         while (castlingPath) {
             const Square square = static_cast<Square>(popLsb(castlingPath));
-            const uint64_t attackers = getSquareAttackersByColor<opponentColor>(square);
+            const uint64_t attackers = movedColor == WHITE ? getSquareAttackersByColor<BLACK>(square, occupied)
+                                                           : getSquareAttackersByColor<WHITE>(square, occupied);
 
             if (attackers) {
                 return false;
             }
         }
+
+        return true;
     }
 
-    return !getSquareAttackersByColor<opponentColor>(kingSquare);
-}
+    // King moves need to check if there are ANY attackers on the toSquare.
+    if (movedPiece == KING) {
+        uint64_t occupancy = occupied;
+        occupancy &= ~squareToBitboard(fromSquare);
+        bool result = movedColor == WHITE ? getSquareAttackersByColor<BLACK>(toSquare, occupancy) == 0
+                                          : getSquareAttackersByColor<WHITE>(toSquare, occupancy) == 0;
+        return result;
+    }
 
-template bool Board::isPositionLegal<WHITE>() const;
-template bool Board::isPositionLegal<BLACK>() const;
+    const uint64_t pinnedPieces = movedColor == WHITE ? this->pinnedPieces[WHITE] : this->pinnedPieces[BLACK];
+    const uint64_t kingBB = squareToBitboard(kingSquare);
+
+    return !(pinnedPieces & squareToBitboard(fromSquare)) || (getLine(fromSquare, toSquare) & kingBB);
+}
 
 /**
  * \brief Checks if castling is possible for the given side. It checks every rule, except for attacks on the castling
@@ -175,7 +188,7 @@ uint64_t Board::getSquareAttackers(const Square square) const {
  * \return A bitboard representing the attackers of the given color.
  */
 template <PieceColor color>
-uint64_t Board::getSquareAttackersByColor(const Square square) const {
+uint64_t Board::getSquareAttackersByColor(const Square square, const uint64_t occupancy) const {
     assert(square < SQUARES);
     constexpr PieceColor opponentColor = !color;
 
@@ -188,11 +201,24 @@ uint64_t Board::getSquareAttackersByColor(const Square square) const {
 
     return (getPawnAttacks<opponentColor>(square) & getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>()) |
            (getKnightAttacks(square) & knights) | (getKingAttacks(square) & kings) |
-           (getBishopAttacks(square, occupied) & bishopsQueens) | (getRookAttacks(square, occupied) & rooksQueens);
+           (getBishopAttacks(square, occupancy) & bishopsQueens) | (getRookAttacks(square, occupancy) & rooksQueens);
 }
 
-template uint64_t Board::getSquareAttackersByColor<WHITE>(Square square) const;
-template uint64_t Board::getSquareAttackersByColor<BLACK>(Square square) const;
+template uint64_t Board::getSquareAttackersByColor<WHITE>(Square square, uint64_t occupancy) const;
+template uint64_t Board::getSquareAttackersByColor<BLACK>(Square square, uint64_t occupancy) const;
+
+template <PieceColor AttackerColor>
+bool Board::isSquareAttackedBySlider(const Square square, const uint64_t occupancy) const {
+    const uint64_t opponentBishops = getPieceBoard<AttackerColor == WHITE ? WHITE_BISHOP : BLACK_BISHOP>();
+    const uint64_t opponentRooks = getPieceBoard<AttackerColor == WHITE ? WHITE_ROOK : BLACK_ROOK>();
+    const uint64_t opponentQueens = getPieceBoard<AttackerColor == WHITE ? WHITE_QUEEN : BLACK_QUEEN>();
+
+    return (getBishopAttacks(square, occupancy) & (opponentBishops | opponentQueens)) ||
+           (getRookAttacks(square, occupancy) & (opponentRooks | opponentQueens));
+}
+
+template bool Board::isSquareAttackedBySlider<WHITE>(Square square, uint64_t occupancy) const;
+template bool Board::isSquareAttackedBySlider<BLACK>(Square square, uint64_t occupancy) const;
 
 /**
  * \brief Resets the board to the initial state.
@@ -210,11 +236,15 @@ void Board::reset() {
     this->halfMoveClock = 0;
     this->castlingRights = 0;
     this->enPassantSquare = NO_EN_PASSANT;
+    this->previousMove = NO_MOVE;
 
     std::ranges::fill(board, EMPTY);
     std::ranges::fill(bitboards, 0);
     std::ranges::fill(colorBoards, 0);
     std::ranges::fill(history, BoardState{});
+    std::ranges::fill(pinnedPieces, 0);
+    std::ranges::fill(checkBlockers, 0);
+    std::ranges::fill(pinners, 0);
 }
 
 /**
@@ -326,6 +356,42 @@ Square Board::getSmallestAttacker(Square square) const {
 
     return NONE;
 }
+
+template <PieceColor color>
+void Board::updatePinnedPieces() {
+    constexpr PieceColor opponentColor = !color;
+    const Square kingSquare = getKingSquare<color>();
+    const uint64_t opponentBishops = getPieceBoard<opponentColor == WHITE ? WHITE_BISHOP : BLACK_BISHOP>();
+    const uint64_t opponentRooks = getPieceBoard<opponentColor == WHITE ? WHITE_ROOK : BLACK_ROOK>();
+    const uint64_t opponentQueens = getPieceBoard<opponentColor == WHITE ? WHITE_QUEEN : BLACK_QUEEN>();
+    const uint64_t opponentSliders = opponentBishops | opponentRooks | opponentQueens;
+
+    this->pinnedPieces[color] = 0;
+    this->checkBlockers[color] = 0;
+    this->pinners[opponentColor] = 0;
+
+    uint64_t candidatePinners = (getRookAttacks(kingSquare, opponentSliders) & (opponentRooks | opponentQueens)) |
+                                (getBishopAttacks(kingSquare, opponentSliders) & (opponentBishops | opponentQueens));
+
+    while (candidatePinners) {
+        const Square pinnerSquare = static_cast<Square>(popLsb(candidatePinners));
+        const uint64_t betweenSquares = getSquaresBetween(pinnerSquare, kingSquare);
+        const uint64_t piecesBetween =
+            betweenSquares & occupied & ~squareToBitboard(pinnerSquare) & ~squareToBitboard(kingSquare);
+
+        if (piecesBetween && popcnt(piecesBetween) == 1) {
+            this->checkBlockers[color] |= piecesBetween;
+
+            if (piecesBetween & getColorBitboard<color>()) {
+                this->pinnedPieces[color] |= piecesBetween;
+                this->pinners[opponentColor] |= squareToBitboard(pinnerSquare);
+            }
+        }
+    }
+}
+
+template void Board::updatePinnedPieces<WHITE>();
+template void Board::updatePinnedPieces<BLACK>();
 
 int estimateMoveValue(const Board& board, const Move move) {
     const MoveType moveType = getMoveType(move);
@@ -466,6 +532,9 @@ void Board::makeMove(const Move move) {
     history[ply].castlingRights = castlingRights;
     history[ply].zobristHash = zobristHash;
     history[ply].halfMoveClock = halfMoveClock;
+    history[ply].checkBlockers = checkBlockers;
+    history[ply].pinnedPieces = pinnedPieces;
+    history[ply].pinners = pinners;
 
     if (enPassantSquare != NO_EN_PASSANT) {
         zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
@@ -630,6 +699,10 @@ void Board::makeMove(const Move move) {
     sideToMove = !sideToMove;
     zobristHash ^= getZobristConstant(ZOBRIST_SIDE_TO_MOVE_INDEX);
 
+    // Need to do this after flipping the side to move
+    updatePinnedPieces<WHITE>();
+    updatePinnedPieces<BLACK>();
+
     assert(ply < MAX_PLIES);
     ply++;
     assert(ply < MAX_PLIES);
@@ -696,6 +769,9 @@ void Board::unmakeMove() {
     this->enPassantSquare = state.enPassantSquare;
     this->castlingRights = state.castlingRights;
     this->zobristHash = state.zobristHash;
+    this->checkBlockers = state.checkBlockers;
+    this->pinnedPieces = state.pinnedPieces;
+    this->pinners = state.pinners;
 }
 
 void Board::makeNullMove() {
@@ -912,6 +988,8 @@ bool Board::setFromFEN(const std::string_view fen) {
         }
     }
 
+    updatePinnedPieces<WHITE>();
+    updatePinnedPieces<BLACK>();
     return true;
 }
 

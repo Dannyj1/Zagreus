@@ -47,6 +47,9 @@ void initZobristConstants();
  * \brief Represents the state of the board at a given ply
  */
 struct BoardState {
+    std::array<uint64_t, COLORS> checkBlockers{};
+    std::array<uint64_t, COLORS> pinnedPieces{};
+    std::array<uint64_t, COLORS> pinners{};
     uint64_t zobristHash = 0;
     Move move = NO_MOVE;
     Move previousMove = NO_MOVE;
@@ -64,6 +67,9 @@ class Board {
     std::array<Piece, SQUARES> board{};
     std::array<uint64_t, PIECES> bitboards{};
     std::array<uint64_t, COLORS> colorBoards{};
+    std::array<uint64_t, COLORS> checkBlockers{};
+    std::array<uint64_t, COLORS> pinnedPieces{};
+    std::array<uint64_t, COLORS> pinners{};
     std::array<BoardState, MAX_PLIES> history{};
     PieceColor sideToMove = WHITE;
     uint64_t occupied = 0;
@@ -318,16 +324,10 @@ class Board {
         const uint64_t kingBB = getPieceBoard<color == WHITE ? WHITE_KING : BLACK_KING>();
         const Square kingSquare = bitboardToSquare(kingBB);
 
-        return getSquareAttackersByColor<opponentColor>(kingSquare) != 0;
+        return getSquareAttackersByColor<opponentColor>(kingSquare, occupied) != 0;
     }
 
-    /**
-     * \brief Checks if the current position is legal based on the color that just made a move.
-     * \tparam movedColor The color of the player who just moved.
-     * \return True if the position is legal, false otherwise.
-     */
-    template <PieceColor movedColor>
-    [[nodiscard]] bool isPositionLegal() const;
+    [[nodiscard]] bool isMoveLegal(Move move) const;
 
     /**
      * \brief Retrieves the attackers of a given square.
@@ -343,7 +343,22 @@ class Board {
      * \return A bitboard representing the attackers of the given color.
      */
     template <PieceColor color>
-    [[nodiscard]] uint64_t getSquareAttackersByColor(const Square square) const;
+    [[nodiscard]] uint64_t getSquareAttackersByColor(Square square, uint64_t occupancy) const;
+
+    template <PieceColor color>
+    [[nodiscard]] uint64_t getSquareAttackersByColor(const Square square) const {
+        return getSquareAttackersByColor<color>(square, occupied);
+    }
+
+    /**
+     * \brief Checks if a square is attacked by a slider piece of a given color.
+     * \tparam AttackerColor The color of the attacker.
+     * \param square The square to check.
+     * \param occupancy The occupancy of the board.
+     * \return True if the square is attacked by a slider, false otherwise.
+     */
+    template <PieceColor AttackerColor>
+    [[nodiscard]] bool isSquareAttackedBySlider(Square square, uint64_t occupancy) const;
 
     /**
      * \brief Checks if castling is possible for the given side.
@@ -562,5 +577,8 @@ class Board {
             return blackPawns & ~combinedSpans;
         }
     }
+
+    template <PieceColor color>
+    void updatePinnedPieces();
 };
 }  // namespace Zagreus

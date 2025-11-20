@@ -68,7 +68,9 @@ static int aspirationSearch(Engine& engine, Board& board, SearchParams& params, 
     pvLine.moveCount = 0;
 
     while (true) {
-        score = pvSearch<color, ROOT>(engine, board, alpha, beta, depth, stats, endTime, pvLine, searchStack);
+        bool isInCheck = board.isKingInCheck<color>();
+        score =
+            pvSearch<color, ROOT>(engine, board, alpha, beta, depth, stats, endTime, pvLine, searchStack, isInCheck);
         assert(score >= -MATE_SCORE && score <= MATE_SCORE);
 
         if (engine.isSearchStopped()) {
@@ -172,12 +174,11 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
         Move bestMove = NO_MOVE;
 
         while (movePicker.next(move)) {
-            board.makeMove(move);
-
-            if (!board.isPositionLegal<color>()) {
-                board.unmakeMove();
+            if (!board.isMoveLegal(move)) {
                 continue;
             }
+
+            board.makeMove(move);
 
             bestMove = move;
             board.unmakeMove();
@@ -198,7 +199,7 @@ template Move search<BLACK>(Engine& engine, Board& board, SearchParams& params, 
 template <PieceColor color, NodeType nodeType>
 int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
              const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine,
-             SearchStack& searchStack) {
+             SearchStack& searchStack, bool isInCheck) {
     constexpr bool isPV = nodeType == PV || nodeType == ROOT;
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
@@ -214,8 +215,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     }
 
-    bool isInCheck = board.isKingInCheck<color>();
-
     if (isInCheck) {
         depth += 1;
 #ifdef TRACE_SEARCH
@@ -226,7 +225,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     if (depth <= 0) {
         assert(!isRoot);
         pvLine.moveCount = 0;
-        return qSearch<color, nodeType>(engine, board, alpha, beta, depth, stats, endTime, searchStack);
+        return qSearch<color, nodeType>(engine, board, alpha, beta, depth, stats, endTime, searchStack, isInCheck);
     }
 
     stats.nodesSearched += 1;
@@ -267,8 +266,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             board.makeNullMove();
             const int R = 2 + depth / 3;
             PvLine nmpPvLine = PvLine{board.getPly()};
-            const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(engine, board, -beta, -beta + 1, depth - R,
-                                                                        stats, endTime, nmpPvLine, searchStack);
+            const int nullMoveScore = -pvSearch<opponentColor, REGULAR>(
+                engine, board, -beta, -beta + 1, depth - R, stats, endTime, nmpPvLine, searchStack, isInCheck);
             board.unmakeNullMove();
 
             if (nullMoveScore >= beta) {
@@ -281,7 +280,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     } else {
         // Internal iterative reductions (IIR)
         /*if (depth >= 6 && ttMove == NO_MOVE) {
-            std::cout << "gfdashgjdakhfjal" << std::endl;
             depth -= 1;
         }*/
     }
@@ -322,12 +320,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             capturedPiece = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
         }
 
-        board.makeMove(move);
-
-        if (!board.isPositionLegal<color>()) {
-            board.unmakeMove();
+        if (!board.isMoveLegal(move)) {
             continue;
         }
+
+        board.makeMove(move);
 
         legalMoves += 1;
         int moveDepth = depth - 1;
@@ -395,7 +392,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
         if (isPV && movesSearched == 0) {
             score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime, nodePvLine,
-                                                 searchStack);
+                                                 searchStack, moveGivesCheck);
         } else {
             int lmrReduction = 0;
             bool isLmr = false;
@@ -409,7 +406,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 lmrReduction = lmrTable[depth][movesSearched];
                 lmrReduction -= isPV;
                 lmrReduction -= isInCheck;
-                lmrReduction -= board.isKingInCheck<opponentColor>();
+                lmrReduction -= moveGivesCheck;
 
                 if (depth - 1 - lmrReduction <= 0) {
                     lmrReduction = depth - 2;
@@ -420,7 +417,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             }
 
             score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth - lmrReduction,
-                                                      stats, endTime, nodePvLine, searchStack);
+                                                      stats, endTime, nodePvLine, searchStack, moveGivesCheck);
 
             if (isLmr && score > alpha) {
 #ifdef TRACE_SEARCH
@@ -428,12 +425,12 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 #endif
 
                 score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth, stats, endTime,
-                                                          nodePvLine, searchStack);
+                                                          nodePvLine, searchStack, moveGivesCheck);
             }
 
             if (isPV && score > alpha) {
                 score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime,
-                                                     nodePvLine, searchStack);
+                                                     nodePvLine, searchStack, moveGivesCheck);
             }
         }
 
@@ -545,7 +542,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
 template <PieceColor color, NodeType nodeType>
 int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-            const std::chrono::time_point<std::chrono::steady_clock>& endTime, SearchStack& searchStack) {
+            const std::chrono::time_point<std::chrono::steady_clock>& endTime, SearchStack& searchStack,
+            bool isInCheck) {
     assert(nodeType != ROOT);
     constexpr bool isPV = nodeType == PV;
 
@@ -578,7 +576,6 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
 
     stats.qNodesSearched += 1;
 
-    const bool isInCheck = board.isKingInCheck<color>();
     int bestScore;
 
     if (isInCheck) {
@@ -637,19 +634,19 @@ int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Search
             }
         }
 
-        board.makeMove(move);
-
-        if (!board.isPositionLegal<color>()) {
-            board.unmakeMove();
+        if (!board.isMoveLegal(move)) {
             continue;
         }
+
+        board.makeMove(move);
 
         legalMoves += 1;
 
         __builtin_prefetch(&tt->transpositionTable[board.getZobristHash() & tt->hashSize]);
 
-        const int score =
-            -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime, searchStack);
+        const bool moveGivesCheck = board.isKingInCheck<!color>();
+        const int score = -qSearch<!color, nodeType>(engine, board, -beta, -alpha, depth - 1, stats, endTime,
+                                                     searchStack, moveGivesCheck);
 
         board.unmakeMove();
 

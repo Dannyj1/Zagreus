@@ -91,12 +91,14 @@ void initializeSearch();
 template <PieceColor color>
 [[nodiscard]] Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
 
+// TODO: Might want to move some args to a struct
 template <PieceColor color, NodeType nodeType>
 int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
              const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine,
-             SearchStack& searchStack);
+             SearchStack& searchStack, bool isInCheck);
 
 template <PieceColor color, NodeType nodeType>
 [[nodiscard]] int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
-                          const std::chrono::time_point<std::chrono::steady_clock>& endTime, SearchStack& searchStack);
+                          const std::chrono::time_point<std::chrono::steady_clock>& endTime, SearchStack& searchStack,
+                          bool isInCheck);
 }  // namespace Zagreus

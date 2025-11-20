@@ -31,6 +31,7 @@ static std::array<uint64_t, SQUARES> knightAttacksTable{};
 static std::array<uint64_t, SQUARES> kingAttacksTable{};
 
 static std::array<std::array<uint64_t, SQUARES>, SQUARES> betweenLookupTable{};
+static std::array<std::array<uint64_t, SQUARES>, SQUARES> lineLookupTable{};
 
 /**
  * \brief Initializes the attack lookup tables for pawns, knights, and kings.
@@ -65,6 +66,24 @@ void initializeBetweenLookupTable() {
             line *= btwn & -btwn;
 
             betweenLookupTable[from][to] = line & btwn;
+        }
+    }
+}
+
+void initializeLineLookupTable() {
+    for (uint8_t fromSquare = 0; fromSquare < SQUARES; ++fromSquare) {
+        for (uint8_t toSquare = 0; toSquare < SQUARES; ++toSquare) {
+            uint64_t line = 0;
+            uint64_t fromBb = squareToBitboard(fromSquare);
+            uint64_t toBb = squareToBitboard(toSquare);
+
+            if ((getRookAttacks(fromSquare, 0) & toBb) != 0) {
+                line = (getRookAttacks(fromSquare, 0) & getRookAttacks(toSquare, 0)) | fromBb | toBb;
+            } else if ((getBishopAttacks(fromSquare, 0) & toBb) != 0) {
+                line = (getBishopAttacks(fromSquare, 0) & getBishopAttacks(toSquare, 0)) | fromBb | toBb;
+            }
+
+            lineLookupTable[fromSquare][toSquare] = line;
         }
     }
 }
@@ -156,5 +175,10 @@ uint64_t queenAttacks(const uint8_t square, const uint64_t occupied) {
 uint64_t getSquaresBetween(const Square fromSquare, const Square toSquare) {
     assert(fromSquare < SQUARES && toSquare < SQUARES);
     return betweenLookupTable[fromSquare][toSquare];
+}
+
+uint64_t getLine(const Square fromSquare, const Square toSquare) {
+    assert(fromSquare < SQUARES && toSquare < SQUARES);
+    return lineLookupTable[fromSquare][toSquare];
 }
 }  // namespace Zagreus

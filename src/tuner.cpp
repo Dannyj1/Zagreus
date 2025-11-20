@@ -98,20 +98,17 @@ TunedEvaluationParameters getTunedParameters(const std::vector<double>& newWeigh
             const int baseMgPst = getBaseMidgameTable(pieceType)[canonicalSquare];
             const int baseEgPst = getBaseEndgameTable(pieceType)[canonicalSquare];
 
-            params.midgamePstTable[piece][square] =
-                params.evalMaterialValues[MIDGAME][pieceType] +
-                static_cast<int>(std::round(baseMgPst + weightsCopy[mgIndex]));
-            params.endgamePstTable[piece][square] =
-                params.evalMaterialValues[ENDGAME][pieceType] +
-                static_cast<int>(std::round(baseEgPst + weightsCopy[egIndex]));
+            params.midgamePstTable[piece][square] = params.evalMaterialValues[MIDGAME][pieceType] +
+                                                    static_cast<int>(std::round(baseMgPst + weightsCopy[mgIndex]));
+            params.endgamePstTable[piece][square] = params.evalMaterialValues[ENDGAME][pieceType] +
+                                                    static_cast<int>(std::round(baseEgPst + weightsCopy[egIndex]));
         }
     }
 
     for (int phase = 0; phase < GAME_PHASES; ++phase) {
         for (int piece = 0; piece < PIECE_TYPES; ++piece) {
             const int index = mobilityWeightStart + (phase * PIECE_TYPES) + piece;
-            int mobilityValue =
-                static_cast<int>(std::round(baseMobility[phase][piece] + weightsCopy[index]));
+            int mobilityValue = static_cast<int>(std::round(baseMobility[phase][piece] + weightsCopy[index]));
             params.evalMobility[phase][piece] = mobilityValue;
         }
     }

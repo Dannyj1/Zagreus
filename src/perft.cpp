@@ -52,26 +52,27 @@ uint64_t perft(Board& board, const int depth, bool printNodes) {
     const PieceColor sideToMove = board.getSideToMove();
 
     if (sideToMove == WHITE) {
-        generateMoves<WHITE, ALL>(board, moveList);
+        if (board.isKingInCheck<WHITE>()) {
+            generateMoves<WHITE, EVASIONS>(board, moveList);
+        } else {
+            generateMoves<WHITE, ALL>(board, moveList);
+        }
     } else {
-        generateMoves<BLACK, ALL>(board, moveList);
+        if (board.isKingInCheck<BLACK>()) {
+            generateMoves<BLACK, EVASIONS>(board, moveList);
+        } else {
+            generateMoves<BLACK, ALL>(board, moveList);
+        }
     }
 
     for (int i = 0; i < moveList.size; i++) {
-        board.makeMove(moveList.moves[i]);
+        const Move move = moveList.moves[i];
 
-        if (sideToMove == WHITE) {
-            if (!board.isPositionLegal<WHITE>()) {
-                board.unmakeMove();
-                continue;
-            }
-        } else {
-            if (!board.isPositionLegal<BLACK>()) {
-                board.unmakeMove();
-                continue;
-            }
+        if (!board.isMoveLegal(move)) {
+            continue;
         }
 
+        board.makeMove(moveList.moves[i]);
         uint64_t perftNodes = perft(board, depth - 1, false);
 
         if (printNodes) {

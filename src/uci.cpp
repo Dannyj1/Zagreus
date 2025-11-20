@@ -56,6 +56,7 @@ void Engine::doSetup() {
     initializeSearch();
     initializeMagicBitboards();
     initializeBetweenLookupTable();
+    initializeLineLookupTable();
     initializeAttackLookupTables();
     initializePst();
 
@@ -399,6 +400,9 @@ void Engine::handlePerftCommand(const std::string& args) {
         board.setFromFEN(startPosFEN);
     }
 
+    // TODO: Figure out why this is needed here???? Doesn't work when putting in pos command, so it has to be in perft??
+    board.updatePinnedPieces<WHITE>();
+    board.updatePinnedPieces<BLACK>();
     const auto start = std::chrono::high_resolution_clock::now();
     const uint64_t nodes = perft(board, depth);
     const auto end = std::chrono::high_resolution_clock::now();

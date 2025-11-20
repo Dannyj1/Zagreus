@@ -96,6 +96,8 @@ TEST_CASE("CastlingRuleTests", "[castling]") {
     initZobristConstants();
     initializeMagicBitboards();
     initializeAttackLookupTables();
+    initializeBetweenLookupTable();
+    initializeLineLookupTable();
 
     SECTION("White Kingside Castling (O-O) Not Allowed") {
         // Pieces are between the king and the rook.

@@ -20,11 +20,11 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/board.h"
 #include "../src/bitboard.h"
+#include "../src/board.h"
+#include "../src/magics.h"
 #include "../src/perft.h"
 #include "../src/uci.h"
-#include "../src/magics.h"
 
 namespace Zagreus {
 // FEN string, depth, expected nodes
@@ -44,6 +44,8 @@ TEST_CASE("test_Perft", "[perft]") {
     initZobristConstants();
     initializeMagicBitboards();
     initializeAttackLookupTables();
+    initializeBetweenLookupTable();
+    initializeLineLookupTable();
 
     for (const auto& [fen, depth, expectedNodes] : POSITIONS) {
         Board board{};
@@ -56,4 +58,4 @@ TEST_CASE("test_Perft", "[perft]") {
         REQUIRE(actualNodes == expectedNodes);
     }
 }
-} // namespace Zagreus
+}  // namespace Zagreus

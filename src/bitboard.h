@@ -39,6 +39,11 @@ void initializeAttackLookupTables();
 void initializeBetweenLookupTable();
 
 /**
+ * \brief Initializes the line lookup table.
+ */
+void initializeLineLookupTable();
+
+/**
  * \brief Shifts the bitboard north by one rank.
  * \param bb The bitboard to shift.
  * \return The shifted bitboard.
@@ -414,6 +419,15 @@ inline uint8_t getRank(const Square square) { return square >> 3; }
  * \return The bitboard of squares between the two squares.
  */
 uint64_t getSquaresBetween(Square fromSquare, Square toSquare);
+
+/**
+ * \brief Gets a bitboard of the line between two squares.
+ * \param fromSquare The starting square.
+ * \param toSquare The ending square.
+ *
+ * \return The bitboard of the line between the two squares.
+ */
+uint64_t getLine(Square fromSquare, Square toSquare);
 
 inline uint64_t fillNorth(uint64_t bb) {
     bb |= (bb << 8);
