@@ -1,6 +1,6 @@
 <map id="Zagreus::Board::makeNullMove" name="Zagreus::Board::makeNullMove">
 <area shape="rect" id="Node000001" title="Makes a null move on the board, meaning the side to move does not make a move and the turn is passed." alt="" coords="196,29,423,55"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="5,29,148,55"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,29,148,55"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,45,148,45,148,39,182,39"/>
 <area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="118,20,107,11,77,8,52,10,39,15,36,20,43,27,39,31,31,21,35,11,51,5,77,3,109,7,122,16"/>
 </map>

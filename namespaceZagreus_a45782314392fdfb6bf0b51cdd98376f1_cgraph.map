@@ -22,7 +22,7 @@
 <area shape="poly" id="edge69_Node000001_Node000045" title=" " alt="" coords="104,625,116,677,141,752,159,794,181,835,208,873,239,907,256,919,253,923,236,911,203,876,176,837,154,796,136,754,111,678,98,626"/>
 <area shape="rect" id="Node000046" href="$namespaceZagreus.html#ae1b3bf55cd6adf4ca93bffdc9ced467e" title="Gets the type of a piece." alt="" coords="267,992,436,1017"/>
 <area shape="poly" id="edge70_Node000001_Node000046" title=" " alt="" coords="102,625,109,689,130,784,147,837,171,888,201,936,239,977,255,988,252,992,236,981,197,940,166,891,142,839,124,786,104,690,97,626"/>
-<area shape="rect" id="Node000047" href="$classZagreus_1_1Board.html#adc52ad654205e521ebb03e472997889b" title="Retrieves the attackers of a given square by color." alt="" coords="254,593,449,633"/>
+<area shape="rect" id="Node000047" href="$classZagreus_1_1Board.html#a4f4cc8277faa7e1697cb0e03468fa4a7" title="Retrieves the attackers of a given square by color." alt="" coords="254,593,449,633"/>
 <area shape="poly" id="edge71_Node000001_Node000047" title=" " alt="" coords="189,610,240,610,240,615,189,615"/>
 <area shape="rect" id="Node000049" href="$namespaceZagreus.html#afda138ab890ea8e4d7fae44a866326ad" title="Gets a bitboard of all squares between two squares." alt="" coords="245,1041,458,1067"/>
 <area shape="poly" id="edge78_Node000001_Node000049" title=" " alt="" coords="101,625,105,697,112,748,123,806,140,866,165,926,197,981,239,1028,244,1032,240,1036,235,1032,193,984,160,928,135,868,118,807,107,749,100,697,96,626"/>

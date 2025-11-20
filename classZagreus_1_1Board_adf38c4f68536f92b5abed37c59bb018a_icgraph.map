@@ -1,8 +1,8 @@
 <map id="Zagreus::Board::getPly" name="Zagreus::Board::getPly">
 <area shape="rect" id="Node000001" title="Retrieves the number of plies since the start of the game." alt="" coords="585,65,756,91"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="5,52,148,77"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,52,148,77"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="620,64,539,41,433,19,375,12,315,8,255,10,197,18,145,34,102,54,100,49,143,29,195,13,255,5,315,3,375,6,434,14,540,35,621,59"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="196,52,331,77"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a11fb11a289c1796bcfed11eabbeb9a68" title=" " alt="" coords="196,52,331,77"/>
 <area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="571,78,331,70,331,64,571,72"/>
 <area shape="rect" id="Node000004" href="$classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="379,86,537,126"/>
 <area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="572,94,538,98,537,93,571,88"/>

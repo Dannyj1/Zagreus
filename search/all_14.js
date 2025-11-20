@@ -30,5 +30,6 @@ var searchData=
   ['unoutput_27',['unoutput',['../structpcg__detail_1_1rxs__m__xs__mixin.html#a96de8c9272525b2811951b9905a672d7',1,'pcg_detail::rxs_m_xs_mixin']]],
   ['unxorshift_28',['unxorshift',['../namespacepcg__extras.html#a4f03e67e7e86db7eaeb41c67d0cd2cb5',1,'pcg_extras']]],
   ['updatecapturehistory_29',['updateCaptureHistory',['../classZagreus_1_1TranspositionTable.html#a345f25aae805dc81ee46fb339e39a3b4',1,'Zagreus::TranspositionTable']]],
-  ['updatehistory_30',['updateHistory',['../classZagreus_1_1TranspositionTable.html#a0cad62cc546cbfb21e62441420ce0d69',1,'Zagreus::TranspositionTable']]]
+  ['updatehistory_30',['updateHistory',['../classZagreus_1_1TranspositionTable.html#a0cad62cc546cbfb21e62441420ce0d69',1,'Zagreus::TranspositionTable']]],
+  ['updatepinnedpieces_31',['updatePinnedPieces',['../classZagreus_1_1Board.html#a4c959033e1ba0996c622f4508af1e326',1,'Zagreus::Board']]]
 ];

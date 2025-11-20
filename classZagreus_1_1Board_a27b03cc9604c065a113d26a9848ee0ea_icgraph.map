@@ -1,10 +1,13 @@
 <map id="Zagreus::Board::isKingInCheck" name="Zagreus::Board::isKingInCheck">
-<area shape="rect" id="Node000001" title=" " alt="" coords="379,22,560,62"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="5,29,148,55"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="365,35,331,33,263,31,196,33,149,36,148,31,196,27,263,25,331,27,365,29"/>
-<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a68af79c888431cfad390153a0273ef23" title=" " alt="" coords="196,67,331,92"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="366,64,331,70,330,65,365,58"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="110,19,100,11,77,8,57,10,47,15,44,20,50,28,46,31,39,21,43,11,55,5,77,3,102,6,113,15"/>
-<area shape="poly" id="edge4_Node000003_Node000002" title=" " alt="" coords="186,67,140,57,141,52,187,61"/>
-<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="296,56,287,48,263,45,244,47,233,52,231,58,237,65,232,68,226,58,229,48,242,42,263,40,289,44,300,52"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="379,73,560,113"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325" title="Performs a perft test on the given board to a specified depth." alt="" coords="207,29,320,55"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="374,72,315,57,316,52,375,67"/>
+<area shape="rect" id="Node000003" href="$namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,117,148,143"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="365,105,196,121,149,125,148,120,196,115,365,99"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a11fb11a289c1796bcfed11eabbeb9a68" title=" " alt="" coords="196,155,331,180"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="402,120,300,157,299,152,400,115"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="296,19,287,11,263,8,244,10,233,15,231,20,237,28,232,31,226,21,229,11,242,5,263,3,289,6,300,15"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="110,107,100,99,77,96,57,98,47,103,44,108,50,116,46,119,39,109,43,99,55,93,77,91,102,94,113,103"/>
+<area shape="poly" id="edge6_Node000004_Node000003" title=" " alt="" coords="186,155,140,145,141,140,187,149"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="296,144,287,136,263,133,244,135,233,140,231,146,237,153,232,156,226,146,229,136,242,130,263,128,289,132,300,140"/>
 </map>

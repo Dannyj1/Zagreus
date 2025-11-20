@@ -1,6 +1,6 @@
 <map id="Zagreus::TranspositionTable::addKillerMove" name="Zagreus::TranspositionTable::addKillerMove">
 <area shape="rect" id="Node000001" title=" " alt="" coords="196,22,399,62"/>
-<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a94682eadf0b234dd5d229a07fdd78da8" title=" " alt="" coords="5,29,148,55"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,29,148,55"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,45,148,45,148,39,182,39"/>
 <area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="116,20,105,11,77,8,53,10,41,15,38,20,45,28,41,31,33,21,37,11,52,5,77,3,107,6,119,15"/>
 </map>

@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title="gets the square of the attacker with the lowest value of a given square" alt="" coords="5,143,212,183"/>
 <area shape="rect" id="Node000002" href="$namespaceZagreus.html#a3b7dc37ae50fe6f86723b9c113ba301f" title="Finds the index of the least significant set bit (LSB) in a bitboard." alt="" coords="266,121,449,147"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,149,252,144,253,149,213,154"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#adc52ad654205e521ebb03e472997889b" title="Retrieves the attackers of a given square by color." alt="" coords="260,171,455,211"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a4f4cc8277faa7e1697cb0e03468fa4a7" title="Retrieves the attackers of a given square by color." alt="" coords="260,171,455,211"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,172,247,176,246,182,212,178"/>
 <area shape="rect" id="Node000004" href="$namespaceZagreus.html#adda3e72c179c4e9f1ef1406a61d9fea7" title="Retrieves the bishop attacks for a given square and occupied squares." alt="" coords="503,55,700,80"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="431,169,453,156,468,140,476,123,484,106,501,89,511,83,514,88,504,93,489,109,481,125,472,143,456,160,433,174"/>
