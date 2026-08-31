@@ -78,13 +78,12 @@ static int aspirationSearch(Engine& engine, Board& board, SearchParams& params, 
         }
 
         if (score <= alpha) {
-            beta = alpha;
-            alpha = std::max(-MATE_SCORE, alpha - delta);
+            beta = (alpha + beta) / 2;
+            alpha = std::max(-MATE_SCORE, score - delta);
             delta *= 2;
             continue;
         } else if (score >= beta) {
-            alpha = beta;
-            beta = std::min(MATE_SCORE, beta + delta);
+            beta = std::min(MATE_SCORE, score + delta);
             delta *= 2;
             continue;
         }
@@ -229,7 +228,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     stats.nodesSearched += 1;
-    const int eval = Evaluation(board).evaluate();
+
     TTEntry* ttEntry = nullptr;
     const int16_t ttScore = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly(), ttEntry);
     Move ttMove = ttEntry ? ttEntry->bestMove : NO_MOVE;
@@ -243,11 +242,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 #endif
 
-    if (!isPV) {
-        if (ttScore != NO_TT_SCORE) {
-            return ttScore;
-        }
+    if (!isPV && ttScore != NO_TT_SCORE) {
+        return ttScore;
+    }
 
+    const int eval = isInCheck ? 0 : Evaluation(board).evaluate();
+
+    if (!isPV) {
         // Reverse Futility Pruning
         int rfMargin = 150 * depth;
         if (!isInCheck && depth <= 3 && eval >= beta + rfMargin) {
