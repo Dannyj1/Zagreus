@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023-2025  Danny Jelsma
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -20,20 +20,42 @@
 
 #pragma once
 #ifdef ZAGREUS_TUNER
-#include <array>
 #include <string>
+#include <vector>
 
 #include "constants.h"
 #include "eval.h"
 #include "types.h"
 
 namespace Zagreus {
-struct TunePosition {
-    std::string fen;
-    PieceColor sideToMove = WHITE;
-    double result = 0.0;
-    EvalTrace trace{};
+struct TraceCoefficient {
+    int midgameIndex;
+    int endgameIndex;
+    int16_t whiteCount;
+    int16_t blackCount;
 };
+
+struct TunePosition {
+    std::vector<TraceCoefficient> coefficients;
+    double result = 0.0;
+    int phase = 0;
+};
+
+extern std::vector<double> weights;
+extern std::vector<double> baseWeights;
+extern int pstWeightStart;
+extern int mobilityWeightStart;
+extern int doubledPawnWeightStart;
+extern double K;
+
+void initializeWeights();
+std::vector<TraceCoefficient> createCoefficients(const EvalTrace& trace);
+double sigmoid(double x);
+double evaluateFromCoefficients(const TunePosition& position);
+double calculateError(const std::vector<TunePosition>& positions);
+std::vector<double> calculateGradients(const std::vector<TunePosition>& positions);
+void exportTunedValues(const std::string& outputPath, int finalEpoch, double trainingError, double validationError,
+                       double testError);
 
 void startTuning(std::string filePath);
 }  // namespace Zagreus

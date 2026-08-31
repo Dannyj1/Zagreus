@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023-2025  Danny Jelsma
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -23,21 +23,20 @@
 #include <vector>
 
 namespace Zagreus {
-// Base material values
-int evalMaterialValues[GAME_PHASES][PIECE_TYPES] = {
-    {100, 350, 350, 525, 1000, 0},  // Midgame
-    {100, 350, 350, 525, 1000, 0}   // Endgame
+// Material values
+int evalMaterialValues[GAME_PHASES][PIECE_TYPES]{
+    {96, 339, 368, 527, 999, 0},   // Midgame
+    {141, 317, 335, 526, 1013, 0}  // Endgame
 };
 
-// Base mobility values
-int evalMobility[GAME_PHASES][PIECE_TYPES] = {
-    {0, 4, 6, 2, 4, 0},  // Midgame
-    {0, 2, 3, 5, 6, 0}   // Endgame
+// Mobility values
+int evalMobility[GAME_PHASES][PIECE_TYPES]{
+    {0, 8, 9, 6, 3, 0},   // Midgame
+    {0, -4, -2, 3, 7, 0}  // Endgame
 };
 
 // Pawn structure
-// Doubled pawns
-int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
+int evalDoubledPawnPenalty[GAME_PHASES] = {-15, -32};
 
 // Passed Pawns
 int evalPassedPawnBonus[GAME_PHASES][RANKS] = {
