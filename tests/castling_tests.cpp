@@ -71,20 +71,9 @@ bool isCastleMoveLegal(const std::string& fen, Square from, Square to) {
             continue;
         }
 
-        // To verify the pseudo-legal castling move is fully legal, we make the move
-        // and then use isPositionLegal() to see if the king is safe.
-        board.makeMove(move);
-
-        bool isLegalAfterMove = false;
-        if (movingColor == WHITE) {
-            isLegalAfterMove = board.isPositionLegal<WHITE>();
-        } else {
-            isLegalAfterMove = board.isPositionLegal<BLACK>();
-        }
-
-        board.unmakeMove();  // Restore the board state
-
-        if (isLegalAfterMove) {
+        // To verify the pseudo-legal castling move is fully legal, we use isMoveLegal()
+        // before making the move, matching the engine's search logic.
+        if (board.isMoveLegal(move)) {
             return true;  // Found the legal castling move.
         }
     }

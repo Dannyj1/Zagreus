@@ -390,6 +390,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         int score;
+        nodePvLine.moveCount = 0;
 
         if (isPV && movesSearched == 0) {
             score = -pvSearch<opponentColor, PV>(engine, board, -beta, -alpha, moveDepth, stats, endTime, nodePvLine,
