@@ -95,7 +95,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> This file is part of Zagreus.</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"></span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> Zagreus is a UCI chess engine</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> Copyright (C) 2023-2025  Danny Jelsma</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> Copyright (C) 2023-2026  Danny Jelsma</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"></span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> Zagreus is free software: you can redistribute it and/or modify</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> it under the terms of the GNU Affero General Public License as published</span></div>
@@ -113,29 +113,49 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#ifdef ZAGREUS_TUNER</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;array&gt;</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;<a class="code" href="constants_8h.html">constants.h</a>&quot;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &quot;<a class="code" href="eval_8h.html">eval.h</a>&quot;</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &quot;<a class="code" href="types_8h.html">types.h</a>&quot;</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceZagreus.html">Zagreus</a> {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">struct </span>TunePosition {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    std::string fen;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <a class="code hl_enumeration" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">PieceColor</a> sideToMove = <a class="code hl_enumvalue" href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">WHITE</a>;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">double</span> result = 0.0;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    EvalTrace trace{};</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">struct </span>TraceCoefficient {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">int</span> midgameIndex;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordtype">int</span> endgameIndex;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    int16_t whiteCount;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    int16_t blackCount;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>};</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">void</span> startTuning(std::string filePath);</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>}  <span class="comment">// namespace Zagreus</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">struct </span>TunePosition {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    std::vector&lt;TraceCoefficient&gt; coefficients;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">double</span> result = 0.0;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordtype">int</span> phase = 0;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>};</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">extern</span> std::vector&lt;double&gt; weights;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">extern</span> std::vector&lt;double&gt; baseWeights;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="keyword">extern</span> <span class="keywordtype">int</span> pstWeightStart;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">extern</span> <span class="keywordtype">int</span> mobilityWeightStart;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">extern</span> <span class="keywordtype">int</span> doubledPawnWeightStart;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">extern</span> <span class="keywordtype">double</span> K;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keywordtype">void</span> initializeWeights();</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>std::vector&lt;TraceCoefficient&gt; createCoefficients(<span class="keyword">const</span> EvalTrace&amp; trace);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keywordtype">double</span> sigmoid(<span class="keywordtype">double</span> x);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keywordtype">double</span> evaluateFromCoefficients(<span class="keyword">const</span> TunePosition&amp; position);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keywordtype">double</span> calculateError(<span class="keyword">const</span> std::vector&lt;TunePosition&gt;&amp; positions);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>std::vector&lt;double&gt; calculateGradients(<span class="keyword">const</span> std::vector&lt;TunePosition&gt;&amp; positions);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keywordtype">void</span> exportTunedValues(<span class="keyword">const</span> std::string&amp; outputPath, <span class="keywordtype">int</span> finalEpoch, <span class="keywordtype">double</span> trainingError, <span class="keywordtype">double</span> validationError,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>                       <span class="keywordtype">double</span> testError);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keywordtype">void</span> startTuning(std::string filePath);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}  <span class="comment">// namespace Zagreus</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aconstants_8h_html"><div class="ttname"><a href="constants_8h.html">constants.h</a></div></div>
 <div class="ttc" id="aeval_8h_html"><div class="ttname"><a href="eval_8h.html">eval.h</a></div></div>
 <div class="ttc" id="anamespaceZagreus_html"><div class="ttname"><a href="namespaceZagreus.html">Zagreus</a></div><div class="ttdef"><b>Definition</b> <a href="bitboard_8cpp_source.html#l00027">bitboard.cpp:27</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a06e913bde27d160c82c691b3925920a4"><div class="ttname"><a href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4">Zagreus::PieceColor</a></div><div class="ttdeci">PieceColor</div><div class="ttdoc">Enum representing colors of chess pieces.</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00103">types.h:103</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad"><div class="ttname"><a href="namespaceZagreus.html#a06e913bde27d160c82c691b3925920a4a1cc62cdcdb8b19df760178d82827c5ad">Zagreus::WHITE</a></div><div class="ttdeci">@ WHITE</div><div class="ttdef"><b>Definition</b> <a href="types_8h_source.html#l00103">types.h:103</a></div></div>
 <div class="ttc" id="atypes_8h_html"><div class="ttname"><a href="types_8h.html">types.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
