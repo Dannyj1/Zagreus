@@ -469,12 +469,10 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                             }
                         }
 
-                        if (!isRoot) {
 #ifdef TRACE_SEARCH
-                            stats.ttWrites++;
+                        stats.ttWrites++;
 #endif
-                            tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
-                        }
+                        tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
                     }
                     return score;
                 }
@@ -492,15 +490,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     }
 
-    if (!isRoot) {
-        const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
+    const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
 
-        if (!engine.isSearchStopped()) {
+    if (!engine.isSearchStopped()) {
 #ifdef TRACE_SEARCH
-            stats.ttWrites++;
+        stats.ttWrites++;
 #endif
-            tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
-        }
+        tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
     }
 
     assert(bestScore >= -MATE_SCORE && bestScore <= MATE_SCORE);
