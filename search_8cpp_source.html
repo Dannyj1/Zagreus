@@ -777,105 +777,99 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>    lmrResearches = 0;</div>
 <div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>    futilityPrunes = 0;</div>
 <div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>    checkExtensions = 0;</div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>    singularExtensions = 0;</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>    singularAttempts = 0;</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>    seePrunes = 0;</div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>}</div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span> </div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span><span class="keywordtype">void</span> SearchStats::printTrace(Engine&amp; engine, <span class="keywordtype">int</span> numPositions)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    <span class="keyword">const</span> uint64_t totalNodes = <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a386fc0b1bc35dae9fe5c341ead711f0b">nodesSearched</a> + <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a3b79ebe9145e435236b851708233fe5e">qNodesSearched</a>;</div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>    <span class="keyword">const</span> uint64_t avgTotalNodes = totalNodes / numPositions;</div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> branchFactor = avgTotalNodes &gt; 1 &amp;&amp; <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a26ada4d3e3751115f06285503ea3eda7">depth</a> &gt; 1 ? std::pow(avgTotalNodes, 1.0 / <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a26ada4d3e3751115f06285503ea3eda7">depth</a>) : 0.0;</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> ttHitRate = ttProbes &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(ttHits) / ttProbes * 100.0 : 0.0;</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> qTtHitRate = qTtProbes &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(qTtHits) / qTtProbes * 100.0 : 0.0;</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> nmpSuccessRate = nmpTries &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nmpPrunes) / nmpTries * 100.0 : 0.0;</div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> lmrResearchRate = lmrSearches &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(lmrResearches) / lmrSearches * 100.0 : 0.0;</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> firstMoveCutoffRate =</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>        totalCutoffs &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(firstMoveCutoffs) / totalCutoffs * 100.0 : 0.0;</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondMoveCutoffRate =</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>        totalCutoffs &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(secondMoveCutoffs) / totalCutoffs * 100.0 : 0.0;</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> avgMoveCutoff = totalCutoffs &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(totalMoveCutoffNumber) / totalCutoffs : 0.0;</div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span> </div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    std::stringstream ss;</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    ss &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span> </div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>    <span class="keyword">auto</span> printStatLine = [&amp;](<span class="keyword">const</span> std::string&amp; label, uint64_t value) {</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>        ss &lt;&lt; label &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; value / numPositions;</div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        <span class="keywordflow">if</span> (numPositions &gt; 1) {</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>            ss &lt;&lt; <span class="stringliteral">&quot; (Total: &quot;</span> &lt;&lt; value &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>        }</div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>        ss &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>    };</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span> </div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    <span class="keyword">auto</span> printStatLineWithRate = [&amp;](<span class="keyword">const</span> std::string&amp; label, uint64_t value, <span class="keywordtype">double</span> rate) {</div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>        ss &lt;&lt; label &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; value / numPositions;</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>        <span class="keywordflow">if</span> (numPositions &gt; 1) {</div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>            ss &lt;&lt; <span class="stringliteral">&quot; (Total: &quot;</span> &lt;&lt; value &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>        }</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>        ss &lt;&lt; <span class="stringliteral">&quot; (&quot;</span> &lt;&lt; rate &lt;&lt; <span class="stringliteral">&quot;%)\n&quot;</span>;</div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    };</div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span> </div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Search Statistics&quot;</span> &lt;&lt; (numPositions &gt; 1 ? <span class="stringliteral">&quot; (Averages per position &amp; Totals)&quot;</span> : <span class="stringliteral">&quot;&quot;</span>) &lt;&lt; <span class="stringliteral">&quot; ---\n&quot;</span></div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>       &lt;&lt; <span class="stringliteral">&quot;Effective Branching Factor: &quot;</span> &lt;&lt; branchFactor &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span></div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>       &lt;&lt; <span class="stringliteral">&quot;\n--- Transposition Table ---\n&quot;</span>;</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span> </div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>    printStatLine(<span class="stringliteral">&quot;Probes&quot;</span>, ttProbes);</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>    printStatLineWithRate(<span class="stringliteral">&quot;Hits&quot;</span>, ttHits, ttHitRate);</div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>    printStatLine(<span class="stringliteral">&quot;Writes&quot;</span>, ttWrites);</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    printStatLine(<span class="stringliteral">&quot;Q-Search Probes&quot;</span>, qTtProbes);</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    printStatLineWithRate(<span class="stringliteral">&quot;Q-Search Hits&quot;</span>, qTtHits, qTtHitRate);</div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span> </div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Move Ordering ---\n&quot;</span>;</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    printStatLineWithRate(<span class="stringliteral">&quot;First Move Cutoffs&quot;</span>, firstMoveCutoffs, firstMoveCutoffRate);</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    printStatLineWithRate(<span class="stringliteral">&quot;Second Move Cutoffs&quot;</span>, secondMoveCutoffs, secondMoveCutoffRate);</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    ss &lt;&lt; <span class="stringliteral">&quot;Average Move Cutoff: &quot;</span> &lt;&lt; avgMoveCutoff &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span> </div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Pruning, Reductions, and Extensions ---\n&quot;</span>;</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>    printStatLine(<span class="stringliteral">&quot;NMP Tries&quot;</span>, nmpTries);</div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>    printStatLineWithRate(<span class="stringliteral">&quot;NMP Prunes&quot;</span>, nmpPrunes, nmpSuccessRate);</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>    printStatLine(<span class="stringliteral">&quot;LMR Searches&quot;</span>, lmrSearches);</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    printStatLineWithRate(<span class="stringliteral">&quot;LMR Researches&quot;</span>, lmrResearches, lmrResearchRate);</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>    printStatLine(<span class="stringliteral">&quot;Futility Prunes&quot;</span>, futilityPrunes);</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    printStatLine(<span class="stringliteral">&quot;Reverse Futility Prunes&quot;</span>, reverseFutilityPrunes);</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>    printStatLine(<span class="stringliteral">&quot;Singular Extensions&quot;</span>, singularExtensions);</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>    printStatLine(<span class="stringliteral">&quot;Singular Attempts&quot;</span>, singularAttempts);</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    printStatLine(<span class="stringliteral">&quot;Check Extensions&quot;</span>, checkExtensions);</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span> </div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Quiescence Search ---\n&quot;</span>;</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>    printStatLine(<span class="stringliteral">&quot;SEE Prunes&quot;</span>, seePrunes);</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>    seePrunes = 0;</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>}</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span> </div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span><span class="keywordtype">void</span> SearchStats::printTrace(Engine&amp; engine, <span class="keywordtype">int</span> numPositions)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    <span class="keyword">const</span> uint64_t totalNodes = <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a386fc0b1bc35dae9fe5c341ead711f0b">nodesSearched</a> + <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a3b79ebe9145e435236b851708233fe5e">qNodesSearched</a>;</div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>    <span class="keyword">const</span> uint64_t avgTotalNodes = totalNodes / numPositions;</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> branchFactor = avgTotalNodes &gt; 1 &amp;&amp; <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a26ada4d3e3751115f06285503ea3eda7">depth</a> &gt; 1 ? std::pow(avgTotalNodes, 1.0 / <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a26ada4d3e3751115f06285503ea3eda7">depth</a>) : 0.0;</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> ttHitRate = ttProbes &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(ttHits) / ttProbes * 100.0 : 0.0;</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> qTtHitRate = qTtProbes &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(qTtHits) / qTtProbes * 100.0 : 0.0;</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> nmpSuccessRate = nmpTries &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(nmpPrunes) / nmpTries * 100.0 : 0.0;</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> lmrResearchRate = lmrSearches &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(lmrResearches) / lmrSearches * 100.0 : 0.0;</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> firstMoveCutoffRate =</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>        totalCutoffs &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(firstMoveCutoffs) / totalCutoffs * 100.0 : 0.0;</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> secondMoveCutoffRate =</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>        totalCutoffs &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(secondMoveCutoffs) / totalCutoffs * 100.0 : 0.0;</div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> avgMoveCutoff = totalCutoffs &gt; 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(totalMoveCutoffNumber) / totalCutoffs : 0.0;</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span> </div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    std::stringstream ss;</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    ss &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span> </div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    <span class="keyword">auto</span> printStatLine = [&amp;](<span class="keyword">const</span> std::string&amp; label, uint64_t value) {</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>        ss &lt;&lt; label &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; value / numPositions;</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>        <span class="keywordflow">if</span> (numPositions &gt; 1) {</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>            ss &lt;&lt; <span class="stringliteral">&quot; (Total: &quot;</span> &lt;&lt; value &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        }</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>        ss &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>    };</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span> </div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>    <span class="keyword">auto</span> printStatLineWithRate = [&amp;](<span class="keyword">const</span> std::string&amp; label, uint64_t value, <span class="keywordtype">double</span> rate) {</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>        ss &lt;&lt; label &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; value / numPositions;</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>        <span class="keywordflow">if</span> (numPositions &gt; 1) {</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>            ss &lt;&lt; <span class="stringliteral">&quot; (Total: &quot;</span> &lt;&lt; value &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>        }</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>        ss &lt;&lt; <span class="stringliteral">&quot; (&quot;</span> &lt;&lt; rate &lt;&lt; <span class="stringliteral">&quot;%)\n&quot;</span>;</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    };</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span> </div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Search Statistics&quot;</span> &lt;&lt; (numPositions &gt; 1 ? <span class="stringliteral">&quot; (Averages per position &amp; Totals)&quot;</span> : <span class="stringliteral">&quot;&quot;</span>) &lt;&lt; <span class="stringliteral">&quot; ---\n&quot;</span></div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>       &lt;&lt; <span class="stringliteral">&quot;Effective Branching Factor: &quot;</span> &lt;&lt; branchFactor &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span></div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>       &lt;&lt; <span class="stringliteral">&quot;\n--- Transposition Table ---\n&quot;</span>;</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span> </div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>    printStatLine(<span class="stringliteral">&quot;Probes&quot;</span>, ttProbes);</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>    printStatLineWithRate(<span class="stringliteral">&quot;Hits&quot;</span>, ttHits, ttHitRate);</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>    printStatLine(<span class="stringliteral">&quot;Writes&quot;</span>, ttWrites);</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>    printStatLine(<span class="stringliteral">&quot;Q-Search Probes&quot;</span>, qTtProbes);</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>    printStatLineWithRate(<span class="stringliteral">&quot;Q-Search Hits&quot;</span>, qTtHits, qTtHitRate);</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span> </div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Move Ordering ---\n&quot;</span>;</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>    printStatLineWithRate(<span class="stringliteral">&quot;First Move Cutoffs&quot;</span>, firstMoveCutoffs, firstMoveCutoffRate);</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    printStatLineWithRate(<span class="stringliteral">&quot;Second Move Cutoffs&quot;</span>, secondMoveCutoffs, secondMoveCutoffRate);</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    ss &lt;&lt; <span class="stringliteral">&quot;Average Move Cutoff: &quot;</span> &lt;&lt; avgMoveCutoff &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span> </div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Pruning, Reductions, and Extensions ---\n&quot;</span>;</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    printStatLine(<span class="stringliteral">&quot;NMP Tries&quot;</span>, nmpTries);</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    printStatLineWithRate(<span class="stringliteral">&quot;NMP Prunes&quot;</span>, nmpPrunes, nmpSuccessRate);</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>    printStatLine(<span class="stringliteral">&quot;LMR Searches&quot;</span>, lmrSearches);</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>    printStatLineWithRate(<span class="stringliteral">&quot;LMR Researches&quot;</span>, lmrResearches, lmrResearchRate);</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>    printStatLine(<span class="stringliteral">&quot;Futility Prunes&quot;</span>, futilityPrunes);</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    printStatLine(<span class="stringliteral">&quot;Reverse Futility Prunes&quot;</span>, reverseFutilityPrunes);</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>    printStatLine(<span class="stringliteral">&quot;Check Extensions&quot;</span>, checkExtensions);</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span> </div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>    ss &lt;&lt; <span class="stringliteral">&quot;\n--- Quiescence Search ---\n&quot;</span>;</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>    printStatLine(<span class="stringliteral">&quot;SEE Prunes&quot;</span>, seePrunes);</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span> </div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>    ss &lt;&lt; <span class="stringliteral">&quot;-------------------------&quot;</span>;</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    engine.sendInfoMessage(ss.str());</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>}</div>
 <div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span> </div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>    ss &lt;&lt; <span class="stringliteral">&quot;-------------------------&quot;</span>;</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    engine.sendInfoMessage(ss.str());</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>}</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span> </div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>SearchStats&amp; SearchStats::operator+=(<span class="keyword">const</span> SearchStats&amp; other) {</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a386fc0b1bc35dae9fe5c341ead711f0b">nodesSearched</a> += other.nodesSearched;</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a3b79ebe9145e435236b851708233fe5e">qNodesSearched</a> += other.qNodesSearched;</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    ttProbes += other.ttProbes;</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>    ttHits += other.ttHits;</div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    ttWrites += other.ttWrites;</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    qTtProbes += other.qTtProbes;</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    qTtHits += other.qTtHits;</div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>    firstMoveCutoffs += other.firstMoveCutoffs;</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>    secondMoveCutoffs += other.secondMoveCutoffs;</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    totalMoveCutoffNumber += other.totalMoveCutoffNumber;</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    totalCutoffs += other.totalCutoffs;</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    nmpTries += other.nmpTries;</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    nmpPrunes += other.nmpPrunes;</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    lmrSearches += other.lmrSearches;</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    lmrResearches += other.lmrResearches;</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    futilityPrunes += other.futilityPrunes;</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    reverseFutilityPrunes += other.reverseFutilityPrunes;</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>    checkExtensions += other.checkExtensions;</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>    singularExtensions += other.singularExtensions;</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>    singularAttempts += other.singularAttempts;</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>    seePrunes += other.seePrunes;</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span> </div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>}</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span> </div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>}  <span class="comment">// namespace Zagreus</span></div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>SearchStats&amp; SearchStats::operator+=(<span class="keyword">const</span> SearchStats&amp; other) {</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a386fc0b1bc35dae9fe5c341ead711f0b">nodesSearched</a> += other.nodesSearched;</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>    <a class="code hl_variable" href="structZagreus_1_1SearchStats.html#a3b79ebe9145e435236b851708233fe5e">qNodesSearched</a> += other.qNodesSearched;</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    ttProbes += other.ttProbes;</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    ttHits += other.ttHits;</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    ttWrites += other.ttWrites;</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    qTtProbes += other.qTtProbes;</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    qTtHits += other.qTtHits;</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>    firstMoveCutoffs += other.firstMoveCutoffs;</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    secondMoveCutoffs += other.secondMoveCutoffs;</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    totalMoveCutoffNumber += other.totalMoveCutoffNumber;</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    totalCutoffs += other.totalCutoffs;</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>    nmpTries += other.nmpTries;</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>    nmpPrunes += other.nmpPrunes;</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    lmrSearches += other.lmrSearches;</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    lmrResearches += other.lmrResearches;</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    futilityPrunes += other.futilityPrunes;</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    reverseFutilityPrunes += other.reverseFutilityPrunes;</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    checkExtensions += other.checkExtensions;</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    seePrunes += other.seePrunes;</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span> </div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>}</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span> </div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>}  <span class="comment">// namespace Zagreus</span></div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aboard_8h_html"><div class="ttname"><a href="board_8h.html">board.h</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html"><div class="ttname"><a href="classZagreus_1_1Board.html">Zagreus::Board</a></div><div class="ttdoc">Represents the chess board and provides methods to manipulate it. The board consists of several bitbo...</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00065">board.h:65</a></div></div>
 <div class="ttc" id="aclassZagreus_1_1Board_html_a15240df01ee55e1b896e9599076b64f5"><div class="ttname"><a href="classZagreus_1_1Board.html#a15240df01ee55e1b896e9599076b64f5">Zagreus::Board::hasNonPawnMaterial</a></div><div class="ttdeci">bool hasNonPawnMaterial() const</div><div class="ttdoc">Determines if the board has material that isn't pawn or king.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00459">board.h:459</a></div></div>

@@ -1,19 +1,18 @@
 var searchData=
 [
   ['parsepvline_0',['parsePvLine',['../namespaceZagreus.html#a63120017049a308ff86a0a9a00ecca44',1,'Zagreus']]],
-  ['passedpawns_1',['passedPawns',['../classZagreus_1_1Board.html#a008960a1b25a7a86518db1b742a70ae3',1,'Zagreus::Board']]],
-  ['pawnattackfrontspans_2',['pawnAttackFrontSpans',['../classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd',1,'Zagreus::Board']]],
-  ['pawnattackrearspans_3',['pawnAttackRearSpans',['../classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c',1,'Zagreus::Board']]],
-  ['pawnfrontspans_4',['pawnFrontSpans',['../classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2',1,'Zagreus::Board']]],
-  ['pawnrearspans_5',['pawnRearSpans',['../classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8',1,'Zagreus::Board']]],
-  ['perft_6',['perft',['../namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325',1,'Zagreus']]],
-  ['period_5fpow2_7',['period_pow2',['../classpcg__detail_1_1engine.html#ae534d703d6ecccf0c7a3da12e1f9bf5e',1,'pcg_detail::engine::period_pow2()'],['../classpcg__detail_1_1extended.html#a87de70733c1c7e5b628834eff39c6819',1,'pcg_detail::extended::period_pow2()']]],
-  ['pop_5f1st_5fbit_8',['pop_1st_bit',['../namespaceZagreus.html#a8946c1992f4f24913bc5396b4a223745',1,'Zagreus']]],
-  ['popcnt_9',['popcnt',['../namespaceZagreus.html#aa0fea3f1f058b2d21f3f387a149b7f8a',1,'Zagreus']]],
-  ['poplsb_10',['popLsb',['../namespaceZagreus.html#a5b8e7dc1ddf3599e06c25e9e88952fbf',1,'Zagreus']]],
-  ['print_11',['print',['../classZagreus_1_1Board.html#a82a99b7d0775ddd726fd3175f63241e1',1,'Zagreus::Board']]],
-  ['printstartupmessage_12',['printStartupMessage',['../classZagreus_1_1Engine.html#a9da44ebb2faa1b76fb8ab5c361c97d8d',1,'Zagreus::Engine']]],
-  ['probeposition_13',['probePosition',['../classZagreus_1_1TranspositionTable.html#ae950ec6aafd607438555f30febb74da4',1,'Zagreus::TranspositionTable']]],
-  ['pvline_14',['PvLine',['../structZagreus_1_1PvLine.html#adc9f29c03ad4347fc94654ee90bdd772',1,'Zagreus::PvLine']]],
-  ['pvsearch_15',['pvSearch',['../namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d',1,'Zagreus']]]
+  ['pawnattackfrontspans_1',['pawnAttackFrontSpans',['../classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd',1,'Zagreus::Board']]],
+  ['pawnattackrearspans_2',['pawnAttackRearSpans',['../classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c',1,'Zagreus::Board']]],
+  ['pawnfrontspans_3',['pawnFrontSpans',['../classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2',1,'Zagreus::Board']]],
+  ['pawnrearspans_4',['pawnRearSpans',['../classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8',1,'Zagreus::Board']]],
+  ['perft_5',['perft',['../namespaceZagreus.html#a8c0bbbe8484b26df054d217409f25325',1,'Zagreus']]],
+  ['period_5fpow2_6',['period_pow2',['../classpcg__detail_1_1engine.html#ae534d703d6ecccf0c7a3da12e1f9bf5e',1,'pcg_detail::engine::period_pow2()'],['../classpcg__detail_1_1extended.html#a87de70733c1c7e5b628834eff39c6819',1,'pcg_detail::extended::period_pow2()']]],
+  ['pop_5f1st_5fbit_7',['pop_1st_bit',['../namespaceZagreus.html#a8946c1992f4f24913bc5396b4a223745',1,'Zagreus']]],
+  ['popcnt_8',['popcnt',['../namespaceZagreus.html#aa0fea3f1f058b2d21f3f387a149b7f8a',1,'Zagreus']]],
+  ['poplsb_9',['popLsb',['../namespaceZagreus.html#a5b8e7dc1ddf3599e06c25e9e88952fbf',1,'Zagreus']]],
+  ['print_10',['print',['../classZagreus_1_1Board.html#a82a99b7d0775ddd726fd3175f63241e1',1,'Zagreus::Board']]],
+  ['printstartupmessage_11',['printStartupMessage',['../classZagreus_1_1Engine.html#a9da44ebb2faa1b76fb8ab5c361c97d8d',1,'Zagreus::Engine']]],
+  ['probeposition_12',['probePosition',['../classZagreus_1_1TranspositionTable.html#ae950ec6aafd607438555f30febb74da4',1,'Zagreus::TranspositionTable']]],
+  ['pvline_13',['PvLine',['../structZagreus_1_1PvLine.html#adc9f29c03ad4347fc94654ee90bdd772',1,'Zagreus::PvLine']]],
+  ['pvsearch_14',['pvSearch',['../namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d',1,'Zagreus']]]
 ];

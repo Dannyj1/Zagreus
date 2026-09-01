@@ -1,9 +1,7 @@
 <map id="Zagreus::Board::pawnFrontSpans" name="Zagreus::Board::pawnFrontSpans">
-<area shape="rect" id="Node000001" title=" " alt="" coords="509,27,707,67"/>
-<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#a008960a1b25a7a86518db1b742a70ae3" title=" " alt="" coords="245,5,461,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="496,37,461,33,462,28,496,32"/>
-<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="250,55,457,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="496,62,457,67,457,61,496,57"/>
-<area shape="rect" id="Node000004" href="$classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,55,197,95"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="236,78,197,78,197,73,236,73"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="500,5,697,45"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="245,5,452,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="487,28,452,28,452,23,487,23"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="5,5,197,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="232,28,198,28,198,23,232,23"/>
 </map>
