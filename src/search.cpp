@@ -21,7 +21,6 @@
 #include "search.h"
 
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
 #include <string>
 // ReSharper disable once CppUnusedIncludeDirective
@@ -215,6 +214,13 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
     }
 
+    if (isInCheck) {
+        depth += 1;
+#ifdef TRACE_SEARCH
+        stats.checkExtensions++;
+#endif
+    }
+
     if (depth <= 0) {
         assert(!isRoot);
         pvLine.moveCount = 0;
@@ -223,41 +229,21 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     stats.nodesSearched += 1;
 
-    const int nodePly = board.getPly();
-    const Move excludedMove = searchStack.excludedMove[nodePly];
-
     TTEntry* ttEntry = nullptr;
-    int16_t ttScore = NO_TT_SCORE;
-    Move ttMove = NO_MOVE;
-    int ttDepth = -MAX_PLIES;
-    int16_t ttEntryScore = 0;
-    TTNodeType ttEntryNodeType = ALPHA;
+    const int16_t ttScore = tt->probePosition(board.getZobristHash(), depth, alpha, beta, board.getPly(), ttEntry);
+    Move ttMove = ttEntry ? ttEntry->bestMove : NO_MOVE;
+    int ttDepth = ttEntry ? ttEntry->depth : -MAX_PLIES;
 
-    if (excludedMove == NO_MOVE) {
-        ttScore = tt->probePosition(board.getZobristHash(), depth, alpha, beta, nodePly, ttEntry);
-        ttMove = ttEntry ? ttEntry->bestMove : NO_MOVE;
-        ttDepth = ttEntry ? ttEntry->depth : -MAX_PLIES;
-        ttEntryScore = ttEntry ? ttEntry->score : 0;
-        ttEntryNodeType = ttEntry ? ttEntry->nodeType : ALPHA;
 #ifdef TRACE_SEARCH
-        stats.ttProbes++;
+    stats.ttProbes++;
 
-        if (ttScore != NO_TT_SCORE) {
-            stats.ttHits++;
-        }
+    if (ttScore != NO_TT_SCORE) {
+        stats.ttHits++;
+    }
 #endif
 
-        if (!isPV && ttScore != NO_TT_SCORE) {
-            return ttScore;
-        }
-    }
-
-    int ttAdjustedScore = ttEntryScore;
-
-    if (ttAdjustedScore >= (MATE_SCORE - MAX_PLIES)) {
-        ttAdjustedScore -= nodePly;
-    } else if (ttAdjustedScore <= (-MATE_SCORE + MAX_PLIES)) {
-        ttAdjustedScore += nodePly;
+    if (!isPV && ttScore != NO_TT_SCORE) {
+        return ttScore;
     }
 
     const int eval = isInCheck ? 0 : Evaluation(board).evaluate();
@@ -265,7 +251,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     if (!isPV) {
         // Reverse Futility Pruning
         int rfMargin = 150 * depth;
-        if (!isInCheck && excludedMove == NO_MOVE && depth <= 3 && eval >= beta + rfMargin) {
+        if (!isInCheck && depth <= 3 && eval >= beta + rfMargin) {
 #ifdef TRACE_SEARCH
             stats.reverseFutilityPrunes++;
 #endif
@@ -273,8 +259,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         }
 
         // Null Move Pruning
-        if (depth >= 2 && !isInCheck && excludedMove == NO_MOVE && board.hasNonPawnMaterial<color>() &&
-            board.getPreviousMove() != NO_MOVE && eval >= beta) {
+        if (depth >= 2 && !isInCheck && board.hasNonPawnMaterial<color>() && board.getPreviousMove() != NO_MOVE &&
+            eval >= beta) {
 #ifdef TRACE_SEARCH
             stats.nmpTries++;
 #endif
@@ -320,6 +306,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     int bestScore = INT32_MIN;
     int movesSearched = 0;
 
+    Move excludedMove = searchStack.excludedMove[depth];
+
     while (movePicker.next(move)) {
         if (move == excludedMove) {
             continue;
@@ -362,46 +350,36 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
             }
         }
 
-        int extension = 0;
-
         // Singular Extensions
-        if (!isRoot && excludedMove == NO_MOVE && depth >= 6 && ttEntry && move == ttMove && ttEntryNodeType == BETA &&
-            ttDepth >= depth - 3 && std::abs(ttAdjustedScore) < MATE_SCORE - MAX_PLIES) {
+        /*if (!isRoot && excludedMove == NO_MOVE && depth >= 6 && ttEntry && move == ttMove &&
+            ttEntry->nodeType == BETA && ttDepth >= depth - 3) {
 #ifdef TRACE_SEARCH
             stats.singularAttempts++;
 #endif
             // Need to unmake the move, as it was already made
             board.unmakeMove();
 
-            const int singularBeta = ttAdjustedScore - (2 * depth);
-            const int singularDepth = moveDepth / 2;
+            int singularBeta = ttEntry->score - depth;
+            int singularDepth = moveDepth / 2;
 
-            searchStack.excludedMove[nodePly] = move;
+            searchStack.excludedMove[singularDepth] = move;
             PvLine singularPvLine = PvLine{board.getPly()};
             const int singularScore =
                 pvSearch<color, REGULAR>(engine, board, singularBeta - 1, singularBeta, singularDepth, stats, endTime,
-                                         singularPvLine, searchStack, isInCheck);
-            searchStack.excludedMove[nodePly] = NO_MOVE;
+                                         singularPvLine, searchStack);
+            searchStack.excludedMove[singularDepth] = NO_MOVE;
 
             if (singularScore < singularBeta) {
 #ifdef TRACE_SEARCH
                 stats.singularExtensions++;
 #endif
 
-                extension = 1;
+                moveDepth += 1;
             }
 
             // Re-make move
             board.makeMove(move);
-        } else if (moveGivesCheck) {
-#ifdef TRACE_SEARCH
-            stats.checkExtensions++;
-#endif
-
-            extension = 1;
-        }
-
-        moveDepth += extension;
+        }*/
 
         __builtin_prefetch(&tt->transpositionTable[board.getZobristHash() & tt->hashSize]);
 
@@ -526,11 +504,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                             }
                         }
 
-                        if (!isRoot && excludedMove == NO_MOVE) {
+                        if (!isRoot) {
 #ifdef TRACE_SEARCH
                             stats.ttWrites++;
 #endif
-                            tt->savePosition(board.getZobristHash(), depth, nodePly, score, move, BETA);
+                            tt->savePosition(board.getZobristHash(), depth, board.getPly(), score, move, BETA);
                         }
                     }
                     return score;
@@ -540,10 +518,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     }
 
     if (!legalMoves) {
-        if (excludedMove != NO_MOVE) {
-            bestScore = alpha;
-        } else if (isInCheck) {
-            alpha = -MATE_SCORE + nodePly;
+        if (isInCheck) {
+            alpha = -MATE_SCORE + board.getPly();
             bestScore = alpha;
         } else {
             alpha = DRAW_SCORE;
@@ -554,11 +530,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     if (!isRoot) {
         const TTNodeType ttNodeType = (isPV && bestMove != NO_MOVE) ? EXACT : ALPHA;
 
-        if (!engine.isSearchStopped() && excludedMove == NO_MOVE) {
+        if (!engine.isSearchStopped()) {
 #ifdef TRACE_SEARCH
             stats.ttWrites++;
 #endif
-            tt->savePosition(board.getZobristHash(), depth, nodePly, bestScore, bestMove, ttNodeType);
+            tt->savePosition(board.getZobristHash(), depth, board.getPly(), bestScore, bestMove, ttNodeType);
         }
     }
 
