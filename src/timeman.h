@@ -19,10 +19,17 @@
  */
 
 #pragma once
+#include <limits>
+
 #include "search.h"
 #include "types.h"
 
 namespace Zagreus {
+struct TimeLimits {
+    int softMs = std::numeric_limits<int>::max();
+    int hardMs = std::numeric_limits<int>::max();
+};
+
 template <PieceColor color>
-int calculateSearchTime(SearchParams& params);
+TimeLimits calculateSearchTime(SearchParams& params);
 }  // namespace Zagreus

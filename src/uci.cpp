@@ -341,6 +341,7 @@ void Engine::handleGoCommand(std::string_view args) {
     params.blackInc = blackInc;
     params.depth = depth;
     params.max_nodes = nodes;
+    params.moveOverhead = std::stoi(getOption("MoveOverhead").getValue());
     params.infinite = infinite;
 
     Move bestMove;
@@ -505,6 +506,12 @@ void Engine::processLine(const std::string& inputLine) {
 void Engine::registerOptions() {
     UCIOption hashOption{"Hash", Spin, "16", "1", "33554432"};
     addOption(hashOption);
+
+    UCIOption moveOverheadOption{"MoveOverhead", Spin, "10", "0", "10000"};
+    addOption(moveOverheadOption);
+
+    UCIOption threads{"Threads", Spin, "1", "1", "1"};
+    addOption(threads);
 }
 
 void Engine::startUci() {

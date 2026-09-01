@@ -98,14 +98,13 @@ template <PieceColor color>
 Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats) {
     int depth = 1;
     const int currentPly = board.getPly();
-    int searchTime;
+    const bool useTimeManagement = !params.infinite && (params.whiteTime > 0 || params.blackTime > 0);
+    TimeLimits timeLimits{};
     auto endTime = std::chrono::steady_clock::time_point{};
 
-    if (params.infinite) {
-        searchTime = 0;
-    } else {
-        searchTime = calculateSearchTime<color>(params);
-        endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime);
+    if (useTimeManagement) {
+        timeLimits = calculateSearchTime<color>(params);
+        endTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeLimits.hardMs);
     }
 
     const auto startTime = std::chrono::steady_clock::now();
@@ -114,14 +113,24 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     engine.setSearchStopped(false);
 
     int previousScore = 0;
+    int rootLegalMoves = 0;
+    MoveList rootMoves = MoveList{};
+
+    generateMoves<color, ALL>(board, rootMoves);
+
+    for (int i = 0; i < rootMoves.size; ++i) {
+        if (board.isMoveLegal(rootMoves.moves[i])) {
+            rootLegalMoves += 1;
+        }
+    }
 
     while (!engine.isSearchStopped() && (currentPly + depth) < MAX_PLIES) {
-        if (!params.infinite && (params.blackTime > 0 || params.whiteTime > 0)) {
-            // Don't start the next iteration if we are 10% away from the end time
-            if (std::chrono::steady_clock::now() + std::chrono::milliseconds(searchTime / 10) > endTime) {
-                engine.setSearchStopped(true);
-                break;
-            }
+        if (useTimeManagement && depth > 1 &&
+            (rootLegalMoves == 1 ||
+             std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTime)
+                     .count() > timeLimits.softMs / 2)) {
+            engine.setSearchStopped(true);
+            break;
         }
 
         if (params.depth > 0 && depth > params.depth) {

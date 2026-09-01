@@ -21,25 +21,24 @@
 #include "timeman.h"
 
 #include <algorithm>
-#include <limits>
 
 namespace Zagreus {
 template <PieceColor color>
-int calculateSearchTime(SearchParams& params) {
-    int timeLeft = color == WHITE ? params.whiteTime : params.blackTime;
-    int timeInc = color == WHITE ? params.whiteInc : params.blackInc;
+TimeLimits calculateSearchTime(SearchParams& params) {
+    const int timeLeft = color == WHITE ? params.whiteTime : params.blackTime;
+    const int timeInc = color == WHITE ? params.whiteInc : params.blackInc;
 
-    if (timeLeft > 0) {
-        int movesToGo = 50;
-        int searchTime = timeLeft + (timeInc * movesToGo);
-
-        searchTime /= movesToGo;
-        return std::max<int>(searchTime, 1);
-    } else {
-        return std::numeric_limits<int>::max();
+    if (timeLeft <= 0) {
+        return TimeLimits{};
     }
+
+    const int usableTime = std::max(timeLeft - params.moveOverhead, 1);
+    const int softMs = std::clamp(usableTime / 20 + timeInc / 2, 1, usableTime);
+    const int hardMs = std::clamp(softMs * 2, softMs, usableTime);
+
+    return TimeLimits{softMs, hardMs};
 }
 
-template int calculateSearchTime<WHITE>(SearchParams& params);
-template int calculateSearchTime<BLACK>(SearchParams& params);
+template TimeLimits calculateSearchTime<WHITE>(SearchParams& params);
+template TimeLimits calculateSearchTime<BLACK>(SearchParams& params);
 }  // namespace Zagreus
