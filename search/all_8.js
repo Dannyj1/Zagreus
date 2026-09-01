@@ -17,8 +17,9 @@ var searchData=
   ['halfsize_5ftrait_3c_20uint16_5ft_20_3e_14',['halfsize_trait&lt; uint16_t &gt;',['../structpcg__detail_1_1halfsize__trait_3_01uint16__t_01_4.html',1,'pcg_detail']]],
   ['halfsize_5ftrait_3c_20uint32_5ft_20_3e_15',['halfsize_trait&lt; uint32_t &gt;',['../structpcg__detail_1_1halfsize__trait_3_01uint32__t_01_4.html',1,'pcg_detail']]],
   ['halfsize_5ftrait_3c_20uint64_5ft_20_3e_16',['halfsize_trait&lt; uint64_t &gt;',['../structpcg__detail_1_1halfsize__trait_3_01uint64__t_01_4.html',1,'pcg_detail']]],
-  ['hashsize_17',['hashSize',['../classZagreus_1_1TranspositionTable.html#aade013cae70e9ffa5aba82accf72a4de',1,'Zagreus::TranspositionTable']]],
-  ['hasnonpawnmaterial_18',['hasNonPawnMaterial',['../classZagreus_1_1Board.html#a15240df01ee55e1b896e9599076b64f5',1,'Zagreus::Board::hasNonPawnMaterial() const'],['../classZagreus_1_1Board.html#ab675e4593af00d78ee91a0bc8ff596d2',1,'Zagreus::Board::hasNonPawnMaterial() const']]],
-  ['hasoption_19',['hasOption',['../classZagreus_1_1Engine.html#a3a16af861f7078b068c14518ddc1d93f',1,'Zagreus::Engine']]],
-  ['htype_20',['htype',['../structpcg__detail_1_1xsl__rr__rr__mixin.html#a65cf0d6a4c80342f09aa381556bd81ac',1,'pcg_detail::xsl_rr_rr_mixin']]]
+  ['hardms_17',['hardMs',['../structZagreus_1_1TimeLimits.html#a50bbf6e3bda9e5e0a00ea95aeb4d234c',1,'Zagreus::TimeLimits']]],
+  ['hashsize_18',['hashSize',['../classZagreus_1_1TranspositionTable.html#aade013cae70e9ffa5aba82accf72a4de',1,'Zagreus::TranspositionTable']]],
+  ['hasnonpawnmaterial_19',['hasNonPawnMaterial',['../classZagreus_1_1Board.html#a15240df01ee55e1b896e9599076b64f5',1,'Zagreus::Board::hasNonPawnMaterial() const'],['../classZagreus_1_1Board.html#ab675e4593af00d78ee91a0bc8ff596d2',1,'Zagreus::Board::hasNonPawnMaterial() const']]],
+  ['hasoption_20',['hasOption',['../classZagreus_1_1Engine.html#a3a16af861f7078b068c14518ddc1d93f',1,'Zagreus::Engine']]],
+  ['htype_21',['htype',['../structpcg__detail_1_1xsl__rr__rr__mixin.html#a65cf0d6a4c80342f09aa381556bd81ac',1,'pcg_detail::xsl_rr_rr_mixin']]]
 ];

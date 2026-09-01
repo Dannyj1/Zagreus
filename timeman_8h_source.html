@@ -112,16 +112,29 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &quot;<a class="code" href="search_8h.html">search.h</a>&quot;</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &quot;<a class="code" href="types_8h.html">types.h</a>&quot;</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceZagreus.html">Zagreus</a> {</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span> &lt;PieceColor color&gt;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keywordtype">int</span> <a class="code hl_function" href="namespaceZagreus.html#a274cbb0aba18a5da103d272022d5712f">calculateSearchTime</a>(SearchParams&amp; params);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>}  <span class="comment">// namespace Zagreus</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;limits&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;<a class="code" href="search_8h.html">search.h</a>&quot;</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &quot;<a class="code" href="types_8h.html">types.h</a>&quot;</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceZagreus.html">Zagreus</a> {</div>
+<div class="foldopen" id="foldopen00028" data-start="{" data-end="};">
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structZagreus_1_1TimeLimits.html">   28</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structZagreus_1_1TimeLimits.html">TimeLimits</a> {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structZagreus_1_1TimeLimits.html#a518732608281b8d284350018c692a081">   29</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structZagreus_1_1TimeLimits.html#a518732608281b8d284350018c692a081">softMs</a> = std::numeric_limits&lt;int&gt;::max();</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="structZagreus_1_1TimeLimits.html#a50bbf6e3bda9e5e0a00ea95aeb4d234c">   30</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structZagreus_1_1TimeLimits.html#a50bbf6e3bda9e5e0a00ea95aeb4d234c">hardMs</a> = std::numeric_limits&lt;int&gt;::max();</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>};</div>
+</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">template</span> &lt;PieceColor color&gt;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><a class="code hl_struct" href="structZagreus_1_1TimeLimits.html">TimeLimits</a> <a class="code hl_function" href="namespaceZagreus.html#a706d879a1e0eb15c153a36974879511e">calculateSearchTime</a>(<a class="code hl_struct" href="structZagreus_1_1SearchParams.html">SearchParams</a>&amp; params);</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}  <span class="comment">// namespace Zagreus</span></div>
 <div class="ttc" id="anamespaceZagreus_html"><div class="ttname"><a href="namespaceZagreus.html">Zagreus</a></div><div class="ttdef"><b>Definition</b> <a href="bitboard_8cpp_source.html#l00027">bitboard.cpp:27</a></div></div>
-<div class="ttc" id="anamespaceZagreus_html_a274cbb0aba18a5da103d272022d5712f"><div class="ttname"><a href="namespaceZagreus.html#a274cbb0aba18a5da103d272022d5712f">Zagreus::calculateSearchTime</a></div><div class="ttdeci">int calculateSearchTime(SearchParams &amp;params)</div><div class="ttdef"><b>Definition</b> <a href="timeman_8cpp_source.html#l00028">timeman.cpp:28</a></div></div>
+<div class="ttc" id="anamespaceZagreus_html_a706d879a1e0eb15c153a36974879511e"><div class="ttname"><a href="namespaceZagreus.html#a706d879a1e0eb15c153a36974879511e">Zagreus::calculateSearchTime</a></div><div class="ttdeci">TimeLimits calculateSearchTime(SearchParams &amp;params)</div><div class="ttdef"><b>Definition</b> <a href="timeman_8cpp_source.html#l00027">timeman.cpp:27</a></div></div>
 <div class="ttc" id="asearch_8h_html"><div class="ttname"><a href="search_8h.html">search.h</a></div></div>
+<div class="ttc" id="astructZagreus_1_1SearchParams_html"><div class="ttname"><a href="structZagreus_1_1SearchParams.html">Zagreus::SearchParams</a></div><div class="ttdef"><b>Definition</b> <a href="search_8h_source.html#l00038">search.h:38</a></div></div>
+<div class="ttc" id="astructZagreus_1_1TimeLimits_html"><div class="ttname"><a href="structZagreus_1_1TimeLimits.html">Zagreus::TimeLimits</a></div><div class="ttdef"><b>Definition</b> <a href="#l00028">timeman.h:28</a></div></div>
+<div class="ttc" id="astructZagreus_1_1TimeLimits_html_a50bbf6e3bda9e5e0a00ea95aeb4d234c"><div class="ttname"><a href="structZagreus_1_1TimeLimits.html#a50bbf6e3bda9e5e0a00ea95aeb4d234c">Zagreus::TimeLimits::hardMs</a></div><div class="ttdeci">int hardMs</div><div class="ttdef"><b>Definition</b> <a href="#l00030">timeman.h:30</a></div></div>
+<div class="ttc" id="astructZagreus_1_1TimeLimits_html_a518732608281b8d284350018c692a081"><div class="ttname"><a href="structZagreus_1_1TimeLimits.html#a518732608281b8d284350018c692a081">Zagreus::TimeLimits::softMs</a></div><div class="ttdeci">int softMs</div><div class="ttdef"><b>Definition</b> <a href="#l00029">timeman.h:29</a></div></div>
 <div class="ttc" id="atypes_8h_html"><div class="ttname"><a href="types_8h.html">types.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
