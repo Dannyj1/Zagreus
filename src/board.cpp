@@ -277,7 +277,7 @@ bool Board::isDraw() const {
     // 3-fold repetition
     int repetitions = 0;
 
-    for (int i = ply - 2; i >= (ply - halfMoveClock); i -= 2) {
+    for (int i = ply - 2; i >= 0 && i >= (ply - halfMoveClock); i -= 2) {
         if (history[i].zobristHash == zobristHash) {
             repetitions++;
         }

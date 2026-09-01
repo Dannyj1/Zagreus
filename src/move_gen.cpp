@@ -128,7 +128,8 @@ void generatePawnMoves(const Board& board, MoveList& moves, const uint64_t genMa
         pawnEastAttacks = blackPawnEastAttacks(pawnBB);
     }
 
-    uint64_t enPassantMask = squareToBitboard(board.getEnPassantSquare());
+    uint64_t enPassantMask =
+        board.getEnPassantSquare() == NO_EN_PASSANT ? 0ULL : squareToBitboard(board.getEnPassantSquare());
 
     if constexpr (color == WHITE) {
         enPassantMask &= RANK_6;
