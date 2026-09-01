@@ -345,25 +345,6 @@ void Evaluation::evaluatePawnStructure() {
 
     addScore<color>(doubledPawnCount * evalDoubledPawnPenalty[MIDGAME],
                     doubledPawnCount * evalDoubledPawnPenalty[ENDGAME]);
-
-    // Passed pawns
-    /*uint64_t passedPawns = board.passedPawns<color>();
-    int midgameScore = 0;
-    int endgameScore = 0;
-
-    while (passedPawns) {
-        const Square square = static_cast<Square>(popLsb(passedPawns));
-        uint8_t rank = getRank(square);
-
-        if (color == BLACK) {
-            rank = 7 - rank;
-        }
-
-        midgameScore += evalPassedPawnBonus[MIDGAME][rank];
-        endgameScore += evalPassedPawnBonus[ENDGAME][rank];
-    }
-
-    addScore<color>(midgameScore, endgameScore);*/
 }
 
 /**

@@ -32,7 +32,4 @@ extern int evalMobility[GAME_PHASES][PIECE_TYPES];
 // Pawn structure
 // Doubled pawns
 extern int evalDoubledPawnPenalty[GAME_PHASES];
-
-// Passed Pawns
-// extern int evalPassedPawnBonus[GAME_PHASES][RANKS];
 }  // namespace Zagreus

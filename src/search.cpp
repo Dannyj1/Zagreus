@@ -278,11 +278,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 return nullMoveScore;
             }
         }
-    } else {
-        // Internal iterative reductions (IIR)
-        /*if (depth >= 6 && ttMove == NO_MOVE) {
-            depth -= 1;
-        }*/
     }
 
     int legalMoves = 0;
@@ -349,37 +344,6 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                 continue;
             }
         }
-
-        // Singular Extensions
-        /*if (!isRoot && excludedMove == NO_MOVE && depth >= 6 && ttEntry && move == ttMove &&
-            ttEntry->nodeType == BETA && ttDepth >= depth - 3) {
-#ifdef TRACE_SEARCH
-            stats.singularAttempts++;
-#endif
-            // Need to unmake the move, as it was already made
-            board.unmakeMove();
-
-            int singularBeta = ttEntry->score - depth;
-            int singularDepth = moveDepth / 2;
-
-            searchStack.excludedMove[singularDepth] = move;
-            PvLine singularPvLine = PvLine{board.getPly()};
-            const int singularScore =
-                pvSearch<color, REGULAR>(engine, board, singularBeta - 1, singularBeta, singularDepth, stats, endTime,
-                                         singularPvLine, searchStack);
-            searchStack.excludedMove[singularDepth] = NO_MOVE;
-
-            if (singularScore < singularBeta) {
-#ifdef TRACE_SEARCH
-                stats.singularExtensions++;
-#endif
-
-                moveDepth += 1;
-            }
-
-            // Re-make move
-            board.makeMove(move);
-        }*/
 
         __builtin_prefetch(&tt->transpositionTable[board.getZobristHash() & tt->hashSize]);
 
@@ -712,8 +676,6 @@ void SearchStats::clearTrace() {
     lmrResearches = 0;
     futilityPrunes = 0;
     checkExtensions = 0;
-    singularExtensions = 0;
-    singularAttempts = 0;
     seePrunes = 0;
 }
 
@@ -772,8 +734,6 @@ void SearchStats::printTrace(Engine& engine, int numPositions) const {
     printStatLineWithRate("LMR Researches", lmrResearches, lmrResearchRate);
     printStatLine("Futility Prunes", futilityPrunes);
     printStatLine("Reverse Futility Prunes", reverseFutilityPrunes);
-    printStatLine("Singular Extensions", singularExtensions);
-    printStatLine("Singular Attempts", singularAttempts);
     printStatLine("Check Extensions", checkExtensions);
 
     ss << "\n--- Quiescence Search ---\n";
@@ -802,8 +762,6 @@ SearchStats& SearchStats::operator+=(const SearchStats& other) {
     futilityPrunes += other.futilityPrunes;
     reverseFutilityPrunes += other.reverseFutilityPrunes;
     checkExtensions += other.checkExtensions;
-    singularExtensions += other.singularExtensions;
-    singularAttempts += other.singularAttempts;
     seePrunes += other.seePrunes;
 
     return *this;

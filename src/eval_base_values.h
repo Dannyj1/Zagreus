@@ -30,9 +30,6 @@ extern const int baseMobility[GAME_PHASES][PIECE_TYPES];
 // Doubled pawns
 extern const int baseDoubledPawnPenalty[GAME_PHASES];
 
-// Passed Pawns
-// extern const int basePassedPawnBonus[GAME_PHASES][RANKS];
-
 extern const int baseMgPawnTable[64];
 extern const int baseEgPawnTable[64];
 extern const int baseMgKnightTable[64];

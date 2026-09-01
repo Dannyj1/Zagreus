@@ -39,10 +39,4 @@ int evalMobility[GAME_PHASES][PIECE_TYPES] = {
 // Doubled pawns
 int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
 
-// Passed Pawns
-int evalPassedPawnBonus[GAME_PHASES][RANKS] = {
-    {0, 5, 10, 20, 35, 60, 100, 0},   // Midgame
-    {0, 10, 20, 40, 70, 120, 200, 0}  // Endgame
-};
-
 }  // namespace Zagreus

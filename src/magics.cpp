@@ -399,19 +399,13 @@ void initializeMagicBitboards() {
 void generateMagics() {
     gen.seed(generatorSeed);
 
-    //        printf("const uint64_t rookMagics[64] = {\n");
     for (int8_t square = 0; square < 64; square++) {
         rookMagics[square] = find_magic(square, RBits[square], 0);
-        //            printf("  0x%llxULL,\n", find_magic(square, RBits[square], 0));
     }
-    //        printf("};\n\n");
 
-    //        printf("const uint64_t bishopMagics[64] = {\n");
     for (int8_t square = 0; square < 64; square++) {
         bishopMagics[square] = find_magic(square, BBits[square], 1);
-        //            printf("  0x%llxULL,\n", find_magic(square, BBits[square], 1));
     }
-    //        printf("};\n\n");
 }
 
 void findFastestSeed() {
