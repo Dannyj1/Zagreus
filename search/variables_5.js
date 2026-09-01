@@ -11,6 +11,5 @@ var searchData=
   ['evaldoubledpawnpenalty_8',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
   ['evalmaterialvalues_9',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
   ['evalmobility_10',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['evalpassedpawnbonus_11',['evalPassedPawnBonus',['../namespaceZagreus.html#a85e5f7441c8cba846daebebe0b6f9993',1,'Zagreus']]],
-  ['excludedmove_12',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
+  ['excludedmove_11',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
 ];
