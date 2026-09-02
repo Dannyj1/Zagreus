@@ -212,7 +212,7 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
     constexpr bool isRoot = nodeType == ROOT;
     constexpr PieceColor opponentColor = !color;
 
-    if (board.isDraw()) {
+    if (!isRoot && board.isDraw()) {
         return DRAW_SCORE;
     }
 

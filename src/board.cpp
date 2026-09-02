@@ -681,11 +681,12 @@ void Board::makeMove(const Move move) {
         halfMoveClock = 0;
 
         if ((fromSquare ^ toSquare) == 16) {
-            if (sideToMove == WHITE) {
-                enPassantSquare = toSquare + SOUTH;
-                zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
-            } else {
-                enPassantSquare = toSquare + NORTH;
+            const uint64_t toSquareBB = squareToBitboard(toSquare);
+            const uint64_t adjacentSquares = shiftEast(toSquareBB) | shiftWest(toSquareBB);
+            const uint64_t opponentPawns = getPieceBoard(sideToMove == WHITE ? BLACK_PAWN : WHITE_PAWN);
+
+            if (adjacentSquares & opponentPawns) {
+                enPassantSquare = toSquare + (sideToMove == WHITE ? SOUTH : NORTH);
                 zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
             }
         }
@@ -970,8 +971,17 @@ bool Board::setFromFEN(const std::string_view fen) {
                 return false;
             }
 
-            enPassantSquare = rank * 8 + file;
-            zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
+            const uint8_t epSquare = rank * 8 + file;
+            const uint64_t pushedPawn = squareToBitboard(epSquare + (sideToMove == WHITE ? SOUTH : NORTH)) &
+                                        getPieceBoard(sideToMove == WHITE ? BLACK_PAWN : WHITE_PAWN);
+            const uint64_t capturingSquares = shiftEast(pushedPawn) | shiftWest(pushedPawn);
+            const uint64_t pawns = getPieceBoard(sideToMove == WHITE ? WHITE_PAWN : BLACK_PAWN);
+
+            if (capturingSquares & pawns) {
+                enPassantSquare = epSquare;
+                zobristHash ^= getZobristConstant(ZOBRIST_EN_PASSANT_START_INDEX + (enPassantSquare % 8));
+            }
+
             index += 2;
         }
 
