@@ -284,6 +284,11 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 #ifdef TRACE_SEARCH
                 stats.nmpPrunes++;
 #endif
+                // Do not return unproven mate scores
+                if (nullMoveScore >= MATE_SCORE - MAX_PLIES) {
+                    return beta;
+                }
+
                 return nullMoveScore;
             }
         }
