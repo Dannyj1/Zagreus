@@ -376,14 +376,9 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                                                  searchStack, moveGivesCheck);
         } else {
             int lmrReduction = 0;
-            bool isLmr = false;
 
             // Late Move Reduction
             if (movesSearched > 2 && depth >= 3 && capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
-                isLmr = true;
-#ifdef TRACE_SEARCH
-                stats.lmrSearches++;
-#endif
                 lmrReduction = lmrTable[depth][movesSearched];
                 lmrReduction -= isPV;
                 lmrReduction -= isInCheck;
@@ -395,12 +390,18 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
                 lmrReduction = std::max(0, lmrReduction);
                 assert(moveDepth - lmrReduction > 0);
+
+#ifdef TRACE_SEARCH
+                if (lmrReduction > 0) {
+                    stats.lmrSearches++;
+                }
+#endif
             }
 
             score = -pvSearch<opponentColor, REGULAR>(engine, board, -alpha - 1, -alpha, moveDepth - lmrReduction,
                                                       stats, endTime, nodePvLine, searchStack, moveGivesCheck);
 
-            if (isLmr && score > alpha) {
+            if (lmrReduction > 0 && score > alpha) {
 #ifdef TRACE_SEARCH
                 stats.lmrResearches++;
 #endif
