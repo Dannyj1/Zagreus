@@ -9,7 +9,7 @@ var searchData=
   ['a7_6',['A7',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fa393c525666b53f11a14d3d70def03f73',1,'Zagreus']]],
   ['a8_7',['A8',['../namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918fae273a67f60d99acb2e0864ef1be168e6',1,'Zagreus']]],
   ['a_5ffile_8',['A_FILE',['../constants_8h.html#a1d1cc5417708ca4faf8cf7e3285c6988',1,'constants.h']]],
-  ['addkillermove_9',['addKillerMove',['../classZagreus_1_1TranspositionTable.html#a7889afa9221436dab5c84475c11ac3ed',1,'Zagreus::TranspositionTable']]],
+  ['addkillermove_9',['addKillerMove',['../classZagreus_1_1TranspositionTable.html#a7c235b35c20e0daf9b5660ea6edb4442',1,'Zagreus::TranspositionTable']]],
   ['addoption_10',['addOption',['../classZagreus_1_1Engine.html#a88a7ddc125e98976af68011c08213a5a',1,'Zagreus::Engine']]],
   ['addvar_11',['addVar',['../classZagreus_1_1UCIOption.html#a9bd71248e84bb86ff3dc177f5fba4c1a',1,'Zagreus::UCIOption']]],
   ['advance_12',['advance',['../classpcg__detail_1_1engine.html#a12d3653cfe490a59f7ce55d028f1a7e0',1,'pcg_detail::engine::advance(itype state, itype delta, itype cur_mult, itype cur_plus)'],['../classpcg__detail_1_1engine.html#ad825cdb944e1a8c9e58e1b20dcbdf042',1,'pcg_detail::engine::advance(itype delta)'],['../classpcg__detail_1_1extended.html#ad917a2241597772e81668695c18ab2bb',1,'pcg_detail::extended::advance()']]],
