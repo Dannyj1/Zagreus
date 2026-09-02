@@ -141,14 +141,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a345f25aae805dc81ee46fb339e39a3b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab71dade2752b32cf70e7f34b3d0e3ec3" id="r_ab71dade2752b32cf70e7f34b3d0e3ec3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab71dade2752b32cf70e7f34b3d0e3ec3">getCaptureHistoryValue</a> (const <a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move, const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> movingPiece, const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> capturedPiece) const</td></tr>
 <tr class="separator:ab71dade2752b32cf70e7f34b3d0e3ec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c235b35c20e0daf9b5660ea6edb4442" id="r_a7c235b35c20e0daf9b5660ea6edb4442"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c235b35c20e0daf9b5660ea6edb4442">addKillerMove</a> (const <a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move, const int ply)</td></tr>
-<tr class="separator:a7c235b35c20e0daf9b5660ea6edb4442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93449f9cbfa8def40aab9aa8d34c709c" id="r_a93449f9cbfa8def40aab9aa8d34c709c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93449f9cbfa8def40aab9aa8d34c709c">getKillerMove</a> (const int ply, const int index) const</td></tr>
-<tr class="separator:a93449f9cbfa8def40aab9aa8d34c709c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab92345a0fd6e05b9fd066be275104874" id="r_ab92345a0fd6e05b9fd066be275104874"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab92345a0fd6e05b9fd066be275104874">setCounterMove</a> (const <a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move, const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> movingPiece, const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> toSquare)</td></tr>
-<tr class="separator:ab92345a0fd6e05b9fd066be275104874"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76554d1b833e2559dd967800c433d46f" id="r_a76554d1b833e2559dd967800c433d46f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76554d1b833e2559dd967800c433d46f">getCounterMove</a> (const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a> movingPiece, const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a> toSquare) const</td></tr>
-<tr class="separator:a76554d1b833e2559dd967800c433d46f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7889afa9221436dab5c84475c11ac3ed" id="r_a7889afa9221436dab5c84475c11ac3ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7889afa9221436dab5c84475c11ac3ed">addKillerMove</a> (<a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> move, int ply)</td></tr>
+<tr class="separator:a7889afa9221436dab5c84475c11ac3ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95cb68b25557dd839277349b09d240af" id="r_a95cb68b25557dd839277349b09d240af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95cb68b25557dd839277349b09d240af">getKillerMove</a> (int ply, int index) const</td></tr>
+<tr class="separator:a95cb68b25557dd839277349b09d240af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -189,7 +185,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00057">57</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00056">56</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -226,7 +222,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00059">59</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00058">58</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 
 </div>
 </div>
@@ -256,8 +252,8 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7c235b35c20e0daf9b5660ea6edb4442" name="a7c235b35c20e0daf9b5660ea6edb4442"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c235b35c20e0daf9b5660ea6edb4442">&#9670;&#160;</a></span>addKillerMove()</h2>
+<a id="a7889afa9221436dab5c84475c11ac3ed" name="a7889afa9221436dab5c84475c11ac3ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7889afa9221436dab5c84475c11ac3ed">&#9670;&#160;</a></span>addKillerMove()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -268,12 +264,12 @@ Here is the call graph for this function:</div>
         <tr>
           <td class="memname">void Zagreus::TranspositionTable::addKillerMove </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a></td>          <td class="paramname"><span class="paramname"><em>move</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a></td>          <td class="paramname"><span class="paramname"><em>move</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>ply</em></span>&#160;)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ply</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -283,12 +279,12 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00130">130</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00123">123</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classZagreus_1_1TranspositionTable_a7c235b35c20e0daf9b5660ea6edb4442_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_a7c235b35c20e0daf9b5660ea6edb4442_icgraph" alt=""/></div>
-<map name="aclassZagreus_1_1TranspositionTable_a7c235b35c20e0daf9b5660ea6edb4442_icgraph" id="aclassZagreus_1_1TranspositionTable_a7c235b35c20e0daf9b5660ea6edb4442_icgraph">
+<div class="center"><img src="classZagreus_1_1TranspositionTable_a7889afa9221436dab5c84475c11ac3ed_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_a7889afa9221436dab5c84475c11ac3ed_icgraph" alt=""/></div>
+<map name="aclassZagreus_1_1TranspositionTable_a7889afa9221436dab5c84475c11ac3ed_icgraph" id="aclassZagreus_1_1TranspositionTable_a7889afa9221436dab5c84475c11ac3ed_icgraph">
 <area shape="rect" title=" " alt="" coords="196,22,399,62"/>
 <area shape="rect" href="namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,29,148,55"/>
 <area shape="poly" title=" " alt="" coords="182,45,148,45,148,39,182,39"/>
@@ -330,7 +326,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00123">123</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00116">116</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -346,54 +342,6 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classZagreus_1_1TranspositionTable_ab71dade2752b32cf70e7f34b3d0e3ec3_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_ab71dade2752b32cf70e7f34b3d0e3ec3_icgraph" alt=""/></div>
 <map name="aclassZagreus_1_1TranspositionTable_ab71dade2752b32cf70e7f34b3d0e3ec3_icgraph" id="aclassZagreus_1_1TranspositionTable_ab71dade2752b32cf70e7f34b3d0e3ec3_icgraph">
-<area shape="rect" title=" " alt="" coords="585,22,788,62"/>
-<area shape="rect" href="classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="379,22,537,62"/>
-<area shape="poly" title=" " alt="" coords="571,45,537,45,537,39,571,39"/>
-<area shape="rect" href="namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,29,148,55"/>
-<area shape="poly" title=" " alt="" coords="365,35,331,33,263,30,196,33,149,36,148,31,196,27,263,25,331,27,365,30"/>
-<area shape="rect" href="namespaceZagreus.html#a11fb11a289c1796bcfed11eabbeb9a68" title=" " alt="" coords="196,67,331,92"/>
-<area shape="poly" title=" " alt="" coords="366,62,331,69,330,64,365,57"/>
-<area shape="poly" title=" " alt="" coords="110,19,100,11,77,8,57,10,47,15,44,20,50,28,46,31,39,21,43,11,55,5,77,3,102,6,113,15"/>
-<area shape="poly" title=" " alt="" coords="186,67,140,57,141,52,187,61"/>
-<area shape="poly" title=" " alt="" coords="296,56,287,48,263,45,244,47,233,52,231,58,237,65,232,68,226,58,229,48,242,42,263,40,289,44,300,52"/>
-</map>
-</div>
-
-</div>
-</div>
-<a id="a76554d1b833e2559dd967800c433d46f" name="a76554d1b833e2559dd967800c433d46f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76554d1b833e2559dd967800c433d46f">&#9670;&#160;</a></span>getCounterMove()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> Zagreus::TranspositionTable::getCounterMove </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a></td>          <td class="paramname"><span class="paramname"><em>movingPiece</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a></td>          <td class="paramname"><span class="paramname"><em>toSquare</em></span>&#160;) const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00150">150</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="classZagreus_1_1TranspositionTable_a76554d1b833e2559dd967800c433d46f_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_a76554d1b833e2559dd967800c433d46f_icgraph" alt=""/></div>
-<map name="aclassZagreus_1_1TranspositionTable_a76554d1b833e2559dd967800c433d46f_icgraph" id="aclassZagreus_1_1TranspositionTable_a76554d1b833e2559dd967800c433d46f_icgraph">
 <area shape="rect" title=" " alt="" coords="585,22,788,62"/>
 <area shape="rect" href="classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="379,22,537,62"/>
 <area shape="poly" title=" " alt="" coords="571,45,537,45,537,39,571,39"/>
@@ -478,7 +426,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00107">107</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00100">100</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -538,7 +486,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00114">114</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00107">107</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -554,8 +502,8 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
-<a id="a93449f9cbfa8def40aab9aa8d34c709c" name="a93449f9cbfa8def40aab9aa8d34c709c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93449f9cbfa8def40aab9aa8d34c709c">&#9670;&#160;</a></span>getKillerMove()</h2>
+<a id="a95cb68b25557dd839277349b09d240af" name="a95cb68b25557dd839277349b09d240af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95cb68b25557dd839277349b09d240af">&#9670;&#160;</a></span>getKillerMove()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -566,12 +514,12 @@ Here is the call graph for this function:</div>
         <tr>
           <td class="memname"><a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a> Zagreus::TranspositionTable::getKillerMove </td>
           <td>(</td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>ply</em></span>, </td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ply</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;) const</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -581,12 +529,12 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00140">140</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00133">133</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classZagreus_1_1TranspositionTable_a93449f9cbfa8def40aab9aa8d34c709c_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_a93449f9cbfa8def40aab9aa8d34c709c_icgraph" alt=""/></div>
-<map name="aclassZagreus_1_1TranspositionTable_a93449f9cbfa8def40aab9aa8d34c709c_icgraph" id="aclassZagreus_1_1TranspositionTable_a93449f9cbfa8def40aab9aa8d34c709c_icgraph">
+<div class="center"><img src="classZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph" alt=""/></div>
+<map name="aclassZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph" id="aclassZagreus_1_1TranspositionTable_a95cb68b25557dd839277349b09d240af_icgraph">
 <area shape="rect" title=" " alt="" coords="585,22,788,62"/>
 <area shape="rect" href="classZagreus_1_1MovePicker.html#ae153b6ab4219316f167d38692a597ed8" title="sorts the move list based on certain criteria." alt="" coords="379,22,537,62"/>
 <area shape="poly" title=" " alt="" coords="571,45,537,45,537,39,571,39"/>
@@ -757,7 +705,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00061">61</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00060">60</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -828,53 +776,6 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="110,19,100,11,77,8,57,10,47,15,44,20,50,28,46,31,39,21,43,11,55,5,77,3,102,6,113,15"/>
 <area shape="poly" title=" " alt="" coords="186,67,140,57,141,52,187,61"/>
 <area shape="poly" title=" " alt="" coords="296,56,287,48,263,45,244,47,233,52,231,58,237,65,232,68,226,58,229,48,242,42,263,40,289,44,300,52"/>
-</map>
-</div>
-
-</div>
-</div>
-<a id="ab92345a0fd6e05b9fd066be275104874" name="ab92345a0fd6e05b9fd066be275104874"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab92345a0fd6e05b9fd066be275104874">&#9670;&#160;</a></span>setCounterMove()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Zagreus::TranspositionTable::setCounterMove </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceZagreus.html#a38e749cf22c411cb709a3da939267e6f">Move</a></td>          <td class="paramname"><span class="paramname"><em>move</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da84729a7">Piece</a></td>          <td class="paramname"><span class="paramname"><em>movingPiece</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceZagreus.html#a7d2e00f0541186be79cce3c9621e918f">Square</a></td>          <td class="paramname"><span class="paramname"><em>toSquare</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00146">146</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="classZagreus_1_1TranspositionTable_ab92345a0fd6e05b9fd066be275104874_icgraph.png" border="0" usemap="#aclassZagreus_1_1TranspositionTable_ab92345a0fd6e05b9fd066be275104874_icgraph" alt=""/></div>
-<map name="aclassZagreus_1_1TranspositionTable_ab92345a0fd6e05b9fd066be275104874_icgraph" id="aclassZagreus_1_1TranspositionTable_ab92345a0fd6e05b9fd066be275104874_icgraph">
-<area shape="rect" title=" " alt="" coords="196,22,399,62"/>
-<area shape="rect" href="namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,29,148,55"/>
-<area shape="poly" title=" " alt="" coords="182,45,148,45,148,39,182,39"/>
-<area shape="poly" title=" " alt="" coords="116,20,105,11,77,8,53,10,41,15,38,20,45,28,41,31,33,21,37,11,52,5,77,3,107,6,119,15"/>
 </map>
 </div>
 
@@ -1028,7 +929,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00055">55</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00054">54</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 
 </div>
 </div>
@@ -1044,7 +945,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00054">54</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tt_8h_source.html#l00053">53</a> of file <a class="el" href="tt_8h_source.html">tt.h</a>.</p>
 
 </div>
 </div>
