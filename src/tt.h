@@ -47,6 +47,7 @@ class TranspositionTable {
     int history[COLORS][SQUARES][SQUARES]{};
     // [movingPiece][toSquare][capturedPiece]
     int captureHistory[PIECES][SQUARES][PIECES]{};
+    Move counterMoveHistory[PIECES][SQUARES]{};
     Move killerMoves[MAX_PLIES][2]{};
 
    public:
@@ -75,6 +76,12 @@ class TranspositionTable {
         for (int ply = 0; ply < MAX_PLIES; ply++) {
             killerMoves[ply][0] = NO_MOVE;
             killerMoves[ply][1] = NO_MOVE;
+        }
+
+        for (int movingPiece = 0; movingPiece < PIECES; movingPiece++) {
+            for (int toSquare = 0; toSquare < SQUARES; toSquare++) {
+                counterMoveHistory[movingPiece][toSquare] = NO_MOVE;
+            }
         }
     }
 
@@ -120,7 +127,7 @@ class TranspositionTable {
         return captureHistory[movingPiece][toSquare][capturedPiece];
     }
 
-    void addKillerMove(Move move, int ply) {
+    void addKillerMove(const Move move, const int ply) {
         assert(ply < MAX_PLIES);
         assert(move != NO_MOVE);
 
@@ -130,6 +137,18 @@ class TranspositionTable {
         }
     }
 
-    [[nodiscard]] Move getKillerMove(int ply, int index) const { return killerMoves[ply][index]; }
+    [[nodiscard]] Move getKillerMove(const int ply, const int index) const {
+        assert(ply < MAX_PLIES);
+        assert(index < 2);
+        return killerMoves[ply][index];
+    }
+
+    void setCounterMove(const Move move, const Piece movingPiece, const Square toSquare) {
+        counterMoveHistory[movingPiece][toSquare] = move;
+    }
+
+    [[nodiscard]] Move getCounterMove(const Piece movingPiece, const Square toSquare) const {
+        return counterMoveHistory[movingPiece][toSquare];
+    }
 };
 }  // namespace Zagreus

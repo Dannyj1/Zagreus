@@ -457,6 +457,16 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
                                     tt->updateHistory<color>(quietMove, -historyValue);
                                 }
                             }
+
+                            // Countermove heuristic
+                            const Move previousMove = board.getPreviousMove();
+
+                            if (previousMove != NO_MOVE) {
+                                const Square prevToSquare = getToSquare(previousMove);
+                                const Piece prevPiece = board.getPieceOnSquare(prevToSquare);
+
+                                tt->setCounterMove(move, prevPiece, prevToSquare);
+                            }
                         }
 
                         if (capturedPiece != EMPTY) {
