@@ -76,6 +76,7 @@ class Board {
     uint64_t zobristHash = 0;
     Move previousMove = NO_MOVE;
     uint16_t ply = 0;
+    uint16_t rootPly = 0;
     uint16_t fullmoveClock = 1;
     uint8_t halfMoveClock = 0;
     uint8_t castlingRights = 0;
@@ -175,6 +176,11 @@ class Board {
      * \return The number of plies since the start of the game.
      */
     [[nodiscard]] constexpr int getPly() const { return ply; }
+
+    /**
+     * \brief Sets the ply the search starts from.
+     */
+    constexpr void setRootPly(const uint16_t value) { rootPly = value; }
 
     /**
      * \brief Retrieves the castling rights available.

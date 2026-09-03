@@ -99,6 +99,9 @@ Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& sta
     int depth = 1;
     const int currentPly = board.getPly();
     const bool useTimeManagement = !params.infinite && (params.whiteTime > 0 || params.blackTime > 0);
+
+    board.setRootPly(static_cast<uint16_t>(currentPly));
+
     TimeLimits timeLimits{};
     auto endTime = std::chrono::steady_clock::time_point{};
 

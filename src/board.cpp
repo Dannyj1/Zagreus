@@ -232,6 +232,7 @@ void Board::reset() {
     this->occupied = 0;
     this->zobristHash = 0;
     this->ply = 0;
+    this->rootPly = 0;
     this->fullmoveClock = 1;
     this->halfMoveClock = 0;
     this->castlingRights = 0;
@@ -274,16 +275,11 @@ bool Board::isDraw() const {
 
     const uint64_t zobristHash = getZobristHash();
 
-    // 3-fold repetition
+    // 2-fold repetition after the root, 3-fold repetition at or before the root
     int repetitions = 0;
 
     for (int i = ply - 2; i >= 0 && i >= (ply - halfMoveClock); i -= 2) {
-        if (history[i].zobristHash == zobristHash) {
-            repetitions++;
-        }
-
-        // The current board state happens twice in history, making this appearance the third time -> 3-fold repetition
-        if (repetitions >= 2) {
+        if (history[i].zobristHash == zobristHash && (i > rootPly || ++repetitions == 2)) {
             return true;
         }
     }
