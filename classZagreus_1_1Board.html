@@ -144,6 +144,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adf38c4f68536f92b5abed37c59bb018a" id="r_adf38c4f68536f92b5abed37c59bb018a"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf38c4f68536f92b5abed37c59bb018a">getPly</a> () const</td></tr>
 <tr class="memdesc:adf38c4f68536f92b5abed37c59bb018a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the number of plies since the start of the game.  <br /></td></tr>
 <tr class="separator:adf38c4f68536f92b5abed37c59bb018a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af45e3460e8ff6a24019fea13e6c14712" id="r_af45e3460e8ff6a24019fea13e6c14712"><td class="memItemLeft" align="right" valign="top">constexpr void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af45e3460e8ff6a24019fea13e6c14712">setRootPly</a> (const uint16_t value)</td></tr>
+<tr class="memdesc:af45e3460e8ff6a24019fea13e6c14712"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the ply the search starts from.  <br /></td></tr>
+<tr class="separator:af45e3460e8ff6a24019fea13e6c14712"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ce52c6f55b827d3b30408ef28c0f4f0" id="r_a9ce52c6f55b827d3b30408ef28c0f4f0"><td class="memItemLeft" align="right" valign="top">constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ce52c6f55b827d3b30408ef28c0f4f0">getCastlingRights</a> () const</td></tr>
 <tr class="memdesc:a9ce52c6f55b827d3b30408ef28c0f4f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the castling rights available.  <br /></td></tr>
 <tr class="separator:a9ce52c6f55b827d3b30408ef28c0f4f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -312,7 +315,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Constructs a new <a class="el" href="classZagreus_1_1Board.html" title="Represents the chess board and provides methods to manipulate it. The board consists of several bitbo...">Board</a> object and initializes it to the starting position. </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00088">88</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00089">89</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -367,7 +370,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00522">522</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00528">528</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -506,7 +509,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 <p>Checks if the given color is close to promoting a pawn. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the given color is close to promoting a pawn, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00440">440</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00446">446</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -546,7 +549,7 @@ Here is the call graph for this function:</div>
 <p>Retrieves the castling rights available. </p>
 <dl class="section return"><dt>Returns</dt><dd>The castling rights available. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00183">183</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00189">189</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -605,7 +608,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard for the given color. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00122">122</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00123">123</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -690,7 +693,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard for the given color. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00131">131</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00132">132</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -720,7 +723,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the bitboard representing empty squares. </p>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard representing empty squares. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00160">160</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00161">161</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -771,7 +774,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the en passant square, if applicable. </p>
 <dl class="section return"><dt>Returns</dt><dd>The en passant square. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00189">189</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00195">195</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -822,7 +825,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the full move clock. </p>
 <dl class="section return"><dt>Returns</dt><dd>The full move clock. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00433">433</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00439">439</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -852,7 +855,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the half move clock. </p>
 <dl class="section return"><dt>Returns</dt><dd>The half move clock. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00427">427</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00433">433</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -881,7 +884,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00477">477</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00483">483</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -957,7 +960,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the last move made. </p>
 <dl class="section return"><dt>Returns</dt><dd>The last move made. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00195">195</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00201">201</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -987,7 +990,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the bitboard representing occupied squares. </p>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard representing occupied squares. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00154">154</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00155">155</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1063,7 +1066,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard for the given piece type. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00105">105</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00106">106</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1222,7 +1225,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard for the given piece type. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00114">114</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00115">115</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -1258,7 +1261,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The piece on the given square. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00138">138</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00139">139</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1340,7 +1343,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the number of plies since the start of the game. </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of plies since the start of the game. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00177">177</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00178">178</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1391,7 +1394,7 @@ Here is the caller graph for this function:</div>
 <p>Gets the previous move made. </p>
 <dl class="section return"><dt>Returns</dt><dd>The previous move made. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00452">452</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00458">458</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1432,7 +1435,7 @@ Here is the caller graph for this function:</div>
 <p>Retrieves the color of the side to move. </p>
 <dl class="section return"><dt>Returns</dt><dd>The color of the side to move. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00166">166</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00167">167</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1498,7 +1501,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The square of the attacker with the lowest value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00339">339</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00335">335</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1653,7 +1656,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00349">349</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00355">355</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1825,7 +1828,7 @@ Here is the caller graph for this function:</div>
 <p>Gets the current zobrist hash of the board. It is pre-computed and will only be retrieved from memory. </p>
 <dl class="section return"><dt>Returns</dt><dd>The current zobrist hash of the board. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00329">329</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00325">325</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1877,7 +1880,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00558">558</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00564">564</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1921,7 +1924,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00545">545</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00551">551</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1971,7 +1974,7 @@ Here is the caller graph for this function:</div>
 <p>Determines if the board has material that isn't pawn or king. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the board has material that isn't pawn or king, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00459">459</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00465">465</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2030,7 +2033,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the board has material that isn't pawn or king, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00471">471</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00477">477</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2064,7 +2067,7 @@ Here is the call graph for this function:</div>
 <p>Checks if the current position is a draw. Checks everything but a stalemate. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the position is a draw, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00268">268</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00269">269</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2124,7 +2127,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00322">322</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00328">328</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2329,7 +2332,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if there is a piece on the given square, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00148">148</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00149">149</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -2453,7 +2456,7 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00516">516</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00512">512</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2574,7 +2577,7 @@ Here is the caller graph for this function:</div>
 
 <p>Makes a null move on the board, meaning the side to move does not make a move and the turn is passed. </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00778">778</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00774">774</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2614,7 +2617,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00505">505</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00501">501</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2688,7 +2691,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00508">508</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00514">514</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2751,7 +2754,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00515">515</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00521">521</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2804,7 +2807,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00482">482</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00488">488</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2863,7 +2866,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00495">495</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00501">501</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2912,7 +2915,7 @@ Here is the caller graph for this function:</div>
 
 <p>Prints the current state of the board to the console. </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00253">253</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00254">254</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2962,7 +2965,7 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00279">279</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00285">285</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3011,7 +3014,7 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00240">240</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00246">246</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3096,7 +3099,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00260">260</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00266">266</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3181,7 +3184,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The static exchange evaluation score. Negative scores indicate a loss of material, while positive scores indicate a gain of material. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00424">424</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00420">420</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3310,7 +3313,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the FEN string was valid, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00882">882</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00878">878</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3431,7 +3434,7 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00222">222</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00228">228</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3488,7 +3491,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a80c68b0ed6d2623104cdff1da
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00203">203</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00209">209</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3566,7 +3569,7 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00831">831</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00827">827</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3591,6 +3594,45 @@ Here is the caller graph for this function:</div>
 <area shape="rect" title="Sets a piece on the board from a FEN character." alt="" coords="261,5,445,45"/>
 <area shape="rect" href="classZagreus_1_1Board.html#af55bc3a5bf87249dcecf75df419f609b" title="Sets the board state from a FEN string." alt="" coords="5,13,213,38"/>
 <area shape="poly" title=" " alt="" coords="248,28,214,28,214,23,248,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="af45e3460e8ff6a24019fea13e6c14712" name="af45e3460e8ff6a24019fea13e6c14712"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af45e3460e8ff6a24019fea13e6c14712">&#9670;&#160;</a></span>setRootPly()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Zagreus::Board::setRootPly </td>
+          <td>(</td>
+          <td class="paramtype">const uint16_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the ply the search starts from. </p>
+
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00183">183</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classZagreus_1_1Board_af45e3460e8ff6a24019fea13e6c14712_icgraph.png" border="0" usemap="#aclassZagreus_1_1Board_af45e3460e8ff6a24019fea13e6c14712_icgraph" alt=""/></div>
+<map name="aclassZagreus_1_1Board_af45e3460e8ff6a24019fea13e6c14712_icgraph" id="aclassZagreus_1_1Board_af45e3460e8ff6a24019fea13e6c14712_icgraph">
+<area shape="rect" title="Sets the ply the search starts from." alt="" coords="180,5,379,31"/>
+<area shape="rect" href="namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="5,5,132,31"/>
+<area shape="poly" title=" " alt="" coords="166,21,132,21,132,15,166,15"/>
 </map>
 </div>
 
@@ -3621,7 +3663,7 @@ Here is the caller graph for this function:</div>
 
 <p>Sets the side to move. </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00171">171</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8h_source.html#l00172">172</a> of file <a class="el" href="board_8h_source.html">board.h</a>.</p>
 
 </div>
 </div>
@@ -3642,7 +3684,7 @@ Here is the caller graph for this function:</div>
 
 <p>Unmakes the last move on the board. </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00716">716</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00712">712</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3713,7 +3755,7 @@ Here is the caller graph for this function:</div>
 
 <p>Unmakes the last null move on the board. Should only be called after a makeNullMove. </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00808">808</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00804">804</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3745,7 +3787,7 @@ template&lt;<a class="el" href="namespaceZagreus.html#a06e913bde27d160c82c691b39
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00361">361</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8cpp_source.html#l00357">357</a> of file <a class="el" href="board_8cpp_source.html">board.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">

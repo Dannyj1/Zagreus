@@ -1,0 +1,5 @@
+<map id="Zagreus::Board::setRootPly" name="Zagreus::Board::setRootPly">
+<area shape="rect" id="Node000001" title="Sets the ply the search starts from." alt="" coords="180,5,379,31"/>
+<area shape="rect" id="Node000002" href="$namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="5,5,132,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="166,21,132,21,132,15,166,15"/>
+</map>
