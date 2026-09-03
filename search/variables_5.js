@@ -9,7 +9,9 @@ var searchData=
   ['endgamepsttable_6',['endgamePstTable',['../namespaceZagreus.html#a7b3cc214c8366a5b0a70e7743277d0a9',1,'Zagreus']]],
   ['enpassantsquare_7',['enPassantSquare',['../structZagreus_1_1BoardState.html#a8168f2482c44d4edf790701162e2a79f',1,'Zagreus::BoardState']]],
   ['evaldoubledpawnpenalty_8',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
-  ['evalmaterialvalues_9',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
-  ['evalmobility_10',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['excludedmove_11',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
+  ['evalkingzoneattackvalue_9',['evalKingZoneAttackValue',['../namespaceZagreus.html#abc3b0e02162cbe8db5fd7eaea1ad8f61',1,'Zagreus']]],
+  ['evalkingzoneattackweight_10',['evalKingZoneAttackWeight',['../namespaceZagreus.html#a506766ab1ee9d17a11899cf3b37f494a',1,'Zagreus']]],
+  ['evalmaterialvalues_11',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
+  ['evalmobility_12',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
+  ['excludedmove_13',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
 ];
