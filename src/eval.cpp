@@ -29,6 +29,8 @@
 #include "types.h"
 
 namespace Zagreus {
+constexpr int tempo = 15;
+
 /**
  * \brief Adds the given midgame and endgame score to the given color.
  * \tparam color The color to add the score to.
@@ -69,7 +71,7 @@ int Evaluation::evaluate() {
     const int whiteScore = ((whiteMidgameScore * (256 - phase)) + (whiteEndgameScore * phase)) / 256;
     const int blackScore = ((blackMidgameScore * (256 - phase)) + (blackEndgameScore * phase)) / 256;
 
-    return (whiteScore - blackScore) * modifier;
+    return (whiteScore - blackScore) * modifier + tempo;
 }
 
 constexpr int knightPhase = 1;
