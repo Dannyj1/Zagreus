@@ -163,28 +163,29 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3">   70</a></span><span class="preprocessor">#define COLORS 2</span></div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">   71</a></span><span class="preprocessor">#define GAME_PHASES 2</span></div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="constants_8h.html#aedc44b4ee04cb21138343a56d92a12c3">   72</a></span><span class="preprocessor">#define RANKS 8</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="constants_8h.html#ad991e7c9f6e7b4dadd2bdf7da02af183">   73</a></span><span class="preprocessor">#define MIDGAME 0</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="constants_8h.html#a29111d5b3d48776267f2ec66fb745a02">   74</a></span><span class="preprocessor">#define ENDGAME 1</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="constants_8h.html#a0bbe4cc8be73cec78c85e164eb6efea6">   76</a></span><span class="preprocessor">#define MAX_PLIES 750</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="constants_8h.html#afe0c4249f8b5f7d5be976a330a3117d1">   77</a></span><span class="preprocessor">#define MAX_MOVES 255</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="constants_8h.html#a3bdc3d77ca3e6d7c92b502c91ce81096">   78</a></span><span class="preprocessor">#define NO_MOVE 0</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">   79</a></span><span class="preprocessor">#define NO_EN_PASSANT 255</span></div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="constants_8h.html#a95c8989f44eada4c4b98ea1b26ee0bd2">   81</a></span><span class="preprocessor">#define NO_TT_SCORE INT16_MIN</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="constants_8h.html#abf8d8994f09509f9e061f5bf82daf4cd">   83</a></span><span class="preprocessor">#define MAX_HISTORY 16384</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="constants_8h.html#afa84451f168e2c98d68dbaf7ab5d85c0">   85</a></span><span class="preprocessor">#define DRAW_SCORE 0</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="constants_8h.html#a8d9895fbbd3a293b00425f34a9d5f14a">   86</a></span><span class="preprocessor">#define MATE_SCORE 25000</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="constants_8h.html#ad65345b8798f8291c40f1de8091a7350">   88</a></span><span class="preprocessor">#define ZOBRIST_PIECE_START_INDEX 0</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="constants_8h.html#a763d2f16525171e564b5ac63c5cb95c5">   89</a></span><span class="preprocessor">#define ZOBRIST_SIDE_TO_MOVE_INDEX PIECES* SQUARES</span></div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="constants_8h.html#a792ff6636faa80fd402190354e8dddb2">   90</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 1</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="constants_8h.html#a9fd6784240224a0f3bbbfb9cb6c12095">   91</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 2</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="constants_8h.html#a19b7f5ce24364970bf9a0d2ed28d3ce2">   92</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 3</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="constants_8h.html#a79d6939f215d359f64b751a6e3d314ea">   93</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 4</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">   94</a></span><span class="preprocessor">#define ZOBRIST_EN_PASSANT_START_INDEX ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX + 1</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="constants_8h.html#af0c578eddb61211eb823c0079fe0b943">   73</a></span><span class="preprocessor">#define FILES 8</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="constants_8h.html#ad991e7c9f6e7b4dadd2bdf7da02af183">   74</a></span><span class="preprocessor">#define MIDGAME 0</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="constants_8h.html#a29111d5b3d48776267f2ec66fb745a02">   75</a></span><span class="preprocessor">#define ENDGAME 1</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="constants_8h.html#a0bbe4cc8be73cec78c85e164eb6efea6">   77</a></span><span class="preprocessor">#define MAX_PLIES 750</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="constants_8h.html#afe0c4249f8b5f7d5be976a330a3117d1">   78</a></span><span class="preprocessor">#define MAX_MOVES 255</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="constants_8h.html#a3bdc3d77ca3e6d7c92b502c91ce81096">   79</a></span><span class="preprocessor">#define NO_MOVE 0</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="constants_8h.html#a5acfc514f0a1f5565a2f1f141d468766">   80</a></span><span class="preprocessor">#define NO_EN_PASSANT 255</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="constants_8h.html#a95c8989f44eada4c4b98ea1b26ee0bd2">   82</a></span><span class="preprocessor">#define NO_TT_SCORE INT16_MIN</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="constants_8h.html#abf8d8994f09509f9e061f5bf82daf4cd">   84</a></span><span class="preprocessor">#define MAX_HISTORY 16384</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="constants_8h.html#afa84451f168e2c98d68dbaf7ab5d85c0">   86</a></span><span class="preprocessor">#define DRAW_SCORE 0</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="constants_8h.html#a8d9895fbbd3a293b00425f34a9d5f14a">   87</a></span><span class="preprocessor">#define MATE_SCORE 25000</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="constants_8h.html#ad65345b8798f8291c40f1de8091a7350">   89</a></span><span class="preprocessor">#define ZOBRIST_PIECE_START_INDEX 0</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="constants_8h.html#a763d2f16525171e564b5ac63c5cb95c5">   90</a></span><span class="preprocessor">#define ZOBRIST_SIDE_TO_MOVE_INDEX PIECES* SQUARES</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="constants_8h.html#a792ff6636faa80fd402190354e8dddb2">   91</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_WHITE_KINGSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 1</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="constants_8h.html#a9fd6784240224a0f3bbbfb9cb6c12095">   92</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_WHITE_QUEENSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 2</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="constants_8h.html#a19b7f5ce24364970bf9a0d2ed28d3ce2">   93</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_BLACK_KINGSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 3</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="constants_8h.html#a79d6939f215d359f64b751a6e3d314ea">   94</a></span><span class="preprocessor">#define ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX ZOBRIST_SIDE_TO_MOVE_INDEX + 4</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="constants_8h.html#a88c95f25885741abbd2d288754a68b47">   95</a></span><span class="preprocessor">#define ZOBRIST_EN_PASSANT_START_INDEX ZOBRIST_CASTLING_BLACK_QUEENSIDE_INDEX + 1</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -17,13 +17,14 @@ var searchData=
   ['basemgrooktable_14',['baseMgRookTable',['../namespaceZagreus.html#abaa7d4cbaef0a562a5735089dd9cc585',1,'Zagreus']]],
   ['basemidgamepsttable_15',['baseMidgamePstTable',['../namespaceZagreus.html#ae4d5f9f80fa20aa20a4d3e8aefcdd966',1,'Zagreus']]],
   ['basemobility_16',['baseMobility',['../namespaceZagreus.html#a955db901977df5e3bedc86ea5533b590',1,'Zagreus']]],
-  ['benchmark_5fpositions_17',['BENCHMARK_POSITIONS',['../main_8cpp.html#a8cb361baefea80b2cb9bbeb2f7fda965',1,'main.cpp']]],
-  ['bestmove_18',['bestMove',['../structZagreus_1_1TTEntry.html#a11425f44f910837e629998c0a93d8774',1,'Zagreus::TTEntry']]],
-  ['bishop_5fattacks_19',['bishop_attacks',['../namespaceZagreus.html#a93f5cd0fe5227a87df3fe9fba5cc32f6',1,'Zagreus']]],
-  ['bishop_5fmasks_20',['bishop_masks',['../namespaceZagreus.html#a1cdd0cf29fd626c864311c8639fdf8b7',1,'Zagreus']]],
-  ['bishopmagics_21',['bishopMagics',['../namespaceZagreus.html#a7593206baeb776a88b56acf788f71477',1,'Zagreus']]],
-  ['bishopphase_22',['bishopPhase',['../namespaceZagreus.html#a3cc7e4512f5d873b270497a7637c6271',1,'Zagreus']]],
-  ['bittable_23',['BitTable',['../namespaceZagreus.html#a7615268e1cccf20a27afd81a53fb62bd',1,'Zagreus']]],
-  ['blackinc_24',['blackInc',['../structZagreus_1_1SearchParams.html#a03c4c3f1613b48d9d457eb5bac657ff6',1,'Zagreus::SearchParams']]],
-  ['blacktime_25',['blackTime',['../structZagreus_1_1SearchParams.html#ab191e90b19f57f2cc6303917692bb01a',1,'Zagreus::SearchParams']]]
+  ['basepawnshieldvalue_17',['basePawnShieldValue',['../namespaceZagreus.html#a93b03c9df3b68f15a25d9c4e9c538b1a',1,'Zagreus']]],
+  ['benchmark_5fpositions_18',['BENCHMARK_POSITIONS',['../main_8cpp.html#a8cb361baefea80b2cb9bbeb2f7fda965',1,'main.cpp']]],
+  ['bestmove_19',['bestMove',['../structZagreus_1_1TTEntry.html#a11425f44f910837e629998c0a93d8774',1,'Zagreus::TTEntry']]],
+  ['bishop_5fattacks_20',['bishop_attacks',['../namespaceZagreus.html#a93f5cd0fe5227a87df3fe9fba5cc32f6',1,'Zagreus']]],
+  ['bishop_5fmasks_21',['bishop_masks',['../namespaceZagreus.html#a1cdd0cf29fd626c864311c8639fdf8b7',1,'Zagreus']]],
+  ['bishopmagics_22',['bishopMagics',['../namespaceZagreus.html#a7593206baeb776a88b56acf788f71477',1,'Zagreus']]],
+  ['bishopphase_23',['bishopPhase',['../namespaceZagreus.html#a3cc7e4512f5d873b270497a7637c6271',1,'Zagreus']]],
+  ['bittable_24',['BitTable',['../namespaceZagreus.html#a7615268e1cccf20a27afd81a53fb62bd',1,'Zagreus']]],
+  ['blackinc_25',['blackInc',['../structZagreus_1_1SearchParams.html#a03c4c3f1613b48d9d457eb5bac657ff6',1,'Zagreus::SearchParams']]],
+  ['blacktime_26',['blackTime',['../structZagreus_1_1SearchParams.html#ab191e90b19f57f2cc6303917692bb01a',1,'Zagreus::SearchParams']]]
 ];
