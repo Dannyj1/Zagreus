@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -19,41 +19,45 @@
  */
 
 #pragma once
-
-#include <deque>
+#ifdef ZAGREUS_TUNER
 #include <string>
+#include <vector>
 
-#include "bitboard.h"
+#include "constants.h"
+#include "eval.h"
+#include "types.h"
 
 namespace Zagreus {
+struct TraceCoefficient {
+    int midgameIndex;
+    int endgameIndex;
+    int16_t whiteCount;
+    int16_t blackCount;
+};
+
 struct TunePosition {
-    std::string fen;
-    float result = 0.0f;
-    int score = 0;
+    std::vector<TraceCoefficient> coefficients;
+    double result = 0.0;
+    int phase = 0;
 };
 
-class ExponentialMovingAverage {
-private:
-    double alpha;
-    double ma;
-    bool initialized;
+extern std::vector<double> weights;
+extern std::vector<double> baseWeights;
+extern int pstWeightStart;
+extern int mobilityWeightStart;
+extern int doubledPawnWeightStart;
+extern int pawnShieldWeightStart;
+extern double K;
 
-public:
-    ExponentialMovingAverage(size_t period)
-        : alpha(2.0 / (period + 1)), ma(0), initialized(false) {
-    }
+void initializeWeights();
+std::vector<TraceCoefficient> createCoefficients(const EvalTrace& trace);
+double sigmoid(double x);
+double evaluateFromCoefficients(const TunePosition& position);
+double calculateError(const std::vector<TunePosition>& positions);
+std::vector<double> calculateGradients(const std::vector<TunePosition>& positions);
+void exportTunedValues(const std::string& outputPath, int finalEpoch, double trainingError, double validationError,
+                       double testError);
 
-    void add(double value) {
-        if (!initialized) {
-            ma = value;
-            initialized = true;
-        } else {
-            ma = alpha * value + (1 - alpha) * ma;
-        }
-    }
-
-    double getMA() const { return ma; }
-};
-
-void startTuning(char* filePath);
-} // namespace Zagreus
+void startTuning(std::string filePath);
+}  // namespace Zagreus
+#endif

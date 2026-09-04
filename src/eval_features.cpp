@@ -18,17 +18,32 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-#include "constants.h"
+#include "eval_features.h"
+
+#include <vector>
 
 namespace Zagreus {
-enum PieceType : uint8_t;
-extern int midgamePstTable[PIECES][SQUARES];
-extern int endgamePstTable[PIECES][SQUARES];
+// Base material values
+int evalMaterialValues[GAME_PHASES][PIECE_TYPES] = {
+    {100, 350, 350, 525, 1000, 0},  // Midgame
+    {100, 350, 350, 525, 1000, 0}   // Endgame
+};
 
-void initializePst();
+// Base mobility values
+int evalMobility[GAME_PHASES][PIECE_TYPES] = {
+    {0, 4, 6, 2, 4, 0},  // Midgame
+    {0, 2, 3, 5, 6, 0}   // Endgame
+};
 
-int* getMidgameTable(PieceType pieceType);
+// Pawn structure
+// Doubled pawns
+int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
 
-int* getEndgameTable(PieceType pieceType);
+// King safety
+// Pawn shield
+int evalPawnShieldValue[GAME_PHASES][RANKS] = {
+    {-25, 20, 10, -5, -10, -15, -15, 0},  // Midgame
+    {0, 0, 0, 0, 0, 0, 0, 0}              // Endgame
+};
+
 }  // namespace Zagreus

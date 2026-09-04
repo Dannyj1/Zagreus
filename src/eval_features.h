@@ -19,16 +19,21 @@
  */
 
 #pragma once
+#include <vector>
+
 #include "constants.h"
+#include "pst.h"
 
 namespace Zagreus {
-enum PieceType : uint8_t;
-extern int midgamePstTable[PIECES][SQUARES];
-extern int endgamePstTable[PIECES][SQUARES];
+extern int evalMaterialValues[GAME_PHASES][PIECE_TYPES];
 
-void initializePst();
+extern int evalMobility[GAME_PHASES][PIECE_TYPES];
 
-int* getMidgameTable(PieceType pieceType);
+// Pawn structure
+// Doubled pawns
+extern int evalDoubledPawnPenalty[GAME_PHASES];
 
-int* getEndgameTable(PieceType pieceType);
+// King safety
+// Pawn shield
+extern int evalPawnShieldValue[GAME_PHASES][RANKS];
 }  // namespace Zagreus

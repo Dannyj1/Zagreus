@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023-2024  Danny Jelsma
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -18,118 +18,475 @@
  along with Zagreus.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifdef ZAGREUS_TUNER
 #include "tuner.h"
 
-#include <algorithm>
+#include <omp.h>
+
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <ranges>
+#include <vector>
 
-#include "../senjo/UCIAdapter.h"
-#include "bitboard.h"
-#include "evaluate.h"
-#include "features.h"
-#include "pst.h"
-#include "search.h"
+#include "board.h"
+#include "constants.h"
+#include "eval.h"
+#include "eval_base_values.h"
+#include "types.h"
+#include "uci.h"
 
 namespace Zagreus {
-int epochs = 10;
-float K = 0.0;
+const double learningRate = 1.0;
+const double earlyStoppingMinDelta = 1e-6;
+const int maxIterations = 200;
+const int batchSize = 8192;
+const int earlyStoppingPatience = 15;
+const int earlyStoppingWarmup = 0;
+const int saveFrequency = 5;
+int seed = 42;
 
-int batchSize = 256;
-float learningRate = 0.1;
-float delta = 1.0;
-float optimizerEpsilon = 1e-6;
-float beta1 = 0.9;
-float beta2 = 0.999;
-// 0 = random seed
-long seed = 0;
+const double epsilon = 1e-8;
+const double sigmoidGradientScale = 2.0 * std::log(10.0) / 400.0;
 
-Bitboard tunerBoard{};
+double K = 0.0;
 
-std::vector<std::vector<TunePosition>> createBatches(std::vector<TunePosition>& positions) {
-    // Create random batches of batchSize positions
-    std::vector<std::vector<TunePosition>> batches;
-    batches.reserve(positions.size() / batchSize);
+std::vector<double> weights{};
+std::vector<double> baseWeights{};
 
-    for (int i = 0; i < positions.size(); i += batchSize) {
-        std::vector<TunePosition> batch;
-        for (int j = i; j < i + batchSize && j < positions.size(); j++) {
-            batch.push_back(positions[j]);
+int pstWeightStart = 0;
+int mobilityWeightStart;
+int doubledPawnWeightStart;
+int pawnShieldWeightStart;
+int totalWeights;
+
+void initializeWeights() {
+    const int numPstWeights = GAME_PHASES * PIECE_TYPES * SQUARES;
+    mobilityWeightStart = numPstWeights;
+
+    const int numMobilityWeights = GAME_PHASES * PIECE_TYPES;
+    doubledPawnWeightStart = mobilityWeightStart + numMobilityWeights;
+
+    const int numDoubledPawnWeights = GAME_PHASES;
+    pawnShieldWeightStart = doubledPawnWeightStart + numDoubledPawnWeights;
+
+    const int numPawnShieldWeights = GAME_PHASES * RANKS;
+    totalWeights = pawnShieldWeightStart + numPawnShieldWeights;
+
+    weights.resize(totalWeights);
+    baseWeights.resize(totalWeights);
+    std::ranges::fill(weights, 0.0);
+
+    for (int phase = 0; phase < GAME_PHASES; ++phase) {
+        for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+            const auto pieceType = static_cast<PieceType>(piece);
+            const int* baseTable = phase == MIDGAME ? getBaseMidgameTable(pieceType) : getBaseEndgameTable(pieceType);
+
+            for (int square = 0; square < SQUARES; ++square) {
+                const int index = pstWeightStart + (phase * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
+                baseWeights[index] = baseMaterialValues[phase][piece] + baseTable[square];
+            }
         }
-        batches.push_back(batch);
+    }
+
+    for (int phase = 0; phase < GAME_PHASES; ++phase) {
+        for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+            const int index = mobilityWeightStart + (phase * PIECE_TYPES) + piece;
+            baseWeights[index] = baseMobility[phase][piece];
+        }
+    }
+
+    baseWeights[doubledPawnWeightStart + MIDGAME] = baseDoubledPawnPenalty[MIDGAME];
+    baseWeights[doubledPawnWeightStart + ENDGAME] = baseDoubledPawnPenalty[ENDGAME];
+
+    for (int phase = 0; phase < GAME_PHASES; ++phase) {
+        for (int rank = 0; rank < RANKS; ++rank) {
+            const int index = pawnShieldWeightStart + (phase * RANKS) + rank;
+            baseWeights[index] = basePawnShieldValue[phase][rank];
+        }
+    }
+}
+
+std::vector<TraceCoefficient> createCoefficients(const EvalTrace& trace) {
+    std::vector<TraceCoefficient> coefficients;
+
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        for (int canonicalSquare = 0; canonicalSquare < SQUARES; ++canonicalSquare) {
+            const int whiteCount = trace.pst[WHITE][piece][canonicalSquare ^ 56];
+            const int blackCount = trace.pst[BLACK][piece][canonicalSquare];
+
+            if (whiteCount == blackCount) {
+                continue;
+            }
+
+            const int midgameIndex =
+                pstWeightStart + (MIDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + canonicalSquare;
+            const int endgameIndex =
+                pstWeightStart + (ENDGAME * PIECE_TYPES * SQUARES) + (piece * SQUARES) + canonicalSquare;
+
+            coefficients.push_back(
+                {midgameIndex, endgameIndex, static_cast<int16_t>(whiteCount), static_cast<int16_t>(blackCount)});
+        }
+    }
+
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        const int whiteCount = trace.mobility[WHITE][piece];
+        const int blackCount = trace.mobility[BLACK][piece];
+
+        if (whiteCount == blackCount) {
+            continue;
+        }
+
+        const int midgameIndex = mobilityWeightStart + (MIDGAME * PIECE_TYPES) + piece;
+        const int endgameIndex = mobilityWeightStart + (ENDGAME * PIECE_TYPES) + piece;
+
+        coefficients.push_back(
+            {midgameIndex, endgameIndex, static_cast<int16_t>(whiteCount), static_cast<int16_t>(blackCount)});
+    }
+
+    const int whiteDoubledPawns = trace.doubledPawns[WHITE];
+    const int blackDoubledPawns = trace.doubledPawns[BLACK];
+
+    if (whiteDoubledPawns != blackDoubledPawns) {
+        coefficients.push_back({doubledPawnWeightStart + MIDGAME, doubledPawnWeightStart + ENDGAME,
+                                static_cast<int16_t>(whiteDoubledPawns), static_cast<int16_t>(blackDoubledPawns)});
+    }
+
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int whiteCount = trace.pawnShield[WHITE][rank];
+        const int blackCount = trace.pawnShield[BLACK][rank];
+
+        if (whiteCount == blackCount) {
+            continue;
+        }
+
+        const int midgameIndex = pawnShieldWeightStart + (MIDGAME * RANKS) + rank;
+        const int endgameIndex = pawnShieldWeightStart + (ENDGAME * RANKS) + rank;
+
+        coefficients.push_back(
+            {midgameIndex, endgameIndex, static_cast<int16_t>(whiteCount), static_cast<int16_t>(blackCount)});
+    }
+
+    return coefficients;
+}
+
+double sigmoid(const double x) { return 1.0 / (1.0 + std::pow(10.0, -K * x / 400.0)); }
+
+double evaluateFromCoefficients(const TunePosition& position) {
+    double midgameScore = 0.0;
+    double endgameScore = 0.0;
+
+    for (const auto& coefficient : position.coefficients) {
+        const int count = coefficient.whiteCount - coefficient.blackCount;
+
+        midgameScore += (baseWeights[coefficient.midgameIndex] + weights[coefficient.midgameIndex]) * count;
+        endgameScore += (baseWeights[coefficient.endgameIndex] + weights[coefficient.endgameIndex]) * count;
+    }
+
+    return ((midgameScore * (256 - position.phase)) + (endgameScore * position.phase)) / 256.0;
+}
+
+double calculateError(const std::vector<TunePosition>& positions) {
+    double totalError = 0.0;
+
+#pragma omp parallel for reduction(+ : totalError) default(none) shared(positions)
+    for (const auto& position : positions) {
+        const double evalScore = evaluateFromCoefficients(position);
+        const double prediction = sigmoid(evalScore);
+        const double error = position.result - prediction;
+        totalError += error * error;
+    }
+
+    return totalError / static_cast<double>(positions.size());
+}
+
+std::vector<double> calculateGradients(const std::vector<TunePosition>& positions) {
+    std::vector<double> gradients(weights.size(), 0.0);
+
+#pragma omp parallel default(none) shared(positions, gradients)
+    {
+        std::vector<double> localGradients(gradients.size(), 0.0);
+
+#pragma omp for nowait
+        for (int i = 0; i < static_cast<int>(positions.size()); ++i) {
+            const TunePosition& position = positions[i];
+            const double evalScore = evaluateFromCoefficients(position);
+            const double prediction = sigmoid(evalScore);
+            const double errorGradient =
+                -sigmoidGradientScale * K * (position.result - prediction) * prediction * (1.0 - prediction);
+
+            const double midgameFactor = (256 - position.phase) / 256.0;
+            const double endgameFactor = position.phase / 256.0;
+
+            for (const auto& coefficient : position.coefficients) {
+                const int count = coefficient.whiteCount - coefficient.blackCount;
+
+                localGradients[coefficient.midgameIndex] += errorGradient * midgameFactor * count;
+                localGradients[coefficient.endgameIndex] += errorGradient * endgameFactor * count;
+            }
+        }
+
+#pragma omp critical
+        {
+            for (size_t i = 0; i < gradients.size(); ++i) {
+                gradients[i] += localGradients[i];
+            }
+        }
+    }
+
+    const double N = static_cast<double>(positions.size());
+    for (double& gradient : gradients) {
+        gradient /= N;
+    }
+
+    return gradients;
+}
+
+std::vector<std::vector<TunePosition>> createBatches(const std::vector<TunePosition>& positions) {
+    std::vector<std::vector<TunePosition>> batches;
+    batches.reserve((positions.size() + batchSize - 1) / batchSize);
+
+    for (size_t i = 0; i < positions.size(); i += batchSize) {
+        std::vector<TunePosition> batch;
+        batch.reserve(std::min((size_t)batchSize, positions.size() - i));
+        for (size_t j = i; j < std::min(i + batchSize, positions.size()); j++) {
+            batch.emplace_back(positions[j]);
+        }
+        batches.emplace_back(std::move(batch));
     }
 
     return batches;
 }
 
-float sigmoid(float x) {
-    return 1.0f / (1.0f + pow(10.0f, -K * x / 400.0f));
-}
-
-float evaluationLoss(std::vector<TunePosition>& positions) {
-    float totalLoss = 0.0f;
-
-    for (TunePosition& pos : positions) {
-        tunerBoard.setFromFenTuner(pos.fen);
-        int evalScore = Evaluation(tunerBoard).evaluate();
-
-        // All scores are from white's perspective
-        if (tunerBoard.getMovingColor() == BLACK) {
-            evalScore *= -1;
-        }
-
-        float loss = std::pow(pos.result - sigmoid(evalScore), 2.0f);
-        totalLoss += loss;
+void exportTunedValues(const std::string& outputPath, int finalEpoch, double trainingError, double validationError,
+                       double testError) {
+    std::ofstream fout(outputPath);
+    if (!fout.is_open()) {
+        std::cerr << "Failed to open output file: " << outputPath << std::endl;
+        return;
     }
 
-    return (1.0f / static_cast<float>(positions.size())) * totalLoss;
-}
+    fout << "/*\n";
+    fout << " * Tuned evaluation parameters\n";
+    fout << " * Generated by Zagreus tuner\n";
+    fout << " *\n";
+    fout << " * Training metrics:\n";
+    fout << " * - Final epoch: " << finalEpoch << "\n";
+    fout << " * - Training error: " << trainingError << "\n";
+    fout << " * - Validation error: " << validationError << "\n";
+    fout << " * - Test error: " << testError << "\n";
+    fout << " */\n\n";
 
-float findOptimalK(std::vector<TunePosition>& positions) {
-    const float phi = (1.0f + sqrt(5.0f)) / 2.0f;
-    const float tolerance = 1e-6f;
+    int materialValues[GAME_PHASES][PIECE_TYPES]{};
+    int pstValues[GAME_PHASES][PIECE_TYPES][SQUARES]{};
 
-    float a = 0.0f;
-    float b = 2.0f;
+    for (int phase = 0; phase < GAME_PHASES; ++phase) {
+        for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+            int combinedValues[SQUARES];
+            double sum = 0.0;
 
-    float x1 = b - (b - a) / phi;
-    float x2 = a + (b - a) / phi;
+            for (int square = 0; square < SQUARES; ++square) {
+                const int index = pstWeightStart + (phase * PIECE_TYPES * SQUARES) + (piece * SQUARES) + square;
+                combinedValues[square] = static_cast<int>(std::round(baseWeights[index] + weights[index]));
+                sum += combinedValues[square];
+            }
 
-    K = x1;
-    float f1 = evaluationLoss(positions);
-    K = x2;
-    float f2 = evaluationLoss(positions);
+            if (piece == KING) {
+                materialValues[phase][piece] = 0;
 
-    while (std::abs(b - a) > tolerance) {
-        if (f1 < f2) {
-            b = x2;
-            x2 = x1;
-            x1 = b - (b - a) / phi;
-            f2 = f1;
-            K = x1;
-            f1 = evaluationLoss(positions);
-        } else {
-            a = x1;
-            x1 = x2;
-            x2 = a + (b - a) / phi;
-            f1 = f2;
-            K = x2;
-            f2 = evaluationLoss(positions);
+                for (int square = 0; square < SQUARES; ++square) {
+                    pstValues[phase][piece][square] = combinedValues[square];
+                }
+            } else {
+                const int offset = static_cast<int>(std::round(sum / SQUARES));
+                materialValues[phase][piece] = offset;
+
+                for (int square = 0; square < SQUARES; ++square) {
+                    pstValues[phase][piece][square] = combinedValues[square] - offset;
+                }
+            }
         }
     }
 
-    return (a + b) / 2.0f;
+    fout << "// Material values\n";
+    fout << "int evalMaterialValues[GAME_PHASES][PIECE_TYPES]{\n";
+    fout << "    {";
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        fout << materialValues[MIDGAME][piece];
+        if (piece < PIECE_TYPES - 1) fout << ", ";
+    }
+    fout << "}, // Midgame\n";
+
+    fout << "    {";
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        fout << materialValues[ENDGAME][piece];
+        if (piece < PIECE_TYPES - 1) fout << ", ";
+    }
+    fout << "} // Endgame\n";
+    fout << "};\n\n";
+
+    fout << "// Mobility values\n";
+    fout << "int evalMobility[GAME_PHASES][PIECE_TYPES]{\n";
+    fout << "    {";
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        const int index = mobilityWeightStart + (MIDGAME * PIECE_TYPES) + piece;
+        fout << static_cast<int>(std::round(baseWeights[index] + weights[index]));
+        if (piece < PIECE_TYPES - 1) fout << ", ";
+    }
+    fout << "}, // Midgame\n";
+
+    fout << "    {";
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        const int index = mobilityWeightStart + (ENDGAME * PIECE_TYPES) + piece;
+        fout << static_cast<int>(std::round(baseWeights[index] + weights[index]));
+        if (piece < PIECE_TYPES - 1) fout << ", ";
+    }
+    fout << "} // Endgame\n";
+    fout << "};\n\n";
+
+    fout << "// Pawn structure\n";
+    fout << "int evalDoubledPawnPenalty[GAME_PHASES] = {";
+    fout << static_cast<int>(
+                std::round(baseWeights[doubledPawnWeightStart + MIDGAME] + weights[doubledPawnWeightStart + MIDGAME]))
+         << ", ";
+    fout << static_cast<int>(
+        std::round(baseWeights[doubledPawnWeightStart + ENDGAME] + weights[doubledPawnWeightStart + ENDGAME]));
+    fout << "};\n\n";
+
+    fout << "// King safety\n";
+    fout << "// Pawn shield\n";
+    fout << "int evalPawnShieldValue[GAME_PHASES][RANKS] = {\n";
+    fout << "    {";
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int index = pawnShieldWeightStart + (MIDGAME * RANKS) + rank;
+        fout << static_cast<int>(std::round(baseWeights[index] + weights[index]));
+        if (rank < RANKS - 1) fout << ", ";
+    }
+    fout << "}, // Midgame\n";
+
+    fout << "    {";
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int index = pawnShieldWeightStart + (ENDGAME * RANKS) + rank;
+        fout << static_cast<int>(std::round(baseWeights[index] + weights[index]));
+        if (rank < RANKS - 1) fout << ", ";
+    }
+    fout << "} // Endgame\n";
+    fout << "};\n\n";
+
+    const std::string pieceNames[] = {"pawn", "knight", "bishop", "rook", "queen", "king"};
+
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        fout << "// Midgame " << pieceNames[piece] << " PST\n";
+        fout << "int mg_" << pieceNames[piece] << "_table[64] = {\n";
+        for (int square = 0; square < SQUARES; ++square) {
+            if (square % 8 == 0) fout << "    ";
+            fout << pstValues[MIDGAME][piece][square];
+            if (square < SQUARES - 1) fout << ", ";
+            if (square % 8 == 7) fout << "\n";
+        }
+        fout << "};\n\n";
+    }
+
+    for (int piece = 0; piece < PIECE_TYPES; ++piece) {
+        fout << "// Endgame " << pieceNames[piece] << " PST\n";
+        fout << "int eg_" << pieceNames[piece] << "_table[64] = {\n";
+        for (int square = 0; square < SQUARES; ++square) {
+            if (square % 8 == 0) fout << "    ";
+            fout << pstValues[ENDGAME][piece][square];
+            if (square < SQUARES - 1) fout << ", ";
+            if (square % 8 == 7) fout << "\n";
+        }
+        fout << "};\n\n";
+    }
+
+    fout.close();
+    std::cout << "Tuned values exported to: " << outputPath << std::endl;
 }
 
-std::vector<TunePosition> loadPositions(
-    char* filePath, std::chrono::time_point<std::chrono::steady_clock>& maxEndTime,
-    std::mt19937_64 gen) {
+void gradientDescent(std::vector<TunePosition>& trainingSet, const std::vector<TunePosition>& validationSet,
+                     const std::vector<TunePosition>& testSet, std::mt19937_64& gen) {
+    std::vector<double> gradientAccumulator(weights.size(), 0.0);
+
+    const double initialTrainingError = calculateError(trainingSet);
+    const double initialValidationError = calculateError(validationSet);
+    std::cout << "Initial Training Error: " << initialTrainingError
+              << " - Initial Validation Error: " << initialValidationError << std::endl;
+
+    double bestTrainingError = initialTrainingError;
+    double bestValidationError = initialValidationError;
+    std::vector<double> bestWeights = weights;
+    int epochsWithoutImprovement = 0;
+    int finalEpoch = 0;
+
+    for (int iteration = 0; iteration < maxIterations; iteration++) {
+        std::ranges::shuffle(trainingSet, gen);
+        std::vector<std::vector<TunePosition>> batches = createBatches(trainingSet);
+
+        double iterationError = 0.0;
+        int numBatches = 0;
+
+        for (const auto& batch : batches) {
+            std::vector<double> gradients = calculateGradients(batch);
+
+            for (int i = 0; i < static_cast<int>(weights.size()); ++i) {
+                gradientAccumulator[i] += gradients[i] * gradients[i];
+                weights[i] -= learningRate * gradients[i] / (std::sqrt(gradientAccumulator[i]) + epsilon);
+            }
+
+            iterationError += calculateError(batch);
+            numBatches++;
+        }
+
+        iterationError /= numBatches;
+
+        const double validationError = calculateError(validationSet);
+        std::cout << "Iteration " << iteration + 1 << "/" << maxIterations << " - Training Error: " << iterationError
+                  << " - Validation Error: " << validationError << std::endl;
+
+        if ((iteration + 1) % saveFrequency == 0) {
+            exportTunedValues("tuned_values.h", iteration + 1, iterationError, validationError,
+                              calculateError(testSet));
+        }
+
+        if (iteration > earlyStoppingWarmup) {
+            if (validationError < bestValidationError - earlyStoppingMinDelta) {
+                bestTrainingError = iterationError;
+                bestValidationError = validationError;
+                bestWeights = weights;
+                epochsWithoutImprovement = 0;
+            } else {
+                epochsWithoutImprovement++;
+
+                if (epochsWithoutImprovement >= earlyStoppingPatience) {
+                    std::cout << "Early stopping triggered." << std::endl;
+                    finalEpoch = iteration + 1;
+                    break;
+                }
+            }
+        }
+
+        finalEpoch = iteration + 1;
+    }
+
+    weights = bestWeights;
+
+    const double testError = calculateError(testSet);
+    std::cout << "Final test error: " << testError << std::endl;
+
+    exportTunedValues("tuned_values.h", finalEpoch, bestTrainingError, bestValidationError, testError);
+}
+
+std::vector<TunePosition> loadPositions(const std::string& filePath) {
     std::cout << "Loading positions..." << std::endl;
-    std::vector<TunePosition> positions;
     std::vector<std::string> lines;
     std::ifstream fin(filePath);
+
+    if (!fin.is_open()) {
+        std::cerr << "Failed to open positions file: " << filePath << std::endl;
+        return {};
+    }
+
     int win = 0;
     int loss = 0;
     int draw = 0;
@@ -139,25 +496,34 @@ std::vector<TunePosition> loadPositions(
         lines.emplace_back(line);
     }
 
-    positions.reserve(lines.size());
+    std::vector<TunePosition> parsedPositions(lines.size());
+    std::vector<bool> isValid(lines.size(), false);
 
-    for (std::string& posLine : lines) {
+#pragma omp parallel for reduction(+ : win, loss, draw) default(none) shared(lines, parsedPositions, isValid)
+    for (size_t i = 0; i < lines.size(); ++i) {
+        std::string posLine = lines[i];
         if (posLine.empty() || posLine == " ") {
             continue;
         }
 
-        float result;
-        std::string resultStr = posLine.substr(posLine.find(" c9 ") + 4, posLine.find(" c9 ") + 4);
-        std::string fen = posLine.substr(0, posLine.find(" c9 "));
+        double result;
+        size_t c9_pos = posLine.find(" c9 ");
+        if (c9_pos == std::string::npos) continue;
 
-        if (!tunerBoard.setFromFen(fen) || tunerBoard.isDraw() || tunerBoard.isWinner<WHITE>()
-            || tunerBoard.isWinner<BLACK>()) {
+        std::string resultStr = posLine.substr(c9_pos + 4);
+        std::string fen = posLine.substr(0, c9_pos);
+        Board board{};
+
+        if (!board.setFromFEN(fen) || board.isDraw() || board.isKingInCheck<WHITE>() || board.isKingInCheck<BLACK>()) {
             continue;
         }
 
-        // Remove " and ; from result
+        Evaluation eval{board};
+        eval.evaluate();
+
         std::erase(resultStr, '"');
         std::erase(resultStr, ';');
+        std::erase(resultStr, ' ');
 
         if (resultStr == "1" || resultStr == "1-0") {
             result = 1.0;
@@ -170,231 +536,115 @@ std::vector<TunePosition> loadPositions(
             draw++;
         }
 
-        int evalScore = Evaluation(tunerBoard).evaluate();
-
-        // All scores are from white's perspective
-        if (tunerBoard.getMovingColor() == BLACK) {
-            evalScore *= -1;
-        }
-
-        TunePosition tunePos{fen, result, evalScore};
-        positions.emplace_back(tunePos);
+        TunePosition tunePos;
+        tunePos.result = result;
+        tunePos.phase = eval.trace.phase;
+        tunePos.coefficients = createCoefficients(eval.trace);
+        parsedPositions[i] = tunePos;
+        isValid[i] = true;
     }
 
-    // Reduce the biggest two classes to the size of the smallest class
-    int smallestClassSize = std::min(win, std::min(loss, draw));
-    std::vector<TunePosition> newPositions;
-    int newWin = 0;
-    int newLoss = 0;
-    int newDraw = 0;
+    std::vector<TunePosition> positions;
+    positions.reserve(win + loss + draw);
 
-    // Shuffle positions
-    std::shuffle(positions.begin(), positions.end(), gen);
-
-    for (TunePosition& pos : positions) {
-        if (pos.result == 1.0 && newWin < smallestClassSize) {
-            newPositions.emplace_back(pos);
-            newWin++;
-        } else if (pos.result == 0.0 && newLoss < smallestClassSize) {
-            newPositions.emplace_back(pos);
-            newLoss++;
-        } else if (pos.result == 0.5 && newDraw < smallestClassSize) {
-            newPositions.emplace_back(pos);
-            newDraw++;
-        }
-
-        if (newWin >= smallestClassSize && newLoss >= smallestClassSize &&
-            newDraw >= smallestClassSize) {
-            break;
+    for (size_t i = 0; i < lines.size(); ++i) {
+        if (isValid[i]) {
+            positions.push_back(std::move(parsedPositions[i]));
         }
     }
 
-    // Write all newPositions to a file by their fen strings
-    std::ofstream fout("cleaned_positions.epd");
-    for (TunePosition& pos : newPositions) {
-        std::string result;
-
-        if (pos.result == 1.0) {
-            result = "1-0";
-        } else if (pos.result == 0.0) {
-            result = "0-1";
-        } else {
-            result = "1/2-1/2";
-        }
-
-        fout << pos.fen << " c9 \"" << result << "\";" << std::endl;
-    }
-
-    fout.close();
-
-    std::cout << "Loaded " << newPositions.size() << " positions." << std::endl;
-    std::cout << "Win: " << newWin << ", Loss: " << newLoss << ", Draw: " << newDraw << std::endl;
+    std::cout << "Loaded " << positions.size() << " positions." << std::endl;
+    std::cout << "Win: " << win << ", Loss: " << loss << ", Draw: " << draw << std::endl;
     return positions;
 }
 
-void exportNewEvalValues(std::vector<float>& bestParams, int epoch, float validationLoss) {
-    std::ofstream fout("tuned_params_epoch_" + std::to_string(epoch) + ".txt");
+double findOptimalK(const std::vector<TunePosition>& positions) {
+    double a = 0.0001;
+    double b = 10.0;
+    const double invphi = (std::sqrt(5.0) - 1.0) / 2.0;
+    const double invphi2 = (3.0 - std::sqrt(5.0)) / 2.0;
+    constexpr double tol = 1e-4;
 
-    fout << "Epoch: " << epoch << ", Val Loss: " << validationLoss << std::endl << std::endl;
+    auto averageError = [&positions](const double candidateK) -> double {
+        const double oldK = K;
+        K = candidateK;
+        const double error = calculateError(positions);
+        K = oldK;
+        return error;
+    };
 
-    // Declare pieceNames
-    std::string pieceNames[6] = {"Pawn", "Knight", "Bishop", "Rook", "Queen", "King"};
+    double x1 = a + invphi2 * (b - a);
+    double x2 = a + invphi * (b - a);
+    double f1 = averageError(x1);
+    double f2 = averageError(x2);
 
-    fout << "int evalValues[" << getEvalFeatureSize() << "] = { ";
-    for (int i = 0; i < getEvalFeatureSize(); i++) {
-        fout << static_cast<int>(bestParams[i]);
+    const double startingError = averageError(K);
+    std::cout << "Starting error with K=" << K << ": " << startingError << std::endl;
 
-        if (i != bestParams.size() - 1) {
-            fout << ", ";
+    while (b - a > tol) {
+        if (f1 < f2) {
+            b = x2;
+            x2 = x1;
+            f2 = f1;
+            x1 = a + invphi2 * (b - a);
+            f1 = averageError(x1);
+            std::cout << "Testing K=" << x1 << ", error=" << f1 << std::endl;
+        } else {
+            a = x1;
+            x1 = x2;
+            f1 = f2;
+            x2 = a + invphi * (b - a);
+            f2 = averageError(x2);
+            std::cout << "Testing K=" << x2 << ", error=" << f2 << std::endl;
         }
     }
-    fout << " };" << std::endl << std::endl;
 
-    // Write the 6 piece square tables to a file (2 tables per piece, a midgame and endgame table
-    // declared like this:  int midgamePawnTable[64] and int endgamePawnTable[64] The 6 midgame tables
-    // are declared first, then the 6 endgame tables
-    int pstSize = getMidgameValues().size();
-    for (int i = 0; i < 6; i++) {
-        fout << "int midgame" << pieceNames[i] << "Table[64] = { ";
-        for (int j = 0; j < 64; j++) {
-            fout << static_cast<int>(bestParams[getEvalFeatureSize() + i * 64 + j]);
-
-            if (j != 63) {
-                fout << ", ";
-            }
-        }
-        fout << " };" << std::endl;
-
-        fout << "int endgame" << pieceNames[i] << "Table[64] = { ";
-        for (int j = 0; j < 64; j++) {
-            fout << static_cast<int>(bestParams[getEvalFeatureSize() + pstSize + i * 64 + j]);
-
-            if (j != 63) {
-                fout << ", ";
-            }
-        }
-        fout << " };" << std::endl << std::endl;
-    }
+    const double optimalK = (a + b) / 2.0;
+    const double finalError = averageError(optimalK);
+    std::cout << "Found optimal K=" << optimalK << " with error: " << finalError << std::endl;
+    return optimalK;
 }
 
-void startTuning(char* filePath) {
-    std::random_device rd;
-    std::mt19937_64 gen; // NOLINT(*-msc51-cpp)
-
+void startTuning(std::string filePath) {
     if (seed == 0) {
+        std::random_device rd;
         seed = rd();
     }
 
-    gen = std::mt19937_64(seed);
-    std::cout << "Using seed: " << seed << std::endl;
+    std::mt19937_64 gen = std::mt19937_64(seed);
+    Engine engine{};
+    engine.registerOptions();
+    engine.doSetup();
+    initializeBasePst();
+    initializeWeights();
 
-    ZagreusEngine engine;
-    senjo::UCIAdapter adapter(engine);
-    auto maxEndTime = std::chrono::time_point<std::chrono::steady_clock>::max();
-    std::vector<TunePosition> positions = loadPositions(filePath, maxEndTime, gen);
+    std::vector<TunePosition> trainingSet = loadPositions(filePath);
+    if (trainingSet.empty()) {
+        std::cout << "Error: No training positions loaded. Tuning cannot start." << std::endl;
+        return;
+    }
 
-    engine.setTuning(false);
+    std::ranges::shuffle(trainingSet, gen);
 
-    std::vector<float> bestParameters = getBaseEvalValues();
-    updateEvalValues(bestParameters);
+    std::vector<TunePosition> validationSet;
+    std::vector<TunePosition> testSet;
+
+    const int64_t validationSetSize = trainingSet.size() * 0.1;
+    const int64_t testSetSize = trainingSet.size() * 0.1;
+
+    validationSet.assign(trainingSet.begin(), trainingSet.begin() + validationSetSize);
+    testSet.assign(trainingSet.begin() + validationSetSize, trainingSet.begin() + validationSetSize + testSetSize);
+    trainingSet.erase(trainingSet.begin(), trainingSet.begin() + validationSetSize + testSetSize);
+
+    std::cout << "Training set size: " << trainingSet.size() << std::endl;
+    std::cout << "Validation set size: " << validationSet.size() << std::endl;
+    std::cout << "Test set size: " << testSet.size() << std::endl;
 
     std::cout << "Finding the optimal K value..." << std::endl;
-    K = findOptimalK(positions);
+    K = findOptimalK(trainingSet);
     std::cout << "Optimal K value: " << K << std::endl;
 
-    std::shuffle(positions.begin(), positions.end(), gen);
-
-    std::vector<TunePosition> validationPositions(positions.begin() + positions.size() * 0.9,
-                                                  positions.end());
-    positions.erase(positions.begin() + positions.size() * 0.9, positions.end());
-    exportNewEvalValues(bestParameters, 0, evaluationLoss(positions));
-
-    std::cout << "Starting tuning..." << std::endl;
-    std::vector<float> m(bestParameters.size(), 0.0);
-    std::vector<float> v(bestParameters.size(), 0.0);
-
-    std::cout << "Calculating the initial loss..." << std::endl;
-    float bestLoss = evaluationLoss(validationPositions);
-
-    std::cout << "Initial loss: " << bestLoss << std::endl;
-    std::cout << "Finding the best parameters. This may take a while..." << std::endl;
-    std::vector<std::vector<TunePosition>> batches = createBatches(positions);
-    int epoch = 1;
-    int iteration = 0;
-
-    while (epoch <= epochs) {
-        std::shuffle(positions.begin(), positions.end(), gen);
-        batches = createBatches(positions);
-        int totalIterations = batches.size();
-        std::vector<float> gradients(bestParameters.size(), 0.0f);
-        float beta1Corrected = 0;
-        float beta2Corrected = 0;
-
-        for (std::vector<TunePosition>& batch : batches) {
-            iteration++;
-
-            if (iteration == 1) {
-                beta1Corrected = beta1;
-                beta2Corrected = beta2;
-            } else {
-                beta1Corrected *= beta1;
-                beta2Corrected *= beta2;
-            }
-
-            int percentDone = static_cast<int>(
-                ((iteration % batches.size()) / static_cast<float>(totalIterations)) * 100);
-            std::cout << "Epoch: " << epoch << ", Iteration: " << (iteration % batches.size() + 1)
-                << "/" <<
-                totalIterations << " (" << percentDone << "%)" << std::endl;
-            std::ranges::fill(gradients, 0.0f);
-
-            for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                float oldParam = bestParameters[paramIndex];
-
-                bestParameters[paramIndex] = oldParam + delta;
-                updateEvalValues(bestParameters);
-                float fPlusDelta = evaluationLoss(batch);
-
-                bestParameters[paramIndex] = oldParam - delta;
-                updateEvalValues(bestParameters);
-                float fMinusDelta = evaluationLoss(batch);
-
-                bestParameters[paramIndex] = oldParam + 2 * delta;
-                updateEvalValues(bestParameters);
-                float fPlus2Delta = evaluationLoss(batch);
-
-                bestParameters[paramIndex] = oldParam - 2 * delta;
-                updateEvalValues(bestParameters);
-                float fMinus2Delta = evaluationLoss(batch);
-
-                gradients[paramIndex] += (
-                    -fPlus2Delta + 8.0f * fPlusDelta - 8.0f * fMinusDelta + fMinus2Delta) / (
-                    12.0f * delta);
-
-                // reset
-                bestParameters[paramIndex] = oldParam;
-            }
-
-            for (int paramIndex = 0; paramIndex < bestParameters.size(); paramIndex++) {
-                m[paramIndex] = beta1 * m[paramIndex] + (1.0f - beta1) * gradients[paramIndex];
-                v[paramIndex] = beta2 * v[paramIndex] + (1.0f - beta2) * std::pow(
-                                    gradients[paramIndex], 2.0f);
-                float mCorrected = m[paramIndex] / (1.0f - beta1Corrected);
-                float vCorrected = v[paramIndex] / (1.0f - beta2Corrected);
-                bestParameters[paramIndex] -= learningRate * mCorrected / (
-                    sqrt(vCorrected) + optimizerEpsilon);
-            }
-        }
-
-        updateEvalValues(bestParameters);
-        float validationLoss = evaluationLoss(validationPositions);
-
-        exportNewEvalValues(bestParameters, epoch, validationLoss);
-
-        std::cout << "======== Epoch " << epoch << " Done ========" << std::endl;
-        std::cout << "Epoch: " << epoch << ", Val Loss: " << validationLoss << std::endl;
-        std::cout << "==============================" << std::endl;
-        epoch++;
-    }
+    gradientDescent(trainingSet, validationSet, testSet, gen);
 }
-} // namespace Zagreus
+}  // namespace Zagreus
+#endif
