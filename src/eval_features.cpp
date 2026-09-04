@@ -39,4 +39,11 @@ int evalMobility[GAME_PHASES][PIECE_TYPES] = {
 // Doubled pawns
 int evalDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
 
+// King safety
+// Pawn shield
+int evalPawnShieldValue[GAME_PHASES][RANKS] = {
+    {-25, 20, 10, -5, -10, -15, -15, 0},  // Midgame
+    {0, 0, 0, 0, 0, 0, 0, 0}              // Endgame
+};
+
 }  // namespace Zagreus

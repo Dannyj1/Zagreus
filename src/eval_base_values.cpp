@@ -39,6 +39,14 @@ const int baseMobility[GAME_PHASES][PIECE_TYPES] = {
 // Doubled pawns
 const int baseDoubledPawnPenalty[GAME_PHASES] = {-10, -20};
 
+// King safety
+// Pawn shield
+// index 0 = missing pawn/open file
+const int basePawnShieldValue[GAME_PHASES][RANKS] = {
+    {-20, 20, 10, -5, -10, -15, -15, 0},  // Midgame
+    {0, 0, 0, 0, 0, 0, 0, 0}              // Endgame
+};
+
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1
 const int baseMgPawnTable[64] = {

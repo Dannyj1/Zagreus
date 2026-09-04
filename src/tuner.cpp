@@ -58,6 +58,7 @@ std::vector<double> baseWeights{};
 int pstWeightStart = 0;
 int mobilityWeightStart;
 int doubledPawnWeightStart;
+int pawnShieldWeightStart;
 int totalWeights;
 
 void initializeWeights() {
@@ -68,7 +69,10 @@ void initializeWeights() {
     doubledPawnWeightStart = mobilityWeightStart + numMobilityWeights;
 
     const int numDoubledPawnWeights = GAME_PHASES;
-    totalWeights = doubledPawnWeightStart + numDoubledPawnWeights;
+    pawnShieldWeightStart = doubledPawnWeightStart + numDoubledPawnWeights;
+
+    const int numPawnShieldWeights = GAME_PHASES * RANKS;
+    totalWeights = pawnShieldWeightStart + numPawnShieldWeights;
 
     weights.resize(totalWeights);
     baseWeights.resize(totalWeights);
@@ -95,6 +99,13 @@ void initializeWeights() {
 
     baseWeights[doubledPawnWeightStart + MIDGAME] = baseDoubledPawnPenalty[MIDGAME];
     baseWeights[doubledPawnWeightStart + ENDGAME] = baseDoubledPawnPenalty[ENDGAME];
+
+    for (int phase = 0; phase < GAME_PHASES; ++phase) {
+        for (int rank = 0; rank < RANKS; ++rank) {
+            const int index = pawnShieldWeightStart + (phase * RANKS) + rank;
+            baseWeights[index] = basePawnShieldValue[phase][rank];
+        }
+    }
 }
 
 std::vector<TraceCoefficient> createCoefficients(const EvalTrace& trace) {
@@ -140,6 +151,21 @@ std::vector<TraceCoefficient> createCoefficients(const EvalTrace& trace) {
     if (whiteDoubledPawns != blackDoubledPawns) {
         coefficients.push_back({doubledPawnWeightStart + MIDGAME, doubledPawnWeightStart + ENDGAME,
                                 static_cast<int16_t>(whiteDoubledPawns), static_cast<int16_t>(blackDoubledPawns)});
+    }
+
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int whiteCount = trace.pawnShield[WHITE][rank];
+        const int blackCount = trace.pawnShield[BLACK][rank];
+
+        if (whiteCount == blackCount) {
+            continue;
+        }
+
+        const int midgameIndex = pawnShieldWeightStart + (MIDGAME * RANKS) + rank;
+        const int endgameIndex = pawnShieldWeightStart + (ENDGAME * RANKS) + rank;
+
+        coefficients.push_back(
+            {midgameIndex, endgameIndex, static_cast<int16_t>(whiteCount), static_cast<int16_t>(blackCount)});
     }
 
     return coefficients;
@@ -326,6 +352,26 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
          << ", ";
     fout << static_cast<int>(
         std::round(baseWeights[doubledPawnWeightStart + ENDGAME] + weights[doubledPawnWeightStart + ENDGAME]));
+    fout << "};\n\n";
+
+    fout << "// King safety\n";
+    fout << "// Pawn shield\n";
+    fout << "int evalPawnShieldValue[GAME_PHASES][RANKS] = {\n";
+    fout << "    {";
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int index = pawnShieldWeightStart + (MIDGAME * RANKS) + rank;
+        fout << static_cast<int>(std::round(baseWeights[index] + weights[index]));
+        if (rank < RANKS - 1) fout << ", ";
+    }
+    fout << "}, // Midgame\n";
+
+    fout << "    {";
+    for (int rank = 0; rank < RANKS; ++rank) {
+        const int index = pawnShieldWeightStart + (ENDGAME * RANKS) + rank;
+        fout << static_cast<int>(std::round(baseWeights[index] + weights[index]));
+        if (rank < RANKS - 1) fout << ", ";
+    }
+    fout << "} // Endgame\n";
     fout << "};\n\n";
 
     const std::string pieceNames[] = {"pawn", "knight", "bishop", "rook", "queen", "king"};

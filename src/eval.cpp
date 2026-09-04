@@ -311,24 +311,72 @@ void Evaluation::evaluateQueens() {
 template <PieceColor color>
 void Evaluation::evaluateKing() {
     constexpr Piece kingPiece = color == WHITE ? WHITE_KING : BLACK_KING;
-    const Square square = board.getKingSquare<color>();
+    const Square kingSquare = board.getKingSquare<color>();
 
-    const int midgamePst = midgamePstTable[kingPiece][square];
-    const int endgamePst = endgamePstTable[kingPiece][square];
+    const int midgamePst = midgamePstTable[kingPiece][kingSquare];
+    const int endgamePst = endgamePstTable[kingPiece][kingSquare];
 
 #ifdef ZAGREUS_TUNER
     trace.material[color][KING] += 1;
-    trace.pst[color][KING][square] += 1;
+    trace.pst[color][KING][kingSquare] += 1;
 #endif
 
     addScore<color>(midgamePst, endgamePst);
 
-    const uint64_t attacks = getKingAttacks(square);
+    const uint64_t attacks = getKingAttacks(kingSquare);
 
-    evalData.attacksFrom[square] = attacks;
+    evalData.attacksFrom[kingSquare] = attacks;
     evalData.attackedBy2[color] |= (attacks & evalData.attacksByColor[color]);
     evalData.attacksByColor[color] |= attacks;
     evalData.attacksByPiece[kingPiece] |= attacks;
+
+    // King safety
+    // Pawn shield
+    const int kingFile = std::clamp(getFile(kingSquare), 1, 6);
+    const int kingRank = getRank(kingSquare);
+
+    const uint64_t pawnBB = board.getPieceBoard<color == WHITE ? WHITE_PAWN : BLACK_PAWN>();
+
+    for (int file = kingFile - 1; file <= kingFile + 1; ++file) {
+        const Square intersectionSquare = static_cast<Square>(file + (kingRank * 8));
+        const uint64_t intersectionBB = squareToBitboard(intersectionSquare);
+        uint64_t forwardMask;
+
+        if (color == WHITE) {
+            forwardMask = fillNorth(shiftNorth(intersectionBB));
+        } else {
+            forwardMask = fillSouth(shiftSouth(intersectionBB));
+        }
+
+        const uint64_t pawnsOnFile = pawnBB & forwardMask;
+
+        if (!pawnsOnFile) {
+            addScore<color>(evalPawnShieldValue[MIDGAME][0], evalPawnShieldValue[ENDGAME][0]);
+#ifdef ZAGREUS_TUNER
+            trace.pawnShield[color][0] += 1;
+#endif
+            continue;
+        }
+
+        // find the closest pawn
+        if (color == WHITE) {
+            const Square closestPawnSquare = static_cast<Square>(bitscanForward(pawnsOnFile));
+            const int distance = getRank(closestPawnSquare) - kingRank;
+
+            addScore<color>(evalPawnShieldValue[MIDGAME][distance], evalPawnShieldValue[ENDGAME][distance]);
+#ifdef ZAGREUS_TUNER
+            trace.pawnShield[color][distance] += 1;
+#endif
+        } else {
+            const Square closestPawnSquare = static_cast<Square>(bitscanReverse(pawnsOnFile));
+            const int distance = kingRank - getRank(closestPawnSquare);
+
+            addScore<color>(evalPawnShieldValue[MIDGAME][distance], evalPawnShieldValue[ENDGAME][distance]);
+#ifdef ZAGREUS_TUNER
+            trace.pawnShield[color][distance] += 1;
+#endif
+        }
+    }
 }
 
 template <PieceColor color>

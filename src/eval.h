@@ -45,6 +45,7 @@ struct EvalTrace {
     int piecesOnWeakSquares[COLORS]{};
     int unoccupiedStrongSquares[COLORS]{};
     int doubledPawns[COLORS]{};
+    int pawnShield[COLORS][RANKS]{};
     int phase{};
 };
 #endif

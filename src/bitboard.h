@@ -446,4 +446,6 @@ inline uint64_t fillSouth(uint64_t bb) {
 }
 
 inline uint64_t fillFile(const uint64_t bb) { return fillNorth(bb) | fillSouth(bb); }
+
+inline int getFile(const Square square) { return square & 7; }
 }  // namespace Zagreus

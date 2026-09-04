@@ -70,6 +70,7 @@
 #define COLORS 2
 #define GAME_PHASES 2
 #define RANKS 8
+#define FILES 8
 #define MIDGAME 0
 #define ENDGAME 1
 

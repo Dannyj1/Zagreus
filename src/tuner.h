@@ -46,6 +46,7 @@ extern std::vector<double> baseWeights;
 extern int pstWeightStart;
 extern int mobilityWeightStart;
 extern int doubledPawnWeightStart;
+extern int pawnShieldWeightStart;
 extern double K;
 
 void initializeWeights();
