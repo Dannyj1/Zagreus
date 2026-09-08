@@ -6,11 +6,12 @@ var searchData=
   ['eg_5fpawn_5ftable_3',['eg_pawn_table',['../namespaceZagreus.html#a6518c62febf3ae96899d9a6b0b4e3a4d',1,'Zagreus']]],
   ['eg_5fqueen_5ftable_4',['eg_queen_table',['../namespaceZagreus.html#a6d453044349a00682909ddf387b3e618',1,'Zagreus']]],
   ['eg_5frook_5ftable_5',['eg_rook_table',['../namespaceZagreus.html#ab189515946f82df48dd4bd326e608c72',1,'Zagreus']]],
-  ['endgamepsttable_6',['endgamePstTable',['../namespaceZagreus.html#a7b3cc214c8366a5b0a70e7743277d0a9',1,'Zagreus']]],
-  ['enpassantsquare_7',['enPassantSquare',['../structZagreus_1_1BoardState.html#a8168f2482c44d4edf790701162e2a79f',1,'Zagreus::BoardState']]],
-  ['evaldoubledpawnpenalty_8',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
-  ['evalmaterialvalues_9',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
-  ['evalmobility_10',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['evalpawnshieldvalue_11',['evalPawnShieldValue',['../namespaceZagreus.html#ab2bda3093a71942ed2947d8caf628601',1,'Zagreus']]],
-  ['excludedmove_12',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
+  ['endgame_6',['endgame',['../structZagreus_1_1PawnShield.html#acdbf312fe21f095e02a4169471a96239',1,'Zagreus::PawnShield']]],
+  ['endgamepsttable_7',['endgamePstTable',['../namespaceZagreus.html#a7b3cc214c8366a5b0a70e7743277d0a9',1,'Zagreus']]],
+  ['enpassantsquare_8',['enPassantSquare',['../structZagreus_1_1BoardState.html#a8168f2482c44d4edf790701162e2a79f',1,'Zagreus::BoardState']]],
+  ['evaldoubledpawnpenalty_9',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
+  ['evalmaterialvalues_10',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
+  ['evalmobility_11',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
+  ['evalpawnshieldvalue_12',['evalPawnShieldValue',['../namespaceZagreus.html#ab2bda3093a71942ed2947d8caf628601',1,'Zagreus']]],
+  ['excludedmove_13',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
 ];
