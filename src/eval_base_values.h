@@ -34,6 +34,10 @@ extern const int baseDoubledPawnPenalty[GAME_PHASES];
 // Pawn shield
 extern const int basePawnShieldValue[GAME_PHASES][RANKS];
 
+// Bishops
+// Bishop pair bonus
+extern const int baseBishopPairBonus[GAME_PHASES];
+
 extern const int baseMgPawnTable[64];
 extern const int baseEgPawnTable[64];
 extern const int baseMgKnightTable[64];

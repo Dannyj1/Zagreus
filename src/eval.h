@@ -54,6 +54,7 @@ struct EvalTrace {
     int unoccupiedStrongSquares[COLORS]{};
     int doubledPawns[COLORS]{};
     int pawnShield[COLORS][RANKS]{};
+    int bishopPair[COLORS]{};
     int phase{};
 };
 #endif

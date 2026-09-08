@@ -47,6 +47,10 @@ const int basePawnShieldValue[GAME_PHASES][RANKS] = {
     {0, 0, 0, 0, 0, 0, 0, 0}             // Endgame
 };
 
+// Bishops
+// Bishop pair bonus
+const int baseBishopPairBonus[GAME_PHASES] = {25, 25};
+
 // PeSTO's piece-square tables from: https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
 // For every table: The first square in the table [0] is square A8 and the last square [63] is H1
 const int baseMgPawnTable[64] = {

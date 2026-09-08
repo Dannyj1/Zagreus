@@ -47,6 +47,7 @@ extern int pstWeightStart;
 extern int mobilityWeightStart;
 extern int doubledPawnWeightStart;
 extern int pawnShieldWeightStart;
+extern int bishopPairWeightStart;
 extern double K;
 
 void initializeWeights();

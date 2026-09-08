@@ -46,4 +46,8 @@ int evalPawnShieldValue[GAME_PHASES][RANKS] = {
     {0, 0, 0, 0, 0, 0, 0, 0}             // Endgame
 };
 
+// Bishops
+// Bishop pair bonus
+int evalBishopPairBonus[GAME_PHASES] = {25, 25};
+
 }  // namespace Zagreus

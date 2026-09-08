@@ -36,4 +36,8 @@ extern int evalDoubledPawnPenalty[GAME_PHASES];
 // King safety
 // Pawn shield
 extern int evalPawnShieldValue[GAME_PHASES][RANKS];
+
+// Bishops
+// Bishop pair bonus
+extern int evalBishopPairBonus[GAME_PHASES];
 }  // namespace Zagreus

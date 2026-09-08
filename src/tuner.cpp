@@ -59,6 +59,7 @@ int pstWeightStart = 0;
 int mobilityWeightStart;
 int doubledPawnWeightStart;
 int pawnShieldWeightStart;
+int bishopPairWeightStart;
 int totalWeights;
 
 void initializeWeights() {
@@ -72,7 +73,10 @@ void initializeWeights() {
     pawnShieldWeightStart = doubledPawnWeightStart + numDoubledPawnWeights;
 
     const int numPawnShieldWeights = GAME_PHASES * RANKS;
-    totalWeights = pawnShieldWeightStart + numPawnShieldWeights;
+    bishopPairWeightStart = pawnShieldWeightStart + numPawnShieldWeights;
+
+    const int numBishopPairWeights = GAME_PHASES;
+    totalWeights = bishopPairWeightStart + numBishopPairWeights;
 
     weights.resize(totalWeights);
     baseWeights.resize(totalWeights);
@@ -106,6 +110,9 @@ void initializeWeights() {
             baseWeights[index] = basePawnShieldValue[phase][rank];
         }
     }
+
+    baseWeights[bishopPairWeightStart + MIDGAME] = baseBishopPairBonus[MIDGAME];
+    baseWeights[bishopPairWeightStart + ENDGAME] = baseBishopPairBonus[ENDGAME];
 }
 
 std::vector<TraceCoefficient> createCoefficients(const EvalTrace& trace) {
@@ -166,6 +173,14 @@ std::vector<TraceCoefficient> createCoefficients(const EvalTrace& trace) {
 
         coefficients.push_back(
             {midgameIndex, endgameIndex, static_cast<int16_t>(whiteCount), static_cast<int16_t>(blackCount)});
+    }
+
+    const int whiteBishopPair = trace.bishopPair[WHITE];
+    const int blackBishopPair = trace.bishopPair[BLACK];
+
+    if (whiteBishopPair != blackBishopPair) {
+        coefficients.push_back({bishopPairWeightStart + MIDGAME, bishopPairWeightStart + ENDGAME,
+                                static_cast<int16_t>(whiteBishopPair), static_cast<int16_t>(blackBishopPair)});
     }
 
     return coefficients;
@@ -372,6 +387,16 @@ void exportTunedValues(const std::string& outputPath, int finalEpoch, double tra
         if (rank < RANKS - 1) fout << ", ";
     }
     fout << "} // Endgame\n";
+    fout << "};\n\n";
+
+    fout << "// Bishops\n";
+    fout << "// Bishop pair bonus\n";
+    fout << "int evalBishopPairBonus[GAME_PHASES] = {";
+    fout << static_cast<int>(
+                std::round(baseWeights[bishopPairWeightStart + MIDGAME] + weights[bishopPairWeightStart + MIDGAME]))
+         << ", ";
+    fout << static_cast<int>(
+        std::round(baseWeights[bishopPairWeightStart + ENDGAME] + weights[bishopPairWeightStart + ENDGAME]));
     fout << "};\n\n";
 
     const std::string pieceNames[] = {"pawn", "knight", "bishop", "rook", "queen", "king"};

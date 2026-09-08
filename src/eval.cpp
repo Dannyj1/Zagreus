@@ -200,6 +200,18 @@ void Evaluation::evaluateBishops() {
     uint64_t bishops = board.getPieceBoard<bishopPiece>();
     const uint64_t occupiedBitboard = board.getOccupiedBitboard();
 
+    // Bishop pair bonus
+    uint64_t darkSquareBishops = bishops & DARK_SQUARES;
+    uint64_t lightSquareBishops = bishops & LIGHT_SQUARES;
+
+    if (darkSquareBishops && lightSquareBishops) {
+#ifdef ZAGREUS_TUNER
+        trace.bishopPair[color] += 1;
+#endif
+
+        addScore<color>(evalBishopPairBonus[MIDGAME], evalBishopPairBonus[ENDGAME]);
+    }
+
     while (bishops) {
         const Square square = static_cast<Square>(popLsb(bishops));
         const int midgamePst = midgamePstTable[bishopPiece][square];
