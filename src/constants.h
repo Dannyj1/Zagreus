@@ -71,6 +71,7 @@
 #define GAME_PHASES 2
 #define RANKS 8
 #define FILES 8
+#define KING_SHIELD_FILES 3
 #define MIDGAME 0
 #define ENDGAME 1
 

@@ -36,6 +36,14 @@ struct EvalData {
     uint64_t attackedBy2[COLORS];
 };
 
+struct PawnShield {
+    int midgame{};
+    int endgame{};
+#ifdef ZAGREUS_TUNER
+    int distances[KING_SHIELD_FILES]{};
+#endif
+};
+
 #ifdef ZAGREUS_TUNER
 struct EvalTrace {
     int material[COLORS][PIECE_TYPES]{};
@@ -107,6 +115,15 @@ class Evaluation {
      */
     template <PieceColor color>
     void evaluateQueens();
+
+    /**
+     * \brief Evaluates the pawn shield in front of a king placed on the given square.
+     * \tparam color The color of the king to evaluate.
+     * \param kingSquare The square the king is evaluated on, which does not have to be its actual square.
+     * \return The midgame and endgame shield score for that square.
+     */
+    template <PieceColor color>
+    [[nodiscard]] PawnShield evaluatePawnShield(Square kingSquare) const;
 
     /**
      * \brief Evaluates features related to the king on the board.
