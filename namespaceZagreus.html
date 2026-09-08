@@ -471,6 +471,14 @@ Functions</h2></td></tr>
 <tr class="memitem:aca73a62242d21a1397a7cdba84da9f31" id="r_aca73a62242d21a1397a7cdba84da9f31"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca73a62242d21a1397a7cdba84da9f31">blackDoublePushablePawns</a> (const uint64_t bb, const uint64_t empty)</td></tr>
 <tr class="memdesc:aca73a62242d21a1397a7cdba84da9f31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the double pushable pawns for black.  <br /></td></tr>
 <tr class="separator:aca73a62242d21a1397a7cdba84da9f31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04433406edd73475d4ae510573ab3d2e" id="r_a04433406edd73475d4ae510573ab3d2e"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04433406edd73475d4ae510573ab3d2e">whiteBlockedPawns</a> (const uint64_t bb, const uint64_t enemyPawns)</td></tr>
+<tr class="separator:a04433406edd73475d4ae510573ab3d2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a094c7e0bfaccc66a521ada78b0636cab" id="r_a094c7e0bfaccc66a521ada78b0636cab"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a094c7e0bfaccc66a521ada78b0636cab">whiteUnblockedPawns</a> (const uint64_t bb, const uint64_t enemyPawns)</td></tr>
+<tr class="separator:a094c7e0bfaccc66a521ada78b0636cab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31b449475ea397a77310108215be15f9" id="r_a31b449475ea397a77310108215be15f9"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31b449475ea397a77310108215be15f9">blackBlockedPawns</a> (const uint64_t bb, const uint64_t enemyPawns)</td></tr>
+<tr class="separator:a31b449475ea397a77310108215be15f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9869481402a2efbf1e52b95f9af0d180" id="r_a9869481402a2efbf1e52b95f9af0d180"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9869481402a2efbf1e52b95f9af0d180">blackUnblockedPawns</a> (const uint64_t bb, const uint64_t enemyPawns)</td></tr>
+<tr class="separator:a9869481402a2efbf1e52b95f9af0d180"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfb4f2b88c7e18befd9a72d0c6d825f1" id="r_adfb4f2b88c7e18befd9a72d0c6d825f1"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfb4f2b88c7e18befd9a72d0c6d825f1">calculateKnightAttacks</a> (const uint64_t bb)</td></tr>
 <tr class="memdesc:adfb4f2b88c7e18befd9a72d0c6d825f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the attacks for knights.  <br /></td></tr>
 <tr class="separator:adfb4f2b88c7e18befd9a72d0c6d825f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -745,6 +753,8 @@ Variables</h2></td></tr>
 <tr class="separator:a038b96dffae3348bb9d1f4cf2eb43e8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93b03c9df3b68f15a25d9c4e9c538b1a" id="r_a93b03c9df3b68f15a25d9c4e9c538b1a"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93b03c9df3b68f15a25d9c4e9c538b1a">basePawnShieldValue</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="el" href="constants_8h.html#aedc44b4ee04cb21138343a56d92a12c3">RANKS</a>]</td></tr>
 <tr class="separator:a93b03c9df3b68f15a25d9c4e9c538b1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8e247bcc2881b9e8fb24aaa59700daf" id="r_af8e247bcc2881b9e8fb24aaa59700daf"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8e247bcc2881b9e8fb24aaa59700daf">baseBishopPairBonus</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {25, 25}</td></tr>
+<tr class="separator:af8e247bcc2881b9e8fb24aaa59700daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4914d0b53a00ff44887d6a4a5495dc9" id="r_af4914d0b53a00ff44887d6a4a5495dc9"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4914d0b53a00ff44887d6a4a5495dc9">baseMgPawnTable</a> [64]</td></tr>
 <tr class="separator:af4914d0b53a00ff44887d6a4a5495dc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af50df7ce17f989de9753a0b0edbbb298" id="r_af50df7ce17f989de9753a0b0edbbb298"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af50df7ce17f989de9753a0b0edbbb298">baseEgPawnTable</a> [64]</td></tr>
@@ -781,6 +791,8 @@ Variables</h2></td></tr>
 <tr class="separator:a5f3c96f4d038028ca2915d6001233228"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2bda3093a71942ed2947d8caf628601" id="r_ab2bda3093a71942ed2947d8caf628601"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2bda3093a71942ed2947d8caf628601">evalPawnShieldValue</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>][<a class="el" href="constants_8h.html#aedc44b4ee04cb21138343a56d92a12c3">RANKS</a>]</td></tr>
 <tr class="separator:ab2bda3093a71942ed2947d8caf628601"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54858d46cee0af83548f8f8307a04171" id="r_a54858d46cee0af83548f8f8307a04171"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54858d46cee0af83548f8f8307a04171">evalBishopPairBonus</a> [<a class="el" href="constants_8h.html#a170754edbd09a328bef8d53b71d0e9e8">GAME_PHASES</a>] = {25, 25}</td></tr>
+<tr class="separator:a54858d46cee0af83548f8f8307a04171"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fac5ee53f7209a034032316726a7e81" id="r_a6fac5ee53f7209a034032316726a7e81"><td class="memItemLeft" align="right" valign="top">std::random_device&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fac5ee53f7209a034032316726a7e81">rd</a></td></tr>
 <tr class="separator:a6fac5ee53f7209a034032316726a7e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cbe1ef1cebd2532f1f7af1253da11d1" id="r_a7cbe1ef1cebd2532f1f7af1253da11d1"><td class="memItemLeft" align="right" valign="top">std::uniform_int_distribution&lt; uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cbe1ef1cebd2532f1f7af1253da11d1">dis</a></td></tr>
@@ -1319,7 +1331,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The square index. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00403">403</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00415">415</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1523,6 +1535,47 @@ Here is the caller graph for this function:</div>
 <dl class="section return"><dt>Returns</dt><dd>The index of the most significant set bit. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="bitwise_8h_source.html#l00062">62</a> of file <a class="el" href="bitwise_8h_source.html">bitwise.h</a>.</p>
+
+</div>
+</div>
+<a id="a31b449475ea397a77310108215be15f9" name="a31b449475ea397a77310108215be15f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31b449475ea397a77310108215be15f9">&#9670;&#160;</a></span>blackBlockedPawns()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t Zagreus::blackBlockedPawns </td>
+          <td>(</td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>bb</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>enemyPawns</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00329">329</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespaceZagreus_a31b449475ea397a77310108215be15f9_cgraph.png" border="0" usemap="#anamespaceZagreus_a31b449475ea397a77310108215be15f9_cgraph" alt=""/></div>
+<map name="anamespaceZagreus_a31b449475ea397a77310108215be15f9_cgraph" id="anamespaceZagreus_a31b449475ea397a77310108215be15f9_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,216,31"/>
+<area shape="rect" href="namespaceZagreus.html#a70869d31a469efacc2790cbd2d5cbf42" title="Shifts the bitboard north by one rank." alt="" coords="264,5,411,31"/>
+<area shape="poly" title=" " alt="" coords="216,15,250,15,250,21,216,21"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -1941,6 +1994,37 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a9869481402a2efbf1e52b95f9af0d180" name="a9869481402a2efbf1e52b95f9af0d180"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9869481402a2efbf1e52b95f9af0d180">&#9670;&#160;</a></span>blackUnblockedPawns()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t Zagreus::blackUnblockedPawns </td>
+          <td>(</td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>bb</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>enemyPawns</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00331">331</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+
+</div>
+</div>
 <a id="aa5aafe9960d89a779ae88293d6c107c0" name="aa5aafe9960d89a779ae88293d6c107c0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa5aafe9960d89a779ae88293d6c107c0">&#9670;&#160;</a></span>bmask()</h2>
 
@@ -2076,7 +2160,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard representing the attacks. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00385">385</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00397">397</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2140,7 +2224,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard representing the attacks. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00328">328</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00340">340</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2615,7 +2699,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00448">448</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00460">460</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2654,7 +2738,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00432">432</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00444">444</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -2701,7 +2785,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00440">440</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00452">452</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3958,7 +4042,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00145">145</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00149">149</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3987,7 +4071,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00127">127</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00131">131</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -4507,7 +4591,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00450">450</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00462">462</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 
 </div>
 </div>
@@ -5567,7 +5651,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the given piece. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00430">430</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval_8cpp_source.html#l00442">442</a> of file <a class="el" href="eval_8cpp_source.html">eval.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -5680,7 +5764,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00412">412</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00424">424</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 
 </div>
 </div>
@@ -6629,7 +6713,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00163">163</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00167">167</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -9085,49 +9169,51 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="namespaceZagreus_a70869d31a469efacc2790cbd2d5cbf42_icgraph.png" border="0" usemap="#anamespaceZagreus_a70869d31a469efacc2790cbd2d5cbf42_icgraph" alt=""/></div>
 <map name="anamespaceZagreus_a70869d31a469efacc2790cbd2d5cbf42_icgraph" id="anamespaceZagreus_a70869d31a469efacc2790cbd2d5cbf42_icgraph">
-<area shape="rect" title="Shifts the bitboard north by one rank." alt="" coords="1428,196,1575,221"/>
-<area shape="rect" href="namespaceZagreus.html#aca73a62242d21a1397a7cdba84da9f31" title="Calculates the double pushable pawns for black." alt="" coords="881,14,1104,54"/>
-<area shape="poly" title=" " alt="" coords="1488,184,1472,151,1448,112,1417,75,1379,47,1344,32,1308,21,1233,10,1159,10,1092,16,1091,11,1158,4,1233,4,1309,15,1346,27,1381,42,1421,71,1452,109,1476,148,1493,182"/>
-<area shape="rect" href="namespaceZagreus.html#a5ade02c27a6792ccd8b45237b25210b5" title="Calculates the pushable pawns for black." alt="" coords="1159,57,1377,82"/>
-<area shape="poly" title=" " alt="" coords="1480,187,1437,140,1409,116,1379,96,1352,85,1354,80,1381,91,1413,112,1441,136,1484,183"/>
-<area shape="rect" href="namespaceZagreus.html#a9e017529de41b72f6df1ee3427ebcad9" title="Calculates the attacks for kings." alt="" coords="1158,106,1378,132"/>
-<area shape="poly" title=" " alt="" coords="1467,190,1426,168,1379,147,1337,134,1339,129,1381,142,1428,163,1469,186"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="1169,156,1367,196"/>
-<area shape="poly" title=" " alt="" coords="1414,199,1366,192,1367,187,1415,194"/>
-<area shape="rect" href="classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8" title=" " alt="" coords="1171,220,1365,260"/>
-<area shape="poly" title=" " alt="" coords="1414,223,1366,230,1365,224,1414,218"/>
-<area shape="rect" href="namespaceZagreus.html#ad3a75a2c28108cb73195106ce77e24ab" title="Shifts the bitboard in the specified direction." alt="" coords="1213,285,1323,310"/>
-<area shape="poly" title=" " alt="" coords="1469,231,1428,254,1381,275,1324,291,1323,286,1379,270,1426,249,1467,226"/>
-<area shape="rect" href="namespaceZagreus.html#a7692fd3583b6b4062e08a14b12db55e8" title="Calculates the double push for white pawns." alt="" coords="877,336,1108,361"/>
-<area shape="poly" title=" " alt="" coords="1485,234,1442,282,1413,305,1381,324,1313,347,1242,359,1172,364,1108,363,1108,357,1172,358,1241,354,1312,341,1379,319,1410,301,1439,278,1481,230"/>
-<area shape="rect" href="namespaceZagreus.html#a10d8ce4127d68a8189027ba00dce39b5" title="Calculates the single push for white pawns." alt="" coords="1156,386,1380,412"/>
-<area shape="poly" title=" " alt="" coords="1490,235,1448,302,1418,338,1381,369,1340,389,1338,384,1379,365,1414,334,1444,298,1486,232"/>
-<area shape="poly" title=" " alt="" coords="1157,58,1104,51,1105,45,1158,52"/>
-<area shape="rect" href="namespaceZagreus.html#af09541379517ebbc25c28b2070c83221" title="Initializes the attack lookup tables for pawns, knights, and kings." alt="" coords="902,92,1083,132"/>
-<area shape="poly" title=" " alt="" coords="1144,119,1083,117,1084,112,1144,113"/>
-<area shape="rect" href="classZagreus_1_1Engine.html#aa97883c4a13a6a6e8b348589c820aafb" title=" " alt="" coords="626,100,814,125"/>
-<area shape="poly" title=" " alt="" coords="888,115,814,115,814,110,888,110"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="889,156,1096,196"/>
-<area shape="poly" title=" " alt="" coords="1156,179,1096,179,1096,174,1156,174"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="624,156,816,196"/>
-<area shape="poly" title=" " alt="" coords="876,179,816,179,816,174,876,174"/>
-<area shape="rect" href="classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c" title=" " alt="" coords="889,220,1096,260"/>
-<area shape="poly" title=" " alt="" coords="1157,243,1096,243,1096,238,1157,238"/>
-<area shape="rect" href="namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title="Generates all pseudo&#45;legal pawn moves for a given color and generation type." alt="" coords="611,361,829,386"/>
-<area shape="poly" title=" " alt="" coords="864,363,830,366,829,361,864,358"/>
-<area shape="rect" href="namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title="Generates all pseudo&#45;legal moves for all pieces of a certain color for a given color and generation t..." alt="" coords="379,361,563,386"/>
-<area shape="poly" title=" " alt="" coords="597,376,563,376,563,371,597,371"/>
-<area shape="rect" href="namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,324,148,349"/>
-<area shape="poly" title=" " alt="" coords="429,358,382,340,330,327,283,322,236,321,148,327,148,322,236,316,284,316,331,322,384,335,431,353"/>
-<area shape="rect" href="namespaceZagreus.html#a11fb11a289c1796bcfed11eabbeb9a68" title=" " alt="" coords="196,361,331,386"/>
-<area shape="poly" title=" " alt="" coords="365,376,331,376,331,371,365,371"/>
-<area shape="rect" href="namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="200,410,327,436"/>
-<area shape="poly" title=" " alt="" coords="404,392,318,413,317,408,403,387"/>
-<area shape="poly" title=" " alt="" coords="110,313,100,305,77,302,57,304,47,309,44,315,50,322,46,325,39,315,43,305,55,299,77,297,102,301,113,309"/>
-<area shape="poly" title=" " alt="" coords="186,361,140,352,141,346,187,356"/>
-<area shape="poly" title=" " alt="" coords="296,351,287,343,263,340,244,342,233,346,231,352,237,359,232,362,226,353,229,343,242,336,263,334,289,338,300,347"/>
-<area shape="poly" title=" " alt="" coords="1184,386,1062,364,1063,358,1185,381"/>
-<area shape="poly" title=" " alt="" coords="1142,396,829,381,830,376,1142,390"/>
+<area shape="rect" title="Shifts the bitboard north by one rank." alt="" coords="1428,213,1575,239"/>
+<area shape="rect" href="namespaceZagreus.html#a31b449475ea397a77310108215be15f9" title=" " alt="" coords="1163,5,1373,31"/>
+<area shape="poly" title=" " alt="" coords="1487,202,1471,168,1447,127,1416,87,1378,52,1339,33,1342,28,1382,48,1420,83,1451,124,1475,165,1492,199"/>
+<area shape="rect" href="namespaceZagreus.html#aca73a62242d21a1397a7cdba84da9f31" title="Calculates the double pushable pawns for black." alt="" coords="881,63,1104,103"/>
+<area shape="poly" title=" " alt="" coords="1484,203,1442,146,1413,118,1379,96,1311,74,1240,64,1169,62,1105,67,1104,61,1169,57,1240,58,1312,69,1381,92,1416,114,1446,143,1488,200"/>
+<area shape="rect" href="namespaceZagreus.html#a5ade02c27a6792ccd8b45237b25210b5" title="Calculates the pushable pawns for black." alt="" coords="1159,107,1377,132"/>
+<area shape="poly" title=" " alt="" coords="1473,206,1431,175,1379,146,1346,135,1348,130,1381,141,1433,170,1476,202"/>
+<area shape="rect" href="namespaceZagreus.html#a9e017529de41b72f6df1ee3427ebcad9" title="Calculates the attacks for kings." alt="" coords="1158,156,1378,181"/>
+<area shape="poly" title=" " alt="" coords="1440,212,1379,197,1326,184,1327,179,1381,191,1442,207"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="1169,206,1367,246"/>
+<area shape="poly" title=" " alt="" coords="1414,229,1367,229,1367,223,1414,223"/>
+<area shape="rect" href="classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8" title=" " alt="" coords="1171,270,1365,310"/>
+<area shape="poly" title=" " alt="" coords="1442,245,1342,272,1341,267,1440,240"/>
+<area shape="rect" href="namespaceZagreus.html#ad3a75a2c28108cb73195106ce77e24ab" title="Shifts the bitboard in the specified direction." alt="" coords="1213,335,1323,360"/>
+<area shape="poly" title=" " alt="" coords="1480,251,1437,289,1381,324,1353,335,1325,342,1323,337,1352,330,1379,320,1433,284,1476,247"/>
+<area shape="rect" href="namespaceZagreus.html#a7692fd3583b6b4062e08a14b12db55e8" title="Calculates the double push for white pawns." alt="" coords="877,385,1108,411"/>
+<area shape="poly" title=" " alt="" coords="1490,253,1473,282,1448,316,1418,348,1381,374,1344,390,1305,402,1225,415,1148,417,1080,413,1080,408,1148,412,1225,409,1304,396,1343,385,1379,369,1414,344,1444,312,1468,279,1485,250"/>
+<area shape="rect" href="namespaceZagreus.html#a10d8ce4127d68a8189027ba00dce39b5" title="Calculates the single push for white pawns." alt="" coords="1156,436,1380,461"/>
+<area shape="poly" title=" " alt="" coords="1493,253,1477,290,1453,335,1422,380,1382,419,1343,438,1341,433,1378,414,1417,377,1449,332,1472,288,1488,251"/>
+<area shape="poly" title=" " alt="" coords="1157,108,1104,101,1105,95,1158,102"/>
+<area shape="rect" href="namespaceZagreus.html#af09541379517ebbc25c28b2070c83221" title="Initializes the attack lookup tables for pawns, knights, and kings." alt="" coords="902,142,1083,182"/>
+<area shape="poly" title=" " alt="" coords="1144,168,1083,167,1084,162,1144,163"/>
+<area shape="rect" href="classZagreus_1_1Engine.html#aa97883c4a13a6a6e8b348589c820aafb" title=" " alt="" coords="626,149,814,175"/>
+<area shape="poly" title=" " alt="" coords="888,165,814,165,814,159,888,159"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a53d52ae1464c3bccab5d89e873abb9fd" title=" " alt="" coords="889,206,1096,246"/>
+<area shape="poly" title=" " alt="" coords="1156,229,1096,229,1096,223,1156,223"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a8e665d26c9ef84dc91859f6af5acdfb2" title=" " alt="" coords="624,206,816,246"/>
+<area shape="poly" title=" " alt="" coords="876,229,816,229,816,223,876,223"/>
+<area shape="rect" href="classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c" title=" " alt="" coords="889,270,1096,310"/>
+<area shape="poly" title=" " alt="" coords="1157,293,1096,293,1096,287,1157,287"/>
+<area shape="rect" href="namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title="Generates all pseudo&#45;legal pawn moves for a given color and generation type." alt="" coords="611,411,829,436"/>
+<area shape="poly" title=" " alt="" coords="864,413,830,416,829,411,864,407"/>
+<area shape="rect" href="namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title="Generates all pseudo&#45;legal moves for all pieces of a certain color for a given color and generation t..." alt="" coords="379,411,563,436"/>
+<area shape="poly" title=" " alt="" coords="597,426,563,426,563,421,597,421"/>
+<area shape="rect" href="namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,373,148,399"/>
+<area shape="poly" title=" " alt="" coords="429,408,382,390,330,377,283,371,236,371,148,377,148,372,236,365,284,366,331,371,384,385,431,403"/>
+<area shape="rect" href="namespaceZagreus.html#a11fb11a289c1796bcfed11eabbeb9a68" title=" " alt="" coords="196,411,331,436"/>
+<area shape="poly" title=" " alt="" coords="365,426,331,426,331,421,365,421"/>
+<area shape="rect" href="namespaceZagreus.html#a8402e43c19031fd84e7ff36a670a6161" title=" " alt="" coords="200,460,327,485"/>
+<area shape="poly" title=" " alt="" coords="404,442,318,463,317,457,403,437"/>
+<area shape="poly" title=" " alt="" coords="110,363,100,355,77,352,57,354,47,359,44,364,50,372,46,375,39,365,43,355,55,349,77,347,102,350,113,359"/>
+<area shape="poly" title=" " alt="" coords="186,411,140,401,141,396,187,405"/>
+<area shape="poly" title=" " alt="" coords="296,400,287,392,263,389,244,391,233,396,231,402,237,409,232,412,226,402,229,392,242,386,263,384,289,388,300,396"/>
+<area shape="poly" title=" " alt="" coords="1184,436,1062,413,1063,408,1185,431"/>
+<area shape="poly" title=" " alt="" coords="1142,446,829,431,830,426,1142,440"/>
 </map>
 </div>
 
@@ -9513,23 +9599,25 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="namespaceZagreus_a5f01c9bf422a21d35c075ff1befb41d2_icgraph.png" border="0" usemap="#anamespaceZagreus_a5f01c9bf422a21d35c075ff1befb41d2_icgraph" alt=""/></div>
 <map name="anamespaceZagreus_a5f01c9bf422a21d35c075ff1befb41d2_icgraph" id="anamespaceZagreus_a5f01c9bf422a21d35c075ff1befb41d2_icgraph">
-<area shape="rect" title="Shifts the bitboard south by one rank." alt="" coords="1425,239,1573,264"/>
+<area shape="rect" title="Shifts the bitboard south by one rank." alt="" coords="1425,271,1573,296"/>
 <area shape="rect" href="namespaceZagreus.html#acef3ff44d80e15c78400d1004a0e8d04" title="Calculates the double push for black pawns." alt="" coords="877,41,1107,67"/>
-<area shape="poly" title=" " alt="" coords="1486,227,1470,192,1447,152,1415,112,1376,82,1338,64,1298,51,1256,43,1215,38,1134,38,1065,44,1064,39,1134,32,1215,33,1257,38,1299,46,1340,59,1379,77,1419,109,1451,149,1475,190,1491,225"/>
+<area shape="poly" title=" " alt="" coords="1489,258,1475,217,1452,168,1419,120,1399,99,1376,82,1337,62,1296,49,1253,40,1210,35,1127,36,1057,44,1056,39,1127,31,1210,30,1254,35,1298,43,1340,57,1379,77,1403,95,1423,116,1457,165,1480,215,1494,257"/>
 <area shape="rect" href="namespaceZagreus.html#ab92b0596a4e9b3fb90f5d34259a44804" title="Calculates the single push for black pawns." alt="" coords="1155,92,1377,117"/>
-<area shape="poly" title=" " alt="" coords="1478,230,1434,184,1406,160,1376,139,1330,120,1332,115,1379,134,1410,155,1438,180,1482,226"/>
+<area shape="poly" title=" " alt="" coords="1482,261,1440,199,1410,167,1376,139,1334,120,1336,115,1379,134,1414,163,1444,196,1487,257"/>
 <area shape="rect" href="namespaceZagreus.html#a9e017529de41b72f6df1ee3427ebcad9" title="Calculates the attacks for kings." alt="" coords="1156,149,1376,175"/>
-<area shape="poly" title=" " alt="" coords="1465,234,1424,211,1376,190,1335,177,1336,172,1378,185,1426,206,1468,229"/>
+<area shape="poly" title=" " alt="" coords="1474,263,1431,225,1376,190,1342,177,1344,172,1379,185,1434,221,1478,259"/>
 <area shape="rect" href="classZagreus_1_1Board.html#a6dffc3e889df097a0d3f0ade6ea071c2" title=" " alt="" coords="1167,199,1365,239"/>
-<area shape="poly" title=" " alt="" coords="1411,242,1364,235,1365,230,1412,237"/>
+<area shape="poly" title=" " alt="" coords="1438,270,1339,242,1340,237,1440,264"/>
 <area shape="rect" href="classZagreus_1_1Board.html#ab72bd3d6645f52abc7b9bc935201a2d8" title=" " alt="" coords="1169,263,1363,303"/>
-<area shape="poly" title=" " alt="" coords="1412,266,1364,273,1363,267,1411,261"/>
+<area shape="poly" title=" " alt="" coords="1411,286,1363,286,1363,281,1411,281"/>
 <area shape="rect" href="namespaceZagreus.html#ad3a75a2c28108cb73195106ce77e24ab" title="Shifts the bitboard in the specified direction." alt="" coords="1211,328,1321,353"/>
-<area shape="poly" title=" " alt="" coords="1468,273,1426,296,1378,318,1323,334,1321,328,1376,313,1424,292,1465,269"/>
-<area shape="rect" href="namespaceZagreus.html#a027d67da9c406b1860c84cebe5e43085" title="Calculates the double pushable pawns for white." alt="" coords="880,397,1104,437"/>
-<area shape="poly" title=" " alt="" coords="1482,277,1439,324,1410,348,1378,367,1311,393,1239,409,1169,418,1104,422,1104,417,1168,413,1238,404,1309,388,1376,362,1407,343,1436,320,1479,273"/>
-<area shape="rect" href="namespaceZagreus.html#a0d2f9d3985a89a5ace60cca661ca1b11" title="Calculates the pushable pawns for white." alt="" coords="1157,429,1375,455"/>
-<area shape="poly" title=" " alt="" coords="1488,278,1446,345,1415,381,1379,412,1337,432,1335,427,1376,408,1411,377,1442,342,1483,275"/>
+<area shape="poly" title=" " alt="" coords="1439,302,1378,318,1322,331,1321,326,1377,313,1437,297"/>
+<area shape="rect" href="namespaceZagreus.html#a04433406edd73475d4ae510573ab3d2e" title=" " alt="" coords="1161,377,1371,403"/>
+<area shape="poly" title=" " alt="" coords="1474,307,1431,338,1378,367,1341,380,1339,375,1376,362,1428,334,1471,303"/>
+<area shape="rect" href="namespaceZagreus.html#a027d67da9c406b1860c84cebe5e43085" title="Calculates the double pushable pawns for white." alt="" coords="880,446,1104,486"/>
+<area shape="poly" title=" " alt="" coords="1485,309,1443,365,1413,393,1379,416,1329,433,1260,446,1105,462,1104,457,1259,440,1328,428,1376,412,1409,389,1439,361,1481,306"/>
+<area shape="rect" href="namespaceZagreus.html#a0d2f9d3985a89a5ace60cca661ca1b11" title="Calculates the pushable pawns for white." alt="" coords="1157,479,1375,504"/>
+<area shape="poly" title=" " alt="" coords="1490,310,1473,344,1449,385,1417,426,1379,462,1339,481,1337,476,1376,457,1413,423,1444,382,1468,342,1485,307"/>
 <area shape="rect" href="namespaceZagreus.html#a4c7d9b8324d0f12f13e5380e78b7b804" title="Generates all pseudo&#45;legal pawn moves for a given color and generation type." alt="" coords="611,67,829,92"/>
 <area shape="poly" title=" " alt="" coords="864,69,830,72,829,67,864,63"/>
 <area shape="rect" href="namespaceZagreus.html#a45782314392fdfb6bf0b51cdd98376f1" title="Generates all pseudo&#45;legal moves for all pieces of a certain color for a given color and generation t..." alt="" coords="379,67,563,92"/>
@@ -9555,7 +9643,7 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="875,229,816,229,816,223,875,223"/>
 <area shape="rect" href="classZagreus_1_1Board.html#a8bd41c08d9df043504a4a4bf19a3db6c" title=" " alt="" coords="889,270,1095,310"/>
 <area shape="poly" title=" " alt="" coords="1155,289,1096,290,1096,285,1155,283"/>
-<area shape="poly" title=" " alt="" coords="1143,433,1104,430,1104,424,1143,428"/>
+<area shape="poly" title=" " alt="" coords="1143,483,1104,479,1104,474,1143,477"/>
 </map>
 </div>
 
@@ -10013,7 +10101,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bitboard representing the square. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00396">396</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00408">408</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -10133,6 +10221,47 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="461,63,424,67,423,62,461,57"/>
 <area shape="rect" href="classZagreus_1_1Engine.html#aa97883c4a13a6a6e8b348589c820aafb" title=" " alt="" coords="5,63,193,88"/>
 <area shape="poly" title=" " alt="" coords="231,78,193,78,193,73,231,73"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a04433406edd73475d4ae510573ab3d2e" name="a04433406edd73475d4ae510573ab3d2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04433406edd73475d4ae510573ab3d2e">&#9670;&#160;</a></span>whiteBlockedPawns()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t Zagreus::whiteBlockedPawns </td>
+          <td>(</td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>bb</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>enemyPawns</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00323">323</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespaceZagreus_a04433406edd73475d4ae510573ab3d2e_cgraph.png" border="0" usemap="#anamespaceZagreus_a04433406edd73475d4ae510573ab3d2e_cgraph" alt=""/></div>
+<map name="anamespaceZagreus_a04433406edd73475d4ae510573ab3d2e_cgraph" id="anamespaceZagreus_a04433406edd73475d4ae510573ab3d2e_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,216,31"/>
+<area shape="rect" href="namespaceZagreus.html#a5f01c9bf422a21d35c075ff1befb41d2" title="Shifts the bitboard south by one rank." alt="" coords="264,5,412,31"/>
+<area shape="poly" title=" " alt="" coords="216,15,251,15,251,21,216,21"/>
 </map>
 </div>
 
@@ -10553,7 +10682,54 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a094c7e0bfaccc66a521ada78b0636cab" name="a094c7e0bfaccc66a521ada78b0636cab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a094c7e0bfaccc66a521ada78b0636cab">&#9670;&#160;</a></span>whiteUnblockedPawns()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t Zagreus::whiteUnblockedPawns </td>
+          <td>(</td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>bb</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t</td>          <td class="paramname"><span class="paramname"><em>enemyPawns</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="bitboard_8h_source.html#l00325">325</a> of file <a class="el" href="bitboard_8h_source.html">bitboard.h</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="af8e247bcc2881b9e8fb24aaa59700daf" name="af8e247bcc2881b9e8fb24aaa59700daf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8e247bcc2881b9e8fb24aaa59700daf">&#9670;&#160;</a></span>baseBishopPairBonus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int Zagreus::baseBishopPairBonus = {25, 25}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00052">52</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a038b96dffae3348bb9d1f4cf2eb43e8a" name="a038b96dffae3348bb9d1f4cf2eb43e8a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a038b96dffae3348bb9d1f4cf2eb43e8a">&#9670;&#160;</a></span>baseDoubledPawnPenalty</h2>
 
@@ -10587,7 +10763,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    13,  3,   -7,  -15, -14, -18, -7,  -1,  4,  -9, -15, -27, -23, -9,  -23, -5,  -9, -16, -5,  -17,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00082">82</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00086">86</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10607,7 +10783,7 @@ Here is the caller graph for this function:</div>
 <div class="line">                                 -18, -4,  21,  24,  27,  23, 9,  -11, -19, -3,  11,  21,  23,  16,  7,   -9,</div>
 <div class="line">                                 -27, -11, 4,   13,  14,  4,  -5, -17, -53, -34, -21, -11, -28, -14, -24, -43}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00118">118</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00122">122</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10628,7 +10804,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    10,  -3,  -20, -22, -42, -20, -10, -5,  -2,  -20, -23, -44, -29, -51, -23, -15, -22, -18, -50, -64,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00070">70</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00074">74</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10649,7 +10825,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    0,  -5, -1, -8, 13, 8, 8,  10, 13,  0,   2,   -7,  0,   0,   0,   0,   0,  0,   0,  0,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00058">58</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00062">62</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10670,7 +10846,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    9,  17, 10, 5,  -22, -23, -30, -16, -16, -23, -36, -32, -33, -28, -22, -43, -5,  -32, -20, -41,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00106">106</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00110">110</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10691,7 +10867,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -7, -12, -8, -16, -6, -6, 0, 2, -9, -9, -11, -3, -9, 2, 3,  -1, -5, -13, 4,  -20,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00094">94</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00098">98</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10707,7 +10883,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00124">124</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00128">128</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10748,7 +10924,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    14,  27, 18,  10,  4,   15,  16, 0,  7,   21, 33,  1,   -33, -3, -14, -21, -13, -12, -39, -21,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00076">76</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00080">80</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10769,7 +10945,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -44, -30, -15, -27, 1,   7,   -8,  -64, -43, -16, 9,   8,  -15, 36,  12,  -54, 8,   -28, 24,  14,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00112">112</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00116">116</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10790,7 +10966,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    19,   17,  25,  -16, -29, -53, -12, -3,   -1,  18,  -14, -19, -105, -21, -58, -33, -17, -28, -19, -23,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00064">64</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00068">68</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10811,7 +10987,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    3,  3,   33,  -12, -35, -1, -20, -23, -15, 24,  38,  -22, 0,  0,   0,  0,   0,  0,   0,   0,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00052">52</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00056">56</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10832,7 +11008,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    -5,  2,  14,  5,   -35, -8,  11, 2,  8,   15,  -3, 1,   -1,  -18, -9, 10, -15, -25, -31, -50,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00100">100</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00104">104</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10853,7 +11029,7 @@ Here is the caller graph for this function:</div>
 <div class="line">    3,  0,  -5,  -33, -44, -16, -20, -9, -1, 11,  -6,  -71, -19, -13, 1,  17, 16, 7,   -37, -26,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00088">88</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00092">92</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -10869,7 +11045,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00123">123</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="eval__base__values_8cpp_source.html#l00127">127</a> of file <a class="el" href="eval__base__values_8cpp_source.html">eval_base_values.cpp</a>.</p>
 
 </div>
 </div>
@@ -11158,6 +11334,22 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="pst_8cpp_source.html#l00105">105</a> of file <a class="el" href="pst_8cpp_source.html">pst.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a54858d46cee0af83548f8f8307a04171" name="a54858d46cee0af83548f8f8307a04171"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54858d46cee0af83548f8f8307a04171">&#9670;&#160;</a></span>evalBishopPairBonus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Zagreus::evalBishopPairBonus = {25, 25}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="eval__features_8cpp_source.html#l00051">51</a> of file <a class="el" href="eval__features_8cpp_source.html">eval_features.cpp</a>.</p>
 
 </div>
 </div>

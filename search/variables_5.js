@@ -9,9 +9,10 @@ var searchData=
   ['endgame_6',['endgame',['../structZagreus_1_1PawnShield.html#acdbf312fe21f095e02a4169471a96239',1,'Zagreus::PawnShield']]],
   ['endgamepsttable_7',['endgamePstTable',['../namespaceZagreus.html#a7b3cc214c8366a5b0a70e7743277d0a9',1,'Zagreus']]],
   ['enpassantsquare_8',['enPassantSquare',['../structZagreus_1_1BoardState.html#a8168f2482c44d4edf790701162e2a79f',1,'Zagreus::BoardState']]],
-  ['evaldoubledpawnpenalty_9',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
-  ['evalmaterialvalues_10',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
-  ['evalmobility_11',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
-  ['evalpawnshieldvalue_12',['evalPawnShieldValue',['../namespaceZagreus.html#ab2bda3093a71942ed2947d8caf628601',1,'Zagreus']]],
-  ['excludedmove_13',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
+  ['evalbishoppairbonus_9',['evalBishopPairBonus',['../namespaceZagreus.html#a54858d46cee0af83548f8f8307a04171',1,'Zagreus']]],
+  ['evaldoubledpawnpenalty_10',['evalDoubledPawnPenalty',['../namespaceZagreus.html#a5f3c96f4d038028ca2915d6001233228',1,'Zagreus']]],
+  ['evalmaterialvalues_11',['evalMaterialValues',['../namespaceZagreus.html#a77212675e9ec1ea5afc27509b4afdd4a',1,'Zagreus']]],
+  ['evalmobility_12',['evalMobility',['../namespaceZagreus.html#a025a34fc4750a9af6e51d2c95b95c4d0',1,'Zagreus']]],
+  ['evalpawnshieldvalue_13',['evalPawnShieldValue',['../namespaceZagreus.html#ab2bda3093a71942ed2947d8caf628601',1,'Zagreus']]],
+  ['excludedmove_14',['excludedMove',['../structZagreus_1_1SearchStack.html#ae3898af71b7138f72996ff4a4d175170',1,'Zagreus::SearchStack']]]
 ];
