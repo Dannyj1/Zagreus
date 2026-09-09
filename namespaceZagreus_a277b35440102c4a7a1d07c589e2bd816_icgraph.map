@@ -1,0 +1,14 @@
+<map id="Zagreus::blackBlockedPawns" name="Zagreus::blackBlockedPawns">
+<area shape="rect" id="Node000001" title=" " alt="" coords="779,29,989,55"/>
+<area shape="rect" id="Node000002" href="$classZagreus_1_1Evaluation.html#abb089e1f075e914b0789cfefef917fcd" title="Initializes part of the evaluation data needed to evaluate the board position." alt="" coords="579,22,731,62"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="765,45,731,45,731,39,765,39"/>
+<area shape="rect" id="Node000003" href="$classZagreus_1_1Evaluation.html#a0f4174df46fff74d4c208a04c861622a" title="Evaluates the current board position." alt="" coords="379,22,531,62"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="565,45,531,45,531,39,565,39"/>
+<area shape="rect" id="Node000004" href="$namespaceZagreus.html#a74f010248729880c767a6536e64d3a6d" title=" " alt="" coords="5,29,148,55"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="365,35,331,33,263,30,196,33,149,36,148,31,196,27,263,25,331,27,365,30"/>
+<area shape="rect" id="Node000005" href="$namespaceZagreus.html#a11fb11a289c1796bcfed11eabbeb9a68" title=" " alt="" coords="196,67,331,92"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="365,62,330,69,329,64,364,57"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="110,19,100,11,77,8,57,10,47,15,44,20,50,28,46,31,39,21,43,11,55,5,77,3,102,6,113,15"/>
+<area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="186,67,140,57,141,52,187,61"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="296,56,287,48,263,45,244,47,233,52,231,58,237,65,232,68,226,58,229,48,242,42,263,40,289,44,300,52"/>
+</map>
