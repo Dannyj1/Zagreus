@@ -320,17 +320,13 @@ inline uint64_t blackDoublePushablePawns(const uint64_t bb, const uint64_t empty
     return blackPushablePawns(bb, emptyRank6);
 }
 
-inline uint64_t whiteBlockedPawns(const uint64_t bb, const uint64_t enemyPawns) { return bb & shiftSouth(enemyPawns); }
+inline uint64_t whiteBlockedPawns(const uint64_t bb, const uint64_t blockers) { return bb & shiftSouth(blockers); }
 
-inline uint64_t whiteUnblockedPawns(const uint64_t bb, const uint64_t enemyPawns) {
-    return bb & ~shiftSouth(enemyPawns);
-}
+inline uint64_t whiteUnblockedPawns(const uint64_t bb, const uint64_t blockers) { return bb & ~shiftSouth(blockers); }
 
-inline uint64_t blackBlockedPawns(const uint64_t bb, const uint64_t enemyPawns) { return bb & shiftNorth(enemyPawns); }
+inline uint64_t blackBlockedPawns(const uint64_t bb, const uint64_t blockers) { return bb & shiftNorth(blockers); }
 
-inline uint64_t blackUnblockedPawns(const uint64_t bb, const uint64_t enemyPawns) {
-    return bb & ~shiftNorth(enemyPawns);
-}
+inline uint64_t blackUnblockedPawns(const uint64_t bb, const uint64_t blockers) { return bb & ~shiftNorth(blockers); }
 
 /**
  * \brief Calculates the attacks for knights.

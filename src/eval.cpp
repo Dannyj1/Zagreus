@@ -198,7 +198,9 @@ template <PieceColor color>
 void Evaluation::evaluateBishops() {
     constexpr Piece bishopPiece = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     uint64_t bishops = board.getPieceBoard<bishopPiece>();
-    const uint64_t occupiedBitboard = board.getOccupiedBitboard();
+    // Allow bishops to x-ray through queens
+    const uint64_t occupiedBitboard =
+        board.getOccupiedBitboard() ^ (board.getPieceBoard<WHITE_QUEEN>() | board.getPieceBoard<BLACK_QUEEN>());
 
     // Bishop pair bonus
     uint64_t darkSquareBishops = bishops & DARK_SQUARES;
@@ -248,7 +250,10 @@ template <PieceColor color>
 void Evaluation::evaluateRooks() {
     constexpr Piece rookPiece = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
     uint64_t rooks = board.getPieceBoard<rookPiece>();
-    const uint64_t occupiedBitboard = board.getOccupiedBitboard();
+    // Allow rooks to x-ray through queens and other rooks
+    const uint64_t occupiedBitboard = board.getOccupiedBitboard() ^
+                                      (board.getPieceBoard<WHITE_QUEEN>() | board.getPieceBoard<BLACK_QUEEN>()) ^
+                                      board.getPieceBoard<rookPiece>();
 
     while (rooks) {
         const Square square = static_cast<Square>(popLsb(rooks));
@@ -429,8 +434,12 @@ void Evaluation::evaluatePawnStructure() {
  * \brief Initializes part of the evaluation data needed to evaluate the board position.
  */
 void Evaluation::initializeEvalData() {
-    evalData.mobilityArea[WHITE] = ~(board.getColorBitboard<WHITE>() | board.getPieceBoard<BLACK_KING>());
-    evalData.mobilityArea[BLACK] = ~(board.getColorBitboard<BLACK>() | board.getPieceBoard<WHITE_KING>());
+    const uint64_t occupied = board.getOccupiedBitboard();
+    const uint64_t whiteBlocked = whiteBlockedPawns(board.getPieceBoard<WHITE_PAWN>(), occupied);
+    const uint64_t blackBlocked = blackBlockedPawns(board.getPieceBoard<BLACK_PAWN>(), occupied);
+
+    evalData.mobilityArea[WHITE] = ~(board.getPieceBoard<WHITE_KING>() | whiteBlocked);
+    evalData.mobilityArea[BLACK] = ~(board.getPieceBoard<BLACK_KING>() | blackBlocked);
 }
 
 /**
