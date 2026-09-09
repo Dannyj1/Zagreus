@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a chess engine that supports the UCI protocol
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,9 @@
 
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <iostream>
+#include <limits>
 #include <random>
 
 // Code for magic generation https://www.chessprogramming.org/Looking_for_Magics
@@ -60,10 +62,9 @@ int count_1s(uint64_t b) {
     return r;
 }
 
-const int BitTable[64] = {63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34,
-                          61, 29, 2, 51, 21, 43, 45, 10, 18, 47, 1, 54, 9, 57, 0, 35,
-                          62, 31, 40, 4, 49, 5, 52, 26, 60, 6, 23, 44, 46, 27, 56, 16,
-                          7, 39, 48, 24, 59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8};
+const int BitTable[64] = {63, 30, 3,  32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2,  51, 21, 43,
+                          45, 10, 18, 47, 1,  54, 9,  57, 0,  35, 62, 31, 40, 4,  49, 5,  52, 26, 60, 6,  23, 44,
+                          46, 27, 56, 16, 7,  39, 48, 24, 59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8};
 
 int pop_1st_bit(uint64_t* bb) {
     uint64_t b = *bb ^ (*bb - 1);
@@ -148,7 +149,7 @@ uint64_t batt(int sq, uint64_t block) {
 
 int transform(uint64_t b, uint64_t magic, int bits) {
 #if defined(USE_32_BIT_MULTIPLICATIONS)
-  return (unsigned)((int)b * (int)magic ^ (int)(b >> 32) * (int)(magic >> 32)) >> (32 - bits);
+    return (unsigned)((int)b * (int)magic ^ (int)(b >> 32) * (int)(magic >> 32)) >> (32 - bits);
 #else
     return static_cast<int>((b * magic) >> (64 - bits));
 #endif
@@ -398,19 +399,13 @@ void initializeMagicBitboards() {
 void generateMagics() {
     gen.seed(generatorSeed);
 
-    //        printf("const uint64_t rookMagics[64] = {\n");
     for (int8_t square = 0; square < 64; square++) {
         rookMagics[square] = find_magic(square, RBits[square], 0);
-        //            printf("  0x%llxULL,\n", find_magic(square, RBits[square], 0));
     }
-    //        printf("};\n\n");
 
-    //        printf("const uint64_t bishopMagics[64] = {\n");
     for (int8_t square = 0; square < 64; square++) {
         bishopMagics[square] = find_magic(square, BBits[square], 1);
-        //            printf("  0x%llxULL,\n", find_magic(square, BBits[square], 1));
     }
-    //        printf("};\n\n");
 }
 
 void findFastestSeed() {
@@ -426,25 +421,21 @@ void findFastestSeed() {
 
         for (int i = 0; i < 50; i++) {
             gen.seed(seedDis(seedGen));
-            std::chrono::time_point<std::chrono::steady_clock> start =
-                std::chrono::steady_clock::now();
+            std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
 
             generateMagics();
 
-            std::chrono::time_point<std::chrono::steady_clock> now =
-                std::chrono::steady_clock::now();
-            uint64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).
-                count();
+            std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
+            uint64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
             total += elapsed;
         }
 
         uint64_t average = total / 50;
         if (average < max) {
             max = average;
-            std::cout << "New fastest seed: 0x" << std::uppercase << std::hex << seed <<
-                std::nouppercase
-                << std::dec << "ULL, took: " << average << "ms (average)" << std::endl;
+            std::cout << "New fastest seed: 0x" << std::uppercase << std::hex << seed << std::nouppercase << std::dec
+                      << "ULL, took: " << average << "ms (average)" << std::endl;
         }
     }
 }
-} // namespace Zagreus
+}  // namespace Zagreus

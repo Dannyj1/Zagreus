@@ -1,8 +1,8 @@
 /*
  This file is part of Zagreus.
 
- Zagreus is a chess engine that supports the UCI protocol
- Copyright (C) 2023  Danny Jelsma
+ Zagreus is a UCI chess engine
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -20,90 +20,92 @@
 
 #include "tt.h"
 
+#include <algorithm>
 #include <cmath>
-#include <iostream>
 
-#include "search.h"
+#include "constants.h"
 
 namespace Zagreus {
-void TranspositionTable::addPosition(uint64_t zobristHash, int16_t depth, int score,
-                                     TTNodeType nodeType, uint32_t bestMoveCode, int ply,
-                                     SearchContext& context) {
-    // current time
-    auto currentTime = std::chrono::steady_clock::now();
-    if (score > MAX_POSITIVE || score < MAX_NEGATIVE || currentTime > context.endTime) {
-        return;
-    }
-
-    if (depth < INT8_MIN || depth > INT8_MAX) {
-        return;
-    }
-
-    uint64_t index = zobristHash & hashSize;
+void TranspositionTable::savePosition(const uint64_t zobristHash, const int16_t depth, const int ply, int score,
+                                      const Move bestMove, const TTNodeType nodeType) const {
+    const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
-    if (depth > entry->depth) {
-        int adjustedScore = score;
-
-        if (adjustedScore >= (MATE_SCORE - MAX_PLY)) {
-            adjustedScore += ply;
-        } else if (adjustedScore <= (-MATE_SCORE + MAX_PLY)) {
-            adjustedScore -= ply;
+    // Only replace the entry if:
+    // 1. Validation hash is 0 (the entry is empty)
+    // 2. Entry is from a shallower depth (lower depth value)
+    if (entry->zobristHash != zobristHash || entry->depth <= depth) {
+        if (score >= (MATE_SCORE - MAX_PLIES)) {
+            score += ply;
+        } else if (score <= (-MATE_SCORE + MAX_PLIES)) {
+            score -= ply;
         }
 
-        entry->validationHash = zobristHash >> 32;
-        entry->depth = static_cast<int8_t>(depth);
-        entry->bestMoveCode = bestMoveCode;
-        entry->score = adjustedScore;
+        score = std::clamp<int>(score, INT16_MIN + 1, INT16_MAX);
+
+        Move moveToSave = bestMove;
+        if (bestMove == NO_MOVE && entry->zobristHash == zobristHash) {
+            moveToSave = entry->bestMove;
+        }
+
+        entry->zobristHash = zobristHash;
+        entry->depth = depth;
+        entry->bestMove = moveToSave;
+        entry->score = score;
         entry->nodeType = nodeType;
     }
 }
 
-int TranspositionTable::getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta,
-                                 int ply) {
-    if (depth < INT8_MIN || depth > INT8_MAX) {
-        return INT32_MIN;
-    }
-
-    uint64_t index = zobristHash & hashSize;
-    uint32_t validationHash = zobristHash >> 32;
+int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int16_t depth, const int alpha,
+                                          const int beta, const int ply, TTEntry*& ttEntry) const {
+    const uint64_t index = zobristHash & hashSize;
     TTEntry* entry = &transpositionTable[index];
 
-    if (entry->validationHash == validationHash && entry->depth >= depth) {
-        bool returnScore = false;
+    if (entry->zobristHash == zobristHash) {
+        ttEntry = entry;
 
-        if (entry->nodeType == EXACT_NODE) {
-            returnScore = true;
-        } else if (entry->nodeType == FAIL_LOW_NODE) {
-            if (entry->score <= alpha) {
+        if (entry->depth >= depth) {
+            bool returnScore = false;
+
+            if (entry->nodeType == EXACT) {
                 returnScore = true;
-            }
-        } else if (entry->nodeType == FAIL_HIGH_NODE) {
-            if (entry->score >= beta) {
-                returnScore = true;
-            }
-        }
-
-        if (returnScore) {
-            int adjustedScore = entry->score;
-
-            if (adjustedScore >= MATE_SCORE) {
-                adjustedScore -= ply;
-            } else if (adjustedScore <= -MATE_SCORE) {
-                adjustedScore += ply;
+            } else if (entry->nodeType == ALPHA) {
+                if (entry->score <= alpha) {
+                    returnScore = true;
+                }
+            } else if (entry->nodeType == BETA) {
+                if (entry->score >= beta) {
+                    returnScore = true;
+                }
             }
 
-            return adjustedScore;
+            if (returnScore) {
+                int adjustedScore = entry->score;
+
+                if (adjustedScore >= (MATE_SCORE - MAX_PLIES)) {
+                    adjustedScore -= ply;
+                } else if (adjustedScore <= (-MATE_SCORE + MAX_PLIES)) {
+                    adjustedScore += ply;
+                }
+
+                return adjustedScore;
+            }
         }
     }
 
-    return INT32_MIN;
+    return NO_TT_SCORE;
 }
 
-TTEntry* TranspositionTable::getEntry(uint64_t zobristHash) {
-    uint64_t index = zobristHash & hashSize;
+TTEntry* TranspositionTable::getEntry(const uint64_t zobristHash) const {
+    const uint64_t index = zobristHash & hashSize;
+    TTEntry* entry = &transpositionTable[index];
 
-    return &transpositionTable[index];
+    // Check full Zobrist hash to ensure positions match
+    if (entry->zobristHash == zobristHash) {
+        return entry;
+    }
+
+    return nullptr;
 }
 
 void TranspositionTable::setTableSize(int megaBytes) {
@@ -111,16 +113,13 @@ void TranspositionTable::setTableSize(int megaBytes) {
         megaBytes = 1 << static_cast<int>(log2(megaBytes));
     }
 
-    uint64_t byteSize = megaBytes * 1024 * 1024;
-    uint64_t entryCount = byteSize / sizeof(TTEntry);
+    const uint64_t byteSize = static_cast<uint64_t>(megaBytes) * 1024 * 1024;
+    const uint64_t entryCount = byteSize / sizeof(TTEntry);
 
     delete[] transpositionTable;
     transpositionTable = new TTEntry[entryCount]{};
-    hashSize = entryCount - 1;
 
-    for (uint64_t i = 0; i < entryCount; i++) {
-        transpositionTable[i] = {};
-    }
+    hashSize = entryCount - 1;
 }
 
 TranspositionTable* TranspositionTable::getTT() {
@@ -128,41 +127,24 @@ TranspositionTable* TranspositionTable::getTT() {
     return &instance;
 }
 
-void TranspositionTable::ageHistoryTable() {
-    for (int i = 0; i < PIECE_TYPES; i++) {
-        for (int j = 0; j < SQUARES; j++) {
-            historyMoves[i][j] /= 8;
-        }
-    }
+template <PieceColor color>
+void TranspositionTable::updateHistory(const Move move, const int value) {
+    const Square from = getFromSquare(move);
+    const Square to = getToSquare(move);
+    const int clampedValue = std::clamp(value, -MAX_HISTORY, MAX_HISTORY);
+
+    history[color][from][to] += clampedValue - history[color][from][to] * std::abs(clampedValue) / MAX_HISTORY;
 }
 
-void TranspositionTable::reset() {
-    for (int i = 0; i < 3; i++) {
-        delete[] killerMoves[i];
-    }
+void TranspositionTable::updateCaptureHistory(const Move move, const Piece movedPiece, const Piece capturedPiece,
+                                              const int value) {
+    const Square to = getToSquare(move);
+    const int clampedValue = std::clamp(value, -MAX_HISTORY, MAX_HISTORY);
 
-    for (int i = 0; i < 12; i++) {
-        delete[] historyMoves[i];
-    }
-
-    for (int i = 0; i < PIECE_TYPES; i++) {
-        delete[] counterMoves[i];
-    }
-
-    for (uint64_t i = 0; i < hashSize; i++) {
-        transpositionTable[i] = {};
-    }
-
-    for (int i = 0; i < 3; i++) {
-        killerMoves[i] = new uint32_t[MAX_PLY]{};
-    }
-
-    for (int i = 0; i < PIECE_TYPES; i++) {
-        historyMoves[i] = new uint32_t[64]{};
-    }
-
-    for (int i = 0; i < PIECE_TYPES; i++) {
-        counterMoves[i] = new uint32_t[64]{};
-    }
+    captureHistory[movedPiece][to][capturedPiece] +=
+        clampedValue - captureHistory[movedPiece][to][capturedPiece] * std::abs(clampedValue) / MAX_HISTORY;
 }
-} // namespace Zagreus
+
+template void TranspositionTable::updateHistory<WHITE>(Move move, int value);
+template void TranspositionTable::updateHistory<BLACK>(Move move, int value);
+}  // namespace Zagreus

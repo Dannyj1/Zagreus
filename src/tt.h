@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -20,87 +20,116 @@
 
 #pragma once
 
-#include <chrono>
+#include <algorithm>
 #include <cstdint>
 
-#include "search.h"
-#include "types.h"
+#include "move.h"
 
+// TODO: Some of the functions here can (and should) be in tt.cpp
 namespace Zagreus {
 enum TTNodeType : uint8_t {
-    EXACT_NODE, // Not a PV node
-    FAIL_LOW_NODE, // Alpha score
-    FAIL_HIGH_NODE // Beta score
+    EXACT,  // PV
+    ALPHA,
+    BETA
 };
 
 struct TTEntry {
-    int score = 0;
-    uint32_t bestMoveCode = 0;
-    uint32_t validationHash = 0;
-    int8_t depth = INT8_MIN;
-    TTNodeType nodeType = EXACT_NODE;
+    uint64_t zobristHash = 0;
+    int16_t score = 0;
+    Move bestMove = NO_MOVE;
+    int16_t depth = INT16_MIN;
+    TTNodeType nodeType = EXACT;
+    uint8_t _padding = 0;
 };
 
 class TranspositionTable {
-public:
-    TTEntry* transpositionTable = new TTEntry[1]{};
-    uint32_t** killerMoves = new uint32_t*[3]{};
-    uint32_t** historyMoves = new uint32_t*[PIECE_TYPES]{};
-    uint32_t** counterMoves = new uint32_t*[PIECE_TYPES]{};
+   private:
+    int history[COLORS][SQUARES][SQUARES]{};
+    // [movingPiece][toSquare][capturedPiece]
+    int captureHistory[PIECES][SQUARES][PIECES]{};
+    Move killerMoves[MAX_PLIES][2]{};
 
+   public:
+    TTEntry* transpositionTable = new TTEntry[1]{};
     uint64_t hashSize = 0;
 
-    TranspositionTable() {
-        for (int i = 0; i < 3; i++) {
-            killerMoves[i] = new uint32_t[MAX_PLY]{};
+    TranspositionTable() { reset(); }
+
+    ~TranspositionTable() { delete[] transpositionTable; }
+
+    void reset() {
+        std::fill_n(transpositionTable, hashSize + 1, TTEntry{});
+
+        for (int color = 0; color < COLORS; color++) {
+            for (int fromSquare = 0; fromSquare < SQUARES; fromSquare++) {
+                std::fill_n(history[color][fromSquare], SQUARES, 0);
+            }
         }
 
-        for (int i = 0; i < PIECE_TYPES; i++) {
-            historyMoves[i] = new uint32_t[64]{};
+        for (int movingPiece = 0; movingPiece < PIECES; movingPiece++) {
+            for (int toSquare = 0; toSquare < SQUARES; toSquare++) {
+                std::fill_n(captureHistory[movingPiece][toSquare], PIECES, 0);
+            }
         }
 
-        for (int i = 0; i < PIECE_TYPES; i++) {
-            counterMoves[i] = new uint32_t[64]{};
+        for (int ply = 0; ply < MAX_PLIES; ply++) {
+            killerMoves[ply][0] = NO_MOVE;
+            killerMoves[ply][1] = NO_MOVE;
         }
-    }
-
-    ~TranspositionTable() {
-        delete[] transpositionTable;
-
-        for (int i = 0; i < 3; i++) {
-            delete[] killerMoves[i];
-        }
-
-        for (int i = 0; i < 12; i++) {
-            delete[] historyMoves[i];
-        }
-
-        for (int i = 0; i < PIECE_TYPES; i++) {
-            delete[] counterMoves[i];
-        }
-
-        delete[] killerMoves;
-        delete[] historyMoves;
-        delete[] counterMoves;
     }
 
     TranspositionTable(TranspositionTable& other) = delete;
-
     void operator=(const TranspositionTable&) = delete;
 
     static TranspositionTable* getTT();
 
     void setTableSize(int megaBytes);
 
-    void addPosition(uint64_t zobristHash, int16_t depth, int score, TTNodeType nodeType,
-                     uint32_t bestMoveCode, int ply, SearchContext& context);
+    void savePosition(uint64_t zobristHash, int16_t depth, int ply, int score, Move bestMove,
+                      TTNodeType nodeType) const;
 
-    int getScore(uint64_t zobristHash, int16_t depth, int alpha, int beta, int ply);
+    [[nodiscard]] int16_t probePosition(uint64_t zobristHash, int16_t depth, int alpha, int beta, int ply,
+                                        TTEntry*& ttEntry) const;
 
-    TTEntry* getEntry(uint64_t zobristHash);
+    [[nodiscard]] TTEntry* getEntry(uint64_t zobristHash) const;
 
-    void ageHistoryTable();
+    template <PieceColor color>
+    void updateHistory(Move move, int value);
 
-    void reset();
+    template <PieceColor color>
+    [[nodiscard]] int getHistoryValue(const Move move) const {
+        const Square fromSquare = getFromSquare(move);
+        const Square toSquare = getToSquare(move);
+
+        return history[color][fromSquare][toSquare];
+    }
+
+    [[nodiscard]] int getHistoryValue(const PieceColor color, const Move move) const {
+        const Square fromSquare = getFromSquare(move);
+        const Square toSquare = getToSquare(move);
+
+        return history[color][fromSquare][toSquare];
+    }
+
+    void updateCaptureHistory(Move move, Piece movedPiece, Piece capturedPiece, int value);
+
+    [[nodiscard]] int getCaptureHistoryValue(const Move move, const Piece movingPiece,
+                                             const Piece capturedPiece) const {
+        const Square toSquare = getToSquare(move);
+
+        return captureHistory[movingPiece][toSquare][capturedPiece];
+    }
+
+    void addKillerMove(Move move, int ply) {
+        assert(ply < MAX_PLIES);
+        assert(move != NO_MOVE);
+
+        if (killerMoves[ply][0] != move) {
+            killerMoves[ply][1] = killerMoves[ply][0];
+            killerMoves[ply][0] = move;
+        }
+    }
+
+    [[nodiscard]] Move getKillerMove(int ply, int index) const { return killerMoves[ply][index]; }
 };
-} // namespace Zagreus
+}  // namespace Zagreus
