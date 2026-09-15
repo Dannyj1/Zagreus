@@ -227,7 +227,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        <span class="keywordflow">if</span> (useTimeManagement &amp;&amp; depth &gt; 1 &amp;&amp;</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            (rootLegalMoves == 1 ||</div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>             std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now() - startTime)</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                     .count() &gt; timeLimits.softMs / 2)) {</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                     .count() &gt; timeLimits.softMs)) {</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>            engine.<a class="code hl_function" href="classZagreus_1_1Engine.html#a2d9d038f1c203aadd2042a26e75af516">setSearchStopped</a>(<span class="keyword">true</span>);</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>            <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        }</div>
