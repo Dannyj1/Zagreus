@@ -344,8 +344,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
         bool moveGivesCheck = board.isKingInCheck<opponentColor>();
 
         // Futility pruning
-        if (!isRoot && depth <= 4 && !isInCheck && !moveGivesCheck && capturedPiece == EMPTY &&
-            getMoveType(move) != PROMOTION) {
+        if (!isRoot && bestScore > -MATE_SCORE + MAX_PLIES && depth <= 4 && !isInCheck && !moveGivesCheck &&
+            capturedPiece == EMPTY && getMoveType(move) != PROMOTION) {
             const int futilityMargin = 200 * depth;
             const int futilityScore = eval + futilityMargin;
 
