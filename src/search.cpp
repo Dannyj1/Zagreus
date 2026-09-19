@@ -260,6 +260,8 @@ int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, Searc
 
     const int eval = isInCheck ? 0 : Evaluation(board).evaluate();
 
+    tt->clearKillerMoves(board.getPly() + 1);
+
     if (!isPV) {
         // Reverse Futility Pruning
         int rfMargin = 150 * depth;

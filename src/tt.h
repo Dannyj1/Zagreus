@@ -47,7 +47,7 @@ class TranspositionTable {
     int history[COLORS][SQUARES][SQUARES]{};
     // [movingPiece][toSquare][capturedPiece]
     int captureHistory[PIECES][SQUARES][PIECES]{};
-    Move killerMoves[MAX_PLIES][2]{};
+    Move killerMoves[MAX_PLIES + 1][2]{};
 
    public:
     TTEntry* transpositionTable = new TTEntry[1]{};
@@ -72,7 +72,7 @@ class TranspositionTable {
             }
         }
 
-        for (int ply = 0; ply < MAX_PLIES; ply++) {
+        for (int ply = 0; ply <= MAX_PLIES; ply++) {
             killerMoves[ply][0] = NO_MOVE;
             killerMoves[ply][1] = NO_MOVE;
         }
@@ -128,6 +128,13 @@ class TranspositionTable {
             killerMoves[ply][1] = killerMoves[ply][0];
             killerMoves[ply][0] = move;
         }
+    }
+
+    void clearKillerMoves(int ply) {
+        assert(ply <= MAX_PLIES);
+
+        killerMoves[ply][0] = NO_MOVE;
+        killerMoves[ply][1] = NO_MOVE;
     }
 
     [[nodiscard]] Move getKillerMove(int ply, int index) const { return killerMoves[ply][index]; }
