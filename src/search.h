@@ -2,7 +2,7 @@
  This file is part of Zagreus.
 
  Zagreus is a UCI chess engine
- Copyright (C) 2023  Danny Jelsma
+ Copyright (C) 2023-2026  Danny Jelsma
 
  Zagreus is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -19,41 +19,87 @@
  */
 
 #pragma once
-#include <vector>
 
-#include "bitboard.h"
-#include "engine.h"
+#include <chrono>
+#include <cstdint>
+
+#include "board.h"
+#include "move.h"
 #include "types.h"
-#include "../senjo/GoParams.h"
+#include "uci.h"
 
 namespace Zagreus {
-struct SearchContext {
-    std::chrono::time_point<std::chrono::steady_clock> startTime;
-    std::chrono::time_point<std::chrono::steady_clock> endTime;
-    int pvChanges = 0;
-    // A boolean variable that keeps track if the score suddenly went from positive to negative or
-    // vice versa
-    bool suddenScoreSwing = false;
-    // A boolean variable that keeps track if the score suddenly had a big drop (-150 or more)
-    bool suddenScoreDrop = false;
+enum NodeType {
+    ROOT,
+    PV,
+    REGULAR,
+};
+
+struct SearchParams {
+    uint32_t whiteTime = 0;
+    uint32_t blackTime = 0;
+    uint32_t whiteInc = 0;
+    uint32_t blackInc = 0;
+    uint16_t depth = 0;
+    uint64_t max_nodes = 0;
+    int moveOverhead = 0;
+    bool infinite = false;
+};
+
+struct SearchStack {
+    std::array<Move, MAX_PLIES> excludedMove{};
+
+    SearchStack() { std::ranges::fill(excludedMove, NO_MOVE); }
+};
+
+struct SearchStats {
+    PvLine pvLine{0};
+    uint64_t nodesSearched = 0;
+    uint64_t qNodesSearched = 0;
+    int score = 0;
+    uint16_t depth = 0;
+    uint64_t timeSpentMs = 0;
+
+#ifdef TRACE_SEARCH
+    uint64_t ttProbes = 0;
+    uint64_t ttHits = 0;
+    uint64_t ttWrites = 0;
+    uint64_t qTtProbes = 0;
+    uint64_t qTtHits = 0;
+    uint64_t firstMoveCutoffs = 0;
+    uint64_t secondMoveCutoffs = 0;
+    uint64_t totalMoveCutoffNumber = 0;
+    uint64_t totalCutoffs = 0;
+    uint64_t nmpTries = 0;
+    uint64_t nmpPrunes = 0;
+    uint64_t lmrSearches = 0;
+    uint64_t lmrResearches = 0;
+    uint64_t futilityPrunes = 0;
+    uint64_t reverseFutilityPrunes = 0;
+    uint64_t checkExtensions = 0;
+    uint64_t singularExtensions = 0;
+    uint64_t singularAttempts = 0;
+    uint64_t seePrunes = 0;
+
+    void clearTrace();
+    void printTrace(Engine& engine, int numPositions = 1) const;
+    SearchStats& operator+=(const SearchStats& other);
+#endif
 };
 
 void initializeSearch();
 
 template <PieceColor color>
-Move getBestMove(senjo::GoParams params, ZagreusEngine& engine, Bitboard& board,
-                 senjo::SearchStats& searchStats);
+[[nodiscard]] Move search(Engine& engine, Board& board, SearchParams& params, SearchStats& stats);
+
+// TODO: Might want to move some args to a struct
+template <PieceColor color, NodeType nodeType>
+int pvSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
+             const std::chrono::time_point<std::chrono::steady_clock>& endTime, PvLine& pvLine,
+             SearchStack& searchStack, bool isInCheck);
 
 template <PieceColor color, NodeType nodeType>
-int search(Bitboard& board, int alpha, int beta, int16_t depth,
-           SearchContext& context,
-           senjo::SearchStats& searchStats, Line& pvLine);
-
-template <PieceColor color, NodeType nodeType>
-int qsearch(Bitboard& board, int alpha, int beta, int16_t depth,
-            SearchContext& context,
-            senjo::SearchStats& searchStats);
-
-void printPv(senjo::SearchStats& searchStats, std::chrono::steady_clock::time_point& startTime,
-             Line& pvLine);
-} // namespace Zagreus
+[[nodiscard]] int qSearch(Engine& engine, Board& board, int alpha, int beta, int depth, SearchStats& stats,
+                          const std::chrono::time_point<std::chrono::steady_clock>& endTime, SearchStack& searchStack,
+                          bool isInCheck);
+}  // namespace Zagreus
