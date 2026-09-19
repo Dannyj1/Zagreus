@@ -10,7 +10,8 @@ var searchData=
   ['calculatewhitepawnattacks_7',['calculateWhitePawnAttacks',['../namespaceZagreus.html#a3e1df28b0949fb8318662fb95dee298c',1,'Zagreus']]],
   ['cancastle_8',['canCastle',['../classZagreus_1_1Board.html#a9d9ff553f48c46abe04c951636ff64c9',1,'Zagreus::Board']]],
   ['canpromotepawn_9',['canPromotePawn',['../classZagreus_1_1Board.html#a6b6c7c41c07ae72b9256b37691d07a32',1,'Zagreus::Board']]],
-  ['clearvar_10',['clearVar',['../classZagreus_1_1UCIOption.html#ae95b1df4fd9ccf77de1904e892e22515',1,'Zagreus::UCIOption']]],
-  ['count_5f1s_11',['count_1s',['../namespaceZagreus.html#ad12d6d30c4c67b4bae5738e8481399b0',1,'Zagreus']]],
-  ['count_5fbits_12',['count_bits',['../namespaceZagreus.html#a4ab101cae51c4b69a1d384d608a0ac45',1,'Zagreus']]]
+  ['clearkillermoves_10',['clearKillerMoves',['../classZagreus_1_1TranspositionTable.html#a68955e10d22bcff1e118fac3f3956259',1,'Zagreus::TranspositionTable']]],
+  ['clearvar_11',['clearVar',['../classZagreus_1_1UCIOption.html#ae95b1df4fd9ccf77de1904e892e22515',1,'Zagreus::UCIOption']]],
+  ['count_5f1s_12',['count_1s',['../namespaceZagreus.html#ad12d6d30c4c67b4bae5738e8481399b0',1,'Zagreus']]],
+  ['count_5fbits_13',['count_bits',['../namespaceZagreus.html#a4ab101cae51c4b69a1d384d608a0ac45',1,'Zagreus']]]
 ];

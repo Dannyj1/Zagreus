@@ -28,10 +28,11 @@ var searchData=
   ['center_5fsquares_25',['CENTER_SQUARES',['../constants_8h.html#a8e351aae4e97313285bccf88f4428a83',1,'constants.h']]],
   ['check_26',['Check',['../namespaceZagreus.html#a25277ebd2a95d3a6cec246971a6e41c1abdb4fefad83966524bb7f2121707702b',1,'Zagreus']]],
   ['checkblockers_27',['checkBlockers',['../structZagreus_1_1BoardState.html#ae43a58fd7ac7d37db300dc2d781ea609',1,'Zagreus::BoardState']]],
-  ['clearvar_28',['clearVar',['../classZagreus_1_1UCIOption.html#ae95b1df4fd9ccf77de1904e892e22515',1,'Zagreus::UCIOption']]],
-  ['colors_29',['COLORS',['../constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3',1,'constants.h']]],
-  ['combo_30',['Combo',['../namespaceZagreus.html#a25277ebd2a95d3a6cec246971a6e41c1adcc0a0c4aa2f3a0af20f04b99a7f135d',1,'Zagreus']]],
-  ['constants_2eh_31',['constants.h',['../constants_8h.html',1,'']]],
-  ['count_5f1s_32',['count_1s',['../namespaceZagreus.html#ad12d6d30c4c67b4bae5738e8481399b0',1,'Zagreus']]],
-  ['count_5fbits_33',['count_bits',['../namespaceZagreus.html#a4ab101cae51c4b69a1d384d608a0ac45',1,'Zagreus']]]
+  ['clearkillermoves_28',['clearKillerMoves',['../classZagreus_1_1TranspositionTable.html#a68955e10d22bcff1e118fac3f3956259',1,'Zagreus::TranspositionTable']]],
+  ['clearvar_29',['clearVar',['../classZagreus_1_1UCIOption.html#ae95b1df4fd9ccf77de1904e892e22515',1,'Zagreus::UCIOption']]],
+  ['colors_30',['COLORS',['../constants_8h.html#a883046b8f0d1f6368a9b9eaf5ca36af3',1,'constants.h']]],
+  ['combo_31',['Combo',['../namespaceZagreus.html#a25277ebd2a95d3a6cec246971a6e41c1adcc0a0c4aa2f3a0af20f04b99a7f135d',1,'Zagreus']]],
+  ['constants_2eh_32',['constants.h',['../constants_8h.html',1,'']]],
+  ['count_5f1s_33',['count_1s',['../namespaceZagreus.html#ad12d6d30c4c67b4bae5738e8481399b0',1,'Zagreus']]],
+  ['count_5fbits_34',['count_bits',['../namespaceZagreus.html#a4ab101cae51c4b69a1d384d608a0ac45',1,'Zagreus']]]
 ];
