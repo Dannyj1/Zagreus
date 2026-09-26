@@ -65,29 +65,16 @@ int16_t TranspositionTable::probePosition(const uint64_t zobristHash, const int1
         ttEntry = entry;
 
         if (entry->depth >= depth) {
-            bool returnScore = false;
+            int adjustedScore = entry->score;
 
-            if (entry->nodeType == EXACT) {
-                returnScore = true;
-            } else if (entry->nodeType == ALPHA) {
-                if (entry->score <= alpha) {
-                    returnScore = true;
-                }
-            } else if (entry->nodeType == BETA) {
-                if (entry->score >= beta) {
-                    returnScore = true;
-                }
+            if (adjustedScore >= (MATE_SCORE - MAX_PLIES)) {
+                adjustedScore -= ply;
+            } else if (adjustedScore <= (-MATE_SCORE + MAX_PLIES)) {
+                adjustedScore += ply;
             }
 
-            if (returnScore) {
-                int adjustedScore = entry->score;
-
-                if (adjustedScore >= (MATE_SCORE - MAX_PLIES)) {
-                    adjustedScore -= ply;
-                } else if (adjustedScore <= (-MATE_SCORE + MAX_PLIES)) {
-                    adjustedScore += ply;
-                }
-
+            if (entry->nodeType == EXACT || (entry->nodeType == ALPHA && adjustedScore <= alpha) ||
+                (entry->nodeType == BETA && adjustedScore >= beta)) {
                 return adjustedScore;
             }
         }
