@@ -19,16 +19,17 @@
  */
 
 #pragma once
-#include "constants.h"
+#include <limits>
+
+#include "search.h"
+#include "types.h"
 
 namespace Zagreus {
-enum PieceType : uint8_t;
-extern int midgamePstTable[PIECES][SQUARES];
-extern int endgamePstTable[PIECES][SQUARES];
+struct TimeLimits {
+    int softMs = std::numeric_limits<int>::max();
+    int hardMs = std::numeric_limits<int>::max();
+};
 
-void initializePst();
-
-int* getMidgameTable(PieceType pieceType);
-
-int* getEndgameTable(PieceType pieceType);
+template <PieceColor color>
+TimeLimits calculateSearchTime(SearchParams& params);
 }  // namespace Zagreus
